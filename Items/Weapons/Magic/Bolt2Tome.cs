@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.autoReuse = true;
             Item.maxStack = 1;
             Item.rare = ItemRarityID.Orange;
-            Item.shootSpeed = 9f;
+            Item.shootSpeed = 12f;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.mana = 20;

@@ -26,6 +26,7 @@ namespace tsorcRevamp.Items.BossItems
             Item.consumable = false;
             Item.rare = ItemRarityID.LightRed;
             Item.consumable = false;
+            
         }
 
 
@@ -35,16 +36,9 @@ namespace tsorcRevamp.Items.BossItems
             {
                 return false;
             }
-            if (Main.dayTime)
-            {
-                Main.NewText("Slogra only awakens at night.", 175, 75, 255);
-            }
-            else
-            {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar);
-                NPC.NewNPC(player.GetSource_ItemUse(Item), (int)player.position.X + 1000, (int)player.position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>(), 0);
-                NPC.NewNPC(player.GetSource_ItemUse(Item), (int)player.position.X - 1000, (int)player.position.Y - 200, ModContent.NPCType<NPCs.Bosses.Slogra>(), 0);
-            }
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar);
+            NPC.NewNPC(player.GetSource_ItemUse(Item), (int)player.position.X + 1000, (int)player.position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>(), 0);
+            NPC.NewNPC(player.GetSource_ItemUse(Item), (int)player.position.X - 1000, (int)player.position.Y - 200, ModContent.NPCType<NPCs.Bosses.Slogra>(), 0);
             return true;
         }
 

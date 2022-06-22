@@ -1,7 +1,10 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
@@ -13,13 +16,12 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetDefaults()
         {
-
+            NPC.aiStyle = -1;
             NPC.npcSlots = 5;
             Main.npcFrameCount[NPC.type] = 5;
             NPC.width = 70;
             NPC.height = 70;
             AnimationType = 62;
-            NPC.aiStyle = 22;
             NPC.damage = 50;
             //It genuinely had none in the original.
             NPC.defense = 0;
@@ -28,13 +30,15 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.boss = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
-            NPC.lifeMax = 5000;
+            NPC.lifeMax = 4000;
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.9f;
-            NPC.value = 35000;
+            NPC.value = 20000;
             NPC.noTileCollide = true;
             NPC.noGravity = true;
             despawnHandler = new NPCDespawnHandler(DustID.Torch);
+
+            CurrentMove = Bombardment;
         }
 
         public override void SetStaticDefaults()
@@ -53,7 +57,6 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
 
-        #region AI
         NPCDespawnHandler despawnHandler;
         bool slograDead = false;
         int comboDamage = 0;
@@ -62,16 +65,51 @@ namespace tsorcRevamp.NPCs.Bosses
         int chargeDamage = 0;
         float dustRadius = 20;
         float dustMin = 3;
+
+        public int Timer
+        {
+            get => (int)NPC.ai[0];
+            set => NPC.ai[0] = value;
+        }
+
+        public Player Target
+        {
+            get => Main.player[NPC.target];
+        }
+
+        List<Action> MoveList
+        {
+            get => new List<Action>() { Bombardment, Bursts, Scatter, Lob };
+        }
+
+        public Action CurrentMove;
+        Vector2 acceleration = Vector2.Zero;
+        float accelerationMagnitude = 5f / 60f; //Jerk is change in acceleration
+        float topSpeed = 10;
+        Vector2 targetPoint;
         public override void AI()
         {
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
+            CurrentMove();
+            FlyTowardTarget();
 
-            for (int i = 0; i < Main.maxPlayers; i++)
+            if (slograDead)
             {
-                Player thisPlayer = Main.player[i];
-                if (thisPlayer != null && thisPlayer.active)
-                {
-                    thisPlayer.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 300);
+                NPC.knockBackResist = 0;
+                //Throw tridents
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {                    
+                    if (Main.GameUpdateCount % 60 == 0)
+                    {
+                        int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.BurningSphere, 0);
+                        Main.npc[spawned].damage = burningSphereDamage;
+                        Main.npc[spawned].velocity += Main.player[NPC.target].velocity;
+                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
+                        }
+                    }
                 }
             }
 
@@ -89,303 +127,410 @@ namespace tsorcRevamp.NPCs.Bosses
                     slograDead = true;
                 }
             }
-            else
+
+            if (Target.Center.X > NPC.Center.X)
             {
-                if (dustRadius > dustMin)
-                {
-                    dustRadius -= 0.25f;
-                }
-
-                int dustPerTick = 20;
-                float speed = 2;
-                for (int i = 0; i < dustPerTick; i++)
-                {
-                    Vector2 dir = Vector2.UnitX.RotatedByRandom(MathHelper.Pi);
-                    Vector2 dustPos = NPC.Center + dir * dustRadius * 16;
-                    Vector2 dustVel = dir.RotatedBy(MathHelper.Pi / 2) * speed;
-                    Dust dustID = Dust.NewDustPerfect(dustPos, 262, dustVel, 200);
-                    dustID.noGravity = true;
-                }
-
-                if (breakCombo == true)
-                {
-                    chargeDamageFlag = true;
-                    NPC.knockBackResist = 0f;
-                    Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                    NPC.velocity.X = (float)(Math.Cos(rotation) * 13) * -1; //12 was 10
-                    NPC.velocity.Y = (float)(Math.Sin(rotation) * 13) * -1;
-
-                    breakCombo = false;
-                    NPC.netUpdate = true;
-
-                }
-                if (chargeDamageFlag == true)
-                {
-                    NPC.damage = 46;
-                    NPC.knockBackResist = 0f;
-                    chargeDamage++;
-                }
-                if (chargeDamage >= 50) //was 45
-                {
-                    chargeDamageFlag = false;
-                    //npc.dontTakeDamage = false;
-                    NPC.damage = 40;
-                    chargeDamage = 0;
-
-                    NPC.knockBackResist = 0.3f;
-                }
-            }
-
-            NPC.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                if (NPC.ai[1] >= 10f)
-                {
-                    if (Main.rand.Next(45) == 1)
-                    {
-                        Vector2 randomSpawn = Main.rand.NextVector2CircularEdge(200, 200);
-                        int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + randomSpawn.X), (int)(NPC.position.Y + randomSpawn.Y), NPCID.BurningSphere, 0);
-                        Main.npc[spawned].damage = burningSphereDamage;
-                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 1f }, NPC.Center);
-                        if (Main.netMode == NetmodeID.Server)
-                        {
-                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
-                        }
-                        //npc.netUpdate=true;
-                    }
-                }
-            }
-
-            if (NPC.justHit)
-            {
-                NPC.ai[2] = 0f;
-            }
-
-            if (NPC.ai[2] >= 0f)
-            {
-                int num258 = 16;
-                bool flag26 = false;
-                bool flag27 = false;
-                if (NPC.position.X > NPC.ai[0] - (float)num258 && NPC.position.X < NPC.ai[0] + (float)num258)
-                {
-                    flag26 = true;
-                }
-                else
-                {
-                    if ((NPC.velocity.X < 0f && NPC.direction > 0) || (NPC.velocity.X > 0f && NPC.direction < 0))
-                    {
-                        flag26 = true;
-                    }
-                }
-                num258 += 24;
-                if (NPC.position.Y > NPC.ai[1] - (float)num258 && NPC.position.Y < NPC.ai[1] + (float)num258)
-                {
-                    flag27 = true;
-                }
-                if (flag26 && flag27)
-                {
-                    NPC.ai[2] += 1f;
-                    if (NPC.ai[2] >= 60f)
-                    {
-                        NPC.ai[2] = -200f;
-                        NPC.direction *= -1;
-                        NPC.velocity.X = NPC.velocity.X * -1f;
-                        NPC.collideX = false;
-                    }
-                }
-                else
-                {
-                    NPC.ai[0] = NPC.position.X;
-                    NPC.ai[1] = NPC.position.Y; //added -60
-                    NPC.ai[2] = 0f;
-                }
+                NPC.direction = 1;
             }
             else
             {
-                NPC.ai[2] += 1f;
-                if (Main.player[NPC.target].position.X + (float)(Main.player[NPC.target].width / 2) > NPC.position.X + (float)(NPC.width / 2))
-                {
-                    NPC.direction = -1;
+                NPC.direction = -1;
+            }
+
+            //Dust ID = 262           
+        }
+
+
+        
+        
+        bool movingLeft = true;
+        int passCount = 0;
+        void Bombardment()
+        {
+            topSpeed = 7;
+            Timer++;
+            targetPoint = Target.Center;
+            if (movingLeft)
+            {
+                targetPoint += new Vector2(-550, -300);   
+            }
+            else
+            {
+                targetPoint += new Vector2(550, -300);
+            }
+
+            
+
+            if(Vector2.Distance(NPC.Center, targetPoint) < 80)
+            {
+                movingLeft = !movingLeft;
+                passCount++;
+            }
+
+            if (Timer % 10 == 0)
+            {
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {                    
+                    int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<NPCs.Enemies.GaibonFireball>(), ai0: burningSphereDamage, ai1: 0, ai2: 5);
+                    Main.npc[spawned].damage = burningSphereDamage;
+                    Main.npc[spawned].velocity = new Vector2(0, 8);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.3f }, NPC.Center);
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
+                    }
                 }
-                else
+            }
+
+            if(passCount >= 4)
+            {
+                ChangeMove();
+            }
+        }
+
+        bool reachedTarget = false;
+        float chargeTime = 70f;
+        float shotsFired = 0;
+        void Bursts()
+        {
+            chargeTime = 70f;
+            topSpeed = 10;
+
+
+            targetPoint = Target.Center;
+            if (movingLeft && shotsFired == 0 || !movingLeft && shotsFired == 2)
+            {
+                targetPoint += new Vector2(-550, -300);
+            }
+            if (!movingLeft && shotsFired == 0 || movingLeft && shotsFired == 2)
+            {
+                targetPoint += new Vector2(550, -300);
+            }
+            if(shotsFired == 1)
+            {
+                targetPoint += new Vector2(0, -350);
+            }
+
+
+            if (Vector2.Distance(NPC.Center, targetPoint) < 80)
+            {
+                Timer++;
+                targetPoint = NPC.Center; //Slow to a stop
+                NPC.velocity *= 0.9f;
+                if (Target.Center.X > NPC.Center.X)
                 {
                     NPC.direction = 1;
                 }
-            }
-            int num259 = (int)((NPC.position.X + (float)(NPC.width / 2)) / 16f) + NPC.direction * 2;
-            int num260 = (int)(((NPC.position.Y - 30) + (float)NPC.height) / 16f);
-            if (NPC.position.Y > Main.player[NPC.target].position.Y)
-            {
-                //npc.velocity.Y += .1f;
-                //if (npc.velocity.Y > +2)
-                //{
-                //	npc.velocity.Y = -2;
-                //}
-
-                NPC.velocity.Y -= 0.05f;
-                if (NPC.velocity.Y < -1)
-                {
-                    NPC.velocity.Y = -1;
-                }
-
-
-            }
-            if (NPC.position.Y < Main.player[NPC.target].position.Y)
-            {
-                NPC.velocity.Y += 0.05f;
-                if (NPC.velocity.Y > 1)
-                {
-                    NPC.velocity.Y = 1;
-                }
-
-                //npc.velocity.Y += .2f;
-                //if (npc.velocity.Y > 2)
-                //{
-                //	npc.velocity.Y = 2;
-                //}
-            }
-            if (NPC.collideX)
-            {
-                NPC.velocity.X = NPC.oldVelocity.X * -0.4f;
-                if (NPC.direction == -1 && NPC.velocity.X > 0f && NPC.velocity.X < 1f)
-                {
-                    NPC.velocity.X = 1f;
-                }
-                if (NPC.direction == 1 && NPC.velocity.X < 0f && NPC.velocity.X > -1f)
-                {
-                    NPC.velocity.X = -1f;
-                }
-            }
-            if (NPC.collideY)
-            {
-                NPC.velocity.Y = NPC.oldVelocity.Y * -0.25f;
-                if (NPC.velocity.Y > 0f && NPC.velocity.Y < 1f)
-                {
-                    NPC.velocity.Y = 1f;
-                }
-                if (NPC.velocity.Y < 0f && NPC.velocity.Y > -1f)
-                {
-                    NPC.velocity.Y = -1f;
-                }
-            }
-            float num270 = 2.5f;
-            if (NPC.direction == -1 && NPC.velocity.X > -num270)
-            {
-                NPC.velocity.X = NPC.velocity.X - 0.1f;
-                if (NPC.velocity.X > num270)
-                {
-                    NPC.velocity.X = NPC.velocity.X - 0.1f;
-                }
                 else
                 {
-                    if (NPC.velocity.X > 0f)
-                    {
-                        NPC.velocity.X = NPC.velocity.X + 0.05f;
-                    }
+                    NPC.direction = -1;
                 }
-                if (NPC.velocity.X < -num270)
+
+
+                if (Timer > chargeTime && Timer % 15 == 0)
                 {
-                    NPC.velocity.X = -num270;
-                }
-            }
-            else
-            {
-                if (NPC.direction == 1 && NPC.velocity.X < num270)
-                {
-                    NPC.velocity.X = NPC.velocity.X + 0.1f;
-                    if (NPC.velocity.X < -num270)
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 1f }, NPC.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        NPC.velocity.X = NPC.velocity.X + 0.1f;
-                    }
-                    else
-                    {
-                        if (NPC.velocity.X < 0f)
+                        for (int i = 0; i < 10; i++)
                         {
-                            NPC.velocity.X = NPC.velocity.X - 0.05f;
+                            Vector2 position = NPC.Center + new Vector2(0, 80).RotatedBy(i * MathHelper.Pi / 5);
+                            Vector2 velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 8);
+                            int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)position.X, (int)position.Y, ModContent.NPCType<NPCs.Enemies.GaibonFireball>(), ai0: burningSphereDamage, ai1: velocity.X, ai2: velocity.Y, Target: NPC.target);
+                            Main.npc[spawned].damage = burningSphereDamage;
+                            Main.npc[spawned].velocity = new Vector2(0, 8);
+                            if (Main.netMode == NetmodeID.Server)
+                            {
+                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
+                            }
                         }
                     }
-                    if (NPC.velocity.X > num270)
-                    {
-                        NPC.velocity.X = num270;
-                    }
                 }
+
+                if (Timer >= 115)
+                {
+                    shotsFired++;
+                    Timer = 0;
+                }
+
+                float radius = chargeTime - Timer;
+                if (radius < 0)
+                {
+                    radius = 0;
+                }
+                for (int j = 0; j < 20 * ((float)Timer / chargeTime); j++)
+                {
+                    Vector2 dir = Main.rand.NextVector2CircularEdge(80 + radius * 20, 80 + radius * 20);
+                    Vector2 dustPos = NPC.Center + dir;
+                    Vector2 dustVel = dir.RotatedBy(MathHelper.Pi);
+
+                    if (Timer > chargeTime)
+                    {
+                        dustVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 0.75f);
+                    }
+
+                    dustVel.Normalize();
+                    dustVel *= 6;
+                    Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 1f).noGravity = true;
+                }
+
             }
-            if (NPC.directionY == -1 && (double)NPC.velocity.Y > -2.5)
+
+            if(shotsFired >= 3)
             {
-                NPC.velocity.Y = NPC.velocity.Y - 0.04f;
-                if ((double)NPC.velocity.Y > 2.5)
-                {
-                    NPC.velocity.Y = NPC.velocity.Y - 0.05f;
-                }
-                else
-                {
-                    if (NPC.velocity.Y > 0f)
-                    {
-                        NPC.velocity.Y = NPC.velocity.Y + 0.03f;
-                    }
-                }
-                if ((double)NPC.velocity.Y < -2.5)
-                {
-                    NPC.velocity.Y = -2.5f;
-                }
+                shotsFired = 0;
+                ChangeMove();
             }
-            else
-            {
-                if (NPC.directionY == 1 && (double)NPC.velocity.Y < 2.5)
-                {
-                    NPC.velocity.Y = NPC.velocity.Y + 0.04f;
-                    if ((double)NPC.velocity.Y < -2.5)
-                    {
-                        NPC.velocity.Y = NPC.velocity.Y + 0.05f;
-                    }
-                    else
-                    {
-                        if (NPC.velocity.Y < 0f)
-                        {
-                            NPC.velocity.Y = NPC.velocity.Y - 0.03f;
-                        }
-                    }
-                    if ((double)NPC.velocity.Y > 2.5)
-                    {
-                        NPC.velocity.Y = 2.5f;
-                    }
-                }
-            }
-            return;
+
         }
-        #endregion
 
-        public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        void Scatter()
         {
-            comboDamage += (int)damage;
-            if (comboDamage > 90)
+            NPC.knockBackResist = 0;
+            Timer++;
+            if (Vector2.Distance(NPC.Center, targetPoint) > 80 || Timer == 1)
             {
-                breakCombo = true;
-                NPC.netUpdate = true; //new
-                Color color = new Color();
-                for (int num36 = 0; num36 < 50; num36++)
-                {
-                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.t_Slime, 0, 0, 100, color, 2f);
-                }
-                for (int num36 = 0; num36 < 20; num36++)
-                {
-                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.CorruptGibs, 0, 0, 100, color, 2f);
-                }
-                //npc.ai[1] = -200;
-                comboDamage = 0;
-                NPC.netUpdate = true; //new
+                targetPoint = Target.Center;
+                targetPoint += new Vector2(0, -250);
             }
-            return true;
-            //if (!npc.justHit)
-            //{
-            //comboDamage --;
+            else
+            {
+                targetPoint = NPC.Center;
+                NPC.velocity *= 0.9f;                
 
-            //	if (comboDamage < 0)
-            //	{
-            //	comboDamage = 0;
-            //	}
-            //}
+                if (Timer >= 120 && Timer % 120 == 0)
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 1f }, NPC.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 30; i++)
+                        {
+                            Vector2 position = new Vector2(0, 80).RotatedBy(i * MathHelper.Pi / 15);
+                            Vector2 velocity = position;
+                            position += NPC.Center;
+                            velocity.Normalize();
+                            velocity *= 6;
+                            int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)position.X, (int)position.Y, ModContent.NPCType<NPCs.Enemies.GaibonFireball>(), ai0: burningSphereDamage, ai1: velocity.X, ai2: velocity.Y, Target: NPC.target);
+                            Main.npc[spawned].damage = burningSphereDamage;
+                            Main.npc[spawned].velocity = new Vector2(0, 8);
+                            if (Main.netMode == NetmodeID.Server)
+                            {
+                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
+                            }
+                        }
+                    }
+                }
+
+                float radius = chargeTime - Timer;
+                if (radius < 0)
+                {
+                    radius = 0;
+                }
+                for (int j = 0; j < 20 * ((float)Timer / 120); j++)
+                {
+                    Vector2 dir = Main.rand.NextVector2CircularEdge(80 + radius * 20, 80 + radius * 20);
+                    Vector2 dustPos = NPC.Center + dir;
+                    Vector2 dustVel = dir.RotatedBy(MathHelper.Pi);
+                    dustVel.Normalize();
+                    dustVel *= 6;
+                    Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 1f).noGravity = true;
+                }
+
+            }
+
+            if(Timer >= 360)
+            {
+                ChangeMove();
+            }
+        }
+
+        void Lob()
+        {
+            Timer++;
+            topSpeed = Vector2.Distance(NPC.Center, Target.Center) / 50f;
+            targetPoint = Target.Center;
+            NPC.knockBackResist = 2f;
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {                
+                if (Timer % 120 == 0)
+                {
+                    Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8, .1f, true, true);
+                    velocity += Target.velocity / 1.5f;
+                    if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.CrystalFire>(), burningSphereDamage / 4, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.CrystalFire>(), burningSphereDamage / 4, 0.5f, Main.myPlayer);
+                    }
+                }
+            }
+
+            if(Timer > 600)
+            {
+                ChangeMove();
+            }
+        }
+
+        int count = 0;
+        int movePhase = 0;
+        void Charge()
+        {
+            if (count == 4)
+            {
+                movePhase = 0;
+                count = 0;
+                ChangeMove();
+            }
+
+            if (movePhase == 0)
+            {
+                topSpeed = 10;
+                if (movingLeft)
+                {
+                    targetPoint = new Vector2(Main.player[NPC.target].Center.X - 500, Main.player[NPC.target].Center.Y - 300);
+                }
+                if (!movingLeft)
+                {
+                    targetPoint = new Vector2(Main.player[NPC.target].Center.X + 500, Main.player[NPC.target].Center.Y - 300);
+                }
+                if (Vector2.Distance(NPC.Center, targetPoint) < 150)
+                {
+                    Timer++;
+                    NPC.velocity *= 0.9f;
+                    targetPoint = NPC.Center;
+                }
+
+                if(Timer > 20)
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 1f }, NPC.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 30; i++)
+                        {
+                            Vector2 position = new Vector2(0, 80).RotatedBy(i * MathHelper.Pi / 15);
+                            Vector2 velocity = position;
+                            position += NPC.Center;
+                            velocity.Normalize();
+                            velocity *= 6;
+                            int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)position.X, (int)position.Y, ModContent.NPCType<NPCs.Enemies.GaibonFireball>(), ai0: burningSphereDamage, ai1: velocity.X, ai2: velocity.Y, Target: NPC.target);
+                            Main.npc[spawned].damage = burningSphereDamage;
+                            Main.npc[spawned].velocity = new Vector2(0, 8);
+                            if (Main.netMode == NetmodeID.Server)
+                            {
+                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
+                            }
+                        }
+                    }
+                    Timer = 0;
+                    movePhase = 1;
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
+                }
+            }
+
+            if(movePhase == 1)
+            {
+                topSpeed = 25;
+                targetPoint = Target.Center;
+
+                if (Vector2.Distance(NPC.Center, targetPoint) < 150)
+                {
+                    reachedTarget = true;
+                }
+                if (reachedTarget)
+                {
+                    Timer++;
+                }                
+
+                if (Timer > 30)
+                {
+                    movingLeft = !movingLeft;
+                    reachedTarget = false;
+                    Timer = 0;
+                    movePhase = 0;
+                    count++;
+                }
+            }
+        }
+
+        void FlyTowardTarget()
+        {
+            if (targetPoint != Vector2.Zero)
+            {
+                accelerationMagnitude = 0.7f;
+                acceleration = UsefulFunctions.GenerateTargetingVector(NPC.Center, targetPoint, accelerationMagnitude);
+                if (!acceleration.HasNaNs())
+                {
+                    NPC.velocity += acceleration;
+                }
+                if (NPC.velocity.Length() > topSpeed)
+                {
+                    NPC.velocity.Normalize();
+                    NPC.velocity *= topSpeed;
+                }
+            }
+        }
+
+        void ChangeMove()
+        {
+            NPC.knockBackResist = 0.9f;
+            Timer = 0;
+            List<Action> possibleMoves = MoveList;
+
+            if (CurrentMove != null && CurrentMove != Charge)
+            {
+                possibleMoves.Remove(CurrentMove);
+            }
+
+            CurrentMove = possibleMoves[Main.rand.Next(0, possibleMoves.Count)];
+
+            if (slograDead && Main.rand.NextBool())
+            {
+                //possibleMoves.Remove(Scatter);
+                CurrentMove = Charge;
+            }
+        }
+
+        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        {
+            if (slograDead)
+            {
+                damage = (int)(damage * 1.5f);
+            }
+        }
+
+        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (slograDead)
+            {
+                damage = (int)(damage * 1.5f);
+            }
+        }
+
+        public static Texture2D texture;
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (slograDead)
+            {
+                if (texture == null || texture.IsDisposed)
+                {
+                    texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
+                }
+
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+                ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
+                data.Apply(null);
+                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                Rectangle sourceRectangle = NPC.frame;
+                Vector2 origin = sourceRectangle.Size() / 2f;
+                Vector2 offset = new Vector2(0, -8);
+                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition + offset, sourceRectangle, Color.White, NPC.rotation, origin, 1.3f, effects, 0f);
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            }
+            return base.PreDraw(spriteBatch, screenPos, drawColor);
         }
 
         public override bool CheckActive()

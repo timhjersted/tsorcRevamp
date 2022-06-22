@@ -25,14 +25,13 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.timeLeft = 22750;
             NPC.damage = 45;
             //npc.Music = 12;
-            NPC.defense = 10;
             NPC.boss = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
-            NPC.lifeMax = 5000;
+            NPC.lifeMax = 4000;
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.4f;
-            NPC.value = 14000;
+            NPC.value = 20000;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             despawnHandler = new NPCDespawnHandler("Slogra returns to the depths...", Color.DarkGreen, DustID.Demonite);
@@ -134,7 +133,8 @@ namespace tsorcRevamp.NPCs.Bosses
             moveTimer++;
             if (gaibonDead)
             {
-                baseCooldown = 240;
+                NPC.defense = 0; //Speed things up a bit
+                baseCooldown = 150;
             }
 
             //Perform attacks
@@ -259,10 +259,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 if (moveTimer <= baseCooldown + 45)
                 {
-                    //NPC.velocity.Y -= 0.015f; //Gravity
                     pickedTrajectory = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 18);
-
-                    //Dust.NewDustPerfect(NPC.Center, DustID.InfernoFork, pickedTrajectory).noGravity = true;
 
                     //Don't fall
                     if (NPC.velocity.Y > 0)
@@ -348,11 +345,8 @@ namespace tsorcRevamp.NPCs.Bosses
             
             if (moveTimer <= baseCooldown + 70)
             {
-                Main.NewText("Jumpattack: " + moveTimer);
-                //NPC.velocity.Y += 0.015f; //Gravity
                 pickedTrajectory = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12, 0.035f, false, false);
                 pickedTrajectory.Y -= 12;
-                //Dust.NewDustPerfect(NPC.Center, DustID.InfernoFork, pickedTrajectory).noGravity = true;
             }
             if (moveTimer == baseCooldown + 65)
             {
@@ -424,6 +418,22 @@ namespace tsorcRevamp.NPCs.Bosses
                 dashAttack = !dashAttack;
             }
             
+        }
+
+        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        {
+            if (gaibonDead)
+            {
+                damage = (int)(damage * 1.5f);
+            }
+        }
+
+        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (gaibonDead)
+            {
+                damage = (int)(damage * 1.5f);
+            }
         }
 
         public static Texture2D texture;

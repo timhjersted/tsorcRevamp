@@ -180,7 +180,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.4f, 0.4f, 0.4f);
 
-            if (Main.rand.Next(600) == 0)
+            if (Main.rand.Next(600) == 0 && NPC.CountNPCS(NPCID.IlluminantBat) < 5)
             {
                 NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.IlluminantBat);
             }
