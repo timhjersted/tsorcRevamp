@@ -404,8 +404,13 @@ namespace tsorcRevamp
                     //scale the width by the stam percentage
                     Rectangle fillDestination = new Rectangle(barOrigin.X + padding, barOrigin.Y, (int)(staminaPercentage * barFill.Width), barFill.Height);
 
+                    //draw a line at the amount of stamina needed to roll
+                    float stamPercentToRoll = 30 / staminaMax;
+                    Rectangle minRollStamDestination = new Rectangle(barOrigin.X + padding + (int)(stamPercentToRoll * barFill.Width), barOrigin.Y, 2, barFill.Height); //displays 2px of the bar
+
                     Main.spriteBatch.Draw(barEmpty, emptyDestination, Color.White);
-                    Main.spriteBatch.Draw(barFill, fillDestination, Color.White);
+                    Main.spriteBatch.Draw(barFill, fillDestination, Color.DodgerBlue);
+                    Main.spriteBatch.Draw(barFill, minRollStamDestination, Color.White);
                 }
             }
             #endregion
