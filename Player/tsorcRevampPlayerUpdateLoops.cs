@@ -1175,7 +1175,7 @@ namespace tsorcRevamp
             }
             //except the first slot
             oldPos[0] = Player.position;
-            Main.NewText("" + Player.lifeRegen);
+            //Main.NewText("" + Player.lifeRegen);
         }
 
         void TryForceFrame(ref Rectangle frame, ref PlayerFrames? newFrame)
