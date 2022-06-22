@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.lifeMax = 4000;
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.9f;
-            NPC.value = 20000;
+            NPC.value = 100000;
             NPC.noTileCollide = true;
             NPC.noGravity = true;
             despawnHandler = new NPCDespawnHandler(DustID.Torch);
