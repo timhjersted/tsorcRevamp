@@ -264,6 +264,10 @@ namespace tsorcRevamp.NPCs
 
         public override void OnKill(NPC npc)
         {
+            if(npc.type == NPCID.Golem)
+            {
+                UsefulFunctions.BroadcastText("Somewhere in the sky, a forcefield collapses...", Color.Cyan);
+            }
             if (npc.boss)
             {
                 foreach (Player player in Main.player)
