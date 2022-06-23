@@ -243,6 +243,15 @@ namespace tsorcRevamp
             return currentPosition;
         }
 
+        ///<summary> 
+        ///Modifies a float between 0 and 1, and returns a 'softened' value between 0 and one calculated via the easing curve sin(x * pi/2)
+        ///Useful for making smoother looking motion
+        ///</summary>         
+        ///<param name="source">A float between 0 and 1</param>
+        public static float EasingCurve(float source)
+        {
+            return (float)Math.Sin(source * MathHelper.PiOver2);
+        }
 
         ///<summary> 
         ///Returns a vector pointing from a source, to a target, with a speed.

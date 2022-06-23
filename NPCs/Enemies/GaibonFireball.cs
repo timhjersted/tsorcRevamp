@@ -10,8 +10,8 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetDefaults()
         {
-            NPC.width = 16;
-            NPC.height = 16;
+            NPC.width = 10;
+            NPC.height = 10;
             NPC.aiStyle = -1;
             NPC.damage = 60;
             NPC.defense = 0;
@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     for (int i = 0; i < 20; i++)
                     {
-                        int spawnDust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y + 2f), NPC.width, NPC.height, DustID.InfernoFork, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), default, default, 1.8f);
+                        int spawnDust = Dust.NewDust(new Vector2(NPC.position.X - 6, NPC.position.Y - 6), NPC.width + 6, NPC.height + 6, DustID.InfernoFork, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), default, default, 1.8f);
                         Main.dust[spawnDust].velocity += NPC.velocity;
                         Main.dust[spawnDust].noGravity = true;
                     }
@@ -50,7 +50,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             for (int j = 0; j < 2; j++)
             {
-                int trailDust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y + 2f), NPC.width, NPC.height, DustID.Torch, NPC.velocity.X * 0.1f, NPC.velocity.Y * 0.1f, default, default, 1.3f);
+                int trailDust = Dust.NewDust(new Vector2(NPC.position.X - 6, NPC.position.Y - 6), NPC.width + 6, NPC.height + 6, DustID.Torch, NPC.velocity.X * 0.1f, NPC.velocity.Y * 0.1f, default, default, 1.3f);
                 Main.dust[trailDust].velocity *= 0.3f;
                 Main.dust[trailDust].noGravity = true;
             }

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -18,11 +19,11 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.aiStyle = -1;
             NPC.npcSlots = 5;
-            Main.npcFrameCount[NPC.type] = 5;
+            Main.npcFrameCount[NPC.type] = 2;
             NPC.width = 70;
             NPC.height = 70;
-            AnimationType = 62;
-            NPC.damage = 50;
+            NPC.scale = 0.6f;
+            DrawOffsetY = 20;
             //It genuinely had none in the original.
             NPC.defense = 0;
             Music = 12;
@@ -31,7 +32,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
             NPC.lifeMax = 4000;
-            NPC.scale = 1.1f;
             NPC.knockBackResist = 0.9f;
             NPC.value = 100000;
             NPC.noTileCollide = true;
@@ -86,9 +86,25 @@ namespace tsorcRevamp.NPCs.Bosses
         Vector2 acceleration = Vector2.Zero;
         float accelerationMagnitude = 5f / 60f; //Jerk is change in acceleration
         float topSpeed = 10;
-        Vector2 targetPoint;
+        float flyingTime = 0;
+
+        Vector2 targetPointValue;
+        Vector2 targetPoint
+        {
+            get
+            {
+                return targetPointValue;
+            }
+            set
+            {
+                flyingTime = 0;
+                targetPointValue = value;
+            }
+        }
         public override void AI()
         {
+            flyingTime++;
+            UsefulFunctions.DustRing(targetPoint, 40, DustID.ShadowbeamStaff);
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             CurrentMove();
             FlyTowardTarget();
@@ -213,7 +229,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
 
-            if (Vector2.Distance(NPC.Center, targetPoint) < 80)
+            if (Vector2.Distance(NPC.Center, targetPoint) < 150)
             {
                 Timer++;
                 targetPoint = NPC.Center; //Slow to a stop
@@ -289,7 +305,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.knockBackResist = 0;
             Timer++;
-            if (Vector2.Distance(NPC.Center, targetPoint) > 80 || Timer == 1)
+            if (Vector2.Distance(NPC.Center, targetPoint) > 150 || Timer == 1)
             {
                 targetPoint = Target.Center;
                 targetPoint += new Vector2(0, -250);
@@ -374,6 +390,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         int count = 0;
         int movePhase = 0;
+        int flightTimer = 0;
         void Charge()
         {
             if (count == 4)
@@ -430,11 +447,13 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if(movePhase == 1)
             {
+                flightTimer++;
                 topSpeed = 25;
                 targetPoint = Target.Center;
 
-                if (Vector2.Distance(NPC.Center, targetPoint) < 150)
+                if (Vector2.Distance(NPC.Center, targetPoint) < 200 || flightTimer > 180)
                 {
+                    flightTimer = 0;
                     reachedTarget = true;
                 }
                 if (reachedTarget)
@@ -442,7 +461,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     Timer++;
                 }                
 
-                if (Timer > 30)
+                if (Timer > 40)
                 {
                     movingLeft = !movingLeft;
                     reachedTarget = false;
@@ -457,7 +476,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             if (targetPoint != Vector2.Zero)
             {
-                accelerationMagnitude = 0.7f;
+                accelerationMagnitude = 0.7f + flyingTime / 60;
                 acceleration = UsefulFunctions.GenerateTargetingVector(NPC.Center, targetPoint, accelerationMagnitude);
                 if (!acceleration.HasNaNs())
                 {
@@ -507,6 +526,29 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
+        public override void FindFrame(int frameHeight)
+        {
+            int num = 1;
+            if (!Main.dedServ)
+            {
+                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
+            }
+
+            NPC.spriteDirection = NPC.direction;
+
+            NPC.rotation = NPC.velocity.X * 0.08f;
+            NPC.frameCounter += 1.0;
+            if (NPC.frameCounter >= 6.0)
+            {
+                NPC.frame.Y = NPC.frame.Y + num;
+                NPC.frameCounter = 0.0;
+            }
+            if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
+            {
+                NPC.frame.Y = 0;
+            }
+        }
+
         public static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
@@ -525,8 +567,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 Rectangle sourceRectangle = NPC.frame;
                 Vector2 origin = sourceRectangle.Size() / 2f;
-                Vector2 offset = new Vector2(0, -8);
-                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition + offset, sourceRectangle, Color.White, NPC.rotation, origin, 1.3f, effects, 0f);
+                Vector2 offset = new Vector2(0, -14);
+                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition + offset, sourceRectangle, Color.White, NPC.rotation, origin, 0.7f, effects, 0f);
                 spriteBatch.End();
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
             }
@@ -544,7 +586,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(new ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.SlograBag>(), 1, 1, 1, new GaibonDropCondition()));
+            npcLoot.Add(new ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.GaibonBag>(), 1, 1, 1, new GaibonDropCondition()));
         }
 
         #region gore

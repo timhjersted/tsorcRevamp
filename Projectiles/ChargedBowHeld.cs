@@ -159,7 +159,7 @@ namespace tsorcRevamp.Projectiles {
 			}
 		}
 
-		protected void UpdateAim() {
+		protected virtual void UpdateAim() {
 			Projectile.timeLeft = 2;
 			Player player = Main.player[Projectile.owner];
 			Vector2 playerHandPos = player.RotatedRelativePoint(player.MountedCenter);

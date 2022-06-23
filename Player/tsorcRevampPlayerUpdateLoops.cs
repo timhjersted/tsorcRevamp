@@ -73,6 +73,8 @@ namespace tsorcRevamp
         public int ConsSoulChanceMult;
         public bool SoulSickle = false;
 
+        public bool WeakeningBurn = false;
+
         public bool SOADrain = false;
 
         public int supersonicLevel = 0;
@@ -170,7 +172,7 @@ namespace tsorcRevamp
 
         public bool CowardsAffliction;
         public bool GravityField;
-
+        public float textCooldown; //Used for if we want text to display when a Thing happens, but not to spam the player
         public override void ResetEffects()
         {
             SilverSerpentRing = false;
@@ -217,6 +219,7 @@ namespace tsorcRevamp
             LifegemHealing = false;
             RadiantLifegemHealing = false;
             PowerWithin = false;
+            WeakeningBurn = false;
             StaminaReaper = 0;
 
             ActivePermanentPotions = new List<int>();
@@ -232,6 +235,11 @@ namespace tsorcRevamp
 
         public override void PreUpdate()
         {
+            if (textCooldown > 0)
+            {
+                textCooldown--;
+            }
+
             Point point = Player.Center.ToTileCoordinates();
             Player.ZoneBeach = Player.ZoneOverworldHeight && (point.X < 1000 || point.X > Main.maxTilesX - 8398); //default 380 and 380
 
@@ -532,6 +540,66 @@ namespace tsorcRevamp
                     }
                 }
             }
+
+            if (!NPC.downedGolemBoss)
+            {
+                Vector2 arena = new Vector2(4484, 365);
+                float distance = Vector2.DistanceSquared(Player.Center / 16, arena);
+                if (distance < 42500)
+                {
+                    float proximity = distance - 22500;
+                    proximity /= 20000f;
+                    proximity = 1 - proximity;
+                    for (int i = 0; i < 10f * proximity * proximity; i++)
+                    {
+                        Vector2 diff = Player.Center - arena * 16;
+                        diff.Normalize();
+                        diff *= 2400;
+
+                        diff = diff.RotatedBy(Main.rand.NextFloat(-MathHelper.Pi / 30, MathHelper.Pi / 30));
+
+                        Vector2 vel = diff;
+                        vel.Normalize();
+                        vel = vel.RotatedBy(Main.rand.NextBool() ? MathHelper.PiOver2 : -MathHelper.PiOver2);
+                        Dust.NewDustPerfect(arena * 16 + diff, DustID.RainbowTorch, vel, default, Main.DiscoColor, 1.5f * proximity).noGravity = true;
+                    }
+
+                    if (distance < 22500)
+                    {
+
+                        if (distance < 12500)
+                        {
+                            
+                            for (int p = 0; p < 1000; p++)
+                            {
+                                if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == 7)
+                                {
+                                    Player.grappling[0] = -1;
+                                    Player.grapCount = 0;
+
+                                    if (textCooldown <= 120)
+                                    {
+                                        Main.NewText("Your grapple suddenly snaps!!", Color.Red);
+                                    }
+                                    textCooldown = 180;
+
+                                    Player.velocity += new Vector2(0, -15);
+                                    Player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 30);
+                                }
+                            }
+                            
+                        }
+
+                        Player.velocity += UsefulFunctions.GenerateTargetingVector(new Vector2(4484, 355) * 16, Player.Center, 20);
+                        if (textCooldown <= 0)
+                        {
+                            Main.NewText("A strong forcefield expels you from the ruins!", Main.DiscoColor);
+                            textCooldown = 120;
+                        }
+                    }
+                }
+            }
+
         }
 
         public override void PostUpdateBuffs()

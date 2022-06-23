@@ -51,81 +51,15 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.damage = (int)(NPC.damage * 1.3 / 2);
             NPC.defense = NPC.defense += 12;
             tridentDamage = (int)(tridentDamage / 2);
-            //For some reason, its contact damage doesn't get doubled due to expert mode either apparently?
-            //burningSphereDamage = (int)(burningSphereDamage / 2);
         }
 
 
-        //int customspawn1 = 0;
-        float customAi1;
-        //float customAi5;
-        int chargeDamage = 0;
-        float comboDamage = 0;
-        bool breakCombo = false;
-        bool chargeDamageFlag = false;
-        int boredTimer = 0;
-        int tBored = 1;//increasing this increases how long it take for the NP to get bored
-        int boredResetT = 0;
-        int bReset = 50;//increasing this will increase how long an NPC "gives up" before coming back to try again.
-
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player P = spawnInfo.Player;
-
-            bool Sky = spawnInfo.SpawnTileY <= (Main.rockLayer * 4);
-            bool Meteor = P.ZoneMeteor;
-            bool Jungle = P.ZoneJungle;
-            bool Dungeon = P.ZoneDungeon;
-            bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-            bool Hallow = P.ZoneHallow;
-            bool AboveEarth = spawnInfo.SpawnTileY < Main.worldSurface;
-            bool InBrownLayer = spawnInfo.SpawnTileY >= Main.worldSurface && spawnInfo.SpawnTileY < Main.rockLayer;
-            bool InGrayLayer = spawnInfo.SpawnTileY >= Main.rockLayer && spawnInfo.SpawnTileY < (Main.maxTilesY - 200) * 16;
-            bool InHell = spawnInfo.SpawnTileY >= (Main.maxTilesY - 200) * 16;
-            bool Ocean = spawnInfo.SpawnTileX < 3600 || spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
-
-            // these are all the regular stuff you get , now lets see......
-            //this doesn't really work, only one spawns 90% of the time in an enraged state
-            /*for (int num36 = 0; num36 < 200; num36++)
-            {
-                if (Main.npc[num36].active && Main.npc[num36].type == ModContent.NPCType<Bosses.Slogra>())
-                {
-                    return 0;
-                }
-            }
-
-            if (Jungle && !Main.dayTime && !tsorcRevampWorld.SuperHardMode && !Main.hardMode && AboveEarth && Main.rand.Next(6000) == 1)
-
-            {
-                Main.NewText("Slogra had emerged from the depths!", 175, 75, 255);
-                //NPC.SpawnOnPlayer(P.whoAmI, ModContent.NPCType<NPCs.Bosses.Gaibon>());
-                return 1;
-            }
-
-            if (Meteor && !Main.hardMode && !tsorcRevampWorld.SuperHardMode && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(3000) == 1)
-
-            {
-                Main.NewText("Slogra has emerged from the depths!", 175, 75, 255);
-                //NPC.SpawnOnPlayer(P.whoAmI, ModContent.NPCType<NPCs.Bosses.Gaibon>());
-                //NPC.NewNPC(NPC.GetSource_FromAI(), (int)P.position.X + 400, (int)P.position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>());
-                return 1;
-            }*/
-
-            return 0;
-        }
-        #endregion
-
-        #region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
         NPCDespawnHandler despawnHandler;
         bool gaibonDead = false;
-        double fireballTimer = 0;
-        float dustRadius = 20;
-        float dustMin = 3;
         int moveTimer = 0;
         bool dashAttack = false;
         Vector2 pickedTrajectory = Vector2.Zero;
-        int baseCooldown = 300;
+        int baseCooldown = 240;
         int lineOfSightTimer = 0;
         public override void AI()
         {
@@ -134,7 +68,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (gaibonDead)
             {
                 NPC.defense = 0; //Speed things up a bit
-                baseCooldown = 150;
+                baseCooldown = 90;
             }
 
             //Perform attacks
@@ -165,15 +99,32 @@ namespace tsorcRevamp.NPCs.Bosses
                 float projectileDelay = 120;
                 if (gaibonDead)
                 {
-                    projectileDelay /= 4;
+                    projectileDelay = 90;
                 }
-                if (moveTimer % projectileDelay == 0 && moveTimer < baseCooldown && moveTimer > 60)
+                if (moveTimer % projectileDelay == 30 && moveTimer < baseCooldown)
                 {
-                    Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8, .1f, true, true);
-                    if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
+                    if (gaibonDead)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.player[NPC.target].velocity / 1.5f, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);
+                        for(int i = 0; i < 9; i++)
+                        {
+                            Vector2 targetPoint = Main.player[NPC.target].Center + new Vector2(-480 + 120 * i, 0);
+                            Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPoint, 12, .1f, true, true);
+                            if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);
+                            }
+                        }
+
                     }
+                    else
+                    {
+                        Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8, .1f, true, true);
+                        if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.player[NPC.target].velocity / 1.5f, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);
+                        }
+                    }
+                    
                 }
             }
 
@@ -246,7 +197,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.netUpdate = true;
             }            
         }
-        #endregion
 
         void DashAttack()
         {
@@ -458,6 +408,44 @@ namespace tsorcRevamp.NPCs.Bosses
                 spriteBatch.Draw(texture, NPC.Center - Main.screenPosition + offset, sourceRectangle, Color.White, NPC.rotation, origin, 1.3f, effects, 0f);
                 spriteBatch.End();
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            }
+            float projectileDelay = 120;
+            if (gaibonDead)
+            {
+                projectileDelay = 90;
+            }
+            if (moveTimer % projectileDelay <= 30 && moveTimer < baseCooldown)
+            {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+                if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gaibon>()))
+                {
+                    ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
+                    data.Apply(null);
+                }
+
+
+
+                if (Projectiles.Enemy.EarthTrident.texture != null && !texture.IsDisposed)
+                {
+                    float rotation = 0;
+                    if(NPC.direction == 1)
+                    {
+                        rotation += 0.15f;
+                    }
+                    else
+                    {
+                        rotation -= 0.15f;
+                    }
+                    Rectangle sourceRectangle = new Rectangle(0, 0, Projectiles.Enemy.EarthTrident.texture.Width, Projectiles.Enemy.EarthTrident.texture.Height);
+                    Vector2 origin = sourceRectangle.Size() / 2f;
+                    Main.EntitySpriteDraw(Projectiles.Enemy.EarthTrident.texture,
+                        NPC.Center - Main.screenPosition,
+                        sourceRectangle, Color.White, rotation, origin, 1, SpriteEffects.None, 0);
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+                }
             }
             return base.PreDraw(spriteBatch, screenPos, drawColor);
         }

@@ -157,7 +157,8 @@ namespace tsorcRevamp
             LothricAmbush2,
             SpawnMechanic,
             SpawnWizard,
-            HellkiteDragonEvent
+            HellkiteDragonEvent,
+            EoL
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -171,6 +172,8 @@ namespace tsorcRevamp
             Player player = Main.LocalPlayer;
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
+            
+            ScriptedEvent EoL = new ScriptedEvent(new Vector2(4484, 355), 100, NPCID.HallowBoss, DustID.RainbowTorch, true, true, "The Empress of Light awakens!", Main.DiscoColor, false);
 
             //LITCH KING
             ScriptedEvent LitchKing = new ScriptedEvent(new Vector2(364, 1897), 40, ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>(), DustID.GoldFlame, true, true, "The Litch King awakens!", Color.Gold, false);
@@ -424,7 +427,8 @@ namespace tsorcRevamp
                 {ScriptedEventType.FirebombHollowAmbush, FirebombHollowAmbush},
                 {ScriptedEventType.SpawnMechanic, SpawnMechanic},
                 {ScriptedEventType.SpawnWizard, SpawnWizard},
-                {ScriptedEventType.HellkiteDragonEvent, HellkiteDragonEvent}
+                {ScriptedEventType.HellkiteDragonEvent, HellkiteDragonEvent},
+                {ScriptedEventType.EoL, EoL}
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();
@@ -516,6 +520,11 @@ namespace tsorcRevamp
         public static bool SuperHardModeCustomCondition()
         {
             return tsorcRevampWorld.SuperHardMode;
+        }
+
+        public static bool GolemDownedCustomCondition()
+        {
+            return NPC.downedGolemBoss;
         }
 
         //This condition returns true if the player is in The Abyss
@@ -945,7 +954,8 @@ namespace tsorcRevamp
 
                             //If the player is nearby, display some dust to make the region visible to them
                             //This has a Math.Sqrt in it, but that's fine because this code only runs for the handful-at-most events that will be onscreen at a time
-                            if ((InactiveEvents[i].visible && distance < 6000000) || InactiveEvents[i].npcToSpawn == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>() && distance < 50000000)
+                            if ((InactiveEvents[i].visible && distance < 6000000) || InactiveEvents[i].npcToSpawn == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>() && distance < 50000000
+                                 || InactiveEvents[i].npcToSpawn == NPCID.HallowBoss && distance < 50000000)
                             {
                                 float sqrtRadius = (float)Math.Sqrt(InactiveEvents[i].radius);
                                 for (int j = 0; j < dustPerTick; j++)
@@ -953,11 +963,22 @@ namespace tsorcRevamp
 
                                     Vector2 dir = Main.rand.NextVector2CircularEdge(sqrtRadius, sqrtRadius);
                                     Vector2 dustPos = InactiveEvents[i].centerpoint + dir;
-                                    if (Collision.CanHit(InactiveEvents[i].centerpoint, 0, 0, dustPos, 0, 0))
+                                    if (Collision.CanHit(InactiveEvents[i].centerpoint, 0, 0, dustPos, 0, 0) || InactiveEvents[i].npcToSpawn == NPCID.HallowBoss)
                                     {
                                         Vector2 dustVel = new Vector2(speed, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
-                                        Dust dustID = Dust.NewDustPerfect(dustPos, InactiveEvents[i].dustID, dustVel, 200);
-                                        dustID.noGravity = true;
+
+                                        Dust thisDust;
+
+                                        if(InactiveEvents[i].npcToSpawn == NPCID.HallowBoss)
+                                        {
+                                            thisDust = Dust.NewDustPerfect(dustPos, InactiveEvents[i].dustID, dustVel, 200, Main.DiscoColor);
+                                        }
+                                        else
+                                        {
+                                            thisDust = Dust.NewDustPerfect(dustPos, InactiveEvents[i].dustID, dustVel, 200);
+                                        }
+
+                                        thisDust.noGravity = true;
                                     }
                                 }
                             }
