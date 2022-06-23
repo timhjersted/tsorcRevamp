@@ -169,6 +169,7 @@ namespace tsorcRevamp
         public Vector2[] oldPos = new Vector2[60];
 
         public bool CowardsAffliction;
+        public bool GravityField;
 
         public override void ResetEffects()
         {
@@ -226,6 +227,7 @@ namespace tsorcRevamp
                 FracturingArmor = 1;
             }
             HasFracturingArmor = false;
+            GravityField = false;
         }
 
         public override void PreUpdate()
@@ -885,6 +887,7 @@ namespace tsorcRevamp
             if (GiveBossZen && ModContent.GetInstance<tsorcRevampConfig>().BossZenConfig)
             {
                 Player.AddBuff(ModContent.BuffType<BossZenBuff>(), 2, false);
+                Player.AddBuff(ModContent.BuffType<GravityField>(), 2, false);
             }
             #endregion
             #region boss magnet
@@ -1098,7 +1101,24 @@ namespace tsorcRevamp
             }
         }
 
-        
+        public override void PostUpdateMiscEffects() {
+            if (GravityField) {
+                if (InSpace(Player)) {
+                    Player.gravity = Player.defaultGravity;
+                    if (Player.wet) {
+                        if (Player.honeyWet) {
+                            Player.gravity = 0.1f;
+                        }
+                        else if (Player.merman) {
+                            Player.gravity = 0.3f;
+                        }
+                        else {
+                            Player.gravity = 0.2f;
+                        }
+                    }
+                } 
+            }
+        }
 
         public override void PostUpdate()
         {
@@ -1190,6 +1210,13 @@ namespace tsorcRevamp
         public static Rectangle ToRectangle(PlayerFrames frame)
         {
             return new Rectangle(0, (int)frame * 56, 40, 56);
+        }
+
+        //taken straight from player.update, dont ask why it does what it does because i have NO idea
+        public static bool InSpace(Player player) {
+            float x = (float)Main.maxTilesX / 4200f;
+            x *= x;
+            return (float)((double)(player.position.Y / 16f - (60f + 10f * x)) / (Main.worldSurface / 6.0)) < 1f;
         }
     }
 }
