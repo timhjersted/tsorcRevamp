@@ -38,6 +38,10 @@ namespace tsorcRevamp.Projectiles
                 Vector2 velVector = UsefulFunctions.BallisticTrajectory(Projectile.Center, Main.MouseWorld, velocity, 0.1f, false, true);
                 int damage = (int)LerpFloat(minDamage, maxDamage, charge);
                 Projectile.NewProjectile(player.GetSource_ItemUse(player.inventory[player.selectedItem]), Projectile.Center, velVector, ModContent.ProjectileType<DarkTridentThrown>(), damage, Projectile.knockBack, Projectile.owner, (charge >= 1) ? 1 : 0);
+                if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                {
+                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30f;
+                }
             }
             else
             {
@@ -53,7 +57,7 @@ namespace tsorcRevamp.Projectiles
         {
             Projectile.timeLeft = 2;
             Player player = Main.player[Projectile.owner];
-
+            
             if (player.altFunctionUse != 2)
             {
                 Vector2 playerHandPos = player.RotatedRelativePoint(player.MountedCenter);
