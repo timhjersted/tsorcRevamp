@@ -1109,7 +1109,7 @@ namespace tsorcRevamp
                     }
                     else if (tsorcRevamp.MusicNeedsUpdate)
                     {
-                        musicText = "Music mod update available, click here to download!";
+                        musicText = "Music mod update available, click here to download! (Will restart the game!)";
                     }
 
                     float musicTextScale = 2;
