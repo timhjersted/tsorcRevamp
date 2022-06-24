@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Redirects curse, restoring 20 lost max HP" +
+            Tooltip.SetDefault("Redirects curse, restoring all of your lost max HP" +
                                "\nWon't increase max HP over the maximum achieved" +
                                "\nvia Life Crystals or Life Fruit");
         }
@@ -37,13 +37,14 @@ namespace tsorcRevamp.Items
 
         public override bool? UseItem(Player player)
         {
-
-            player.statLifeMax += 20;
-            player.statLife += 20; //BOTC can still heal from this, as you can in DS
+            int maxAcquired = player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP;
+            int restore = maxAcquired - player.statLifeMax;
+            player.statLifeMax = maxAcquired;
             if (Main.myPlayer == player.whoAmI)
             {
-                player.HealEffect(20, true);
+                player.HealEffect(restore, true);
             }
+            //sanity. should never actually trigger
             if (player.statLifeMax > 500)
             {
                 player.statLife = player.statLifeMax2;
