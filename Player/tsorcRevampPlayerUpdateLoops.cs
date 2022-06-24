@@ -1141,6 +1141,11 @@ namespace tsorcRevamp
             {
                 if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath)
                 {
+                    if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>() && Main.mouseItem.stack > 0) {
+                        SoulSlot.Item.stack += Main.mouseItem.stack;
+                        Player.inventory[58].TurnToAir();
+                        Main.mouseItem.TurnToAir();
+                    }
                     int soulCount  = 0;
                     foreach (Item item in Player.inventory)
                     {
