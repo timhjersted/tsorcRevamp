@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories
             }
             Vector2 dir = Main.rand.NextVector2CircularEdge(60, 60);
             Vector2 dustPos = player.Center + dir;
-            //Dust.NewDustPerfect(dustPos, DustID.InfernoFork, player.velocity, 200, Scale: 0.65f).noGravity = true;
+            Dust.NewDustPerfect(dustPos, DustID.InfernoFork, player.velocity, 200, Scale: 0.65f).noGravity = true;
 
             tsorcRevampPlayer ModPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             ModPlayer.BurningAura = true;
