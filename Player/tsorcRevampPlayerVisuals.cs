@@ -62,14 +62,10 @@ namespace tsorcRevamp
         public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
             ModLoader.TryGetMod("tsorcRevamp", out Mod mod);
             if (drawInfo.drawPlayer.HeldItem.ModItem != null)
-            {
                 return drawInfo.drawPlayer.HeldItem.ModItem.Mod == mod;
-            }
-            else
-            {
-                return false;
-            }
-            
+            else if (drawInfo.drawPlayer.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking)
+                    return true;
+            return false;
         }
 
         protected override void Draw(ref PlayerDrawSet drawInfo) {
@@ -261,9 +257,7 @@ namespace tsorcRevamp
 
             #region estus flask
             tsorcRevampEstusPlayer estusPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampEstusPlayer>();
-
-            if (estusPlayer.isDrinking && !estusPlayer.Player.dead) {
-
+            if (!estusPlayer.Player.dead) {
                 int estusFrameCount = 3;
                 float estusScale = 0.8f;
                 Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.EstusFlask];
@@ -295,7 +289,7 @@ namespace tsorcRevamp
                     drawInfo.DrawDataCache.Add(new DrawData(
                             texture, // The texture to render.
                             new Vector2(drawX + (12 * drawInfo.drawPlayer.direction), drawY - 14), // Position to render at.
-                            null, // Source rectangle.
+                            sourceRectangle, // Source rectangle.
                             newColor, // Color.
                             rotation, // Rotation.
                             origin, // Origin. Uses the texture's center.
