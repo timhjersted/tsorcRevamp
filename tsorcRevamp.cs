@@ -1106,7 +1106,7 @@ namespace tsorcRevamp
             #endregion
         }
 
-        internal void UpdateCheck()
+        internal async void UpdateCheck()
         {
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -1129,14 +1129,8 @@ namespace tsorcRevamp
                 InstallMusicMod();
             }
 
-            //Download the changelog. *Not* async, because the next function requires it (and it's extremely small).
-            //Could rewrite this to work async later if impact on load time isn't neglicable. Something something premature optimization.
 
-            //changed it to async
-            ChangelogDownload();
-            //if we can't use synchronous, just async and manually sleep
-            //i dont care. get over it.
-            Thread.Sleep(500);
+            using StreamReader reader = await GetChangelogAsync();
 
             //If it exists, read from it. If not, put a warning in the log that it failed to download.
             if (File.Exists(changelogPath))
@@ -1145,26 +1139,25 @@ namespace tsorcRevamp
                 string musicString = "";
 
                 //Pull the version numbers from the file
-                using (StreamReader reader = File.OpenText(changelogPath))
-                {
-                    string currentString = "";
 
-                    while ((currentString = reader.ReadLine()) != null)
+                string currentString = "";
+
+                while ((currentString = reader.ReadLine()) != null)
+                {
+                    if (currentString.Contains("MAP ") && mapString == "")
                     {
-                        if (currentString.Contains("MAP ") && mapString == "")
-                        {
-                            mapString = currentString;
-                        }
-                        if (currentString.Contains("MUSIC ") && musicString == "")
-                        {
-                            musicString = currentString;
-                        }
-                        if (mapString != "" && musicString != "")
-                        {
-                            break;
-                        }
+                        mapString = currentString;
+                    }
+                    if (currentString.Contains("MUSIC ") && musicString == "")
+                    {
+                        musicString = currentString;
+                    }
+                    if (mapString != "" && musicString != "")
+                    {
+                        break;
                     }
                 }
+                
                 if (mapString == "" || musicString == "")
                 {
                     Logger.Warn("WARNING: Failed to read version data from downloaded changelog! This will prevent the mod from downloading the map, music mod, or updates!");
@@ -1383,14 +1376,22 @@ namespace tsorcRevamp
             }
             //discard
             //i do not care about "best practice", i want it to work
-            _ = GetChangelogAsync(changelogPath);
+            //_ = GetChangelogAsync(changelogPath);
         }
 
-        public static async Task GetChangelogAsync(string dir) {
+        public async Task<StreamReader> GetChangelogAsync() {
+            char separator = Path.DirectorySeparatorChar;
+            string changelogPath = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData" + separator + "tsorcChangelog.txt";
+
+            Logger.Info("Attempting to download changelog.");
+            if (File.Exists(changelogPath)) {
+                File.Delete(changelogPath);
+            }
+
             try {
                 using HttpClient client = new();
                 using var netstream = await client.GetStreamAsync(new Uri(VariousConstants.CHANGELOG_URL));
-                using var fs = new FileStream(dir, FileMode.CreateNew);
+                using var fs = new FileStream(changelogPath, FileMode.CreateNew);
                 await netstream.CopyToAsync(fs);
             }
             catch (Exception e) {
@@ -1398,6 +1399,9 @@ namespace tsorcRevamp
                 log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
                 thisLogger.InfoFormat("GetChangelogAsync threw error {0}", e);
             }
+            //NOT a using statement, because if we discard it here it wont be available later
+            StreamReader r = File.OpenText(changelogPath);
+            return r;
         }
 
         public void CreateDataDirectory()
