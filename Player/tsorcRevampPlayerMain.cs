@@ -538,7 +538,7 @@ namespace tsorcRevamp
 
         public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit)
         {
-            if (WeakeningBurn)
+            if (BurningAura || BurningStone)
             {
                 damage = (int)(damage * 1.05f);
             }
@@ -570,7 +570,7 @@ namespace tsorcRevamp
 
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (WeakeningBurn)
+            if (BurningAura || BurningStone)
             {
                 damage = (int)(damage * 1.05f);
             }

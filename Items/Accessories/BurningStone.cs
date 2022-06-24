@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void UpdateEquip(Player player)
         {
             tsorcRevampPlayer ModPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            ModPlayer.WeakeningBurn = true;
+            ModPlayer.BurningStone = true;
             Lighting.AddLight(player.Center, Color.Orange.ToVector3());
             if (ModPlayer.isDodging || player.timeSinceLastDashStarted < 20)
             {

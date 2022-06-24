@@ -31,31 +31,18 @@ namespace tsorcRevamp.Items.Accessories
         }
         public override void UpdateEquip(Player player)
         {
-            for (int j = 0; j < 5; j++)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.BurningShards>()] < 5 && Main.GameUpdateCount % 15 == 0)
             {
-                Vector2 dir = Main.rand.NextVector2CircularEdge(45, 45);
-                Vector2 dustPos = player.Center + dir;
-                Dust.NewDustPerfect(dustPos, DustID.InfernoFork, player.velocity, 200, Scale: 0.65f).noGravity = true;
+                Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.BurningShards>(), 0, 0, player.whoAmI);
             }
+            Vector2 dir = Main.rand.NextVector2CircularEdge(60, 60);
+            Vector2 dustPos = player.Center + dir;
+            //Dust.NewDustPerfect(dustPos, DustID.InfernoFork, player.velocity, 200, Scale: 0.65f).noGravity = true;
 
             tsorcRevampPlayer ModPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            ModPlayer.WeakeningBurn = true;
+            ModPlayer.BurningAura = true;
 
-            if (Main.GameUpdateCount % 45 == 0)
-            {
-                int? target = UsefulFunctions.GetClosestEnemyNPC(player.Center);
-                if (target != null && Main.npc[target.Value].Distance(player.Center) < 1000)
-                {
-                    Vector2 offset = Main.rand.NextVector2CircularEdge(45, 45);
-                    Vector2 velocity = UsefulFunctions.GenerateTargetingVector(player.Center + offset, Main.npc[target.Value].Center, 10);
-                    int damage = (int)(tsorcRevampWorld.Slain.Count * 3f);
-                    if (tsorcRevampWorld.SuperHardMode)
-                    {
-                        damage *= 2;
-                    }
-                    Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center + offset, velocity, ModContent.ProjectileType<Projectiles.HomingFireball>(), damage, 0.5f, player.whoAmI);
-                }
-            }
+            
         }
 
         public override void UpdateVanity(Player player)

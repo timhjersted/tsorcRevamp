@@ -73,7 +73,8 @@ namespace tsorcRevamp
         public int ConsSoulChanceMult;
         public bool SoulSickle = false;
 
-        public bool WeakeningBurn = false;
+        public bool BurningAura = false;
+        public bool BurningStone = false;
 
         public bool SOADrain = false;
 
@@ -172,7 +173,8 @@ namespace tsorcRevamp
 
         public bool CowardsAffliction;
         public bool GravityField;
-        public float textCooldown; //Used for if we want text to display when a Thing happens, but not to spam the player
+        public float TextCooldown; //Used for if we want text to display when a Thing happens, but not to spam the player
+        public float FieldTimer;
         public override void ResetEffects()
         {
             SilverSerpentRing = false;
@@ -219,7 +221,8 @@ namespace tsorcRevamp
             LifegemHealing = false;
             RadiantLifegemHealing = false;
             PowerWithin = false;
-            WeakeningBurn = false;
+            BurningAura = false;
+            BurningStone = false;
             StaminaReaper = 0;
 
             ActivePermanentPotions = new List<int>();
@@ -235,9 +238,9 @@ namespace tsorcRevamp
 
         public override void PreUpdate()
         {
-            if (textCooldown > 0)
+            if (TextCooldown > 0)
             {
-                textCooldown--;
+                TextCooldown--;
             }
 
             Point point = Player.Center.ToTileCoordinates();
@@ -541,7 +544,7 @@ namespace tsorcRevamp
                 }
             }
 
-            if (!NPC.downedGolemBoss)
+            if (!NPC.downedGolemBoss && !NPC.AnyNPCs(NPCID.HallowBoss))
             {
                 Vector2 arena = new Vector2(4484, 365);
                 float distance = Vector2.DistanceSquared(Player.Center / 16, arena);
@@ -566,36 +569,36 @@ namespace tsorcRevamp
 
                     if (distance < 22500)
                     {
-
-                        if (distance < 12500)
+                        for (int p = 0; p < 1000; p++)
                         {
-                            
-                            for (int p = 0; p < 1000; p++)
+                            if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == 7)
                             {
-                                if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == 7)
+                                FieldTimer++;
+                                if (FieldTimer == 1)
                                 {
-                                    Player.grappling[0] = -1;
-                                    Player.grapCount = 0;
+                                    Main.NewText("Your grapple strains against the force, but...!", Color.Orange);
+                                    TextCooldown = 250;
+                                }
 
-                                    if (textCooldown <= 120)
-                                    {
-                                        Main.NewText("Your grapple suddenly snaps!!", Color.Red);
-                                    }
-                                    textCooldown = 180;
-
+                                if(FieldTimer == 240)
+                                {
                                     Player.velocity += new Vector2(0, -15);
                                     Player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 30);
+                                    Main.NewText("Your grapple suddenly snaps!!", Color.Red);
                                 }
                             }
-                            
-                        }
+                        }                       
 
                         Player.velocity += UsefulFunctions.GenerateTargetingVector(new Vector2(4484, 355) * 16, Player.Center, 20);
-                        if (textCooldown <= 0)
+                        if (TextCooldown <= 0)
                         {
                             Main.NewText("A strong forcefield expels you from the ruins!", Main.DiscoColor);
-                            textCooldown = 120;
+                            TextCooldown = 240;
                         }
+                    }
+                    else
+                    {
+                        FieldTimer = 0;
                     }
                 }
             }
