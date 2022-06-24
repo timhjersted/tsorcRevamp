@@ -1089,6 +1089,7 @@ namespace tsorcRevamp
                 }
                 if (tsorcRevamp.SpecialReloadNeeded)
                 {
+                    tsorcRevamp.SpecialReloadNeeded = false;
                     object[] modParam = new object[1] { "tsorcMusic" };
                     typeof(ModLoader).GetMethod("DisableMod", BindingFlags.NonPublic | BindingFlags.Static).Invoke(default, modParam);
                     typeof(ModLoader).GetMethod("Reload", BindingFlags.NonPublic | BindingFlags.Static).Invoke(default, new object[] { });

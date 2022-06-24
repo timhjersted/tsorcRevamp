@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using On.System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +10,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -1430,18 +1432,11 @@ namespace tsorcRevamp
 
             //First, check if the music mod is still enabled
             bool musicLoaded = false;
-            using (StreamReader reader = File.OpenText(configPath))
-            {
-                string currentString = "";
+            
 
-                while ((currentString = reader.ReadLine()) != null)
-                {
-                    if (currentString.Contains("tsorcMusic"))
-                    {
-                        musicLoaded = true;
-                        break;
-                    }
-                }
+            if (ModLoader.TryGetMod("tsorcMusic", out _))
+            {
+                musicLoaded = true;
             }
 
 
@@ -1458,12 +1453,21 @@ namespace tsorcRevamp
             {
                 if (File.Exists(musicFinalPath))
                 {
-                    File.Delete(musicFinalPath);
+                    try
+                    {
+                        File.Delete(musicFinalPath);
+                        File.Move(musicTempPath, musicFinalPath);
+                        justUpdatedMusic = true;
+                        ReloadNeeded = true;
+                        tsorcRevamp.SpecialReloadNeeded = false;
+                    }
+                    catch (Exception e)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Restarting to finish updating music mod!\nThis is totally normal, just hit OK and re-launch!", "Restarting!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        Main.WeGameRequireExitGame();
+                    }
                 }
 
-                File.Move(musicTempPath, musicFinalPath);
-                justUpdatedMusic = true;
-                ReloadNeeded = true;
             }
         }
 
