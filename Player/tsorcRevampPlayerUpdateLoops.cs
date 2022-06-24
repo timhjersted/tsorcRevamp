@@ -543,7 +543,8 @@ namespace tsorcRevamp
                     }
                 }
             }
-
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+                return;
             if (!NPC.downedGolemBoss && !NPC.AnyNPCs(NPCID.HallowBoss))
             {
                 Vector2 arena = new Vector2(4484, 365);
