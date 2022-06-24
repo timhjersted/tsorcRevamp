@@ -1364,21 +1364,6 @@ namespace tsorcRevamp
             }
         }
 
-        public void ChangelogDownload()
-        {
-            char separator = Path.DirectorySeparatorChar;
-            string changelogPath = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData" + separator + "tsorcChangelog.txt";
-
-            Logger.Info("Attempting to download changelog.");
-            if (File.Exists(changelogPath))
-            {
-                File.Delete(changelogPath);
-            }
-            //discard
-            //i do not care about "best practice", i want it to work
-            //_ = GetChangelogAsync(changelogPath);
-        }
-
         public async Task<StreamReader> GetChangelogAsync() {
             char separator = Path.DirectorySeparatorChar;
             string changelogPath = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData" + separator + "tsorcChangelog.txt";
