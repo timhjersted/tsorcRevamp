@@ -1467,6 +1467,12 @@ namespace tsorcRevamp
                         Main.WeGameRequireExitGame();
                     }
                 }
+                else
+                {
+                    File.Move(musicTempPath, musicFinalPath);
+                    justUpdatedMusic = true;
+                    ReloadNeeded = true;
+                }
 
             }
         }
