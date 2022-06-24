@@ -42,7 +42,7 @@ namespace tsorcRevamp.Projectiles
                                                                                                                             //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
             if (Projectile.owner == Main.myPlayer)
             {
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X, Projectile.position.Y, 0, 0, ModContent.ProjectileType<Projectiles.FireballInferno1>(), Projectile.damage, 6f, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X, Projectile.position.Y, 0, 0, ModContent.ProjectileType<Projectiles.FireballInferno1>(), 0, 6f, Projectile.owner);
             }
 
             for (int i = 0; i < 5; i++)

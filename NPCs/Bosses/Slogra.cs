@@ -427,7 +427,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
 
-                if (Projectiles.Enemy.EarthTrident.texture != null && !texture.IsDisposed)
+                if (Projectiles.Enemy.EarthTrident.texture != null && !Projectiles.Enemy.EarthTrident.texture.IsDisposed)
                 {
                     float rotation = 0;
                     if(NPC.direction == 1)
