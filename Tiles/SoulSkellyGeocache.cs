@@ -77,7 +77,7 @@ namespace tsorcRevamp.Tiles
             //SOUL SKULLS - They are 2x2, so use 2, 2 in the rectangle. In TEdit, these are SlimeBlock-PinkSlimeBlock(facing left) and PinkSlimeBlock-SlimeBlock(facing right)
 
             //Earth temple, by the first altar
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4248, 984, 2, 2), ModContent.ItemType<Items.LostUndeadSoul>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4248, 984, 2, 2), ModContent.ItemType<Items.GreatMagicMirror>(), 1));
 
             //Giant Tree, bottom left by roots.
             //SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(2542, 1486, 2, 2), ModContent.ItemType<Items.Accessories.SoulReaper2>(), 1, mod.Find<ModPrefix>("Revitalizing").Type));
