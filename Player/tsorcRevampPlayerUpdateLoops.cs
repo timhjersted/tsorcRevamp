@@ -543,9 +543,7 @@ namespace tsorcRevamp
                     }
                 }
             }
-            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
-                return;
-            if (!NPC.downedGolemBoss && !NPC.AnyNPCs(NPCID.HallowBoss))
+            if (!NPC.downedGolemBoss && !NPC.AnyNPCs(NPCID.HallowBoss) && !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !NPC.downedEmpressOfLight)
             {
                 Vector2 arena = new Vector2(4484, 365);
                 float distance = Vector2.DistanceSquared(Player.Center / 16, arena);
@@ -565,7 +563,7 @@ namespace tsorcRevamp
                         Vector2 vel = diff;
                         vel.Normalize();
                         vel = vel.RotatedBy(Main.rand.NextBool() ? MathHelper.PiOver2 : -MathHelper.PiOver2);
-                        Dust.NewDustPerfect(arena * 16 + diff, DustID.RainbowTorch, vel, default, Main.DiscoColor, 1.5f * proximity).noGravity = true;
+                        Dust.NewDustPerfect(arena * 16 + diff, DustID.ShadowbeamStaff, vel, default, default, 1.5f * proximity).noGravity = true;
                     }
 
                     if (distance < 22500)
@@ -593,7 +591,7 @@ namespace tsorcRevamp
                         Player.velocity += UsefulFunctions.GenerateTargetingVector(new Vector2(4484, 355) * 16, Player.Center, 20);
                         if (TextCooldown <= 0)
                         {
-                            Main.NewText("A strong forcefield expels you from the ruins!", Main.DiscoColor);
+                            Main.NewText("A strong forcefield expels you from the ruins!", Color.Purple);
                             TextCooldown = 240;
                         }
                     }

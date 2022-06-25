@@ -238,21 +238,28 @@ namespace tsorcRevamp
         //Hijacks the vanilla method and just sets the NPC price to default and happiness to "", which signals the game to not draw the button
         private static ShoppingSettings ShopHelper_GetShoppingSettings(On.Terraria.GameContent.ShopHelper.orig_GetShoppingSettings orig, ShopHelper self, Player player, NPC npc)
         {
-            ShoppingSettings shoppingSettings = default;
-            shoppingSettings.PriceAdjustment = 1.0;
-            shoppingSettings.HappinessReport = "";            
-
-            if (ShopHelper == null)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                ShopHelper = typeof(ShopHelper);
-                currentNPC = ShopHelper.GetField("_currentNPCBeingTalkedTo", BindingFlags.NonPublic | BindingFlags.Instance);
-                currentPlayer = ShopHelper.GetField("_currentPlayerTalking", BindingFlags.NonPublic | BindingFlags.Instance);
+                ShoppingSettings shoppingSettings = default;
+                shoppingSettings.PriceAdjustment = 1.0;
+                shoppingSettings.HappinessReport = "";
+
+                if (ShopHelper == null)
+                {
+                    ShopHelper = typeof(ShopHelper);
+                    currentNPC = ShopHelper.GetField("_currentNPCBeingTalkedTo", BindingFlags.NonPublic | BindingFlags.Instance);
+                    currentPlayer = ShopHelper.GetField("_currentPlayerTalking", BindingFlags.NonPublic | BindingFlags.Instance);
+                }
+
+                currentNPC.SetValue(self, npc);
+                currentPlayer.SetValue(self, player);
+
+                return shoppingSettings;
             }
-
-            currentNPC.SetValue(self, npc);
-            currentPlayer.SetValue(self, player);
-
-            return shoppingSettings;
+            else
+            {
+                return orig(self, player, npc);
+            }
         }
 
        
