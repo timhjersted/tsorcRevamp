@@ -63,13 +63,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             if (NPC.life <= 0)
             {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Guardian Corruptor Gore 1").Type, 0.9f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Guardian Corruptor Gore 2").Type, 0.9f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Guardian Corruptor Gore 3").Type, 0.9f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Guardian Corruptor Gore 4").Type, 0.9f);
-                for (int i = 0; i < 10; i++)
+                if (!Main.dedServ)
                 {
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Guardian Corruptor Gore 1").Type, 0.9f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Guardian Corruptor Gore 2").Type, 0.9f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Guardian Corruptor Gore 3").Type, 0.9f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Guardian Corruptor Gore 4").Type, 0.9f);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
+                    }
                 }
             }
         }

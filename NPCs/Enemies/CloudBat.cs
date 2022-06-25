@@ -63,7 +63,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, 16, Main.rand.Next(-2, 2), Main.rand.Next(-2, 2), 70, default(Color), .8f);
                 }
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Cloud Bat Gore").Type, 1f);
+                if (!Main.dedServ)
+                {
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Cloud Bat Gore").Type, 1f);
+                }
             }
         }
     }

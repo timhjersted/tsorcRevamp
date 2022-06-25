@@ -2557,9 +2557,12 @@ namespace tsorcRevamp.NPCs
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit1, npc.position);
                         for (int num844 = 0; num844 < 2; num844++)
                         {
-                            Gore.NewGore(npc.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 8);
-                            Gore.NewGore(npc.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 7);
-                            Gore.NewGore(npc.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 6);
+                            if (!Main.dedServ)
+                            {
+                                Gore.NewGore(npc.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 8);
+                                Gore.NewGore(npc.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 7);
+                                Gore.NewGore(npc.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 6);
+                            }
                         }
                         for (int num855 = 0; num855 < 20; num855++)
                         {
