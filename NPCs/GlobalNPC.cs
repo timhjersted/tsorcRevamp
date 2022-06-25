@@ -1848,7 +1848,7 @@ namespace tsorcRevamp.NPCs
             //If it has a sound to play, roll a chance for playing it
             if (randomSound != null && Main.rand.Next(soundFrequency) <= 0)
             {
-                Terraria.Audio.SoundEngine.PlaySound(randomSound.Value);
+                Terraria.Audio.SoundEngine.PlaySound(randomSound.Value, npc.Center);
             }
 
             //If we can enrage, do that
@@ -2156,7 +2156,7 @@ namespace tsorcRevamp.NPCs
                     }
                     if (shootSound != null)
                     {
-                        SoundEngine.PlaySound(shootSound.Value);
+                        SoundEngine.PlaySound(shootSound.Value, npc.Center);
                     }
                     return true;
                 }
