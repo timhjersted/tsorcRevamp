@@ -222,6 +222,12 @@ namespace tsorcRevamp.NPCs
 
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
         {
+            if(player.statLifeMax2 == 100)
+            {
+                spawnRate = (int)(spawnRate * 0.8f);
+                maxSpawns = (int)(maxSpawns * 0.8f);
+            }
+
             if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff)
             {
                 maxSpawns = 0;
