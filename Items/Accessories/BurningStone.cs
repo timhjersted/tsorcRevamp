@@ -44,21 +44,23 @@ namespace tsorcRevamp.Items.Accessories
                 if (Main.GameUpdateCount % 5 == 0)
                 {
                     int? target = UsefulFunctions.GetClosestEnemyNPC(player.Center);
-
-                    if (target != null && Main.npc[target.Value].Distance(player.Center) < 1000)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.npc[target.Value].Center, 10);
-                        int damage = tsorcRevampWorld.Slain.Count * 3;
-                        if (tsorcRevampWorld.SuperHardMode)
+                        if (target != null && Main.npc[target.Value].Distance(player.Center) < 1000)
                         {
-                            damage *= 2;
-                        }
+                            Vector2 velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.npc[target.Value].Center, 10);
+                            int damage = 1 + (tsorcRevampWorld.Slain.Count * 3);
+                            if (tsorcRevampWorld.SuperHardMode)
+                            {
+                                damage *= 2;
+                            }
 
-                        for (int i = 0; i < 5; i++)
-                        {
-                            Dust.NewDustPerfect(player.Center, DustID.InfernoFork, player.velocity, 200, Scale: 0.65f).noGravity = true;
+                            for (int i = 0; i < 5; i++)
+                            {
+                                Dust.NewDustPerfect(player.Center, DustID.InfernoFork, player.velocity, 200, Scale: 0.65f).noGravity = true;
+                            }
+                            Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, velocity, ModContent.ProjectileType<Projectiles.HomingFireball>(), damage, 0.5f, player.whoAmI);
                         }
-                        Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, velocity, ModContent.ProjectileType<Projectiles.HomingFireball>(), damage, 0.5f, player.whoAmI);
                     }
                 }
             }
