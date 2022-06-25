@@ -4,50 +4,56 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    public class Ancient : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    public class Ancient : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Creates a Sandstorm using a long forgotten spell.");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
-            item.width = 28;
-            item.height = 30;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTurn = true;
-            item.useAnimation = 25;
-            item.useTime = 25;
-            item.maxStack = 1;
-            item.damage = 170;
-            item.autoReuse = true;
-            item.knockBack = (float)4;
-            item.scale = (float)1;
-            item.UseSound = SoundID.Item34;
+            Item.width = 28;
+            Item.height = 30;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTurn = true;
+            Item.useAnimation = 25;
+            Item.useTime = 25;
+            Item.maxStack = 1;
+            Item.damage = 170;
+            Item.autoReuse = true;
+            Item.knockBack = (float)4;
+            Item.scale = (float)1;
+            Item.UseSound = SoundID.Item34;
             //item.projectile=Sandstorm;
-            item.rare = ItemRarityID.Red;
-            item.shootSpeed = (float)10;
-            item.crit = 2;
-            item.mana = 14;
-            item.noMelee = true;
-            item.value = PriceByRarity.Red_10;
-            item.magic = true;
+            Item.rare = ItemRarityID.Red;
+            Item.shootSpeed = (float)10;
+            Item.crit = 2;
+            Item.mana = 14;
+            Item.noMelee = true;
+            Item.value = PriceByRarity.Red_10;
+            Item.DamageType = DamageClass.Magic;
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.MeteoriteBar, 25);
             recipe.AddIngredient(ItemID.SandBlock, 150);
-            recipe.AddIngredient(mod.GetItem("FlameOfTheAbyss"), 20);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 120000);
+            recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 20);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 120000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player)
+        {
             int spread = 10;
             float num48 = 14f;
 
@@ -60,26 +66,30 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             speed.X *= num51;
             speed.Y *= num51;
 
-            if ((player.direction == -1) && ((Main.mouseX + Main.screenPosition.X) > (player.position.X + player.width * 0.5f))) {
+            if ((player.direction == -1) && ((Main.mouseX + Main.screenPosition.X) > (player.position.X + player.width * 0.5f)))
+            {
                 player.direction = 1;
             }
-            if ((player.direction == 1) && ((Main.mouseX + Main.screenPosition.X) < (player.position.X + player.width * 0.5f))) {
+            if ((player.direction == 1) && ((Main.mouseX + Main.screenPosition.X) < (player.position.X + player.width * 0.5f)))
+            {
                 player.direction = -1;
             }
 
-            if (player.direction == 1) {
+            if (player.direction == 1)
+            {
                 player.itemRotation = (float)Math.Atan2((Main.mouseY + Main.screenPosition.Y) - (player.position.Y + player.height * 0.5f), (Main.mouseX + Main.screenPosition.X) - (player.position.X + player.width * 0.5f));
             }
-            else {
+            else
+            {
                 player.itemRotation = (float)Math.Atan2((player.position.Y + player.height * 0.5f) - (Main.mouseY + Main.screenPosition.Y), (player.position.X + player.width * 0.5f) - (Main.mouseX + Main.screenPosition.X));
             }
 
             position.X += player.width * 0.5f;
             position.Y += player.height * 0.5f;
-            int damage = (int)(item.damage * player.magicDamage);
+            int damage = (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage));
             float knockback = player.inventory[player.selectedItem].knockBack;
 
-            Projectile.NewProjectile(position, speed, ModContent.ProjectileType<Projectiles.Sandstorm>(), damage, knockback, player.whoAmI);
+            Projectile.NewProjectile(player.GetSource_ItemUse(Item), position, speed, ModContent.ProjectileType<Projectiles.Sandstorm>(), damage, knockback, player.whoAmI);
 
             return true;
         }

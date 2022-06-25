@@ -1,30 +1,34 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ReforgedOldTwoHandedSword : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ReforgedOldTwoHandedSword : ModItem
+    {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldTwoHandedSword";
-        public override void SetDefaults() {
-            item.damage = 25; //it's post EoC
-            item.width = 50;
-            item.height = 50;
-            item.knockBack = 5;
-            item.maxStack = 1;
-            item.melee = true;
-            item.scale = 1f;
-            item.useAnimation = 30;
-            item.rare = ItemRarityID.White;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 30;
-            item.value = 15000;
+        public override void SetDefaults()
+        {
+            Item.damage = 25; //it's post EoC
+            Item.width = 50;
+            Item.height = 50;
+            Item.knockBack = 5;
+            Item.maxStack = 1;
+            Item.DamageType = DamageClass.Melee;
+            Item.scale = 1f;
+            Item.useAnimation = 30;
+            Item.rare = ItemRarityID.White;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 30;
+            Item.value = 15000;
         }
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("OldTwoHandedSword"));
-            recipe.AddTile(mod.GetTile("SweatyCyclopsForge"));
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("OldTwoHandedSword").Type);
+            recipe.AddTile(ModContent.TileType<Tiles.SweatyCyclopsForge>());
+
+            recipe.Register();
         }
     }
 }

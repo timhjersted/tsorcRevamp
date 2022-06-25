@@ -11,11 +11,11 @@ namespace tsorcRevamp.Projectiles
     {
         public override void SetDefaults()
         {
-            projectile.CloneDefaults(ProjectileID.EnchantedBoomerang);
-            projectile.height = 16;
-            projectile.width = 16;
-            projectile.light = 0.2f;
-            projectile.melee = true;
+            Projectile.CloneDefaults(ProjectileID.EnchantedBoomerang);
+            Projectile.height = 16;
+            Projectile.width = 16;
+            Projectile.light = 0.2f;
+            Projectile.DamageType = DamageClass.Melee;
         }
 
         public static Vector2 RotateVector(Vector2 origin, Vector2 vecToRot, float rot)
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles
             if (playSound && p.soundDelay == 0)
             {
                 p.soundDelay = 8;
-                Main.PlaySound(2, (int)p.position.X, (int)p.position.Y, 7);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item7, p.Center);
             }
             if (ai[0] == 0f)
             {
@@ -109,63 +109,63 @@ namespace tsorcRevamp.Projectiles
 
         public override bool PreAI()
         {
-            if (projectile.ai[0] < 2)
+            if (Projectile.ai[0] < 2)
             {
-                AIBoomerang(projectile, ref projectile.ai, default(Vector2), -1, -1, true, 15f, 15, 1.2f, .8f, false);
+                AIBoomerang(Projectile, ref Projectile.ai, default(Vector2), -1, -1, true, 15f, 15, 1.2f, .8f, false);
             }
 
-            if (projectile.ai[0] == 2)
+            if (Projectile.ai[0] == 2)
             {
-                projectile.friendly = false;
-                projectile.hostile = true;
-                projectile.width = 16;
-                projectile.height = 16;
-                projectile.penetrate = -1;
-                projectile.tileCollide = true;
-                projectile.melee = false;
+                Projectile.friendly = false;
+                Projectile.hostile = true;
+                Projectile.width = 16;
+                Projectile.height = 16;
+                Projectile.penetrate = -1;
+                Projectile.tileCollide = true;
+                Projectile.DamageType = DamageClass.Ranged;
 
-                projectile.ai[1] += 1f; // Use a timer to wait 12 ticks before applying gravity.
-                if (projectile.ai[1] >= 15f)
+                Projectile.ai[1] += 1f; // Use a timer to wait 12 ticks before applying gravity.
+                if (Projectile.ai[1] >= 15f)
                 {
-                    projectile.ai[1] = 15f;
-                    projectile.velocity.Y = projectile.velocity.Y + 0.12f;
+                    Projectile.ai[1] = 15f;
+                    Projectile.velocity.Y = Projectile.velocity.Y + 0.12f;
                 }
-                if (projectile.velocity.Y > 16f)
+                if (Projectile.velocity.Y > 16f)
                 {
-                    projectile.velocity.Y = 16f;
+                    Projectile.velocity.Y = 16f;
                 }
-                projectile.rotation += 0.4f * (float)projectile.direction;
+                Projectile.rotation += 0.4f * (float)Projectile.direction;
 
             }
 
             if (Main.rand.Next(6) == 0)
             {
-                Dust dust2 = Main.dust[Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 89, 0, 0, 50, default(Color), 1f)];
+                Dust dust2 = Main.dust[Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 89, 0, 0, 50, default(Color), 1f)];
                 dust2.velocity *= 0;
                 dust2.noGravity = true;
             }
-            
+
             return false;
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            if (projectile.ai[0] < 2)
+            if (Projectile.ai[0] < 2)
             {
-                projectile.ai[0] = 1f;
-                projectile.velocity.X = -projectile.velocity.X;
-                projectile.velocity.Y = -projectile.velocity.Y;
-                projectile.netUpdate = true;
+                Projectile.ai[0] = 1f;
+                Projectile.velocity.X = -Projectile.velocity.X;
+                Projectile.velocity.Y = -Projectile.velocity.Y;
+                Projectile.netUpdate = true;
             }
 
-            if (projectile.ai[0] == 2)
+            if (Projectile.ai[0] == 2)
             {
-                projectile.Kill();
+                Projectile.Kill();
             }
 
             for (int i = 0; i <= 5; i++)
             {
-                Dust dust2 = Main.dust[Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 89, projectile.velocity.X * -0.5f, projectile.velocity.Y * -0.5f, 50, default(Color), 0.8f)];
+                Dust dust2 = Main.dust[Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 89, Projectile.velocity.X * -0.5f, Projectile.velocity.Y * -0.5f, 50, default(Color), 0.8f)];
                 dust2.noGravity = true;
             }
 
@@ -176,40 +176,40 @@ namespace tsorcRevamp.Projectiles
         {
             for (int i = 0; i <= 5; i++)
             {
-                Dust dust2 = Main.dust[Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 89, projectile.velocity.X * -0.5f, projectile.velocity.Y * -0.5f, 50, default(Color), 0.8f)];
+                Dust dust2 = Main.dust[Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 89, Projectile.velocity.X * -0.5f, Projectile.velocity.Y * -0.5f, 50, default(Color), 0.8f)];
                 dust2.noGravity = true;
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[projectile.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
             Color alphalowered = Color.White * .4f;
             Texture2D textureGlow = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ShatteredMoonlightGlowmask];
-            spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), lightColor, projectile.rotation, new Vector2(12, 12), projectile.scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(textureGlow, projectile.Center - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), alphalowered, projectile.rotation, new Vector2(12, 12), projectile.scale, SpriteEffects.None, 0f);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), lightColor, Projectile.rotation, new Vector2(12, 12), Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(textureGlow, Projectile.Center - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), alphalowered, Projectile.rotation, new Vector2(12, 12), Projectile.scale, SpriteEffects.None, 0);
             return false;
         }
 
         public override void Kill(int timeLeft)
         {
-            if (projectile.ai[0] == 2)
+            if (Projectile.ai[0] == 2)
             {
-                if (!projectile.active)
+                if (!Projectile.active)
                 {
                     return;
                 }
 
-                projectile.timeLeft = 0;
+                Projectile.timeLeft = 0;
 
                 {
-                    Main.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
-                    Item.NewItem(projectile.position, ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), 1, false, -1);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
+                    Item.NewItem(Projectile.GetSource_FromThis(), Projectile.position, ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), 1, false, -1);
                     for (int i = 0; i < 10; i++)
                     {
-                        Vector2 arg_92_0 = new Vector2(projectile.position.X, projectile.position.Y);
-                        int arg_92_1 = projectile.width;
-                        int arg_92_2 = projectile.height;
+                        Vector2 arg_92_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
+                        int arg_92_1 = Projectile.width;
+                        int arg_92_2 = Projectile.height;
                         int arg_92_3 = 89;
                         float arg_92_4 = 0f;
                         float arg_92_5 = 0f;
@@ -218,7 +218,7 @@ namespace tsorcRevamp.Projectiles
                         Dust.NewDust(arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4, arg_92_5, arg_92_6, newColor, 1f);
                     }
                 }
-                projectile.active = false;
+                Projectile.active = false;
             }
         }
     }

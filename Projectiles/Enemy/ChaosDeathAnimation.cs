@@ -1,37 +1,34 @@
-using Microsoft.Xna.Framework;
-using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
-	class ChaosDeathAnimation: ModProjectile
-	{
-		public override void SetDefaults()
-		{
-			Main.projFrames[projectile.type] = 14;
-			projectile.height = 1;
-			projectile.tileCollide = false;
-			projectile.width = 1;
-			projectile.scale = 2;
-		}
+    class ChaosDeathAnimation : ModProjectile
+    {
+        public override void SetDefaults()
+        {
+            Main.projFrames[Projectile.type] = 14;
+            Projectile.height = 1;
+            Projectile.tileCollide = false;
+            Projectile.width = 1;
+            Projectile.scale = 2;
+        }
 
-		//int chaosdacount1 = 0;
+        //int chaosdacount1 = 0;
         public override void AI()
         {
-			projectile.frameCounter++;
-			if (projectile.frameCounter > 3)
-			{
-				projectile.frame++;
-				projectile.frameCounter = 0;
-			}
-			if (projectile.frame >= 14)
-			{
-				projectile.Kill();
-				return;
-			}
-		}
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 3)
+            {
+                Projectile.frame++;
+                Projectile.frameCounter = 0;
+            }
+            if (Projectile.frame >= 14)
+            {
+                Projectile.Kill();
+                return;
+            }
+        }
         /**
 		#region Frames
 		public override void FindFrame(int currentFrame)

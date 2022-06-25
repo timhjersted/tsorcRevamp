@@ -2,31 +2,35 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenAxe : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenAxe : ModItem
+    {
 
-        public override void SetDefaults() {
-            item.rare = ItemRarityID.Blue;
-            item.damage = 18;
-            item.height = 30;
-            item.knockBack = 6;
-            item.melee = true;
-            item.autoReuse = true;
-            item.useAnimation = 25;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
-            item.value = 4500;
-            item.width = 30;
+        public override void SetDefaults()
+        {
+            Item.rare = ItemRarityID.Blue;
+            Item.damage = 18;
+            Item.height = 30;
+            Item.knockBack = 6;
+            Item.DamageType = DamageClass.Melee;
+            Item.autoReuse = true;
+            Item.useAnimation = 25;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 21;
+            Item.value = 4500;
+            Item.width = 30;
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.StoneBlock, 5);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1200);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1200);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

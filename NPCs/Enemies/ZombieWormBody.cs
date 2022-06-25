@@ -1,61 +1,61 @@
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-	class ZombieWormBody : ModNPC
-	{
-		public override void SetStaticDefaults()
-		{
-			DisplayName.SetDefault("Parasytic Worm");
-		}
+    class ZombieWormBody : ModNPC
+    {
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Parasytic Worm");
+        }
 
-		public override void SetDefaults()
-		{
-			animationType = 10;
-			npc.netAlways = true;
-			npc.npcSlots = 1;
-			npc.width = 38;
-			npc.height = 24;
-			npc.aiStyle = 6;
-			npc.timeLeft = 750;
-			npc.damage = 80;
-			npc.defense = 28;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath5;
-			npc.lavaImmune = true;
-			npc.knockBackResist = 0;
-			npc.lifeMax = 91000000;
-			npc.noGravity = true;
-			npc.noTileCollide = true;
-			npc.behindTiles = true;
-			npc.value = 460;
+        public override void SetDefaults()
+        {
+            AnimationType = 10;
+            NPC.netAlways = true;
+            NPC.npcSlots = 1;
+            NPC.width = 38;
+            NPC.height = 24;
+            NPC.aiStyle = 6;
+            NPC.timeLeft = 750;
+            NPC.damage = 80;
+            NPC.defense = 28;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath5;
+            NPC.lavaImmune = true;
+            NPC.knockBackResist = 0;
+            NPC.lifeMax = 91000000;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.behindTiles = true;
+            NPC.value = 460;
 
-			bodyTypes = new int[13];
-			int bodyID = ModContent.NPCType<ZombieWormBody>();
-			for (int i = 0; i < 13; i++)
-			{
-				bodyTypes[i] = bodyID;
-			}
-		}
-		int[] bodyTypes;
-		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
-		{
-			npc.lifeMax = (int)(npc.lifeMax / 2);
-			npc.damage = (int)(npc.damage / 2);
-			npc.defense = (int)(npc.defense * (2 / 3));
-		}
+            bodyTypes = new int[13];
+            int bodyID = ModContent.NPCType<ZombieWormBody>();
+            for (int i = 0; i < 13; i++)
+            {
+                bodyTypes[i] = bodyID;
+            }
+        }
+        int[] bodyTypes;
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        {
+            NPC.lifeMax = (int)(NPC.lifeMax / 2);
+            NPC.damage = (int)(NPC.damage / 2);
+            NPC.defense = (int)(NPC.defense * (2 / 3));
+        }
 
-		public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
-		{
-			return false;
-		}
+        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            return false;
+        }
 
-		public override void AI()
-		{
-			tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<ZombieWormHead>(), bodyTypes, ModContent.NPCType<ZombieWormTail>(), 15, .4f, 8, 0.07f, false, false, false, true, true);
-		}
-	}
+        public override void AI()
+        {
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<ZombieWormHead>(), bodyTypes, ModContent.NPCType<ZombieWormTail>(), 15, .4f, 8, 0.07f, false, false, false, true, true);
+        }
+    }
 }

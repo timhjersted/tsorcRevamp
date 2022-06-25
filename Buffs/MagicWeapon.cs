@@ -5,7 +5,7 @@ namespace tsorcRevamp.Buffs
 {
     class MagicWeapon : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Magic Weapon");
             Description.SetDefault("Your weapon is imbued with magic!");

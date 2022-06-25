@@ -1,17 +1,19 @@
-﻿using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class MusicalNote : ModProjectile {
-        public override void SetDefaults() {
-            projectile.aiStyle = 8;
-            projectile.friendly = true;
-            projectile.height = 10;
-            projectile.penetrate = 8;
-            projectile.magic = true;
-            projectile.tileCollide = true;
-            projectile.width = 10;
+namespace tsorcRevamp.Projectiles
+{
+    class MusicalNote : ModProjectile
+    {
+        public override void SetDefaults()
+        {
+            Projectile.aiStyle = 8;
+            Projectile.friendly = true;
+            Projectile.height = 10;
+            Projectile.penetrate = 8;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.tileCollide = true;
+            Projectile.width = 10;
         }
     }
 }

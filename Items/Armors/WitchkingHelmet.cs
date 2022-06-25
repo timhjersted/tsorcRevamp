@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -11,11 +10,11 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 12;
-            item.defense = 30;
-            item.value = 21000;
-            item.rare = ItemRarityID.LightRed;
+            Item.width = 18;
+            Item.height = 12;
+            Item.defense = 30;
+            Item.value = 21000;
+            Item.rare = ItemRarityID.LightRed;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -28,8 +27,8 @@ namespace tsorcRevamp.Items.Armors
             player.setBonus = "+20% magic and ranged damage, +10% movement speed, -30% mana cost," + "\nnightvision +3 HP regen, no knockback, fall damage or firewalk damage";
             player.fireWalk = true;
             player.noKnockback = true;
-            player.magicDamage += 0.20f;
-            player.rangedDamage += 0.20f;
+            player.GetDamage(DamageClass.Magic) += 0.20f;
+            player.GetDamage(DamageClass.Ranged) += 0.20f;
             player.moveSpeed += 0.10f;
             player.manaCost -= 0.30f;
             player.lifeRegen += 3;
@@ -40,8 +39,8 @@ namespace tsorcRevamp.Items.Armors
             int j2 = (int)(player.position.Y + 2f) / 16;
             Lighting.AddLight(i2, j2, 0.92f, 0.8f, 0.65f);
         }
-        
-        public override void ArmorSetShadows (Player player)
+
+        public override void ArmorSetShadows(Player player)
         {
             player.armorEffectDrawShadow = true;
         }

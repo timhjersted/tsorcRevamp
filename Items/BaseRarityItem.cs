@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 
@@ -20,15 +19,15 @@ public abstract class BaseRarityItem : ModItem
         {
             foreach (TooltipLine line2 in list)
             {
-                if (line2.mod == "Terraria" && line2.Name == "ItemName")
+                if (line2.Mod == "Terraria" && line2.Name == "ItemName")
                 {
-                    line2.overrideColor = (Color)customNameColor;
+                    line2.OverrideColor = (Color)customNameColor;
                 }
             }
             return;
         }
 
-        if (item.modItem is BaseRarityItem MyModItem && MyModItem.DarkSoulRarity != 0)
+        if (Item.ModItem is BaseRarityItem MyModItem && MyModItem.DarkSoulRarity != 0)
         {
             Color Rare;
             switch (MyModItem.DarkSoulRarity)
@@ -38,9 +37,9 @@ public abstract class BaseRarityItem : ModItem
             }
             foreach (TooltipLine line2 in list)
             {
-                if (line2.mod == "Terraria" && line2.Name == "ItemName")
+                if (line2.Mod == "Terraria" && line2.Name == "ItemName")
                 {
-                    line2.overrideColor = Rare;
+                    line2.OverrideColor = Rare;
                 }
             }
         }

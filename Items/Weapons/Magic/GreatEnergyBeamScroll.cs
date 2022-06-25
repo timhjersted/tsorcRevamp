@@ -1,29 +1,33 @@
-﻿using Terraria.ModLoader;
-using Terraria.ID;
+﻿using Terraria.ID;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class GreatEnergyBeamScroll : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class GreatEnergyBeamScroll : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("The scroll reads \"Exevo gran vix lux.\"");
         }
-        public override void SetDefaults() {
-            item.damage = 55;
-            item.height = 10;
-            item.knockBack = 1;
-            item.rare = ItemRarityID.Pink;
-            item.autoReuse = true;
-            item.shootSpeed = 4;
-            item.magic = true;
-            item.mana = 30;
-            item.useAnimation = 30;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 30;
-            item.value = PriceByRarity.Pink_5;
-            item.width = 34;
-            item.noMelee = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.GreatEnergyBeamBall>();
+        public override void SetDefaults()
+        {
+            Item.damage = 55;
+            Item.height = 10;
+            Item.knockBack = 1;
+            Item.rare = ItemRarityID.Pink;
+            Item.autoReuse = true;
+            Item.shootSpeed = 4;
+            Item.DamageType = DamageClass.Magic;
+            Item.mana = 30;
+            Item.useAnimation = 30;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 30;
+            Item.value = PriceByRarity.Pink_5;
+            Item.width = 34;
+            Item.noMelee = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.GreatEnergyBeamBall>();
         }
     }
 }

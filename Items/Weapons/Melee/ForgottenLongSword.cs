@@ -1,23 +1,26 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenLongSword : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenLongSword : ModItem
+    {
 
-        public override void SetDefaults() {
-            item.autoReuse = true;
-            item.useTurn = true;
-            item.rare = ItemRarityID.Green;
-            item.damage = 24;
-            item.height = 34;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.knockBack = 4;
-            item.melee = true;
-            item.useAnimation = 22;
-            item.useTime = 22;
-            item.UseSound = SoundID.Item1;
-            item.value = PriceByRarity.Green_2;
-            item.width = 34;
+        public override void SetDefaults()
+        {
+            Item.autoReuse = true;
+            Item.useTurn = true;
+            Item.rare = ItemRarityID.Green;
+            Item.damage = 24;
+            Item.height = 34;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.knockBack = 4;
+            Item.DamageType = DamageClass.Melee;
+            Item.useAnimation = 22;
+            Item.useTime = 22;
+            Item.UseSound = SoundID.Item1;
+            Item.value = PriceByRarity.Green_2;
+            Item.width = 34;
         }
     }
 }

@@ -1,53 +1,56 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class EnemySpellIce3Ball : ModProjectile {
-		public override string Texture => "tsorcRevamp/Projectiles/Ice1Ball";
-        public override void SetDefaults() {
-            projectile.aiStyle = 4;
-            projectile.hostile = true;
-            projectile.height = 16;
-            projectile.magic = true;
-            projectile.penetrate = 1;
-            projectile.tileCollide = true;
-            projectile.width = 16;
-        }
-		public override void SetStaticDefaults()
-		{
-			DisplayName.SetDefault("Enemy Spell Ice 3");
-
-		}
-		public override void AI()
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class EnemySpellIce3Ball : ModProjectile
+    {
+        public override string Texture => "tsorcRevamp/Projectiles/Ice1Ball";
+        public override void SetDefaults()
         {
-			if (projectile.ai[0] != 0) //Dark Elf Mage version
-			{
-				projectile.timeLeft = 80;
-				projectile.aiStyle = 1;
-			}
+            Projectile.aiStyle = 4;
+            Projectile.hostile = true;
+            Projectile.height = 16;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.penetrate = 1;
+            Projectile.tileCollide = true;
+            Projectile.width = 16;
+        }
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Enemy Spell Ice 3");
 
-			if(Math.Abs(Main.player[(int)projectile.ai[1]].Center.X - projectile.Center.X) < 8 )
+        }
+        public override void AI()
+        {
+            if (Projectile.ai[0] != 0) //Dark Elf Mage version
             {
-				projectile.Kill();
-				projectile.active = false;
-			}
-		}
+                Projectile.timeLeft = 80;
+                Projectile.aiStyle = 1;
+            }
 
-        public override void Kill(int timeLeft) {
-			Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 30, 0.2f, .3f); //ice materialize - good
-			//Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
-			int Icicle = ModContent.ProjectileType<EnemySpellIce3Icicle>();
-			Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 5, Icicle, projectile.damage, 3f, projectile.owner);
-			Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height * 2), 0, 5, Icicle, projectile.damage, 3f, projectile.owner);
-			Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -2), projectile.position.Y + (float)(projectile.height * 2), 0, 5, Icicle, projectile.damage, 3f, projectile.owner);
-			Vector2 projectilePos = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
-			int num41 = Dust.NewDust(projectilePos, projectile.width, projectile.height, 15, 0f, 0f, 100, default, 2f);
-			Main.dust[num41].noGravity = true;
-			Main.dust[num41].velocity *= 2f;
-			Dust.NewDust(projectilePos, projectile.width, projectile.height, 15, 0f, 0f, 100, default, 1f);
-		}
-	}
+            if (Math.Abs(Main.player[(int)Projectile.ai[1]].Center.X - Projectile.Center.X) < 8)
+            {
+                Projectile.Kill();
+                Projectile.active = false;
+            }
+        }
+
+        public override void Kill(int timeLeft)
+        {
+            Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item30 with { Volume = 0.2f, Pitch = 0.3f }, Projectile.Center); //ice materialize - good
+                                                                                                                            //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
+            int Icicle = ModContent.ProjectileType<EnemySpellIce3Icicle>();
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 5, Icicle, Projectile.damage, 3f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height * 2), 0, 5, Icicle, Projectile.damage, 3f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -2), Projectile.position.Y + (float)(Projectile.height * 2), 0, 5, Icicle, Projectile.damage, 3f, Projectile.owner);
+            Vector2 projectilePos = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
+            int num41 = Dust.NewDust(projectilePos, Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 2f);
+            Main.dust[num41].noGravity = true;
+            Main.dust[num41].velocity *= 2f;
+            Dust.NewDust(projectilePos, Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 1f);
+        }
+    }
 }

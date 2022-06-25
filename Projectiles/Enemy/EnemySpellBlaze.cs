@@ -1,5 +1,3 @@
-using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,54 +8,54 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetDefaults()
         {
-            Main.projFrames[projectile.type] = 5;
-            drawOriginOffsetX = 15;
-            drawOriginOffsetY = 10;
-            projectile.width = 86;
-            projectile.height = 66;
-            projectile.aiStyle = 4;
-            projectile.hostile = true;
-            projectile.penetrate = 16;
-            projectile.magic = true;
-            projectile.light = 1f;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 100;
+            Main.projFrames[Projectile.type] = 5;
+            DrawOriginOffsetX = 15;
+            DrawOriginOffsetY = 10;
+            Projectile.width = 86;
+            Projectile.height = 66;
+            Projectile.aiStyle = 4;
+            Projectile.hostile = true;
+            Projectile.penetrate = 16;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.light = 1f;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 100;
         }
 
         #region AI
         public override void AI()
         {
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 3)
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 3)
             {
-                projectile.frame++;
-                projectile.frameCounter = 0;
+                Projectile.frame++;
+                Projectile.frameCounter = 0;
             }
-            if (projectile.frame >= 5)
+            if (Projectile.frame >= 5)
             {
-                projectile.frame = 0;
+                Projectile.frame = 0;
                 return;
             }
-            if (projectile.ai[0] == 0f)
+            if (Projectile.ai[0] == 0f)
             {
-                projectile.alpha -= 50;
-                if (projectile.alpha <= 0)
+                Projectile.alpha -= 50;
+                if (Projectile.alpha <= 0)
                 {
-                    projectile.alpha = 0;
-                    projectile.ai[0] = 1f;
-                    if (projectile.ai[1] == 0f)
+                    Projectile.alpha = 0;
+                    Projectile.ai[0] = 1f;
+                    if (Projectile.ai[1] == 0f)
                     {
-                        projectile.ai[1] += 1f;
-                        projectile.position += projectile.velocity * 1f;
+                        Projectile.ai[1] += 1f;
+                        Projectile.position += Projectile.velocity * 1f;
                     }
                 }
             }
-            if (projectile.timeLeft > 60)
+            if (Projectile.timeLeft > 60)
             {
-                projectile.timeLeft = 60;
+                Projectile.timeLeft = 60;
             }
-            projectile.rotation += 0.3f * (float)projectile.direction;
+            Projectile.rotation += 0.3f * (float)Projectile.direction;
             return;
         }
         #endregion

@@ -1,42 +1,39 @@
-using Microsoft.Xna.Framework;
-using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
-	class EnemySpellAbyssPoisonStrike : ModProjectile
-	{
-		public override void SetDefaults()
-		{
-			projectile.width = 26;
-			projectile.height = 40;
-			Main.projFrames[projectile.type] = 5;
-			projectile.aiStyle = 4;
-			projectile.hostile = true;
-			projectile.magic = true;
-			projectile.light = 1;
-			projectile.tileCollide = true;
-			projectile.ignoreWater = true;
-			projectile.penetrate = 50;
-		}
+    class EnemySpellAbyssPoisonStrike : ModProjectile
+    {
+        public override void SetDefaults()
+        {
+            Projectile.width = 26;
+            Projectile.height = 40;
+            Main.projFrames[Projectile.type] = 5;
+            Projectile.aiStyle = 4;
+            Projectile.hostile = true;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.light = 1;
+            Projectile.tileCollide = true;
+            Projectile.ignoreWater = true;
+            Projectile.penetrate = 50;
+        }
 
-		#region AI
-		public override void AI()
-		{
-			projectile.frameCounter++;
-			if (projectile.frameCounter > 3)
-			{
-				projectile.frame++;
-				projectile.frameCounter = 0;
-			}
-			if (projectile.frame >= 5)
-			{
-				projectile.Kill();
-				return;
-			}
-		}
-		#endregion
-	}
+        #region AI
+        public override void AI()
+        {
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 3)
+            {
+                Projectile.frame++;
+                Projectile.frameCounter = 0;
+            }
+            if (Projectile.frame >= 5)
+            {
+                Projectile.Kill();
+                return;
+            }
+        }
+        #endregion
+    }
 }

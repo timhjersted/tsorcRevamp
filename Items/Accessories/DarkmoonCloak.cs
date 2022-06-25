@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
+namespace tsorcRevamp.Items.Accessories
+{
     [AutoloadEquip(EquipType.Back)]
 
     public class DarkmoonCloak : ModItem
@@ -18,23 +18,23 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void SetDefaults()
         {
-            item.width = 28;
-            item.height = 28;
-            item.accessory = true;
-            item.maxStack = 1;
-            item.rare = ItemRarityID.Pink;
-            item.value = PriceByRarity.Pink_5;
+            Item.width = 28;
+            Item.height = 28;
+            Item.accessory = true;
+            Item.maxStack = 1;
+            Item.rare = ItemRarityID.Pink;
+            Item.value = PriceByRarity.Pink_5;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
             recipe.AddIngredient(ItemID.SoulofNight, 3);
             recipe.AddIngredient(ItemID.StarCloak, 1);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
 
         public override void UpdateEquip(Player player)
@@ -45,16 +45,16 @@ namespace tsorcRevamp.Items.Accessories {
             if (player.statLife <= 150)
             {
                 player.manaRegenBuff = true;
-                player.starCloak = true;
-                player.magicCrit += 15;
-                player.magicDamage += .15f;
+                player.starCloakItem = new Item(ItemID.StarCloak);
+                player.GetCritChance(DamageClass.Magic) += 15;
+                player.GetDamage(DamageClass.Magic) += .15f;
 
             }
             else
             {
-                player.starCloak = true;
-                player.magicCrit += 5;
-                player.magicDamage += .05f;
+                player.starCloakItem = new Item(ItemID.StarCloak);
+                player.GetCritChance(DamageClass.Magic) += 5;
+                player.GetDamage(DamageClass.Magic) += .05f;
             }
         }
 
@@ -156,7 +156,7 @@ namespace tsorcRevamp.Items.Accessories {
             }
         }
 
-        public override void UpdateVanity(Player player, EquipType type)
+        public override void UpdateVanity(Player player)
         {
             if (player.direction == 1)
             {

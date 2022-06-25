@@ -11,35 +11,35 @@ namespace tsorcRevamp.Items
         //all consumable souls found here. It's odd how the item quantity is consumed at a random tick during item use. They behave quite oddly but they work.
         public override void SetStaticDefaults()
         {
-            ItemID.Sets.ItemIconPulse[item.type] = true; // Makes item pulsate in world.
-            ItemID.Sets.ItemNoGravity[item.type] = true; // Makes item float in world.
+            ItemID.Sets.ItemIconPulse[Item.type] = true; // Makes item pulsate in world.
+            ItemID.Sets.ItemNoGravity[Item.type] = true; // Makes item float in world.
         }
 
         public override void SetDefaults()
         {
             Item refItem = new Item();
             refItem.SetDefaults(ItemID.SoulofSight);
-            item.width = 14;
-            item.height = 22;
-            item.maxStack = 999;
-            item.autoReuse = true;
-            item.useTurn = true;
-            item.value = 1;
-            item.consumable = true;
-            item.useAnimation = 61; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
-            item.useTime = 60;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.rare = ItemRarityID.Green; // Mainly for colour consistency.
+            Item.width = 14;
+            Item.height = 22;
+            Item.maxStack = 999;
+            Item.autoReuse = true;
+            Item.useTurn = true;
+            Item.value = 1;
+            Item.consumable = true;
+            Item.useAnimation = 60; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
+            Item.useTime = 60;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.rare = ItemRarityID.Green; // Mainly for colour consistency.
         }
         public override void PostUpdate()
         {
-            Lighting.AddLight(item.Center, 0.15f, 0.42f, 0.05f);
+            Lighting.AddLight(Item.Center, 0.15f, 0.42f, 0.05f);
         }
         public override bool GrabStyle(Player player)
         { //make pulling souls through walls more consistent
-            Vector2 vectorItemToPlayer = player.Center - item.Center;
-            Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.75f;
-            item.velocity = item.velocity + movement;
+            Vector2 vectorItemToPlayer = player.Center - Item.Center;
+            Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 10f;
+            Item.velocity = Item.velocity + movement;
             return true;
         }
         public override void GrabRange(Player player, ref int grabRange)
@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items
             grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper);
         }
 
-        public override bool UseItem(Player player) // Won't consume item without this
+        public override bool? UseItem(Player player) // Won't consume item without this
         {
             return true;
         }
@@ -63,9 +63,9 @@ namespace tsorcRevamp.Items
         }
         public override void PostUpdate()
         {
-            Lighting.AddLight(item.Center, 0.05f, 0.18f, 0.02f);
+            Lighting.AddLight(Item.Center, 0.05f, 0.18f, 0.02f);
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             // Each frame, make some dust
             if (Main.rand.NextFloat() < .3f)
@@ -73,21 +73,14 @@ namespace tsorcRevamp.Items
                 Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default, .75f);
             }
 
-
-            // This sets up the itemTime correctly.
-            if (player.itemTime == 0)
+            if (player.itemTime == 1)
             {
-                player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
-            }
+                // This code runs once halfway through the useTime of the item.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.25f, PitchVariance = 0.5f }, player.Center); // Plays sound.
 
-            else if (player.itemTime == 1)
-            {
-                // This code runs once halfway through the useTime of the item. 
-                Main.PlaySound(SoundID.NPCDeath52.WithVolume(.25f).WithPitchVariance(.3f), player.position); // Plays sound.
-                
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
-                    player.QuickSpawnItem(mod.ItemType("DarkSoul"), 50); // Gives player souls.
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), Mod.Find<ModItem>("DarkSoul").Type, 50); // Gives player souls.
                 }
 
                 for (int d = 0; d < 10; d++)
@@ -105,32 +98,26 @@ namespace tsorcRevamp.Items
             DisplayName.SetDefault("Soul of a Lost Undead");
             Tooltip.SetDefault("Consume to gain 200 souls");
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             // Each frame, make some dust
             if (Main.rand.NextBool())
             {
-                Dust.NewDust(player.BottomLeft, player.width, player.height-40, 89, 0f, -5f, 80, default, .8f);
+                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 80, default, .8f);
             }
 
-            // This sets up the itemTime correctly.
-            if (player.itemTime == 0)
-            {
-                player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
-            }
-
-            else if (player.itemTime == 1)
+            if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
-                Main.PlaySound(SoundID.NPCDeath52.WithVolume(.35f).WithPitchVariance(.3f), player.position); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.35f, PitchVariance = 0.3f }, player.Center); // Plays sound.
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
-                    player.QuickSpawnItem(mod.ItemType("DarkSoul"), 200); // Gives player souls.
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), Mod.Find<ModItem>("DarkSoul").Type, 200); // Gives player souls.
                 }
 
                 for (int d = 0; d < 30; d++)
                 {
-                     Dust.NewDust(player.BottomLeft, player.width, player.height-40, 89, 0f, -5f, 50, default, .8f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default, .8f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
             }
         }
@@ -144,7 +131,7 @@ namespace tsorcRevamp.Items
             DisplayName.SetDefault("Soul of a Nameless Soldier");
             Tooltip.SetDefault("Consume to gain 800 souls");
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             // Each frame, make some dust
             if (Main.rand.NextBool())
@@ -157,20 +144,14 @@ namespace tsorcRevamp.Items
                 Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default, .75f);
             }
 
-            // This sets up the itemTime correctly.
-            if (player.itemTime == 0)
-            {
-                player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
-            }
-
-            else if (player.itemTime == 1)
+            if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
-                Main.PlaySound(SoundID.NPCDeath52.WithVolume(.5f).WithPitchVariance(.3f), player.position); // Plays sound.
-                                                                                                            
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.5f, PitchVariance = 0.3f }, player.Center); // Plays sound.
+
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
-                    player.QuickSpawnItem(mod.ItemType("DarkSoul"), 800); // Gives player souls.
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), Mod.Find<ModItem>("DarkSoul").Type, 800); // Gives player souls.
                 }
 
                 for (int d = 0; d < 60; d++)
@@ -201,9 +182,9 @@ namespace tsorcRevamp.Items
         }
         public override void PostUpdate()
         {
-            Lighting.AddLight(item.Center, 0.25f, 0.60f, 0.15f);
+            Lighting.AddLight(Item.Center, 0.25f, 0.60f, 0.15f);
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             // Each frame, make some dust
             if (Main.rand.NextBool())
@@ -216,20 +197,14 @@ namespace tsorcRevamp.Items
                 Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default, .75f);
             }
 
-            // This sets up the itemTime correctly.
-            if (player.itemTime == 0)
-            {
-                player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
-            }
-
-            else if (player.itemTime == 1)
+            if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
-                Main.PlaySound(SoundID.NPCDeath52.WithVolume(.75f).WithPitchVariance(.3f), player.position); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.75f, PitchVariance = 0.3f }, player.Center); // Plays sound.
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
-                    player.QuickSpawnItem(mod.ItemType("DarkSoul"), 2000); // Gives player souls.
-                    Projectile.NewProjectile(player.Top, player.velocity, mod.ProjectileType("Soulsplosion"), 250, 15, 0);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), Mod.Find<ModItem>("DarkSoul").Type, 2000); // Gives player souls.
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, Mod.Find<ModProjectile>("Soulsplosion").Type, 250, 15, 0);
                 }
 
                 for (int d = 0; d < 90; d++) // Upwards
@@ -258,37 +233,38 @@ namespace tsorcRevamp.Items
             base.SetStaticDefaults();
             DisplayName.SetDefault("Soul of a Brave Warrior");
             Tooltip.SetDefault("Consume to gain 5000 souls");
-            ItemID.Sets.ItemIconPulse[item.type] = true; // Makes item pulsate in world.
-            ItemID.Sets.ItemNoGravity[item.type] = true; // Makes item float in world.
+            ItemID.Sets.ItemIconPulse[Item.type] = true; // Makes item pulsate in world.
+            ItemID.Sets.ItemNoGravity[Item.type] = true; // Makes item float in world.
         }
 
         public override void SetDefaults()
         {
             Item refItem = new Item();
             refItem.SetDefaults(ItemID.SoulofSight);
-            item.width = 14;
-            item.height = 22;
-            item.maxStack = 999;
-            item.autoReuse = true;
-            item.useTurn = true;
-            item.value = 1;
-            item.consumable = true;
-            item.useAnimation = 121; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
-            item.useTime = 120;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.rare = ItemRarityID.Green; // Mainly for colour consistency.
+            Item.width = 14;
+            Item.height = 22;
+            Item.maxStack = 999;
+            Item.autoReuse = true;
+            Item.useTurn = true;
+            Item.value = 1;
+            Item.consumable = true;
+            Item.useAnimation = 120;
+            Item.useTime = 120;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.rare = ItemRarityID.Green; // Mainly for colour consistency.
         }
         public override void PostUpdate()
         {
-            Lighting.AddLight(item.Center, 0.2f, 0.52f, 0.08f);
+            Lighting.AddLight(Item.Center, 0.2f, 0.52f, 0.08f);
         }
 
-        public override bool UseItem(Player player) // Won't consume item without this
+        public override bool? UseItem(Player player) // Won't consume item without this
         {
+            
             return true;
         }
 
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             // Each frame, make some dust
             if (Main.rand.NextBool())
@@ -301,21 +277,15 @@ namespace tsorcRevamp.Items
                 Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default, .75f);
             }
 
-            // This sets up the itemTime correctly.
-            if (player.itemTime == 0)
+            if (player.itemTime == 1)
             {
-                player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
-            }
-
-            else if (player.itemTime == 1)
-            {
-                // This code runs once halfway through the useTime of the item. 
-                Main.PlaySound(SoundID.NPCDeath52.WithVolume(.9f).WithPitchVariance(.3f), player.position); // Plays sound.
+                // This code runs at the end of the usetime of the item
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.9f, PitchVariance = 0.3f }, player.Center); // Plays sound.
 
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
-                    player.QuickSpawnItem(mod.ItemType("DarkSoul"), 5000); // Gives player souls.
-                    Projectile.NewProjectile(player.Top, player.velocity, mod.ProjectileType("Soulsplosion"), 600, 15, 0);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), Mod.Find<ModItem>("DarkSoul").Type, 5000); // Gives player souls.
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, Mod.Find<ModProjectile>("Soulsplosion").Type, 600, 15, 0);
                 }
 
                 for (int d = 0; d < 100; d++) // Upwards
@@ -354,37 +324,37 @@ namespace tsorcRevamp.Items
             base.SetStaticDefaults();
             DisplayName.SetDefault("Soul of a Hero");
             Tooltip.SetDefault("Consume to gain 10000 souls");
-            ItemID.Sets.ItemIconPulse[item.type] = true; // Makes item pulsate in world.
-            ItemID.Sets.ItemNoGravity[item.type] = true; // Makes item float in world.
+            ItemID.Sets.ItemIconPulse[Item.type] = true; // Makes item pulsate in world.
+            ItemID.Sets.ItemNoGravity[Item.type] = true; // Makes item float in world.
         }
 
         public override void SetDefaults()
         {
             Item refItem = new Item();
             refItem.SetDefaults(ItemID.SoulofSight);
-            item.width = 14;
-            item.height = 22;
-            item.maxStack = 999;
-            item.autoReuse = true;
-            item.useTurn = true;
-            item.value = 1;
-            item.consumable = true;
-            item.useAnimation = 241; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
-            item.useTime = 240;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.rare = ItemRarityID.Green; // Mainly for colour consistency.
+            Item.width = 14;
+            Item.height = 22;
+            Item.maxStack = 999;
+            Item.autoReuse = true;
+            Item.useTurn = true;
+            Item.value = 1;
+            Item.consumable = true;
+            Item.useAnimation = 240; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
+            Item.useTime = 240;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.rare = ItemRarityID.Green; // Mainly for colour consistency.
         }
         public override void PostUpdate()
         {
-            Lighting.AddLight(item.Center, 0.25f, 0.6f, 0.10f);
+            Lighting.AddLight(Item.Center, 0.25f, 0.6f, 0.10f);
         }
 
-        public override bool UseItem(Player player) // Won't consume item without this
+        public override bool? UseItem(Player player) // Won't consume item without this
         {
             return true;
         }
 
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             // Each frame, make some dust
             if (Main.rand.NextBool())
@@ -397,20 +367,14 @@ namespace tsorcRevamp.Items
                 Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default, .75f);
             }
 
-            // This sets up the itemTime correctly.
-            if (player.itemTime == 0)
+            if (player.itemTime == 1)
             {
-                player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
-            }
-
-            else if (player.itemTime == 1)
-            {
-                // This code runs once halfway through the useTime of the item. 
-                Main.PlaySound(SoundID.NPCDeath52.WithVolume(1f).WithPitchVariance(.3f), player.position); // Plays sound.
+                // This code runs once halfway through the useTime of the item.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 1f, PitchVariance = 0.3f }, player.Center); // Plays sound.
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
-                    player.QuickSpawnItem(mod.ItemType("DarkSoul"), 10000); // Gives player souls.
-                    Projectile.NewProjectile(player.Top, player.velocity, mod.ProjectileType("SoulsplosionLarge"), 2000, 15, 0);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), Mod.Find<ModItem>("DarkSoul").Type, 10000); // Gives player souls.
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, Mod.Find<ModProjectile>("SoulsplosionLarge").Type, 2000, 15, 0);
                 }
 
                 for (int d = 0; d < 100; d++) // Upwards

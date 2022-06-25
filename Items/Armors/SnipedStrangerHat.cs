@@ -10,15 +10,16 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Part of the TSORC Revamp Team dev set belonging to ChromaEquinox");
+            ArmorIDs.Head.Sets.DrawHead[Item.headSlot] = false;
         }
 
         public override void SetDefaults()
         {
-            item.vanity = true;
-            item.width = 30;
-            item.height = 28;
-            item.value = 50000;
-            item.rare = ItemRarityID.Purple;
+            Item.vanity = true;
+            Item.width = 30;
+            Item.height = 28;
+            Item.value = 50000;
+            Item.rare = ItemRarityID.Purple;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -30,11 +31,6 @@ namespace tsorcRevamp.Items.Armors
         {
             player.armorEffectDrawShadow = true;
             player.armorEffectDrawOutlinesForbidden = true;
-        }
-
-        public override bool DrawHead()
-        {
-            return false;
         }
     }
 }

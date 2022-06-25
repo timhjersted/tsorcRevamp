@@ -1,40 +1,45 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    public class Gastraphetes : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    public class Gastraphetes : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Blacken the sky");
         }
 
-        public override void SetDefaults() {
-            item.ranged = true;
-            item.shoot = ProjectileID.PurificationPowder;
+        public override void SetDefaults()
+        {
+            Item.DamageType = DamageClass.Ranged;
+            Item.shoot = ProjectileID.PurificationPowder;
 
-            item.damage = 50;
-            item.width = 50;
-            item.height = 18;
-            item.useTime = 16;
-            item.useAnimation = 16;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.noMelee = true;
-            item.knockBack = 3;
-            item.value = PriceByRarity.LightPurple_6;
-            item.rare = ItemRarityID.LightPurple;
-            item.UseSound = SoundID.Item5;
-            item.autoReuse = true;
+            Item.damage = 50;
+            Item.width = 50;
+            Item.height = 18;
+            Item.useTime = 16;
+            Item.useAnimation = 16;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noMelee = true;
+            Item.knockBack = 3;
+            Item.value = PriceByRarity.LightPurple_6;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.UseSound = SoundID.Item5;
+            Item.autoReuse = true;
 
-            item.shootSpeed = 12f;
-            item.useAmmo = AmmoID.Arrow;
+            Item.shootSpeed = 12f;
+            Item.useAmmo = AmmoID.Arrow;
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedRepeater, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

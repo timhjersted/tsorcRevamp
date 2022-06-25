@@ -19,11 +19,11 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void SetDefaults()
         {
-            item.width = 34;
-            item.height = 28;
-            item.accessory = true;
-            item.value = PriceByRarity.LightRed_4;
-            item.rare = ItemRarityID.Lime;
+            Item.width = 34;
+            Item.height = 28;
+            Item.accessory = true;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.rare = ItemRarityID.Lime;
         }
 
         public override void UpdateEquip(Player player)

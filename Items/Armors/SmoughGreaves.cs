@@ -9,22 +9,22 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.vanity = true;
-            item.width = 18;
-            item.height = 18;
+            Item.vanity = true;
+            Item.width = 18;
+            Item.height = 18;
             //item.defense = 2;
-            item.value = 10000;
-            item.rare = ItemRarityID.Orange;
+            Item.value = 10000;
+            Item.rare = ItemRarityID.Orange;
         }
 
         public override void AddRecipes()
         {
-            /*ModRecipe recipe = new ModRecipe(mod);
+            /*Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.IronGreaves, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 100);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();*/
+            
+            recipe.Register();*/
         }
     }
 }

@@ -15,16 +15,16 @@ namespace tsorcRevamp.Items.Potions
 
         public override void SetDefaults()
         {
-            item.consumable = true;
-            item.useAnimation = 17;
-            item.UseSound = SoundID.Item2;
-            item.useStyle = ItemUseStyleID.EatingUsing;
-            item.useTime = 17;
-            item.height = 54;
-            item.width = 54;
-            item.maxStack = 100;
-            item.scale = .6f;
-            item.value = 500;
+            Item.consumable = true;
+            Item.useAnimation = 17;
+            Item.UseSound = SoundID.Item2;
+            Item.useStyle = ItemUseStyleID.EatFood;
+            Item.useTime = 17;
+            Item.height = 54;
+            Item.width = 54;
+            Item.maxStack = 100;
+            Item.scale = .6f;
+            Item.value = 500;
         }
 
 
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Potions
             return true;
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
@@ -55,14 +55,14 @@ namespace tsorcRevamp.Items.Potions
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Wood, 1);
             recipe.AddIngredient(ItemID.Mushroom, 1);
-            recipe.AddIngredient(mod.GetItem("DeadChicken"), 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DeadChicken").Type, 1);
             recipe.AddIngredient(ItemID.PixieDust, 1);
             recipe.AddTile(TileID.Campfire);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

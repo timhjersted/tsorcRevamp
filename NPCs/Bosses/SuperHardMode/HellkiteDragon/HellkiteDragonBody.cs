@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,34 +9,34 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
     {
         public override void SetDefaults()
         {
-            npc.netAlways = true;
-            npc.npcSlots = 2;
-            npc.width = 44;
-            npc.height = 44;
-            drawOffsetY = 49;
-            
-            npc.aiStyle = 6;
-            npc.knockBackResist = 0;
-            npc.timeLeft = 22750;
-            npc.damage = 85;
-            npc.defense = 40;
-            npc.HitSound = SoundID.NPCHit7;
-            npc.DeathSound = SoundID.NPCDeath8;
-            npc.lifeMax = 20000;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.behindTiles = true;
-            npc.value = 0;
-            npc.buffImmune[BuffID.Poisoned] = true;
-            npc.buffImmune[BuffID.Confused] = true;
-            npc.buffImmune[BuffID.OnFire] = true;
-            npc.buffImmune[BuffID.CursedInferno] = true;
+            NPC.netAlways = true;
+            NPC.npcSlots = 2;
+            NPC.width = 44;
+            NPC.height = 44;
+            DrawOffsetY = 49;
+
+            NPC.aiStyle = 6;
+            NPC.knockBackResist = 0;
+            NPC.timeLeft = 22750;
+            NPC.damage = 85;
+            NPC.defense = 40;
+            NPC.HitSound = SoundID.NPCHit7;
+            NPC.DeathSound = SoundID.NPCDeath8;
+            NPC.lifeMax = 20000;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.behindTiles = true;
+            NPC.value = 0;
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
         }
 
         int fireDamage = 50;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.damage = (int)(npc.damage / 2);
+            NPC.damage = (int)(NPC.damage / 2);
             fireDamage = (int)(fireDamage / 2);
         }
         public override void SetStaticDefaults()
@@ -51,47 +50,47 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         public override void AI()
         {
             int[] bodyTypes = new int[] { ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody2>(), ModContent.NPCType<HellkiteDragonBody3>() };
-            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, HellkiteDragonHead.hellkitePieceSeperation, 22, 0.25f, true, false);
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, HellkiteDragonHead.hellkitePieceSeperation, 22, 0.25f, true, false);
 
-            if (!Main.npc[(int)npc.ai[1]].active)
+            if (!Main.npc[(int)NPC.ai[1]].active)
             {
-                
-                    for (int num36 = 0; num36 < 50; num36++)
-                    {
-                        Color color = new Color();
-                        int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, ProjectileID.GoldenShowerFriendly, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 10f);
-                        Main.dust[dust].noGravity = false;
-                        dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, ProjectileID.GoldenShowerFriendly, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 6f);
-                        Main.dust[dust].noGravity = false;
-                        dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 6f);
-                        Main.dust[dust].noGravity = false;
-                        dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 62, 0, 0, 100, Color.White, 10.0f);
-                        Main.dust[dust].noGravity = true;
-                        //npc.netUpdate = true; //new
-                    }
-                npc.life = 0;
-                npc.HitEffect(0, 10.0);
-                NPCLoot();
-                npc.active = false;
+
+                for (int num36 = 0; num36 < 50; num36++)
+                {
+                    Color color = new Color();
+                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, ProjectileID.GoldenShowerFriendly, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 10f);
+                    Main.dust[dust].noGravity = false;
+                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, ProjectileID.GoldenShowerFriendly, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 6f);
+                    Main.dust[dust].noGravity = false;
+                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 6f);
+                    Main.dust[dust].noGravity = false;
+                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 62, 0, 0, 100, Color.White, 10.0f);
+                    Main.dust[dust].noGravity = true;
+                    //npc.netUpdate = true; //new
+                }
+                NPC.life = 0;
+                NPC.HitEffect(0, 10.0);
+                OnKill();
+                NPC.active = false;
             }
         }
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
-            HellkiteDragonHead.SetImmune(projectile, npc);
+            HellkiteDragonHead.SetImmune(projectile, NPC);
         }
 
         public override bool CheckActive()
         {
             return false;
         }
-        public override void NPCLoot()
+        public override void OnKill()
         {
 
-            npc.netUpdate = true;
-            Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-            if (Main.player[npc.target].active)
+            NPC.netUpdate = true;
+            Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+            if (Main.player[NPC.target].active)
             {
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hellkite Dragon Body Gore"), 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hellkite Dragon Body Gore").Type, 1f);
 
             }
         }

@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    public class WallTome : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    public class WallTome : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Wall Tome");
             Tooltip.SetDefault("A lost tome that is consumed on use\n" +
                                "Casts Wall on the player, raising defense by 25 for 25 seconds" +
@@ -14,46 +16,53 @@ namespace tsorcRevamp.Items.Weapons.Magic {
                                "\nCannot be used again for 60 seconds after wearing off");
         }
 
-        public override void SetDefaults() {
-            item.stack = 1;
-            item.width = 28;
-            item.height = 30;
-            item.maxStack = 99;
-            item.rare = ItemRarityID.Green;
-            item.magic = true;
-            item.noMelee = true;
-            item.mana = 50;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 35;
-            item.useAnimation = 35;
-            item.value = 8000;
-            item.consumable = true;
+        public override void SetDefaults()
+        {
+            Item.stack = 1;
+            Item.width = 28;
+            Item.height = 30;
+            Item.maxStack = 99;
+            Item.rare = ItemRarityID.Green;
+            Item.DamageType = DamageClass.Magic;
+            Item.noMelee = true;
+            Item.mana = 50;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 35;
+            Item.useAnimation = 35;
+            Item.value = 8000;
+            Item.consumable = true;
 
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.IronskinPotion);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 600);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 600);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player)
+        {
             player.AddBuff(ModContent.BuffType<Buffs.Wall>(), 1500, false);
             player.AddBuff(ModContent.BuffType<Buffs.ShieldCooldown>(), 5100); //85 seconds (60 seconds downtime)
             return true;
         }
-        public override bool CanUseItem(Player player) {
-            if (player.HasBuff(ModContent.BuffType<Buffs.ShieldCooldown>())) {
+        public override bool CanUseItem(Player player)
+        {
+            if (player.HasBuff(ModContent.BuffType<Buffs.ShieldCooldown>()))
+            {
                 return false;
             }
-            if (player.HasBuff(ModContent.BuffType<Buffs.Fog>()) || player.HasBuff(ModContent.BuffType<Buffs.Barrier>()) || player.HasBuff(ModContent.BuffType<Buffs.Shield>())) {
+            if (player.HasBuff(ModContent.BuffType<Buffs.Fog>()) || player.HasBuff(ModContent.BuffType<Buffs.Barrier>()) || player.HasBuff(ModContent.BuffType<Buffs.Shield>()))
+            {
                 return false;
             }
-            else {
+            else
+            {
                 return true;
             }
         }

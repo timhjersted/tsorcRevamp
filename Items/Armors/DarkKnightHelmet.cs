@@ -14,11 +14,11 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 12;
-            item.defense = 15;
-            item.value = 10000;
-            item.rare = ItemRarityID.Orange;
+            Item.width = 18;
+            Item.height = 12;
+            Item.defense = 15;
+            Item.value = 10000;
+            Item.rare = ItemRarityID.Orange;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -30,8 +30,8 @@ namespace tsorcRevamp.Items.Armors
         {
             player.waterWalk = true;
             player.noKnockback = true;
-            player.meleeDamage += 0.3f;
-            player.meleeSpeed += 0.3f;
+            player.GetDamage(DamageClass.Melee) += 0.3f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.3f;
             player.moveSpeed += 0.3f;
 
             int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 27, (player.velocity.X) + (player.direction * 3), player.velocity.Y, 100, Color.BlueViolet, 1.0f);
@@ -48,12 +48,12 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedMask, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

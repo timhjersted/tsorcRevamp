@@ -13,11 +13,11 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.vanity = true;
-            item.width = 18;
-            item.height = 18;
-            item.value = 100000;
-            item.rare = ItemRarityID.Yellow;
+            Item.vanity = true;
+            Item.width = 18;
+            Item.height = 18;
+            Item.value = 100000;
+            Item.rare = ItemRarityID.Yellow;
         }
     }
 }

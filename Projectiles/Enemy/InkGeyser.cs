@@ -1,20 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class InkGeyser : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class InkGeyser : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Okiku/PoisonSmog";
 
-        public override void SetDefaults() {
-            projectile.width = 80;
-            projectile.height = 80;
-            projectile.timeLeft = 240;
-            projectile.hostile = true;
+        public override void SetDefaults()
+        {
+            Projectile.width = 80;
+            Projectile.height = 80;
+            Projectile.timeLeft = 240;
+            Projectile.hostile = true;
         }
 
 
@@ -25,27 +27,27 @@ namespace tsorcRevamp.Projectiles.Enemy {
         {
             if (timer < 120)
             {
-                timer++;                
+                timer++;
             }
             else
             {
-                if(!targetSet)
+                if (!targetSet)
                 {
                     targetSet = true;
-                    targetPos = Main.player[(int)projectile.ai[0]].Center;
+                    targetPos = Main.player[(int)Projectile.ai[0]].Center;
                 }
                 if (Main.GameUpdateCount % 5 == 0)
                 {
-                    Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(projectile.Center, targetPos, 12);
+                    Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, targetPos, 12);
                     projVelocity = projVelocity.RotatedBy(Main.rand.NextFloat(-0.1f, 0.1f));
-                    Projectile.NewProjectile(projectile.Center, projVelocity, ModContent.ProjectileType<Projectiles.Enemy.InkJet>(), projectile.damage, 0, projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, projVelocity, ModContent.ProjectileType<Projectiles.Enemy.InkJet>(), Projectile.damage, 0, Projectile.owner);
                 }
             }
 
             for (int j = 0; j < 10f * (timer / 120f); j++)
             {
                 Vector2 dir = Main.rand.NextVector2Circular(64, 64);
-                Vector2 dustPos = projectile.Center + dir;
+                Vector2 dustPos = Projectile.Center + dir;
                 Vector2 dustVel = dir.RotatedBy(MathHelper.Pi / 1.3f);
                 dustVel /= 16f;
                 Dust thisDust = Dust.NewDustPerfect(dustPos, DustID.Asphalt, dustVel, 0, default, 2f);
@@ -55,26 +57,26 @@ namespace tsorcRevamp.Projectiles.Enemy {
             for (int j = 0; j < 100; j++)
             {
                 Vector2 dir = Main.rand.NextVector2CircularEdge(65, 65);
-                Vector2 dustPos = projectile.Center + dir;
+                Vector2 dustPos = Projectile.Center + dir;
                 Vector2 dustVel = new Vector2(10, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
-                int dustType = DustID.Asphalt;
+                int DustType = DustID.Asphalt;
                 if (Main.GameUpdateCount % 5 == 0)
                 {
-                    dustType = DustID.CursedTorch;
+                    DustType = DustID.CursedTorch;
                 }
-                Dust.NewDustPerfect(dustPos, dustType, dustVel, 0, default, 1).noGravity = true;
+                Dust.NewDustPerfect(dustPos, DustType, dustVel, 0, default, 1).noGravity = true;
             }
         }
 
-       
-        public override void OnHitPlayer(Player target, int damage, bool crit) {
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
             int buffLengthMod = 1;
             if (Main.expertMode)
             {
                 buffLengthMod = 2;
             }
 
-            target.AddBuff(BuffID.Slow, 180 / buffLengthMod, false);
             target.AddBuff(BuffID.BrokenArmor, 180 / buffLengthMod, false);
             target.AddBuff(BuffID.Blackout, 600 / buffLengthMod, false);
         }

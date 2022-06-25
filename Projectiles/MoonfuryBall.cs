@@ -2,46 +2,51 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
+namespace tsorcRevamp.Projectiles
+{
 
-    public class MoonfuryBall : ModProjectile {
+    public class MoonfuryBall : ModProjectile
+    {
 
         private const string ChainTexturePath = "tsorcRevamp/Projectiles/chain";
 
-        public override void SetDefaults() {
-            projectile.width = 30;
-            projectile.height = 30;
-            projectile.friendly = true;
-            projectile.penetrate = -1;
-            projectile.melee = true;
+        public override void SetDefaults()
+        {
+            Projectile.width = 30;
+            Projectile.height = 30;
+            Projectile.friendly = true;
+            Projectile.penetrate = -1;
+            Projectile.DamageType = DamageClass.Melee;
         }
 
-        public override void AI() {
+        public override void AI()
+        {
 
 
-            var dust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 171, projectile.velocity.X * 0.4f, projectile.velocity.Y * 0.4f, 100, new Color(0, 255, 67), 1f);
+            var dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 171, Projectile.velocity.X * 0.4f, Projectile.velocity.Y * 0.4f, 100, new Color(0, 255, 67), 1f);
 
             dust.noGravity = true;
             dust.velocity /= 2f;
 
-            var player = Main.player[projectile.owner];
+            var player = Main.player[Projectile.owner];
 
-            if (player.dead) {
-                projectile.Kill();
+            if (player.dead)
+            {
+                Projectile.Kill();
                 return;
             }
 
             player.itemAnimation = 10;
             player.itemTime = 10;
 
-            int newDirection = projectile.Center.X > player.Center.X ? 1 : -1;
+            int newDirection = Projectile.Center.X > player.Center.X ? 1 : -1;
             player.ChangeDir(newDirection);
-            projectile.direction = newDirection;
+            Projectile.direction = newDirection;
 
-            var vectorToPlayer = player.MountedCenter - projectile.Center;
+            var vectorToPlayer = player.MountedCenter - Projectile.Center;
             float currentChainLength = vectorToPlayer.Length();
 
             // ai[0] == 0: being thrown out
@@ -49,130 +54,146 @@ namespace tsorcRevamp.Projectiles {
             // ai[1] == 1 or !projectile.tileCollide: forced retraction
 
 
-            if (projectile.ai[0] == 0f) {
+            if (Projectile.ai[0] == 0f)
+            {
                 float maxChainLength = 160f; //pixels
-                projectile.tileCollide = true;
-                if (currentChainLength > maxChainLength) {
+                Projectile.tileCollide = true;
+                if (currentChainLength > maxChainLength)
+                {
                     // If we reach maxChainLength, we change behavior.
-                    projectile.ai[0] = 1f;
-                    projectile.netUpdate = true;
+                    Projectile.ai[0] = 1f;
+                    Projectile.netUpdate = true;
                 }
-                else if (!player.channel) { //release mouse
+                else if (!player.channel)
+                { //release mouse
 
-                    if (projectile.velocity.Y < 0f)
-                        projectile.velocity.Y *= 0.9f;
+                    if (Projectile.velocity.Y < 0f)
+                        Projectile.velocity.Y *= 0.9f;
 
-                    projectile.velocity.Y += 1f;
-                    projectile.velocity.X *= 0.9f;
+                    Projectile.velocity.Y += 1f;
+                    Projectile.velocity.X *= 0.9f;
                 }
             }
-            else if (projectile.ai[0] == 1f) {
-                float elasticFactorA = 14f / player.meleeSpeed;
-                float elasticFactorB = 0.9f / player.meleeSpeed;
+            else if (Projectile.ai[0] == 1f)
+            {
+                float elasticFactorA = 14f / player.GetAttackSpeed(DamageClass.Melee);
+                float elasticFactorB = 0.9f / player.GetAttackSpeed(DamageClass.Melee);
                 float maxStretchLength = 300f; //flails force retract, even through walls, when they reach this length
 
-                if (projectile.ai[1] == 1f)
-                    projectile.tileCollide = false;
+                if (Projectile.ai[1] == 1f)
+                    Projectile.tileCollide = false;
 
-                if (!player.channel || currentChainLength > maxStretchLength || !projectile.tileCollide) {
-                    projectile.ai[1] = 1f;
+                if (!player.channel || currentChainLength > maxStretchLength || !Projectile.tileCollide)
+                {
+                    Projectile.ai[1] = 1f;
 
-                    if (projectile.tileCollide)
-                        projectile.netUpdate = true;
+                    if (Projectile.tileCollide)
+                        Projectile.netUpdate = true;
 
-                    projectile.tileCollide = false;
+                    Projectile.tileCollide = false;
 
                     if (currentChainLength < 20f)
-                        projectile.Kill();
+                        Projectile.Kill();
                 }
 
-                if (!projectile.tileCollide)
+                if (!Projectile.tileCollide)
                     elasticFactorB *= 2f;
 
                 int restingChainLength = 60;
 
 
-                if (currentChainLength > restingChainLength || !projectile.tileCollide) {
-                    var elasticAcceleration = vectorToPlayer * elasticFactorA / currentChainLength - projectile.velocity;
+                if (currentChainLength > restingChainLength || !Projectile.tileCollide)
+                {
+                    var elasticAcceleration = vectorToPlayer * elasticFactorA / currentChainLength - Projectile.velocity;
                     elasticAcceleration *= elasticFactorB / elasticAcceleration.Length();
-                    projectile.velocity *= 0.98f;
-                    projectile.velocity += elasticAcceleration;
+                    Projectile.velocity *= 0.98f;
+                    Projectile.velocity += elasticAcceleration;
                 }
-                else {
+                else
+                {
 
-                    if (Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) < 6f) {
-                        projectile.velocity.X *= 0.96f;
-                        projectile.velocity.Y += 0.2f;
+                    if (Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) < 6f)
+                    {
+                        Projectile.velocity.X *= 0.96f;
+                        Projectile.velocity.Y += 0.2f;
                     }
                     if (player.velocity.X == 0f)
-                        projectile.velocity.X *= 0.96f;
+                        Projectile.velocity.X *= 0.96f;
                 }
             }
 
-            projectile.rotation = vectorToPlayer.ToRotation() - projectile.velocity.X * 0.1f;
+            Projectile.rotation = vectorToPlayer.ToRotation() - Projectile.velocity.X * 0.1f;
 
             //add shoot projectiles here (like flower pow)
         }
 
-        public override bool OnTileCollide(Vector2 oldVelocity) {
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
             //slow when bouncing
             bool shouldMakeSound = false;
 
-            if (oldVelocity.X != projectile.velocity.X) {
-                if (Math.Abs(oldVelocity.X) > 4f) {
+            if (oldVelocity.X != Projectile.velocity.X)
+            {
+                if (Math.Abs(oldVelocity.X) > 4f)
+                {
                     shouldMakeSound = true;
                 }
 
-                projectile.position.X += projectile.velocity.X;
-                projectile.velocity.X = -oldVelocity.X * 0.2f;
+                Projectile.position.X += Projectile.velocity.X;
+                Projectile.velocity.X = -oldVelocity.X * 0.2f;
             }
 
-            if (oldVelocity.Y != projectile.velocity.Y) {
-                if (Math.Abs(oldVelocity.Y) > 4f) {
+            if (oldVelocity.Y != Projectile.velocity.Y)
+            {
+                if (Math.Abs(oldVelocity.Y) > 4f)
+                {
                     shouldMakeSound = true;
                 }
 
-                projectile.position.Y += projectile.velocity.Y;
-                projectile.velocity.Y = -oldVelocity.Y * 0.2f;
+                Projectile.position.Y += Projectile.velocity.Y;
+                Projectile.velocity.Y = -oldVelocity.Y * 0.2f;
             }
-            projectile.ai[0] = 1f;
+            Projectile.ai[0] = 1f;
 
-            if (shouldMakeSound) {
-                projectile.netUpdate = true;
-                Collision.HitTiles(projectile.position, projectile.velocity, projectile.width, projectile.height);
-                Main.PlaySound(SoundID.Dig, (int)projectile.position.X, (int)projectile.position.Y);
+            if (shouldMakeSound)
+            {
+                Projectile.netUpdate = true;
+                Collision.HitTiles(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
             }
 
             return false;
         }
 
-        static Texture2D chainTexture = ModContent.GetTexture(ChainTexturePath);
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        static Texture2D chainTexture = (Texture2D)ModContent.Request<Texture2D>(ChainTexturePath, ReLogic.Content.AssetRequestMode.ImmediateLoad);
+        public override bool PreDraw(ref Color lightColor)
         {
             if (chainTexture == null || chainTexture.IsDisposed)
             {
-                chainTexture = ModContent.GetTexture(ChainTexturePath);
+                chainTexture = (Texture2D)ModContent.Request<Texture2D>(ChainTexturePath, ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
-            var player = Main.player[projectile.owner];
+            var player = Main.player[Projectile.owner];
 
             Vector2 mountedCenter = player.MountedCenter;
 
-            var drawPosition = projectile.Center;
+            var drawPosition = Projectile.Center;
             var remainingVectorToPlayer = mountedCenter - drawPosition;
 
             float rotation = remainingVectorToPlayer.ToRotation() - MathHelper.PiOver2;
 
-            if (projectile.alpha == 0) {
+            if (Projectile.alpha == 0)
+            {
                 int direction = -1;
 
-                if (projectile.Center.X < mountedCenter.X)
+                if (Projectile.Center.X < mountedCenter.X)
                     direction = 1;
 
                 player.itemRotation = (float)Math.Atan2(remainingVectorToPlayer.Y * direction, remainingVectorToPlayer.X * direction);
             }
 
             //draw the chain
-            while (true) {
+            while (true)
+            {
                 float length = remainingVectorToPlayer.Length();
 
                 if (length < 25f || float.IsNaN(length))
@@ -184,7 +205,7 @@ namespace tsorcRevamp.Projectiles {
 
                 // Finally, we draw the texture at the coordinates using the lighting information of the tile coordinates of the chain section
                 Color color = Lighting.GetColor((int)drawPosition.X / 16, (int)(drawPosition.Y / 16f));
-                spriteBatch.Draw(chainTexture, drawPosition - Main.screenPosition, null, color, rotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                Main.EntitySpriteDraw(chainTexture, drawPosition - Main.screenPosition, null, color, rotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0);
             }
 
             return true;

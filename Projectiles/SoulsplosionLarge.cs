@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
+﻿using Terraria;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
@@ -10,23 +8,23 @@ namespace tsorcRevamp.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Large Soulsplosion"); // These are just part of the animation of the consumable souls
-            Main.projFrames[projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 4;
         }
         public override void SetDefaults()
         {
 
-            projectile.aiStyle = 0;
-            projectile.friendly = true;
-            projectile.width = 176;
-            projectile.height = 144;
-            projectile.penetrate = -1;
-            projectile.damage = 1000;
-            //projectile.ranged = true;
-            projectile.scale = 1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 16;
-            projectile.alpha = 100;
-            projectile.ignoreWater = true;
+            Projectile.aiStyle = 0;
+            Projectile.friendly = true;
+            Projectile.width = 176;
+            Projectile.height = 144;
+            Projectile.penetrate = -1;
+            Projectile.damage = 1000;
+            //Projectile.DamageType = DamageClass.Ranged;
+            Projectile.scale = 1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 16;
+            Projectile.alpha = 100;
+            Projectile.ignoreWater = true;
         }
 
         public int soulsplosionsmalltimer;
@@ -36,14 +34,14 @@ namespace tsorcRevamp.Projectiles
 
             //ANIMATION
 
-            if (++projectile.frameCounter >= 4) //ticks spent on each frame
+            if (++Projectile.frameCounter >= 4) //ticks spent on each frame
             {
-                projectile.frameCounter = 0;
-                if (projectile.timeLeft >= 4)
+                Projectile.frameCounter = 0;
+                if (Projectile.timeLeft >= 4)
                 {
-                    if (++projectile.frame == 4)
+                    if (++Projectile.frame == 4)
                     {
-                        projectile.frame = 0;
+                        Projectile.frame = 0;
                     }
                 }
             }

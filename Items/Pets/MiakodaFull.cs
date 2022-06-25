@@ -22,36 +22,36 @@ namespace tsorcRevamp.Items.Pets
         }
         public override void SetDefaults()
         {
-            item.CloneDefaults(ItemID.DD2PetGhost);
-            item.shoot = ModContent.ProjectileType<Projectiles.Pets.MiakodaFull>();
-            item.buffType = ModContent.BuffType<Buffs.MiakodaFull>();
+            Item.CloneDefaults(ItemID.DD2PetGhost);
+            Item.shoot = ModContent.ProjectileType<Projectiles.Pets.MiakodaFull>();
+            Item.buffType = ModContent.BuffType<Buffs.MiakodaFull>();
         }
 
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             if (player.whoAmI == Main.myPlayer && player.itemTime == 0)
             {
-                player.AddBuff(item.buffType, 3600, true);
+                player.AddBuff(Item.buffType, 3600, true);
             }
         }
 
         public override void AddRecipes()
         {
             {
-                ModRecipe recipe = new ModRecipe(mod);
-                recipe.AddIngredient(mod.GetItem("MiakodaCrescent"));
-                recipe.AddIngredient(mod.GetItem("DarkSoul"), 100);
+                Terraria.Recipe recipe = CreateRecipe();
+                recipe.AddIngredient(Mod.Find<ModItem>("MiakodaCrescent").Type);
+                recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100);
                 recipe.AddTile(TileID.DemonAltar);
-                recipe.SetResult(this);
-                recipe.AddRecipe();
+
+                recipe.Register();
             }
             {
-                ModRecipe recipe = new ModRecipe(mod);
-                recipe.AddIngredient(mod.GetItem("MiakodaNew"));
-                recipe.AddIngredient(mod.GetItem("DarkSoul"), 100);
+                Terraria.Recipe recipe = CreateRecipe();
+                recipe.AddIngredient(Mod.Find<ModItem>("MiakodaNew").Type);
+                recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100);
                 recipe.AddTile(TileID.DemonAltar);
-                recipe.SetResult(this);
-                recipe.AddRecipe();
+
+                recipe.Register();
             }
         }
     }

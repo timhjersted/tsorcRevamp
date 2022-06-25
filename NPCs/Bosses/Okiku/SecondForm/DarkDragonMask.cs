@@ -1,13 +1,16 @@
 using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 
-namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
+namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
+{
     [AutoloadBossHead]
-    public class DarkDragonMask : ModNPC {
+    public class DarkDragonMask : ModNPC
+    {
 
         public bool DragonSpawned = false;
         public bool DragonDead = false;
@@ -18,54 +21,58 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
         int randPosX = 0;
         int nextRandPosX = 0;
 
-        public override void SetDefaults() {
-            npc.width = 28;
-            npc.height = 44;
-            npc.aiStyle = -1;
-            npc.damage = 1;
-            npc.defense = 15;
-            npc.boss = true;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.lifeMax = 14000;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath1;
-            npc.knockBackResist = 0f;
-            npc.npcSlots = 6f;
-            npc.buffImmune[BuffID.Poisoned] = true;
-            npc.buffImmune[BuffID.OnFire] = true;
-            npc.buffImmune[BuffID.Confused] = true;
+        public override void SetDefaults()
+        {
+            NPC.width = 28;
+            NPC.height = 44;
+            NPC.aiStyle = -1;
+            NPC.damage = 1;
+            NPC.defense = 15;
+            NPC.boss = true;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.lifeMax = 14000;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.knockBackResist = 0f;
+            NPC.npcSlots = 6f;
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
             despawnHandler = new NPCDespawnHandler("You've been slain at the hand of Attraidies...", Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
 
-        public override void SetStaticDefaults() {
-            Main.npcFrameCount[npc.type] = 7;
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 7;
             DisplayName.SetDefault("Attraidies");
         }
 
         public int ObscureDropDamage = 50;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        {
         }
 
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
             //Basic despawn handler and passive dust
-            despawnHandler.TargetAndDespawn(npc.whoAmI);            
-            int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 62, 0, 0, 100, Color.White, 1.0f);
+            despawnHandler.TargetAndDespawn(NPC.whoAmI);
+            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 62, 0, 0, 100, Color.White, 1.0f);
             Main.dust[dust].noGravity = true;
 
             DispelGravitation();
 
             //Spawn dragon
-            if (DragonSpawned == false) {
+            if (DragonSpawned == false)
+            {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    DragonIndex = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<ShadowDragonHead>(), npc.whoAmI);
+                    DragonIndex = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<ShadowDragonHead>(), NPC.whoAmI);
                     Main.npc[DragonIndex].velocity.Y = -10;
                 }
                 DragonSpawned = true;
-            }           
+            }
             if (!NPC.AnyNPCs(ModContent.NPCType<ShadowDragonHead>()))
             {
                 DragonDead = true;
@@ -74,37 +81,37 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
                 {
                     randPosX = nextRandPosX;
                     nextRandPosX = Main.rand.Next(-250, 250);
-                    npc.netUpdate = true;                    
+                    NPC.netUpdate = true;
                 }
 
                 //While we're in the "spam obscure drops" phase               
                 if (TimerSpawn <= 600)
                 {
-                    npc.position.X = Main.player[npc.target].position.X + randPosX;
-                    npc.position.Y = Main.player[npc.target].position.Y - 300;
+                    NPC.position.X = Main.player[NPC.target].position.X + randPosX;
+                    NPC.position.Y = Main.player[NPC.target].position.Y - 300;
 
                     TimerRain++;
                     if (TimerRain >= 2)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(npc.Center.X, npc.Center.Y, Main.rand.Next(-120, 120) / 10, -7, ModContent.ProjectileType<ObscureDrop>(), ObscureDropDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, Main.rand.Next(-120, 120) / 10, -7, ModContent.ProjectileType<ObscureDrop>(), ObscureDropDamage, 0f, Main.myPlayer);
 
                             if (Main.rand.Next(4) == 0)
                             {
-                                Projectile.NewProjectile(npc.Center.X, npc.Center.Y, Main.rand.Next(Main.rand.Next(-160, -120), Main.rand.Next(120, 160)) / 10, -7, ModContent.ProjectileType<ObscureDrop>(), ObscureDropDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, Main.rand.Next(Main.rand.Next(-160, -120), Main.rand.Next(120, 160)) / 10, -7, ModContent.ProjectileType<ObscureDrop>(), ObscureDropDamage, 0f, Main.myPlayer);
                             }
                         }
 
                         TimerRain = 0;
-                    }                    
+                    }
                 }
-                
+
                 //While we're in the "channeling dragon" phase
                 if (TimerSpawn > 600 && TimerSpawn < 780)
                 {
-                    npc.velocity.X = 0;
-                    npc.velocity.Y = 0;
+                    NPC.velocity.X = 0;
+                    NPC.velocity.Y = 0;
                     ChannellingDragon = true;
                 }
 
@@ -113,7 +120,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
                     ChannellingDragon = false;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        DragonIndex = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<ShadowDragonHead>(), npc.whoAmI);
+                        DragonIndex = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<ShadowDragonHead>(), NPC.whoAmI);
                         Main.npc[DragonIndex].velocity.Y = -10;
                     }
                     TimerSpawn = 0;
@@ -126,13 +133,13 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
                 if (!Main.npc[DragonIndex].active || (Main.npc[DragonIndex].type != ModContent.NPCType<ShadowDragonHead>()))
                 {
                     int? newIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<ShadowDragonHead>());
-                    if(newIndex != null)
+                    if (newIndex != null)
                     {
                         DragonIndex = newIndex.Value;
                     }
                 }
 
-                npc.Center = Main.npc[DragonIndex].Center;                
+                NPC.Center = Main.npc[DragonIndex].Center;
             }
         }
 
@@ -141,11 +148,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
             //Dispel gravitation buffs
             for (int i = 0; i < 10; i++)
             {
-                if (Main.player[npc.target].buffType[i] == 18)
+                if (Main.player[NPC.target].buffType[i] == 18)
                 {
-                    Main.player[npc.target].buffType[i] = 0;
-                    Main.player[npc.target].buffTime[i] = 0;
-                    if (Main.netMode != NetmodeID.Server && Main.myPlayer == npc.target)
+                    Main.player[NPC.target].buffType[i] = 0;
+                    Main.player[NPC.target].buffTime[i] = 0;
+                    if (Main.netMode != NetmodeID.Server && Main.myPlayer == NPC.target)
                     {
                         //This one can stay a NewText because it already checks != server and does need to run only for that one player
                         Main.NewText("What a horrible night to have your Gravitation buff dispelled...", 150, 150, 150);
@@ -168,21 +175,22 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
             nextRandPosX = reader.ReadInt32();
         }
 
-        public override void NPCLoot()
-        {            
+        public override void OnKill()
+        {
             for (int i = 0; i < 50; i++)
             {
-                int dustDeath = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), npc.width, npc.height, 54, npc.velocity.X + Main.rand.Next(-10, 10), npc.velocity.Y + Main.rand.Next(-10, 10), 200, Color.White, 4f);
+                int dustDeath = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.White, 4f);
                 Main.dust[dustDeath].noGravity = true;
             }
 
-            if(Main.npc[DragonIndex].type == ModContent.NPCType<ShadowDragonHead>()){
+            if (Main.npc[DragonIndex].type == ModContent.NPCType<ShadowDragonHead>())
+            {
                 Main.npc[DragonIndex].life = 0;
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ThirdForm.Okiku>(), 0);
+                NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<ThirdForm.Okiku>(), 0);
                 UsefulFunctions.BroadcastText("??????????????????? A booming laughter echoes all around you!", new Color(175, 75, 255));
             }
         }
@@ -192,70 +200,71 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
         {
             potionType = ItemID.GreaterHealingPotion;
         }
-        public override void FindFrame(int frameHeight) {
+        public override void FindFrame(int frameHeight)
+        {
 
             int num = 1;
             if (!Main.dedServ)
             {
-                num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
+                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
             }
 
-            if ((npc.velocity.X > -2 && npc.velocity.X < 2) && (npc.velocity.Y > -2 && npc.velocity.Y < 2) && !ChannellingDragon)
+            if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2) && !ChannellingDragon)
             {
-                npc.frameCounter = 0;
-                npc.frame.Y = 0;
-                if (npc.position.X > Main.player[npc.target].position.X)
+                NPC.frameCounter = 0;
+                NPC.frame.Y = 0;
+                if (NPC.position.X > Main.player[NPC.target].position.X)
                 {
-                    npc.spriteDirection = -1;
+                    NPC.spriteDirection = -1;
                 }
                 else
                 {
-                    npc.spriteDirection = 1;
+                    NPC.spriteDirection = 1;
                 }
             }
 
             if (DragonDead)
             {
-                if (npc.alpha > 40) npc.alpha -= 1;
-                if (npc.alpha < 40) npc.alpha += 1;
+                if (NPC.alpha > 40) NPC.alpha -= 1;
+                if (NPC.alpha < 40) NPC.alpha += 1;
             }
             else
             {
-                if (npc.alpha < 200) npc.alpha += 1;
-                if (npc.alpha > 200) npc.alpha -= 1;
+                if (NPC.alpha < 200) NPC.alpha += 1;
+                if (NPC.alpha > 200) NPC.alpha -= 1;
             }
 
             if (ChannellingDragon)
             {
-                npc.spriteDirection = npc.direction;
-                npc.frameCounter++;
-                if (npc.frameCounter < 8)
+                NPC.spriteDirection = NPC.direction;
+                NPC.frameCounter++;
+                if (NPC.frameCounter < 8)
                 {
-                    npc.frame.Y = num * 3;
+                    NPC.frame.Y = num * 3;
                 }
-                else if (npc.frameCounter < 16)
+                else if (NPC.frameCounter < 16)
                 {
-                    npc.frame.Y = num * 4;
+                    NPC.frame.Y = num * 4;
                 }
-                else if (npc.frameCounter < 24)
+                else if (NPC.frameCounter < 24)
                 {
-                    npc.frame.Y = num * 5;
+                    NPC.frame.Y = num * 5;
                 }
-                else if (npc.frameCounter < 32)
+                else if (NPC.frameCounter < 32)
                 {
-                    npc.frame.Y = num * 4;
+                    NPC.frame.Y = num * 4;
                 }
                 else
                 {
-                    npc.frameCounter = 0;
+                    NPC.frameCounter = 0;
                 }
             }
 
             else
             {
-                if (npc.velocity.X > 1.5f) npc.frame.Y = num;
-                if (npc.velocity.X < -1.5f) npc.frame.Y = num * 2;
-                if (npc.velocity.X > -1.5f && npc.velocity.X < 1.5f) npc.frame.Y = 0;
+                if (NPC.velocity.X > 1.5f) NPC.frame.Y = num;
+                if (NPC.velocity.X < -1.5f) NPC.frame.Y = num * 2;
+                if (NPC.velocity.X > -1.5f && NPC.velocity.X < 1.5f) NPC.frame.Y = 0;
             }
         }
     }

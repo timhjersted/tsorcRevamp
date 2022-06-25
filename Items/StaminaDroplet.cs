@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items
 
         public override void SetDefaults()
         {
-            item.width = 14;
-            item.height = 20;
-            item.rare = ItemRarityID.Green;
+            Item.width = 14;
+            Item.height = 20;
+            Item.rare = ItemRarityID.Green;
         }
 
         public override bool ItemSpace(Player player)
@@ -23,11 +23,12 @@ namespace tsorcRevamp.Items
 
         public override bool OnPickup(Player player)
         {
-            if (player.whoAmI == Main.myPlayer) /*i dont know if this is necessary but better safe than sorry*/ {
+            if (player.whoAmI == Main.myPlayer) /*i dont know if this is necessary but better safe than sorry*/
+            {
                 tsorcRevampStaminaPlayer stamPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
                 float amount = stamPlayer.staminaResourceMax2 / 2;
 
-                Main.PlaySound(SoundID.Drip, -1, -1, 0, 0.3f);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Drip with { Volume = 0.3f});
 
 
                 if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
@@ -37,13 +38,15 @@ namespace tsorcRevamp.Items
 
                 stamPlayer.staminaResourceCurrent += amount;
 
-                if (stamPlayer.staminaResourceCurrent > stamPlayer.staminaResourceMax2) {
+                if (stamPlayer.staminaResourceCurrent > stamPlayer.staminaResourceMax2)
+                {
                     stamPlayer.staminaResourceCurrent = stamPlayer.staminaResourceMax2;
                 }
                 CombatText.NewText(player.getRect(), Color.YellowGreen, (int)amount);
-                for (int i = 0; i < 15; i++) {
+                for (int i = 0; i < 15; i++)
+                {
                     Dust.NewDust(player.position, player.height, player.width, 107, 0, 0, 100, default, Main.rand.NextFloat(.7f, 1.2f));
-                } 
+                }
             }
 
             return false;
@@ -51,16 +54,16 @@ namespace tsorcRevamp.Items
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Microsoft.Xna.Framework.Color lightColor, Microsoft.Xna.Framework.Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
-            Texture2D texture = Main.itemTexture[item.type];
-            spriteBatch.Draw(texture, item.position - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), Color.White, 0f, new Vector2(2, 0), item.scale, SpriteEffects.None, 0f);
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            spriteBatch.Draw(texture, Item.position - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), Color.White, 0f, new Vector2(2, 0), Item.scale, SpriteEffects.None, 0);
 
             return false;
         }
         public override bool GrabStyle(Player player)
         {
-            Vector2 vectorItemToPlayer = player.Center - item.Center;
-            Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.75f;
-            item.velocity = item.velocity + movement;
+            Vector2 vectorItemToPlayer = player.Center - Item.Center;
+            Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 10f;
+            Item.velocity = Item.velocity + movement;
             return true;
         }
 

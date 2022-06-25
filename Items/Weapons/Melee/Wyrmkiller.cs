@@ -1,39 +1,44 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.NPCs;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class Wyrmkiller : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class Wyrmkiller : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A sword used to kill wyverns and dragons." +
                                 "\nDoes 8x damage against flying beasts.");
         }
-        public override void SetDefaults() {
-            item.rare = ItemRarityID.Green;
-            item.damage = 46;
-            item.height = 32;
-            item.knockBack = 5;
-            item.melee = true;
-            item.scale = .9f;
-            item.useAnimation = 21;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
-            item.value = 140000;
-            item.width = 32;
+        public override void SetDefaults()
+        {
+            Item.rare = ItemRarityID.Green;
+            Item.damage = 46;
+            Item.height = 32;
+            Item.knockBack = 5;
+            Item.DamageType = DamageClass.Melee;
+            Item.scale = .9f;
+            Item.useAnimation = 21;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 21;
+            Item.value = 140000;
+            Item.width = 32;
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GoldBroadsword, 1);
             recipe.AddIngredient(ItemID.SoulofFlight, 30);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
+        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        {
             //what a mess lmao, should probably be a switch but im lazy
             if (target.type == NPCID.WyvernBody
                 || target.type == NPCID.WyvernBody2
@@ -72,7 +77,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()
                 || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessLegs>()
                 || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessTail>()
-                ) {
+                )
+            {
                 damage *= 8;
             }
         }

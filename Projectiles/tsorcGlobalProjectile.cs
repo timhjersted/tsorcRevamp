@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,7 +8,8 @@ namespace tsorcRevamp.Projectiles
 {
     class tsorcGlobalProjectile : GlobalProjectile
     {
-        public override bool PreAI(Projectile projectile) {
+        public override bool PreAI(Projectile projectile)
+        {
             if (projectile.owner < Main.maxPlayers && Main.player[projectile.owner].active)
             {
                 Player player = Main.player[projectile.owner];
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles
                         Main.dust[dust].noGravity = true;
                     }
                 }
-                if (projectile.owner == Main.myPlayer && !projectile.hostile && projectile.melee)
+                if (projectile.owner == Main.myPlayer && !projectile.hostile && projectile.DamageType == DamageClass.Melee)
                 {
                     if (modPlayer.MagicWeapon)
                     {
@@ -103,7 +103,7 @@ namespace tsorcRevamp.Projectiles
             }
 
             if (projectile.type == ProjectileID.IceBolt || projectile.type == ProjectileID.EnchantedBeam || projectile.type == ProjectileID.SwordBeam || projectile.type == ProjectileID.FrostBoltSword
-                || projectile.type == ProjectileID.LightBeam || projectile.type == ProjectileID.NightBeam || projectile.type == ProjectileID.TerraBeam) 
+                || projectile.type == ProjectileID.LightBeam || projectile.type == ProjectileID.NightBeam || projectile.type == ProjectileID.TerraBeam)
             {
                 projectile.ai[1]++;
                 if (projectile.ai[1] > 15)
@@ -123,30 +123,34 @@ namespace tsorcRevamp.Projectiles
                 }
                 if (projectile.type == ProjectileID.PinkLaser)
                 {
-                    Projectile.NewProjectile(projectile.Center, projectile.velocity, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -2, projectile.owner);
+                    Projectile.NewProjectile(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -2, projectile.owner);
                     projectile.Kill();
                 }
             }
             return true;
         }
-        public override void OnHitNPC(Projectile projectile, NPC target, int damage, float knockback, bool crit) {
+        public override void OnHitNPC(Projectile projectile, NPC target, int damage, float knockback, bool crit)
+        {
             Player player = Main.player[projectile.owner];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-            if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaCrescentBoost && projectile.type != (int)ModContent.ProjectileType<MiakodaCrescent>()) {
+            if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaCrescentBoost && projectile.type != (int)ModContent.ProjectileType<MiakodaCrescent>())
+            {
                 target.AddBuff(ModContent.BuffType<Buffs.CrescentMoonlight>(), 180); // Adds the ExampleJavelin debuff for a very small DoT
             }
 
-            if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaNewBoost && projectile.type != (int)ModContent.ProjectileType<MiakodaNew>()) {
+            if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaNewBoost && projectile.type != (int)ModContent.ProjectileType<MiakodaNew>())
+            {
                 target.AddBuff(BuffID.Midas, 300);
             }
 
-            if (projectile.owner == Main.myPlayer && (modPlayer.MagicWeapon || modPlayer.GreatMagicWeapon) && projectile.melee) {
-                Main.PlaySound(SoundID.NPCHit44.WithVolume(0.3f), target.position);
-            }
-            if (projectile.owner == Main.myPlayer && modPlayer.CrystalMagicWeapon && projectile.melee)
+            if (projectile.owner == Main.myPlayer && (modPlayer.MagicWeapon || modPlayer.GreatMagicWeapon) && projectile.DamageType == DamageClass.Melee)
             {
-                Main.PlaySound(SoundID.Item27.WithVolume(0.3f), target.position);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit44 with { Volume = 0.3f }, target.position);
+            }
+            if (projectile.owner == Main.myPlayer && modPlayer.CrystalMagicWeapon && projectile.DamageType == DamageClass.Melee)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.3f }, target.position);
             }
         }
 
@@ -170,10 +174,10 @@ namespace tsorcRevamp.Projectiles
 
         public override bool PreKill(Projectile projectile, int timeLeft)
         {
-            if(projectile.type == ProjectileID.SandBallFalling && projectile.velocity.X != 0)
+            if (projectile.type == ProjectileID.SandBallFalling && projectile.velocity.X != 0)
             {
                 return false;
-            } 
+            }
 
             else
             {

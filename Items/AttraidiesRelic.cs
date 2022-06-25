@@ -16,23 +16,23 @@ namespace tsorcRevamp.Items
         }
         public override void SetDefaults()
         {
-            item.width = 34;
-            item.height = 40;
-            item.consumable = true;
-            item.maxStack = 99;
-            item.value = 1000;
-            item.rare = ItemRarityID.Blue;
-            item.useTime = 45;
-            item.useAnimation = 45;
-            item.UseSound = mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EvilLaugh");
-            item.scale = 1f;
-            item.useStyle = ItemUseStyleID.HoldingUp;
+            Item.width = 34;
+            Item.height = 40;
+            Item.consumable = true;
+            Item.maxStack = 99;
+            Item.value = 1000;
+            Item.rare = ItemRarityID.Blue;
+            Item.useTime = 45;
+            Item.useAnimation = 45;
+            Item.UseSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/EvilLaugh");
+            Item.scale = 1f;
+            Item.useStyle = ItemUseStyleID.HoldUp;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
-            if (!NPC.AnyNPCs(mod.NPCType("AttraidiesIllusion")))
+            if (!NPC.AnyNPCs(Mod.Find<ModNPC>("AttraidiesIllusion").Type))
             {
-                NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType("AttraidiesIllusion"));
+                NPC.SpawnOnPlayer(player.whoAmI, Mod.Find<ModNPC>("AttraidiesIllusion").Type);
                 return true;
             }
             else

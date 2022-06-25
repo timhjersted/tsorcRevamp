@@ -1,11 +1,13 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using ReLogic.Graphics;
+using System;
 using TerraUI.Utilities;
 
-namespace TerraUI.Objects {
-    public class UINumberBox : UIObject {
+namespace TerraUI.Objects
+{
+    public class UINumberBox : UIObject
+    {
         private const int frameDelay = 9;
         private int up = 0;
         private int down = 0;
@@ -25,13 +27,17 @@ namespace TerraUI.Objects {
         /// <summary>
         /// The maximum value of the UINumberBox.
         /// </summary>
-        public int Maximum {
+        public int Maximum
+        {
             get { return maximum; }
-            set {
-                if(value <= Minimum) {
+            set
+            {
+                if (value <= Minimum)
+                {
                     maximum = Minimum + 1;
                 }
-                else {
+                else
+                {
                     maximum = value;
                 }
             }
@@ -39,13 +45,17 @@ namespace TerraUI.Objects {
         /// <summary>
         /// The minimum value of the UINumberBox.
         /// </summary>
-        public int Minimum {
+        public int Minimum
+        {
             get { return minimum; }
-            set {
-                if(value >= Maximum) {
+            set
+            {
+                if (value >= Maximum)
+                {
                     minimum = Maximum - 1;
                 }
-                else {
+                else
+                {
                     minimum = value;
                 }
             }
@@ -53,19 +63,23 @@ namespace TerraUI.Objects {
         /// <summary>
         /// The current value of the UINumberBox.
         /// </summary>
-        public int Value {
+        public int Value
+        {
             get { return Convert.ToInt32(textBox.Text); }
-            set {
+            set
+            {
                 int oldValue = this.value;
                 this.value = (int)MathHelper.Clamp(value, Minimum, Maximum);
 
-                if(textBox != null) {
+                if (textBox != null)
+                {
                     textBox.TextChanged -= TextBox_TextChanged;
                     textBox.Text = this.value.ToString();
                     textBox.TextChanged += TextBox_TextChanged;
                 }
 
-                if(ValueChanged != null && oldValue != this.value) {
+                if (ValueChanged != null && oldValue != this.value)
+                {
                     ValueChanged(this, new ValueChangedEventArgs<int>(oldValue, this.value));
                 }
             }
@@ -73,13 +87,17 @@ namespace TerraUI.Objects {
         /// <summary>
         /// The amount that the value of the UINumberBox changes with each Increase() or Decrease() call.
         /// </summary>
-        public uint StepAmount {
+        public uint StepAmount
+        {
             get { return stepAmount; }
-            set {
-                if(value < 1) {
+            set
+            {
+                if (value < 1)
+                {
                     stepAmount = 1;
                 }
-                else {
+                else
+                {
                     stepAmount = value;
                 }
             }
@@ -87,28 +105,32 @@ namespace TerraUI.Objects {
         /// <summary>
         /// The background color of the UINumberBox text.
         /// </summary>
-        public Color TextBackColor {
+        public Color TextBackColor
+        {
             get { return textBox.BackColor; }
             set { textBox.BackColor = value; }
         }
         /// <summary>
         /// The background color of the UINumberBox up button.
         /// </summary>
-        public Color UpBackColor {
+        public Color UpBackColor
+        {
             get { return upButton.BackColor; }
             set { upButton.BackColor = value; }
         }
         /// <summary>
         /// The background color of the UINumberBox down button.
         /// </summary>
-        public Color DownBackColor {
+        public Color DownBackColor
+        {
             get { return downButton.BackColor; }
             set { downButton.BackColor = value; }
         }
         /// <summary>
         /// The text color of the UINumberBox.
         /// </summary>
-        public Color TextColor {
+        public Color TextColor
+        {
             get { return textBox.TextColor; }
             set { textBox.TextColor = value; }
         }
@@ -129,7 +151,8 @@ namespace TerraUI.Objects {
         /// <param name="parent">parent UIObject</param>
         public UINumberBox(Vector2 position, Vector2 size, DynamicSpriteFont font, int value = 0, int minimum = 0,
             int maximum = 100, uint stepAmount = 1, UIObject parent = null)
-            : base(position, size, parent, true, true) {
+            : base(position, size, parent, true, true)
+        {
             Font = font;
             Value = value;
             Minimum = minimum;
@@ -154,17 +177,20 @@ namespace TerraUI.Objects {
             downButton.Click += DownButton_Click;
         }
 
-        private void TextBox_TextChanged(UIObject sender, ValueChangedEventArgs<string> e) {
+        private void TextBox_TextChanged(UIObject sender, ValueChangedEventArgs<string> e)
+        {
             // ensure that the textbox text doesn't contain a leading zero, stays within bounds, etc.
             Value = (string.IsNullOrWhiteSpace(textBox.Text) ? Value = Minimum : Convert.ToInt32(textBox.Text));
         }
 
-        private bool UpButton_Click(UIObject sender, MouseButtonEventArgs e) {
+        private bool UpButton_Click(UIObject sender, MouseButtonEventArgs e)
+        {
             Increase();
             return true;
         }
 
-        private bool DownButton_Click(UIObject sender, MouseButtonEventArgs e) {
+        private bool DownButton_Click(UIObject sender, MouseButtonEventArgs e)
+        {
             Decrease();
             return true;
         }
@@ -172,31 +198,39 @@ namespace TerraUI.Objects {
         /// <summary>
         /// Increase by the StepAmount.
         /// </summary>
-        private void Increase() {
+        private void Increase()
+        {
             Value += (int)StepAmount;
         }
 
         /// <summary>
         /// Decrease by the StepAmount.
         /// </summary>
-        private void Decrease() {
+        private void Decrease()
+        {
             Value -= (int)StepAmount;
         }
 
         /// <summary>
         /// Update the UINumberBox.
         /// </summary>
-        public override void Update() {
-            if(textBox.Focused) {
-                if(KeyboardUtils.JustPressed(Keys.Up) || KeyboardUtils.HeldDown(Keys.Up)) {
-                    if(up == 0) {
+        public override void Update()
+        {
+            if (textBox.Focused)
+            {
+                if (KeyboardUtils.JustPressed(Keys.Up) || KeyboardUtils.HeldDown(Keys.Up))
+                {
+                    if (up == 0)
+                    {
                         Increase();
                         up = frameDelay;
                     }
                     up--;
                 }
-                else if(KeyboardUtils.JustPressed(Keys.Down) || KeyboardUtils.HeldDown(Keys.Down)) {
-                    if(down == 0) {
+                else if (KeyboardUtils.JustPressed(Keys.Down) || KeyboardUtils.HeldDown(Keys.Down))
+                {
+                    if (down == 0)
+                    {
                         Decrease();
                         down = frameDelay;
                     }

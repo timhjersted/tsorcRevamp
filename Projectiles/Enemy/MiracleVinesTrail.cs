@@ -1,35 +1,41 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class MiracleVinesTrail : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class MiracleVinesTrail : ModProjectile
+    {
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/MiracleVines";
-        public override void SetDefaults() {
-            projectile.width = 15;
-            projectile.height = 15;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.MaxUpdates = 2;
-            projectile.penetrate = 3;
-            projectile.hostile = true;
-            projectile.netUpdate = true;
+        public override void SetDefaults()
+        {
+            Projectile.width = 15;
+            Projectile.height = 15;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.MaxUpdates = 2;
+            Projectile.penetrate = 3;
+            Projectile.hostile = true;
+            Projectile.netUpdate = true;
         }
 
-        public override void AI() {
-            projectile.rotation = (float)Math.Atan2((double)this.projectile.velocity.Y, (double)this.projectile.velocity.X) + 1.57f;
+        public override void AI()
+        {
+            Projectile.rotation = (float)Math.Atan2((double)this.Projectile.velocity.Y, (double)this.Projectile.velocity.X) + 1.57f;
 
-            if (projectile.alpha < 170 && projectile.alpha + 5 >= 170) {
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, 17, projectile.velocity.X * 0.025f, projectile.velocity.Y * 0.025f, 170, default, 1.2f);
+            if (Projectile.alpha < 170 && Projectile.alpha + 5 >= 170)
+            {
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 17, Projectile.velocity.X * 0.025f, Projectile.velocity.Y * 0.025f, 170, default, 1.2f);
             }
-            projectile.alpha += 5;
-            if (projectile.alpha > 210) {
-                projectile.damage = 0;
+            Projectile.alpha += 5;
+            if (Projectile.alpha > 210)
+            {
+                Projectile.damage = 0;
             }
-            if (projectile.alpha >= 255) {
-                projectile.Kill();
+            if (Projectile.alpha >= 255)
+            {
+                Projectile.Kill();
                 NetMessage.SendData(MessageID.KillProjectile, -1, -1, null);
                 return;
             }
@@ -39,7 +45,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         public override void Kill(int timeLeft)
         {
-            projectile.active = false;
+            Projectile.active = false;
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 NetMessage.SendData(MessageID.KillProjectile, -1, -1, null);

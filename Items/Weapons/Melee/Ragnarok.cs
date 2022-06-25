@@ -1,29 +1,33 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    public class Ragnarok : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    public class Ragnarok : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Ragnarok");
 
         }
 
-        public override void SetDefaults() {
-            item.stack = 1;
-            item.rare = ItemRarityID.Cyan;
-            item.useTurn = true;
-            item.autoReuse = true;
-            item.damage = 170;
-            item.knockBack = 10;
-            item.scale = 0.8f;
-            item.maxStack = 1;
-            item.melee = true;
-            item.scale = (float)1.3;
-            item.useAnimation = 15;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
-            item.value = PriceByRarity.Cyan_9;
+        public override void SetDefaults()
+        {
+            Item.stack = 1;
+            Item.rare = ItemRarityID.Cyan;
+            Item.useTurn = true;
+            Item.autoReuse = true;
+            Item.damage = 170;
+            Item.knockBack = 10;
+            Item.scale = 0.8f;
+            Item.maxStack = 1;
+            Item.DamageType = DamageClass.Melee;
+            Item.scale = (float)1.3;
+            Item.useAnimation = 15;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 21;
+            Item.value = PriceByRarity.Cyan_9;
         }
     }
 }

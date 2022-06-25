@@ -1,35 +1,32 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Armors;
-using tsorcRevamp.Items.Accessories;
-using static tsorcRevamp.SpawnHelper;
 
-namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
-    class SwordOfLordGwyn : ModNPC {
+namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
+{
+    class SwordOfLordGwyn : ModNPC
+    {
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sword of Lord Gwyn");
         }
 
-        public override void SetDefaults() {
-            npc.npcSlots = 1;
-            npc.width = 152;
-            npc.height = 152;
-            npc.aiStyle = 23;
-            npc.timeLeft = 22500;
-            npc.knockBackResist = 0;
-            npc.damage = 190;
-            npc.defense = 75;
-            npc.HitSound = SoundID.NPCHit4;
-            npc.DeathSound = SoundID.NPCDeath6;
-            npc.lifeMax = 7500;
-            npc.value = 10000;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
+        public override void SetDefaults()
+        {
+            NPC.npcSlots = 1;
+            NPC.width = 152;
+            NPC.height = 152;
+            NPC.aiStyle = 23;
+            NPC.timeLeft = 22500;
+            NPC.knockBackResist = 0;
+            NPC.damage = 190;
+            NPC.defense = 75;
+            NPC.HitSound = SoundID.NPCHit4;
+            NPC.DeathSound = SoundID.NPCDeath6;
+            NPC.lifeMax = 7500;
+            NPC.value = 10000;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
         }
 
         public override void AI()
@@ -38,10 +35,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
             {
                 for (int i = 0; i < 60; i++)
                 {
-                    int dustID = Dust.NewDust(npc.position, npc.width, npc.height, 6, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
+                    int dustID = Dust.NewDust(NPC.position, NPC.width, NPC.height, 6, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
                     Main.dust[dustID].noGravity = true;
                 }
-                npc.active = false;
+                NPC.active = false;
             }
         }
     }

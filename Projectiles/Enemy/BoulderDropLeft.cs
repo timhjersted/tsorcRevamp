@@ -16,27 +16,27 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetDefaults()
         {
-            projectile.aiStyle = -1;
-            projectile.alpha = 255; //invis
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.height = 6;
-            projectile.width = 6;
-            projectile.scale = 1f;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 4;
+            Projectile.aiStyle = -1;
+            Projectile.alpha = 255; //invis
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.height = 6;
+            Projectile.width = 6;
+            Projectile.scale = 1f;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 4;
         }
 
         public override void AI()
         {
-            projectile.velocity.X = 0;
-            projectile.velocity.Y = 0;
+            Projectile.velocity.X = 0;
+            Projectile.velocity.Y = 0;
         }
 
         public override bool PreKill(int timeLeft)
         {
-            projectile.type = ProjectileID.GrenadeI;
-            Projectile.NewProjectile(projectile.Center, new Vector2(0, 0), ProjectileID.Boulder, 70, 1, Main.myPlayer);
+            Projectile.type = ProjectileID.GrenadeI;
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(0, 0), ProjectileID.Boulder, 70, 1, Main.myPlayer);
 
             return true;
         }

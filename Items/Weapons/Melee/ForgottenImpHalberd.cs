@@ -1,28 +1,32 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenImpHalberd : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenImpHalberd : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A crescent shaped spear used by imps.");
         }
 
-        public override void SetDefaults() {
-            item.damage = 60;
-            item.knockBack = 6;
-            item.melee = true;
-            item.noMelee = true;
-            item.noUseGraphic = true;
-            item.rare = ItemRarityID.Pink;
-            item.shootSpeed = 7;
-            item.useAnimation = 16;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 8;
-            item.value = PriceByRarity.Pink_5;
-            item.height = 50;
-            item.width = 50;
-            item.shoot = ModContent.ProjectileType<Projectiles.ForgottenImpHalberd>();
+        public override void SetDefaults()
+        {
+            Item.damage = 60;
+            Item.knockBack = 6;
+            Item.DamageType = DamageClass.Melee;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
+            Item.rare = ItemRarityID.Pink;
+            Item.shootSpeed = 7;
+            Item.useAnimation = 16;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 8;
+            Item.value = PriceByRarity.Pink_5;
+            Item.height = 50;
+            Item.width = 50;
+            Item.shoot = ModContent.ProjectileType<Projectiles.ForgottenImpHalberd>();
         }
     }
 }

@@ -11,12 +11,12 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetDefaults()
         {
-            projectile.aiStyle = 0;
-            projectile.hostile = true;
-            projectile.tileCollide = true;
-            projectile.height = 10;
-            projectile.penetrate = -1;
-            projectile.width = 10;
+            Projectile.aiStyle = 0;
+            Projectile.hostile = true;
+            Projectile.tileCollide = true;
+            Projectile.height = 10;
+            Projectile.penetrate = -1;
+            Projectile.width = 10;
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
@@ -26,11 +26,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
-            projectile.alpha = 255;
+            Projectile.alpha = 255;
 
             if (Main.rand.Next(4) == 0)
             {
-                int z = Dust.NewDust(projectile.position, projectile.width, projectile.height, 6, 0f, 0f, 120, default(Color), Main.rand.NextFloat(1.5f, 3.5f));
+                int z = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6, 0f, 0f, 120, default(Color), Main.rand.NextFloat(1.5f, 3.5f));
                 Main.dust[z].noGravity = true;
             }
 

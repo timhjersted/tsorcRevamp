@@ -5,7 +5,7 @@ namespace tsorcRevamp.Buffs
 {
     class CrystalMagicWeapon : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Crystal Magic Weapon");
             Description.SetDefault("Your weapon is imbued with crystalline magic!");

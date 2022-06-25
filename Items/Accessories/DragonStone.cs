@@ -2,34 +2,39 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
-    public class DragonStone : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Accessories
+{
+    public class DragonStone : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Imbues swords with fire, raises damage dealt by 5% and provides immunity to" +
                                 "\nmost flying creatures, lava, catching on fire, knockback, and fire blocks.");
         }
 
-        public override void SetDefaults() {
-            item.width = 26;
-            item.height = 26;
-            item.accessory = true;
-            item.value = PriceByRarity.LightRed_4;
-            item.rare = ItemRarityID.LightRed;
+        public override void SetDefaults()
+        {
+            Item.width = 26;
+            Item.height = 26;
+            Item.accessory = true;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.rare = ItemRarityID.LightRed;
         }
 
         /*public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofFlight, 70);
-            recipe.AddIngredient(mod.GetItem("RedTitanite"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
         */
 
-        public override void UpdateEquip(Player player) {
-            player.allDamage += 0.05f;
+        public override void UpdateEquip(Player player)
+        {
+            player.GetDamage(DamageClass.Generic) += 0.05f;
             player.noKnockback = true;
             player.fireWalk = true;
             player.lavaImmune = true;

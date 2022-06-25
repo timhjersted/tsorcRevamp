@@ -1,16 +1,15 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+﻿using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs {
-    class DispelShadow : ModBuff {
+namespace tsorcRevamp.Buffs
+{
+    class DispelShadow : ModBuff
+    {
 
-        public override bool Autoload(ref string name, ref string texture) {
-            texture = "tsorcRevamp/Buffs/CurseBuildup"; //enemy only buff, so it doesnt need a real icon
-            return base.Autoload(ref name, ref texture);
-        }
+        //Generic texture since this buff is enemy-only
+        public override string Texture => "tsorcRevamp/Buffs/ArmorDrug";
 
-        public override void SetDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Dispel Shadow");
             Description.SetDefault("Your defense has been dispelled");
         }

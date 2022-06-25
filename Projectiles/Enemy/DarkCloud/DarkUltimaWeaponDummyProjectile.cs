@@ -1,9 +1,6 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.ID;
 
 namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 {
@@ -11,13 +8,13 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
     {
         public override void SetDefaults()
         {
-            projectile.aiStyle = -1;
-            projectile.width = 30;
-            projectile.height = 30;
-            projectile.hostile = true;
-            projectile.penetrate = 9999;
-            projectile.melee = true;
-            projectile.tileCollide = false;
+            Projectile.aiStyle = -1;
+            Projectile.width = 30;
+            Projectile.height = 30;
+            Projectile.hostile = true;
+            Projectile.penetrate = 9999;
+            Projectile.DamageType = DamageClass.Melee;
+            Projectile.tileCollide = false;
         }
         public override void SetStaticDefaults()
         {
@@ -25,8 +22,8 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
         }
         public NPC Sword
         {
-            get => Main.npc[(int)projectile.ai[0]];
-            set => Main.npc[(int)projectile.ai[0]] = value;
+            get => Main.npc[(int)Projectile.ai[0]];
+            set => Main.npc[(int)Projectile.ai[0]] = value;
         }
         public NPC DarkCloud
         {
@@ -40,35 +37,35 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
         }
 
         public override void AI()
-        {            
+        {
             if (Sword == null || Sword.active == false || DarkCloud == null || DarkCloud.active == false)
             {
-                projectile.Kill();
+                Projectile.Kill();
             }
 
-            if (projectile.ai[1] == 0)
+            if (Projectile.ai[1] == 0)
             {
-                projectile.Center = SwordCenter + new Vector2(16, 0).RotatedBy(Sword.rotation + MathHelper.ToRadians(-45));
+                Projectile.Center = SwordCenter + new Vector2(16, 0).RotatedBy(Sword.rotation + MathHelper.ToRadians(-45));
             }
-            if (projectile.ai[1] == 1)
+            if (Projectile.ai[1] == 1)
             {
-                projectile.Center = SwordCenter + new Vector2(32, 0).RotatedBy(Sword.rotation + MathHelper.ToRadians(-45));
+                Projectile.Center = SwordCenter + new Vector2(32, 0).RotatedBy(Sword.rotation + MathHelper.ToRadians(-45));
             }
-            if (projectile.ai[1] == 2)
+            if (Projectile.ai[1] == 2)
             {
-                projectile.Center = SwordCenter + new Vector2(48, 0).RotatedBy(Sword.rotation + MathHelper.ToRadians(-45));
+                Projectile.Center = SwordCenter + new Vector2(48, 0).RotatedBy(Sword.rotation + MathHelper.ToRadians(-45));
             }
-            else if (projectile.ai[1] == 3)
+            else if (Projectile.ai[1] == 3)
             {
-                projectile.Center = SwordCenter + new Vector2(64, 0).RotatedBy(Sword.rotation + MathHelper.ToRadians(-45));
+                Projectile.Center = SwordCenter + new Vector2(64, 0).RotatedBy(Sword.rotation + MathHelper.ToRadians(-45));
             }
-            else if (projectile.ai[1] == 4)
+            else if (Projectile.ai[1] == 4)
             {
-                projectile.Center = SwordCenter;
+                Projectile.Center = SwordCenter;
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             return false;
         }

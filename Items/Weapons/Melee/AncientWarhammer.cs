@@ -1,7 +1,8 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
     class AncientWarhammer : ModItem
     {
         public override void SetStaticDefaults()
@@ -14,34 +15,34 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         public override void SetDefaults()
         {
 
-            item.rare = ItemRarityID.Green;
-            item.melee = true;
-            item.damage = 32;
-            item.height = 38;
-            item.width = 38;
-            item.knockBack = 9f;
-            item.maxStack = 1;
-            item.autoReuse = true;
-            item.useTurn = true;
-            item.useAnimation = 40;
-            item.useTime = 29;
-            item.hammer = 65;
-            item.scale = 1.25f;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = PriceByRarity.Green_2;
+            Item.rare = ItemRarityID.Green;
+            Item.DamageType = DamageClass.Melee;
+            Item.damage = 32;
+            Item.height = 38;
+            Item.width = 38;
+            Item.knockBack = 9f;
+            Item.maxStack = 1;
+            Item.autoReuse = true;
+            Item.useTurn = true;
+            Item.useAnimation = 40;
+            Item.useTime = 29;
+            Item.hammer = 65;
+            Item.scale = 1.25f;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = PriceByRarity.Green_2;
 
 
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.TheBreaker, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

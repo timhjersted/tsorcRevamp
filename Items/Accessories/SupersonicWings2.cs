@@ -3,10 +3,13 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
+namespace tsorcRevamp.Items.Accessories
+{
     [AutoloadEquip(EquipType.Wings, EquipType.Shoes)]
-    public class SupersonicWings2 : ModItem {
-        public override void SetStaticDefaults() {
+    public class SupersonicWings2 : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Supersonic Wings II");
             Tooltip.SetDefault("+60% supersonic movement speed and virtually limitless flight" +
                                 "\nPlus all the previous abilities of Supersonic Wings." +
@@ -14,26 +17,29 @@ namespace tsorcRevamp.Items.Accessories {
                                 "\nCompatible with Dragoon Boots and Dragoon Gear.");
         }
 
-        public override void SetDefaults() {
-            item.width = 32;
-            item.height = 28;
-            item.accessory = true;
-            item.value = PriceByRarity.Cyan_9;
-            item.rare = ItemRarityID.Cyan;
+        public override void SetDefaults()
+        {
+            Item.width = 32;
+            Item.height = 28;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Cyan_9;
+            Item.rare = ItemRarityID.Cyan;
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("SupersonicWings"), 1);
-            recipe.AddIngredient(mod.GetItem("SoulOfAttraidies"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 70000);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 70000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
 
-        public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising, 
-                            ref float maxCanAscendMultiplier, ref float maxAscentMultiplier, ref float constantAscend) {
+        public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising,
+                            ref float maxCanAscendMultiplier, ref float maxAscentMultiplier, ref float constantAscend)
+        {
             ascentWhenFalling = 0.85f;
             ascentWhenRising = 0.15f;
             maxCanAscendMultiplier = 1f;
@@ -42,13 +48,16 @@ namespace tsorcRevamp.Items.Accessories {
 
         }
 
-        public override void HorizontalWingSpeeds(Player player, ref float speed, ref float acceleration) {
+        public override void HorizontalWingSpeeds(Player player, ref float speed, ref float acceleration)
+        {
             speed = 9f;
+            acceleration = 0.3f;
         }
 
-        public override void UpdateAccessory(Player player, bool hideVisual) {
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
             player.jumpBoost = true;
-            player.doubleJumpCloud = true;
+            player.hasJumpOption_Cloud = true;
             player.fireWalk = true;
             player.noKnockback = true;
             player.noFallDmg = true;
@@ -62,14 +71,17 @@ namespace tsorcRevamp.Items.Accessories {
 
 
             bool restricted = false;
-            for (int i = 3; i <= 8; i++) {
+            for (int i = 3; i <= 8; i++)
+            {
                 if (player.armor[i].type == ItemID.HermesBoots || player.armor[i].type == ItemID.SpectreBoots
                     || player.armor[i].type == ItemID.LightningBoots || player.armor[i].type == ItemID.FlurryBoots
-                    || player.armor[i].type == ItemID.FrostsparkBoots || player.armor[i].type == ItemID.SailfishBoots) {
+                    || player.armor[i].type == ItemID.FrostsparkBoots || player.armor[i].type == ItemID.SailfishBoots)
+                {
                     restricted = true;
                 }
             }
-            if (!restricted) {
+            if (!restricted)
+            {
                 player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 3;
                 /** W1K's original code
                 if (player.controlLeft) {
@@ -92,7 +104,8 @@ namespace tsorcRevamp.Items.Accessories {
                     }
                 } **/
 
-                if (player.velocity.X > 6 || player.velocity.X < -6) {
+                if (player.velocity.X > 6 || player.velocity.X < -6)
+                {
                     player.waterWalk = true;
                     int sonicDust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 16, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, default, 2f);
                     Main.dust[sonicDust].noGravity = true;

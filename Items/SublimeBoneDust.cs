@@ -17,18 +17,18 @@ namespace tsorcRevamp.Items
 
         public override void SetDefaults()
         {
-            item.width = 24;
-            item.height = 20;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.rare = ItemRarityID.Yellow;
-            item.value = 0;
-            item.maxStack = 10;
-            item.useAnimation = 20;
-            item.useTime = 20;
-            item.shoot = ProjectileID.PurificationPowder;
-            item.shootSpeed = 6f;
-            item.noUseGraphic = true;
-            item.consumable = true;
+            Item.width = 24;
+            Item.height = 20;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.rare = ItemRarityID.Yellow;
+            Item.value = 0;
+            Item.maxStack = 10;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
+            Item.shoot = ProjectileID.PurificationPowder;
+            Item.shootSpeed = 6f;
+            Item.noUseGraphic = true;
+            Item.consumable = true;
         }
 
         public override bool CanUseItem(Player player)
@@ -45,12 +45,12 @@ namespace tsorcRevamp.Items
                 return false;
             }
         }
-        
+
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
-            Texture2D texture = Main.itemTexture[item.type];
-            spriteBatch.Draw(texture, new Vector2(item.position.X - Main.screenPosition.X + item.width * 0.5f, item.position.Y - Main.screenPosition.Y + item.height - texture.Height * 0.5f + 8f),
-                new Rectangle(0, 0, texture.Width, texture.Height), lightColor, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            spriteBatch.Draw(texture, new Vector2(Item.position.X - Main.screenPosition.X + Item.width * 0.5f, Item.position.Y - Main.screenPosition.Y + Item.height - texture.Height * 0.5f + 8f),
+                new Rectangle(0, 0, texture.Width, texture.Height), lightColor, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0);
 
             return false;
         }

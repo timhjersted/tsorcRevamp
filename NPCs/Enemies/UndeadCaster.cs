@@ -1,9 +1,9 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 using static tsorcRevamp.SpawnHelper;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -17,126 +17,126 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void SetDefaults()
         {
-            npc.CloneDefaults(NPCID.GoblinSorcerer);
-            Main.npcFrameCount[npc.type] = 2;
-            aiType = NPCID.GoblinSorcerer;
-            npc.lifeMax = 30;
-            npc.damage = 15;
-            npc.scale = 1f;
-            npc.knockBackResist = 0.1f;
-            npc.value = 650;
-            npc.defense = 10;
-            banner = npc.type;
-            bannerItem = ModContent.ItemType<Banners.UndeadCasterBanner>();
-            npc.height = 44;
-            npc.width = 28;
-            npc.HitSound = SoundID.NPCHit2;
-            npc.DeathSound = SoundID.NPCDeath2;
+            NPC.CloneDefaults(NPCID.GoblinSorcerer);
+            Main.npcFrameCount[NPC.type] = 2;
+            AIType = NPCID.GoblinSorcerer;
+            NPC.lifeMax = 30;
+            NPC.damage = 15;
+            NPC.scale = 1f;
+            NPC.knockBackResist = 0.1f;
+            NPC.value = 650;
+            NPC.defense = 10;
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.UndeadCasterBanner>();
+            NPC.height = 44;
+            NPC.width = 28;
+            NPC.HitSound = SoundID.NPCHit2;
+            NPC.DeathSound = SoundID.NPCDeath2;
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
 
             float chance = 0;
-            Player p = spawnInfo.player;
-            if (!Main.hardMode && p.ZoneRockLayerHeight && !spawnInfo.player.ZoneCrimson && Main.dayTime) return 0.0285f;
-            if (!Main.hardMode && p.ZoneRockLayerHeight && !spawnInfo.player.ZoneCrimson && !Main.dayTime) return 0.05f;
+            Player p = spawnInfo.Player;
+            if (!Main.hardMode && p.ZoneRockLayerHeight && !spawnInfo.Player.ZoneCrimson && Main.dayTime) return 0.0285f;
+            if (!Main.hardMode && p.ZoneRockLayerHeight && !spawnInfo.Player.ZoneCrimson && !Main.dayTime) return 0.05f;
             if (!Main.hardMode && Sky(p) && !Main.dayTime) return 0.033f;
-            if (!Main.hardMode && (spawnInfo.player.ZoneRockLayerHeight && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) && !Main.dayTime) return 0.033f;
+            if (!Main.hardMode && (spawnInfo.Player.ZoneRockLayerHeight && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) && !Main.dayTime) return 0.033f;
 
             return chance;
         }
 
         public override void HitEffect(int hitDirection, double damage)
         {
-            if (npc.life <= 0)
+            if (NPC.life <= 0)
             {
                 for (int i = 0; i < 20; i++)
                 {
-                    int dust = Dust.NewDust(npc.position, npc.width, npc.height, 27, 2 * hitDirection, -1.75f);
+                    int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, 27, 2 * hitDirection, -1.75f);
                 }
-                Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+                Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
 
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 1"), 1f);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 2"), 1f);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 2"), 1f);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 3"), 1f);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 3"), 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 1").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 2").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 2").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 3").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 3").Type, 1f);
             }
         }
 
-        public override void NPCLoot()
+        public override void OnKill()
         {
-            Player player = Main.player[npc.target];
+            Player player = Main.player[NPC.target];
 
-            Item.NewItem(npc.getRect(), ItemID.Heart, 1);
-            Item.NewItem(npc.getRect(), ItemID.Heart, 1);
-            Item.NewItem(npc.getRect(), ItemID.Heart, 1);
-            Item.NewItem(npc.getRect(), ItemID.Diamond, Main.rand.Next(1, 3));
-            if (Main.rand.Next(8) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Diamond, Main.rand.Next(1, 3));
+            if (Main.rand.Next(8) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.Next(8) == 0)
             {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
             }
             else
             {
-                Item.NewItem(npc.getRect(), ItemID.HealingPotion, 2);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HealingPotion, 2);
             }
 
 
             if (Main.rand.NextFloat() <= .20f)
             {
-                Item.NewItem(npc.getRect(), mod.ItemType("WoodenWand"), 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("WoodenWand").Type, 1, false, -1);
             }
             if (Main.rand.NextFloat() <= .1f)
             {
-                Item.NewItem(npc.getRect(), mod.ItemType("WandOfDarkness"), 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("WandOfDarkness").Type, 1, false, -1);
             }
             if (Main.rand.NextFloat() <= .05f)
             {
-                Item.NewItem(npc.getRect(), mod.ItemType("WandOfFire"), 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("WandOfFire").Type, 1, false, -1);
             }
             if (Main.rand.NextFloat() <= .12f)
             {
-                Item.NewItem(npc.getRect(), mod.ItemType("AttraidiesRelic"));
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("AttraidiesRelic").Type);
             }
             if (Main.rand.NextFloat() <= .05f) //lol dead chicken as rare as a fire wand
             {
-                Item.NewItem(npc.getRect(), mod.ItemType("DeadChicken"));
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
             }
             if (Main.rand.NextFloat() <= .1f)
             {
-                Item.NewItem(npc.getRect(), ItemID.SpellTome);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpellTome);
             }
         }
 
-        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
-            Texture2D glowTexture = mod.GetTexture("NPCs/Enemies/UndeadCaster_Glow");
-            SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Texture2D glowTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/UndeadCaster_Glow");
+            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-            if (npc.spriteDirection == 1)
+            if (NPC.spriteDirection == 1)
             {
-                spriteBatch.Draw(glowTexture, npc.Center - Main.screenPosition, new Rectangle(npc.frame.X, npc.frame.Y, 50, 68), lightColor, npc.rotation, new Vector2(25, 42), npc.scale, effects, 0f);
+                spriteBatch.Draw(glowTexture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 50, 68), lightColor, NPC.rotation, new Vector2(25, 42), NPC.scale, effects, 0f);
             }
             else
             {
-                spriteBatch.Draw(glowTexture, npc.Center - Main.screenPosition, new Rectangle(npc.frame.X, npc.frame.Y, 50, 68), lightColor, npc.rotation, new Vector2(25, 42), npc.scale, effects, 0f);
+                spriteBatch.Draw(glowTexture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 50, 68), lightColor, NPC.rotation, new Vector2(25, 42), NPC.scale, effects, 0f);
             }
 
         }
 
         public override void FindFrame(int frameHeight)
         {
-            npc.spriteDirection = npc.direction;
+            NPC.spriteDirection = NPC.direction;
 
-            if (npc.ai[1] > 0f)
+            if (NPC.ai[1] > 0f)
             {
-                npc.frame.Y = 1 * frameHeight;
+                NPC.frame.Y = 1 * frameHeight;
             }
             else
             {
-                npc.frame.Y = 0 * frameHeight;
+                NPC.frame.Y = 0 * frameHeight;
             }
         }
     }

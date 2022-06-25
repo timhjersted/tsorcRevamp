@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
@@ -14,14 +13,14 @@ namespace tsorcRevamp.Projectiles
 
         public override void SetDefaults()
         {
-            projectile.hostile = true;
-            projectile.penetrate = 3;
-            projectile.width = 15;
-            projectile.height = 15;
-            projectile.alpha = 255;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.MaxUpdates = 2;
+            Projectile.hostile = true;
+            Projectile.penetrate = 3;
+            Projectile.width = 15;
+            Projectile.height = 15;
+            Projectile.alpha = 255;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.MaxUpdates = 2;
         }
 
         int distfrommaster = 0;
@@ -29,21 +28,21 @@ namespace tsorcRevamp.Projectiles
         int lastposindex = 0;
         public override void AI()
         {
-            if (this.projectile.timeLeft > 100)
+            if (this.Projectile.timeLeft > 100)
             {
-                this.projectile.rotation -= (float)0.01;
-                this.projectile.position.X = Main.npc[(int)this.projectile.ai[0]].position.X + (float)Math.Sin(this.projectile.rotation) * distfrommaster;
-                this.projectile.position.Y = Main.npc[(int)this.projectile.ai[0]].position.Y + (float)Math.Cos(this.projectile.rotation) * distfrommaster;
-                if (distfrommaster < this.projectile.ai[1]) distfrommaster += 2;
+                this.Projectile.rotation -= (float)0.01;
+                this.Projectile.position.X = Main.npc[(int)this.Projectile.ai[0]].position.X + (float)Math.Sin(this.Projectile.rotation) * distfrommaster;
+                this.Projectile.position.Y = Main.npc[(int)this.Projectile.ai[0]].position.Y + (float)Math.Cos(this.Projectile.rotation) * distfrommaster;
+                if (distfrommaster < this.Projectile.ai[1]) distfrommaster += 2;
             }
             else
             {
-                this.projectile.velocity.X = 0;
-                this.projectile.velocity.Y = 0;
-                this.projectile.scale *= 0.9f;
-                this.projectile.damage = 0;
+                this.Projectile.velocity.X = 0;
+                this.Projectile.velocity.Y = 0;
+                this.Projectile.scale *= 0.9f;
+                this.Projectile.damage = 0;
             }
-            lastpos[lastposindex] = this.projectile.position;
+            lastpos[lastposindex] = this.Projectile.position;
             lastposindex++;
             if (lastposindex > 19) lastposindex = 0;
         }
@@ -57,18 +56,18 @@ namespace tsorcRevamp.Projectiles
             Main.player[Main.myPlayer].AddBuff(39, 300 / expertScaling, false); //cursed inferno
             Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 3600, false); //
 
-       
-            if(Main.rand.Next(10) == 0)
-            Main.player[Main.myPlayer].AddBuff(35, 120 / expertScaling, false); //silenced
+
+            if (Main.rand.Next(10) == 0)
+                Main.player[Main.myPlayer].AddBuff(35, 120 / expertScaling, false); //silenced
             Main.player[Main.myPlayer].AddBuff(32, 600 / expertScaling, false); //slow
             Main.player[Main.myPlayer].AddBuff(39, 600 / expertScaling, false); //cursed inferno
-         }
+        }
 
-        public override void PostDraw(SpriteBatch sp, Color lightColor)
+        public override void PostDraw(Color lightColor)
         {
-        Random rand1 = new Random((int)Main.GameUpdateCount);
-            Texture2D MyTexture = Main.projectileTexture[ModContent.ProjectileType<Projectiles.Comet>()];
-            Rectangle fromrect = new Rectangle(0, 0, this.projectile.width, this.projectile.height);
+            Random rand1 = new Random((int)Main.GameUpdateCount);
+            Texture2D MyTexture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<Projectiles.Comet>()];
+            Rectangle fromrect = new Rectangle(0, 0, this.Projectile.width, this.Projectile.height);
             Vector2 PC;
             Color targetColor = new Color(0, 50, 255, 0);
             int modlastposindex = lastposindex;
@@ -78,19 +77,19 @@ namespace tsorcRevamp.Projectiles
                 float scalemod = rand1.Next(50, 150) / 100f;
                 lastpos[modlastposindex].X += rand1.Next(-1, 1);
                 lastpos[modlastposindex].Y += rand1.Next(-1, 1);
-                PC = lastpos[modlastposindex] + new Vector2(this.projectile.width / 2, this.projectile.height / 2);
+                PC = lastpos[modlastposindex] + new Vector2(this.Projectile.width / 2, this.Projectile.height / 2);
 
 
-                sp.Draw(
+                Main.EntitySpriteDraw(
                             MyTexture,
                             PC - Main.screenPosition,
                             fromrect,
                             targetColor,
-                            this.projectile.rotation + rotmod,
-                            new Vector2(this.projectile.width / 2, this.projectile.height / 2),
-                            1f * (0.1f * i) * this.projectile.scale * scalemod,
+                            this.Projectile.rotation + rotmod,
+                            new Vector2(this.Projectile.width / 2, this.Projectile.height / 2),
+                            1f * (0.1f * i) * this.Projectile.scale * scalemod,
                             SpriteEffects.None,
-                            0f);
+                            0);
                 modlastposindex++;
                 if (modlastposindex > 19) modlastposindex = 0;
 
@@ -103,18 +102,18 @@ namespace tsorcRevamp.Projectiles
             {
                 float rotmod = rand1.Next(-100, 100) / 100f;
                 float scalemod = rand1.Next(50, 150) / 100f;
-                PC = lastpos[modlastposindex] + new Vector2(this.projectile.width / 2, this.projectile.height / 2);
+                PC = lastpos[modlastposindex] + new Vector2(this.Projectile.width / 2, this.Projectile.height / 2);
 
-                sp.Draw(
+                Main.EntitySpriteDraw(
                             MyTexture,
                             PC - Main.screenPosition,
                             fromrect,
                             targetColor,
-                            this.projectile.rotation + rotmod,
-                            new Vector2(this.projectile.width / 2, this.projectile.height / 2),
-                            1f * (0.09f * i) * this.projectile.scale * scalemod,
+                            this.Projectile.rotation + rotmod,
+                            new Vector2(this.Projectile.width / 2, this.Projectile.height / 2),
+                            1f * (0.09f * i) * this.Projectile.scale * scalemod,
                             SpriteEffects.None,
-                            0f);
+                            0);
                 modlastposindex++;
                 if (modlastposindex > 19) modlastposindex = 0;
 

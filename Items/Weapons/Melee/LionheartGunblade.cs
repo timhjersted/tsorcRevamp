@@ -2,29 +2,33 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class LionheartGunblade : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class LionheartGunblade : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("\"Of gunblades, the finest model is the Lionheart.\"");
         }
-        public override void SetDefaults() {
-            item.damage = 50;
-            item.width = 66;
-            item.height = 26;
-            item.knockBack = 7;
-            item.rare = ItemRarityID.LightRed;
-            item.scale = 1.1f;
-            item.shoot = ProjectileID.PurificationPowder;
-            item.shootSpeed = 10;
-            item.useAmmo = AmmoID.Bullet;
-            item.ranged = true;
-            item.melee = true;
-            item.useAnimation = 15;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 45;
-            item.value = PriceByRarity.LightRed_4;
+        public override void SetDefaults()
+        {
+            Item.damage = 50;
+            Item.width = 66;
+            Item.height = 26;
+            Item.knockBack = 7;
+            Item.rare = ItemRarityID.LightRed;
+            Item.scale = 1.1f;
+            Item.shoot = ProjectileID.PurificationPowder;
+            Item.shootSpeed = 10;
+            Item.useAmmo = AmmoID.Bullet;
+            Item.DamageType = DamageClass.Ranged;
+            Item.DamageType = DamageClass.Melee;
+            Item.useAnimation = 15;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 45;
+            Item.value = PriceByRarity.LightRed_4;
         }
     }
 }

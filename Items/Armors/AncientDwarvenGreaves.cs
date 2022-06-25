@@ -2,23 +2,27 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Armors {
+namespace tsorcRevamp.Items.Armors
+{
     [AutoloadEquip(EquipType.Legs)]
-    class AncientDwarvenGreaves : ModItem {
+    class AncientDwarvenGreaves : ModItem
+    {
 
-        public override void SetDefaults() {
-            item.height = item.width = 18;
-            item.defense = 4;
-            item.value = 24000;
+        public override void SetDefaults()
+        {
+            Item.height = Item.width = 18;
+            Item.defense = 4;
+            Item.value = 24000;
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverGreaves);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

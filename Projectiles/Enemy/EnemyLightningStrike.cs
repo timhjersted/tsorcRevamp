@@ -2,19 +2,16 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Terraria;
 using Terraria.Enums;
-using Terraria.GameContent.Shaders;
-using Terraria.Graphics.Effects;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
+namespace tsorcRevamp.Projectiles.Enemy
+{
 
-    public class EnemyLightningStrike : EnemyGenericLaser {
+    public class EnemyLightningStrike : EnemyGenericLaser
+    {
 
         //Titled "EnemyLightningStrike", but could also be used for player projectiles (and indeed is right now).
         //Warning: Highly experimental. Many commented out things are unfinished and do not work yet, others are incomplete.
@@ -30,18 +27,19 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         public override string Texture => base.Texture;
 
-        public override void SetDefaults() {
-            projectile.width = 10;
-            projectile.height = 10;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.magic = true;
-            projectile.hide = true;
-            projectile.timeLeft = 180;
-            projectile.usesLocalNPCImmunity = true;
-            projectile.localNPCHitCooldown = 30;
+        public override void SetDefaults()
+        {
+            Projectile.width = 10;
+            Projectile.height = 10;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.hide = true;
+            Projectile.timeLeft = 180;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 30;
 
             FollowHost = true;
             LaserOrigin = Main.npc[HostIdentifier].Center;
@@ -53,7 +51,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             LaserSize = 1.3f;
             LaserColor = Color.Cyan;
             LaserTexture = TransparentTextureHandler.TransparentTextureType.Lightning;
-            
+
             LaserTextureBody = new Rectangle(0, 0, 10, 4);
             LaserSound = null;
 
@@ -66,9 +64,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         public override void AI()
         {
-            projectile.friendly = true;
-            projectile.hostile = false;
-            projectile.damage = 300;
+            Projectile.friendly = true;
+            Projectile.hostile = false;
             displayDuration--;
             if (Charge < MaxCharge - 1)
             {
@@ -78,13 +75,13 @@ namespace tsorcRevamp.Projectiles.Enemy {
             base.ChargeLaser();
 
             //Dust on player when  using
-            Dust.NewDustPerfect(projectile.position, DustID.FireworkFountain_Blue, Main.rand.NextVector2Circular(3, 3)).noGravity = true;
+            Dust.NewDustPerfect(Projectile.position, DustID.FireworkFountain_Blue, Main.rand.NextVector2Circular(3, 3)).noGravity = true;
 
             //Dust along lightning lines
             if (FiringTimeLeft == 28)
             {
                 int dustCount = 4;
-                
+
                 if (branches.Count > 0)
                 {
                     for (int i = 0; i < branches.Count; i++)
@@ -98,7 +95,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                                 float lerpPercent = 0.8f * ((float)j / ((float)branches[i].Count - 1f));
 
                                 float scale = 1.7f;
-                                if(i == 0)
+                                if (i == 0)
                                 {
                                     scale = 2.2f;
                                     lerpPercent = 0;
@@ -132,7 +129,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             branches = new List<List<Vector2>>();
             branchAngles = new List<List<float>>();
 
-            Tuple<List<Vector2>, List<float>> initialLine = GenerateLightningLine(projectile.position, projectile.velocity.ToRotation(), segmentCount, false);
+            Tuple<List<Vector2>, List<float>> initialLine = GenerateLightningLine(Projectile.position, Projectile.velocity.ToRotation(), segmentCount, false);
 
             branches.Add(initialLine.Item1);
             branchAngles.Add(initialLine.Item2);
@@ -147,11 +144,11 @@ namespace tsorcRevamp.Projectiles.Enemy {
                         {
                             //If it's the first set of splits, let them go longer
                             int segmentLimit = 3;
-                            if(i == 0)
+                            if (i == 0)
                             {
                                 segmentLimit = 12;
                             }
-                            Tuple<List<Vector2>, List<float>> newBranch = GenerateLightningLine(branches[i][j], projectile.velocity.ToRotation(), Main.rand.Next(segmentLimit), true);
+                            Tuple<List<Vector2>, List<float>> newBranch = GenerateLightningLine(branches[i][j], Projectile.velocity.ToRotation(), Main.rand.Next(segmentLimit), true);
                             branches.Add(newBranch.Item1);
                             branchAngles.Add(newBranch.Item2);
                         }
@@ -227,7 +224,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     bool segmentCollides = false;
                     if (!Collision.CanHit(currentBranch[i], 1, 1, currentBranch[i + 1], 1, 1) && !Collision.CanHitLine(currentBranch[i], 1, 1, currentBranch[i + 1], 1, 1))
                     {
-                        if(!branch || (!Collision.CanHit(projectile.position, 1, 1, currentBranch[i + 1], 1, 1) && !Collision.CanHitLine(projectile.position, 1, 1, currentBranch[i + 1], 1, 1)))
+                        if (!branch || (!Collision.CanHit(Projectile.position, 1, 1, currentBranch[i + 1], 1, 1) && !Collision.CanHitLine(Projectile.position, 1, 1, currentBranch[i + 1], 1, 1)))
                         {
                             segmentCollides = true;
                             branchCollided = true;
@@ -255,13 +252,14 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 currentAngles.Add((currentBranch[i] - currentBranch[i + 1]).ToRotation());
             }
 
-            if(currentBranch.Count > 0)
+            if (currentBranch.Count > 0)
             {
                 int dustCount = 3;
                 if (!branch)
                 {
                     dustCount = 15;
-                    Main.PlaySound(4, currentBranch[currentBranch.Count - 1], 43);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath43 with { Volume = 0.4f, Pitch = 0.0f });
+                    //Terraria.Audio.SoundEngine.PlaySound(4, currentBranch[currentBranch.Count - 1], 43);
                 }
                 if (branchCollided)
                 {
@@ -282,7 +280,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     }
                 }
             }
-            
+
 
             return new Tuple<List<Vector2>, List<float>>(currentBranch, currentAngles);
         }
@@ -292,7 +290,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         //RenderTarget2D renderTarget;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (!IsAtMaxCharge)
             {
@@ -307,7 +305,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 {
                     for (int i = 0; i < branches[0].Count - 1; i++)
                     {
-                        DrawLightning(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], branches[0][i],
+                        DrawLightning(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], branches[0][i],
                                 branches[0][i + 1], LaserTargetingHead, LaserTextureBody, LaserTargetingTail, Vector2.Distance(branches[0][i], branches[0][i + 1]), branchAngles[0][i], 0.2f, LaserColor * 0.9f);
                     }
                 }
@@ -325,9 +323,9 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 {
                     float scaleFactor = (float)FiringTimeLeft / (float)FiringDuration;
 
-                    spriteBatch.End();
-                    spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);                   
-                                        
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);
+
                     if (branches.Count > 0)
                     {
                         for (int i = 0; i < branches.Count; i++)
@@ -343,22 +341,21 @@ namespace tsorcRevamp.Projectiles.Enemy {
                                     Vector2 nextSegment = currentBranch[j + 1];
 
                                     float scale = 0.7f;
-                                    if(i == 0)
+                                    if (i == 0)
                                     {
                                         scale = 1;
                                     }
-
-                                    DrawLightning(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], segment,
+                                    DrawLightning(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], segment,
                                             nextSegment, LaserTargetingHead, LaserTextureBody, LaserTargetingTail, Vector2.Distance(segment, nextSegment), currentAngles[j], scale * scaleFactor, LaserColor * scaleFactor * scaleFactor);
                                 }
                             }
                         }
                     }
 
-                    spriteBatch.End();
+                    Main.spriteBatch.End();
 
                     //Revert to normal spritebatch mode
-                    spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);
 
 
 
@@ -492,7 +489,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);
                 Rectangle screenRect = new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);
                 for(int i = 0; i < 10; i++)
-                spriteBatch.Draw(renderTarget, new Vector2(10, 10) * i, screenRect, Color.White);
+                Main.EntitySpriteDraw(renderTarget, new Vector2(10, 10) * i, screenRect, Color.White);
                 spriteBatch.End();
 
                 //Revert to normal spritebatch mode
@@ -562,7 +559,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             basicEffect.VertexColorEnabled = true;
 
 
-            Vector2 worldPos = projectile.position - Main.screenPosition;
+            Vector2 worldPos = Projectile.position - Main.screenPosition;
             worldPos.X = (worldPos.X / (Main.screenWidth / 2)) - 1;
             worldPos.Y = (worldPos.Y / (Main.screenHeight / -2f)) + 1;
             worldPos *= Main.GameZoomTarget;
@@ -618,7 +615,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 }
             }
 
-            
+
 
             float i = 0;
             Vector2 diff = unit - start;
@@ -630,14 +627,14 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 Vector2 drawStart = startPos + i * diff;
                 if (screenRect.Contains(drawStart.ToPoint()))
                 {
-                    spriteBatch.Draw(texture, drawStart - Main.screenPosition, bodyFrame, color, rotation + MathHelper.PiOver2, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);
+                    Main.EntitySpriteDraw(texture, drawStart - Main.screenPosition, bodyFrame, color, rotation + MathHelper.PiOver2, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);
                 }
             }
 
             /*
             if (screenRect.Contains(startPos.ToPoint()))
             {
-                spriteBatch.Draw(texture, startPos - Main.screenPosition, headFrame, color, r, new Vector2(headRect.Width * .5f, headRect.Height * .5f), scale, 0, 0);
+                Main.EntitySpriteDraw(texture, startPos - Main.screenPosition, headFrame, color, r, new Vector2(headRect.Width * .5f, headRect.Height * .5f), scale, 0, 0);
             }
             startPos += (unit * (headRect.Height) * scale);
             i -= (LaserTextureBody.Height) * scale;
@@ -646,14 +643,14 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
             if (screenRect.Contains(startPos.ToPoint()))
             {
-                spriteBatch.Draw(texture, startPos - Main.screenPosition, tailFrame, color, r, new Vector2(tailRect.Width * .5f, tailRect.Height * .5f), scale, 0, 0);
+                Main.EntitySpriteDraw(texture, startPos - Main.screenPosition, tailFrame, color, r, new Vector2(tailRect.Width * .5f, tailRect.Height * .5f), scale, 0, 0);
             }*/
-            }
+        }
 
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if(branches == null || branches.Count == 0 || branches[0].Count == 0)
+            if (branches == null || branches.Count == 0 || branches[0].Count == 0)
             {
                 return false;
             }
@@ -695,7 +692,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             return collides;
         }
 
-        
+
         public override void CutTiles()
         {
             if (branches == null || branches.Count == 0 || branches[0].Count == 0)
@@ -747,9 +744,9 @@ namespace tsorcRevamp.Projectiles.Enemy {
         public override bool CanHitPlayer(Player target)
         {
 
-            string deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(-1, projectile.whoAmI).GetDeathText(target.name).ToString();
+            string deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(-1, Projectile.whoAmI).GetDeathText(target.name).ToString();
             deathMessage = deathMessage.Replace("Laser", LaserName);
-            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), projectile.damage * 4, 1);
+            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), Projectile.damage * 4, 1);
 
             return false;
         }

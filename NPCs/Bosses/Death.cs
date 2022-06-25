@@ -2,9 +2,9 @@ using Microsoft.Xna.Framework;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -13,27 +13,26 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetDefaults()
         {
-            Main.npcFrameCount[npc.type] = 6;
-            npc.npcSlots = 10;
-            npc.aiStyle = 0;
-            npc.width = 80;
-            npc.height = 100;
-            npc.damage = 250;
-            npc.defense = 45;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath6;
-            npc.lifeMax = 35000;
-            npc.friendly = false;
-            npc.boss = true;
-            npc.noTileCollide = true;
-            npc.noGravity = true;
-            npc.knockBackResist = 0;
-            npc.value = 150000;
+            Main.npcFrameCount[NPC.type] = 6;
+            NPC.npcSlots = 10;
+            NPC.aiStyle = 0;
+            NPC.width = 80;
+            NPC.height = 100;
+            NPC.damage = 250;
+            NPC.defense = 45;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath6;
+            NPC.lifeMax = 35000;
+            NPC.friendly = false;
+            NPC.boss = true;
+            NPC.noTileCollide = true;
+            NPC.noGravity = true;
+            NPC.knockBackResist = 0;
+            NPC.value = 150000;
 
-            npc.buffImmune[BuffID.Poisoned] = true;
-            npc.buffImmune[BuffID.Confused] = true;
-            npc.buffImmune[BuffID.OnFire] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.DeathBag>();
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
             despawnHandler = new NPCDespawnHandler("Death claims you at last...", Color.DarkMagenta, DustID.Demonite);
         }
 
@@ -41,8 +40,8 @@ namespace tsorcRevamp.NPCs.Bosses
         int shadowShotDamage = 75;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.damage = (int)(npc.damage * 1.3 / 2);
-            npc.defense = npc.defense += 12;
+            NPC.damage = (int)(NPC.damage * 1.3 / 2);
+            NPC.defense = NPC.defense += 12;
             shadowShotDamage = (int)(shadowShotDamage * 1.3 / 2);
         }
 
@@ -57,16 +56,16 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             if (Main.hardMode)
             {
-                bool nospecialbiome = !spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && !spawnInfo.player.ZoneHoly && !spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
+                bool nospecialbiome = !spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && !spawnInfo.Player.ZoneHallow && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
 
-                bool sky = nospecialbiome && ((double)spawnInfo.player.position.Y < Main.worldSurface * 0.44999998807907104);
-                bool surface = nospecialbiome && !sky && (spawnInfo.player.position.Y <= Main.worldSurface);
-                bool underground = nospecialbiome && !surface && (spawnInfo.player.position.Y <= Main.rockLayer);
-                bool underworld = (spawnInfo.player.position.Y > Main.maxTilesY - 190);
-                bool cavern = nospecialbiome && (spawnInfo.player.position.Y >= Main.rockLayer) && (spawnInfo.player.position.Y <= Main.rockLayer * 25);
-                bool undergroundJungle = (spawnInfo.player.position.Y >= Main.rockLayer) && (spawnInfo.player.position.Y <= Main.rockLayer * 25) && spawnInfo.player.ZoneJungle;
-                bool undergroundEvil = (spawnInfo.player.position.Y >= Main.rockLayer) && (spawnInfo.player.position.Y <= Main.rockLayer * 25) && (spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson);
-                bool undergroundHoly = (spawnInfo.player.position.Y >= Main.rockLayer) && (spawnInfo.player.position.Y <= Main.rockLayer * 25) && spawnInfo.player.ZoneHoly;
+                bool sky = nospecialbiome && ((double)spawnInfo.Player.position.Y < Main.worldSurface * 0.44999998807907104);
+                bool surface = nospecialbiome && !sky && (spawnInfo.Player.position.Y <= Main.worldSurface);
+                bool underground = nospecialbiome && !surface && (spawnInfo.Player.position.Y <= Main.rockLayer);
+                bool underworld = (spawnInfo.Player.position.Y > Main.maxTilesY - 190);
+                bool cavern = nospecialbiome && (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25);
+                bool undergroundJungle = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && spawnInfo.Player.ZoneJungle;
+                bool undergroundEvil = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && (spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson);
+                bool undergroundHoly = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && spawnInfo.Player.ZoneHallow;
                 if (!Main.dayTime && Main.bloodMoon && surface)
                 {
                     if (Main.rand.Next(250) == 0)
@@ -82,75 +81,75 @@ namespace tsorcRevamp.NPCs.Bosses
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
-            despawnHandler.TargetAndDespawn(npc.whoAmI);
-            npc.netUpdate = false;
-            npc.ai[0]++; // Timer Scythe
-            npc.ai[1]++; // Timer Teleport
+            despawnHandler.TargetAndDespawn(NPC.whoAmI);
+            NPC.netUpdate = false;
+            NPC.ai[0]++; // Timer Scythe
+            NPC.ai[1]++; // Timer Teleport
                          // npc.ai[2] Shots
 
-            if (npc.life > 5000)
+            if (NPC.life > 5000)
             {
                 Color color = new Color();
-                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, npc.velocity.X, npc.velocity.Y, 200, color, 4f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 200, color, 4f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (npc.life <= 5000)
+            else if (NPC.life <= 5000)
             {
                 Color color = new Color();
-                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, npc.velocity.X, npc.velocity.Y, 140, color, 6f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 140, color, 6f);
                 Main.dust[dust].noGravity = true;
             }
 
-            
-            if (npc.ai[0] >= 12 && npc.ai[2] < 5)
+
+            if (NPC.ai[0] >= 12 && NPC.ai[2] < 5)
             {
                 float speed = 0.5f;
-                Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+                Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                 int type = ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>();
-                float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
+                float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * speed) * -1), (float)((Math.Sin(rotation) * speed) * -1), type, shadowShotDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * speed) * -1), (float)((Math.Sin(rotation) * speed) * -1), type, shadowShotDamage, 0f, Main.myPlayer);
                 }
-                npc.ai[0] = 0;
-                npc.ai[2]++;
-            }
-            
-
-            if (npc.ai[1] >= 40)
-            {
-                npc.velocity.X *= 0.97f;
-                npc.velocity.Y *= 0.97f;
+                NPC.ai[0] = 0;
+                NPC.ai[2]++;
             }
 
-            if ((npc.ai[1] >= 150 && npc.life > 2000) || (npc.ai[1] >= 100 && npc.life <= 2000))
+
+            if (NPC.ai[1] >= 40)
             {
-                Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
+                NPC.velocity.X *= 0.97f;
+                NPC.velocity.Y *= 0.97f;
+            }
+
+            if ((NPC.ai[1] >= 150 && NPC.life > 2000) || (NPC.ai[1] >= 100 && NPC.life <= 2000))
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int i = 0; i < 10; i++)
                 {
                     Color color = new Color();
-                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, npc.velocity.X + Main.rand.Next(-10, 10), npc.velocity.Y + Main.rand.Next(-10, 10), 200, color, 4f);
+                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, color, 4f);
                     Main.dust[dust].noGravity = true;
                 }
 
-                npc.ai[2] = 0;
-                npc.ai[1] = 0;                
-               
-                npc.position.X = Main.player[npc.target].position.X + (float)((600 * Math.Cos(nextWarpAngle)) * -1);
-                npc.position.Y = Main.player[npc.target].position.Y + (float)((600 * Math.Sin(nextWarpAngle)) * -1);
-                Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                npc.velocity.X = (float)(Math.Cos(rotation) * 14) * -1;
-                npc.velocity.Y = (float)(Math.Sin(rotation) * 14) * -1;
+                NPC.ai[2] = 0;
+                NPC.ai[1] = 0;
+
+                NPC.position.X = Main.player[NPC.target].position.X + (float)((600 * Math.Cos(nextWarpAngle)) * -1);
+                NPC.position.Y = Main.player[NPC.target].position.Y + (float)((600 * Math.Sin(nextWarpAngle)) * -1);
+                Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                NPC.velocity.X = (float)(Math.Cos(rotation) * 14) * -1;
+                NPC.velocity.Y = (float)(Math.Sin(rotation) * 14) * -1;
                 nextWarpAngle = (float)(Main.rand.Next(360) * (Math.PI / 180));
-                npc.netUpdate = true;
+                NPC.netUpdate = true;
             }
 
-            if (npc.velocity.X > 0)
+            if (NPC.velocity.X > 0)
             {
-                npc.spriteDirection = 1;
+                NPC.spriteDirection = 1;
             }
-            else npc.spriteDirection = -1;
+            else NPC.spriteDirection = -1;
         }
         public override void SendExtraAI(BinaryWriter writer)
         {
@@ -165,41 +164,41 @@ namespace tsorcRevamp.NPCs.Bosses
             int num = 1;
             if (!Main.dedServ)
             {
-                num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
+                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
             }
-            if ((npc.velocity.X > -2 && npc.velocity.X < 2) && (npc.velocity.Y > -2 && npc.velocity.Y < 2))
+            if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2))
             {
-                npc.frameCounter = 0;
-                npc.frame.Y = 0;
+                NPC.frameCounter = 0;
+                NPC.frame.Y = 0;
             }
             else
             {
-                npc.frameCounter += 1.0;
+                NPC.frameCounter += 1.0;
             }
-            if (npc.frameCounter >= 1.0)
+            if (NPC.frameCounter >= 1.0)
             {
-                npc.frame.Y = npc.frame.Y + num;
-                npc.frameCounter = 0.0;
+                NPC.frame.Y = NPC.frame.Y + num;
+                NPC.frameCounter = 0.0;
             }
-            if (npc.frame.Y >= num * Main.npcFrameCount[npc.type])
+            if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
             {
-                npc.frame.Y = 0;
+                NPC.frame.Y = 0;
             }
         }
 
         public override void HitEffect(int hitDirection, double damage)
         {
-            if(npc.life <= 0)
+            if (NPC.life <= 0)
             {
-                Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+                Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
 
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Death Gore 1"), 1f);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Death Gore 2"), 1f);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Death Gore 3"), 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Death Gore 1").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Death Gore 2").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Death Gore 3").Type, 1f);
                 for (int num36 = 0; num36 < 50; num36++)
                 {
                     Color color = new Color();
-                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, npc.velocity.X + Main.rand.Next(-10, 10), npc.velocity.Y + Main.rand.Next(-10, 10), 200, color, 4f);
+                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, color, 4f);
                     Main.dust[dust].noGravity = true;
                 }
             }
@@ -212,22 +211,22 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             potionType = ItemID.GreaterHealingPotion;
         }
-        public override void NPCLoot()
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.DeathBag>()));
+        }
+        public override void OnKill()
         {
-            if (Main.expertMode)
+            if (!Main.expertMode)
             {
-                npc.DropBossBags();
-            }
-            else
-            {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>(), 4);
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
-                Item.NewItem(npc.getRect(), ItemID.MidnightRainbowDye, 5);
-                if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>(), 4);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MidnightRainbowDye, 5);
+                if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
                 {
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000);
                 }
             }
         }

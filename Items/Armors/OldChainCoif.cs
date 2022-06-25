@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -10,11 +9,11 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetDefaults()
         {
-            item.width = 26;
-            item.height = 20;
-            item.defense = 1;
-            item.value = 3000;
-            item.rare = ItemRarityID.White;
+            Item.width = 26;
+            Item.height = 20;
+            Item.defense = 1;
+            Item.value = 3000;
+            Item.rare = ItemRarityID.White;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)

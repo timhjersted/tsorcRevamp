@@ -4,53 +4,50 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class MoonlightGreatsword : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class MoonlightGreatsword : ModItem
+    {
 
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("The Moonlight Greatsword, the sword of legend..." +
                                 "\nGlows and gains magic damage scaling at night" +
                                 "\nLaunches glimmering waves of moonlight");
         }
-        public override void SetDefaults() {
-            item.rare = ItemRarityID.Pink;
-            item.damage = 2000;
-            item.height = 72;
-            item.width = 72;
-            item.knockBack = 12f;
-            item.melee = true;
-            item.autoReuse = true;
-            item.useAnimation = 27;
-            item.useTime = 27;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = 1000000;
-            item.shoot = ModContent.ProjectileType<Projectiles.MLGSCrescent>();
-            item.shootSpeed = 2f; //Yes it looks slow but it gets *1.2f each tick in it's AI. My attempt at making the sword look like it's not spawning in the player.
-        }
-
-
-
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override void SetDefaults()
         {
-
-            if (!Main.dayTime && player.magicDamage > 1)
-            {
-                damage = (int)(damage * player.magicDamage);
-            }
-
-            return true;
-
+            Item.rare = ItemRarityID.Pink;
+            Item.damage = 2000;
+            Item.height = 72;
+            Item.width = 72;
+            Item.knockBack = 12f;
+            Item.DamageType = DamageClass.Melee;
+            Item.autoReuse = true;
+            Item.useAnimation = 27;
+            Item.useTime = 27;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = 1000000;
+            Item.shoot = ModContent.ProjectileType<Projectiles.MLGSCrescent>();
+            Item.shootSpeed = 2f; //Yes it looks slow but it gets *1.2f each tick in it's AI. My attempt at making the sword look like it's not spawning in the player.
         }
 
-        public override bool OnlyShootOnSwing => true;
+
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+        {
+            if (!Main.dayTime && player.GetTotalDamage(DamageClass.Magic).ApplyTo(100000) > 100000)
+            {
+                damage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(damage);
+            }
+        }
 
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
         {
-            if (!Main.dayTime && player.magicDamage > 1)
+            if (!Main.dayTime && player.GetTotalDamage(DamageClass.Magic).ApplyTo(100000) > 100000)
             {
-                damage = (int)(damage * player.magicDamage);
+                damage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(damage);
             }
         }
 
@@ -71,7 +68,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             {
                 spriteBatch.Draw(glowTexture, position, new Rectangle(0, 0, glowTexture.Width, glowTexture.Height), Color.White, 0f, origin, scale, SpriteEffects.None, 0.1f);
             }
-            
+
             return false;
         }
 
@@ -85,10 +82,10 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             {
                 baseTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.MoonlightGreatsword];
             }
-            spriteBatch.Draw(baseTexture, item.Center - Main.screenPosition, new Rectangle(0, 0, baseTexture.Width, baseTexture.Height), lightColor, rotation, new Vector2(item.width / 2, item.height / 2), item.scale, SpriteEffects.None, 0.1f);
+            spriteBatch.Draw(baseTexture, Item.Center - Main.screenPosition, new Rectangle(0, 0, baseTexture.Width, baseTexture.Height), lightColor, rotation, new Vector2(Item.width / 2, Item.height / 2), Item.scale, SpriteEffects.None, 0.1f);
             if (!Main.dayTime)
             {
-                spriteBatch.Draw(glowTexture, item.Center - Main.screenPosition, new Rectangle(0, 0, glowTexture.Width, glowTexture.Height), Color.White, rotation, new Vector2(item.width / 2, item.height / 2), item.scale, SpriteEffects.None, 0.1f);
+                spriteBatch.Draw(glowTexture, Item.Center - Main.screenPosition, new Rectangle(0, 0, glowTexture.Width, glowTexture.Height), Color.White, rotation, new Vector2(Item.width / 2, Item.height / 2), Item.scale, SpriteEffects.None, 0.1f);
             }
 
             return false;

@@ -1,116 +1,125 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Bosses.WyvernMage {
-    class MechaDragonBody : ModNPC {
-		public int Timer = -1000;
+namespace tsorcRevamp.NPCs.Bosses.WyvernMage
+{
+    class MechaDragonBody : ModNPC
+    {
+        public int Timer = -1000;
 
-		public override void SetDefaults() {
-			npc.netAlways = true;
-			npc.npcSlots = 1;
-			npc.aiStyle = 6;
-			npc.width = 45;
-			npc.height = 45;
-			npc.knockBackResist = 0f;
-			npc.timeLeft = 750;
-			npc.damage = 70;
-			npc.defense = 23;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath10;
-			npc.lifeMax = 91000000;
-			npc.boss = true;
-			npc.noGravity = true;
-			npc.noTileCollide = true;
-			npc.behindTiles = true;
-			npc.value = 25000;
-			npc.buffImmune[BuffID.Poisoned] = true;
-			npc.buffImmune[BuffID.OnFire] = true;
-			npc.buffImmune[BuffID.Confused] = true;
-			npc.buffImmune[BuffID.CursedInferno] = true;
-			bodyTypes = new int[] { ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
-				ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
-				ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
-				ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
-				ModContent.NPCType<MechaDragonBody2>(), ModContent.NPCType<MechaDragonBody3>() };
-
-		}
-		public static int[] bodyTypes;
-
-		public int CrystalFireDamage = 35;
-		public override void SetStaticDefaults() {
-			DisplayName.SetDefault("Wyvern Mage Disciple");
-		}
-		public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
-		{
-			return false;
-		}
-
-		public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
-			CrystalFireDamage = CrystalFireDamage / 2;
-		}
-
-		public override void AI() {
-
-
-			//Generic Worm Part Code:
-			tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<MechaDragonHead>(), bodyTypes, ModContent.NPCType<MechaDragonTail>(), 23, -1f, 12f, 0.13f, true, false);
-
-			//Code unique to this body part:
-			Timer++;
-			if (!Main.npc[(int)npc.ai[1]].active)
-			{
-				npc.life = 0;
-				NPCLoot();
-
-				npc.HitEffect(0, 10.0);
-				npc.active = false;
-			}
-
-			if (Timer >= 600)
-			{
-				if (Main.netMode != NetmodeID.Server)
-				{
-					float num48 = 6f;
-					Vector2 vector8 = new Vector2(npc.position.X + (npc.width / 2), npc.position.Y + (npc.height / 2));
-					float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-					rotation += Main.rand.Next(-50, 50) / 100;
-					if (Main.netMode == NetmodeID.MultiplayerClient)
-					{
-						Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.CrystalFire>(), CrystalFireDamage, 0f, Main.myPlayer);
-					}
-					Timer = -600 - Main.rand.Next(700);
-				}
-
-				//npc.netUpdate=true;
-			}
-		}
-
-		public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor) {
-			Vector2 origin = new Vector2(Main.npcTexture[npc.type].Width / 2, Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type] / 2);
-			Color alpha = Color.White;
-			SpriteEffects effects = SpriteEffects.None;
-			if (npc.spriteDirection == 1) {
-				effects = SpriteEffects.FlipHorizontally;
-			}
-			spriteBatch.Draw(Main.npcTexture[npc.type], new Vector2(npc.position.X - Main.screenPosition.X + (float)(npc.width / 2) - (float)Main.npcTexture[npc.type].Width * npc.scale / 2f + origin.X * npc.scale, npc.position.Y - Main.screenPosition.Y + (float)npc.height - (float)Main.npcTexture[npc.type].Height * npc.scale / (float)Main.npcFrameCount[npc.type] + 4f + origin.Y * npc.scale + 56f), npc.frame, alpha, npc.rotation, origin, npc.scale, effects, 0f);
-			npc.alpha = 255;
-			return true;
-		}
-		public override bool CheckActive()
-		{
-			return false;
-		}
-		public override void NPCLoot()
+        public override void SetDefaults()
         {
-			Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-			Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-0, 1) * 0.2f, (float)Main.rand.Next(-0, 1) * 0.2f), Main.rand.Next(61, 64), 1f);
-			Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-0, 1) * 0.2f, (float)Main.rand.Next(-0, 1) * 0.2f), Main.rand.Next(61, 64), 1f);
-			Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-0, 1) * 0.2f, (float)Main.rand.Next(-0, 1) * 0.2f), Main.rand.Next(61, 64), 1f);
-			Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-0, 1) * 0.2f, (float)Main.rand.Next(-0, 1) * 0.2f), Main.rand.Next(61, 64), 1f);
-		}
-	}
+            NPC.netAlways = true;
+            NPC.npcSlots = 1;
+            NPC.aiStyle = 6;
+            NPC.width = 45;
+            NPC.height = 45;
+            NPC.knockBackResist = 0f;
+            NPC.timeLeft = 750;
+            NPC.damage = 70;
+            NPC.defense = 23;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath10;
+            NPC.lifeMax = 91000000;
+            NPC.boss = true;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.behindTiles = true;
+            NPC.value = 25000;
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
+            bodyTypes = new int[] { ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
+                ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
+                ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
+                ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
+                ModContent.NPCType<MechaDragonBody2>(), ModContent.NPCType<MechaDragonBody3>() };
+
+        }
+        public static int[] bodyTypes;
+
+        public int CrystalFireDamage = 35;
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Wyvern Mage Disciple");
+        }
+        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            return false;
+        }
+
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        {
+            CrystalFireDamage = CrystalFireDamage / 2;
+        }
+
+        public override void AI()
+        {
+
+
+            //Generic Worm Part Code:
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<MechaDragonHead>(), bodyTypes, ModContent.NPCType<MechaDragonTail>(), 23, -1f, 12f, 0.13f, true, false);
+
+            //Code unique to this body part:
+            Timer++;
+            if (!Main.npc[(int)NPC.ai[1]].active)
+            {
+                NPC.life = 0;
+                OnKill();
+
+                NPC.HitEffect(0, 10.0);
+                NPC.active = false;
+            }
+
+            if (Timer >= 600)
+            {
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    float num48 = 6f;
+                    Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width / 2), NPC.position.Y + (NPC.height / 2));
+                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                    rotation += Main.rand.Next(-50, 50) / 100;
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.CrystalFire>(), CrystalFireDamage, 0f, Main.myPlayer);
+                    }
+                    Timer = -600 - Main.rand.Next(700);
+                }
+
+                //npc.netUpdate=true;
+            }
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            Vector2 origin = new Vector2(TextureAssets.Npc[NPC.type].Value.Width / 2, TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type] / 2);
+            Color alpha = Color.White;
+            SpriteEffects effects = SpriteEffects.None;
+            if (NPC.spriteDirection == 1)
+            {
+                effects = SpriteEffects.FlipHorizontally;
+            }
+            spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, new Vector2(NPC.position.X - Main.screenPosition.X + (float)(NPC.width / 2) - (float)TextureAssets.Npc[NPC.type].Value.Width * NPC.scale / 2f + origin.X * NPC.scale, NPC.position.Y - Main.screenPosition.Y + (float)NPC.height - (float)TextureAssets.Npc[NPC.type].Value.Height * NPC.scale / (float)Main.npcFrameCount[NPC.type] + 4f + origin.Y * NPC.scale + 56f), NPC.frame, alpha, NPC.rotation, origin, NPC.scale, effects, 0f);
+            NPC.alpha = 255;
+            return true;
+        }
+        public override bool CheckActive()
+        {
+            return false;
+        }
+        public override void OnKill()
+        {
+            Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+            Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-0, 1) * 0.2f, (float)Main.rand.Next(-0, 1) * 0.2f), Main.rand.Next(61, 64), 1f);
+            Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-0, 1) * 0.2f, (float)Main.rand.Next(-0, 1) * 0.2f), Main.rand.Next(61, 64), 1f);
+            Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-0, 1) * 0.2f, (float)Main.rand.Next(-0, 1) * 0.2f), Main.rand.Next(61, 64), 1f);
+            Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-0, 1) * 0.2f, (float)Main.rand.Next(-0, 1) * 0.2f), Main.rand.Next(61, 64), 1f);
+        }
+    }
 }

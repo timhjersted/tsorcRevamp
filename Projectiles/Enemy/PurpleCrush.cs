@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.Achievements;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -13,16 +8,16 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetDefaults()
         {
             //projectile.aiStyle = 24;
-            projectile.hostile = true;
-            projectile.height = 16;
-            projectile.scale = 1;
-            projectile.tileCollide = false;
-            projectile.damage = 25;
-            projectile.width = 16;
+            Projectile.hostile = true;
+            Projectile.height = 16;
+            Projectile.scale = 1;
+            Projectile.tileCollide = false;
+            Projectile.damage = 25;
+            Projectile.width = 16;
             //projectile.aiPretendType = 94;
-            projectile.timeLeft = 100;
-            projectile.light = .8f;
-            drawOriginOffsetX = 13;
+            Projectile.timeLeft = 100;
+            Projectile.light = .8f;
+            DrawOriginOffsetX = 13;
         }
 
         public override void SetStaticDefaults()
@@ -32,16 +27,16 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreKill(int timeLeft)
         {
-            projectile.type = 44; //killpretendtype
+            Projectile.type = 44; //killpretendtype
             return true;
         }
         public override void AI()
         {
-            projectile.rotation += 0.9f;
-            if (projectile.velocity.X <= 10 && projectile.velocity.Y <= 10 && projectile.velocity.X >= -10 && projectile.velocity.Y >= -10)
+            Projectile.rotation += 0.9f;
+            if (Projectile.velocity.X <= 10 && Projectile.velocity.Y <= 10 && Projectile.velocity.X >= -10 && Projectile.velocity.Y >= -10)
             {
-                projectile.velocity.X *= 1.01f;
-                projectile.velocity.Y *= 1.01f;
+                Projectile.velocity.X *= 1.01f;
+                Projectile.velocity.Y *= 1.01f;
             }
         }
         public override void OnHitPlayer(Player target, int damage, bool crit)

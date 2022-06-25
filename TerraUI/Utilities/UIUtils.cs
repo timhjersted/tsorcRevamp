@@ -1,15 +1,17 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 using TerraUI.Objects;
 
-namespace TerraUI.Utilities {
-    public static class UIUtils {
+namespace TerraUI.Utilities
+{
+    public static class UIUtils
+    {
         /// <summary>
         /// The mod that uses TerraUI.
         /// </summary>
@@ -26,21 +28,24 @@ namespace TerraUI.Utilities {
         /// </summary>
         /// <param name="texture">texture name without extension</param>
         /// <returns>Texture2D</returns>
-        public static Texture2D GetTexture(string texture) {
+        public static Texture2D GetTexture(string texture)
+        {
             string tex = "";
             string subdir = (string.IsNullOrEmpty(Subdirectory) ? "" : Subdirectory.Replace(@"\", "/"));
 
-            if(!string.IsNullOrWhiteSpace(subdir)) {
+            if (!string.IsNullOrWhiteSpace(subdir))
+            {
                 tex += subdir;
 
-                if(!subdir.Substring(subdir.Length - 1, 1).Equals("/")) {
+                if (!subdir.Substring(subdir.Length - 1, 1).Equals("/"))
+                {
                     tex += "/";
                 }
             }
 
             tex += "Textures/" + texture;
 
-            return Mod.GetTexture(tex);
+            return (Texture2D)Mod.Assets.Request<Texture2D>(tex);
         }
 
         /// <summary>
@@ -49,12 +54,16 @@ namespace TerraUI.Utilities {
         /// <param name="obj">parent object</param>
         /// <param name="rect">intersection rectangle</param>
         /// <returns>true if no children intersect the rectangle</returns>
-        public static bool NoChildrenIntersect(UIObject obj, Rectangle rect) {
+        public static bool NoChildrenIntersect(UIObject obj, Rectangle rect)
+        {
             bool flag = true;
 
-            foreach(UIObject ob in obj.Children) {
-                if(ob.GetType() != typeof(UILabel)) {
-                    if(ob.Rectangle.Intersects(rect)) {
+            foreach (UIObject ob in obj.Children)
+            {
+                if (ob.GetType() != typeof(UILabel))
+                {
+                    if (ob.Rectangle.Intersects(rect))
+                    {
                         flag = false;
                     }
                 }
@@ -68,8 +77,10 @@ namespace TerraUI.Utilities {
         /// </summary>
         /// <param name="context">slot context</param>
         /// <returns>texture of the slot</returns>
-        public static Texture2D GetContextTexture(int context) {
-            switch(context) {
+        public static Texture2D GetContextTexture(int context)
+        {
+            switch (context)
+            {
                 case ItemSlot.Context.EquipAccessory:
                 case ItemSlot.Context.EquipArmor:
                 case ItemSlot.Context.EquipGrapple:
@@ -77,26 +88,26 @@ namespace TerraUI.Utilities {
                 case ItemSlot.Context.EquipMinecart:
                 case ItemSlot.Context.EquipPet:
                 case ItemSlot.Context.EquipLight:
-                    return Main.inventoryBack3Texture;
+                    return TextureAssets.InventoryBack3.Value;
                 case ItemSlot.Context.EquipArmorVanity:
                 case ItemSlot.Context.EquipAccessoryVanity:
-                    return Main.inventoryBack8Texture;
+                    return TextureAssets.InventoryBack8.Value;
                 case ItemSlot.Context.EquipDye:
-                    return Main.inventoryBack12Texture;
+                    return TextureAssets.InventoryBack12.Value;
                 case ItemSlot.Context.ChestItem:
-                    return Main.inventoryBack5Texture;
+                    return TextureAssets.InventoryBack5.Value;
                 case ItemSlot.Context.BankItem:
-                    return Main.inventoryBack2Texture;
+                    return TextureAssets.InventoryBack2.Value;
                 case ItemSlot.Context.GuideItem:
                 case ItemSlot.Context.PrefixItem:
                 case ItemSlot.Context.CraftingMaterial:
-                    return Main.inventoryBack4Texture;
+                    return TextureAssets.InventoryBack4.Value;
                 case ItemSlot.Context.TrashItem:
-                    return Main.inventoryBack7Texture;
+                    return TextureAssets.InventoryBack7.Value;
                 case ItemSlot.Context.ShopItem:
-                    return Main.inventoryBack6Texture;
+                    return TextureAssets.InventoryBack6.Value;
                 default:
-                    return Main.inventoryBackTexture;
+                    return TextureAssets.InventoryBack.Value;
             }
         }
 
@@ -105,8 +116,10 @@ namespace TerraUI.Utilities {
         /// </summary>
         /// <param name="context">context of the slot</param>
         /// <returns>text in current language</returns>
-        public static string GetHoverText(int context) {
-            switch(context) {
+        public static string GetHoverText(int context)
+        {
+            switch (context)
+            {
                 case ItemSlot.Context.EquipAccessory:
                     return Language.GetTextValue("LegacyInterface.9");
                 case ItemSlot.Context.EquipAccessoryVanity:
@@ -137,20 +150,21 @@ namespace TerraUI.Utilities {
         /// </summary>
         /// <param name="item1">first item</param>
         /// <param name="item2">second item</param>
-        public static void SwitchItems(ref Item item1, ref Item item2) {
-            if((item1.type == 0 || item1.stack < 1) && (item2.type != 0 || item2.stack > 0)) //if item2 is mouseitem, then if item slot is empty and item is picked up
+        public static void SwitchItems(ref Item item1, ref Item item2)
+        {
+            if ((item1.type == 0 || item1.stack < 1) && (item2.type != 0 || item2.stack > 0)) //if item2 is mouseitem, then if item slot is empty and item is picked up
             {
                 item1 = item2;
                 item2 = new Item();
                 item2.SetDefaults();
             }
-            else if((item1.type != 0 || item1.stack > 0) && (item2.type == 0 || item2.stack < 1)) //if item2 is mouseitem, then if item slot is empty and item is picked up
+            else if ((item1.type != 0 || item1.stack > 0) && (item2.type == 0 || item2.stack < 1)) //if item2 is mouseitem, then if item slot is empty and item is picked up
             {
                 item2 = item1;
                 item1 = new Item();
                 item1.SetDefaults();
             }
-            else if((item1.type != 0 || item1.stack > 0) && (item2.type != 0 || item2.stack > 0)) //if item2 is mouseitem, then if item slot is empty and item is picked up
+            else if ((item1.type != 0 || item1.stack > 0) && (item2.type != 0 || item2.stack > 0)) //if item2 is mouseitem, then if item slot is empty and item is picked up
             {
                 Item item3 = item2;
                 item2 = item1;
@@ -166,8 +180,10 @@ namespace TerraUI.Utilities {
         /// <param name="capsLock">whether capslock is enabled</param>
         /// <param name="numLock">whether numlock is enabled</param>
         /// <returns>translated character</returns>
-        public static string TranslateChar(Keys key, bool shift, bool capsLock, bool numLock) {
-            switch(key) {
+        public static string TranslateChar(Keys key, bool shift, bool capsLock, bool numLock)
+        {
+            switch (key)
+            {
                 case Keys.A:
                     return TranslateAlphabetic('a', shift, capsLock);
                 case Keys.B:
@@ -257,47 +273,47 @@ namespace TerraUI.Utilities {
                     return "    ";
 
                 case Keys.Decimal:
-                    if(numLock && !shift)
+                    if (numLock && !shift)
                         return ".";
                     break;
                 case Keys.NumPad0:
-                    if(numLock && !shift)
+                    if (numLock && !shift)
                         return "0";
                     break;
                 case Keys.NumPad1:
-                    if(numLock && !shift)
+                    if (numLock && !shift)
                         return "1";
                     break;
                 case Keys.NumPad2:
-                    if(numLock && !shift)
+                    if (numLock && !shift)
                         return "2";
                     break;
                 case Keys.NumPad3:
-                    if(numLock && !shift)
+                    if (numLock && !shift)
                         return "3";
                     break;
                 case Keys.NumPad4:
-                    if(numLock && !shift)
+                    if (numLock && !shift)
                         return "4";
                     break;
                 case Keys.NumPad5:
-                    if(numLock && !shift)
+                    if (numLock && !shift)
                         return "5";
                     break;
                 case Keys.NumPad6:
-                    if(numLock && !shift)
+                    if (numLock && !shift)
                         return "6";
                     break;
                 case Keys.NumPad7:
-                    if(numLock && !shift)
+                    if (numLock && !shift)
                         return "7";
                     break;
                 case Keys.NumPad8:
-                    if(numLock && !shift)
+                    if (numLock && !shift)
                         return "8";
                     break;
                 case Keys.NumPad9:
-                    if(numLock && !shift)
+                    if (numLock && !shift)
                         return "9";
                     break;
 
@@ -336,7 +352,8 @@ namespace TerraUI.Utilities {
         /// <param name="shift">whether shift is pressed</param>
         /// <param name="capsLock">whether capslock is enabled</param>
         /// <returns>translated character</returns>
-        public static string TranslateAlphabetic(char baseChar, bool shift, bool capsLock) {
+        public static string TranslateAlphabetic(char baseChar, bool shift, bool capsLock)
+        {
             return (capsLock ^ shift) ? string.Concat(char.ToUpper(baseChar)) : string.Concat(baseChar);
         }
     }

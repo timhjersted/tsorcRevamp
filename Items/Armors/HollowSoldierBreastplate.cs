@@ -13,22 +13,22 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.vanity = true;
-            item.width = 18;
-            item.height = 18;
-            item.value = 30000;
-            item.rare = ItemRarityID.Green;
+            Item.vanity = true;
+            Item.width = 18;
+            Item.height = 18;
+            Item.value = 30000;
+            Item.rare = ItemRarityID.Green;
         }
 
 
         /*public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.IronChainmail, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 200);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 200);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }*/
     }
 }

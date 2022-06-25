@@ -20,33 +20,33 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetDefaults()
         {
-            item.width = 28;
-            item.height = 30;
-            item.maxStack = 1;
-            item.rare = ItemRarityID.Cyan;
-            item.magic = true;
-            item.noMelee = true;
-            item.mana = 240;
-            item.UseSound = SoundID.Item82;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useTime = 34;
-            item.useAnimation = 34;
-            item.value = PriceByRarity.Cyan_9;
+            Item.width = 28;
+            Item.height = 30;
+            Item.maxStack = 1;
+            Item.rare = ItemRarityID.Cyan;
+            Item.DamageType = DamageClass.Magic;
+            Item.noMelee = true;
+            Item.mana = 240;
+            Item.UseSound = SoundID.Item82;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useTime = 34;
+            Item.useAnimation = 34;
+            Item.value = PriceByRarity.Cyan_9;
 
         }
 
         public override void AddRecipes() //recipe/progression subject to change
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("GreatMagicWeapon"));
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 50000);
-            recipe.AddIngredient(mod.GetItem("GuardianSoul")); //lol idek how early you can get these but will do for now
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("GreatMagicWeapon").Type);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 50000);
+            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type); //lol idek how early you can get these but will do for now
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
@@ -66,7 +66,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
                 return false;
             }
 
-            if (player.HasBuff(ModContent.BuffType<Buffs.MagicWeapon>()) 
+            if (player.HasBuff(ModContent.BuffType<Buffs.MagicWeapon>())
                 || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicWeapon>())
                 || player.meleeEnchant == 1
                 || player.meleeEnchant == 2

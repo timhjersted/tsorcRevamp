@@ -2,24 +2,28 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class EnemySpellIcestormIcicle4 : ModProjectile {
-        public override void SetDefaults() {
-            projectile.width = 18;
-            projectile.height = 28;
-            projectile.hostile = true;
-            projectile.penetrate = 16;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 400;
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class EnemySpellIcestormIcicle4 : ModProjectile
+    {
+        public override void SetDefaults()
+        {
+            Projectile.width = 18;
+            Projectile.height = 28;
+            Projectile.hostile = true;
+            Projectile.penetrate = 16;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 400;
         }
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Enemy Spell Ice Storm");
 
         }
-        public override void AI() {
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
+        public override void AI()
+        {
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
         }
     }
 }

@@ -1,40 +1,42 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    public class ElfinTargeting : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    public class ElfinTargeting : ModProjectile
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Elfin Targeting");
         }
         public override void SetDefaults()
         {
-            projectile.height = 5;
-            projectile.width = 5;
-            projectile.ranged = true;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 15;
+            Projectile.height = 5;
+            Projectile.width = 5;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 15;
         }
 
         public override void AI()
         {
-            Lighting.AddLight(projectile.Center, Color.Cyan.ToVector3() * 1.5f);
-            projectile.damage = 0;
-            projectile.rotation -= 0.05f;
-            if (Main.npc[(int)projectile.ai[0]].active)
+            Lighting.AddLight(Projectile.Center, Color.Cyan.ToVector3() * 1.5f);
+            Projectile.damage = 0;
+            Projectile.rotation -= 0.05f;
+            if (Main.npc[(int)Projectile.ai[0]].active)
             {
-                projectile.Center = Main.npc[(int)projectile.ai[0]].Center;
-                NPC target = Main.npc[(int)projectile.ai[0]];
+                Projectile.Center = Main.npc[(int)Projectile.ai[0]].Center;
+                NPC target = Main.npc[(int)Projectile.ai[0]];
 
 
                 //Ignore the weird math operations on 'size' here, it's all just fine-tuning how the dust ring scales with the size of the NPC being targeted
                 float size;
-                if(target.height > target.width)
+                if (target.height > target.width)
                 {
                     size = target.height;
                 }
@@ -48,11 +50,11 @@ namespace tsorcRevamp.Projectiles {
                 {
                     Vector2 dir = Main.rand.NextVector2CircularEdge(1, 1);
                     dir.Normalize();
-                    dir *= Main.npc[(int)projectile.ai[0]].width * 1.9f + Main.rand.NextFloat(-size, size);
+                    dir *= Main.npc[(int)Projectile.ai[0]].width * 1.9f + Main.rand.NextFloat(-size, size);
                     Vector2 vel = dir * -1;
                     vel.Normalize();
                     vel *= (float)Math.Pow(size, 1.5) / 20;
-                    Dust d = Dust.NewDustPerfect(dir + Main.npc[(int)projectile.ai[0]].Center, 174, vel, 10, default, (int)(Math.Log10(size) * 2));
+                    Dust d = Dust.NewDustPerfect(dir + Main.npc[(int)Projectile.ai[0]].Center, 174, vel, 10, default, (int)(Math.Log10(size) * 2));
                     d.noGravity = true;
                     //Turns out you can shade dust?? The More You Know(TM)
                     d.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.CyanGradientDye), Main.LocalPlayer);
@@ -60,11 +62,11 @@ namespace tsorcRevamp.Projectiles {
             }
             else
             {
-                projectile.active = false;
+                Projectile.active = false;
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             //Just couldn't get the ring to look good. Texture wasn't made to be expanded that large, and couldn't really edit it well enough to make it work lol
             /*
@@ -82,11 +84,11 @@ namespace tsorcRevamp.Projectiles {
 
             for (int i = 0; i < 3; i++)
             {
-                //Main.spriteBatch.Draw(texture,
-                //  projectile.Center - Main.screenPosition, sourceRectangle, Color.White * (1 / (i + 2)), projectile.rotation + 0.05f + (0.05f * i), origin, projectile.scale, spriteEffects, 0f);
+                //Main.EntitySpriteDraw(texture,
+                //  projectile.Center - Main.screenPosition, sourceRectangle, Color.White * (1 / (i + 2)), projectile.rotation + 0.05f + (0.05f * i), origin, projectile.scale, spriteEffects, 0);
             }
-            //Main.spriteBatch.Draw(texture,
-            //    projectile.Center - Main.screenPosition, sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+            //Main.EntitySpriteDraw(texture,
+            //    projectile.Center - Main.screenPosition, sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0);
             */
             return false;
         }

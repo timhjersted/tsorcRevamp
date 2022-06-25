@@ -6,13 +6,13 @@ namespace tsorcRevamp.Buffs
     class HealingElixirCooldown : ModBuff
     {
 
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Healing Elixir Cooldown");
             Description.SetDefault("You cannot use Healing Elixirs!");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
-            canBeCleared = false; //prevents nurse clearing
+            Terraria.ID.BuffID.Sets.NurseCannotRemoveDebuff[Type] = true; //prevents nurse clearing
         }
     }
 }

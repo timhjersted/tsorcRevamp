@@ -15,12 +15,12 @@ namespace tsorcRevamp.Items.Accessories
         }
         public override void SetDefaults()
         {
-            item.width = 24;
-            item.height = 24;
-            item.alpha = 0;
-            item.accessory = true;
-            item.value = 1000000;
-            item.rare = ItemRarityID.Cyan;
+            Item.width = 24;
+            Item.height = 24;
+            Item.alpha = 0;
+            Item.accessory = true;
+            Item.value = 1000000;
+            Item.rare = ItemRarityID.Cyan;
         }
         public override void UpdateEquip(Player player)
         {
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories
         {
             if (!hideVisual && player.direction == -1)
             {
-                int dust = Dust.NewDust(player.position + new Vector2(1, 9), 2, 2, 111, 0f, 0f, 100, default(Color), .6f); 
+                int dust = Dust.NewDust(player.position + new Vector2(1, 9), 2, 2, 111, 0f, 0f, 100, default(Color), .6f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity *= 0.1f;
                 Main.dust[dust].velocity.Y = Main.dust[dust].velocity.Y - 1f;
@@ -39,11 +39,11 @@ namespace tsorcRevamp.Items.Accessories
             }
         }
 
-        public override void UpdateVanity(Player player, EquipType type)
+        public override void UpdateVanity(Player player)
         {
             if (player.direction == -1)
             {
-                int dust = Dust.NewDust(player.position + new Vector2(1, 9), 2, 2, 111, 0f, 0f, 100, default(Color), .6f); 
+                int dust = Dust.NewDust(player.position + new Vector2(1, 9), 2, 2, 111, 0f, 0f, 100, default(Color), .6f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity *= 0.1f;
                 Main.dust[dust].velocity.Y = Main.dust[dust].velocity.Y - 1f;
