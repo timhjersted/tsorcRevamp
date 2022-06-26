@@ -664,6 +664,15 @@ namespace tsorcRevamp
             {
                 Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f;
             }
+            if (Player.HasBuff(BuffID.WellFed2))
+            {
+                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.2f;
+            }
+            if (Player.HasBuff(BuffID.WellFed3))
+            {
+                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.3f;
+            }
+
 
             if (Player.HasBuff(BuffID.TheTongue))
             {

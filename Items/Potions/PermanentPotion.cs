@@ -12,8 +12,28 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     //memory management is scary
     public abstract class PermanentPotion : ModItem
     {
+        public static readonly List<int> ExclusiveSetCombat = new List<int> {
+            new PermanentArmorDrug().PermanentID,
+            new PermanentDemonDrug().PermanentID,
+            new PermanentStrengthPotion().PermanentID,
+            new PermanentBattlefrontPotion().PermanentID
+        };
+
+        public static readonly List<int> ExclusiveSetWellFed = new List<int> {
+            new PermanentTea().PermanentID,
+            new PermanentSoup().PermanentID,
+            new PermanentGoldenDelight().PermanentID,
+        };
         public abstract int PermanentID
         {
+            get;
+        }
+
+        public abstract int BuffType {
+            get;
+        }
+
+        public virtual List<int> ExclusivePermanents {
             get;
         }
         public override void SetDefaults()
@@ -42,12 +62,22 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.PermanentBuffToggles[PermanentID] = !modPlayer.PermanentBuffToggles[PermanentID];
+
+            if (ExclusivePermanents != null) {
+                foreach (int checkID in ExclusivePermanents) {
+                    //dont disable self
+                    if (checkID == PermanentID)
+                        continue;
+                    //toggle off
+                    modPlayer.PermanentBuffToggles[checkID] = false;
+                }
+            }
             return true;
         }
 
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[PermanentID])
+            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[PermanentID])
             {
                 Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
                 for (int i = 0; i < 4; i++)
@@ -62,20 +92,26 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void UpdateInventory(Player player)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            if (!modPlayer.PermanentBuffToggles[PermanentID] && !modPlayer.ActivePermanentPotions.Contains(PermanentID))
+            if (modPlayer.PermanentBuffToggles[PermanentID] && !modPlayer.ActivePermanentPotions.Contains(PermanentID))
             {
                 modPlayer.ActivePermanentPotions.Add(PermanentID);
                 PotionEffect(player);
+                MakeImmuneToBuff(player);
             }
 
         }
 
         public abstract void PotionEffect(Player player);
+
+        private void MakeImmuneToBuff(Player player) {
+            player.buffImmune[BuffType] = true;
+        }
     }
     public class PermanentObsidianSkinPotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_288";
         public override int PermanentID => 0;
+        public override int BuffType => BuffID.ObsidianSkin;
 
         public override void SetStaticDefaults()
         {
@@ -87,7 +123,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.lavaImmune = true;
             player.fireWalk = true;
             player.buffImmune[BuffID.OnFire] = true;
-            player.buffImmune[BuffID.ObsidianSkin] = true;
         }
     }
 
@@ -95,6 +130,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_289";
         public override int PermanentID => 1;
+        public override int BuffType => BuffID.Regeneration;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Regeneration buff.");
@@ -103,7 +140,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.lifeRegen += 4;
-            player.buffImmune[BuffID.Regeneration] = true;
         }
     }
 
@@ -111,6 +147,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_290";
         public override int PermanentID => 2;
+        public override int BuffType => BuffID.Swiftness;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Swiftness buff.");
@@ -118,13 +156,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.moveSpeed += 0.25f;
-            player.buffImmune[BuffID.Swiftness] = true;
         }
     }
     public class PermanentGillsPotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_291";
         public override int PermanentID => 3;
+        public override int BuffType => BuffID.Gills;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Gills buff.");
@@ -133,13 +172,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.gills = true;
-            player.buffImmune[BuffID.Gills] = true;
         }
     }
     public class PermanentIronskinPotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_292";
         public override int PermanentID => 4;
+        public override int BuffType => BuffID.Ironskin;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Ironskin buff.");
@@ -148,13 +188,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.statDefense += 8;
-            player.buffImmune[BuffID.Ironskin] = true;
         }
     }
     public class PermanentManaRegenerationPotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_293";
         public override int PermanentID => 5;
+        public override int BuffType => BuffID.ManaRegeneration;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Mana Regeneration buff.");
@@ -166,13 +207,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             {
                 player.manaRegenBuff = true;
             }
-            player.buffImmune[BuffID.ManaRegeneration] = true;
         }
     }
     public class PermanentMagicPowerPotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_294";
         public override int PermanentID => 6;
+        public override int BuffType => BuffID.MagicPower;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Magic Power buff.");
@@ -181,13 +223,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.GetDamage(DamageClass.Magic) += 0.2f;
-            player.buffImmune[BuffID.MagicPower] = true;
         }
     }
     public class PermanentFeatherfallPotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_295";
         public override int PermanentID => 7;
+        public override int BuffType => BuffID.Featherfall;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Featherfall buff.");
@@ -196,13 +239,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.slowFall = true;
-            player.buffImmune[BuffID.Featherfall] = true;
         }
     }
     public class PermanentSpelunkerPotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_296";
         public override int PermanentID => 8;
+        public override int BuffType => BuffID.Spelunker;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Spelunker buff.");
@@ -211,13 +255,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.findTreasure = true;
-            player.buffImmune[BuffID.Spelunker] = true;
         }
     }
     public class PermanentInvisibilityPotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_297";
         public override int PermanentID => 9;
+        public override int BuffType => BuffID.Invisibility;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Invisibility buff.");
@@ -226,13 +271,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.invis = true;
-            player.buffImmune[BuffID.Invisibility] = true;
         }
     }
     public class PermanentShinePotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_298";
         public override int PermanentID => 10;
+        public override int BuffType => BuffID.Shine;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Shine buff.");
@@ -240,10 +286,9 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void UpdateInventory(Player player)
         {
-            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[10] && !player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[10] && !player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 Lighting.AddLight((int)(player.Center.X / 16), (int)(player.Center.Y / 16), 0.8f, 0.95f, 1f);
-                player.buffImmune[BuffID.Shine] = true;
             }
         }
 
@@ -252,7 +297,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 Lighting.AddLight((int)(player.Center.X / 16), (int)(player.Center.Y / 16), 0.8f, 0.95f, 1f);
-                player.buffImmune[BuffID.Shine] = true;
             }
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
@@ -274,6 +318,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_299";
         public override int PermanentID => 11;
+        public override int BuffType => BuffID.NightOwl;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Night Owl buff.");
@@ -282,13 +328,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.nightVision = true;
-            player.buffImmune[BuffID.NightOwl] = true;
         }
     }
     public class PermanentBattlePotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_300";
         public override int PermanentID => 12;
+        public override int BuffType => BuffID.Battle;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Battle buff.");
@@ -297,13 +344,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.enemySpawns = true;
-            player.buffImmune[BuffID.Battle] = true;
         }
     }
     public class PermanentThornsPotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_301";
         public override int PermanentID => 13;
+        public override int BuffType => BuffID.Thorns;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Thorns buff.");
@@ -312,7 +360,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.thorns += 1f;
-            player.buffImmune[BuffID.Thorns] = true;
         }
     }
 
@@ -320,6 +367,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_302";
         public override int PermanentID => 14;
+        public override int BuffType => BuffID.WaterWalking;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Water Walking buff.");
@@ -328,7 +377,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.waterWalk = true;
-            player.buffImmune[BuffID.WaterWalking] = true;
         }
     }
 
@@ -336,6 +384,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_303";
         public override int PermanentID => 15;
+        public override int BuffType => BuffID.Archery;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Archery buff.");
@@ -344,13 +394,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.archery = true;
-            player.buffImmune[BuffID.Archery] = true;
         }
     }
     public class PermanentHunterPotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_304";
         public override int PermanentID => 16;
+        public override int BuffType => BuffID.Hunter;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Hunter buff.");
@@ -359,13 +410,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.detectCreature = true;
-            player.buffImmune[BuffID.Hunter] = true;
         }
     }
     public class PermanentGravitationPotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_305";
         public override int PermanentID => 17;
+        public override int BuffType => BuffID.Gravitation;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Gravitation buff.");
@@ -374,13 +426,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.gravControl = true;
-            player.buffImmune[BuffID.Gravitation] = true;
         }
     }
     public class PermanentAle : PermanentPotion
     {
-        public override string Texture => "Terraria/Images/Item_353";
+        public override string Texture => "tsorcRevamp/Items/Potions/VanillaTextures/Ale";
         public override int PermanentID => 18;
+        public override int BuffType => BuffID.Tipsy;
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Ale buff.");
@@ -392,7 +444,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetDamage(DamageClass.Melee) += 0.1f;
             player.GetCritChance(DamageClass.Melee) += 2;
             player.GetAttackSpeed(DamageClass.Melee) += 0.1f;
-            player.buffImmune[BuffID.Tipsy] = true;
         }
     }
 
@@ -400,6 +451,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_1340";
         public override int PermanentID => 19;
+        public override int BuffType => BuffID.WeaponImbueVenom;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Permanent Flask of Venom");
@@ -410,13 +463,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 1;
             player.GetDamage(DamageClass.Melee) += 0.1f;
-            player.buffImmune[BuffID.WeaponImbueVenom] = true;
         }
     }
     public class PermanentFlaskOfCursedFlames : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_1353";
         public override int PermanentID => 20;
+        public override int BuffType => BuffID.WeaponImbueCursedFlames;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Permanent Flask of Cursed Flames");
@@ -427,7 +481,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 2;
             player.GetDamage(DamageClass.Melee) += 0.1f;
-            player.buffImmune[BuffID.WeaponImbueCursedFlames] = true;
         }
     }
 
@@ -435,6 +488,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_1354";
         public override int PermanentID => 21;
+        public override int BuffType => BuffID.WeaponImbueFire;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Permanent Flask of Fire");
@@ -445,7 +500,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 3;
             player.GetDamage(DamageClass.Melee) += 0.1f;
-            player.buffImmune[BuffID.WeaponImbueFire] = true;
         }
     }
 
@@ -453,6 +507,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_1355";
         public override int PermanentID => 22;
+        public override int BuffType => BuffID.WeaponImbueGold;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Permanent Flask of Gold");
@@ -463,7 +519,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 4;
             player.GetDamage(DamageClass.Melee) += 0.1f;
-            player.buffImmune[BuffID.WeaponImbueGold] = true;
         }
     }
 
@@ -471,6 +526,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_1356";
         public override int PermanentID => 23;
+        public override int BuffType => BuffID.WeaponImbueIchor;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Permanent Flask of Ichor");
@@ -481,7 +538,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 5;
             player.GetDamage(DamageClass.Melee) += 0.1f;
-            player.buffImmune[BuffID.WeaponImbueIchor] = true;
         }
     }
 
@@ -489,6 +545,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_1357";
         public override int PermanentID => 24;
+        public override int BuffType => BuffID.WeaponImbueNanites;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Permanent Flask of Nanites");
@@ -499,7 +557,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 6;
             player.GetDamage(DamageClass.Melee) += 0.1f;
-            player.buffImmune[BuffID.WeaponImbueNanites] = true;
         }
     }
 
@@ -507,6 +564,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_1358";
         public override int PermanentID => 25;
+        public override int BuffType => BuffID.WeaponImbueConfetti;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Permanent Flask of Party");
@@ -517,7 +576,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 7;
             player.GetDamage(DamageClass.Melee) += 0.1f;
-            player.buffImmune[BuffID.WeaponImbueConfetti] = true;
         }
     }
 
@@ -525,6 +583,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_1359";
         public override int PermanentID => 26;
+        public override int BuffType => BuffID.WeaponImbuePoison;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Permanent Flask of Poison");
@@ -535,7 +595,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 8;
             player.GetDamage(DamageClass.Melee) += 0.1f;
-            player.buffImmune[BuffID.WeaponImbuePoison] = true;
         }
     }
 
@@ -543,6 +602,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_2322";
         public override int PermanentID => 27;
+        public override int BuffType => BuffID.Mining;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Mining buff.");
@@ -551,7 +612,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.pickSpeed -= 0.25f;
-            player.buffImmune[BuffID.Mining] = true;
         }
     }
 
@@ -559,6 +619,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_2323";
         public override int PermanentID => 28;
+        public override int BuffType => BuffID.Heartreach;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Heartreach buff.");
@@ -567,7 +629,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.lifeMagnet = true;
-            player.buffImmune[BuffID.Heartreach] = true;
         }
     }
 
@@ -575,6 +636,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_2324";
         public override int PermanentID => 29;
+        public override int BuffType => BuffID.Calm;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Calm buff.");
@@ -583,13 +646,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.calmed = true;
-            player.buffImmune[BuffID.Calm] = true;
         }
     }
     public class PermanentBuilderPotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_2325";
         public override int PermanentID => 30;
+        public override int BuffType => BuffID.Builder;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Builder buff.");
@@ -600,13 +664,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.tileSpeed += 0.25f;
             player.wallSpeed += 0.25f;
             player.blockRange++;
-            player.buffImmune[BuffID.Builder] = true;
         }
     }
     public class PermanentTitanPotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_2326";
         public override int PermanentID => 31;
+        public override int BuffType => BuffID.Titan;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Titan buff.");
@@ -615,7 +680,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.kbBuff = true;
-            player.buffImmune[BuffID.Titan] = true;
         }
     }
 
@@ -623,6 +687,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_2327";
         public override int PermanentID => 32;
+        public override int BuffType => BuffID.Flipper;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Flipper buff.");
@@ -632,7 +698,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.accFlipper = true;
             player.ignoreWater = true;
-            player.buffImmune[BuffID.Flipper] = true;
         }
     }
 
@@ -640,6 +705,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_2328";
         public override int PermanentID => 33;
+        public override int BuffType => BuffID.Summoning;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Summoning buff.");
@@ -648,13 +715,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.maxMinions++;
-            player.buffImmune[BuffID.Summoning] = true;
         }
     }
     public class PermanentDangersensePotion : PermanentPotion
     {
         public override string Texture => "Terraria/Images/Item_2329";
         public override int PermanentID => 34;
+        public override int BuffType => BuffID.Dangersense;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Dangersense buff.");
@@ -663,7 +731,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.dangerSense = true;
-            player.buffImmune[BuffID.Dangersense] = true;
         }
     }
 
@@ -671,6 +738,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_2344";
         public override int PermanentID => 35;
+        public override int BuffType => BuffID.AmmoReservation;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Ammo Reservation buff.");
@@ -679,7 +748,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.ammoPotion = true;
-            player.buffImmune[BuffID.AmmoReservation] = true;
         }
     }
 
@@ -687,6 +755,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_2345";
         public override int PermanentID => 36;
+        public override int BuffType => BuffID.Lifeforce;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Lifeforce buff.");
@@ -696,7 +766,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.lifeForce = true;
             player.statLifeMax2 += player.statLifeMax / 5 / 20 * 20;
-            player.buffImmune[BuffID.Lifeforce] = true;
         }
     }
 
@@ -704,6 +773,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_2346";
         public override int PermanentID => 37;
+        public override int BuffType => BuffID.Endurance;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Endurance buff.");
@@ -712,7 +783,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.endurance += 0.1f;
-            player.buffImmune[BuffID.Endurance] = true;
         }
     }
 
@@ -720,6 +790,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_2347";
         public override int PermanentID => 38;
+        public override int BuffType => BuffID.Rage;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Rage buff.");
@@ -731,7 +803,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetCritChance(DamageClass.Melee) += 10;
             player.GetCritChance(DamageClass.Ranged) += 10;
             player.GetCritChance(DamageClass.Throwing) += 10;
-            player.buffImmune[BuffID.Rage] = true;
         }
     }
 
@@ -739,6 +810,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_2348";
         public override int PermanentID => 39;
+        public override int BuffType => BuffID.Inferno;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Inferno buff.");
@@ -746,7 +819,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
-            player.buffImmune[BuffID.Inferno] = true;
             player.inferno = true;
             Lighting.AddLight((int)(player.Center.X / 16f), (int)(player.Center.Y / 16f), 0.65f, 0.4f, 0.1f);
             int num = 24;
@@ -801,6 +873,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_2349";
         public override int PermanentID => 40;
+        public override int BuffType => BuffID.Wrath;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Wrath buff.");
@@ -809,7 +883,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.GetDamage(DamageClass.Generic) += 0.1f;
-            player.buffImmune[BuffID.Wrath] = true;
         }
     }
 
@@ -817,6 +890,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_2354";
         public override int PermanentID => 41;
+        public override int BuffType => BuffID.Fishing;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Fishing buff.");
@@ -825,7 +900,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.fishingSkill += 15;
-            player.buffImmune[BuffID.Fishing] = true;
         }
     }
 
@@ -833,6 +907,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_2355";
         public override int PermanentID => 41;
+        public override int BuffType => BuffID.Sonar;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Sonar buff.");
@@ -841,7 +917,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.sonarPotion = true;
-            player.buffImmune[BuffID.Sonar] = true;
         }
     }
 
@@ -849,6 +924,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_2356";
         public override int PermanentID => 43;
+        public override int BuffType => BuffID.Crate;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Crate buff.");
@@ -857,7 +934,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.cratePotion = true;
-            player.buffImmune[BuffID.Crate] = true;
         }
     }
 
@@ -865,6 +941,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "Terraria/Images/Item_2359";
         public override int PermanentID => 44;
+        public override int BuffType => BuffID.Warmth;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Warmth buff.");
@@ -873,7 +951,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.resistCold = true;
-            player.buffImmune[BuffID.Warmth] = true;
         }
     }
 
@@ -881,33 +958,17 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "tsorcRevamp/Items/Potions/ArmorDrugPotion";
         public override int PermanentID => 45;
+        public override int BuffType => ModContent.BuffType<ArmorDrug>();
+        public override List<int> ExclusivePermanents => ExclusiveSetCombat;
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Armor Drug buff.");
         }
 
 
-        public override bool? UseItem(Player player)
-        {
-            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.PermanentBuffToggles[49] = true;
-            modPlayer.PermanentBuffToggles[51] = true;
-            modPlayer.PermanentBuffToggles[46] = true;
-            modPlayer.PermanentBuffToggles[45] = !modPlayer.PermanentBuffToggles[45]; //toggle
-            return true;
-        }
-
         public override void PotionEffect(Player player)
         {
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.PermanentBuffToggles[49] = true;
-            modPlayer.PermanentBuffToggles[51] = true;
-            modPlayer.PermanentBuffToggles[46] = true;
             player.statDefense += 13;
-            player.buffImmune[ModContent.BuffType<ArmorDrug>()] = true;
-            player.buffImmune[ModContent.BuffType<DemonDrug>()] = true;
-            player.buffImmune[ModContent.BuffType<Strength>()] = true;
-            player.buffImmune[ModContent.BuffType<Battlefront>()] = true;
         }
     }
 
@@ -915,28 +976,16 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "tsorcRevamp/Items/Potions/BattlefrontPotion";
         public override int PermanentID => 46;
+        public override int BuffType => ModContent.BuffType<Battlefront>();
+        public override List<int> ExclusivePermanents => ExclusiveSetCombat;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Battlefront buff.");
         }
 
-
-        public override bool? UseItem(Player player)
-        {
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.PermanentBuffToggles[49] = true;
-            modPlayer.PermanentBuffToggles[51] = true;
-            modPlayer.PermanentBuffToggles[45] = true;
-            modPlayer.PermanentBuffToggles[46] = !modPlayer.PermanentBuffToggles[46]; //toggle
-            return true;
-        }
-
         public override void PotionEffect(Player player)
         {
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.PermanentBuffToggles[49] = true;
-            modPlayer.PermanentBuffToggles[51] = true;
-            modPlayer.PermanentBuffToggles[45] = true;
             player.statDefense += 17;
             player.GetDamage(DamageClass.Generic) += 0.3f;
             player.GetCritChance(DamageClass.Magic) += 6;
@@ -946,10 +995,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.pickSpeed += 0.2f;
             player.thorns += 2f;
             player.enemySpawns = true;
-            player.buffImmune[ModContent.BuffType<ArmorDrug>()] = true;
-            player.buffImmune[ModContent.BuffType<DemonDrug>()] = true;
-            player.buffImmune[ModContent.BuffType<Strength>()] = true;
-            player.buffImmune[ModContent.BuffType<Battlefront>()] = true;
         }
     }
 
@@ -957,6 +1002,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "tsorcRevamp/Items/Potions/BoostPotion";
         public override int PermanentID => 47;
+        public override int BuffType => ModContent.BuffType<Boost>();
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Boost buff.");
@@ -967,7 +1014,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetCritChance(DamageClass.Magic) += 5;
             player.GetCritChance(DamageClass.Melee) += 5;
             player.GetCritChance(DamageClass.Ranged) += 5;
-            player.buffImmune[ModContent.BuffType<Boost>()] = true;
         }
     }
 
@@ -975,6 +1021,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "tsorcRevamp/Items/Potions/CrimsonPotion";
         public override int PermanentID => 48;
+        public override int BuffType => ModContent.BuffType<CrimsonDrain>();
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Crimson Drain buff.");
@@ -983,7 +1031,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().CrimsonDrain = true;
-            player.buffImmune[ModContent.BuffType<CrimsonDrain>()] = true;
         }
     }
 
@@ -991,32 +1038,18 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "tsorcRevamp/Items/Potions/DemonDrugPotion";
         public override int PermanentID => 49;
+        public override int BuffType => ModContent.BuffType<DemonDrug>();
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Demon Drug buff.");
         }
 
-        public override bool? UseItem(Player player)
-        {
-            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.PermanentBuffToggles[46] = true;
-            modPlayer.PermanentBuffToggles[51] = true;
-            modPlayer.PermanentBuffToggles[45] = true;
-            modPlayer.PermanentBuffToggles[49] = !modPlayer.PermanentBuffToggles[49]; //toggle
-            return true;
-        }
+        public override List<int> ExclusivePermanents => ExclusiveSetCombat;
 
         public override void PotionEffect(Player player)
         {
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.PermanentBuffToggles[46] = true;
-            modPlayer.PermanentBuffToggles[51] = true;
-            modPlayer.PermanentBuffToggles[45] = true;
             player.GetDamage(DamageClass.Generic) += 0.2f;
-            player.buffImmune[ModContent.BuffType<ArmorDrug>()] = true;
-            player.buffImmune[ModContent.BuffType<DemonDrug>()] = true;
-            player.buffImmune[ModContent.BuffType<Strength>()] = true;
-            player.buffImmune[ModContent.BuffType<Battlefront>()] = true;
         }
     }
 
@@ -1024,6 +1057,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "tsorcRevamp/Items/Potions/ShockwavePotion";
         public override int PermanentID => 50;
+        public override int BuffType => ModContent.BuffType<Shockwave>();
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Shockwave buff.");
@@ -1032,7 +1067,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().Shockwave = true;
-            player.buffImmune[ModContent.BuffType<Shockwave>()] = true;
         }
     }
 
@@ -1040,28 +1074,16 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "tsorcRevamp/Items/Potions/StrengthPotion";
         public override int PermanentID => 51;
+        public override int BuffType => ModContent.BuffType<Strength>();
+        public override List<int> ExclusivePermanents => ExclusiveSetCombat;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Strength buff.");
         }
 
-
-        public override bool? UseItem(Player player)
-        {
-            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.PermanentBuffToggles[46] = true;
-            modPlayer.PermanentBuffToggles[49] = true;
-            modPlayer.PermanentBuffToggles[45] = true;
-            modPlayer.PermanentBuffToggles[51] = !modPlayer.PermanentBuffToggles[51]; //toggle
-            return true;
-        }
-
         public override void PotionEffect(Player player)
         {
-            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.PermanentBuffToggles[46] = true;
-            modPlayer.PermanentBuffToggles[49] = true;
-            modPlayer.PermanentBuffToggles[45] = true;
             player.statDefense += 15;
             player.GetDamage(DamageClass.Generic) += 0.15f;
             player.GetAttackSpeed(DamageClass.Melee) += 0.15f;
@@ -1069,10 +1091,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetCritChance(DamageClass.Magic) += 2;
             player.GetCritChance(DamageClass.Melee) += 2;
             player.GetCritChance(DamageClass.Ranged) += 2;
-            player.buffImmune[ModContent.BuffType<ArmorDrug>()] = true;
-            player.buffImmune[ModContent.BuffType<DemonDrug>()] = true;
-            player.buffImmune[ModContent.BuffType<Strength>()] = true;
-            player.buffImmune[ModContent.BuffType<Battlefront>()] = true;
         }
     }
 
@@ -1080,6 +1098,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     {
         public override string Texture => "tsorcRevamp/Items/Potions/SoulSiphonPotion";
         public override int PermanentID => 52;
+        public override int BuffType => ModContent.BuffType<SoulSiphon>();
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Permanently grants the Soul Siphon buff.");
@@ -1092,14 +1112,16 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             modPlayer.SoulSiphon = true;
             modPlayer.SoulReaper += 5;
             modPlayer.ConsSoulChanceMult += 10;
-            player.buffImmune[ModContent.BuffType<SoulSiphon>()] = true;
         }
     }
 
     public class PermanentSoup : PermanentPotion
     {
-        public override string Texture => "Terraria/Images/Item_357";
+        public override string Texture => "tsorcRevamp/Items/Potions/VanillaTextures/BowlOfSoup";
         public override int PermanentID => 53;
+        public override int BuffType => BuffID.WellFed2;
+        public override List<int> ExclusivePermanents => ExclusiveSetWellFed;
+
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Never go hungry again.");
@@ -1107,6 +1129,29 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
+            player.wellFed = true;
+            player.statDefense += 3;
+            player.GetCritChance(DamageClass.Melee) += 3;
+            player.GetCritChance(DamageClass.Ranged) += 3;
+            player.GetCritChance(DamageClass.Magic) += 3;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.075f;
+            player.GetDamage(DamageClass.Generic) += 0.075f;
+            player.GetKnockback(DamageClass.Summon) += 0.75f;
+            player.moveSpeed += 0.30f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.2f;
+        }
+    }
+    public class PermanentTea : PermanentPotion {
+        public override string Texture => "tsorcRevamp/Items/Potions/VanillaTextures/Teacup";
+        public override int PermanentID => 54;
+        public override int BuffType => BuffID.WellFed;
+        public override List<int> ExclusivePermanents => ExclusiveSetWellFed;
+
+        public override void SetStaticDefaults() {
+            Tooltip.SetDefault("Tea time all the time.");
+        }
+
+        public override void PotionEffect(Player player) {
             player.wellFed = true;
             player.statDefense += 2;
             player.GetCritChance(DamageClass.Melee) += 2;
@@ -1116,8 +1161,34 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetDamage(DamageClass.Generic) += 0.05f;
             player.GetKnockback(DamageClass.Summon) += 0.5f;
             player.moveSpeed += 0.20f;
+            player.pickSpeed -= 0.1f;
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f;
-            player.buffImmune[BuffID.WellFed] = true;
+        }
+    }
+
+
+    public class PermanentGoldenDelight : PermanentPotion {
+        public override string Texture => "tsorcRevamp/Items/Potions/VanillaTextures/GoldenDelight";
+        public override int PermanentID => 55;
+        public override int BuffType => BuffID.WellFed;
+        public override List<int> ExclusivePermanents => ExclusiveSetWellFed;
+
+        public override void SetStaticDefaults() {
+            Tooltip.SetDefault("You could probably make a fortune by selling this...");
+        }
+
+        public override void PotionEffect(Player player) {
+            player.wellFed = true;
+            player.statDefense += 2;
+            player.GetCritChance(DamageClass.Melee) += 4;
+            player.GetCritChance(DamageClass.Ranged) += 4;
+            player.GetCritChance(DamageClass.Magic) += 4;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.Generic) += 0.1f;
+            player.GetKnockback(DamageClass.Summon) += 1f;
+            player.moveSpeed += 0.40f;
+            player.pickSpeed -= 0.15f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.3f;
         }
     }
 

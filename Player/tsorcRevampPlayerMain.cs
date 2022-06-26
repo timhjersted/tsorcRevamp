@@ -20,13 +20,13 @@ namespace tsorcRevamp
 {
     public partial class tsorcRevampPlayer : ModPlayer
     {
-
+        public static readonly int PermanentBuffCount = 56;
         public static List<int> startingItemsList;
         public List<int> bagsOpened;
 
         public override void Initialize()
         {
-            PermanentBuffToggles = new bool[54]; //todo dont forget to increment this if you add buffs to the dictionary
+            PermanentBuffToggles = new bool[PermanentBuffCount]; //todo dont forget to increment this if you add buffs to the dictionary
             DamageDir = new Dictionary<int, float> {
                 { 48, 4 }, //spike
                 { 76, 4 }, //hellstone
@@ -132,6 +132,9 @@ namespace tsorcRevamp
             }
 
             tag.Add("PotionBag", PotionBagList);
+
+            List<bool> permaBuffs = PermanentBuffToggles.ToList();
+            tag.Add("PermanentBuffToggles", permaBuffs);
         }
 
         public override void LoadData(TagCompound tag)
@@ -181,6 +184,16 @@ namespace tsorcRevamp
 
                 PotionBagItems = TempArray;
             }
+
+            List<bool> permaBuffs = (List<bool>)tag.GetList<bool>("PermanentBuffToggles");
+
+            //characters created before this was added would otherwise crash from OOB
+            if (permaBuffs.Count == 0) {
+                for (int i = 0; i < PermanentBuffCount; i++) {
+                    permaBuffs.Add(false);
+                }
+            }
+            PermanentBuffToggles = permaBuffs.ToArray<bool>();
         }
 
         public void SetDirection() => SetDirection(false);
