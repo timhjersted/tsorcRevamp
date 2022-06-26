@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items
         {
             Vector2 vectorItemToPlayer = player.Center - Item.Center;
             Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 10f;
-            Item.velocity = Item.velocity + movement;
+            Item.velocity = movement;
             return true;
         }
 
