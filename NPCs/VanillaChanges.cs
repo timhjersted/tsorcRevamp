@@ -3258,12 +3258,15 @@ namespace tsorcRevamp.NPCs
                                 if (destroyerChargeTimer % 180 == 90)
                                 {
                                     laserRotation = Main.rand.NextVector2Circular(10, 10).ToRotation();
-
-                                    float subRotation = 0;
-                                    for (int i = 0; i < 3; i++)
+                                    if (Main.netMode != NetmodeID.MultiplayerClient)
                                     {
-                                        subRotation += 2 * MathHelper.Pi / 3;
-                                        Projectile.NewProjectile(npc.GetSource_FromThis(), Main.player[npc.target].Center, new Vector2(0, 1).RotatedBy(laserRotation + subRotation), ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -3, npc.whoAmI);
+                                        float subRotation = 0;
+                                        for (int i = 0; i < 3; i++)
+                                        {
+                                            subRotation += 2 * MathHelper.Pi / 3;
+
+                                            Projectile.NewProjectile(npc.GetSource_FromThis(), Main.player[npc.target].Center, new Vector2(0, 1).RotatedBy(laserRotation + subRotation), ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -3, npc.whoAmI);
+                                        }
                                     }
                                 }
                             }
@@ -3286,32 +3289,36 @@ namespace tsorcRevamp.NPCs
                                     Vector2 startPos = new Vector2(0, -3200).RotatedBy(laserRotation);
                                     Vector2 step = new Vector2(220, 220).RotatedBy(laserRotation);
                                     Vector2 laserVel = new Vector2(-1, 1).RotatedBy(laserRotation); //Aim down left
-                                    for (int i = 0; i < 15; i++)
+                                    if (Main.netMode != NetmodeID.MultiplayerClient)
                                     {
-                                        horizontalLasers.Add(Projectile.NewProjectileDirect(npc.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -1, npc.whoAmI));
-                                        startPos += step;
-                                    }
-
-                                    startPos = new Vector2(0, -3200).RotatedBy(laserRotation);
-                                    step = new Vector2(-220, 220).RotatedBy(laserRotation);
-                                    laserVel = new Vector2(1, 1).RotatedBy(laserRotation); //Aim down right
-                                    for (int i = 0; i < 15; i++)
-                                    {
-                                        verticalLasers.Add(Projectile.NewProjectileDirect(npc.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -1, npc.whoAmI));
-                                        startPos += step;
-                                    }
-
-                                    intersections = new List<Vector2>();
-                                    foreach (Projectile hLaser in horizontalLasers)
-                                    {
-                                        foreach (Projectile vLaser in verticalLasers)
+                                        for (int i = 0; i < 15; i++)
                                         {
-                                            Vector2[] collisions = Collision.CheckLinevLine(hLaser.position, hLaser.position + hLaser.velocity * 3000, vLaser.position, vLaser.position + vLaser.velocity * 3000);
-                                            if (collisions.Length == 1) //2 lines can only ever intersect once, unless they're parallel and on top of each other. There would be bigger problems if that was the case.
+                                            horizontalLasers.Add(Projectile.NewProjectileDirect(npc.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -1, npc.whoAmI));
+                                            startPos += step;
+                                        }
+
+
+                                        startPos = new Vector2(0, -3200).RotatedBy(laserRotation);
+                                        step = new Vector2(-220, 220).RotatedBy(laserRotation);
+                                        laserVel = new Vector2(1, 1).RotatedBy(laserRotation); //Aim down right
+                                        for (int i = 0; i < 15; i++)
+                                        {
+                                            verticalLasers.Add(Projectile.NewProjectileDirect(npc.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -1, npc.whoAmI));
+                                            startPos += step;
+                                        }
+
+                                        intersections = new List<Vector2>();
+                                        foreach (Projectile hLaser in horizontalLasers)
+                                        {
+                                            foreach (Projectile vLaser in verticalLasers)
                                             {
-                                                if (!intersections.Contains(collisions[0]))
+                                                Vector2[] collisions = Collision.CheckLinevLine(hLaser.position, hLaser.position + hLaser.velocity * 3000, vLaser.position, vLaser.position + vLaser.velocity * 3000);
+                                                if (collisions.Length == 1) //2 lines can only ever intersect once, unless they're parallel and on top of each other. There would be bigger problems if that was the case.
                                                 {
-                                                    intersections.Add(collisions[0]);
+                                                    if (!intersections.Contains(collisions[0]))
+                                                    {
+                                                        intersections.Add(collisions[0]);
+                                                    }
                                                 }
                                             }
                                         }
