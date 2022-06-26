@@ -557,7 +557,7 @@ namespace tsorcRevamp
                     }
                 }
             }
-            if (!NPC.downedGolemBoss && !NPC.AnyNPCs(NPCID.HallowBoss) && !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !NPC.downedEmpressOfLight)
+            if (!NPC.downedGolemBoss && !NPC.AnyNPCs(NPCID.HallowBoss) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !NPC.downedEmpressOfLight)
             {
                 Vector2 arena = new Vector2(4484, 365);
                 float distance = Vector2.DistanceSquared(Player.Center / 16, arena);
