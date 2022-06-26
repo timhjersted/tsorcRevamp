@@ -1,33 +1,40 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using On.System.Windows.Forms;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.GameContent;
+using Terraria.GameContent.UI;
+using Terraria.Graphics.Effects;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
-using Terraria.UI;
-using Terraria.GameContent.UI;
-using tsorcRevamp.UI;
-using System;
-using Microsoft.Xna.Framework.Graphics;
-using static tsorcRevamp.MethodSwaps;
-using static tsorcRevamp.ILEdits;
-using System.IO;
 using Terraria.ModLoader.IO;
-using Terraria.Graphics.Shaders;
-using Terraria.Graphics.Effects;
-using ReLogic.Graphics;
-using System.Net;
-using System.Reflection;
-using System.ComponentModel;
-using Terraria.DataStructures;
+using Terraria.UI;
+using tsorcRevamp.Items;
+using tsorcRevamp.UI;
+using static tsorcRevamp.ILEdits;
+using static tsorcRevamp.MethodSwaps;
 
-namespace tsorcRevamp {
+namespace tsorcRevamp
+{
 
-   
-    public class tsorcRevamp : Mod {
 
-        public static ModHotKey toggleDragoonBoots;
-        public static ModHotKey reflectionShiftKey;
+    public class tsorcRevamp : Mod
+    {
+
+        public static ModKeybind toggleDragoonBoots;
+        public static ModKeybind reflectionShiftKey;
         public static bool isAdventureMap = false;
         public static int DarkSoulCustomCurrencyId;
         internal bool UICooldown = false;
@@ -40,14 +47,16 @@ namespace tsorcRevamp {
         public static List<int> PlaceAllowedModTiles;
 
         internal BonfireUIState BonfireUIState;
-        private UserInterface _bonfireUIState;
+        internal UserInterface _bonfireUIState; //"but zeo!", you say
         internal DarkSoulCounterUIState DarkSoulCounterUIState;
-        private UserInterface _darkSoulCounterUIState;
+        internal UserInterface _darkSoulCounterUIState; //"prefacing a name with an underscore is supposed to be for private fields!"
         internal UserInterface EmeraldHeraldUserInterface;
         internal EstusFlaskUIState EstusFlaskUIState;
-        private UserInterface _estusFlaskUIState;
+        internal UserInterface _estusFlaskUIState; //"but reader! i dont care!" says zeo
         internal PotionBagUIState PotionUIState;
         internal UserInterface PotionBagUserInterface;
+        internal CustomMapUIState DownloadUIState;
+        internal UserInterface DownloadUI;
 
         public static FieldInfo AudioLockInfo;
         public static FieldInfo ActiveSoundInstancesInfo;
@@ -63,16 +72,19 @@ namespace tsorcRevamp {
         public static bool SpecialReloadNeeded = false;
         public static bool DownloadingMusic = false;
         public static float MusicDownloadProgress = 0;
-        public static ModHotKey DodgerollKey;
+        public static ModKeybind DodgerollKey;
         //public static ModHotKey SwordflipKey;
 
         internal static bool[] CustomDungeonWalls;
 
-        public override void Load() {
-            toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
-            reflectionShiftKey = RegisterHotKey("Reflection Shift", "O");
-            DodgerollKey = RegisterHotKey("Dodge Roll", "LeftAlt");
-            //SwordflipKey = RegisterHotKey("Sword Flip", "P"); //TODO change this
+        public static bool ActuationBypassActive = false;
+
+        public override void Load()
+        {
+            toggleDragoonBoots = KeybindLoader.RegisterKeybind(this, "Dragoon Boots", Microsoft.Xna.Framework.Input.Keys.Z);
+            reflectionShiftKey = KeybindLoader.RegisterKeybind(this, "Reflection Shift", Microsoft.Xna.Framework.Input.Keys.O);
+            DodgerollKey = KeybindLoader.RegisterKeybind(this, "Dodge Roll", Microsoft.Xna.Framework.Input.Keys.LeftAlt);
+            //SwordflipKey = KeybindLoader.RegisterKeybind(this, "Sword Flip", Microsoft.Xna.Framework.Input.Keys.P);
 
             DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulShekel>(), 99999L));
 
@@ -95,208 +107,54 @@ namespace tsorcRevamp {
             PotionBagUserInterface = new UserInterface();
             if (!Main.dedServ) PotionBagUserInterface.SetState(PotionUIState);
 
+            
+            DownloadUIState = new CustomMapUIState();
+            DownloadUI = new UserInterface();
+            if (!Main.dedServ) DownloadUI.SetState(DownloadUIState);
+            
+
             ApplyMethodSwaps();
             ApplyILs();
             PopulateArrays();
-            if(!Main.dedServ) TransparentTextureHandler.TransparentTextureFix();
+            if (!Main.dedServ)
+            {
+                Main.QueueMainThreadAction(TransparentTextureHandler.TransparentTextureFix);
+            }
 
-
-            if (!Main.dedServ) {
+            if (!Main.dedServ)
+            {
                 tsorcRevamp Instance = this;
-                TheAbyssEffect = Instance.GetEffect("Effects/ScreenFilters/TheAbyssShader");
-                Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
+
+                    TheAbyssEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TheAbyssShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                    Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
+                    
 
                 //AttraidiesEffect = Instance.GetEffect("Effects/ScreenFilters/AttraidiesShader");
                 //Filters.Scene["tsorcRevamp:AttraidiesShader"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(AttraidiesEffect), "AttraidiesShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
-               
+
                 EmeraldHeraldUserInterface = new UserInterface();
             }
 
-            if (!Main.dedServ) {
+            /*
+            if (!Main.dedServ)
+            {
                 Main.instance.LoadNPC(NPCID.TheDestroyer);
-                Main.npcTexture[NPCID.TheDestroyer] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_134");
+                TextureAssets.Npc[NPCID.TheDestroyer] = ModContent.Request<Texture2D>("NPCs/Bosses/TheDestroyer/NPC_134");
                 Main.instance.LoadNPC(NPCID.TheDestroyerBody);
-                Main.npcTexture[NPCID.TheDestroyerBody] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_135");
+                TextureAssets.Npc[NPCID.TheDestroyerBody] = ModContent.Request<Texture2D>("NPCs/Bosses/TheDestroyer/NPC_135");
                 Main.instance.LoadNPC(NPCID.TheDestroyerTail);
-                Main.npcTexture[NPCID.TheDestroyerTail] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_136");
+                TextureAssets.Npc[NPCID.TheDestroyerTail] = ModContent.Request<Texture2D>("NPCs/Bosses/TheDestroyer/NPC_136");
                 Main.instance.LoadGore(156);
-                Main.goreTexture[156] = GetTexture("NPCs/Bosses/TheDestroyer/Gore_156");
+                TextureAssets.Gore[156] = ModContent.Request<Texture2D>("NPCs/Bosses/TheDestroyer/Gore_156");
                 Main.instance.LoadNPC(NPCID.Probe);
-                Main.npcTexture[NPCID.Probe] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_139");
-            }
+                TextureAssets.Npc[NPCID.Probe] = ModContent.Request<Texture2D>("NPCs/Bosses/TheDestroyer/NPC_139");
+            }*/
 
             UpdateCheck();
         }
 
-
-        Texture2D BonfireMinimapTexture;
-        public override void PostDrawFullscreenMap(ref string mouseText) {
-            if (Main.LocalPlayer.HasBuff(ModContent.BuffType<Buffs.Bonfire>()))
-            {
-                DrawMinimapBonfires();
-            }
-        }
-
-        public void DrawMinimapBonfires()
+        private void PopulateArrays()
         {
-            if (BonfireMinimapTexture == null || BonfireMinimapTexture.IsDisposed)
-            {
-                BonfireMinimapTexture = ModContent.GetTexture("tsorcRevamp/UI/MinimapBonfire");
-            }
-
-            //Step 1: Convert mouse position on the minimap screen to position in-world
-            //Also convert these to vectors because it dramatically simplifies calculations. Why aren't they vectors to start with?
-            Vector2 scrCenter = new Vector2((Main.screenWidth / 2), (Main.screenHeight / 2));
-            Vector2 mouse = new Vector2(Main.mouseX, Main.mouseY);
-
-            mouse -= scrCenter;
-            mouse *= Main.UIScale;
-            mouse += scrCenter;            
-
-            Vector2 mapPos = Main.mapFullscreenPos * Main.mapFullscreenScale;
-            Vector2 scrOrigin = scrCenter - mapPos;
-
-            scrOrigin.X += 10 * Main.mapFullscreenScale;
-            scrOrigin.Y += 10 * Main.mapFullscreenScale;
-
-            Vector2 mouseTile = (mouse - scrOrigin) / Main.mapFullscreenScale;
-            mouseTile.X += 10;
-            mouseTile.Y += 10;
-
-            //Step 2: Convert world coordinates to minimap fucko-units for every bonfire as they get drawn
-            float mapScale = Main.mapFullscreenScale / Main.UIScale;
-            Vector2 scaledMapCoords = Main.mapFullscreenPos * mapScale * -1;
-            scaledMapCoords += scrCenter;
-            foreach (Vector2 bonfirePoint in tsorcRevampWorld.LitBonfireList)
-            {
-                Vector2 bonfireDrawCoords = bonfirePoint;
-                bonfireDrawCoords.X += 1.5f;
-                bonfireDrawCoords.Y += 1f;
-                bonfireDrawCoords *= mapScale;
-                bonfireDrawCoords += scaledMapCoords;
-
-                //Step 3: While drawing check if it's in-range of the cursor, and if so give it a rainbow backdrop
-                float hoverRange = 32 / Main.mapFullscreenScale;
-                if ((mouseTile - bonfirePoint).Length() <= hoverRange)
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
-                        Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords + offsetPositon, null, Main.DiscoColor, 0, BonfireMinimapTexture.Size() / 2, 1.04f, SpriteEffects.None, 1);
-                    }
-                    Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords, null, Color.White, 0, BonfireMinimapTexture.Size() / 2, 1f, SpriteEffects.None, 1);
-
-                    //Step 4: Check if they're left-clicking, and close the minimap + teleport them if so
-                    if (Main.mouseLeft)
-                    {
-                        Main.PlaySound(SoundID.Item20, Main.LocalPlayer.position);
-                        UsefulFunctions.SafeTeleport(Main.LocalPlayer, new Vector2(bonfirePoint.X, bonfirePoint.Y - 1) * 16);
-                        Main.mapFullscreen = false;
-                        Main.PlaySound(SoundID.Item20, bonfirePoint * 16);
-                    }
-                }
-                else
-                {
-                    Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords, null, Color.White, 0, BonfireMinimapTexture.Size() / 2, 0.85f, SpriteEffects.None, 1);
-                }
-            }
-        }
-
-        public override void UpdateUI(GameTime gameTime) {
-            if (BonfireUIState.Visible) {
-                _bonfireUIState?.Update(gameTime);
-            }
-            if (DarkSoulCounterUIState.Visible)
-            {
-                _darkSoulCounterUIState?.Update(gameTime);
-            }
-
-            EmeraldHeraldUserInterface?.Update(gameTime);
-
-            if (EstusFlaskUIState.Visible)
-            {
-                _estusFlaskUIState?.Update(gameTime);
-            }
-
-            if (PotionBagUIState.Visible)
-            {
-                PotionBagUserInterface.Update(gameTime);
-            }
-        }
-
-        public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
-            int mouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
-            if (mouseTextIndex != -1) {
-                layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer(
-                    "tsorcRevamp: BonfireUI",
-                    delegate {
-                        if (BonfireUIState.Visible) {
-
-                            _bonfireUIState.Draw(Main.spriteBatch, new GameTime());
-                        }
-                        return true;
-                    },
-                    InterfaceScaleType.UI)
-                );
-            }
-
-            int resourceBarIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
-            if (resourceBarIndex != -1) {
-                layers.Insert(resourceBarIndex, new LegacyGameInterfaceLayer(
-                    "tsorcRevamp: Dark Soul Counter UI",
-                    delegate {
-                        _darkSoulCounterUIState.Draw(Main.spriteBatch, new GameTime());
-                        return true;
-                    },
-                    InterfaceScaleType.UI)
-                );
-            }
-
-            int inventoryIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Inventory"));
-            if (inventoryIndex != -1)
-            {
-                layers.Insert(inventoryIndex, new LegacyGameInterfaceLayer(
-                    "tsorcRevamp: Emerald Herald UI",
-                    delegate {
-                        EmeraldHeraldUserInterface.Draw(Main.spriteBatch, new GameTime());
-                        return true;
-                    },
-                    InterfaceScaleType.UI)
-                );
-            }
-
-            int resourceBarIndex2 = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
-            if (resourceBarIndex2 != -1)
-            {
-                layers.Insert(resourceBarIndex2, new LegacyGameInterfaceLayer(
-                    "tsorcRevamp: Estus Flask UI",
-                    delegate {
-                        _estusFlaskUIState.Draw(Main.spriteBatch, new GameTime());
-                        return true;
-                    },
-                    InterfaceScaleType.UI)
-                );
-            }
-
-            int potionBagIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
-            if(potionBagIndex != -1)
-            {
-                layers.Insert(potionBagIndex, new LegacyGameInterfaceLayer(
-                    "tsorcRevamp: Potion Bag UI",
-                    delegate {
-                        if (PotionBagUIState.Visible)
-                        {
-                            PotionBagUserInterface.Draw(Main.spriteBatch, new GameTime());
-                        }
-                        return true;
-                    },
-                    InterfaceScaleType.UI)
-                );
-            }
-        }
-
-
-        private void PopulateArrays() {
             #region KillAllowed list
             KillAllowed = new List<int>() {
                 2, //grass
@@ -630,6 +488,11 @@ namespace tsorcRevamp {
                 135, //pressure plates
                 136, //switch
                 137, //dart trap
+                TileID.Rope,
+                TileID.Chain,
+                TileID.VineRope,
+                TileID.SilkRope,
+                TileID.WebRope,
                 TileID.LunarMonolith //410
             };
             #endregion
@@ -669,36 +532,38 @@ namespace tsorcRevamp {
             //--------
             #region CrossModTiles list
             CrossModTiles = new List<int>();
-            Mod MagicStorage = ModLoader.GetMod("MagicStorage");
-            if (MagicStorage != null) {
-                CrossModTiles.Add(MagicStorage.TileType("CraftingAccess"));
-                CrossModTiles.Add(MagicStorage.TileType("RemoteAccess"));
-                CrossModTiles.Add(MagicStorage.TileType("StorageAccess"));
-                CrossModTiles.Add(MagicStorage.TileType("StorageComponent"));
-                CrossModTiles.Add(MagicStorage.TileType("StorageHeart"));
-                CrossModTiles.Add(MagicStorage.TileType("StorageUnit"));
-                CrossModTiles.Add(MagicStorage.TileType("StorageConnector"));
 
+            Mod MagicStorage;
+            if (ModLoader.TryGetMod("MagicStorage", out MagicStorage))
+            {
+                CrossModTiles.Add(MagicStorage.Find<ModTile>("CraftingAccess").Type);
+                CrossModTiles.Add(MagicStorage.Find<ModTile>("RemoteAccess").Type);
+                CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageAccess").Type);
+                CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageComponent").Type);
+                CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageHeart").Type);
+                CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageUnit").Type);
+                CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageConnector").Type);
             }
 
-            Mod MagicStorageExtra = ModLoader.GetMod("MagicStorageExtra");
-            if (MagicStorageExtra != null) {
-                CrossModTiles.Add(MagicStorageExtra.TileType("CraftingAccess"));
-                CrossModTiles.Add(MagicStorageExtra.TileType("CreativeStorageUnit"));
-                CrossModTiles.Add(MagicStorageExtra.TileType("RemoteAccess"));
-                CrossModTiles.Add(MagicStorageExtra.TileType("StorageAccess"));
-                CrossModTiles.Add(MagicStorageExtra.TileType("StorageComponent"));
-                CrossModTiles.Add(MagicStorageExtra.TileType("StorageHeart"));
-                CrossModTiles.Add(MagicStorageExtra.TileType("StorageUnit"));
-                CrossModTiles.Add(MagicStorageExtra.TileType("StorageConnector"));
+            Mod MagicStorageExtra;
+            if (ModLoader.TryGetMod("MagicStorageExtra", out MagicStorageExtra))
+            {
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("CraftingAccess").Type);
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("CreativeStorageUnit").Type);
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("RemoteAccess").Type);
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("StorageAccess").Type);
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("StorageComponent").Type);
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("StorageHeart").Type);
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("StorageUnit").Type);
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("StorageConnector").Type);
             }
             #endregion
             //--------
             #region PlaceAllowedModTiles list
             PlaceAllowedModTiles = new List<int>()
             {
-                TileType("EnemyBannerTile"),
-                TileType("SweatyCyclopsForge")
+                Find<ModTile>("EnemyBannerTile").Type,
+                Find<ModTile>("SweatyCyclopsForge").Type
 
             };
 
@@ -706,7 +571,8 @@ namespace tsorcRevamp {
             //--------
             #region CustomDungeonTiles list
             CustomDungeonWalls = new bool[231];
-            for (int i = 0; i < 231; i++) {
+            for (int i = 0; i < 231; i++)
+            {
                 CustomDungeonWalls[i] = false;
             }
             CustomDungeonWalls[0] = true; //no wall
@@ -717,7 +583,8 @@ namespace tsorcRevamp {
             #endregion
         }
 
-        public override void Unload() {
+        public override void Unload()
+        {
             toggleDragoonBoots = null;
             reflectionShiftKey = null;
             KillAllowed = null;
@@ -726,11 +593,13 @@ namespace tsorcRevamp {
             IgnoredTiles = null;
             tsorcRevampWorld.Slain = null;
             //the following sun and moon texture changes are failsafes. they should be set back to default in PreSaveAndQuit 
-            Main.sunTexture = ModContent.GetTexture("Terraria/Sun");
-            Main.sun2Texture = ModContent.GetTexture("Terraria/Sun2");
-            Main.sun3Texture = ModContent.GetTexture("Terraria/Sun3");
-            for (int i = 0; i < Main.moonTexture.Length; i++) {
-                Main.moonTexture[i] = ModContent.GetTexture("Terraria/Moon_" + i);
+            TextureAssets.Sun = ModContent.Request<Texture2D>("Terraria/Images/Sun", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            TextureAssets.Sun2 = ModContent.Request<Texture2D>("Terraria/Images/Sun2");
+            TextureAssets.Sun3 = ModContent.Request<Texture2D>("Terraria/Images/Sun3");
+
+            for (int i = 0; i < TextureAssets.Moon.Length; i++)
+            {
+                TextureAssets.Moon[i] = ModContent.Request<Texture2D>("Terraria/Images/Moon_" + i);
             }
             DarkSoulCounterUIState.ConfigInstance = null;
 
@@ -748,47 +617,35 @@ namespace tsorcRevamp {
                     }
                 }
             }*/
+
             UnloadILs();
             CustomDungeonWalls = null;
             DodgerollKey = null;
             //SwordflipKey = null;
-            if (!Main.dedServ) {
+
+            /* IIRC this was to change the Destroyer's texture, which was never fully implemented?
+             * I think there's a new way to do it now though
+            if (!Main.dedServ)
+            {
                 Main.NPCLoaded[NPCID.TheDestroyer] = false;
                 Main.NPCLoaded[NPCID.TheDestroyerBody] = false;
                 Main.NPCLoaded[NPCID.TheDestroyerTail] = false;
                 Main.NPCLoaded[NPCID.Probe] = false;
                 Main.goreLoaded[156] = false;
-            }
+            }*/
         }
-        public override void AddRecipes() {
-            ModRecipeHelper.AddModRecipes();
+        public override void AddRecipes()
+        {
+            ModRecipeHelper.AddRecipes();
 
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems) {
-                RecipeHelper.EditRecipes(); 
-            }
-        }
-
-        public override void AddRecipeGroups() {
-            ModRecipeHelper.AddRecipeGroups();
-        }
-
-        public override void PreSaveAndQuit() {
-            Main.sunTexture = ModContent.GetTexture("Terraria/Sun");
-            Main.sun2Texture = ModContent.GetTexture("Terraria/Sun2");
-            Main.sun3Texture = ModContent.GetTexture("Terraria/Sun3");
-            for (int i = 0; i < Main.moonTexture.Length; i++) {
-                Main.moonTexture[i] = ModContent.GetTexture("Terraria/Moon_" + i);
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                RecipeHelper.EditRecipes();
             }
         }
 
-        public override void PostDrawInterface(SpriteBatch spriteBatch) {
-            tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.Draw(spriteBatch);
-        }
-
-        
-
-        public override void HandlePacket(BinaryReader reader, int whoAmI) {
+        public override void HandlePacket(BinaryReader reader, int whoAmI)
+        {
             int message = reader.ReadByte(); //(byte) 1;
 
             //Sync Soul Slot
@@ -858,11 +715,11 @@ namespace tsorcRevamp {
                     while (count > 32000)
                     {
                         //UsefulFunctions.ServerText("Dropping " + 32000 + "souls");
-                        Item.NewItem(position + Main.rand.NextVector2Circular(10, 10), ModContent.ItemType<Items.DarkSoul>(), 32000);
+                        Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position + Main.rand.NextVector2Circular(10, 10), ModContent.ItemType<Items.DarkSoul>(), 32000);
                         count -= 32000;
                     }
 
-                    Item.NewItem(position, ModContent.ItemType<Items.DarkSoul>(), count);
+                    Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position, ModContent.ItemType<Items.DarkSoul>(), count);
                     //UsefulFunctions.NewItemInstanced(position, new Vector2(1, 1), ModContent.ItemType<Items.DarkSoul>(), count);
                 }
             }
@@ -882,9 +739,9 @@ namespace tsorcRevamp {
                     modPlayer.forceDodgeroll = true;
                     modPlayer.wantedDodgerollDir = reader.ReadSByte();
                     player.velocity = reader.ReadVector2();
-                    
+
                     //If we're the server in specific, bounce it to the other clients, passing "true" as the bounced flag to ensure this only happens once
-                    if(Main.netMode == NetmodeID.Server)
+                    if (Main.netMode == NetmodeID.Server)
                     {
                         ModPacket rollPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
                         rollPacket.Write(tsorcPacketID.SyncPlayerDodgeroll);
@@ -894,15 +751,15 @@ namespace tsorcRevamp {
                         rollPacket.WriteVector2(player.velocity);
 
                         //Iterate through all active clients and send it specifically to them
-                        for(int i = 0; i < Main.maxPlayers; i++)
+                        for (int i = 0; i < Main.maxPlayers; i++)
                         {
-                            if(Main.player[i].active && i != player.whoAmI)
+                            if (Main.player[i].active && i != player.whoAmI)
                             {
                                 rollPacket.Send(i);
                             }
                         }
                     }
-                }                
+                }
             }
             else if (message == tsorcPacketID.SyncBonfire)
             {
@@ -947,10 +804,9 @@ namespace tsorcRevamp {
         public override void PostSetupContent()
         {
             #region Boss Checklist Compatibility
+            Mod bossChecklist;
+            if (ModLoader.TryGetMod("BossChecklist", out bossChecklist)){  //See https://github.com/JavidPack/BossChecklist/wiki/Support-using-Mod-Call for instructions
 
-            Mod bossChecklist = ModLoader.GetMod("BossChecklist"); //See https://github.com/JavidPack/BossChecklist/wiki/Support-using-Mod-Call for instructions
-            if (bossChecklist != null)
-            {
 
                 // AddBoss, bossname, order or value in terms of vanilla bosses, inline method for retrieving downed value.
                 /*
@@ -1248,26 +1104,24 @@ namespace tsorcRevamp {
 
 
 
-
-
-
-
             }
-
             #endregion
         }
 
-        internal void UpdateCheck() {
+        internal async void UpdateCheck()
+        {
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
-            string changelogPath = dataDir + "\\tsorcChangelog.txt"; //Downloaded changelog from the github
-            string curVersionPath = dataDir + "\\tsorcCurrentVer.txt"; //Stored file recording current map and music mod versions
-            string musicTempPath = Main.SavePath + "\\Mod Configs\\tsorcRevampData" + "\\tsorcMusic.tmod"; //Where the music mod is downloaded to
+            char separator = Path.DirectorySeparatorChar;
+            string dataDir = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData";
+            string changelogPath = dataDir + separator + "tsorcChangelog.txt"; //Downloaded changelog from the github
+            string curVersionPath = dataDir + separator + "tsorcCurrentVer.txt"; //Stored file recording current map and music mod versions
+            string musicTempPath = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData" + separator + "tsorcMusic.tmod"; //Where the music mod is downloaded to
 
             //Check if the data directory exists, if not then create it
-            if (!Directory.Exists(dataDir)) {
+            if (!Directory.Exists(dataDir))
+            {
                 CreateDataDirectory();
             }
 
@@ -1277,9 +1131,8 @@ namespace tsorcRevamp {
                 InstallMusicMod();
             }
 
-            //Download the changelog. *Not* async, because the next function requires it (and it's extremely small).
-            //Could rewrite this to work async later if impact on load time isn't neglicable. Something something premature optimization.
-            ChangelogDownload();
+
+            using StreamReader reader = await GetChangelogAsync();
 
             //If it exists, read from it. If not, put a warning in the log that it failed to download.
             if (File.Exists(changelogPath))
@@ -1288,26 +1141,25 @@ namespace tsorcRevamp {
                 string musicString = "";
 
                 //Pull the version numbers from the file
-                using (StreamReader reader = File.OpenText(changelogPath))
-                {
-                    string currentString = "";
 
-                    while ((currentString = reader.ReadLine()) != null)
+                string currentString = "";
+
+                while ((currentString = reader.ReadLine()) != null)
+                {
+                    if (currentString.Contains("MAP ") && mapString == "")
                     {
-                        if (currentString.Contains("MAP ") && mapString == "")
-                        {
-                            mapString = currentString;
-                        }
-                        if (currentString.Contains("MUSIC ") && musicString == "")
-                        {
-                            musicString = currentString;
-                        }
-                        if(mapString != "" && musicString != "")
-                        {
-                            break;
-                        }
+                        mapString = currentString;
+                    }
+                    if (currentString.Contains("MUSIC ") && musicString == "")
+                    {
+                        musicString = currentString;
+                    }
+                    if (mapString != "" && musicString != "")
+                    {
+                        break;
                     }
                 }
+                
                 if (mapString == "" || musicString == "")
                 {
                     Logger.Warn("WARNING: Failed to read version data from downloaded changelog! This will prevent the mod from downloading the map, music mod, or updates!");
@@ -1316,7 +1168,7 @@ namespace tsorcRevamp {
                 {
                     //Simplify them
                     mapString = mapString.TrimStart("MAP ".ToCharArray());
-                    if(musicString.Contains("MUSIC MOD "))
+                    if (musicString.Contains("MUSIC MOD "))
                     {
                         musicString = musicString.TrimStart("MUSIC MOD ".ToCharArray());
                     }
@@ -1325,7 +1177,22 @@ namespace tsorcRevamp {
                         musicString = musicString.TrimStart("MUSIC ".ToCharArray());
                     }
                     mapString = mapString.Replace(".", "");
+                    mapString = mapString.Replace(" ", "");
                     musicString = musicString.Replace(".", "");
+                    musicString = musicString.Replace(" ", "");
+
+                    //Append 0's to both strings to make them fixed-length, so that different sized version numbers are all read the same
+                    int initialLength = mapString.Length;
+                    for (int i = 0; i < 10 - initialLength; i++)
+                    {
+                        mapString += "0";
+                    }
+
+                    initialLength = musicString.Length;
+                    for (int i = 0; i < 10 - initialLength; i++)
+                    {
+                        musicString += "0";
+                    }
 
                     //If no stored version file exists, create it with version 000000
                     if (!File.Exists(curVersionPath))
@@ -1374,14 +1241,15 @@ namespace tsorcRevamp {
             }
 
 
-           //TryCopyMap();
+            //TryCopyMap();
         }
 
         //Returns true if download successful
         public bool MapDownload()
         {
-            string filePath = Main.SavePath + "\\Mod Configs\\tsorcRevampData" + "\\tsorcBaseMap.wld";
-            
+            char separator = Path.DirectorySeparatorChar;
+            string filePath = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData" + separator + "tsorcBaseMap.wld";
+
             if (File.Exists(filePath))
             {
                 Logger.Info("Deleting outdated world template.");
@@ -1414,16 +1282,34 @@ namespace tsorcRevamp {
         //Checks if there is already a copy of the adventure map in the Worlds folder, and if not automatically copies one there.
         public static void TryCopyMap(object sender = null, AsyncCompletedEventArgs downloadEvent = null)
         {
-            string userMapFileName = "\\TheStoryofRedCloud.wld";
-            string worldsFolder = Main.SavePath + "\\Worlds";
-            string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
-            string baseMapFileName = "\\tsorcBaseMap.wld";
+            char separator = Path.DirectorySeparatorChar;
+            string userMapFileName = separator + "TheStoryofRedCloud.wld";
+            string worldsFolder = Main.SavePath + separator + "Worlds";
+            string dataDir = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData";
+            string baseMapFileName = separator + "tsorcBaseMap.wld";
 
             FileInfo fileToCopy = new FileInfo(dataDir + baseMapFileName);
             DirectoryInfo worlds = new DirectoryInfo(worldsFolder);
             bool worldExists = false;
+            log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
 
-            foreach(FileInfo file in worlds.GetFiles("*.wld"))
+            if (!Directory.Exists(worldsFolder))
+            {
+                try
+                {
+                    Directory.CreateDirectory(worldsFolder);
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    thisLogger.Error("World directory creation failed ({0}). Try again with administrator privileges?", e);
+                }
+                catch (Exception e)
+                {
+                    thisLogger.Error("World directory creation failed ({0}).", e);
+                }
+            }
+
+            foreach (FileInfo file in worlds.GetFiles("*.wld"))
             {
                 if (file.FullName.Contains("TheStoryofRedCloud"))
                 {
@@ -1434,7 +1320,6 @@ namespace tsorcRevamp {
 
             if (!worldExists && File.Exists(dataDir + baseMapFileName))
             {
-                log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
                 thisLogger.Info("Attempting to copy world.");
                 try
                 {
@@ -1442,11 +1327,11 @@ namespace tsorcRevamp {
                 }
                 catch (System.Security.SecurityException e)
                 {
-                    thisLogger.Warn("World copy failed ({0}). Try again with administrator privileges?", e);
+                    thisLogger.Error("World copy failed ({0}). Try again with administrator privileges?", e);
                 }
                 catch (Exception e)
                 {
-                    thisLogger.Warn("World copy failed ({0}).", e);
+                    thisLogger.Error("World copy failed ({0}).", e);
                 }
             }
         }
@@ -1456,17 +1341,18 @@ namespace tsorcRevamp {
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
-            string musicTempPath = Main.SavePath + "\\Mod Configs\\tsorcRevampData" + "\\tsorcMusic.tmod"; //Where the music mod is downloaded to
-            
+            char separator = Path.DirectorySeparatorChar;
+            string musicTempPath = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData" + separator + "tsorcMusic.tmod"; //Where the music mod is downloaded to
+
             thisLogger.Info("Attempting to download music file.");
             try
             {
                 using (WebClient client = new WebClient())
                 {
                     client.DownloadProgressChanged += MusicDownloadProgressChanged;
-                    client.DownloadFileCompleted += MusicDownloadCompleted;                    
+                    client.DownloadFileCompleted += MusicDownloadCompleted;
                     client.DownloadFileAsync(new Uri(VariousConstants.MUSIC_MOD_URL), musicTempPath);
-                    
+
                     DownloadingMusic = true;
                 }
             }
@@ -1480,36 +1366,35 @@ namespace tsorcRevamp {
             }
         }
 
-        public void ChangelogDownload()
-        {            
-            string changelogPath = Main.SavePath + "\\Mod Configs\\tsorcRevampData" + "\\tsorcChangelog.txt";
+        public async Task<StreamReader> GetChangelogAsync() {
+            char separator = Path.DirectorySeparatorChar;
+            string changelogPath = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData" + separator + "tsorcChangelog.txt";
 
             Logger.Info("Attempting to download changelog.");
-            if (File.Exists(changelogPath))
-            {
+            if (File.Exists(changelogPath)) {
                 File.Delete(changelogPath);
             }
-            try
-            {
-                using (WebClient client = new WebClient())
-                {
-                    client.DownloadFile(new Uri(VariousConstants.CHANGELOG_URL), changelogPath);
-                }
-            }
-            catch (WebException e)
-            {
-                Logger.Warn("Automatic changelog download failed ({0}). Connection to the internet failed or the file's location has changed.", e);
-            }
 
-            catch (Exception e)
-            {
-                Logger.Warn("Automatic changelog download failed ({0}).", e);
+            try {
+                using HttpClient client = new();
+                using var netstream = await client.GetStreamAsync(new Uri(VariousConstants.CHANGELOG_URL));
+                using var fs = new FileStream(changelogPath, FileMode.CreateNew);
+                await netstream.CopyToAsync(fs);
             }
+            catch (Exception e) {
+                //at least it isnt log and throw
+                log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
+                thisLogger.InfoFormat("GetChangelogAsync threw error {0}", e);
+            }
+            //NOT a using statement, because if we discard it here it wont be available later
+            StreamReader r = File.OpenText(changelogPath);
+            return r;
         }
 
         public void CreateDataDirectory()
         {
-            string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
+            char separator = Path.DirectorySeparatorChar;
+            string dataDir = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData";
             Logger.Info("Directory " + dataDir + " not found. Creating directory.");
             try
             {
@@ -1517,11 +1402,11 @@ namespace tsorcRevamp {
             }
             catch (UnauthorizedAccessException e)
             {
-                Logger.Warn("Directory creation failed ({0}). Try again with administrator privileges?", e);
+                Logger.Error("Data directory creation failed ({0}). Try again with administrator privileges?", e);
             }
             catch (Exception e)
             {
-                Logger.Warn("Automatic world download failed ({0}).", e);
+                Logger.Error("Data directory creation failed ({0}).", e);
             }
         }
 
@@ -1531,7 +1416,7 @@ namespace tsorcRevamp {
         }
 
         public static void MusicDownloadCompleted(object sender, AsyncCompletedEventArgs downloadEvent)
-        {           
+        {
             MusicDownloadProgress = 0;
             DownloadingMusic = false;
             DisableMusicAndReload();
@@ -1540,29 +1425,24 @@ namespace tsorcRevamp {
         //Performs the tasks necessary to replace the old music mod file with the newly downloaded one
         public static void InstallMusicMod()
         {
-            string musicTempPath = Main.SavePath + "\\Mod Configs\\tsorcRevampData" + "\\tsorcMusic.tmod"; //Where the music mod is downloaded to
-            string musicFinalPath = Main.SavePath + "\\Mods\\tsorcMusic.tmod"; //Where the music mod should be moved to upon reload
-            string configPath = Main.SavePath + "\\Mods\\enabled.json"; //Where the config dedicing what mods to load is
+            char separator = Path.DirectorySeparatorChar;
+            string musicTempPath = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData" + separator + "tsorcMusic.tmod"; //Where the music mod is downloaded to
+            string musicFinalPath = Main.SavePath + separator + "Mods" + separator + "tsorcMusic.tmod"; //Where the music mod should be moved to upon reload
+            string configPath = Main.SavePath + separator + "Mods" + separator + "enabled.json"; //Where the config dedicing what mods to load is
 
             //First, check if the music mod is still enabled
             bool musicLoaded = false;
-            using (StreamReader reader = File.OpenText(configPath))
-            {
-                string currentString = "";
+            
 
-                while ((currentString = reader.ReadLine()) != null)
-                {
-                    if (currentString.Contains("tsorcMusic"))
-                    {
-                        musicLoaded = true;
-                        break;
-                    }
-                }
+            if (ModLoader.TryGetMod("tsorcMusic", out _))
+            {
+                musicLoaded = true;
             }
+
 
             //If so, do not move it. Instead enable a special flag to prompt a reload once the initial load finishes (can't do it here while we're mid-load, or an error would occur)
             if (musicLoaded)
-            {                
+            {
                 SpecialReloadNeeded = true;
             }
 
@@ -1573,12 +1453,27 @@ namespace tsorcRevamp {
             {
                 if (File.Exists(musicFinalPath))
                 {
-                    File.Delete(musicFinalPath);
+                    try
+                    {
+                        File.Delete(musicFinalPath);
+                        File.Move(musicTempPath, musicFinalPath);
+                        justUpdatedMusic = true;
+                        ReloadNeeded = true;
+                        tsorcRevamp.SpecialReloadNeeded = false;
+                    }
+                    catch (Exception e)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Restarting to finish updating music mod!\nThis is totally normal, just hit OK and re-launch!", "Restarting!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        Main.WeGameRequireExitGame();
+                    }
+                }
+                else
+                {
+                    File.Move(musicTempPath, musicFinalPath);
+                    justUpdatedMusic = true;
+                    ReloadNeeded = true;
                 }
 
-                File.Move(musicTempPath, musicFinalPath);
-                justUpdatedMusic = true;
-                ReloadNeeded = true;
             }
         }
 
@@ -1587,7 +1482,7 @@ namespace tsorcRevamp {
         {
             object[] modParam = new object[1] { "tsorcMusic" };
             typeof(ModLoader).GetMethod("DisableMod", BindingFlags.NonPublic | BindingFlags.Static).Invoke(default, modParam);
-            typeof(ModLoader).GetMethod("Reload", BindingFlags.NonPublic | BindingFlags.Static).Invoke(default, new object[] { });            
+            typeof(ModLoader).GetMethod("Reload", BindingFlags.NonPublic | BindingFlags.Static).Invoke(default, new object[] { });
         }
 
 
@@ -1602,8 +1497,8 @@ namespace tsorcRevamp {
         }
     }
 
-    
-   
+
+
 
     public class tsorcPacketID
     {
@@ -1619,14 +1514,19 @@ namespace tsorcRevamp {
 
     //config moved to separate file
 
-    public class TilePlaceCode : GlobalItem {
+    public class TilePlaceCode : GlobalItem
+    {
 
-        public override bool CanUseItem(Item item, Player player) {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
-                if (item.createWall > 0) {
+        public override bool CanUseItem(Item item, Player player)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                if (item.createWall > 0)
+                {
                     return false; //prevent placing walls
                 }
-                if (item.createTile > -1) {
+                if (item.createTile > -1)
+                {
 
                     if (tsorcRevamp.PlaceAllowed.Contains(item.createTile))
                     {
@@ -1651,51 +1551,67 @@ namespace tsorcRevamp {
         }
     }
 
-    public class TileKillCode : GlobalTile {
+    public class TileKillCode : GlobalTile
+    {
 
-        public override bool CanKillTile(int x, int y, int type, ref bool blockDamaged) {
-
-            if (Main.tile[x, y - 1].type == ModContent.TileType<Tiles.BonfireCheckpoint>())
+        public override bool CanKillTile(int x, int y, int type, ref bool blockDamaged)
+        {
+            if (tsorcRevamp.ActuationBypassActive)
+            {
+                return true;
+            }
+            
+            if (Main.tile[x, y - 1].TileType == ModContent.TileType<Tiles.BonfireCheckpoint>())
             {
                 return false;
             }
 
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
 
-                if (Main.tile[x, y - 1].type == TileID.Statues)
+                if (Main.tile[x, y - 1].TileType == TileID.Statues)
                 {
                     return false;
                 }
 
-                bool right = !Main.tile[x + 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x + 1, y].type);
-                bool left = !Main.tile[x - 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x - 1, y].type);
-                bool below = !Main.tile[x, y - 1].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y - 1].type);
-                bool above = !Main.tile[x, y + 1].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y + 1].type);
-                if (x < 10 || x > Main.maxTilesX - 10) {//sanity
+                bool right = !Main.tile[x + 1, y].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x + 1, y].TileType);
+                bool left = !Main.tile[x - 1, y].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x - 1, y].TileType);
+                bool below = !Main.tile[x, y - 1].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y - 1].TileType);
+                bool above = !Main.tile[x, y + 1].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y + 1].TileType);
+                if (x < 10 || x > Main.maxTilesX - 10)
+                {//sanity
                     return false;
                 }
-                else if (y < 10 || y > Main.maxTilesY - 10) {//sanity 
+                else if (y < 10 || y > Main.maxTilesY - 10)
+                {//sanity 
                     return false;
                 }
-                else if (Main.tile[x, y] == null) {//sanity
+                else if (Main.tile[x, y] == null)
+                {//sanity
                     return false;
                 }
-                else if (tsorcRevamp.KillAllowed.Contains(type)) {//always allow KillAllowed
+                else if (tsorcRevamp.KillAllowed.Contains(type))
+                {//always allow KillAllowed
                     return true;
                 }
-                else if (tsorcRevamp.CrossModTiles.Contains(type)) {//allow breaking placeable modded tiles from other mods
+                else if (tsorcRevamp.CrossModTiles.Contains(type))
+                {//allow breaking placeable modded tiles from other mods
                     return true;
                 }
-                else if (tsorcRevamp.PlaceAllowedModTiles.Contains(type)) {//allow breaking placeable modded tiles
+                else if (tsorcRevamp.PlaceAllowedModTiles.Contains(type))
+                {//allow breaking placeable modded tiles
                     return true;
                 }
-                else if (tsorcRevamp.Unbreakable.Contains(type)) {//always disallow Unbreakable	
+                else if (tsorcRevamp.Unbreakable.Contains(type))
+                {//always disallow Unbreakable	
                     return false;
                 }
-                else if (right && left) {//if a tile has no neighboring tiles horizontally, allow breaking
+                else if (right && left)
+                {//if a tile has no neighboring tiles horizontally, allow breaking
                     return true;
                 }
-                else if (below && above) {//if a tile has no neighboring tiles vertically, allow breaking
+                else if (below && above)
+                {//if a tile has no neighboring tiles vertically, allow breaking
                     return true;
                 }
                 else return false; //disallow breaking tiles otherwise
@@ -1704,41 +1620,47 @@ namespace tsorcRevamp {
             return base.CanKillTile(x, y, type, ref blockDamaged); //use default value
         }
 
-        public override bool CanExplode(int x, int y, int type) {
+        public override bool CanExplode(int x, int y, int type)
+        {
 
-            if (Main.tile[x, y - 1].type == ModContent.TileType<Tiles.BonfireCheckpoint>())
+            if (Main.tile[x, y - 1].TileType == ModContent.TileType<Tiles.BonfireCheckpoint>())
             {
                 return false;
             }
 
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
-                if (Main.tile[x, y - 1].type == TileID.Statues)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                if (Main.tile[x, y - 1].TileType == TileID.Statues)
                 {
                     return false;
                 }
-                bool right = !Main.tile[x + 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x + 1, y].type);
-                bool left = !Main.tile[x - 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x - 1, y].type);
-                bool below = !Main.tile[x, y - 1].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y - 1].type);
-                bool above = !Main.tile[x, y + 1].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y + 1].type);
+                bool right = !Main.tile[x + 1, y].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x + 1, y].TileType);
+                bool left = !Main.tile[x - 1, y].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x - 1, y].TileType);
+                bool below = !Main.tile[x, y - 1].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y - 1].TileType);
+                bool above = !Main.tile[x, y + 1].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y + 1].TileType);
                 bool CanDestroy = false;
-                if (type == TileID.Ebonsand || type == TileID.Amethyst || type == TileID.ShadowOrbs) { //shadow temple / corruption chasm stuff that gets blown up
+                if (type == TileID.Ebonsand || type == TileID.Amethyst || type == TileID.ShadowOrbs)
+                { //shadow temple / corruption chasm stuff that gets blown up
                     CanDestroy = true;
                 }
 
                 //check cankilltiles stuff
-                if ((right && left) || (above && below) || tsorcRevamp.KillAllowed.Contains(type) || (x < 10 || x > Main.maxTilesX - 10) || (y < 10 || y > Main.maxTilesY - 10) || (!Main.tile[x, y].active())) {
+                if ((right && left) || (above && below) || tsorcRevamp.KillAllowed.Contains(type) || (x < 10 || x > Main.maxTilesX - 10) || (y < 10 || y > Main.maxTilesY - 10) || (!Main.tile[x, y].HasTile))
+                {
                     CanDestroy = true;
                 }
-                if (Main.tileDungeon[Main.tile[x, y].type]
+                if (Main.tileDungeon[Main.tile[x, y].TileType]
                     || type == TileID.Silver
                     || type == TileID.Cobalt
                     || type == TileID.Mythril
                     || type == TileID.Adamantite
                     || (tsorcRevamp.Unbreakable.Contains(type))
-                ) {
+                )
+                {
                     CanDestroy = false;
                 }
-                if (!Main.hardMode && type == TileID.Hellstone) {
+                if (!Main.hardMode && type == TileID.Hellstone)
+                {
                     CanDestroy = false;
                 }
                 return CanDestroy;
@@ -1747,46 +1669,58 @@ namespace tsorcRevamp {
 
 
             else return base.CanExplode(x, y, type);
+            
 
         }
 
-        public override bool Slope(int i, int j, int type) {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+        public override bool Slope(int i, int j, int type)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
                 return false;
             }
             else return base.Slope(i, j, type);
         }
     }
 
-    public class WallKillCode : GlobalWall {
-        public override void KillWall(int i, int j, int type, ref bool fail) {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+    public class WallKillCode : GlobalWall
+    {
+        public override void KillWall(int i, int j, int type, ref bool fail)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
                 fail = true;
             }
         }
-        public override bool CanExplode(int i, int j, int type) {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+        public override bool CanExplode(int i, int j, int type)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
                 return false;
             }
             return base.CanExplode(i, j, type);
         }
     }
-    public class MiscGlobalTile : GlobalTile {
+    public class MiscGlobalTile : GlobalTile
+    {
 
         bool vortexNotif = false;
         bool nebulaNotif = false;
         bool stardustNotif = false;
         bool solarNotif = false;
-       
-        public override void NearbyEffects(int i, int j, int type, bool closer) {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+
+        public override void NearbyEffects(int i, int j, int type, bool closer)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
                 Player player = Main.LocalPlayer;
                 var pos = new Vector2(i + 0.5f, j); // the + .5f makes the effect reach from equal distance to left and right
                 var distance = Math.Abs(Vector2.Distance(player.Center, (pos * 16)));
 
-                if (Main.tile[i, j].type == TileID.LunarMonolith && distance <= 800f && !player.dead && Main.tile[i, j].frameY > 54) { //frameY > 54 means enabled
-                    
-                        int style = Main.tile[i, j].frameX / 36;
+                if (Main.tile[i, j].TileType == TileID.LunarMonolith && distance <= 800f && !player.dead && Main.tile[i, j].TileFrameY > 54)
+                { //frameY > 54 means enabled
+
+                    int style = Main.tile[i, j].TileFrameX / 36;
                     switch (style)
                     {
                         case 0:
@@ -1794,7 +1728,7 @@ namespace tsorcRevamp {
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {
-                                    int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerVortex, 1);
+                                    int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerVortex, 1);
                                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
                                     NPC.TowerActiveVortex = true;
                                     NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
@@ -1817,7 +1751,7 @@ namespace tsorcRevamp {
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {
-                                    int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerNebula, 1);
+                                    int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerNebula, 1);
                                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
                                     NPC.TowerActiveNebula = true;
                                     NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
@@ -1840,7 +1774,7 @@ namespace tsorcRevamp {
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {
-                                    int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerStardust, 1);
+                                    int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerStardust, 1);
                                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
                                     NPC.TowerActiveStardust = true;
                                     NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
@@ -1863,7 +1797,7 @@ namespace tsorcRevamp {
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {
-                                    int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerSolar, 1);
+                                    int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerSolar, 1);
                                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
                                     NPC.TowerActiveSolar = true;
                                     NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;
@@ -1880,12 +1814,12 @@ namespace tsorcRevamp {
                                 }
                             }
                             break;
-                    }                    
-                } 
+                    }
+                }
             }
 
             base.NearbyEffects(i, j, type, closer);
-        } 
+        }
     }
 
     //tConfig played nice with partially transparent textures, tModloader doesn't. This class helps fix that
@@ -1938,61 +1872,61 @@ namespace tsorcRevamp {
             RedLaserTransparent,
             Lightning,
             BulletHellLaser
-        }          
-        
+        }
+
         //All textures with transparency will have to get run through this function to get premultiplied
         public static void TransparentTextureFix()
         {
             //Generates the dictionary of textures
             TransparentTextures = new Dictionary<TransparentTextureType, Texture2D>()
             {
-                {TransparentTextureType.PhasedMatterBlast, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/PhasedMatterBlast")},
-                {TransparentTextureType.AntiGravityBlast, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/AntiGravityBlast")},
-                {TransparentTextureType.EnemyPlasmaOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb")},
-                {TransparentTextureType.ManaShield, ModContent.GetTexture("tsorcRevamp/Projectiles/ManaShield")},
-                {TransparentTextureType.CrazedOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/CrazedOrb")},
-                {TransparentTextureType.MasterBuster, ModContent.GetTexture("tsorcRevamp/Projectiles/MasterBuster")},
-                {TransparentTextureType.AntiMaterialRound, ModContent.GetTexture("tsorcRevamp/Projectiles/AntiMaterialRound")},
-                {TransparentTextureType.GlaiveBeam, ModContent.GetTexture("tsorcRevamp/Projectiles/GlaiveBeamLaser")},
-                {TransparentTextureType.GlaiveBeamItemGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeam_Glowmask")},
-                {TransparentTextureType.GlaiveBeamHeldGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeamHeld_Glowmask")},
-                {TransparentTextureType.GenericLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/GenericLaser")},
-                {TransparentTextureType.GenericLaserTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/GenericLaserTargeting")},
-                {TransparentTextureType.DarkLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaser")},
-                {TransparentTextureType.DarkLaserTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaserTargeting")},
-                {TransparentTextureType.PulsarGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Pulsar_Glowmask")},
-                {TransparentTextureType.GWPulsarGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GWPulsar_Glowmask")},
-                {TransparentTextureType.PolarisGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Polaris_Glowmask")},
-                {TransparentTextureType.ToxicCatalyzerGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/ToxicCatalyzer_Glowmask")},
-                {TransparentTextureType.VirulentCatalyzerGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/VirulentCatalyzer_Glowmask")},
-                {TransparentTextureType.BiohazardGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Biohazard_Glowmask")},
-                {TransparentTextureType.HealingElixirGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Potions/HealingElixir_Glowmask")},
-                {TransparentTextureType.DarkDivineSpark, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkDivineSpark")},
-                {TransparentTextureType.ShatteredMoonlightGlowmask, ModContent.GetTexture("tsorcRevamp/Projectiles/ShatteredMoonlight_Glowmask")},
-                {TransparentTextureType.GreySlashGlowmask, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/GreySlash_Glowmask")},
-                {TransparentTextureType.UltimaWeapon, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/UltimaWeaponTransparent")},
-                {TransparentTextureType.UltimaWeaponGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/UltimaWeaponGlowmask")},
-                {TransparentTextureType.DarkUltimaWeapon, ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeapon")},
-                {TransparentTextureType.DarkUltimaWeaponGlowmask, ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeaponGlowmask")},
-                {TransparentTextureType.ReflectionShift, ModContent.GetTexture("tsorcRevamp/Items/Accessories/ReflectionShift")},
-                {TransparentTextureType.PhazonRound, ModContent.GetTexture("tsorcRevamp/Projectiles/PhazonRound")},
-                {TransparentTextureType.MoonlightGreatsword, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword")},
-                {TransparentTextureType.MoonlightGreatswordGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword_Glowmask")},
-                {TransparentTextureType.EstusFlask, ModContent.GetTexture("tsorcRevamp/Textures/EstusFlask_drinking")},
-                {TransparentTextureType.ElfinArrow, ModContent.GetTexture("tsorcRevamp/Projectiles/ElfinArrow")},
-                {TransparentTextureType.ElfinTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/ElfinTargeting")},
-                {TransparentTextureType.HumanityPhantom, ModContent.GetTexture("tsorcRevamp/NPCs/Enemies/HumanityPhantom")},
-                {TransparentTextureType.BarbarousThornBladeGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/BarbarousThornBlade_Glow")},
-                {TransparentTextureType.RedLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/RedLaserBeam")},
-                {TransparentTextureType.RedLaserTransparent, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyRedLaser")}, //A transparent and non-transparent version of this exists because the current focused energy beam laser projectile stacks a lot of beam midsections on top of each other, which fucks up transparency
-                {TransparentTextureType.Lightning, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyLightningStrike")},
-                {TransparentTextureType.BulletHellLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Gwyn/BulletHellLaser")}
+                {TransparentTextureType.PhasedMatterBlast, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/PhasedMatterBlast", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.AntiGravityBlast, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/AntiGravityBlast", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.EnemyPlasmaOrb, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ManaShield, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ManaShield", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.CrazedOrb, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/CrazedOrb", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.MasterBuster, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/MasterBuster", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.AntiMaterialRound, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/AntiMaterialRound", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.GlaiveBeam, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/GlaiveBeamLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.GlaiveBeamItemGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeam_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.GlaiveBeamHeldGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeamHeld_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.GenericLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/GenericLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.GenericLaserTargeting, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/GenericLaserTargeting", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.DarkLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.DarkLaserTargeting, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaserTargeting", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.PulsarGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/Pulsar_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.GWPulsarGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/GWPulsar_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.PolarisGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/Polaris_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ToxicCatalyzerGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/ToxicCatalyzer_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.VirulentCatalyzerGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/VirulentCatalyzer_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.BiohazardGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/Biohazard_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.HealingElixirGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Potions/HealingElixir_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.DarkDivineSpark, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkDivineSpark", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ShatteredMoonlightGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ShatteredMoonlight_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.GreySlashGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/GreySlash_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.UltimaWeapon, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/UltimaWeaponTransparent", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.UltimaWeaponGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/UltimaWeaponGlowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.DarkUltimaWeapon, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeapon", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.DarkUltimaWeaponGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeaponGlowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ReflectionShift, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Accessories/ReflectionShift", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.PhazonRound, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/PhazonRound", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.MoonlightGreatsword, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.MoonlightGreatswordGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.EstusFlask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/EstusFlask_drinking", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ElfinArrow, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ElfinArrow", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ElfinTargeting, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ElfinTargeting", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.HumanityPhantom, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/HumanityPhantom", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.BarbarousThornBladeGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/BarbarousThornBlade_Glow", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.RedLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/RedLaserBeam", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.RedLaserTransparent, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyRedLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad)}, //A transparent and non-transparent version of this exists because the current focused energy beam laser projectile stacks a lot of beam midsections on top of each other, which fucks up transparency
+                {TransparentTextureType.Lightning, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyLightningStrike", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.BulletHellLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Gwyn/BulletHellLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad)}
 
             };
 
 
             //Runs each entry through the XNA's premultiplication function
-           foreach(Texture2D textureEntry in TransparentTextures.Values)
+            foreach (Texture2D textureEntry in TransparentTextures.Values)
             {
                 Color[] buffer = new Color[textureEntry.Width * textureEntry.Height];
                 textureEntry.GetData(buffer);
@@ -2004,4 +1938,5 @@ namespace tsorcRevamp {
             }
         }
     };
+
 }

@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -15,29 +13,29 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void SetDefaults()
         {
-            projectile.aiStyle = 23;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.width = 16;
-            projectile.height = 16;
-            projectile.light = 0.8f;
-            projectile.penetrate = 1;
-            projectile.magic = true;
-            projectile.scale = 1f;
-            projectile.tileCollide = true;
-			projectile.timeLeft = 0;
+            Projectile.aiStyle = 23;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.width = 16;
+            Projectile.height = 16;
+            Projectile.light = 0.8f;
+            Projectile.penetrate = 1;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.scale = 1f;
+            Projectile.tileCollide = true;
+            Projectile.timeLeft = 0;
         }
 
-		public override void AI()
-		{		
-			
-		}
-
-		public override void Kill(int timeLeft)
+        public override void AI()
         {
-            Projectile.NewProjectile(projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStorm>(), projectile.damage, 8f, projectile.owner);
-            //Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 110, 0.3f, -0.01f); //crystal serpent split, paper, thud, faint high squeel 
+
         }
 
-	}
+        public override void Kill(int timeLeft)
+        {
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStorm>(), Projectile.damage, 8f, Projectile.owner);
+            //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 110, 0.3f, -0.01f); //crystal serpent split, paper, thud, faint high squeel 
+        }
+
+    }
 }

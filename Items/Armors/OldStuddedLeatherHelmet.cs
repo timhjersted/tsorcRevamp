@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -10,11 +9,11 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetDefaults()
         {
-            item.width = 20;
-            item.height = 26;
-            item.defense = 3;
-            item.value = 900;
-            item.rare = ItemRarityID.White;
+            Item.width = 20;
+            Item.height = 26;
+            Item.defense = 3;
+            Item.value = 900;
+            Item.rare = ItemRarityID.White;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -24,19 +23,19 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.rangedDamage += 0.07f;
-            player.rangedCrit += 5;
+            player.GetDamage(DamageClass.Ranged) += 0.07f;
+            player.GetCritChance(DamageClass.Ranged) += 5;
             player.moveSpeed += 0.1f;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("OldLeatherHelmet"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 500);
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("OldLeatherHelmet").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 500);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

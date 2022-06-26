@@ -1,16 +1,19 @@
 ﻿using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class BlackBreath : ModProjectile {
-        public override void SetDefaults() {
-            projectile.alpha = 150;
-            projectile.aiStyle = 23;
-            projectile.hostile = true;
-            projectile.height = 38;
-            projectile.penetrate = 2;
-            projectile.ranged = true;
-            projectile.tileCollide = true;
-            projectile.width = 18;
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class BlackBreath : ModProjectile
+    {
+        public override void SetDefaults()
+        {
+            Projectile.alpha = 150;
+            Projectile.aiStyle = 23;
+            Projectile.hostile = true;
+            Projectile.height = 38;
+            Projectile.penetrate = 2;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.tileCollide = true;
+            Projectile.width = 18;
         }
     }
 }

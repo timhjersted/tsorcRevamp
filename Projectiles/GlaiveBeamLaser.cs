@@ -9,9 +9,11 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
+namespace tsorcRevamp.Projectiles
+{
 
-    public class GlaiveBeamLaser : ModProjectile {
+    public class GlaiveBeamLaser : ModProjectile
+    {
 
         //Fair warning: This is an absolute garbled mess right now, mostly as the result of experimentation.
         //Expect it to look pretty different in the future.
@@ -20,29 +22,32 @@ namespace tsorcRevamp.Projectiles {
         private const float MOVE_DISTANCE = 20f;
         public const int FIRING_TIME = 120;
 
-        public float Distance {
-            get => projectile.ai[0];
-            set => projectile.ai[0] = value;
+        public float Distance
+        {
+            get => Projectile.ai[0];
+            set => Projectile.ai[0] = value;
         }
 
-        public float Charge {
-            get => projectile.localAI[0];
-            set => projectile.localAI[0] = value;
+        public float Charge
+        {
+            get => Projectile.localAI[0];
+            set => Projectile.localAI[0] = value;
         }
 
         public bool IsAtMaxCharge => Charge == MAX_CHARGE;
 
         public int FiringTimeLeft = 0;
 
-        public override void SetDefaults() {
-            projectile.width = 10;
-            projectile.height = 10;
-            projectile.friendly = true;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.magic = true;
-            projectile.hide = true;
-            projectile.damage = 25;
+        public override void SetDefaults()
+        {
+            Projectile.width = 10;
+            Projectile.height = 10;
+            Projectile.friendly = true;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.hide = true;
+            Projectile.damage = 25;
         }
 
 
@@ -52,9 +57,9 @@ namespace tsorcRevamp.Projectiles {
         //Might go back and change this to use that code for this at some point. It works for now, though.
         private Vector2 GetOrigin()
         {
-            Vector2 origin = Main.player[projectile.owner].Center;
-            origin.X -= 5 * Main.player[projectile.owner].direction;
-            if (Main.player[projectile.owner].gravDir != 1 && ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
+            Vector2 origin = Main.player[Projectile.owner].Center;
+            origin.X -= 5 * Main.player[Projectile.owner].direction;
+            if (Main.player[Projectile.owner].gravDir != 1 && ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
             {
                 origin.Y += 15;
             }
@@ -62,69 +67,69 @@ namespace tsorcRevamp.Projectiles {
             {
                 origin.Y -= 15;
             }
-            if (Main.player[projectile.owner].gravDir != 1 && ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
+            if (Main.player[Projectile.owner].gravDir != 1 && ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
             {
-                if (Main.player[projectile.owner].itemRotation < 0)
+                if (Main.player[Projectile.owner].itemRotation < 0)
                 {
                     //If aiming in the upper right quadrant
-                    if (Main.player[projectile.owner].direction == 1)
+                    if (Main.player[Projectile.owner].direction == 1)
                     {
-                        origin.X += 8 + -8 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        origin.X += 8 + -8 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
                         //origin.Y += 0 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
                     }
                     //Bottom left
                     else
                     {
-                        origin.X -= -10 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
-                        origin.Y -= 10 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        origin.X -= -10 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
+                        origin.Y -= 10 * (float)Math.Sin(Math.Abs(Main.player[Projectile.owner].itemRotation));
                     }
                 }
                 else
                 {
                     //Bottom right
-                    if (Main.player[projectile.owner].direction == 1)
+                    if (Main.player[Projectile.owner].direction == 1)
                     {
-                        origin.X += 0 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
-                        origin.Y -= 15 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        origin.X += 0 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
+                        origin.Y -= 15 * (float)Math.Sin(Math.Abs(Main.player[Projectile.owner].itemRotation));
                     }
                     //Upper left
                     else
                     {
-                        origin.X -= 5 + -5 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        origin.X -= 5 + -5 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
                         //origin.Y += 15 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
                     }
                 }
             }
             else
             {
-                if (Main.player[projectile.owner].itemRotation < 0)
+                if (Main.player[Projectile.owner].itemRotation < 0)
                 {
                     //If aiming in the upper right quadrant
-                    if (Main.player[projectile.owner].direction == 1)
+                    if (Main.player[Projectile.owner].direction == 1)
                     {
-                        origin.X -= 10 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
-                        origin.Y -= -10 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        origin.X -= 10 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
+                        origin.Y -= -10 * (float)Math.Sin(Math.Abs(Main.player[Projectile.owner].itemRotation));
                     }
                     //Bottom left
                     else
                     {
-                        origin.X -= 5 + -10 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
-                        origin.Y += -10 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        origin.X -= 5 + -10 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
+                        origin.Y += -10 * (float)Math.Sin(Math.Abs(Main.player[Projectile.owner].itemRotation));
                     }
                 }
                 else
                 {
                     //Bottom right
-                    if (Main.player[projectile.owner].direction == 1)
+                    if (Main.player[Projectile.owner].direction == 1)
                     {
-                        origin.X += 6 + -11 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
-                        origin.Y += -10 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        origin.X += 6 + -11 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
+                        origin.Y += -10 * (float)Math.Sin(Math.Abs(Main.player[Projectile.owner].itemRotation));
                     }
                     //Upper left
                     else
                     {
-                        origin.X += 10 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
-                        origin.Y -= -10 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        origin.X += 10 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
+                        origin.Y -= -10 * (float)Math.Sin(Math.Abs(Main.player[Projectile.owner].itemRotation));
                     }
                 }
             }
@@ -132,47 +137,52 @@ namespace tsorcRevamp.Projectiles {
             return origin;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) {           
+        public override bool PreDraw(ref Color lightColor)
+        {
             //Get the premultiplied, properly transparent texture
-            Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.GlaiveBeam];           
+            Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.GlaiveBeam];
 
-            if (IsAtMaxCharge && FiringTimeLeft > 0) {
+            if (IsAtMaxCharge && FiringTimeLeft > 0)
+            {
                 float scale = 0.4f;
 
-                DrawLaser(spriteBatch, texture, GetOrigin(),
-                    projectile.velocity, 28 * scale, projectile.damage, -1.57f, scale, 2000f, Color.White, (int)MOVE_DISTANCE);
+                DrawLaser(Main.spriteBatch, texture, GetOrigin(),
+                    Projectile.velocity, 28 * scale, Projectile.damage, -1.57f, scale, 2000f, Color.White, (int)MOVE_DISTANCE);
             }
             return false;
         }
 
-        public void DrawLaser(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 unit, float step, int damage, float rotation = 0f, float scale = 1f, float maxDist = 2000f, Color color = default, int transDist = 50) {
+        public void DrawLaser(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 unit, float step, int damage, float rotation = 0f, float scale = 1f, float maxDist = 2000f, Color color = default, int transDist = 50)
+        {
             float r = unit.ToRotation() + rotation;
-            
+
             // Draws the laser 'body'
-            for (float i = transDist; i <= Distance; i += step) {
+            for (float i = transDist; i <= Distance; i += step)
+            {
 
                 Color c = Color.White;
                 var origin = start + i * unit;
-                
-                spriteBatch.Draw(texture, origin - Main.screenPosition, new Rectangle(0, 0, 46, 28), i < transDist ? Color.Transparent : c, r, new Vector2(46 * .5f, 28 * .5f), scale, 0, 0);
+
+                Main.EntitySpriteDraw(texture, origin - Main.screenPosition, new Rectangle(0, 0, 46, 28), i < transDist ? Color.Transparent : c, r, new Vector2(46 * .5f, 28 * .5f), scale, 0, 0);
 
                 //If it's at the end, draws the end of the laser
-                if((i + step) > Distance)
+                if ((i + step) > Distance)
                 {
                     i += step;
                     origin = start + i * unit;
-                    spriteBatch.Draw(texture, origin - Main.screenPosition, new Rectangle(0, 30, 46, 28), i < transDist ? Color.Transparent : c, r, new Vector2(46 * .5f, 28 * .5f), scale, 0, 0);
+                    Main.EntitySpriteDraw(texture, origin - Main.screenPosition, new Rectangle(0, 30, 46, 28), i < transDist ? Color.Transparent : c, r, new Vector2(46 * .5f, 28 * .5f), scale, 0, 0);
                 }
             }
             CastLights();
         }
 
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
             if ((!IsAtMaxCharge) || FiringTimeLeft <= 0) return false;
 
 
-            Player player = Main.player[projectile.owner];
-            Vector2 unit = projectile.velocity;
+            Player player = Main.player[Projectile.owner];
+            Vector2 unit = Projectile.velocity;
             float point = 0f;
             Vector2 origin = GetOrigin();
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), origin,
@@ -184,7 +194,7 @@ namespace tsorcRevamp.Projectiles {
             target.AddBuff(BuffID.OnFire, 300);
 
             Vector2 endpoint = target.position;
-            Player player = Main.player[projectile.owner];
+            Player player = Main.player[Projectile.owner];
             float distance = Vector2.Distance(endpoint, player.position);
             float velocity = -8f;
             Vector2 speed = ((endpoint - player.position) / distance) * velocity;
@@ -196,16 +206,17 @@ namespace tsorcRevamp.Projectiles {
             Main.dust[dust].noGravity = true;
             Main.dust[dust].shader = GameShaders.Armor.GetSecondaryShader(107, Main.LocalPlayer);
             dust = Dust.NewDust(endpoint, 30, 30, 130, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 20, default, 1.0f);
-            Main.dust[dust].noGravity = true;            
+            Main.dust[dust].noGravity = true;
         }
 
         private float HostGlaiveBeamIndex
         {
-            get => projectile.ai[1];
-            set => projectile.ai[1] = value;
+            get => Projectile.ai[1];
+            set => Projectile.ai[1] = value;
         }
 
-        public override void AI() { 
+        public override void AI()
+        {
 
             FiringTimeLeft--;
             if (FiringTimeLeft == 0)
@@ -213,18 +224,18 @@ namespace tsorcRevamp.Projectiles {
                 Charge = 0;
             }
 
-            Player player = Main.player[projectile.owner];
+            Player player = Main.player[Projectile.owner];
             Vector2 origin = GetOrigin();
-            projectile.position = origin + projectile.velocity * MOVE_DISTANCE;
-            projectile.timeLeft = 2;
+            Projectile.position = origin + Projectile.velocity * MOVE_DISTANCE;
+            Projectile.timeLeft = 2;
 
             UpdatePlayer(player);
-            ChargeLaser(player); 
+            ChargeLaser(player);
 
             if (Charge < MAX_CHARGE) return;
 
             SetLaserPosition(player);
-            Vector2 endpoint = origin + projectile.velocity * Distance;
+            Vector2 endpoint = origin + Projectile.velocity * Distance;
             endpoint -= new Vector2(8, 8); //Offset endpoint so dust is centered on it, covering it better
             float distance = Vector2.Distance(endpoint, origin);
             float velocity = -10f;
@@ -236,7 +247,7 @@ namespace tsorcRevamp.Projectiles {
             {
                 dust = Dust.NewDust(endpoint, 16, 16, 127, speed.X * 1.2f + Main.rand.Next(-5, 5), speed.Y * 1.2f + Main.rand.Next(-5, 5), 20, default, 3.5f);
                 Main.dust[dust].noGravity = true;
-            }            
+            }
             if (Main.rand.Next(2) == 1)
             {
                 dust = Dust.NewDust(endpoint, 16, 16, 130, speed.X, speed.Y, 20, default, 1.0f);
@@ -256,11 +267,12 @@ namespace tsorcRevamp.Projectiles {
             //}
         }
 
-        private void SetLaserPosition(Player player) {
+        private void SetLaserPosition(Player player)
+        {
             for (Distance = MOVE_DISTANCE; Distance <= 2200f; Distance += 5f)
             {
                 Vector2 origin = GetOrigin();
-                var start = origin + projectile.velocity * Distance;
+                var start = origin + Projectile.velocity * Distance;
                 if (!Collision.CanHit(origin, 1, 1, start, 1, 1) && !Collision.CanHitLine(origin, 1, 1, start, 1, 1))
                 {
                     Distance -= 5f;
@@ -274,68 +286,76 @@ namespace tsorcRevamp.Projectiles {
             WaterShaderData shaderData = (WaterShaderData)Filters.Scene["WaterDistortion"].GetShader();
 
             // A universal time-based sinusoid which updates extremely rapidly. GlobalTime is 0 to 3600, measured in seconds.
-            float waveSine = 0.1f * (float)Math.Sin(Main.GlobalTime * 20f);
-            Vector2 ripplePos = projectile.position + new Vector2(beamDims.X * 0.5f, 0f).RotatedBy(projectile.rotation);
+            float waveSine = 0.1f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 20f);
+            Vector2 ripplePos = Projectile.position + new Vector2(beamDims.X * 0.5f, 0f).RotatedBy(Projectile.rotation);
 
             // WaveData is encoded as a Color. Not really sure why.
             Color waveData = new Color(0.5f, 0.1f * Math.Sign(waveSine) + 0.5f, 0f, 1f) * Math.Abs(waveSine);
-            shaderData.QueueRipple(ripplePos, waveData, beamDims, RippleShape.Square, projectile.rotation);
+            shaderData.QueueRipple(ripplePos, waveData, beamDims, RippleShape.Square, Projectile.rotation);
         }
 
-        private void ChargeLaser(Player player) {
-            if (!player.channel) {
-                projectile.Kill();
+        private void ChargeLaser(Player player)
+        {
+            if (!player.channel)
+            {
+                Projectile.Kill();
             }
-            else {
-                Vector2 offset = projectile.velocity;
+            else
+            {
+                Vector2 offset = Projectile.velocity;
                 offset *= MOVE_DISTANCE - 20;
                 Vector2 pos = GetOrigin() + offset - new Vector2(10, 10);
-                if (Charge < MAX_CHARGE) {
+                if (Charge < MAX_CHARGE)
+                {
                     Charge++;
                     //Only play the sound once, on the frame it hits max charge
-                    if(Charge == MAX_CHARGE)
+                    if (Charge == MAX_CHARGE)
                     {
-                        Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GlaiveBeam").WithVolume(50f));
+                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/GlaiveBeam") with { Volume = 50f, PitchVariance = 0.1f }, Projectile.Center);
                         FiringTimeLeft = FIRING_TIME;
                     }
                 }
                 Vector2 dustVelocity = Vector2.UnitX * 18f;
-                dustVelocity = dustVelocity.RotatedBy(projectile.rotation - 1.57f);
+                dustVelocity = dustVelocity.RotatedBy(Projectile.rotation - 1.57f);
             }
         }
 
-        private void UpdatePlayer(Player player) {
+        private void UpdatePlayer(Player player)
+        {
             // Multiplayer support here, only run this code if the client running it is the owner of the projectile
-            if (projectile.owner == Main.myPlayer) {
+            if (Projectile.owner == Main.myPlayer)
+            {
                 Vector2 diff = Main.MouseWorld - GetOrigin();
                 diff.Normalize();
-                projectile.velocity = diff;
-                projectile.direction = Main.MouseWorld.X > player.position.X ? 1 : -1;
-                projectile.netUpdate = true;
+                Projectile.velocity = diff;
+                Projectile.direction = Main.MouseWorld.X > player.position.X ? 1 : -1;
+                Projectile.netUpdate = true;
             }
 
-            int dir = projectile.direction;
+            int dir = Projectile.direction;
             player.ChangeDir(dir); // Set player direction to where we are shooting
-            player.heldProj = projectile.whoAmI; // Update player's held projectile
+            player.heldProj = Projectile.whoAmI; // Update player's held projectile
             player.itemTime = 2; // Set item time to 2 frames while we are used
             player.itemAnimation = 2; // Set item animation time to 2 frames while we are used
-            player.itemRotation = (float)Math.Atan2(projectile.velocity.Y * dir, projectile.velocity.X * dir); // Set the item rotation to where we are shooting
+            player.itemRotation = (float)Math.Atan2(Projectile.velocity.Y * dir, Projectile.velocity.X * dir); // Set the item rotation to where we are shooting
         }
 
-        private void CastLights() {
+        private void CastLights()
+        {
             // Cast a light along the line of the laser
             DelegateMethods.v3_1 = new Vector3(1f, 0f, 0f);
-            Utils.PlotTileLine(projectile.Center, projectile.Center + projectile.velocity * (Distance - MOVE_DISTANCE), 8, DelegateMethods.CastLight);
+            Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * (Distance - MOVE_DISTANCE), 8, DelegateMethods.CastLight);
         }
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override void CutTiles() {
+        public override void CutTiles()
+        {
             if (Charge == MAX_CHARGE)
             {
                 DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
-                Vector2 unit = projectile.velocity;
-                Utils.PlotTileLine(projectile.Center, projectile.Center + unit * Distance, (projectile.width + 16) * projectile.scale, DelegateMethods.CutTiles);
+                Vector2 unit = Projectile.velocity;
+                Utils.PlotTileLine(Projectile.Center, Projectile.Center + unit * Distance, (Projectile.width + 16) * Projectile.scale, DelegateMethods.CutTiles);
             }
         }
     }

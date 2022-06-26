@@ -3,40 +3,45 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class Limit : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class Limit : ModItem
+    {
 
-        public override void SetDefaults() {
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.width = 24;
-            item.height = 24;
-            item.noUseGraphic = true;
-            item.UseSound = SoundID.Item1;
-            item.autoReuse = true;
-            item.melee = true;
-            item.channel = true;
-            item.noMelee = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.Limit>();
-            item.useAnimation = 40;
-            item.useTime = item.useAnimation / 4;
-            item.shootSpeed = 0.08f;
-            item.damage = 151;
-            item.knockBack = 6.5f;
-            item.value = Item.sellPrice(0, 20);
-            item.crit = 10;
-            item.rare = ItemRarityID.Red;
+        public override void SetDefaults()
+        {
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.width = 24;
+            Item.height = 24;
+            Item.noUseGraphic = true;
+            Item.UseSound = SoundID.Item1;
+            Item.autoReuse = true;
+            Item.DamageType = DamageClass.Melee;
+            Item.channel = true;
+            Item.noMelee = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Limit>();
+            Item.useAnimation = 40;
+            Item.useTime = Item.useAnimation / 4;
+            Item.shootSpeed = 0.08f;
+            Item.damage = 151;
+            Item.knockBack = 6.5f;
+            Item.value = Item.sellPrice(0, 20);
+            Item.crit = 10;
+            Item.rare = ItemRarityID.Red;
             //item.glowMask = 271; was this actually trying to do something?
         }
 
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
+        {
             Vector2 mousePos = Main.MouseWorld;
             Vector2 playerToMouse = mousePos - player.Center;
 
-            if (playerToMouse.Length() > 60f) {
+            if (playerToMouse.Length() > 60f)
+            {
                 playerToMouse *= 60f / playerToMouse.Length();
                 mousePos = player.Center + playerToMouse;
             }
-            Projectile.NewProjectile(mousePos, new Vector2(speedX, speedY), ModContent.ProjectileType<Projectiles.Limit>(), item.damage, item.knockBack, item.owner);
+            Projectile.NewProjectile(player.GetSource_ItemUse(Item), mousePos, speed, ModContent.ProjectileType<Projectiles.Limit>(), Item.damage, Item.knockBack, Item.playerIndexTheItemIsReservedFor);
             return false;
         }
     }

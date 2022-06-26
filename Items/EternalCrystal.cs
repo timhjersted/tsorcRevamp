@@ -11,18 +11,18 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault($"[i:{item.type}][c/4949c2:A mysterious crystal][i:{item.type}]" +
+            Tooltip.SetDefault($"[i:{Item.type}][c/4949c2:A mysterious crystal][i:{Item.type}]" +
                 "\nLooking into it is like peering into the infinite expanse of [c/4949c2:space]");
-            Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(4, 25));
+            Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(4, 25));
 
         }
         public override void SetDefaults()
         {
-            item.width = 28;
-            item.height = 50;
-            item.maxStack = 999;
-            item.value = 50000;
-            item.rare = ItemRarityID.Yellow;
+            Item.width = 28;
+            Item.height = 50;
+            Item.maxStack = 999;
+            Item.value = 50000;
+            Item.rare = ItemRarityID.Yellow;
         }
 
         public int itemframe = 0;
@@ -30,23 +30,23 @@ namespace tsorcRevamp.Items
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
-            Lighting.AddLight(item.Center, .5f, .35f, .35f);
-            Texture2D texture = Main.itemTexture[item.type];
-            Texture2D textureglow = mod.GetTexture("Items/EternalCrystal_Glow");
+            Lighting.AddLight(Item.Center, .5f, .35f, .35f);
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            Texture2D textureglow = (Texture2D)Mod.Assets.Request<Texture2D>("Items/EternalCrystal_Glow");
             var myrectangle = texture.Frame(1, 25, 0, itemframe);
-            spriteBatch.Draw(texture, item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(14, 25), item.scale, SpriteEffects.None, 0.1f);
-            spriteBatch.Draw(textureglow, item.Center - Main.screenPosition, myrectangle, Color.White, 0f, new Vector2(14, 25), item.scale, SpriteEffects.None, 0f);
-			
+            spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(14, 25), Item.scale, SpriteEffects.None, 0.1f);
+            spriteBatch.Draw(textureglow, Item.Center - Main.screenPosition, myrectangle, Color.White, 0f, new Vector2(14, 25), Item.scale, SpriteEffects.None, 0);
+
             itemframeCounter++;
 
-			if (itemframeCounter < 4)
-			{
-				itemframe = 0;
-			}
-			else if (itemframeCounter < 8)
-			{
-				itemframe = 1;
-			}
+            if (itemframeCounter < 4)
+            {
+                itemframe = 0;
+            }
+            else if (itemframeCounter < 8)
+            {
+                itemframe = 1;
+            }
             else if (itemframeCounter < 12)
             {
                 itemframe = 2;
@@ -140,41 +140,41 @@ namespace tsorcRevamp.Items
                 itemframe = 24;
             }
             else
-			{
-			    itemframeCounter = 0;
-			}
+            {
+                itemframeCounter = 0;
+            }
 
 
             if (Main.rand.Next(50) == 0) //Yellow
             {
-                Dust dust = Main.dust[Dust.NewDust(new Vector2(item.position.X + 2, item.position.Y + 24), 24, 24, 170, item.velocity.X, item.velocity.Y, 100, default(Color), .4f)];
+                Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X + 2, Item.position.Y + 24), 24, 24, 170, Item.velocity.X, Item.velocity.Y, 100, default(Color), .4f)];
                 dust.velocity *= 0f;
                 dust.noGravity = true;
-                dust.velocity += item.velocity;
+                dust.velocity += Item.velocity;
                 dust.fadeIn = 1f;
             }
             if (Main.rand.Next(50) == 0) //Pink
             {
-                Dust dust = Main.dust[Dust.NewDust(new Vector2(item.position.X + 2, item.position.Y + 24), 24, 24, 272, item.velocity.X, item.velocity.Y, 100, default(Color), .4f)]; //223, 255, 272
+                Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X + 2, Item.position.Y + 24), 24, 24, 272, Item.velocity.X, Item.velocity.Y, 100, default(Color), .4f)]; //223, 255, 272
                 dust.velocity *= 0f;
                 dust.noGravity = true;
-                dust.velocity += item.velocity;
+                dust.velocity += Item.velocity;
                 dust.fadeIn = 1f;
             }
             if (Main.rand.Next(50) == 0) //Blue
             {
-                Dust dust = Main.dust[Dust.NewDust(new Vector2(item.position.X + 2, item.position.Y + 24), 24, 24, 185, item.velocity.X, item.velocity.Y, 100, default(Color), .4f)];
+                Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X + 2, Item.position.Y + 24), 24, 24, 185, Item.velocity.X, Item.velocity.Y, 100, default(Color), .4f)];
                 dust.velocity *= 0f;
                 dust.noGravity = true;
-                dust.velocity += item.velocity;
+                dust.velocity += Item.velocity;
                 dust.fadeIn = 1f;
             }
             if (Main.rand.Next(50) == 0) //Green
             {
-                Dust dust = Main.dust[Dust.NewDust(new Vector2(item.position.X + 2, item.position.Y + 24), 24, 24, 107, item.velocity.X, item.velocity.Y, 100, default(Color), .4f)];
+                Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X + 2, Item.position.Y + 24), 24, 24, 107, Item.velocity.X, Item.velocity.Y, 100, default(Color), .4f)];
                 dust.velocity *= 0f;
                 dust.noGravity = true;
-                dust.velocity += item.velocity;
+                dust.velocity += Item.velocity;
                 dust.fadeIn = 1f;
             }
 

@@ -1,32 +1,39 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Okiku {
-    class EnemySuddenDeathStrike : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy.Okiku
+{
+    class EnemySuddenDeathStrike : ModProjectile
+    {
 
-        public override void SetDefaults() {
-            projectile.width = 44;
-            projectile.height = 40;
-            projectile.hostile = true;
-            projectile.penetrate = 50;
-            projectile.light = 1;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            Main.projFrames[projectile.type] = 12;
+        public override void SetDefaults()
+        {
+            Projectile.width = 44;
+            Projectile.height = 40;
+            Projectile.hostile = true;
+            Projectile.penetrate = 50;
+            Projectile.light = 1;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Main.projFrames[Projectile.type] = 12;
         }
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Sudden Death Strike");
         }
 
-        public override void AI() {
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 3) {
-                projectile.frame++;
-                projectile.frameCounter = 0;
+        public override void AI()
+        {
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 3)
+            {
+                Projectile.frame++;
+                Projectile.frameCounter = 0;
             }
-            if (projectile.frame >= 12) {
-                projectile.Kill();
+            if (Projectile.frame >= 12)
+            {
+                Projectile.Kill();
                 return;
             }
         }

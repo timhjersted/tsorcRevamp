@@ -1,6 +1,9 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
@@ -13,26 +16,24 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
 
-            npc.npcSlots = 5;
-            Main.npcFrameCount[npc.type] = 16;
-            npc.width = 38;
-            npc.height = 32;
-            animationType = 28;
-            npc.aiStyle = 3;
-            npc.timeLeft = 22750;
-            npc.damage = 45;
-            //npc.music = 12;
-            npc.defense = 10;
-            npc.boss = true;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/Gaibon_Roar");
-            npc.lifeMax = 5000;
-            npc.scale = 1.1f;
-            npc.knockBackResist = 0.4f;
-            npc.value = 35000;
-            npc.buffImmune[BuffID.Confused] = true;
-            npc.buffImmune[BuffID.OnFire] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.SlograBag>();
+            NPC.npcSlots = 5;
+            Main.npcFrameCount[NPC.type] = 16;
+            NPC.width = 38;
+            NPC.height = 32;
+            AnimationType = 28;
+            NPC.aiStyle = -1;
+            NPC.timeLeft = 22750;
+            NPC.damage = 45;
+            //npc.Music = 12;
+            NPC.boss = true;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
+            NPC.lifeMax = 4000;
+            NPC.scale = 1.1f;
+            NPC.knockBackResist = 0.4f;
+            NPC.value = 100000;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
             despawnHandler = new NPCDespawnHandler("Slogra returns to the depths...", Color.DarkGreen, DustID.Demonite);
 
         }
@@ -47,100 +48,113 @@ namespace tsorcRevamp.NPCs.Bosses
         int burningSphereDamage = 60;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.damage = (int)(npc.damage * 1.3 / 2);
-            npc.defense = npc.defense += 12;
+            NPC.damage = (int)(NPC.damage * 1.3 / 2);
+            NPC.defense = NPC.defense += 12;
             tridentDamage = (int)(tridentDamage / 2);
-            //For some reason, its contact damage doesn't get doubled due to expert mode either apparently?
-            //burningSphereDamage = (int)(burningSphereDamage / 2);
         }
 
 
-        //int customspawn1 = 0;
-        float customAi1;
-        //float customAi5;
-        int chargeDamage = 0;
-        float comboDamage = 0;
-        bool breakCombo = false;
-        bool chargeDamageFlag = false;
-        int boredTimer = 0;
-        int tBored = 1;//increasing this increases how long it take for the NP to get bored
-        int boredResetT = 0;
-        int bReset = 50;//increasing this will increase how long an NPC "gives up" before coming back to try again.
-
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player P = spawnInfo.player;
-
-            bool Sky = spawnInfo.spawnTileY <= (Main.rockLayer * 4);
-            bool Meteor = P.ZoneMeteor;
-            bool Jungle = P.ZoneJungle;
-            bool Dungeon = P.ZoneDungeon;
-            bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-            bool Hallow = P.ZoneHoly;
-            bool AboveEarth = spawnInfo.spawnTileY < Main.worldSurface;
-            bool InBrownLayer = spawnInfo.spawnTileY >= Main.worldSurface && spawnInfo.spawnTileY < Main.rockLayer;
-            bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
-            bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200) * 16;
-            bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
-
-            // these are all the regular stuff you get , now lets see......
-            //this doesn't really work, only one spawns 90% of the time in an enraged state
-            /*for (int num36 = 0; num36 < 200; num36++)
-            {
-                if (Main.npc[num36].active && Main.npc[num36].type == ModContent.NPCType<Bosses.Slogra>())
-                {
-                    return 0;
-                }
-            }
-
-            if (Jungle && !Main.dayTime && !tsorcRevampWorld.SuperHardMode && !Main.hardMode && AboveEarth && Main.rand.Next(6000) == 1)
-
-            {
-                Main.NewText("Slogra had emerged from the depths!", 175, 75, 255);
-                //NPC.SpawnOnPlayer(P.whoAmI, ModContent.NPCType<NPCs.Bosses.Gaibon>());
-                return 1;
-            }
-
-            if (Meteor && !Main.hardMode && !tsorcRevampWorld.SuperHardMode && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(3000) == 1)
-
-            {
-                Main.NewText("Slogra has emerged from the depths!", 175, 75, 255);
-                //NPC.SpawnOnPlayer(P.whoAmI, ModContent.NPCType<NPCs.Bosses.Gaibon>());
-                //NPC.NewNPC((int)P.position.X + 400, (int)P.position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>());
-                return 1;
-            }*/
-
-            return 0;
-        }
-        #endregion
-
-        #region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
         NPCDespawnHandler despawnHandler;
         bool gaibonDead = false;
-        double fireballTimer = 0;
-        float dustRadius = 20;
-        float dustMin = 3;
+        int moveTimer = 0;
+        bool dashAttack = false;
+        Vector2 pickedTrajectory = Vector2.Zero;
+        int baseCooldown = 240;
+        int lineOfSightTimer = 0;
         public override void AI()
         {
-            despawnHandler.TargetAndDespawn(npc.whoAmI);
-
-            for (int i = 0; i < Main.maxPlayers; i++)
+            despawnHandler.TargetAndDespawn(NPC.whoAmI);
+            moveTimer++;
+            if (gaibonDead)
             {
-                Player thisPlayer = Main.player[i];
-                if(thisPlayer != null && thisPlayer.active)
+                NPC.defense = 0; //Speed things up a bit
+                baseCooldown = 90;
+            }
+
+            //Perform attacks
+            if (moveTimer >= baseCooldown)
+            {
+                if (dashAttack)
                 {
-                    thisPlayer.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 300);
+                    DashAttack();
+                }
+                else
+                {
+                    JumpAttack();
+                }                
+            }
+
+            //Do basic movement
+            if (moveTimer < baseCooldown)
+            {
+                NPC.ai[3] = 0; //Never get bored
+                tsorcRevampAIs.FighterAI(NPC, 4, 0.12f, 0.12f, true);
+                //NPC.velocity.Y += 0.015f; //Gravity
+            }
+
+
+            //Throw tridents
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                float projectileDelay = 120;
+                if (gaibonDead)
+                {
+                    projectileDelay = 90;
+                }
+                if (moveTimer % projectileDelay == 30 && moveTimer < baseCooldown)
+                {
+                    if (gaibonDead)
+                    {
+                        for(int i = 0; i < 9; i++)
+                        {
+                            Vector2 targetPoint = Main.player[NPC.target].Center + new Vector2(-480 + 120 * i, 0);
+                            Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPoint, 12, .1f, true, true);
+                            if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8, .1f, true, true);
+                        if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.player[NPC.target].velocity / 1.5f, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);
+                        }
+                    }
+                    
                 }
             }
 
-            //If super far away from the player, warp to them
-            if (Vector2.Distance(npc.Center, Main.player[npc.target].Center) > 5000)
+            //Spawn dust telegraphing moves
+            if (moveTimer < baseCooldown + 70)
             {
-                npc.Center = new Vector2(Main.player[npc.target].Center.X, Main.player[npc.target].Center.Y - 500);
+                float radius = baseCooldown - moveTimer;
+                if (radius < 0)
+                {
+                    radius = 0;
+                }
+
+                for (int j = 0; j < 10 * ((float)moveTimer / (float)baseCooldown); j++)
+                {
+                    Vector2 dir = Main.rand.NextVector2CircularEdge(40 + radius, 40 + radius);
+                    Vector2 dustPos = NPC.Center + dir;
+                    Vector2 dustVel = dir.RotatedBy(MathHelper.Pi);
+
+                    if (moveTimer > baseCooldown)
+                    {
+                        dustVel = pickedTrajectory;
+                    }
+
+                    dustVel.Normalize();
+                    dustVel *= 6;
+                    Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 0.75f).noGravity = true;
+                }
             }
 
-            //If gaibon is dead, we don't need to keep calling AnyNPCs.
+            //Check if Gaibon is dead. If so we don't need to keep calling AnyNPCs.
             if (!gaibonDead)
             {
                 if (!NPC.AnyNPCs(ModContent.NPCType<Gaibon>()))
@@ -148,717 +162,294 @@ namespace tsorcRevamp.NPCs.Bosses
                     gaibonDead = true;
                 }
             }
+
+            //Check if it has line of sight, and if not increase the timer
+            if (Collision.CanHitLine(Main.player[NPC.target].Center, 1, 1, NPC.Center, 1, 1))
+            {
+                lineOfSightTimer = 0;
+            }
             else
             {
-                if(dustRadius > dustMin)
+                lineOfSightTimer++;
+            }
+
+            //Jump occasionally if no line of sight
+            if (moveTimer < baseCooldown && NPC.velocity.Y == 0 && lineOfSightTimer % 140 == 139)
+            {
+                NPC.velocity.Y -= 8f;
+            }
+
+            //If super far away from the player or no line of sight for too long, warp to them
+            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 5000 || lineOfSightTimer > 300)
+            {
+                Vector2 warpPoint = Main.rand.NextVector2CircularEdge(500, 500);
+                for (int i = 0; i < 100; i++)
                 {
-                    dustRadius -= 0.25f;
+                    warpPoint = Main.rand.NextVector2CircularEdge(500, 500);
+                    if (Collision.CanHitLine(Main.player[NPC.target].Center, 1, 1, Main.player[NPC.target].Center + warpPoint, 1, 1))
+                    {
+                        break;
+                    }
                 }
 
-                int dustPerTick = 20;
-                float speed = 2;
-                for (int i = 0; i < dustPerTick; i++)
+                NPC.Center = Main.player[NPC.target].Center + warpPoint;
+                moveTimer = 0;
+                NPC.netUpdate = true;
+            }            
+        }
+
+        void DashAttack()
+        {
+            if (Main.player[NPC.target].CanHit(NPC) || moveTimer >= baseCooldown + 45)
+            {
+                if (moveTimer == baseCooldown)
                 {
-                    Vector2 dir = Vector2.UnitX.RotatedByRandom(MathHelper.Pi);
-                    Vector2 dustPos = npc.Center + dir * dustRadius * 16;
-                    Vector2 dustVel = dir.RotatedBy(MathHelper.Pi / 2) * speed;
-                    Dust dustID = Dust.NewDustPerfect(dustPos, 173, dustVel, 200);
-                    dustID.noGravity = true;
-                }                
+                    NPC.velocity.Y = -22;
+                }
+
+                if (moveTimer <= baseCooldown + 45)
+                {
+                    pickedTrajectory = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 18);
+
+                    //Don't fall
+                    if (NPC.velocity.Y > 0)
+                    {
+                        NPC.velocity.Y = 0;
+                    }
+                    NPC.velocity *= 0.9f;                   
+                }
+
+                if(moveTimer == baseCooldown + 45)
+                {
+                    for(int i = 0; i < 40; i++)
+                    {
+                        Vector2 dustPos = NPC.Center + Main.rand.NextVector2Circular(30, 30);
+                        Vector2 dustVel = pickedTrajectory.RotatedBy(MathHelper.Pi);
+                        dustVel.Normalize();
+                        dustVel *= 10;
+                        Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 2f).noGravity = true;
+                    }
+                }
+
+                if (moveTimer > baseCooldown + 45)
+                {
+                    //Don't keep dashing if too close to a wall
+                    if (Collision.CanHitLine(NPC.Center, 2, 2, NPC.Center + pickedTrajectory * 4, 2, 2))
+                    {
+                        for (int i = 0; i < 10; i++)
+                        {
+                            Vector2 dustPos = NPC.Center + Main.rand.NextVector2Circular(30, 30);
+                            Vector2 dustVel = pickedTrajectory.RotatedBy(MathHelper.Pi);
+                            dustVel.Normalize();
+                            dustVel *= 10;
+                            Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 1.4f).noGravity = true;
+                        }
+                        NPC.velocity = pickedTrajectory;
+                    }
+                    else
+                    {
+                        pickedTrajectory = Vector2.Zero;
+                    }
+                }
+
+
+                if (moveTimer < baseCooldown + 160 && moveTimer >= baseCooldown + 45)
+                { 
+                    if (moveTimer % 10 == 0)
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            if (gaibonDead)
+                            {
+                                int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.BurningSphere, 0);
+                                Main.npc[spawned].damage = burningSphereDamage;
+                                Main.npc[spawned].velocity += Main.player[NPC.target].velocity;
+                                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
+                                if (Main.netMode == NetmodeID.Server)
+                                {
+                                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
+                                }
+                            }
+                        }
+                    }
+                }
                 
+                if(moveTimer > baseCooldown + 71 && pickedTrajectory == Vector2.Zero)
+                {
+                    moveTimer = 0;
+                    dashAttack = !dashAttack;
+                }
+            }
+            else
+            {
+                if (moveTimer == baseCooldown)
+                {
+                    tsorcRevampAIs.FighterAI(NPC, 7, 0.2f, 0.2f, true);
+                    moveTimer--; //If it is are doing the dash attack and don't have line of sight, delay the attack until it does
+                }
+            }
+        }
+
+        void JumpAttack()
+        {
+            
+            if (moveTimer <= baseCooldown + 70)
+            {
+                pickedTrajectory = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12, 0.035f, false, false);
+                pickedTrajectory.Y -= 12;
+            }
+            if (moveTimer == baseCooldown + 65)
+            {
+                NPC.velocity.Y = -5;
+            }
+            if (moveTimer > baseCooldown + 70 && moveTimer < baseCooldown + 115)
+            {
+                for (int i = 0; i < 7; i++)
+                {
+                    Vector2 dustPos = NPC.Center + Main.rand.NextVector2Circular(30, 30);
+                    Vector2 dustVel = NPC.velocity.RotatedBy(MathHelper.Pi);
+                    dustVel.Normalize();
+                    dustVel *= 10;
+                    Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 1.4f).noGravity = true;
+                }
+            }
+           
+
+            if (moveTimer < baseCooldown + 70)
+            {
+                NPC.velocity *= 0.9f;
+            }
+            else if (moveTimer == baseCooldown + 70)
+            {
+                for (int i = 0; i < 40; i++)
+                {
+                    Vector2 dustPos = NPC.Center + Main.rand.NextVector2Circular(30, 30);
+                    Vector2 dustVel = pickedTrajectory.RotatedBy(MathHelper.Pi);
+                    dustVel.Normalize();
+                    dustVel *= 10;
+                    Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 2f).noGravity = true;
+                }
+                NPC.velocity = pickedTrajectory;
+
+                if (NPC.velocity == Vector2.Zero) //Then there wasn't a valid ballistic trajectory. Just fling itself in the vague direction of the player instead.
+                {
+                    NPC.velocity.X = 12 * NPC.direction;
+                    NPC.velocity.Y = 12;
+                }
+            }
+            else if (moveTimer < baseCooldown + 160)
+            {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    fireballTimer += (Main.rand.Next(2, 5) * 0.1f) * 1.1;
-                    if (fireballTimer >= 10f)
+                    if (moveTimer % 15 == 0)
                     {
-                        if (Main.rand.Next(45) == 1)
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 7), ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);                        
+                    }
+
+                    if (moveTimer % 15 == 7)
+                    {
+                        if (gaibonDead)
                         {
-                            Vector2 dir = Vector2.UnitX.RotatedByRandom(MathHelper.Pi);
-                            Vector2 projPos = npc.Center + dir * dustRadius * 16;
-                            int spawned = NPC.NewNPC((int)projPos.X, (int)projPos.Y, NPCID.BurningSphere, 0);
+                            int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.BurningSphere, 0);
                             Main.npc[spawned].damage = burningSphereDamage;
-                            Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GaibonSpit2"), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2));
+                            Main.npc[spawned].velocity += Main.player[NPC.target].velocity;
+                            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
                             if (Main.netMode == NetmodeID.Server)
                             {
                                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
                             }
-                            //npc.netUpdate=true;
                         }
                     }
                 }
             }
-
-            #region set up NPC's attributes & behaviors
-            // set parameters
-            //  is_archer OR can_pass_doors OR shoot_and_walk, pick only 1.  They use the same ai[] vars (1&2)
-            bool is_archer = false; // stops and shoots when target sighted; skel archer & gob archer are the archers
-            bool can_pass_doors = false;  //  can open or break doors; c. bunny, crab, clown, skel archer, gob archer, & chaos elemental cannot
-            bool shoot_and_walk = true;  //  can shoot while walking like clown; uses ai[2] so cannot be used with is_archer or can_pass_doors
-
-            //  can_teleport==true code uses boredom_time and ai[3] (boredom), but not mutually exclusive
-            bool can_teleport = true;  //  tp around like chaos ele
-            int boredom_time = 60; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
-            int boredom_cooldown = 10 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
-
-            bool hates_light = false;  //  flees in daylight like: Zombie, Skeleton, Undead Miner, Doctor Bones, The Groom, Werewolf, Clown, Bald Zombie, Possessed Armor
-            bool can_pass_doors_bloodmoon_only = false;  //  can open or break doors, but only during bloodmoon: zombies & bald zombies. Will keep trying anyway.
-
-            int sound_type = 26; // Parameter for Main.PlaySound().  14 for Zombie, Skeleton, Angry Bones, Heavy Skeleton, Skeleton Archer, Bald Zombie.  26 for Mummy, Light & Dark Mummy. 0 means no sounds
-            int sound_frequency = 2000;  //  chance to play sound every frame, 1000 for zombie/skel, 500 for mummies
-
-            float acceleration = .09f;  //  how fast it can speed up
-            float top_speed = 2f;  //  max walking speed, also affects jump length
-            float braking_power = .2f;  //  %of speed that can be shed every tick when above max walking speed
-            double bored_speed = .9;  //  above this speed boredom decreases(if not already bored); usually .9
-
-            float enrage_percentage = .5f;  //  double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
-            float enrage_acceleration = .14f;  //  faster when enraged, usually 2*acceleration
-            float enrage_top_speed = 3.5f;  //  faster when enraged, usually 2*top_speed
-
-            bool clown_sized = false; // is hitbox the same as clowns' for purposes of when to jump?
-            bool jump_gaps = true; // attempt to jump gaps; everything but crabs do this
-
-            bool hops = true; // hops when close to target like Angry Bones, Corrupt Bunny, Armored Skeleton, and Werewolf
-            float hop_velocity = 2f; // forward velocity needed to initiate hopping; usually 1
-            float hop_range_x = 100; // less than this is 'close to target'; usually 100
-            float hop_range_y = 50; // less than this is 'close to target'; usually 50
-            float hop_power = 4; // how hard/high offensive hops are; usually 4
-            float hop_speed = 4; // how fast hops can accelerate vertically; usually 3 (2xSpd is 4 for Hvy Skel & Werewolf so they're noticably capped)
-
-            // is_archer & clown bombs only
-            int shot_rate = 70;  //  rate at which archers/bombers fire; 70 for skeleton archer, 180 for goblin archer, 450 for clown; atm must be an even # or won't fire at shot_rate/2
-            //int fuse_time = 300;  //  fuse time on bombs, 300 for clown bombs
-            int projectile_damage = 35;  //  projectile dmg: 35 for Skeleton Archer, 11 for Goblin Archer
-            int projectile_id = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellMeteor>(); // projectile id: 82(Flaming Arrow) for Skeleton Archer, 81(Wooden Arrow) for Goblin Archer, 75(Happy Bomb) for Clown
-            float projectile_velocity = 11; // initial velocity? 11 for Skeleton Archers, 9 for Goblin Archers, bombs have fixed speed & direction atm
-
-            // can_pass_doors only
-            float door_break_pow = 2; // 10 dmg breaks door; 2 for goblin thief and 7 for Angry Bones; 1 for others
-            bool breaks_doors = false; // meaningless unless can_pass_doors; if this is true the door breaks down instead of trying to open; Goblin Peon is only warrior to do this
-
-            // Omnirs creature sorts
-            bool tooBig = true; // force bigger creatures to jump
-            bool lavaJumping = true; // Enemies jump on lava.
-            //bool canDrown = false; // They will drown if in the water for too long
-            bool quickBored = false; //Enemy will respond to boredom much faster(? -- test)
-            bool oBored = false; //Whether they're bored under the "quickBored" conditions
-
-            // calculated parameters
-            bool moonwalking = false;  //  not jump/fall and moving backwards to facing
-            if (npc.velocity.Y == 0f && ((npc.velocity.X > 0f && npc.direction < 0) || (npc.velocity.X < 0f && npc.direction > 0)))
-                moonwalking = true;
-            #endregion
-            //-------------------------------------------------------------------
-            #region Too Big and Lava Jumping
-
-
-            if (tooBig)
+            else
             {
-                if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction < 0))
-                {
-                    npc.velocity.Y -= 8f;
-                    npc.velocity.X -= 2f;
-                }
-                else if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction > 0))
-                {
-                    npc.velocity.Y -= 8f;
-                    npc.velocity.X += 2f;
-                }
+                moveTimer = 0;
+                dashAttack = !dashAttack;
             }
-            if (lavaJumping)
-            {
-                if (npc.lavaWet)
-                {
-                    npc.velocity.Y -= 2;
-                }
-            }
-            #endregion
-            //-------------------------------------------------------------------
-            #region teleportation particle effects
-            if (can_teleport)  //  chaos elemental type teleporter
-            {
-                if (npc.ai[3] == -120f)  //  boredom goes negative? I think this makes disappear/arrival effects after it just teleported
-                {
-                    npc.velocity *= 0f; // stop moving
-                    npc.ai[3] = 0f; // reset boredom to 0
-                    Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 8);
-                    Vector2 vector = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // current location
-                    float num6 = npc.oldPos[2].X + (float)npc.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
-                    float num7 = npc.oldPos[2].Y + (float)npc.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
-                    float num8 = (float)Math.Sqrt((double)(num6 * num6 + num7 * num7)); // distance to where it was 3 frames ago?
-                    num8 = 2f / num8; // to normalize to 2 unit long vector
-                    num6 *= num8; // direction to where it was 3 frames ago, vector normalized
-                    num7 *= num8; // direction to where it was 3 frames ago, vector normalized
-                    for (int j = 0; j < 20; j++) // make 20 dusts at current position
-                    {
-                        int num9 = Dust.NewDust(npc.position, npc.width, npc.height, DustID.UndergroundHallowedEnemies, num6, num7, 200, default(Color), 2f);
-                        Main.dust[num9].noGravity = true; // floating
-                        Dust expr_19EE_cp_0 = Main.dust[num9]; // make a dust handle?
-                        expr_19EE_cp_0.velocity.X = expr_19EE_cp_0.velocity.X * 2f; // faster in x direction
-                    }
-                    for (int k = 0; k < 20; k++) // more dust effects at old position
-                    {
-                        int num10 = Dust.NewDust(npc.oldPos[2], npc.width, npc.height, DustID.UndergroundHallowedEnemies, -num6, -num7, 200, default(Color), 2f);
-                        Main.dust[num10].noGravity = true;
-                        Dust expr_1A6F_cp_0 = Main.dust[num10];
-                        expr_1A6F_cp_0.velocity.X = expr_1A6F_cp_0.velocity.X * 2f;
-                    }
-                } // END just teleported
-            } // END can teleport
-            #endregion
-            //-------------------------------------------------------------------
-            #region adjust boredom level
-            if (!is_archer || npc.ai[2] <= 0f)  //  loop to set ai[3] (boredom)
-            {
-                if (npc.position.X == npc.oldPosition.X || npc.ai[3] >= (float)boredom_time || moonwalking)  //  stopped or bored or moonwalking
-                    npc.ai[3] += 1f; // increase boredom
-                else if ((double)Math.Abs(npc.velocity.X) > bored_speed && npc.ai[3] > 0f)  //  moving fast and not bored
-                    npc.ai[3] -= 1f; // decrease boredom
-
-                if (npc.justHit || npc.ai[3] > boredom_cooldown)
-                    npc.ai[3] = 0f; // boredom wears off if enough time passes, or if hit
-
-                if (npc.ai[3] == (float)boredom_time)
-                    npc.netUpdate = true; // netupdate when state changes to bored
-            }
-            #endregion
-            //-------------------------------------------------------------------
-            #region play creature sounds, target/face player, respond to boredom
-            if ((!hates_light || !Main.dayTime || (double)npc.position.Y > Main.worldSurface * 16.0) && npc.ai[3] < (float)boredom_time)
-            {  // not fleeing light & not bored
-                if (sound_type > 0 && Main.rand.Next(sound_frequency) <= 0)
-                    Main.PlaySound(sound_type, (int)npc.position.X, (int)npc.position.Y, 1); // random creature sounds
-            }
-            else if (!is_archer || npc.ai[2] <= 0f) //  fleeing light or bored (& not aiming)
-            {               
-
-                if (npc.velocity.X == 0f)
-                {
-                    if (npc.velocity.Y == 0f)
-                    { // not moving
-                        if (npc.ai[0] == 0f)
-                            npc.ai[0] = 1f; // facing change delay
-                        else
-                        { // change movement and facing direction, reset delay
-                            npc.direction *= -1;
-                            npc.spriteDirection = npc.direction;
-                            npc.ai[0] = 0f;
-                        }
-                    }
-                }
-                else // moving in x direction,
-                    npc.ai[0] = 0f; // reset facing change delay
-
-                if (npc.direction == 0) // what does it mean if direction is 0?
-                    npc.direction = 1; // flee right if direction not set? or is initial direction?
-            } // END fleeing light or bored (& not aiming)
-            #endregion
-            //-------------------------------------------------------------------
-            #region enrage
-            bool enraged = false; // angry from damage; not stored from tick to tick
-            if ((enrage_percentage > 0) && (npc.life < (float)npc.lifeMax * enrage_percentage))  //  speed up at low life
-                enraged = true;
-            if (enraged)
-            { // speed up movement if enraged
-                acceleration = enrage_acceleration;
-                top_speed = enrage_top_speed;
-                //npc.knockBackResist=0.1f;
-            }
-            #endregion
-            //-------------------------------------------------------------------
-            #region melee movement
-
-            //int dust = Dust.NewDust(new Vector2((float) npc.position.X, (float) npc.position.Y), npc.width, npc.height, 6, npc.velocity.X-6f, npc.velocity.Y, 150, Color.Red, 1f);
-            //				Main.dust[dust].noGravity = true;
-            Color color = new Color();
-            int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Vile, npc.velocity.X, npc.velocity.Y, 200, color, 1f + comboDamage / 30);
-            Main.dust[dust].noGravity = true;
-
-
-            if (!is_archer || (npc.ai[2] <= 0f && !npc.confused))  //  meelee attack/movement. archers only use while not aiming
-            {
-                if (Math.Abs(npc.velocity.X) > top_speed)  //  running/flying faster than top speed
-                {
-                    if (npc.velocity.Y == 0f)  //  and not jump/fall
-                        npc.velocity *= (1f - braking_power);  //  decelerate
-                }
-                else if ((npc.velocity.X < top_speed && npc.direction == 1) || (npc.velocity.X > -top_speed && npc.direction == -1))
-                {  //  running slower than top speed (forward), can be jump/fall
-                    if (can_teleport && moonwalking)
-                        npc.velocity.X = npc.velocity.X * 0.99f;  //  ? small decelerate for teleporters
-
-                    npc.velocity.X = npc.velocity.X + (float)npc.direction * acceleration;  //  accellerate fwd; can happen midair
-                    if ((float)npc.direction * npc.velocity.X > top_speed)
-                        npc.velocity.X = (float)npc.direction * top_speed;  //  but cap at top speed
-                }  //  END running slower than top speed (forward), can be jump/fall
-            } // END non archer or not aiming*/
-            #endregion
-            //-------------------------------------------------------------------
-            #region archer projectile code (stops moving to shoot)
-            if (is_archer)
-            {
-                if (npc.confused)
-                    npc.ai[2] = 0f; // won't try to stop & aim if confused
-                else // not confused
-                {
-                    if (npc.ai[1] > 0f)
-                        npc.ai[1] -= 1f; // decrement fire & reload counter
-
-                    if (npc.justHit) // was just hit?
-                    {
-                        npc.ai[1] = 30f; // shot on .5 sec cooldown
-                        npc.ai[2] = 0f; // not aiming
-                    }
-                    if (npc.ai[2] > 0f) // if aiming: adjust aim and fire if needed
-                    {
-                        //npc.TargetClosest(true); // target and face closest player
-                        if (npc.ai[1] == (float)(shot_rate / 2))  //  fire at halfway through; first half of delay is aim, 2nd half is cooldown
-                        { // firing:
-                            Vector2 npc_center = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // npc position
-                            float npc_to_target_x = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - npc_center.X; // x vector to target
-                            float num16 = Math.Abs(npc_to_target_x) * 0.1f; // 10% of x distance to target: to aim high if farther?
-                            float npc_to_target_y = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - npc_center.Y - num16; // y vector to target (aiming high at distant targets)
-                            npc_to_target_x += (float)Main.rand.Next(-40, 41); //  targeting error: 40 pix=2.5 blocks
-                            npc_to_target_y += (float)Main.rand.Next(-40, 41); //  targeting error: 40 pix=2.5 blocks
-                            float target_dist = (float)Math.Sqrt((double)(npc_to_target_x * npc_to_target_x + npc_to_target_y * npc_to_target_y)); // distance to target
-                            npc.netUpdate = true; // ??
-                            target_dist = projectile_velocity / target_dist; // to normalize by projectile_velocity
-                            npc_to_target_x *= target_dist; // normalize by projectile_velocity
-                            npc_to_target_y *= target_dist; // normalize by projectile_velocity
-                            npc_center.X += npc_to_target_x;  //  initial projectile position includes one tick of initial movement
-                            npc_center.Y += npc_to_target_y;  //  initial projectile position includes one tick of initial movement
-                            if (Main.netMode != NetmodeID.MultiplayerClient)  //  is server
-                                Projectile.NewProjectile(npc_center.X, npc_center.Y, npc_to_target_x, npc_to_target_y, projectile_id, projectile_damage, 0f, Main.myPlayer);
-
-                            if (Math.Abs(npc_to_target_y) > Math.Abs(npc_to_target_x) * 2f) // target steeply above/below NPC
-                            {
-                                if (npc_to_target_y > 0f)
-                                    npc.ai[2] = 1f; // aim downward
-                                else
-                                    npc.ai[2] = 5f; // aim upward
-                            }
-                            else if (Math.Abs(npc_to_target_x) > Math.Abs(npc_to_target_y) * 2f) // target on level with NPC
-                                npc.ai[2] = 3f;  //  aim straight ahead
-                            else if (npc_to_target_y > 0f) // target is below NPC
-                                npc.ai[2] = 2f;  //  aim slight downward
-                            else // target is not below NPC
-                                npc.ai[2] = 4f;  //  aim slight upward
-                        } // END firing
-                        if (npc.velocity.Y != 0f || npc.ai[1] <= 0f) // jump/fall or firing reload
-                        {
-                            npc.ai[2] = 0f; // not aiming
-                            npc.ai[1] = 0f; // reset firing/reload counter (necessary? nonzero maybe)
-                        }
-                        else // no jump/fall and no firing reload
-                        {
-                            npc.velocity.X = npc.velocity.X * 0.9f; // decelerate to stop & shoot
-                            npc.spriteDirection = npc.direction; // match animation to facing
-                        }
-                    } // END if aiming: adjust aim and fire if needed
-                    if (npc.ai[2] <= 0f && npc.velocity.Y == 0f && npc.ai[1] <= 0f && !Main.player[npc.target].dead && Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
-                    { // not aiming & no jump/fall & fire/reload ctr is 0 & target is alive and LOS to target: start aiming
-                        float num21 = 10f; // dummy vector length in place of initial velocity? not sure why this is needed
-                        Vector2 npc_center = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
-                        float npc_to_target_x = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - npc_center.X;
-                        float num23 = Math.Abs(npc_to_target_x) * 0.1f; // 10% of x distance to target: to aim high if farther?
-                        float npc_to_target_y = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - npc_center.Y - num23; // y vector to target (aiming high at distant targets)
-                        npc_to_target_x += (float)Main.rand.Next(-40, 41);
-                        npc_to_target_y += (float)Main.rand.Next(-40, 41);
-                        float target_dist = (float)Math.Sqrt((double)(npc_to_target_x * npc_to_target_x + npc_to_target_y * npc_to_target_y));
-                        if (target_dist < 700f) // 700 pix = 43.75 blocks
-                        { // target is in range
-                            npc.netUpdate = true; // ??
-                            npc.velocity.X = npc.velocity.X * 0.5f; // hard brake
-                            target_dist = num21 / target_dist; // to normalize by num21
-                            npc_to_target_x *= target_dist; // normalize by num21
-                            npc_to_target_y *= target_dist; // normalize by num21
-                            npc.ai[2] = 3f; // aim straight ahead
-                            npc.ai[1] = (float)shot_rate; // start fire & reload counter
-                            if (Math.Abs(npc_to_target_y) > Math.Abs(npc_to_target_x) * 2f) // target steeply above/below NPC
-                            {
-                                if (npc_to_target_y > 0f)
-                                    npc.ai[2] = 1f; // aim downward
-                                else
-                                    npc.ai[2] = 5f; // aim upward
-                            }
-                            else if (Math.Abs(npc_to_target_x) > Math.Abs(npc_to_target_y) * 2f) // target on level with NPC
-                                npc.ai[2] = 3f; // aim straight ahead
-                            else if (npc_to_target_y > 0f)
-                                npc.ai[2] = 2f; // aim slight downward
-                            else
-                                npc.ai[2] = 4f; // aim slight upward
-                        } // END target is in range
-                    } // END start aiming
-                } // END not confused
-            }  //  END is archer
-            #endregion
-            //-------------------------------------------------------------------
-            #region shoot and walk
-            if (!oBored && shoot_and_walk && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code 
-            {
-                if (comboDamage > 0)
-                {
-                    comboDamage -= 0.4f;
-                    npc.netUpdate = true; //new
-                }
-
-                //if (customspawn1 == 0)
-                //{
-                //if ((customspawn1 < 1) && (comboDamage > 1) && Main.rand.Next(2)==1)
-                //	{
-                //		int Spawned = NPC.NewNPC((int) npc.position.X+(npc.width/2), (int) npc.position.Y+(npc.height/2), "Gaibon", 0);
-                //		Main.npc[Spawned].velocity.Y = -8;
-                //		Main.npc[Spawned].velocity.X = Main.rand.Next(-10,10)/10;
-                //		customspawn1 += 1;
-
-                //		if (Main.netMode != 1)
-                //		{
-                //			NetMessage.SendData(23, -1, -1, "", Spawned, 0f, 0f, 0f, 0);
-                //		}
-                //		npc.netUpdate=true; //new
-                //	}
-
-                //}
-
-                if (breakCombo == true || (enraged == true && Main.rand.Next(450) == 1))
-                {
-                    chargeDamageFlag = true;
-                    npc.knockBackResist = 0f;
-                    Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                    npc.velocity.X = (float)(Math.Cos(rotation) * 13) * -1; //12 was 10
-                    npc.velocity.Y = (float)(Math.Sin(rotation) * 13) * -1;
-
-                    breakCombo = false;
-                    npc.netUpdate = true;
-
-                }
-                if (chargeDamageFlag == true)
-                {
-                    npc.damage = 46;
-                    npc.knockBackResist = 0f;
-                    chargeDamage++;
-                }
-                if (chargeDamage >= 50) //was 45
-                {
-                    chargeDamageFlag = false;
-                    //npc.dontTakeDamage = false;
-                    npc.damage = 40;
-                    chargeDamage = 0;
-
-                    npc.knockBackResist = 0.3f;
-                }
-
-                #region Projectiles
-                customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-                if (customAi1 >= 10f)
-                {
-                    if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
-                    {
-                        if (Main.rand.Next(200) == 1)
-                        {
-                            float num48 = 10f;
-                            Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                            float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                            float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                            if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-                            {
-                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                                num51 = num48 / num51;
-                                speedX *= num51;
-                                speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>();//44;//0x37; //14;
-                                int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, tridentDamage, 0f, Main.myPlayer);
-                                Main.projectile[num54].timeLeft = 600;
-                                Main.projectile[num54].aiStyle = 1;
-                                Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
-                                customAi1 = 1f;
-                            }
-                            npc.netUpdate = true;
-                        }
-                    }
-                }
-                #endregion
-            }
-            #endregion
-            //-------------------------------------------------------------------
-            #region check if standing on a solid tile
-            // warning: this section contains a return statement
-            bool standing_on_solid_tile = false;
-            if (npc.velocity.Y == 0f) // no jump/fall
-            {
-                int y_below_feet = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
-                int x_left_edge = (int)npc.position.X / 16;
-                int x_right_edge = (int)(npc.position.X + (float)npc.width) / 16;
-                for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
-                {
-                    if (Main.tile[l, y_below_feet] == null) // null tile means ??
-                        return;
-
-                    if (Main.tile[l, y_below_feet].active() && Main.tileSolid[(int)Main.tile[l, y_below_feet].type]) // tile exists and is solid
-                    {
-                        standing_on_solid_tile = true;
-                        break; // one is enough so stop checking
-                    }
-                } // END traverse blocks under feet
-            } // END no jump/fall
-            #endregion
-            //-------------------------------------------------------------------
-            #region new Tile()s, door opening/breaking
-            if (standing_on_solid_tile)  //  if standing on solid tile
-            {
-                int x_in_front = (int)((npc.position.X + (float)(npc.width / 2) + (float)(15 * npc.direction)) / 16f); // 15 pix in front of center of mass
-                int y_above_feet = (int)((npc.position.Y + (float)npc.height - 15f) / 16f); // 15 pix above feet
-                if (clown_sized)
-                    x_in_front = (int)((npc.position.X + (float)(npc.width / 2) + (float)((npc.width / 2 + 16) * npc.direction)) / 16f); // 16 pix in front of edge
-                                                                                                                                         //  create? 5 tile high stack in front
-                if (Main.tile[x_in_front, y_above_feet] == null)
-                    Main.tile[x_in_front, y_above_feet] = new Tile();
-
-                if (Main.tile[x_in_front, y_above_feet - 1] == null)
-                    Main.tile[x_in_front, y_above_feet - 1] = new Tile();
-
-                if (Main.tile[x_in_front, y_above_feet - 2] == null)
-                    Main.tile[x_in_front, y_above_feet - 2] = new Tile();
-
-                if (Main.tile[x_in_front, y_above_feet - 3] == null)
-                    Main.tile[x_in_front, y_above_feet - 3] = new Tile();
-
-                if (Main.tile[x_in_front, y_above_feet + 1] == null)
-                    Main.tile[x_in_front, y_above_feet + 1] = new Tile();
-                //  create? 2 other tiles farther in front
-                if (Main.tile[x_in_front + npc.direction, y_above_feet - 1] == null)
-                    Main.tile[x_in_front + npc.direction, y_above_feet - 1] = new Tile();
-
-                if (Main.tile[x_in_front + npc.direction, y_above_feet + 1] == null)
-                    Main.tile[x_in_front + npc.direction, y_above_feet + 1] = new Tile();
-
-                if (Main.tile[x_in_front, y_above_feet - 1].active() && Main.tile[x_in_front, y_above_feet - 1].type == 10 && can_pass_doors)
-                { // tile in front is active, is door and NPC can pass doors: trying to break door
-                    npc.ai[2] += 1f; // inc knock countdown
-                    npc.ai[3] = 0f; // not bored if working on breaking a door
-                    if (npc.ai[2] >= 60f)  //  knock once per second
-                    {
-                        if (!Main.bloodMoon && can_pass_doors_bloodmoon_only)
-                            npc.ai[1] = 0f;  //  damage counter zeroed unless bloodmoon, but will still knock
-
-                        npc.velocity.X = 0.5f * (float)(-(float)npc.direction); //  slight recoil from hitting it
-                        npc.ai[1] += door_break_pow;  //  increase door damage counter
-                        npc.ai[2] = 0f;  //  knock finished; start next knock
-                        bool door_breaking = false;  //  door break flag
-                        if (npc.ai[1] >= 10f)  //  at 10 damage, set door as breaking (and cap at 10)
-                        {
-                            door_breaking = true;
-                            npc.ai[1] = 10f;
-                        }
-                        WorldGen.KillTile(x_in_front, y_above_feet - 1, true, false, false);  //  kill door ? when door not breaking too? can fail=true; effect only would make more sense, to make knocking sound
-                        if (door_breaking && Main.netMode != NetmodeID.MultiplayerClient)  //  server and door breaking
-                        {
-                            if (breaks_doors)  //  breaks doors rather than attempt to open
-                            {
-                                WorldGen.KillTile(x_in_front, y_above_feet - 1, false, false, false);  //  kill door
-                                if (Main.netMode == NetmodeID.Server) // server
-                                    NetMessage.SendData(MessageID.TileChange, -1, -1, null, 0, (float)x_in_front, (float)(y_above_feet - 1), 0f, 0); // ?? tile breaking and/or item drop probably
-                            }
-                            else  //  try to open without breaking
-                            {
-                                bool door_opened = WorldGen.OpenDoor(x_in_front, y_above_feet, npc.direction);  //  open the door
-                                if (!door_opened)  //  door not opened successfully
-                                {
-                                    npc.ai[3] = (float)boredom_time;  //  bored if door is stuck
-                                    npc.netUpdate = true;
-                                    npc.velocity.X = 0; // cancel recoil so boredom wall reflection can trigger
-                                }
-                                if (Main.netMode == NetmodeID.Server && door_opened) // is server & door was just opened
-                                    NetMessage.SendData(MessageID.ChangeDoor, -1, -1, null, 0, (float)x_in_front, (float)y_above_feet, (float)npc.direction, 0); // ??
-                            }
-                        }  //  END server and door breaking
-                    } // END knock on door
-                } // END trying to break door
-                #endregion
-                //-------------------------------------------------------------------
-                #region jumping, reset door knock & damage counters
-                else // standing on solid tile but not in front of a passable door
-                {
-                    if ((npc.velocity.X < 0f && npc.spriteDirection == -1) || (npc.velocity.X > 0f && npc.spriteDirection == 1))
-                    {  //  moving forward
-                        if (Main.tile[x_in_front, y_above_feet - 2].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 2].type])
-                        { // 3 blocks above ground level(head height) blocked
-                            if (Main.tile[x_in_front, y_above_feet - 3].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 3].type])
-                            { // 4 blocks above ground level(over head) blocked
-                                npc.velocity.Y = -9f; // jump with power 8 (for 4 block steps)
-                                npc.netUpdate = true;
-                            }
-                            else
-                            {
-                                npc.velocity.Y = -8f; // jump with power 7 (for 3 block steps)
-                                npc.netUpdate = true;
-                            }
-                        } // for everything else, head height clear:
-                        else if (Main.tile[x_in_front, y_above_feet - 1].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 1].type])
-                        { // 2 blocks above ground level(mid body height) blocked
-                            npc.velocity.Y = -7f; // jump with power 6 (for 2 block steps)
-                            npc.netUpdate = true;
-                        }
-                        else if (Main.tile[x_in_front, y_above_feet].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet].type])
-                        { // 1 block above ground level(foot height) blocked
-                            npc.velocity.Y = -7f; // jump with power 5 (for 1 block steps)
-                            npc.netUpdate = true;
-                        }
-                        else if (npc.directionY < 0 && jump_gaps && (!Main.tile[x_in_front, y_above_feet + 1].active() || !Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet + 1].type]) && (!Main.tile[x_in_front + npc.direction, y_above_feet + 1].active() || !Main.tileSolid[(int)Main.tile[x_in_front + npc.direction, y_above_feet + 1].type]))
-                        { // rising? & jumps gaps & no solid tile ahead to step on for 2 spaces in front
-                            npc.velocity.Y = -9f; // jump with power 8
-                            npc.velocity.X = npc.velocity.X * 1.5f; // jump forward hard as well; we're trying to jump a gap
-                            npc.netUpdate = true;
-                        }
-                        else if (can_pass_doors) // standing on solid tile but not in front of a passable door, moving forward, didnt jump.  I assume recoil from hitting door is too small to move passable door out of range and trigger this
-                        {
-                            npc.ai[1] = 0f;  //  reset door dmg counter
-                            npc.ai[2] = 0f;  //  reset knock counter
-                        }
-                    } // END moving forward, still: standing on solid tile but not in front of a passable door
-                    if (hops && npc.velocity.Y == 0f && Math.Abs(npc.position.X + (float)(npc.width / 2) - (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2))) < hop_range_x && Math.Abs(npc.position.Y + (float)(npc.height / 2) - (Main.player[npc.target].position.Y + (float)(Main.player[npc.target].height / 2))) < hop_range_y && ((npc.direction > 0 && npc.velocity.X >= hop_velocity) || (npc.direction < 0 && npc.velocity.X <= -hop_velocity)))
-                    { // type that hops & no jump/fall & near target & moving forward fast enough: hop code
-                        npc.velocity.X = npc.velocity.X * 2f; // burst forward
-                        if (npc.velocity.X > hop_speed) // but cap at hop_speed
-                            npc.velocity.X = hop_speed;
-                        else if (npc.velocity.X < -hop_speed)
-                            npc.velocity.X = -hop_speed;
-
-                        npc.velocity.Y = -hop_power; // and jump of course
-                        npc.netUpdate = true;
-                    }
-                    if (can_teleport && npc.velocity.Y < 0f) // jumping
-                        npc.velocity.Y = npc.velocity.Y * 1.1f; // infinite jump? antigravity?
-                }
-            }
-            else if (can_pass_doors)  //  not standing on a solid tile & can open/break doors
-            {
-                npc.ai[1] = 0f;  //  reset door damage counter
-                npc.ai[2] = 0f;  //  reset knock counter
-            }//*/
-            #endregion
-            //-------------------------------------------------------------------
-            #region teleportation
-            if (Main.netMode != NetmodeID.MultiplayerClient && can_teleport && npc.ai[3] >= (float)boredom_time) // is server & chaos ele & bored
-            {
-                int target_x_blockpos = (int)Main.player[npc.target].position.X / 16; // corner not center
-                int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
-                int x_blockpos = (int)npc.position.X / 16; // corner not center
-                int y_blockpos = (int)npc.position.Y / 16; // corner not center
-                int tp_radius = 20; // radius around target(upper left corner) in blocks to teleport into
-                int tp_counter = 0;
-                bool flag7 = false;
-                if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 2000f)
-                { // far away from target; 2000 pixels = 125 blocks
-                    tp_counter = 100;
-                    flag7 = true; // no teleport
-                }
-                while (!flag7) // loop always ran full 100 time before I added "flag7 = true" below
-                {
-                    if (tp_counter >= 100) // run 100 times
-                        break; //return;
-                    tp_counter++;
-
-                    int tp_x_target = Main.rand.Next(target_x_blockpos - tp_radius, target_x_blockpos + tp_radius);  //  pick random tp point (centered on corner)
-                    int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
-                    for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
-                    { // (tp_x_target,m) is block under its feet I think
-                        if ((m < target_y_blockpos - 12 || m > target_y_blockpos + 12 || tp_x_target < target_x_blockpos - 12 || tp_x_target > target_x_blockpos + 12) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
-                        { // over 12 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
-                            bool safe_to_stand = true;
-                            bool dark_caster = false; // not a fighter type AI...
-                            if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
-                                safe_to_stand = false;
-                            else if (Main.tile[tp_x_target, m - 1].lava()) // feet submerged in lava
-                                safe_to_stand = false;
-
-                            if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
-                            { // safe enviornment & solid below feet & 3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
-                                npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
-                                npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet
-                                npc.netUpdate = true;
-                                npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
-                                flag7 = true; // end the loop (after testing every lower point :/)
-                            }
-                        } // END over 6 blocks distant from player...
-                    } // END traverse y down to edge of radius
-                } // END try 100 times
-            } // END is server & chaos ele & bored
-            #endregion
-            //-------------------------------------------------------------------*/
-            #region New Boredom by Omnir
-            if (quickBored)
-            {
-                if (!oBored)
-                {
-                    if (npc.velocity.X == 0f)
-                    {
-                        boredTimer++;
-                        if (boredTimer > tBored)
-                        {
-                            boredResetT = 0;                            
-                            npc.directionY = -1;
-                            if (npc.velocity.Y > 0f)
-                            {
-                                npc.direction = 1;
-                            }
-                            npc.direction = -1;
-                            if (npc.velocity.X > 0f)
-                            {
-                                npc.direction = 1;
-                            }
-                            oBored = true;
-                        }
-                    }
-                }
-                if (oBored)
-                {
-                    boredResetT++;
-                    if (boredResetT > bReset)
-                    {
-                        boredTimer = 0;
-                        oBored = false;
-                    }
-                }
-            }
-            #endregion
+            
         }
-        #endregion
 
-        #region damage counter then lunge
-        public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        {
+            if (gaibonDead)
             {
-            comboDamage += (float)damage;
-            if (comboDamage > 90)
-            {
-                breakCombo = true;
-                npc.netUpdate = true; //new
-                Color color = new Color();
-                for (int num36 = 0; num36 < 50; num36++)
-                {
-                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.t_Slime, 0, 0, 100, color, 2f);
-                }
-                for (int num36 = 0; num36 < 20; num36++)
-                {
-                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Vile, 0, 0, 100, color, 2f);
-                }
-                //npc.ai[1] = -200;
-                comboDamage = 0;
-                npc.netUpdate = true; //new
+                damage = (int)(damage * 1.5f);
             }
-            return true;
-            //if (!npc.justHit)
-            //{
-            //comboDamage --;
-
-            //	if (comboDamage < 0)
-            //	{
-            //	comboDamage = 0;
-            //	}
-            //}
         }
-        #endregion
+
+        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (gaibonDead)
+            {
+                damage = (int)(damage * 1.5f);
+            }
+        }
+
+        public static Texture2D texture;
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (gaibonDead)
+            {
+                if (texture == null || texture.IsDisposed)
+                {
+                    texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
+                }
+
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+                ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
+                data.Apply(null);
+                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                Rectangle sourceRectangle = NPC.frame;
+                Vector2 origin = sourceRectangle.Size() / 2f;
+                Vector2 offset = new Vector2(0, -8);
+                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition + offset, sourceRectangle, Color.White, NPC.rotation, origin, 1.3f, effects, 0f);
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            }
+            float projectileDelay = 120;
+            if (gaibonDead)
+            {
+                projectileDelay = 90;
+            }
+            if (moveTimer % projectileDelay <= 30 && moveTimer < baseCooldown)
+            {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+                if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gaibon>()))
+                {
+                    ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
+                    data.Apply(null);
+                }
+
+
+
+                if (Projectiles.Enemy.EarthTrident.texture != null && !Projectiles.Enemy.EarthTrident.texture.IsDisposed)
+                {
+                    float rotation = 0;
+                    if(NPC.direction == 1)
+                    {
+                        rotation += 0.15f;
+                    }
+                    else
+                    {
+                        rotation -= 0.15f;
+                    }
+                    Rectangle sourceRectangle = new Rectangle(0, 0, Projectiles.Enemy.EarthTrident.texture.Width, Projectiles.Enemy.EarthTrident.texture.Height);
+                    Vector2 origin = sourceRectangle.Size() / 2f;
+                    Main.EntitySpriteDraw(Projectiles.Enemy.EarthTrident.texture,
+                        NPC.Center - Main.screenPosition,
+                        sourceRectangle, Color.White, rotation, origin, 1, SpriteEffects.None, 0);
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+                }
+            }
+            return base.PreDraw(spriteBatch, screenPos, drawColor);
+        }
+
         public override bool CheckActive()
         {
             return false;
@@ -867,30 +458,30 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             potionType = ItemID.GreaterHealingPotion;
         }
-        public override void NPCLoot()
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(new ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.SlograBag>(), 1, 1, 1, new SlograDropCondition()));
+        }
+        public override void OnKill()
         {
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Slogra Gore 1"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Slogra Gore 2"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Slogra Gore 3"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Slogra Gore 2"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Slogra Gore 3"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Slogra Gore 1").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Slogra Gore 2").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Slogra Gore 3").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Slogra Gore 2").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Slogra Gore 3").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
             if (!NPC.AnyNPCs(ModContent.NPCType<Gaibon>()))
             {
-                if (Main.expertMode)
+                if (!Main.expertMode)
                 {
-                    npc.DropBossBags();
-                }
-                else
-                {
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 700);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 700);
                 }
             }
             else
@@ -900,16 +491,34 @@ namespace tsorcRevamp.NPCs.Bosses
                 for (int i = 0; i < 200; i++)
                 {
                     Vector2 dir = Vector2.UnitX.RotatedByRandom(MathHelper.Pi);
-                    Vector2 dustPos = npc.Center + dir * 3 * 16;
-                    float distanceFactor = Vector2.Distance(npc.position, Main.npc[slograID].position) / speed;
+                    Vector2 dustPos = NPC.Center + dir * 3 * 16;
+                    float distanceFactor = Vector2.Distance(NPC.position, Main.npc[slograID].position) / speed;
                     Vector2 speedRand = Vector2.UnitX.RotatedByRandom(MathHelper.Pi) * 10;
-                    float speedX = (((Main.npc[slograID].position.X + (Main.npc[slograID].width * 0.5f)) - npc.position.X) / distanceFactor) + speedRand.X;
-                    float speedY = (((Main.npc[slograID].position.Y + (Main.npc[slograID].height * 0.5f)) - npc.position.Y) / distanceFactor) + speedRand.Y;
+                    float speedX = (((Main.npc[slograID].position.X + (Main.npc[slograID].width * 0.5f)) - NPC.position.X) / distanceFactor) + speedRand.X;
+                    float speedY = (((Main.npc[slograID].position.Y + (Main.npc[slograID].height * 0.5f)) - NPC.position.Y) / distanceFactor) + speedRand.Y;
                     Vector2 dustSpeed = new Vector2(speedX, speedY);
                     Dust dustObj = Dust.NewDustPerfect(dustPos, 262, dustSpeed, 200, default, 3);
                     dustObj.noGravity = true;
                 }
             }
+        }
+    }
+
+    public class SlograDropCondition : IItemDropRuleCondition
+    {
+        public bool CanDrop(DropAttemptInfo info)
+        {
+            return !NPC.AnyNPCs(ModContent.NPCType<Gaibon>());
+        }
+
+        public bool CanShowItemDropInUI()
+        {
+            return false;
+        }
+
+        public string GetConditionDescription()
+        {
+            return "Drops if Gaibon is dead";
         }
     }
 }

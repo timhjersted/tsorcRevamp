@@ -4,17 +4,20 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Okiku {
-    public class SolarDetonator : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy.Okiku
+{
+    public class SolarDetonator : ModProjectile
+    {
 
-        public override void SetDefaults() {
-            projectile.aiStyle = 0;
-            projectile.height = 16;
-            projectile.scale = 1.2f;
-            projectile.tileCollide = false;
-            projectile.width = 16;
-            projectile.timeLeft = DetonationTime;
-            projectile.hostile = false;
+        public override void SetDefaults()
+        {
+            Projectile.aiStyle = 0;
+            Projectile.height = 16;
+            Projectile.scale = 1.2f;
+            Projectile.tileCollide = false;
+            Projectile.width = 16;
+            Projectile.timeLeft = DetonationTime;
+            Projectile.hostile = false;
         }
 
         float DetonationRange = 80;
@@ -23,16 +26,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
         const int LASER_COUNT = 6;
         int[] pickedDirections = new int[LASER_COUNT];
 
-        public override void AI() {
-            projectile.rotation++;
+        public override void AI()
+        {
+            Projectile.rotation++;
 
             if (!spawnedLasers)
             {
                 spawnedLasers = true;
                 for (int i = 0; i < LASER_COUNT; i++)
                 {
-                    GenericLaser SolarLaser = (GenericLaser)Projectile.NewProjectileDirect(projectile.position, new Vector2(0, 5), ModContent.ProjectileType<GenericLaser>(), projectile.damage, .5f).modProjectile;
-                    SolarLaser.LaserOrigin = projectile.Center;
+                    GenericLaser SolarLaser = (GenericLaser)Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.position, new Vector2(0, 5), ModContent.ProjectileType<GenericLaser>(), Projectile.damage, .5f).ModProjectile;
+                    SolarLaser.LaserOrigin = Projectile.Center;
 
                     bool repeat;
                     int direction;
@@ -56,35 +60,35 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                     switch (direction)
                     {
                         case 0:
-                            SolarLaser.LaserTarget = projectile.Center + new Vector2(0, 1);
+                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(0, 1);
                             break;
 
                         case 1:
-                            SolarLaser.LaserTarget = projectile.Center + new Vector2(1, 0);
+                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(1, 0);
                             break;
 
                         case 2:
-                            SolarLaser.LaserTarget = projectile.Center + new Vector2(0, -1);
+                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(0, -1);
                             break;
 
                         case 3:
-                            SolarLaser.LaserTarget = projectile.Center + new Vector2(-1, 0);
+                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(-1, 0);
                             break;
 
                         case 4:
-                            SolarLaser.LaserTarget = projectile.Center + new Vector2(1, 1);
+                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(1, 1);
                             break;
 
                         case 5:
-                            SolarLaser.LaserTarget = projectile.Center + new Vector2(1, -1);
+                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(1, -1);
                             break;
 
                         case 6:
-                            SolarLaser.LaserTarget = projectile.Center + new Vector2(-1, 1);
+                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(-1, 1);
                             break;
 
                         case 7:
-                            SolarLaser.LaserTarget = projectile.Center + new Vector2(-1, -1);
+                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(-1, -1);
                             break;
                     }
 
@@ -98,18 +102,19 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                     SolarLaser.MaxCharge = DetonationTime;
                 }
             }
-            
+
 
             //The closer it gets to detonating the more dust it spawns, up to 10 per frame
             //Note: Integer division
-            for(int i = 0; i < (int)(10 * ((float)((float)DetonationTime - (float)projectile.timeLeft) / (float)DetonationTime)); i++) {
+            for (int i = 0; i < (int)(10 * ((float)((float)DetonationTime - (float)Projectile.timeLeft) / (float)DetonationTime)); i++)
+            {
                 Vector2 dustOffset = Main.rand.NextVector2CircularEdge(DetonationRange, DetonationRange);
                 Vector2 dustVel = Main.rand.NextVector2CircularEdge(8, 8);
-                Vector2 dustPos = dustOffset + projectile.Center;
+                Vector2 dustPos = dustOffset + Projectile.Center;
                 int dustDir = dustOffset.X < 0 ? -1 : 1;
 
-                Dust.NewDustPerfect(dustPos, 6, new Vector2(5 * dustDir, 0), 250, Color.White, 1.0f).noGravity = true;                
-                Dust.NewDustPerfect(projectile.Center, 127, dustVel, 250, Color.White, 2.0f).noGravity = true;
+                Dust.NewDustPerfect(dustPos, 6, new Vector2(5 * dustDir, 0), 250, Color.White, 1.0f).noGravity = true;
+                Dust.NewDustPerfect(Projectile.Center, 127, dustVel, 250, Color.White, 2.0f).noGravity = true;
             }
         }
 
@@ -119,43 +124,43 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile fireball = Projectile.NewProjectileDirect(projectile.Center, Main.rand.NextVector2Square(-18, 18), 686, projectile.damage, .5f, Main.myPlayer);
+                    Projectile fireball = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Main.rand.NextVector2Square(-18, 18), 686, Projectile.damage, .5f, Main.myPlayer);
                     fireball.Name = "Solar Detonation";
                     fireball.tileCollide = false;
                 }
             }
-            
-            
+
+
             for (int i = 0; i < 50; i++)
             {
                 Vector2 dustVel = Main.rand.NextVector2CircularEdge(8, 8);
-                Dust.NewDustPerfect(projectile.Center, 127, dustVel, 250, Color.White, 4.0f).noGravity = true;
+                Dust.NewDustPerfect(Projectile.Center, 127, dustVel, 250, Color.White, 4.0f).noGravity = true;
             }
             return true;
         }
 
         static Texture2D texture;
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (texture == null || texture.IsDisposed)
             {
-                texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/SolarDetonator");
+                texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/SolarDetonator");
             }
             SpriteEffects spriteEffects = SpriteEffects.None;
-            if (projectile.spriteDirection == -1)
+            if (Projectile.spriteDirection == -1)
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
             //Get the premultiplied, properly transparent texture
-            int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
-            int startY = frameHeight * projectile.frame;
+            int frameHeight = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
+            int startY = frameHeight * Projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;
             //origin.X = (float)(projectile.spriteDirection == 1 ? sourceRectangle.Width - 20 : 20);
-            Color drawColor = projectile.GetAlpha(lightColor);
-            Main.spriteBatch.Draw(texture,
-                projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
-                sourceRectangle, drawColor, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+            Color drawColor = Projectile.GetAlpha(lightColor);
+            Main.EntitySpriteDraw(texture,
+                Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+                sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
 
             return false;
         }

@@ -4,37 +4,46 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class ForgottenRisingSun : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class ForgottenRisingSun : ModProjectile
+    {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/ForgottenRisingSun";
-        public override void SetDefaults() {
-            projectile.width = 25;
-            projectile.height = 25;
-            projectile.aiStyle = 3;
-            projectile.timeLeft = 2400;
-            projectile.friendly = true;
-            projectile.melee = true;
-            projectile.ownerHitCheck = true;
-            projectile.penetrate = 6;
+        public override void SetDefaults()
+        {
+            Projectile.width = 25;
+            Projectile.height = 25;
+            Projectile.aiStyle = 3;
+            Projectile.timeLeft = 2400;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Melee;
+            Projectile.ownerHitCheck = true;
+            Projectile.penetrate = 6;
         }
-        public override void AI() {
-            projectile.rotation += Math.Sign(projectile.velocity.X) * MathHelper.ToRadians(10f);
-            if (projectile.timeLeft < 2340f) {
-                projectile.tileCollide = false;
-                projectile.velocity = (projectile.velocity + projectile.DirectionTo(Main.player[projectile.owner].Center)) * 0.98f;
-                if (Main.player[projectile.owner].Hitbox.Intersects(projectile.Hitbox)) {
-                    projectile.Kill();
+        public override void AI()
+        {
+            Projectile.rotation += Math.Sign(Projectile.velocity.X) * MathHelper.ToRadians(10f);
+            if (Projectile.timeLeft < 2340f)
+            {
+                Projectile.tileCollide = false;
+                Projectile.velocity = (Projectile.velocity + Projectile.DirectionTo(Main.player[Projectile.owner].Center)) * 0.98f;
+                if (Main.player[Projectile.owner].Hitbox.Intersects(Projectile.Hitbox))
+                {
+                    Projectile.Kill();
                 }
             }
         }
 
-        public override bool OnTileCollide(Vector2 oldVelocity) {
-            Main.PlaySound(SoundID.Dig, (int)projectile.position.X, (int)projectile.position.Y, 9);
-            if (projectile.velocity.X != oldVelocity.X) {
-                projectile.velocity.X = 0f - oldVelocity.X;
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
+            if (Projectile.velocity.X != oldVelocity.X)
+            {
+                Projectile.velocity.X = 0f - oldVelocity.X;
             }
-            if (projectile.velocity.Y != oldVelocity.Y) {
-                projectile.velocity.Y = 0f - oldVelocity.Y;
+            if (Projectile.velocity.Y != oldVelocity.Y)
+            {
+                Projectile.velocity.Y = 0f - oldVelocity.Y;
             }
 
             return false;

@@ -20,21 +20,21 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void SetDefaults()
         {
-            item.width = 24;
-            item.height = 24;
-            item.accessory = true;
-            item.value = PriceByRarity.Pink_5;
-            item.rare = ItemRarityID.Pink;
+            Item.width = 24;
+            Item.height = 24;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Pink_5;
+            Item.rare = ItemRarityID.Pink;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 6000);
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6000);
             recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 50);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
 
         public override void UpdateEquip(Player player)
@@ -52,9 +52,9 @@ namespace tsorcRevamp.Items.Accessories
 
             base.UpdateEquip(player);
             player.GetModPlayer<tsorcRevampPlayer>().manaShield = 1;
-            player.rangedDamage = 0.01f;
-            player.magicDamage = 0.01f;
-            player.minionDamage = 0.01f;
+            player.GetDamage(DamageClass.Ranged) *= 0.01f;
+            player.GetDamage(DamageClass.Magic) *= 0.01f;
+            player.GetDamage(DamageClass.Summon) *= 0.01f;
             if (player.statMana >= manaCost)
             {
                 player.endurance += damageResistance;

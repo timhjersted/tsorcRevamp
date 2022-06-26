@@ -1,13 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs
 {
     class LifegemHealing : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lifegem Healing");
             Description.SetDefault("Health is slowly being restored");

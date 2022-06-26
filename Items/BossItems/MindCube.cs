@@ -6,62 +6,70 @@ using tsorcRevamp.NPCs.Bosses.Okiku.SecondForm;
 using tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm;
 
 
-namespace tsorcRevamp.Items.BossItems {
-    class MindCube : ModItem {
+namespace tsorcRevamp.Items.BossItems
+{
+    class MindCube : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Summons Attraidies, the Mindflayer King \n" +
                 "This is it. The final battle. \n" +
                 "Item is not consumed on use. To find the light and dark shards needed to craft this in adventure mode... Seek the Dark Tower of Attraidies.");
         }
 
-        public override void SetDefaults() {
-            item.rare = ItemRarityID.LightRed;
-            item.width = 38;
-            item.height = 34;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useAnimation = 45;
-            item.useTime = 45;
-            item.maxStack = 1;
-            item.consumable = false;
+        public override void SetDefaults()
+        {
+            Item.rare = ItemRarityID.LightRed;
+            Item.width = 38;
+            Item.height = 34;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
+            Item.maxStack = 1;
+            Item.consumable = false;
         }
 
 
-        public override bool UseItem(Player player) {
-            NPC.NewNPC((int)player.position.X, (int)player.position.Y - 64, ModContent.NPCType<DarkShogunMask>());
-            Main.NewText("You are a fool, Red. You think you can defeat me?...", 175, 75, 255);;
+        public override bool? UseItem(Player player)
+        {
+            NPC.NewNPC(NPC.GetBossSpawnSource(player.whoAmI), (int)player.position.X, (int)player.position.Y - 64, ModContent.NPCType<DarkShogunMask>());
+            Main.NewText("You are a fool, Red. You think you can defeat me?...", 175, 75, 255); ;
             return true;
         }
-        public override bool CanUseItem(Player player) {
+        public override bool CanUseItem(Player player)
+        {
             if (NPC.AnyNPCs(ModContent.NPCType<DarkShogunMask>())
                 || NPC.AnyNPCs(ModContent.NPCType<DarkDragonMask>())
                 || NPC.AnyNPCs(ModContent.NPCType<Okiku>())
                 || NPC.AnyNPCs(ModContent.NPCType<BrokenOkiku>())
-                ) {
+                )
+            {
                 return false;
             }
             return true;
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
                 recipe.AddIngredient(ItemID.LightShard, 99);
                 recipe.AddIngredient(ItemID.DarkShard, 99);
             }
-            recipe.AddIngredient(mod.GetItem("CrestOfFire"), 1);
-            recipe.AddIngredient(mod.GetItem("CrestOfWater"), 1);
-            recipe.AddIngredient(mod.GetItem("CrestOfEarth"), 1);
-            recipe.AddIngredient(mod.GetItem("CrestOfSky"), 1);
-            recipe.AddIngredient(mod.GetItem("CrestOfCorruption"), 1);
-            recipe.AddIngredient(mod.GetItem("CrestOfSteel"), 1);
-            recipe.AddIngredient(mod.GetItem("CrestOfLife"), 1);
-            recipe.AddIngredient(mod.GetItem("CrestOfStone"), 1);
+            recipe.AddIngredient(ModContent.ItemType<CrestOfFire>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<CrestOfWater>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<CrestOfEarth>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<CrestOfSky>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<CrestOfCorruption>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<CrestOfSteel>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<CrestOfLife>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<CrestOfStone>(), 1);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

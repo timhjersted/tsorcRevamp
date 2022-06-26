@@ -8,56 +8,56 @@ namespace tsorcRevamp.Items.Weapons.Melee
     {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/HeavensTear";
         public override void SetStaticDefaults()
-	{
-		DisplayName.SetDefault("Heaven's Tear II");
+        {
+            DisplayName.SetDefault("Heaven's Tear II");
             Tooltip.SetDefault("'Heaven splits with each swing'\n" +
                                 "Does 2x damage to mages and ghosts...");
 
-	}
+        }
 
         public override void SetDefaults()
         {
-            
-            item.width = 32;
-            item.height = 32;
+
+            Item.width = 32;
+            Item.height = 32;
             //item.pretendType=389;
             //item.prefixType=368;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.channel = true;
-            item.useAnimation = 30;
-            item.useTime = 30;
-            item.maxStack = 1;
-            item.damage = 2000;
-            item.knockBack = (float)10;
-            item.scale = (float)1.1;
-            item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.Purple;
-            item.shootSpeed = (float)16;
-            item.noUseGraphic = true;
-            item.noMelee = true;
-            item.value = PriceByRarity.Purple_11;
-            item.melee = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.HeavenBall>();
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.channel = true;
+            Item.useAnimation = 30;
+            Item.useTime = 30;
+            Item.maxStack = 1;
+            Item.damage = 2000;
+            Item.knockBack = (float)10;
+            Item.scale = (float)1.1;
+            Item.UseSound = SoundID.Item1;
+            Item.rare = ItemRarityID.Purple;
+            Item.shootSpeed = (float)16;
+            Item.noUseGraphic = true;
+            Item.noMelee = true;
+            Item.value = PriceByRarity.Purple_11;
+            Item.DamageType = DamageClass.Melee;
+            Item.shoot = ModContent.ProjectileType<Projectiles.HeavenBall>();
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(mod.GetItem("HeavensTear"), 1);
-            recipe.AddIngredient(mod.GetItem("Humanity"), 15);
+            recipe.AddIngredient(Mod.Find<ModItem>("HeavensTear").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 15);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>());
-            recipe.AddIngredient(mod.GetItem("RedTitanite"), 20);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 220000);
+            recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 20);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 220000);
 
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
-        
-        public override void ModifyHitNPC(Player player, NPC npc, ref int damage, ref float knockBack, ref bool crit )
+
+        public override void ModifyHitNPC(Player player, NPC npc, ref int damage, ref float knockBack, ref bool crit)
         {
-            //damage = (int) ((Main.rand.Next(26)) * (P.meleeDamage));
+            //damage = (int) ((Main.rand.Next(26)) * (P.GetDamage(DamageClass.Melee)));
             if (npc.FullName == "Tim") damage *= 2;
             else if (npc.FullName == "Dark Caster") damage *= 2;
             else if (npc.FullName == "Goblin Sorcerer") damage *= 2;

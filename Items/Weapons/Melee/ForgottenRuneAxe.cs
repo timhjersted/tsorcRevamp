@@ -3,28 +3,33 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Enemies;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenRuneAxe : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenRuneAxe : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("4 times as effective against magic users.");
         }
-        public override void SetDefaults() {
-            item.rare = ItemRarityID.Cyan;
-            item.damage = 105;
-            item.height = 46;
-            item.knockBack = 5;
-            item.autoReuse = true;
-            item.melee = true;
-            item.scale = 1f;
-            item.useAnimation = 23;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
-            item.value = PriceByRarity.Cyan_9;
-            item.width = 56;
+        public override void SetDefaults()
+        {
+            Item.rare = ItemRarityID.Cyan;
+            Item.damage = 105;
+            Item.height = 46;
+            Item.knockBack = 5;
+            Item.autoReuse = true;
+            Item.DamageType = DamageClass.Melee;
+            Item.scale = 1f;
+            Item.useAnimation = 23;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 21;
+            Item.value = PriceByRarity.Cyan_9;
+            Item.width = 56;
         }
 
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
+        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        {
             //todo add mod NPCs to this list
             if (target.type == NPCID.DarkCaster
                 || target.type == NPCID.GoblinSorcerer
@@ -50,18 +55,20 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerServant>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerIllusion>()
                 || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingDisciple>()
-                ) {
+                )
+            {
                 damage *= 4;
             }
         }
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("OldAxe"), 1);
-            recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 150000);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("OldAxe").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 150000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

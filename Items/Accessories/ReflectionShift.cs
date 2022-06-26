@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,22 +8,25 @@ using Terraria.Utilities;
 namespace tsorcRevamp.Items.Accessories
 {
     [AutoloadEquip(EquipType.Shoes)]
-    public class ReflectionShift : ModItem {
-        public override void SetStaticDefaults() {
+    public class ReflectionShift : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Your full potential trancends even space and time" +
                                 "\nDouble tap any direction or press the hotkey to [c/9803fc:shift]" +
                                 "\nWhile shifting you are [c/9803fc:completely intangable] for a brief moment");
         }
 
-        public override void SetDefaults() {
-            item.width = 40;
-            item.height = 40;
-            item.accessory = true;
-            item.value = PriceByRarity.Purple_11;
-            item.rare = ItemRarityID.Purple;
+        public override void SetDefaults()
+        {
+            Item.width = 40;
+            Item.height = 40;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Purple_11;
+            Item.rare = ItemRarityID.Purple;
         }
 
-        public override void UpdateVanity(Player player, EquipType type)
+        public override void UpdateVanity(Player player)
         {
             Lighting.AddLight(player.Center, Color.Blue.ToVector3());
             UsefulFunctions.DustRing(player.Center, 64, DustID.ShadowbeamStaff);
@@ -48,18 +50,18 @@ namespace tsorcRevamp.Items.Accessories
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ReflectionShift];
-            spriteBatch.Draw(texture, position, frame, drawColor, 0f, origin, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, position, frame, drawColor, 0f, origin, scale, SpriteEffects.None, 0);
             return false;
         }
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
 
-            Lighting.AddLight(item.Center, Color.Blue.ToVector3());
-            UsefulFunctions.DustRing(item.Center, 32, DustID.ShadowbeamStaff);
+            Lighting.AddLight(Item.Center, Color.Blue.ToVector3());
+            UsefulFunctions.DustRing(Item.Center, 32, DustID.ShadowbeamStaff);
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ReflectionShift];
-            spriteBatch.Draw(texture, new Vector2(item.position.X - Main.screenPosition.X + item.width * 0.5f, item.position.Y - Main.screenPosition.Y + item.height - texture.Height * 0.5f + 2f),
-                new Rectangle(0, 0, texture.Width, texture.Height), Color.White, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, new Vector2(Item.position.X - Main.screenPosition.X + Item.width * 0.5f, Item.position.Y - Main.screenPosition.Y + Item.height - texture.Height * 0.5f + 2f),
+                new Rectangle(0, 0, texture.Width, texture.Height), Color.White, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0);
             return false;
         }
     }

@@ -14,27 +14,27 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 18;
-            item.defense = 10;
-            item.value = 100000;
-            item.rare = ItemRarityID.Pink;
+            Item.width = 18;
+            Item.height = 18;
+            Item.defense = 10;
+            Item.value = 100000;
+            Item.rare = ItemRarityID.Pink;
         }
 
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += 0.20f;
-            player.magicDamage += 0.30f;
+            player.GetDamage(DamageClass.Magic) += 0.30f;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedGreaves, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

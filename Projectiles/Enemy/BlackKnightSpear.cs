@@ -11,33 +11,33 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetDefaults()
         {
-            projectile.aiStyle = 1;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.height = 12;
-            projectile.penetrate = 1;
-            projectile.ranged = true;
-            projectile.scale = 0.8f;
-            projectile.tileCollide = true;
-            projectile.width = 12;
+            Projectile.aiStyle = 1;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.height = 12;
+            Projectile.penetrate = 1;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.scale = 0.8f;
+            Projectile.tileCollide = true;
+            Projectile.width = 12;
         }
 
         #region Kill
         public override void Kill(int timeLeft)
         {
             //int num98 = -1;
-            if (!projectile.active)
+            if (!Projectile.active)
             {
                 return;
             }
-            projectile.timeLeft = 0;
+            Projectile.timeLeft = 0;
             {
-                Main.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
                 for (int i = 0; i < 10; i++)
                 {
-                    Vector2 arg_92_0 = new Vector2(projectile.position.X, projectile.position.Y);
-                    int arg_92_1 = projectile.width;
-                    int arg_92_2 = projectile.height;
+                    Vector2 arg_92_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
+                    int arg_92_1 = Projectile.width;
+                    int arg_92_2 = Projectile.height;
                     int arg_92_3 = 7;
                     float arg_92_4 = 0f;
                     float arg_92_5 = 0f;
@@ -47,7 +47,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
                 }
             }
-            projectile.active = false;
+            Projectile.active = false;
         }
         #endregion
     }

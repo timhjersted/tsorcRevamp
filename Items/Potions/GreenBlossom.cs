@@ -12,19 +12,19 @@ namespace tsorcRevamp.Items.Potions
 
         public override void SetDefaults()
         {
-            item.width = 24;
-            item.height = 28;
-            item.useStyle = ItemUseStyleID.EatingUsing;
-            item.useAnimation = 20;
-            item.useTime = 20;
-            item.useTurn = true;
-            item.UseSound = SoundID.Item3;
-            item.maxStack = 99;
-            item.consumable = true;
-            item.rare = ItemRarityID.Blue;
-            item.value = 5000;
-            item.buffType = ModContent.BuffType<Buffs.GreenBlossom>();
-            item.buffTime = 14400;
+            Item.width = 24;
+            Item.height = 28;
+            Item.useStyle = ItemUseStyleID.EatFood;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
+            Item.useTurn = true;
+            Item.UseSound = SoundID.Item3;
+            Item.maxStack = 99;
+            Item.consumable = true;
+            Item.rare = ItemRarityID.Blue;
+            Item.value = 5000;
+            Item.buffType = ModContent.BuffType<Buffs.GreenBlossom>();
+            Item.buffTime = 14400;
         }
     }
 }

@@ -14,26 +14,26 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 18;
-            item.defense = 24;
-            item.value = 5000;
-            item.rare = ItemRarityID.Orange;
+            Item.width = 18;
+            Item.height = 18;
+            Item.defense = 24;
+            Item.value = 5000;
+            Item.rare = ItemRarityID.Orange;
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.meleeSpeed += 0.2f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.2f;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.AdamantiteBreastplate, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 4000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 4000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

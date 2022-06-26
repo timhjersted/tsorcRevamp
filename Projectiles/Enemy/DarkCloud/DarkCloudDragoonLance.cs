@@ -1,9 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 {
@@ -11,13 +10,13 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
     {
         public override void SetDefaults()
         {
-            projectile.width = 14;
-            projectile.height = 161;
+            Projectile.width = 14;
+            Projectile.height = 161;
             //projectile.aiStyle = 19;
             //projectile.timeLeft = 700;
             //projectile.penetrate = 12;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
         }
 
         public override void SetStaticDefaults()
@@ -25,56 +24,56 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             DisplayName.SetDefault("Dragoon Lance");
         }
 
-		public override void AI()
-		{
-            Lighting.AddLight(projectile.Center, Color.Cyan.ToVector3());
-            if(projectile.ai[0] > 0)
+        public override void AI()
+        {
+            Lighting.AddLight(Projectile.Center, Color.Cyan.ToVector3());
+            if (Projectile.ai[0] > 0)
             {
-                projectile.ai[0]--;
-                if(projectile.ai[0] == 0) 
+                Projectile.ai[0]--;
+                if (Projectile.ai[0] == 0)
                 {
-                    projectile.velocity = new Vector2(-1, -30);
+                    Projectile.velocity = new Vector2(-1, -30);
                 }
                 else
                 {
-                    projectile.velocity = new Vector2(0, -1);
+                    Projectile.velocity = new Vector2(0, -1);
                 }
             }
-		}
+        }
 
-		#region Kill
-		public override void Kill(int timeLeft)
+        #region Kill
+        public override void Kill(int timeLeft)
         {
-            if (!projectile.active)
+            if (!Projectile.active)
             {
-                int num40 = Dust.NewDust(new Vector2(projectile.position.X + projectile.velocity.X, projectile.position.Y + projectile.velocity.Y), projectile.width, projectile.height, 15, projectile.velocity.X, projectile.velocity.Y, 100, default(Color), 3f);
+                int num40 = Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, 15, Projectile.velocity.X, Projectile.velocity.Y, 100, default(Color), 3f);
                 return;
             }
-            projectile.timeLeft = 0;
+            Projectile.timeLeft = 0;
             {
-                Main.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
                 for (int i = 0; i < 10; i++)
                 {
-                    int dust = Dust.NewDust(new Vector2(projectile.position.X + projectile.velocity.X, projectile.position.Y + projectile.velocity.Y), projectile.width, projectile.height, 15, projectile.velocity.X, projectile.velocity.Y, 200, default(Color), 1f);
+                    int dust = Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, 15, Projectile.velocity.X, Projectile.velocity.Y, 200, default(Color), 1f);
                     Main.dust[dust].noGravity = false;
-                    Dust.NewDust(new Vector2(projectile.position.X + projectile.velocity.X, projectile.position.Y + projectile.velocity.Y), projectile.width, projectile.height, 15, projectile.velocity.X, projectile.velocity.Y, 200, default(Color), 2f);
-                    Dust.NewDust(new Vector2(projectile.position.X + projectile.velocity.X, projectile.position.Y + projectile.velocity.Y), projectile.width, projectile.height, 15, projectile.velocity.X, projectile.velocity.Y, 200, default(Color), 1f);
-                    Dust.NewDust(new Vector2(projectile.position.X + projectile.velocity.X, projectile.position.Y + projectile.velocity.Y), projectile.width, projectile.width, 15, projectile.velocity.X, projectile.velocity.Y, 200, default(Color), 1f);
-                    Dust.NewDust(new Vector2(projectile.position.X + projectile.velocity.X, projectile.position.Y + projectile.velocity.Y), projectile.width, projectile.width, 15, projectile.velocity.X, projectile.velocity.Y, 200, default(Color), 1f);
-                    Dust.NewDust(new Vector2(projectile.position.X + projectile.velocity.X, projectile.position.Y + projectile.velocity.Y), projectile.width, projectile.height, 15, projectile.velocity.X, projectile.velocity.Y, 200, default(Color), 2f);
-                    Dust.NewDust(new Vector2(projectile.position.X + projectile.velocity.X, projectile.position.Y + projectile.velocity.Y), projectile.width, projectile.height, 15, projectile.velocity.X, projectile.velocity.Y, 200, default(Color), 1f);
-                    Dust.NewDust(new Vector2(projectile.position.X + projectile.velocity.X, projectile.position.Y + projectile.velocity.Y), projectile.width, projectile.width, 15, projectile.velocity.X, projectile.velocity.Y, 200, default(Color), 1f);
-                    Dust.NewDust(new Vector2(projectile.position.X + projectile.velocity.X, projectile.position.Y + projectile.velocity.Y), projectile.width, projectile.width, 15, projectile.velocity.X, projectile.velocity.Y, 200, default(Color), 1f);
+                    Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, 15, Projectile.velocity.X, Projectile.velocity.Y, 200, default(Color), 2f);
+                    Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, 15, Projectile.velocity.X, Projectile.velocity.Y, 200, default(Color), 1f);
+                    Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.width, 15, Projectile.velocity.X, Projectile.velocity.Y, 200, default(Color), 1f);
+                    Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.width, 15, Projectile.velocity.X, Projectile.velocity.Y, 200, default(Color), 1f);
+                    Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, 15, Projectile.velocity.X, Projectile.velocity.Y, 200, default(Color), 2f);
+                    Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, 15, Projectile.velocity.X, Projectile.velocity.Y, 200, default(Color), 1f);
+                    Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.width, 15, Projectile.velocity.X, Projectile.velocity.Y, 200, default(Color), 1f);
+                    Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.width, 15, Projectile.velocity.X, Projectile.velocity.Y, 200, default(Color), 1f);
                 }
             }
-            projectile.active = false;
+            Projectile.active = false;
         }
         #endregion
 
         static Texture2D texture;
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            UsefulFunctions.DrawSimpleLitProjectile(spriteBatch, projectile, ref texture);
+            UsefulFunctions.DrawSimpleLitProjectile(Projectile, ref texture);
             return false;
         }
     }

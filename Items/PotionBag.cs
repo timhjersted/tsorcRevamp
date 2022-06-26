@@ -1,43 +1,47 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
-using tsorcRevamp.UI;
-using Terraria.DataStructures;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 
 
-namespace tsorcRevamp.Items {
-    class PotionBag : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items
+{
+    class PotionBag : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Can store up to 28 potions" +
                                "\nSupports Quick Buff/Heal/Mana hotkeys as well as permanent potions!" +
                                "\n\"[c/C92CD1:Favorite]\" valuable potions in the pouch with Alt+Click" +
                                "\n[c/C92CD1:Favorited potions] are not consumed by Quick Buff" +
                                "\nPotions are stored per character instead of per-bag, similar to a piggy bank");
-            Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(10, 9));
+            Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(10, 9));
 
         }
 
-        public override void SetDefaults() {
-            item.width = 22;
-            item.height = 30;
-            item.rare = ItemRarityID.Purple;
-            item.value = 0;
-            item.noUseGraphic = true;
-            item.useAnimation = 10;
-            item.useTime = 10;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.maxStack = 1;
+        public override void SetDefaults()
+        {
+            Item.width = 22;
+            Item.height = 30;
+            Item.rare = ItemRarityID.Purple;
+            Item.value = 0;
+            Item.noUseGraphic = true;
+            Item.useAnimation = 10;
+            Item.useTime = 10;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.maxStack = 1;
         }
 
-        public override bool CanUseItem(Player player) {
-           
+        public override bool CanUseItem(Player player)
+        {
+
             return true;
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player)
+        {
             player.GetModPlayer<tsorcRevampPlayer>().potionBagCountdown = 12;
             return true;
         }
@@ -47,17 +51,17 @@ namespace tsorcRevamp.Items {
         //Doing it like this means the bag opens *after* the item is finished being used
         public override void UpdateInventory(Player player)
         {
-            
+
             base.UpdateInventory(player);
         }
 
         public override void PostUpdate()
         {
-            Lighting.AddLight(item.Center, 0.3f, 0.2f, 0.4f);
+            Lighting.AddLight(Item.Center, 0.3f, 0.2f, 0.4f);
 
             if (Main.rand.Next(10) == 0)
             {
-                Dust dust = Main.dust[Dust.NewDust(item.position, item.width, item.height, 27, 0f, 0f, 50, default, Main.rand.NextFloat(.8f, 1.2f))];
+                Dust dust = Main.dust[Dust.NewDust(Item.position, Item.width, Item.height, 27, 0f, 0f, 50, default, Main.rand.NextFloat(.8f, 1.2f))];
                 dust.noGravity = true;
                 dust.velocity *= 0;
             }
@@ -68,11 +72,11 @@ namespace tsorcRevamp.Items {
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
-            Texture2D texture = Main.itemTexture[item.type];
-            Texture2D textureGlow = mod.GetTexture("Items/PotionBag_Glow");
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            Texture2D textureGlow = (Texture2D)Mod.Assets.Request<Texture2D>("Items/PotionBag_Glow");
             var myrectangle = texture.Frame(1, 9, 0, itemframe);
-            spriteBatch.Draw(texture, item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(12, 16), item.scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(texture, item.Center - Main.screenPosition, myrectangle, Color.White, 0f, new Vector2(12, 16), item.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(12, 16), Item.scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, Color.White, 0f, new Vector2(12, 16), Item.scale, SpriteEffects.None, 0);
 
 
             itemframeCounter++;
@@ -123,12 +127,12 @@ namespace tsorcRevamp.Items {
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Silk, 5);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 75);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 75);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
-        }       
+
+            recipe.Register();
+        }
     }
 }

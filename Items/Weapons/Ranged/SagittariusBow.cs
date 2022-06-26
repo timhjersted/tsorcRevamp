@@ -1,44 +1,52 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    class SagittariusBow : ModItem {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    class SagittariusBow : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Fires two arrows\nHold FIRE to charge\nArrows are faster and more accurate when the bow is charged");
         }
-        public override void SetDefaults() {
-            item.ranged = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.SagittariusBowHeld>();
-            item.channel = true;
-            item.damage = 548;
-            item.width = 14;
-            item.height = 28;
-            item.useTime = 60;
-            item.useAnimation = 60;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.noMelee = true;
-            item.noUseGraphic = true;
-            item.knockBack = 5f;
-            item.value = PriceByRarity.Red_10;
-            item.rare = ItemRarityID.Red;
-            item.UseSound = SoundID.Item7;
-            item.shootSpeed = 21f;
+        public override void SetDefaults()
+        {
+            Item.DamageType = DamageClass.Ranged;
+            Item.shoot = ModContent.ProjectileType<Projectiles.SagittariusBowHeld>();
+            Item.channel = true;
+            Item.damage = 548;
+            Item.width = 14;
+            Item.height = 28;
+            Item.useTime = 60;
+            Item.useAnimation = 60;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
+            Item.knockBack = 5f;
+            Item.value = PriceByRarity.Red_10;
+            Item.rare = ItemRarityID.Red;
+            Item.UseSound = SoundID.Item7;
+            Item.shootSpeed = 21f;
+            Item.useAmmo = AmmoID.Arrow;
         }
 
-        public override bool CanUseItem(Player player) {
-            return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.SagittariusBowHeld>()] <= 0;
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
+            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<Projectiles.SagittariusBowHeld>(), damage, knockback, player.whoAmI, type);
+            return false;
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("ArtemisBow"), 1);
-            recipe.AddIngredient(mod.GetItem("BlueTitanite"), 5);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 90000);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("ArtemisBow").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 5);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 90000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
+
         }
     }
 }

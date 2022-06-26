@@ -1,14 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Linq;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs
 {
     class Bonfire : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bonfire");
             Description.SetDefault("Stay a little while... Let your soul heal \n" +

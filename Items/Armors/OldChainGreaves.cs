@@ -9,11 +9,11 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 18;
-            item.defense = 1;
-            item.value = 3000;
-            item.rare = ItemRarityID.White;
+            Item.width = 18;
+            Item.height = 18;
+            Item.defense = 1;
+            Item.value = 3000;
+            Item.rare = ItemRarityID.White;
         }
     }
 }

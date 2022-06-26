@@ -2,25 +2,30 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class CoralSword : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class CoralSword : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Edged to slay those of the sea. Deals 4x damage to water enemies.");
         }
-        public override void SetDefaults() {
-            item.rare = ItemRarityID.Blue;
-            item.damage = 32;
-            item.height = 36;
-            item.knockBack = 5;
-            item.melee = true;
-            item.useAnimation = 23;
-            item.useTime = 23;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = PriceByRarity.Blue_1;
-            item.width = 36;
+        public override void SetDefaults()
+        {
+            Item.rare = ItemRarityID.Blue;
+            Item.damage = 32;
+            Item.height = 36;
+            Item.knockBack = 5;
+            Item.DamageType = DamageClass.Melee;
+            Item.useAnimation = 23;
+            Item.useTime = 23;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = PriceByRarity.Blue_1;
+            Item.width = 36;
         }
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
+        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        {
             //todo add mod NPCs to this list
             if (target.type == NPCID.Shark
                 || target.type == NPCID.Goldfish
@@ -37,17 +42,19 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 //|| target.type == ModContent.NPCType<QuaraMantassin>()
                 //|| target.type == ModContent.NPCType<QuaraPincher>()
                 //|| target.type == ModContent.NPCType<QuaraPredator>()
-                ) {
+                )
+            {
                 damage *= 4;
             }
         }
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Coral, 5);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

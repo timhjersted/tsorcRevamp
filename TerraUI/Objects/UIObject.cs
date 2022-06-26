@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameInput;
 using TerraUI.Utilities;
 
-namespace TerraUI.Objects {
-    public class UIObject {
+namespace TerraUI.Objects
+{
+    public class UIObject
+    {
         protected bool acceptsKeyboardInput = false;
         protected UIObject parent = null;
         protected bool mouseEnter = false;
@@ -51,12 +53,16 @@ namespace TerraUI.Objects {
         /// <summary>
         /// The X and Y position of the object relative to its parent.
         /// </summary>
-        public Vector2 RelativePosition {
-            get {
-                if(Parent != null) {
+        public Vector2 RelativePosition
+        {
+            get
+            {
+                if (Parent != null)
+                {
                     return Position + Parent.RelativePosition;
                 }
-                else {
+                else
+                {
                     return Position;
                 }
             }
@@ -64,12 +70,15 @@ namespace TerraUI.Objects {
         /// <summary>
         /// The X and Y position of the object on the screen, accounting for all its parent objects.
         /// </summary>
-        public Vector2 ScreenPosition {
-            get {
+        public Vector2 ScreenPosition
+        {
+            get
+            {
                 UIObject obj = Parent;
                 Vector2 position = Position;
 
-                while(obj != null) {
+                while (obj != null)
+                {
                     position += obj.Position;
                     obj = obj.Parent;
                 }
@@ -96,16 +105,20 @@ namespace TerraUI.Objects {
         /// <summary>
         /// The parent of the object.
         /// </summary>
-        public UIObject Parent {
+        public UIObject Parent
+        {
             get { return parent; }
-            set {
-                if(parent != null) {
+            set
+            {
+                if (parent != null)
+                {
                     parent.Children.Remove(this);
                 }
 
                 parent = value;
 
-                if(parent != null) {
+                if (parent != null)
+                {
                     parent.Children.Add(this);
                 }
             }
@@ -119,7 +132,8 @@ namespace TerraUI.Objects {
         /// <param name="parent">parent UIObject</param>
         /// <param name="acceptsKeyboardInput">whether the object should capture keyboard input</param>
         public UIObject(Vector2 position, Vector2 size, UIObject parent = null, bool allowFocus = false,
-            bool acceptsKeyboardInput = false) {
+            bool acceptsKeyboardInput = false)
+        {
             Position = position;
             Size = size;
             Children = new List<UIObject>();
@@ -131,44 +145,56 @@ namespace TerraUI.Objects {
         /// <summary>
         /// Update the object. Call during any PreUpdate() function.
         /// </summary>
-        public virtual void Update() {
-            if(!PlayerInput.IgnoreMouseInterface) {
-                if(MouseUtils.Rectangle.Intersects(Rectangle)) {
+        public virtual void Update()
+        {
+            if (!PlayerInput.IgnoreMouseInterface)
+            {
+                if (MouseUtils.Rectangle.Intersects(Rectangle))
+                {
                     Main.player[Main.myPlayer].mouseInterface = true;
 
-                    if(MouseEnter != null && !mouseEnter) {
+                    if (MouseEnter != null && !mouseEnter)
+                    {
                         mouseEnter = true;
                         MouseEnter(this, new MouseEventArgs(MouseUtils.Position));
                     }
-                    else {
+                    else
+                    {
                         OnMouseEnter();
                     }
 
-                    if(MouseHover != null) {
+                    if (MouseHover != null)
+                    {
                         MouseHover(this, new MouseEventArgs(MouseUtils.Position));
                     }
-                    else {
+                    else
+                    {
                         OnMouseHover();
                     }
 
                     Handle();
                 }
-                else {
-                    if(mouseEnter && MouseLeave != null) {
+                else
+                {
+                    if (mouseEnter && MouseLeave != null)
+                    {
                         mouseEnter = false;
                         MouseLeave(this, new MouseEventArgs(MouseUtils.Position));
                     }
-                    else {
+                    else
+                    {
                         OnMouseLeave();
                     }
 
-                    if(MouseUtils.AnyButtonPressed()) {
+                    if (MouseUtils.AnyButtonPressed())
+                    {
                         Unfocus();
                     }
                 }
             }
 
-            foreach(UIObject obj in Children) {
+            foreach (UIObject obj in Children)
+            {
                 obj.Update();
             }
         }
@@ -176,21 +202,27 @@ namespace TerraUI.Objects {
         /// <summary>
         /// Handle the mouse click events.
         /// </summary>
-        public virtual void Handle() {
+        public virtual void Handle()
+        {
             MouseButtons button = MouseButtons.None;
 
-            if(MouseUtils.AnyButtonPressed(out button)) {
-                if(MouseDown != null) {
+            if (MouseUtils.AnyButtonPressed(out button))
+            {
+                if (MouseDown != null)
+                {
                     MouseDown(this, new MouseButtonEventArgs(button, MouseUtils.Position));
                 }
-                else {
+                else
+                {
                     OnMouseDown();
                 }
 
-                if(Click == null || !Click(this, new MouseButtonEventArgs(button, MouseUtils.Position))) {
+                if (Click == null || !Click(this, new MouseButtonEventArgs(button, MouseUtils.Position)))
+                {
                     Focus();
 
-                    switch(button) {
+                    switch (button)
+                    {
                         case MouseButtons.Left:
                             OnLeftClick();
                             break;
@@ -210,11 +242,14 @@ namespace TerraUI.Objects {
                 }
             }
 
-            if(MouseUtils.AnyButtonReleased(out button)) {
-                if(MouseUp != null) {
+            if (MouseUtils.AnyButtonReleased(out button))
+            {
+                if (MouseUp != null)
+                {
                     MouseUp(this, new MouseButtonEventArgs(button, MouseUtils.Position));
                 }
-                else {
+                else
+                {
                     OnMouseUp();
                 }
             }
@@ -273,8 +308,10 @@ namespace TerraUI.Objects {
         /// Draw the object. Call during any Draw() function.
         /// </summary>
         /// <param name="spriteBatch">drawing SpriteBatch</param>
-        public virtual void Draw(SpriteBatch spriteBatch) {
-            foreach(UIObject obj in Children) {
+        public virtual void Draw(SpriteBatch spriteBatch)
+        {
+            foreach (UIObject obj in Children)
+            {
                 obj.Draw(spriteBatch);
             }
         }
@@ -282,17 +319,22 @@ namespace TerraUI.Objects {
         /// <summary>
         /// Give the object focus.
         /// </summary>
-        public virtual void Focus() {
-            if(!Focused && allowFocus) {
+        public virtual void Focus()
+        {
+            if (!Focused && allowFocus)
+            {
                 Focused = true;
-                if(acceptsKeyboardInput) {
+                if (acceptsKeyboardInput)
+                {
                     Main.blockInput = true;
                 }
 
-                if(GotFocus != null) {
+                if (GotFocus != null)
+                {
                     GotFocus(this);
                 }
-                else {
+                else
+                {
                     OnGotFocus();
                 }
             }
@@ -301,17 +343,22 @@ namespace TerraUI.Objects {
         /// <summary>
         /// Take focus from the object.
         /// </summary>
-        protected virtual void Unfocus() {
-            if(Focused && allowFocus) {
+        protected virtual void Unfocus()
+        {
+            if (Focused && allowFocus)
+            {
                 Focused = false;
-                if(acceptsKeyboardInput) {
+                if (acceptsKeyboardInput)
+                {
                     Main.blockInput = false;
                 }
 
-                if(LostFocus != null) {
+                if (LostFocus != null)
+                {
                     LostFocus(this);
                 }
-                else {
+                else
+                {
                     OnLostFocus();
                 }
             }

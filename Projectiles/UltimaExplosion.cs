@@ -1,33 +1,37 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
-using Terraria.ID;
 
-namespace tsorcRevamp.Projectiles {
-    class UltimaExplosion : ModProjectile {
-        public override void SetStaticDefaults() {
-            Main.projFrames[projectile.type] = 8;
+namespace tsorcRevamp.Projectiles
+{
+    class UltimaExplosion : ModProjectile
+    {
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[Projectile.type] = 8;
         }
-        public override void SetDefaults() {
-            projectile.width = 250;
-            projectile.height = 172;
-            projectile.aiStyle = 5;
-            projectile.friendly = true;
-            projectile.penetrate = 50;
-            projectile.magic = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.aiStyle = 5;
+        public override void SetDefaults()
+        {
+            Projectile.width = 250;
+            Projectile.height = 172;
+            Projectile.aiStyle = 5;
+            Projectile.friendly = true;
+            Projectile.penetrate = 50;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.aiStyle = 5;
         }
-        public override void AI() {
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 3) {
-                projectile.frame++;
-                projectile.frameCounter = 0;
+        public override void AI()
+        {
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 3)
+            {
+                Projectile.frame++;
+                Projectile.frameCounter = 0;
             }
-            if (projectile.frame >= 8) {
-                projectile.Kill();
+            if (Projectile.frame >= 8)
+            {
+                Projectile.Kill();
                 return;
             }
         }

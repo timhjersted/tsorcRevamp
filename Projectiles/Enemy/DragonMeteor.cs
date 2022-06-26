@@ -1,35 +1,39 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class DragonMeteor : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class DragonMeteor : ModProjectile
+    {
 
-        public override void SetDefaults() {
-            projectile.aiStyle = 1;
-            aiType = 20;
-            projectile.width = 59;
-            projectile.height = 62;
-            projectile.hide = false;
-            projectile.magic = true;
-            projectile.timeLeft = 600;
-            projectile.light = 1;
-            projectile.tileCollide = true;
-            projectile.friendly = false;
-            projectile.hostile = true;
+        public override void SetDefaults()
+        {
+            Projectile.aiStyle = 1;
+            AIType = 20;
+            Projectile.width = 59;
+            Projectile.height = 62;
+            Projectile.hide = false;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.timeLeft = 600;
+            Projectile.light = 1;
+            Projectile.tileCollide = true;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
         }
 
-        public override bool PreKill(int timeLeft) {
-            projectile.type = 30;
+        public override bool PreKill(int timeLeft)
+        {
+            Projectile.type = 30;
             return true;
         }
 
-        public override bool PreAI() {
-            int D = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y), projectile.width, projectile.height, 6, projectile.velocity.X, projectile.velocity.Y, 200, new Color(), 3f);
+        public override bool PreAI()
+        {
+            int D = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, Projectile.velocity.X, Projectile.velocity.Y, 200, new Color(), 3f);
             Main.dust[D].noGravity = true;
-            projectile.rotation += 0.1f;
-            Lighting.AddLight((int)((projectile.position.X + (float)(projectile.width / 2)) / 16f), (int)((projectile.position.Y + (float)(projectile.height / 2)) / 16f), 1f, 1f, 1f);
+            Projectile.rotation += 0.1f;
+            Lighting.AddLight((int)((Projectile.position.X + (float)(Projectile.width / 2)) / 16f), (int)((Projectile.position.Y + (float)(Projectile.height / 2)) / 16f), 1f, 1f, 1f);
             return true;
         }
     }

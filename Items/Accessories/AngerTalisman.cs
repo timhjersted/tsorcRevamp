@@ -2,36 +2,43 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
-    public class AngerTalisman : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Accessories
+{
+    public class AngerTalisman : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("-30 defense" +
                                 "\n30% increased damage");
         }
 
-        public override void SetDefaults() {
-            item.width = 24;
-            item.height = 28;
-            item.accessory = true;
-            item.value = PriceByRarity.LightRed_4;
-            item.rare = ItemRarityID.LightRed;
+        public override void SetDefaults()
+        {
+            Item.width = 24;
+            Item.height = 28;
+            Item.accessory = true;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.rare = ItemRarityID.LightRed;
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.RangerEmblem, 1);
             recipe.AddIngredient(ItemID.SorcererEmblem, 1);
             recipe.AddIngredient(ItemID.WarriorEmblem, 1);
+            recipe.AddIngredient(ItemID.SummonerEmblem, 1);
             recipe.AddIngredient(ItemID.ChlorophyteBar, 5);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 60000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 60000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
 
-        public override void UpdateEquip(Player player) {
+        public override void UpdateEquip(Player player)
+        {
             player.statDefense -= 30; //because 10 defense is a joke
-            player.allDamage += 0.3f;
+            player.GetDamage(DamageClass.Generic) += 0.3f;
 
         }
 

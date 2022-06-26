@@ -1,22 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using Terraria;
-using Terraria.Enums;
-using Terraria.GameContent.Shaders;
-using Terraria.Graphics.Effects;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
+namespace tsorcRevamp.Projectiles.Enemy
+{
 
-    public class EnemyRedLaser : EnemyGenericLaser {
+    public class EnemyRedLaser : EnemyGenericLaser
+    {
 
-       
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Laser");
@@ -24,18 +17,19 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         public override string Texture => base.Texture;
 
-        public override void SetDefaults() {
-            projectile.width = 10;
-            projectile.height = 10;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.magic = true;
-            projectile.hide = true;
+        public override void SetDefaults()
+        {
+            Projectile.width = 10;
+            Projectile.height = 10;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.hide = true;
 
             FollowHost = true;
-            LaserOrigin = Main.npc[HostIdentifier].Center;            
+            LaserOrigin = Main.npc[HostIdentifier].Center;
             TelegraphTime = 90;
             FiringDuration = 60;
             MaxCharge = 90;
@@ -56,16 +50,16 @@ namespace tsorcRevamp.Projectiles.Enemy {
         int rotDirection = 0;
         public override void AI()
         {
-            NPC owner = Main.npc[(int)projectile.ai[1]];
-            if(owner == null || owner.active == false)
+            NPC owner = Main.npc[(int)Projectile.ai[1]];
+            if (owner == null || owner.active == false)
             {
-                projectile.active = false;
+                Projectile.active = false;
                 return;
             }
 
             if (Charge < MaxCharge)
             {
-                Player target = Main.player[(int)projectile.ai[0]];
+                Player target = Main.player[(int)Projectile.ai[0]];
                 if (target != null)
                 {
                     if (rotDirection == 0) //Only set this once, so no flipping
@@ -79,12 +73,12 @@ namespace tsorcRevamp.Projectiles.Enemy {
                             rotDirection = 1;
                         }
                     }
-                    projectile.velocity = UsefulFunctions.GenerateTargetingVector(projectile.Center, target.Center, 1).RotatedBy(rotDirection * MathHelper.Pi / 3);
+                    Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target.Center, 1).RotatedBy(rotDirection * MathHelper.Pi / 3);
                 }
             }
             else
             {
-                projectile.velocity = projectile.velocity.RotatedBy(rotDirection * -MathHelper.PiOver2 / 60f);
+                Projectile.velocity = Projectile.velocity.RotatedBy(rotDirection * -MathHelper.PiOver2 / 60f);
             }
             base.AI();
         }

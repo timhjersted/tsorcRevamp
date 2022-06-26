@@ -4,59 +4,65 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    public class AntimatRifle : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    public class AntimatRifle : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Antimat Rifle");
             Tooltip.SetDefault("Unbelievable damage at the cost of a 2.5 second cooldown between shots \n" +
                                 "Fires piercing high-velocity rounds that punch through thin walls\n" +
                                 "Damage increases with enemy armor");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
             //item.prefixType=96;
-            item.autoReuse = true;
-            item.damage = 3000;
-            item.width = 78;
-            item.height = 26;
-            item.knockBack = 5;
-            item.maxStack = 1;
-            item.noMelee = true;
-            item.rare = ItemRarityID.Red;
-            item.scale = (float)0.9;
-            item.useAmmo = AmmoID.Bullet;
-            item.ranged = true;
-            item.shoot = AmmoID.Bullet;
-            item.shootSpeed = 10;
+            Item.autoReuse = true;
+            Item.damage = 3000;
+            Item.width = 78;
+            Item.height = 26;
+            Item.knockBack = 5;
+            Item.maxStack = 1;
+            Item.noMelee = true;
+            Item.rare = ItemRarityID.Red;
+            Item.scale = (float)0.9;
+            Item.useAmmo = AmmoID.Bullet;
+            Item.DamageType = DamageClass.Ranged;
+            Item.shoot = AmmoID.Bullet;
+            Item.shootSpeed = 10;
             //item.pretendType=96;
-            item.useAnimation = 150;
-            item.useTime = 150;
-            item.UseSound = SoundID.Item36;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.value = PriceByRarity.Red_10;
+            Item.useAnimation = 150;
+            Item.useTime = 150;
+            Item.UseSound = SoundID.Item36;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.value = PriceByRarity.Red_10;
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.SniperRifle, 1);
-            recipe.AddIngredient(mod.GetItem("DestructionElement"), 1);
-            recipe.AddIngredient(mod.GetItem("SoulOfChaos"), 1);
-            recipe.AddIngredient(mod.GetItem("Humanity"), 20);
-            recipe.AddIngredient(mod.GetItem("CursedSoul"), 100);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 240000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DestructionElement").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfChaos").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 20);
+            recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 100);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 240000);
 
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
         public override void HoldItem(Player player)
         {
             player.scope = true;
         }
 
-        public override void UseStyle(Player player) {
+        public override void UseStyle(Player player, Rectangle rectangle)
+        {
             float backX = 24f; // move the weapon back
             float downY = 0f; // and down
             float cosRot = (float)Math.Cos(player.itemRotation);
@@ -65,12 +71,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             player.itemLocation.X = player.itemLocation.X - backX * cosRot * player.direction - downY * sinRot * player.gravDir;
             player.itemLocation.Y = player.itemLocation.Y - backX * sinRot * player.direction + downY * cosRot * player.gravDir;
         }
-        public override bool Shoot(Player P, ref Vector2 Pos, ref float speedX, ref float speedY, ref int type, ref int DMG, ref float KB) {
 
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+        {
             type = ModContent.ProjectileType<Projectiles.AntiMaterialRound>();
-            Projectile.NewProjectile(Pos.X, Pos.Y, speedX, speedY, type, DMG, KB, P.whoAmI);
-            return false;
         }
-
     }
 }

@@ -2,30 +2,37 @@
 using Terraria.ModLoader;
 
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class EnemySpellGreatEnergyStrike : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class EnemySpellGreatEnergyStrike : ModProjectile
+    {
         public override string Texture => "tsorcRevamp/Projectiles/EnergyField";
-        public override void SetStaticDefaults() {
-            Main.projFrames[projectile.type] = 12;
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[Projectile.type] = 12;
         }
-        public override void SetDefaults() {
-            projectile.width = 44;
-            projectile.height = 40;
-            projectile.aiStyle = -1;
-            projectile.hostile = true;
-            projectile.penetrate = 50;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
+        public override void SetDefaults()
+        {
+            Projectile.width = 44;
+            Projectile.height = 40;
+            Projectile.aiStyle = -1;
+            Projectile.hostile = true;
+            Projectile.penetrate = 50;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
         }
 
-        public override void AI() {
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 3) {
-                projectile.frame++;
-                projectile.frameCounter = 0;
+        public override void AI()
+        {
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 3)
+            {
+                Projectile.frame++;
+                Projectile.frameCounter = 0;
             }
-            if (projectile.frame >= 12) {
-                projectile.Kill();
+            if (Projectile.frame >= 12)
+            {
+                Projectile.Kill();
                 return;
             }
         }

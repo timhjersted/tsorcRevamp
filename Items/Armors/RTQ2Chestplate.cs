@@ -1,7 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Collections.Generic;
 
 namespace tsorcRevamp.Items.Armors
 {
@@ -16,29 +15,29 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 18;
-            item.defense = 10;
-            item.value = 100000;
-            item.rare = ItemRarityID.Pink;
+            Item.width = 18;
+            Item.height = 18;
+            Item.defense = 10;
+            Item.value = 100000;
+            Item.rare = ItemRarityID.Pink;
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.magicCrit += 15;
-            player.magicDamage += 0.10f;
+            player.GetCritChance(DamageClass.Magic) += 15;
+            player.GetDamage(DamageClass.Magic) += 0.10f;
         }
 
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MeteorSuit, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

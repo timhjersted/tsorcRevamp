@@ -11,24 +11,20 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Forged by those who brave Annihilation.\nMana Regen Skill activates when health falls below 160 \nSet bonus: +15% Magic Critical Chance, -15% Mana Usage, +15% Magic Damage");
+            ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = false;
         }
 
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 18;
-            item.defense = 13;
-            item.value = 40000;
-            item.rare = ItemRarityID.Orange;
-        }
-
-        public override void DrawHands(ref bool drawHands, ref bool drawArms)
-        {
-            drawHands = true;
+            Item.width = 18;
+            Item.height = 18;
+            Item.defense = 13;
+            Item.value = 40000;
+            Item.rare = ItemRarityID.Orange;
         }
         public override void UpdateEquip(Player player)
         {
-            player.magicDamage += 0.10f;
+            player.GetDamage(DamageClass.Magic) += 0.10f;
         }
 
         public override void DrawArmorColor(Player drawPlayer, float shadow, ref Color color, ref int glowMask, ref Color glowMaskColor)
@@ -43,12 +39,12 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MoltenBreastplate, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

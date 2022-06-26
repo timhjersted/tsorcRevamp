@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -16,33 +15,33 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void SetDefaults()
         {
-            projectile.width = 16;
-            projectile.height = 16;
-            projectile.scale = 1;
-            projectile.aiStyle = 8;
-            projectile.timeLeft = 610;
-            projectile.damage = 81;
-            projectile.light = 0.5f;
-            projectile.penetrate = 2;
-            //projectile.aiType = 8;
-            projectile.tileCollide = true;
+            Projectile.width = 16;
+            Projectile.height = 16;
+            Projectile.scale = 1;
+            Projectile.aiStyle = 8;
+            Projectile.timeLeft = 610;
+            Projectile.damage = 81;
+            Projectile.light = 0.5f;
+            Projectile.penetrate = 2;
+            //projectile.AIType = 8;
+            Projectile.tileCollide = true;
             //projectile.pretendType = 15;
-            projectile.magic = true;
-            projectile.hostile = true;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.hostile = true;
         }
         public override void AI()
         {
-            projectile.rotation++;
+            Projectile.rotation++;
 
 
-            if (projectile.velocity.X <= 5 && projectile.velocity.Y <= 5 && projectile.velocity.X >= -5 && projectile.velocity.Y >= -5)
+            if (Projectile.velocity.X <= 5 && Projectile.velocity.Y <= 5 && Projectile.velocity.X >= -5 && Projectile.velocity.Y >= -5)
             {
-                projectile.velocity.X *= 1.00f;
-                projectile.velocity.Y *= 1.00f;
+                Projectile.velocity.X *= 1.00f;
+                Projectile.velocity.Y *= 1.00f;
             }
 
 
-            int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y), projectile.width, projectile.height, DustID.Fire, 0, 0, 100, Color.Red, 2.0f);
+            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.Torch, 0, 0, 100, Color.Red, 2.0f);
             Main.dust[dust].noGravity = false;
         }
         public override void OnHitPlayer(Player target, int damage, bool crit)

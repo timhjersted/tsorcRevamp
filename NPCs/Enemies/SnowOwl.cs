@@ -1,7 +1,7 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -10,39 +10,39 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Snow Owl");
-            Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.GiantBat];
+            Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.GiantBat];
         }
 
         public override void SetDefaults()
         {
-            npc.CloneDefaults(NPCID.CaveBat);
-            animationType = NPCID.GiantBat;
-            aiType = NPCID.CaveBat;
-            npc.lifeMax = 15;
-            npc.damage = 20;
-            npc.scale = 1.1f;
-            npc.knockBackResist = .4f;
-            npc.value = 100;
-            npc.defense = 10;
-            npc.buffImmune[BuffID.Confused] = true;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath1;
-            npc.width = 24;
-            npc.height = 34;
+            NPC.CloneDefaults(NPCID.CaveBat);
+            AnimationType = NPCID.GiantBat;
+            AIType = NPCID.CaveBat;
+            NPC.lifeMax = 15;
+            NPC.damage = 20;
+            NPC.scale = 1.1f;
+            NPC.knockBackResist = .4f;
+            NPC.value = 100;
+            NPC.defense = 10;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.width = 24;
+            NPC.height = 34;
 
-            banner = npc.type;
-            bannerItem = ModContent.ItemType<Banners.SnowOwlBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.SnowOwlBanner>();
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0;
-            if (Main.snowTiles > 5)
+            if (Main.SceneMetrics.SnowTileCount > 5)
             {
                 chance = 0.2f;
             }
-            
+
             //Otherwise it spawns in the frozen ocean and gets stuck in the ceiling
-            if (spawnInfo.water)
+            if (spawnInfo.Water)
             {
                 chance = 0;
             }
@@ -53,24 +53,24 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             for (int i = 0; i < 5; i++)
             {
-                int dustType = 5;
-                int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, dustType);
+                int DustType = 5;
+                int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustType);
                 Dust dust = Main.dust[dustIndex];
                 dust.velocity.X = dust.velocity.X + Main.rand.Next(-50, 51) * 0.06f;
                 dust.velocity.Y = dust.velocity.Y + Main.rand.Next(-50, 51) * 0.06f;
                 dust.scale *= 1f + Main.rand.Next(-30, 31) * 0.01f;
                 dust.noGravity = true;
             }
-            if (npc.life <= 0)
+            if (NPC.life <= 0)
             {
                 for (int i = 0; i < 25; i++)
                 {
-                    Dust.NewDust(npc.position, npc.width, npc.height, 5, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3), 70, default(Color), 1f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 5, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3), 70, default(Color), 1f);
                 }
 
-                Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Snow Owl Gore 1"), 1.1f);
-                Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Snow Owl Gore 2"), 1.1f);
-                Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Snow Owl Gore 3"), 1.1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Snow Owl Gore 1").Type, 1.1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Snow Owl Gore 2").Type, 1.1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Snow Owl Gore 3").Type, 1.1f);
 
             }
         }

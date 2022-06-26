@@ -1,22 +1,23 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
+﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class GigaDrill : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class GigaDrill : ModProjectile
+    {
 
-        public override void SetDefaults() {
-            projectile.height = 22;
-            projectile.width = 22;
-            projectile.scale = 1.1f;
-            projectile.aiStyle = 20;
-            projectile.timeLeft = 3600;
-            projectile.hide = true;
-            projectile.ownerHitCheck = true;
-            projectile.tileCollide = false;
-            projectile.melee = true;
-            projectile.penetrate = 6;
+        public override void SetDefaults()
+        {
+            Projectile.height = 22;
+            Projectile.width = 22;
+            Projectile.scale = 1.1f;
+            Projectile.aiStyle = 20;
+            Projectile.timeLeft = 3600;
+            Projectile.hide = true;
+            Projectile.ownerHitCheck = true;
+            Projectile.tileCollide = false;
+            Projectile.DamageType = DamageClass.Melee;
+            Projectile.penetrate = 6;
         }
     }
 }

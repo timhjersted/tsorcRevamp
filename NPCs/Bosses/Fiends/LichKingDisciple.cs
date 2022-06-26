@@ -1,6 +1,7 @@
-using System;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -10,28 +11,28 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
     {
         public override void SetDefaults()
         {
-            npc.npcSlots = 1;
-            Main.npcFrameCount[npc.type] = 3;
-            animationType = 29;
-            npc.aiStyle = 0;
-            npc.damage = 40;
-            npc.defense = 20;
-            npc.height = 44;
-            npc.boss = true;
-            npc.timeLeft = 22500;
-            npc.lifeMax = 45000;
-            npc.scale = 1;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath5;
-            npc.noGravity = false;
-            npc.noTileCollide = false;
-            npc.lavaImmune = true;
-            npc.value = 40000;
-            npc.width = 28;
-            npc.knockBackResist = 0.2f;
-            npc.buffImmune[BuffID.Poisoned] = true;
-            npc.buffImmune[BuffID.Confused] = true;
-            npc.buffImmune[BuffID.OnFire] = true;
+            NPC.npcSlots = 1;
+            Main.npcFrameCount[NPC.type] = 3;
+            AnimationType = 29;
+            NPC.aiStyle = 0;
+            NPC.damage = 40;
+            NPC.defense = 20;
+            NPC.height = 44;
+            NPC.boss = true;
+            NPC.timeLeft = 22500;
+            NPC.lifeMax = 45000;
+            NPC.scale = 1;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath5;
+            NPC.noGravity = false;
+            NPC.noTileCollide = false;
+            NPC.lavaImmune = true;
+            NPC.value = 40000;
+            NPC.width = 28;
+            NPC.knockBackResist = 0.2f;
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
             despawnHandler = new NPCDespawnHandler(DustID.GreenFairy);
         }
 
@@ -44,8 +45,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.damage = (int)(npc.damage * 1.3 / 2);
-            npc.defense = npc.defense += 12;
+            NPC.damage = (int)(NPC.damage * 1.3 / 2);
+            NPC.defense = NPC.defense += 12;
         }
 
         #region AI
@@ -54,71 +55,71 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         int OptionId = 0;
         public override void AI()
         {
-            despawnHandler.TargetAndDespawn(npc.whoAmI);
+            despawnHandler.TargetAndDespawn(NPC.whoAmI);
             if (OptionSpawned == false)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    OptionId = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<LichKingSerpentHead>(), npc.whoAmI);
+                    OptionId = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<LichKingSerpentHead>(), NPC.whoAmI);
                     Main.npc[OptionId].velocity.Y = -10;
-                }   
+                }
                 OptionSpawned = true;
             }
 
-            npc.ai[0]++; // Timer Scythe
-            npc.ai[1]++; // Timer Teleport
-                            // npc.ai[2]++; // Shots
+            NPC.ai[0]++; // Timer Scythe
+            NPC.ai[1]++; // Timer Teleport
+                         // npc.ai[2]++; // Shots
 
-            if (npc.life > 3000)
+            if (NPC.life > 3000)
             {
-                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Wraith, npc.velocity.X, npc.velocity.Y, 150, Color.Black, 1f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, 150, Color.Black, 1f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (npc.life <= 3000)
+            else if (NPC.life <= 3000)
             {
-                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Wraith, npc.velocity.X, npc.velocity.Y, 100, Color.Black, 2f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, 100, Color.Black, 2f);
                 Main.dust[dust].noGravity = true;
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if (npc.ai[0] >= 5 && npc.ai[2] < 3)
+                if (NPC.ai[0] >= 5 && NPC.ai[2] < 3)
                 {
-                    Vector2 projectileVelocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 2);
-                    Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projectileVelocity.X, projectileVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
+                    Vector2 projectileVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 2);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projectileVelocity.X, projectileVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
 
-                    Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 20);
-                    npc.ai[0] = 0;
-                    npc.ai[2]++;
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                    NPC.ai[0] = 0;
+                    NPC.ai[2]++;
                 }
             }
 
-            if (npc.ai[1] >= 10)
+            if (NPC.ai[1] >= 10)
             {
-                npc.velocity.X *= 0.87f;
-                npc.velocity.Y *= 0.17f;
+                NPC.velocity.X *= 0.87f;
+                NPC.velocity.Y *= 0.17f;
             }
 
-            if ((npc.ai[1] >= 200 && npc.life > 2000) || (npc.ai[1] >= 120 && npc.life <= 2000))
+            if ((NPC.ai[1] >= 200 && NPC.life > 2000) || (NPC.ai[1] >= 120 && NPC.life <= 2000))
             {
-                Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 8);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int num36 = 0; num36 < 10; num36++)
                 {
-                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Wraith, npc.velocity.X + Main.rand.Next(-10, 10), npc.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);
+                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);
                     Main.dust[dust].noGravity = false;
                 }
 
-                npc.ai[1] = 0;
-                npc.ai[2] = 0;
-                
-                Player Pt = Main.player[npc.target];
-                npc.position.X = Pt.position.X + (float)((600 * Math.Cos(npc.ai[3])) * -1);
-                npc.position.Y = Pt.position.Y - 65 + (float)((30 * Math.Sin(npc.ai[3])) * -1);
-                npc.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
+                NPC.ai[1] = 0;
+                NPC.ai[2] = 0;
+
+                Player Pt = Main.player[NPC.target];
+                NPC.position.X = Pt.position.X + (float)((600 * Math.Cos(NPC.ai[3])) * -1);
+                NPC.position.Y = Pt.position.Y - 65 + (float)((30 * Math.Sin(NPC.ai[3])) * -1);
+                NPC.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
 
                 float MinDIST = 300f;
                 float MaxDIST = 600f;
-                Vector2 Diff = npc.position - Pt.position;
+                Vector2 Diff = NPC.position - Pt.position;
                 if (Diff.Length() > MaxDIST)
                 {
                     Diff *= MaxDIST / Diff.Length();
@@ -127,9 +128,9 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 {
                     Diff *= MinDIST / Diff.Length();
                 }
-                npc.position = Pt.position + Diff;
+                NPC.position = Pt.position + Diff;
 
-                npc.velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Pt.Center, 12);           
+                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Pt.Center, 12);
             }
 
             //end of W1k's Death code            
@@ -139,42 +140,42 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         public override void FindFrame(int currentFrame)
         {
 
-            if ((npc.velocity.X > -9 && npc.velocity.X < 9) && (npc.velocity.Y > -9 && npc.velocity.Y < 9))
+            if ((NPC.velocity.X > -9 && NPC.velocity.X < 9) && (NPC.velocity.Y > -9 && NPC.velocity.Y < 9))
             {
-                npc.frameCounter = 0;
-                npc.frame.Y = 0;
-                if (npc.position.X > Main.player[npc.target].position.X)
+                NPC.frameCounter = 0;
+                NPC.frame.Y = 0;
+                if (NPC.position.X > Main.player[NPC.target].position.X)
                 {
-                    npc.spriteDirection = -1;
+                    NPC.spriteDirection = -1;
                 }
                 else
                 {
-                    npc.spriteDirection = 1;
+                    NPC.spriteDirection = 1;
                 }
             }
 
             int num = 1;
             if (!Main.dedServ)
             {
-                num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
+                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
             }
-            if ((npc.velocity.X > -2 && npc.velocity.X < 2) && (npc.velocity.Y > -2 && npc.velocity.Y < 2))
+            if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2))
             {
-                npc.frameCounter = 0;
-                npc.frame.Y = 0;
+                NPC.frameCounter = 0;
+                NPC.frame.Y = 0;
             }
             else
             {
-                npc.frameCounter += 1.0;
+                NPC.frameCounter += 1.0;
             }
-            if (npc.frameCounter >= 1.0)
+            if (NPC.frameCounter >= 1.0)
             {
-                npc.frame.Y = npc.frame.Y + num;
-                npc.frameCounter = 0.0;
+                NPC.frame.Y = NPC.frame.Y + num;
+                NPC.frameCounter = 0.0;
             }
-            if (npc.frame.Y >= num * Main.npcFrameCount[npc.type])
+            if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
             {
-                npc.frame.Y = 0;
+                NPC.frame.Y = 0;
             }
         }
         public override bool CheckActive()
@@ -185,23 +186,25 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         {
             potionType = ItemID.SuperHealingPotion;
         }
-        public override void NPCLoot()
+        public override void OnKill()
         {
-            Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-            if (npc.life <= 0)
+            Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+            if (NPC.life <= 0)
             {
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 1"), 1f);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 2"), 1f);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 2"), 1f);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 3"), 1f);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 3"), 1f);
-            }
-            if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
-            {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 1").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 2").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 2").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 3").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 3").Type, 1f);
             }
 
-
+            if (!Main.expertMode)
+            {
+                if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
+                {
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
+                }
+            }
         }
     }
 }

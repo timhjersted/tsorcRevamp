@@ -2,10 +2,13 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.BossItems {
-    class StoneOfSeath : ModItem {
+namespace tsorcRevamp.Items.BossItems
+{
+    class StoneOfSeath : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Stone of Seath");
             Tooltip.SetDefault("Summons Seath the Scaleless, a great dragon granted the title of Duke by Lord Gwyn for his \n" +
                 "assistance in defeating the Everlasting Dragons and given a fragment of a Lord Soul. Seath \n" +
@@ -14,15 +17,16 @@ namespace tsorcRevamp.Items.BossItems {
                 "into the Primordial Crystal, which he stole from the dragons when he defected.");
         }
 
-        public override void SetDefaults() {
-            item.rare = ItemRarityID.LightRed;
-            item.width = 38;
-            item.height = 34;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useAnimation = 45;
-            item.useTime = 45;
-            item.maxStack = 1;
-            item.consumable = false;
+        public override void SetDefaults()
+        {
+            Item.rare = ItemRarityID.LightRed;
+            Item.width = 38;
+            Item.height = 34;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
+            Item.maxStack = 1;
+            Item.consumable = false;
         }
 
         public override bool CanUseItem(Player player)
@@ -35,26 +39,28 @@ namespace tsorcRevamp.Items.BossItems {
             return canUse;
         }
 
-        public override bool UseItem(Player player) {
-           
+        public override bool? UseItem(Player player)
+        {
+
             Main.NewText("Thy death will only fuel my immortality, Red... ", 175, 75, 255);
-            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>());            
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>());
             return true;
         }
 
-       
-        public override void AddRecipes() {
+
+        public override void AddRecipes()
+        {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                ModRecipe recipe = new ModRecipe(mod);
-                recipe.AddIngredient(mod.GetItem("BlueTitanite"), 10);
+                Recipe recipe = CreateRecipe();
+                recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 10);
                 recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 15);
-                recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
+                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
                 recipe.AddTile(TileID.DemonAltar);
-                recipe.SetResult(this, 1);
-                recipe.AddRecipe();
+                
+                recipe.Register();
             }
         }
-        
+
     }
 }

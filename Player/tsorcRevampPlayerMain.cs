@@ -1,32 +1,32 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using tsorcRevamp.Items;
-using tsorcRevamp.Buffs;
-using System;
-using TerraUI.Objects;
 using Terraria.UI;
-using Terraria.Audio;
+using TerraUI.Objects;
+using tsorcRevamp.Buffs;
+using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles.Pets;
-using Terraria.Localization;
 using tsorcRevamp.UI;
-using System.IO;
 
 namespace tsorcRevamp
 {
     public partial class tsorcRevampPlayer : ModPlayer
     {
-
+        public static readonly int PermanentBuffCount = 56;
         public static List<int> startingItemsList;
-        
+        public List<int> bagsOpened;
+
         public override void Initialize()
         {
-            PermanentBuffToggles = new bool[54]; //todo dont forget to increment this if you add buffs to the dictionary
+            PermanentBuffToggles = new bool[PermanentBuffCount]; //todo dont forget to increment this if you add buffs to the dictionary
             DamageDir = new Dictionary<int, float> {
                 { 48, 4 }, //spike
                 { 76, 4 }, //hellstone
@@ -44,30 +44,36 @@ namespace tsorcRevamp
             chestPiggyOpen = false;
             chestPiggy = -1;
 
+
+            bagsOpened = new List<int>();
         }
 
-        public override void clientClone(ModPlayer clientClone) {
+        public override void clientClone(ModPlayer clientClone)
+        {
             tsorcRevampPlayer clone = clientClone as tsorcRevampPlayer;
             if (clone == null) { return; }
 
             clone.SoulSlot.Item = SoulSlot.Item.Clone();
         }
 
-        public override void SendClientChanges(ModPlayer clientPlayer) {
+        public override void SendClientChanges(ModPlayer clientPlayer)
+        {
             tsorcRevampPlayer oldClone = clientPlayer as tsorcRevampPlayer;
             if (oldClone == null) { return; }
 
-            if (oldClone.SoulSlot.Item.IsNotTheSameAs(SoulSlot.Item)) {
-                SendSingleItemPacket(1, SoulSlot.Item, -1, player.whoAmI);
+            if (oldClone.SoulSlot.Item.IsNotSameTypePrefixAndStack(SoulSlot.Item))
+            {
+                SendSingleItemPacket(1, SoulSlot.Item, -1, Player.whoAmI);
             }
         }
 
-        public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) {
+        public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
+        {
 
             //Sync soul slot
-            ModPacket packet = mod.GetPacket();
+            ModPacket packet = Mod.GetPacket();
             packet.Write((byte)tsorcPacketID.SyncSoulSlot);
-            packet.Write((byte)player.whoAmI);
+            packet.Write((byte)Player.whoAmI);
             ItemIO.Send(SoulSlot.Item, packet);
             packet.Send(toWho, fromWho);
 
@@ -82,36 +88,38 @@ namespace tsorcRevamp
             **/
         }
 
-        public override TagCompound Save()
+        public override void SaveData(TagCompound tag)
         {
-            TagCompound tsorcTagCompound = new TagCompound
-            {
-                {"warpX", warpX},
-                {"warpY", warpY},
-                {"warpWorld", warpWorld},
-                {"warpSet", warpSet},
-                {"townWarpX", townWarpX},
-                {"townWarpY", townWarpY},
-                {"townWarpWorld", townWarpWorld},
-                {"townWarpSet", townWarpSet},
-                {"gotPickaxe", gotPickaxe},
-                {"FirstEncounter", FirstEncounter},
-                {"ReceivedGift", ReceivedGift},
-                {"BearerOfTheCurse", BearerOfTheCurse},
-                {"soulSlot", ItemIO.Save(SoulSlot.Item)},
-                {"MaxAcquiredHP", MaxAcquiredHP}
+            tag.Add("warpX", warpX);
+            tag.Add("warpY", warpY);
+            tag.Add("warpWorld", warpWorld);
+            tag.Add("warpSet", warpSet);
+            tag.Add("townWarpX", townWarpX);
+            tag.Add("townWarpY", townWarpY);
+            tag.Add("townWarpWorld", townWarpWorld);
+            tag.Add("townWarpSet", townWarpSet);
+            tag.Add("gotPickaxe", gotPickaxe);
+            tag.Add("FirstEncounter", FirstEncounter);
+            tag.Add("ReceivedGift", ReceivedGift);
+            tag.Add("BearerOfTheCurse", BearerOfTheCurse);
+            tag.Add("soulSlot", ItemIO.Save(SoulSlot.Item));
+            tag.Add("MaxAcquiredHP", MaxAcquiredHP);
 
-            };
+            if (bagsOpened == null)
+            {
+                bagsOpened = new List<int>();
+            }
+            tag.Add("bagType", bagsOpened);
 
             List<Item> PotionBagList = new List<Item>();
-            if(PotionBagItems == null)
+            if (PotionBagItems == null)
             {
-                PotionBagItems = new Item[PotionBagUIState.POTION_BAG_SIZE];                
+                PotionBagItems = new Item[PotionBagUIState.POTION_BAG_SIZE];
             }
 
             for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
             {
-                if(PotionBagItems[i] == null)
+                if (PotionBagItems[i] == null)
                 {
                     PotionBagItems[i] = new Item();
                     PotionBagItems[i].SetDefaults(0);
@@ -123,12 +131,13 @@ namespace tsorcRevamp
                 PotionBagList.Add(thisItem);
             }
 
-            tsorcTagCompound.Add("PotionBag", PotionBagList);
+            tag.Add("PotionBag", PotionBagList);
 
-            return tsorcTagCompound;
+            List<bool> permaBuffs = PermanentBuffToggles.ToList();
+            tag.Add("PermanentBuffToggles", permaBuffs);
         }
 
-        public override void Load(TagCompound tag)
+        public override void LoadData(TagCompound tag)
         {
             warpX = tag.GetInt("warpX");
             warpY = tag.GetInt("warpY");
@@ -146,18 +155,27 @@ namespace tsorcRevamp
             SoulSlot.Item = soulSlotSouls.Clone();
             MaxAcquiredHP = tag.GetInt("MaxAcquiredHP");
 
+            if (bagsOpened == null)
+            {
+                bagsOpened = new List<int>();
+            }
+
+            if (tag.ContainsKey("bagType"))
+            {
+                bagsOpened = tag.Get<List<int>>("bagType");
+            }
 
             PotionBagItems = ((List<Item>)tag.GetList<Item>("PotionBag")).ToArray();
-            if(PotionBagItems.Length < PotionBagUIState.POTION_BAG_SIZE)
+            if (PotionBagItems.Length < PotionBagUIState.POTION_BAG_SIZE)
             {
                 Item[] TempArray = new Item[PotionBagUIState.POTION_BAG_SIZE];
-                for(int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
+                for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
                 {
                     if (i < PotionBagItems.Length)
                     {
                         TempArray[i] = PotionBagItems[i];
                     }
-                    if(TempArray[i] == null)
+                    if (TempArray[i] == null)
                     {
                         TempArray[i] = new Item();
                         TempArray[i].SetDefaults(0);
@@ -166,36 +184,53 @@ namespace tsorcRevamp
 
                 PotionBagItems = TempArray;
             }
+
+            List<bool> permaBuffs = (List<bool>)tag.GetList<bool>("PermanentBuffToggles");
+
+            //characters created before this was added would otherwise crash from OOB
+            if (permaBuffs.Count == 0) {
+                for (int i = 0; i < PermanentBuffCount; i++) {
+                    permaBuffs.Add(false);
+                }
+            }
+            PermanentBuffToggles = permaBuffs.ToArray<bool>();
         }
 
         public void SetDirection() => SetDirection(false);
 
-        private void SetDirection(bool resetForcedDirection) {
-            if (!Main.dedServ && Main.gameMenu) {
-                player.direction = 1;
+        private void SetDirection(bool resetForcedDirection)
+        {
+            if (!Main.dedServ && Main.gameMenu)
+            {
+                Player.direction = 1;
 
                 return;
             }
 
-            if (!player.pulley && (!player.mount.Active || player.mount.AllowDirectionChange) && (player.itemAnimation <= 1)) {
-                if (forcedDirection != 0) {
-                    player.direction = forcedDirection;
+            if (!Player.pulley && (!Player.mount.Active || Player.mount.AllowDirectionChange) && (Player.itemAnimation <= 1))
+            {
+                if (forcedDirection != 0)
+                {
+                    Player.direction = forcedDirection;
 
-                    if (resetForcedDirection) {
+                    if (resetForcedDirection)
+                    {
                         forcedDirection = 0;
                     }
                 }
             }
         }
-        public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
-            if (player.HasBuff(ModContent.BuffType<Invincible>())) return false;
+        public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
+        {
+            if (Player.HasBuff(ModContent.BuffType<Invincible>())) return false;
             /*
             player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 
             */
             return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource);
         }
 
-        public override void OnHitAnything(float x, float y, Entity victim) {
+        public override void OnHitAnything(float x, float y, Entity victim)
+        {
             /*
             player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 
             */
@@ -218,23 +253,23 @@ namespace tsorcRevamp
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            Projectile.NewProjectile(player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, player.whoAmI);
-            //Main.PlaySound(SoundID.NPCDeath58.WithVolume(0.8f).WithPitchVariance(.3f), player.position);
+            Projectile.NewProjectile(Player.GetSource_Misc("Bloodsign"), Player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, Player.whoAmI);
+            //Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath58.WithVolume(0.8f).WithPitchVariance(.3f), player.position);
 
-            //you died sound
-            Main.PlaySound(SoundLoader.customSoundType, (int)player.position.X, (int)player.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/you-died"), 0.3f, 0.0f);
+            //you died sound                    \
+            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/you-died") with { Volume = 0.4f }, Player.Center);
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.statLifeMax > 200)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.statLifeMax > 200)
             {
-                player.statLifeMax -= 20;
+                Player.statLifeMax -= 20;
             }
 
-            
+
 
             bool onePlayerAlive = false;
-            for(int i = 0; i < Main.maxPlayers; i++)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
-                if(Main.player[i].active && !Main.player[i].dead)
+                if (Main.player[i].active && !Main.player[i].dead)
                 {
                     onePlayerAlive = true;
                 }
@@ -267,7 +302,7 @@ namespace tsorcRevamp
 
         public override bool ShiftClickSlot(Item[] inventory, int context, int slot)
         {
-            if(player.HasItem(ModContent.ItemType<PotionBag>()) && (context == ItemSlot.Context.ChestItem || context == ItemSlot.Context.BankItem || context == ItemSlot.Context.InventoryItem))
+            if (Player.HasItem(ModContent.ItemType<PotionBag>()) && (context == ItemSlot.Context.ChestItem || context == ItemSlot.Context.BankItem || context == ItemSlot.Context.InventoryItem))
             {
                 if (PotionBagUIState.IsValidPotion(inventory[slot]))
                 {
@@ -277,7 +312,7 @@ namespace tsorcRevamp
                     bool inPotionBag = false; //Is the item being clicked in the potion bag? Hard to tell, because the bag is treated like a normal inventory slot. We have to check manually.
                     for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
                     {
-                        if(item == PotionBagItems[i])
+                        if (item == PotionBagItems[i])
                         {
                             inPotionBag = true;
                         }
@@ -295,29 +330,29 @@ namespace tsorcRevamp
                             if (PotionBagItems[i].type == item.type && (PotionBagItems[i].stack + item.stack) <= PotionBagItems[i].maxStack)
                             {
                                 PotionBagItems[i].stack += item.stack;
-                                item.TurnToAir(); 
-                                if (Main.netMode == 1 && player.chest >= -1 && context == ItemSlot.Context.ChestItem)
+                                item.TurnToAir();
+                                if (Main.netMode == 1 && Player.chest >= -1 && context == ItemSlot.Context.ChestItem)
                                 {
-                                    NetMessage.SendData(32, -1, -1, null, player.chest, slot);
+                                    NetMessage.SendData(32, -1, -1, null, Player.chest, slot);
                                 }
-                                Main.PlaySound(SoundID.Grab);
-                                Main.PlaySound(SoundID.Item, Style: 8);
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8);
                                 return true;
                             }
                         }
-                        
+
                         //If it got here, that means there's no existing stacks with room
-                         //So go through it again, finding the first empty slot instead
+                        //So go through it again, finding the first empty slot instead
                         if (emptySlot != null)
                         {
-                            PotionBagItems[emptySlot.Value] = item.DeepClone();
+                            PotionBagItems[emptySlot.Value] = item.Clone();
                             item.TurnToAir();
-                            if (Main.netMode == 1 && player.chest >= -1 && context == ItemSlot.Context.ChestItem)
+                            if (Main.netMode == 1 && Player.chest >= -1 && context == ItemSlot.Context.ChestItem)
                             {
-                                NetMessage.SendData(32, -1, -1, null, player.chest, slot);
+                                NetMessage.SendData(32, -1, -1, null, Player.chest, slot);
                             }
-                            Main.PlaySound(SoundID.Grab);
-                            Main.PlaySound(SoundID.Item, Style: 8);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8);
                             return true;
                         }
                     }
@@ -327,45 +362,48 @@ namespace tsorcRevamp
                     {
                         for (int i = 0; i < 50; i++)
                         {
-                            if (player.inventory[i].type == 0 && emptySlot == null)
+                            if (Player.inventory[i].type == 0 && emptySlot == null)
                             {
                                 emptySlot = i;
                             }
-                            if (player.inventory[i].type == item.type && (player.inventory[i].stack + item.stack) <= player.inventory[i].maxStack)
+                            if (Player.inventory[i].type == item.type && (Player.inventory[i].stack + item.stack) <= Player.inventory[i].maxStack)
                             {
-                                player.inventory[i].stack += item.stack;
-                                item.TurnToAir();                                
-                                Main.PlaySound(SoundID.Grab);
-                                Main.PlaySound(SoundID.Item, Style: 8);
+                                Player.inventory[i].stack += item.stack;
+                                item.TurnToAir();
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8);
                                 return true;
                             }
                         }
 
                         if (emptySlot != null)
                         {
-                            player.inventory[emptySlot.Value] = item.DeepClone();
-                            item.TurnToAir(); 
-                            Main.PlaySound(SoundID.Grab);
-                            Main.PlaySound(SoundID.Item, Style: 8);
+                            Player.inventory[emptySlot.Value] = item.Clone();
+                            item.TurnToAir();
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8);
                             return true;
                         }
                     }
 
-                    
+
                 }
             }
             return false;
         }
 
-        public override void SetupStartInventory(IList<Item> items, bool mediumcoreDeath)
+        public override IEnumerable<Item> AddStartingItems(bool mediumCoreDeath)
         {
+            List<Item> startingItems = new List<Item>();
             Item item = new Item();
             item.SetDefaults(ModContent.ItemType<Darksign>());
-            items.Add(item);
+            startingItems.Add(item);
 
             Item PotionBagItem = new Item();
             PotionBagItem.SetDefaults(ModContent.ItemType<PotionBag>());
-            items.Add(PotionBagItem);            
+            startingItems.Add(PotionBagItem);
+
+            return startingItems;
         }
 
         public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit)
@@ -374,8 +412,8 @@ namespace tsorcRevamp
             {
                 if (Main.rand.Next(10) == 0)
                 {
-                    player.HealEffect(10);
-                    player.statLife += (10);
+                    Player.HealEffect(10);
+                    Player.statLife += (10);
 
                 }
             }
@@ -383,8 +421,8 @@ namespace tsorcRevamp
             {
                 if (Main.rand.Next(5) == 0)
                 {
-                    player.HealEffect(damage / 4);
-                    player.statLife += (damage / 4);
+                    Player.HealEffect(damage / 4);
+                    Player.statLife += (damage / 4);
                 }
             }
             if (MiakodaFull)
@@ -394,18 +432,18 @@ namespace tsorcRevamp
                     if (crit)
                     {
 
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
 
-                        int HealAmount = (int)((Math.Floor((double)(player.statLifeMax2 / 100)) * 2) + 2);
-                        player.statLife += HealAmount;
-                        player.HealEffect(HealAmount, false);
-                        if (player.statLife > player.statLifeMax2)
+                        int HealAmount = (int)((Math.Floor((double)(Player.statLifeMax2 / 100)) * 2) + 2);
+                        Player.statLife += HealAmount;
+                        Player.HealEffect(HealAmount, false);
+                        if (Player.statLife > Player.statLifeMax2)
                         {
-                            player.statLife = player.statLifeMax2;
+                            Player.statLife = Player.statLifeMax2;
                         }
 
-                        Main.PlaySound(SoundID.Item30.WithVolume(.7f), player.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.7f }, Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -418,11 +456,11 @@ namespace tsorcRevamp
                 {
                     if (crit)
                     {
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
 
-                        Main.PlaySound(SoundID.Item100.WithVolume(.75f), player.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item100 with { Volume = 0.75f }, Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -435,11 +473,11 @@ namespace tsorcRevamp
                 {
                     if (crit)
                     {
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = true;
 
-                        Main.PlaySound(SoundID.Item81.WithVolume(.75f), player.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item81 with { Volume = 0.75f }, Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -453,23 +491,23 @@ namespace tsorcRevamp
             { //Miakoda Full Moon
                 if (MiakodaEffectsTimer > 720)
                 {
-                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.summon))
+                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.DamageType == DamageClass.Summon))
                     {
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
 
 
 
                         //2 per 100 max hp, plus 2
-                        int HealAmount = (int)((Math.Floor((double)(player.statLifeMax2 / 100)) * 2) + 2);
-                        player.statLife += HealAmount;
-                        player.HealEffect(HealAmount, false);
-                        if (player.statLife > player.statLifeMax2)
+                        int HealAmount = (int)((Math.Floor((double)(Player.statLifeMax2 / 100)) * 2) + 2);
+                        Player.statLife += HealAmount;
+                        Player.HealEffect(HealAmount, false);
+                        if (Player.statLife > Player.statLifeMax2)
                         {
-                            player.statLife = player.statLifeMax2;
+                            Player.statLife = Player.statLifeMax2;
                         }
 
-                        Main.PlaySound(SoundID.Item30.WithVolume(.7f), player.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.7f }, Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -480,13 +518,13 @@ namespace tsorcRevamp
             { //Miakoda Crescent Moon
                 if (MiakodaEffectsTimer > 720)
                 {
-                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.summon))
+                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.DamageType == DamageClass.Summon))
                     {
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
 
-                        Main.PlaySound(SoundID.Item100.WithVolume(.75f), player.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item100 with { Volume = 0.75f }, Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -497,13 +535,13 @@ namespace tsorcRevamp
             { //Miakoda New Moon
                 if (MiakodaEffectsTimer > 720)
                 {
-                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.summon))
+                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.CountsAsClass(DamageClass.Summon)))
                     {
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = true;
 
-                        Main.PlaySound(SoundID.Item81.WithVolume(.75f), player.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item81 with { Volume = 0.75f }, Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -513,51 +551,69 @@ namespace tsorcRevamp
 
         public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit)
         {
+            if (BurningAura || BurningStone)
+            {
+                damage = (int)(damage * 1.05f);
+            }
             if (OldWeapon)
             {
                 float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
                 damage = (int)(damage * damageMult);
             }
-            if (crit) {
-                if (item.melee) {
-                    DoMultiCrits(ref damage, player.meleeCrit);
+            if (crit)
+            {
+                if (item.DamageType == DamageClass.Melee)
+                {
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Melee));
                 }
-                else if (item.magic) {
-                    DoMultiCrits(ref damage, player.magicCrit);
+                else if (item.DamageType == DamageClass.Magic)
+                {
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Magic));
                 }
-                else if (item.ranged) {
-                    DoMultiCrits(ref damage, player.rangedCrit);
+                else if (item.DamageType == DamageClass.Ranged)
+                {
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Ranged));
                 }
-                else if (item.thrown) {
-                    DoMultiCrits(ref damage, player.thrownCrit); //lol
+                else if (item.DamageType == DamageClass.Throwing)
+                {
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Throwing)); //lol
                 }
             }
         }
 
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
+            if (BurningAura || BurningStone)
+            {
+                damage = (int)(damage * 1.05f);
+            }
             if (OldWeapon)
             {
                 float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
                 damage = (int)(damage * damageMult);
             }
-            if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>())
+            if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>())
             {
                 damage = (int)(damage * 0.55);
             }
 
-            if (crit) {
-                if (proj.melee) {
-                    DoMultiCrits(ref damage, player.meleeCrit);
+            if (crit)
+            {
+                if (proj.CountsAsClass(DamageClass.Melee))
+                {
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Melee));
                 }
-                else if (proj.magic) {
-                    DoMultiCrits(ref damage, player.magicCrit);
+                else if (proj.CountsAsClass(DamageClass.Magic))
+                {
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Magic));
                 }
-                else if (proj.ranged) {
-                    DoMultiCrits(ref damage, player.rangedCrit);
+                else if (proj.CountsAsClass(DamageClass.Ranged))
+                {
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Ranged));
                 }
-                else if (proj.thrown) {
-                    DoMultiCrits(ref damage, player.thrownCrit); //lol
+                else if (proj.CountsAsClass(DamageClass.Throwing))
+                {
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Throwing)); //lol
                 }
             }
         }
@@ -611,7 +667,7 @@ namespace tsorcRevamp
             }
             if (UndeadTalisman)
             {
-                if (NPCID.Sets.Skeletons.Contains(npc.type)
+                if (NPCID.Sets.Skeletons[npc.type]
                     || npc.type == NPCID.Zombie
                     || npc.type == NPCID.Skeleton
                     || npc.type == NPCID.BaldZombie
@@ -645,77 +701,79 @@ namespace tsorcRevamp
 
         public override void OnHitByNPC(NPC npc, int damage, bool crit)
         {
-            if (player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
+            //Todo: All of these accessories should use Player.GetSource_Accessory() as their source
+            //They don't because that requires getting the inventory item casuing this effect. I'll do it later if I remember.
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
             {
                 if (!Main.hardMode)
                 {
                     for (int b = 0; b < 8; b++)
                     {
-                        Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
+                        Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
                     }
                 }
                 else
                 {
                     for (int b = 0; b < 12; b++)
                     {
-                        Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
+                        Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
                     }
                 }
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSickle)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().SoulSickle)
             {
                 if (!Main.hardMode)
                 {
-                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 7f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 7f, 0, 0, 0);
                 }
                 else
                 {
-                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 80, 9f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 80, 9f, 0, 0, 0);
                 }
             }
             if (npc.type == NPCID.SkeletronPrime && Main.rand.Next(2) == 0)
             {
-                player.AddBuff(BuffID.Bleeding, 1800);
-                player.AddBuff(BuffID.OnFire, 600);
+                Player.AddBuff(BuffID.Bleeding, 1800);
+                Player.AddBuff(BuffID.OnFire, 600);
             }
         }
 
         public override void OnHitByProjectile(Projectile projectile, int damage, bool crit)
         {
-            if (player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
             {
                 if (!Main.hardMode)
                 {
                     for (int b = 0; b < 8; b++)
                     {
-                        Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
+                        Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
                     }
                 }
                 else
                 {
                     for (int b = 0; b < 12; b++)
                     {
-                        Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
+                        Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
                     }
                 }
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSickle)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().SoulSickle)
             {
                 if (!Main.hardMode)
                 {
-                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 6f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 6f, 0, 0, 0);
                 }
                 else
                 {
-                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 60, 8f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 60, 8f, 0, 0, 0);
                 }
             }
             if (projectile.type == ProjectileID.DeathLaser && Main.rand.Next(2) == 0)
             {
-                player.AddBuff(BuffID.BrokenArmor, 180);
-                player.AddBuff(BuffID.OnFire, 180);
+                Player.AddBuff(BuffID.BrokenArmor, 180);
+                Player.AddBuff(BuffID.OnFire, 180);
             }
         }
 
@@ -745,28 +803,29 @@ namespace tsorcRevamp
             {
                 DragoonBootsEnable = !DragoonBootsEnable;
             }
-            if (tsorcRevamp.reflectionShiftKey.JustPressed) { 
+            if (tsorcRevamp.reflectionShiftKey.JustPressed)
+            {
                 if (ReflectionShiftEnabled)
                 {
-                    if (player.controlUp)
+                    if (Player.controlUp)
                     {
                         ReflectionShiftState.Y = -1;
                     }
-                    if (player.controlLeft)
+                    if (Player.controlLeft)
                     {
                         ReflectionShiftState.X = -1;
                     }
-                    if (player.controlRight)
+                    if (Player.controlRight)
                     {
                         ReflectionShiftState.X = 1;
                     }
-                    if (player.controlDown)
+                    if (Player.controlDown)
                     {
                         ReflectionShiftState.Y = 1;
                     }
                 }
-        }            
-        }        
+            }
+        }
 
         //On hit, subtract the mana cost and disable natural mana regen for a short period
         //The latter is absolutely necessary, because natural mana regen scales with your base mana
@@ -777,10 +836,10 @@ namespace tsorcRevamp
             base.Hurt(pvp, quiet, damage, hitDirection, crit);
             if (manaShield == 1)
             {
-                if (player.statMana >= Items.Accessories.ManaShield.manaCost)
+                if (Player.statMana >= Items.Accessories.ManaShield.manaCost)
                 {
-                    player.statMana -= Items.Accessories.ManaShield.manaCost;
-                    player.manaRegenDelay = Items.Accessories.ManaShield.regenDelay;
+                    Player.statMana -= Items.Accessories.ManaShield.manaCost;
+                    Player.manaRegenDelay = Items.Accessories.ManaShield.regenDelay;
                 }
             }
         }
@@ -795,32 +854,38 @@ namespace tsorcRevamp
         }
 
         public override void OnEnterWorld(Player player)
-        {            
+        {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !gotPickaxe)
             { //sandbox mode only, and only once
-                player.QuickSpawnItem(ModContent.ItemType<DiamondPickaxe>());
+                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DiamondPickaxe>());
                 gotPickaxe = true;
             }
         }
 
-        
+
 
         public override void OnRespawn(Player player)
         {
             tsorcScriptedEvents.RefreshEvents();
             player.statLife = player.statLifeMax2;
+            player.AddBuff(ModContent.BuffType<Invincible>(), 600);
+
         }
 
-        public static bool CheckBossZen() {
-            for (int i = 0; i < 200; i++) {
-                if (Main.npc[i].active && Main.npc[i].boss) {
+        public static bool CheckBossZen()
+        {
+            for (int i = 0; i < 200; i++)
+            {
+                if (Main.npc[i].active && Main.npc[i].boss)
+                {
                     return true;
                 }
             }
             return false;
         }
 
-        public static float CheckReduceDefense(Vector2 Position, int Width, int Height, bool fireWalk) {
+        public static float CheckReduceDefense(Vector2 Position, int Width, int Height, bool fireWalk)
+        {
 
             int playerTileXLeft = (int)(Position.X / 16f) - 1;
             int playerTileXRight = (int)((Position.X + Width) / 16f) + 2;
@@ -828,36 +893,45 @@ namespace tsorcRevamp
             int playerTileYTop = (int)((Position.Y + Height) / 16f) + 2;
 
             #region sanity
-            if (playerTileXLeft < 0) {
+            if (playerTileXLeft < 0)
+            {
                 playerTileXLeft = 0;
             }
-            if (playerTileXRight > Main.maxTilesX) {
+            if (playerTileXRight > Main.maxTilesX)
+            {
                 playerTileXRight = Main.maxTilesX;
             }
-            if (playerTileYBottom < 0) {
+            if (playerTileYBottom < 0)
+            {
                 playerTileYBottom = 0;
             }
-            if (playerTileYTop > Main.maxTilesY) {
+            if (playerTileYTop > Main.maxTilesY)
+            {
                 playerTileYTop = Main.maxTilesY;
             }
             #endregion
 
-            for (int i = playerTileXLeft; i < playerTileXRight; i++) {
-                for (int j = playerTileYBottom; j < playerTileYTop; j++) {
-                    if (Main.tile[i, j] != null && Main.tile[i, j].active()) {
+            for (int i = playerTileXLeft; i < playerTileXRight; i++)
+            {
+                for (int j = playerTileYBottom; j < playerTileYTop; j++)
+                {
+                    if (Main.tile[i, j] != null && Main.tile[i, j].HasTile)
+                    {
                         Vector2 TilePos;
                         TilePos.X = i * 16;
                         TilePos.Y = j * 16;
 
-                        int type = Main.tile[i, j].type;
+                        int type = Main.tile[i, j].TileType;
 
-                        if (DamageDir.ContainsKey(type) && !(fireWalk && type == 76)) {
+                        if (DamageDir.ContainsKey(type) && !(fireWalk && type == 76))
+                        {
                             float a = DamageDir[type];
                             float z = 0.5f;
                             if (Position.X + Width > TilePos.X - z &&
                                 Position.X < TilePos.X + 16f + z &&
                                 Position.Y + Height > TilePos.Y - z &&
-                                Position.Y < TilePos.Y + 16f + z) {
+                                Position.Y < TilePos.Y + 16f + z)
+                            {
                                 return a;
                             }
                         }
@@ -867,15 +941,19 @@ namespace tsorcRevamp
             return 0;
         }
 
-        public static float CheckSoulsMultiplier(Player player) {
+        public static float CheckSoulsMultiplier(Player player)
+        {
             float multiplier = 1f;
-            if (player.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing)
+            {
                 multiplier += 0.20f;
             }
-            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon)
+            {
                 multiplier += 0.2f;
             }
-            if (player.GetModPlayer<tsorcRevampPlayer>().SOADrain) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().SOADrain)
+            {
                 multiplier += 0.4f;
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
@@ -885,63 +963,74 @@ namespace tsorcRevamp
             return multiplier;
         }
 
-        public void DoPortableChest<T>(ref int whoAmI, ref bool toggle) where T : BonfireProjectiles, new() {
+        public void DoPortableChest<T>(ref int whoAmI, ref bool toggle) where T : BonfireProjectiles, new()
+        {
             int projectileType = ModContent.ProjectileType<T>();
             T instance = ModContent.GetInstance<T>();
             int bankID = instance.ChestType;
-            LegacySoundStyle useSound = instance.UseSound;
+            SoundStyle useSound = instance.UseSound;
 
-            if (Main.projectile[whoAmI].active && Main.projectile[whoAmI].type == projectileType) {
-                int oldChest = player.chest;
-                player.chest = bankID;
+            if (Main.projectile[whoAmI].active && Main.projectile[whoAmI].type == projectileType)
+            {
+                int oldChest = Player.chest;
+                Player.chest = bankID;
                 toggle = true;
 
-                int num17 = (int)((player.position.X + player.width * 0.5) / 16.0);
-                int num18 = (int)((player.position.Y + player.height * 0.5) / 16.0);
-                player.chestX = (int)Main.projectile[whoAmI].Center.X / 16;
-                player.chestY = (int)Main.projectile[whoAmI].Center.Y / 16;
-                if ((oldChest != bankID && oldChest != -1) || num17 < player.chestX - Player.tileRangeX || num17 > player.chestX + Player.tileRangeX + 1 || num18 < player.chestY - Player.tileRangeY || num18 > player.chestY + Player.tileRangeY + 1) {
+                int num17 = (int)((Player.position.X + Player.width * 0.5) / 16.0);
+                int num18 = (int)((Player.position.Y + Player.height * 0.5) / 16.0);
+                Player.chestX = (int)Main.projectile[whoAmI].Center.X / 16;
+                Player.chestY = (int)Main.projectile[whoAmI].Center.Y / 16;
+                if ((oldChest != bankID && oldChest != -1) || num17 < Player.chestX - Player.tileRangeX || num17 > Player.chestX + Player.tileRangeX + 1 || num18 < Player.chestY - Player.tileRangeY || num18 > Player.chestY + Player.tileRangeY + 1)
+                {
                     whoAmI = -1;
-                    if (player.chest != -1) {
-                        Main.PlaySound(useSound);
+                    if (Player.chest != -1)
+                    {
+                        Terraria.Audio.SoundEngine.PlaySound(useSound);
                     }
 
                     if (oldChest != bankID)
-                        player.chest = oldChest;
+                        Player.chest = oldChest;
                     else
-                        player.chest = -1;
+                        Player.chest = -1;
 
                     Recipe.FindRecipes();
                 }
             }
-            else {
+            else
+            {
 
 
                 whoAmI = -1;
-                player.chest = -1; //none
+                Player.chest = -1; //none
                 Recipe.FindRecipes();
             }
         }
 
-        internal void SendSingleItemPacket(int message, Item item, int toWho, int fromWho) {
-            ModPacket packet = mod.GetPacket();
+        internal void SendSingleItemPacket(int message, Item item, int toWho, int fromWho)
+        {
+            ModPacket packet = Mod.GetPacket();
             packet.Write((byte)message);
-            packet.Write((byte)player.whoAmI);
+            packet.Write((byte)Player.whoAmI);
             ItemIO.Send(item, packet);
             packet.Send(toWho, fromWho);
         }
 
-        public void DoMultiCrits(ref int damage, int critType) {
+        public void DoMultiCrits(ref int damage, float critType)
+        {
             int critLevel = (int)(Math.Floor(critType / 100f));
-            if (critLevel != 0) {
-                if (critLevel > 1) {
-                    for (int i = 1; i < critLevel; i++) {
+            if (critLevel != 0)
+            {
+                if (critLevel > 1)
+                {
+                    for (int i = 1; i < critLevel; i++)
+                    {
                         damage *= 2;
                     }
                 }
-                if (Main.rand.Next(1, 101) <= critType - (100 * critLevel)) {
+                if (Main.rand.Next(1, 101) <= critType - (100 * critLevel))
+                {
                     damage *= 2;
-                } 
+                }
             }
         }
     }

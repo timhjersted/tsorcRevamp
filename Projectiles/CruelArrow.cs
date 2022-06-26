@@ -1,26 +1,28 @@
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    public class CruelArrow : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    public class CruelArrow : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Items/Ammo/CruelArrow";
-        public override void SetDefaults() {
-            projectile.aiStyle = 1;
-            projectile.friendly = true;
-            projectile.height = 10;
-            projectile.damage = 10;
-            projectile.penetrate = 2;
-            projectile.ranged = true;
-            projectile.scale = (float)1;
-            projectile.tileCollide = true;
-            projectile.width = 5;
+        public override void SetDefaults()
+        {
+            Projectile.aiStyle = 1;
+            Projectile.friendly = true;
+            Projectile.height = 10;
+            Projectile.damage = 10;
+            Projectile.penetrate = 2;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.scale = (float)1;
+            Projectile.tileCollide = true;
+            Projectile.width = 5;
         }
 
 
-        public void OnHitNPC(Player P, NPC npc, int damage, float KB, bool crit )
+        public void OnHitNPC(Player P, NPC npc, int damage, float KB, bool crit)
         {
             if (npc.type == ModContent.NPCType<NPCs.Enemies.GhostoftheForgottenKnight>()) damage *= 8;
             if (npc.type == ModContent.NPCType<NPCs.Enemies.GhostOfTheForgottenWarrior>()) damage *= 8;
@@ -39,9 +41,10 @@ namespace tsorcRevamp.Projectiles {
             if (npc.type == ModContent.NPCType<NPCs.Enemies.GhostOfTheDarkmoonKnight>()) damage *= 8;
         }
 
-        public override void Kill(int timeLeft) {
-            Collision.HitTiles(projectile.position + projectile.velocity, projectile.velocity, projectile.width, projectile.height);
-            Main.PlaySound(SoundID.Dig, projectile.position);
+        public override void Kill(int timeLeft)
+        {
+            Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
         }
 
     }

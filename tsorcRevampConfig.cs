@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
 using Terraria.ModLoader.Config;
 
-namespace tsorcRevamp {
+namespace tsorcRevamp
+{
     [Label("Config")]
     [BackgroundColor(30, 60, 40, 220)]
-    public class tsorcRevampConfig : ModConfig {
+    public class tsorcRevampConfig : ModConfig
+    {
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) => true;
         public override ConfigScope Mode => ConfigScope.ServerSide;
         [Header("Adventure Mode")]
@@ -97,8 +99,8 @@ namespace tsorcRevamp {
         [Tooltip("Flipping gravity will only invert you instead of the whole screen." +
             "\nSome mods may draw visuals or fire projectiles at the wrong spot while gravity is flipped.")]
         public bool GravityFix { get; set; }
-        
-        
+
+
 
         /*
         [Label("Auto-Update Adventure Map")]

@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -16,39 +15,38 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
         public override void SetDefaults()
         {
-            npc.netAlways = true;
-            npc.npcSlots = 6;
-            npc.width = 60;
-            npc.height = 60;
-            drawOffsetY = 42;
-            npc.aiStyle = 6;
-            npc.knockBackResist = 0;
-            npc.timeLeft = 22500;
-            npc.damage = 100;
-            npc.defense = 10;
-            npc.HitSound = SoundID.NPCHit7;
-            npc.DeathSound = SoundID.NPCDeath8;
-            npc.lifeMax = 100000;
-            music = 12;
-            npc.boss = true;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.behindTiles = true;
-            npc.value = 200000;
-            npc.lavaImmune = true;
-            npc.buffImmune[BuffID.Poisoned] = true;
-            npc.buffImmune[BuffID.Confused] = true;
-            npc.buffImmune[BuffID.OnFire] = true;
-            npc.buffImmune[BuffID.CursedInferno] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.HellkiteBag>();
+            NPC.netAlways = true;
+            NPC.npcSlots = 6;
+            NPC.width = 60;
+            NPC.height = 60;
+            DrawOffsetY = 42;
+            NPC.aiStyle = 6;
+            NPC.knockBackResist = 0;
+            NPC.timeLeft = 22500;
+            NPC.damage = 100;
+            NPC.defense = 10;
+            NPC.HitSound = SoundID.NPCHit7;
+            NPC.DeathSound = SoundID.NPCDeath8;
+            NPC.lifeMax = 100000;
+            Music = 12;
+            NPC.boss = true;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.behindTiles = true;
+            NPC.value = 200000;
+            NPC.lavaImmune = true;
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
 
             Color textColor = new Color(175, 75, 255);
             despawnHandler = new NPCDespawnHandler("The Hellkite Dragon claims its prey...", textColor, 174);
 
-            if (tsorcRevampWorld.SuperHardMode) 
-            { 
-                npc.damage = 120;
-                npc.value = 100000;
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.damage = 120;
+                NPC.value = 100000;
                 breathDamage = 45;
                 flameRainDamage = 37;
                 meteorDamage = 73;
@@ -56,10 +54,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         }
 
 
-       
+
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.damage = (int)(npc.damage / 2);
+            NPC.damage = (int)(NPC.damage / 2);
             breathDamage = (int)(breathDamage / 2);
             flameRainDamage = (int)(flameRainDamage / 2);
             meteorDamage = (int)(meteorDamage / 2);
@@ -82,21 +80,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         public static int hellkitePieceSeperation = -5;
         public override void AI()
         {
-            despawnHandler.TargetAndDespawn(npc.whoAmI);
+            despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
-            Player nT = Main.player[npc.target];
+            Player nT = Main.player[NPC.target];
             if (Main.rand.Next(175) == 0)
             {
                 breath = true;
-                //Main.PlaySound(15, -1, -1, 0);
+                //Terraria.Audio.SoundEngine.PlaySound(15, -1, -1, 0);
             }
             if (breath)
             {
                 //while (breathCD > 0) {
                 //for (int pcy = 0; pcy < 10; pcy++) {
-                Projectile.NewProjectile(npc.position.X + (float)npc.width / 2f, npc.position.Y + (float)npc.height / 2f, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position.X + (float)NPC.width / 2f, NPC.position.Y + (float)NPC.height / 2f, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
                 //}
-                npc.netUpdate = true; //new
+                NPC.netUpdate = true; //new
                 breathCD--;
                 //}
             }
@@ -104,36 +102,36 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             {
                 breath = false;
                 breathCD = 90;
-                Main.PlaySound(2, -1, -1, 20);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
             }
             if (Main.rand.Next(303) == 0)//was 833
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
-                    Projectile.NewProjectile((float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 4.5f, ProjectileID.Fireball, flameRainDamage, 2f, Main.myPlayer); //6.5 too fast
-                    //Projectile.NewProjectile((float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 6.5f, ModContent.ProjectileType<Projectiles.Enemy.FlameRain>(), flameRainDamage, 2f, Main.myPlayer);
-                    Main.PlaySound(2, -1, -1, 20);
-                    npc.netUpdate = true; //new
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 4.5f, ProjectileID.Fireball, flameRainDamage, 2f, Main.myPlayer); //6.5 too fast
+                    //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 6.5f, ModContent.ProjectileType<Projectiles.Enemy.FlameRain>(), flameRainDamage, 2f, Main.myPlayer);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                    NPC.netUpdate = true; //new
                 }
             }
             if (Main.rand.Next(400) == 0)//1460, 200 was pretty awesome but a bit crazy
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
-                    //Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
-                    Projectile.NewProjectile((float)nT.position.X - 200 + Main.rand.Next(500), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / Main.rand.Next(3, 10), 5.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //8.9f is speed, 4.9 too slow, (float)nT.position.Y - 400f starts projectile closer above the player vs 500?
-                    Main.PlaySound(2, -1, -1, 20);
-                    npc.netUpdate = true; //new
+                    //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 200 + Main.rand.Next(500), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / Main.rand.Next(3, 10), 5.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //8.9f is speed, 4.9 too slow, (float)nT.position.Y - 400f starts projectile closer above the player vs 500?
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                    NPC.netUpdate = true; //new
                 }
             }
             if (Main.rand.Next(2) == 0)
             {
-                int d = Dust.NewDust(npc.position, npc.width, npc.height, 6, npc.velocity.X / 4f, npc.velocity.Y / 4f, 100, default(Color), 1f);
+                int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, 6, NPC.velocity.X / 4f, NPC.velocity.Y / 4f, 100, default(Color), 1f);
                 Main.dust[d].noGravity = true;
             }
-            
+
             int[] bodyTypes = new int[] { ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody2>(), ModContent.NPCType<HellkiteDragonBody3>() };
-            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, HellkiteDragonHead.hellkitePieceSeperation, 22, 0.25f, true, false, true, false, false); //30f was 10f
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, HellkiteDragonHead.hellkitePieceSeperation, 22, 0.25f, true, false, true, false, false); //30f was 10f
 
         }
         public static void SetImmune(Projectile projectile, NPC hitNPC)
@@ -149,7 +147,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         }
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
-            SetImmune(projectile, npc);
+            SetImmune(projectile, NPC);
         }
 
         public override void BossLoot(ref string name, ref int potionType)
@@ -157,22 +155,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             potionType = ItemID.SuperHealingPotion;
         }
 
-        public override void NPCLoot()
-        {
-            Gore.NewGore(npc.Center, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hellkite Dragon Head Gore"), 1f);
-            Gore.NewGore(npc.Center, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
-            Gore.NewGore(npc.Center, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.HellkiteBag>()));
+        }
 
-            if (Main.expertMode)
+        public override void OnKill()
+        {
+            Gore.NewGore(NPC.GetSource_Death(), NPC.Center, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hellkite Dragon Head Gore").Type, 1f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.Center, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.Center, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
+            if (!Main.expertMode)
             {
-                npc.DropBossBags();
-            }
-            else
-            {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DragonEssence>(), 22 + Main.rand.Next(6));
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 4000);
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.HellkiteStone>());
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.DragonStone>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DragonEssence>(), 22 + Main.rand.Next(6));
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 4000);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.HellkiteStone>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.DragonStone>());
             }
         }
     }

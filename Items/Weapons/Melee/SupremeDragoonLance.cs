@@ -1,48 +1,53 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    public class SupremeDragoonLance : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    public class SupremeDragoonLance : ModItem
+    {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/DragoonLance";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Supreme Dragoon Lance");
             Tooltip.SetDefault("An all-powerful spear forged from the fang of the Dragoon Serpent.");
         }
 
-        public override void SetDefaults() {
-            item.damage = 300;
-            item.knockBack = 15f;
+        public override void SetDefaults()
+        {
+            Item.damage = 300;
+            Item.knockBack = 15f;
 
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 11;
-            item.useTime = 1;
-            item.shootSpeed = 8;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 11;
+            Item.useTime = 1;
+            Item.shootSpeed = 8;
 
-            item.height = 50;
-            item.width = 50;
+            Item.height = 50;
+            Item.width = 50;
 
-            item.melee = true;
-            item.noMelee = true;
-            item.noUseGraphic = true;
+            Item.DamageType = DamageClass.Melee;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
 
-            item.value = PriceByRarity.Purple_11;
-            item.rare = ItemRarityID.Purple;
-            item.maxStack = 1;
-            item.UseSound = SoundID.Item1;
-            item.shoot = ModContent.ProjectileType<Projectiles.DragoonLance>();
+            Item.value = PriceByRarity.Purple_11;
+            Item.rare = ItemRarityID.Purple;
+            Item.maxStack = 1;
+            Item.UseSound = SoundID.Item1;
+            Item.shoot = ModContent.ProjectileType<Projectiles.DragoonLance>();
 
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("DragoonLance"), 1);
-            recipe.AddIngredient(mod.GetItem("FlameOfTheAbyss"), 10);
-            recipe.AddIngredient(mod.GetItem("SoulOfArtorias"), 1);
-            recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 170000);
-            recipe.SetResult(this, 1);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("DragoonLance").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 10);
+            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 170000);
+
             recipe.AddTile(TileID.DemonAltar);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

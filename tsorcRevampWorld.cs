@@ -1,26 +1,22 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using ReLogic.Content;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameInput;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using tsorcRevamp;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Potions.PermanentPotions;
-using tsorcRevamp.Buffs;
-using System;
-using Microsoft.Xna.Framework.Input;
-using Terraria.GameContent.NetModules;
-using Terraria.Localization;
-using System.IO;
-using Microsoft.Xna.Framework.Graphics;
-using tsorcRevamp.UI;
 
-namespace tsorcRevamp {
-    public class tsorcRevampWorld : ModWorld {
+namespace tsorcRevamp
+{
+    public class tsorcRevampWorld : ModSystem
+    {
 
         public static bool DownedVortex;
         public static bool DownedNebula;
@@ -34,9 +30,10 @@ namespace tsorcRevamp {
 
         public static List<Vector2> LitBonfireList;
 
-       
 
-        public override void Initialize() {
+
+        public override void OnWorldLoad()
+        {
             DownedVortex = false;
             DownedNebula = false;
             DownedStardust = false;
@@ -47,46 +44,42 @@ namespace tsorcRevamp {
             Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
             initialized = false;
-
             tsorcScriptedEvents.InitializeScriptedEvents();
-            Tiles.SoulSkellyGeocache.InitializeSkellys();
         }
 
-		public override TagCompound Save() {
-
+        public override void SaveWorldData(TagCompound tag)
+        {
             List<string> downed = new List<string>();
 
-            if (DownedVortex) downed.Add("DownedVortex");
-            if (DownedNebula) downed.Add("DownedNebula");
-            if (DownedStardust) downed.Add("DownedStardust");
-            if (DownedSolar) downed.Add("DownedSolar");
+            if (DownedVortex)
+                downed.Add("DownedVortex");
+            if (DownedNebula)
+                downed.Add("DownedNebula");
+            if (DownedStardust)
+                downed.Add("DownedStardust");
+            if (DownedSolar)
+                downed.Add("DownedSolar");
 
-            List<string> world_state= new List<string>();
-            if (SuperHardMode) world_state.Add("SuperHardMode");
+            List<string> world_state = new List<string>();
+            if (SuperHardMode)
+                world_state.Add("SuperHardMode");
             //This saves the fact that SuperHardMode has been disabled
-            if(world_state.Contains("SuperHardMode") && !SuperHardMode)
+            if (world_state.Contains("SuperHardMode") && !SuperHardMode)
             {
                 world_state.Remove("SuperHardMode");
             }
-            if (TheEnd) world_state.Add("TheEnd");
-            if (CustomMap) world_state.Add("CustomMap");
+            if (TheEnd)
+                world_state.Add("TheEnd");
+            if (CustomMap)
+                world_state.Add("CustomMap");
 
-            TagCompound tagCompound = new TagCompound
-			{
-                {"downed", downed},
-                {"world_state", world_state},
-            };
-			SaveSlain(tagCompound);
-            tsorcScriptedEvents.SaveScriptedEvents(tagCompound);
-            return tagCompound;
-		}
-
-		private void SaveSlain(TagCompound tag) {
-            tag.Add("type", Slain.Keys.ToList());
-            tag.Add("value", Slain.Values.ToList());
+            tag.Add("downed", downed);
+            tag.Add("world_state", world_state);
+            SaveSlain(tag);
+            tsorcScriptedEvents.SaveScriptedEvents(tag);
         }
 
-        public override void Load(TagCompound tag)
+        public override void LoadWorldData(TagCompound tag)
         {
             LoadSlain(tag);
             tsorcScriptedEvents.LoadScriptedEvents(tag);
@@ -103,19 +96,20 @@ namespace tsorcRevamp {
             CustomMap = worldStateList.Contains("CustomMap");
 
             //Faisafe. Checks some blocks near the top of one of the Wyvern Mage's tower that are unlikely to change. Even if they do, this shouldn't be necessary though. It's purely to be safe.
-            if (Framing.GetTileSafely(7102, 137).type == 54 && Framing.GetTileSafely(7103, 137).type == 357 && Framing.GetTileSafely(7104, 136).type == 357 && Framing.GetTileSafely(7105, 136).type == 197) {
+            if (Framing.GetTileSafely(7102, 137).TileType == 54 && Framing.GetTileSafely(7103, 137).TileType == 357 && Framing.GetTileSafely(7104, 136).TileType == 357 && Framing.GetTileSafely(7105, 136).TileType == 197)
+            {
                 CustomMap = true;
             }
 
             LitBonfireList = GetActiveBonfires();
-            
+
 
             //If the player leaves the world or turns off their computer in the middle of the fight or whatever, this will de-actuate the pyramid for them next time they load
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
                 if (Main.tile[5810, 1670] != null)
                 {
-                    if (Main.tile[5810, 1670].active() && Main.tile[5810, 1670].inActive())
+                    if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated)
                     {
                         NPCs.Bosses.SuperHardMode.DarkCloud.ActuatePyramid();
                     }
@@ -123,11 +117,24 @@ namespace tsorcRevamp {
             }
         }
 
-        private void LoadSlain(TagCompound tag) {
-            if (tag.ContainsKey("type")) {
+        private void SaveSlain(TagCompound tag)
+        {
+            if(Slain == null)
+            {
+                Slain = new Dictionary<int, int>();
+            }
+            tag.Add("type", Slain.Keys.ToList());
+            tag.Add("value", Slain.Values.ToList());
+        }
+
+        private void LoadSlain(TagCompound tag)
+        {
+            if (tag.ContainsKey("type"))
+            {
                 List<int> list = tag.Get<List<int>>("type");
                 List<int> list2 = tag.Get<List<int>>("value");
-                for (int i = 0; i < list.Count; i++) {
+                for (int i = 0; i < list.Count; i++)
+                {
                     Slain.Add(list[i], list2[i]);
                 }
             }
@@ -135,7 +142,7 @@ namespace tsorcRevamp {
 
         public override void NetSend(BinaryWriter writer)
         {
-            if(Main.netMode == NetmodeID.Server)
+            if (Main.netMode == NetmodeID.Server)
             {
                 writer.Write(CustomMap);
                 writer.Write(SuperHardMode);
@@ -179,7 +186,7 @@ namespace tsorcRevamp {
             }
 
             int bonfireSize = reader.ReadInt32();
-            if(LitBonfireList == null)
+            if (LitBonfireList == null)
             {
                 LitBonfireList = new List<Vector2>();
             }
@@ -194,25 +201,32 @@ namespace tsorcRevamp {
             }
         }
 
-        public static bool JustPressed(Keys key) {
+        public static bool JustPressed(Keys key)
+        {
             return Main.keyState.IsKeyDown(key) && !Main.oldKeyState.IsKeyDown(key);
         }
 
 
         #region CampfireToBonfire (Is also Skelly Loot Cache replacement code)
 
-        public static void CampfireToBonfire() {
+        public static void CampfireToBonfire()
+        {
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
-            for (int x = 0; x < Main.maxTilesX - 2; x++) {
-                for (int y = 0; y < Main.maxTilesY - 2; y++) {
+            for (int x = 0; x < Main.maxTilesX - 2; x++)
+            {
+                for (int y = 0; y < Main.maxTilesY - 2; y++)
+                {
 
                     //Campfire to Bonfire
-                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.Campfire) {
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.Campfire)
+                    {
 
                         //kill the space above the campfire, to remove vines and such
-                        for (int q = 0; q < 3; q++) {
-                            for (int w = -2; w < 2; w++) {
-                                WorldGen.KillTile(x + q, y + w, false, false, true);  
+                        for (int q = 0; q < 3; q++)
+                        {
+                            for (int w = -2; w < 2; w++)
+                            {
+                                WorldGen.KillTile(x + q, y + w, false, false, true);
                             }
                         }
                         Dust.QuickBox(new Vector2(x + 1, y + 1) * 16, new Vector2(x + 2, y + 2) * 16, 2, Color.YellowGreen, null);
@@ -222,39 +236,50 @@ namespace tsorcRevamp {
                         ushort type = (ushort)ModContent.TileType<Tiles.BonfireCheckpoint>();
                         //reimplement WorldGen.Place3x4 minus SolidTile2 checking because this game is fucked 
                         {
-                            if (x+1 < 5 || x + 1 > Main.maxTilesX - 5 || y + 1 < 5 || y + 1 > Main.maxTilesY - 5) {
+                            if (x + 1 < 5 || x + 1 > Main.maxTilesX - 5 || y + 1 < 5 || y + 1 > Main.maxTilesY - 5)
+                            {
                                 return;
                             }
                             bool flag = true;
-                            for (int i = x + 1 - 1; i < x + 1 + 2; i++) {
-                                for (int j = y + 1 - 3; j < y + 1 + 1; j++) {
-                                    if (Main.tile[i, j] == null) {
-                                        Main.tile[i, j] = new Tile();
+                            for (int i = x + 1 - 1; i < x + 1 + 2; i++)
+                            {
+                                for (int j = y + 1 - 3; j < y + 1 + 1; j++)
+                                {
+                                    if (Main.tile[i, j] == null)
+                                    {
+                                        Main.tile[i, j].ClearTile();
                                     }
-                                    if (Main.tile[i, j].active()) {
+                                    if (Main.tile[i, j].HasTile)
+                                    {
                                         flag = false;
                                     }
                                 }
-                                if (Main.tile[i, y + 1 + 1] == null) {
-                                    Main.tile[i, y + 1 + 1] = new Tile();
+                                if (Main.tile[i, y + 1 + 1] == null)
+                                {
+                                    Main.tile[i, y + 1 + 1].ClearTile();
                                 }
                             }
-                            if (flag) {
+                            if (flag)
+                            {
                                 int num = style * 54;
-                                for (int k = -3; k <= 0; k++) {
+                                for (int k = -3; k <= 0; k++)
+                                {
                                     short frameY = (short)((3 + k) * 18);
-                                    Main.tile[x + 1 - 1, y + 1 + k].active(active: true);
-                                    Main.tile[x + 1 - 1, y + 1 + k].frameY = frameY;
-                                    Main.tile[x + 1 - 1, y + 1 + k].frameX = (short)num;
-                                    Main.tile[x + 1 - 1, y + 1 + k].type = type;
-                                    Main.tile[x + 1, y + 1 + k].active(active: true);
-                                    Main.tile[x + 1, y + 1 + k].frameY = frameY;
-                                    Main.tile[x + 1, y + 1 + k].frameX = (short)(num + 18);
-                                    Main.tile[x + 1, y + 1 + k].type = type;
-                                    Main.tile[x + 1 + 1, y + 1 + k].active(active: true);
-                                    Main.tile[x + 1 + 1, y + 1 + k].frameY = frameY;
-                                    Main.tile[x + 1 + 1, y + 1 + k].frameX = (short)(num + 36);
-                                    Main.tile[x + 1 + 1, y + 1 + k].type = type;
+                                    Tile tile = Main.tile[x + 1 - 1, y + 1 + k];
+                                    tile.HasTile = true;
+                                    tile.TileFrameY = frameY;
+                                    tile.TileFrameX = (short)num;
+                                    tile.TileType = type;
+                                    tile = Main.tile[x + 1, y + 1 + k];
+                                    tile.HasTile = true;
+                                    tile.TileFrameY = frameY;
+                                    tile.TileFrameX = (short)(num + 18);
+                                    tile.TileType = type;
+                                    tile = Main.tile[x + 1 + 1, y + 1 + k];
+                                    tile.HasTile = true;
+                                    tile.TileFrameY = frameY;
+                                    tile.TileFrameX = (short)(num + 36);
+                                    tile.TileType = type;
                                 }
                             }
 
@@ -262,7 +287,7 @@ namespace tsorcRevamp {
                     }
 
                     //Slime blocks to SkullLeft - SlimeBlock-PinkSlimeBlock (I tried to stick right and lefts together but the code refuses to work for both, I swear I'm not just being dumb) 
-                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.PinkSlimeBlock && Main.tile[x - 1, y].type == TileID.SlimeBlock) 
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.PinkSlimeBlock && Main.tile[x - 1, y].TileType == TileID.SlimeBlock)
                     {
 
                         //kill the space the skull occupies, to remove vines and such
@@ -278,47 +303,58 @@ namespace tsorcRevamp {
                         int style = 0;
                         ushort type = (ushort)ModContent.TileType<Tiles.SoulSkullL>();
                         //reimplement WorldGen.Place2x2 minus SolidTile2 checking
-                        if (x < 5 || x > Main.maxTilesX - 5 || y < 5 || y > Main.maxTilesY - 5) {
+                        if (x < 5 || x > Main.maxTilesX - 5 || y < 5 || y > Main.maxTilesY - 5)
+                        {
                             return;
                         }
                         short num = 0;
                         bool flag = true;
-                        for (int i = x - 1; i < x + 1; i++) {
-                            for (int j = y - 1; j < y + 1; j++) {
-                                if (Main.tile[i, j] == null) {
-                                    Main.tile[i, j] = new Tile();
+                        for (int i = x - 1; i < x + 1; i++)
+                        {
+                            for (int j = y - 1; j < y + 1; j++)
+                            {
+                                if (Main.tile[i, j] == null)
+                                {
+                                    Main.tile[i, j].ClearTile();
                                 }
-                                if (Main.tile[i, j].active()) {
+                                if (Main.tile[i, j].HasTile)
+                                {
                                     flag = false;
                                 }
                             }
-                            if (Main.tile[i, y + 1] == null) {
-                                Main.tile[i, y + 1] = new Tile();
+                            if (Main.tile[i, y + 1] == null)
+                            {
+                                Main.tile[i, y + 1].ClearTile();
                             }
                         }
-                        if (flag) {
+                        if (flag)
+                        {
                             short num2 = (short)(36 * style);
-                            Main.tile[x - 1, y - 1].active(active: true);
-                            Main.tile[x - 1, y - 1].frameY = num;
-                            Main.tile[x - 1, y - 1].frameX = num2;
-                            Main.tile[x - 1, y - 1].type = type;
-                            Main.tile[x, y - 1].active(active: true);
-                            Main.tile[x, y - 1].frameY = num;
-                            Main.tile[x, y - 1].frameX = (short)(num2 + 18);
-                            Main.tile[x, y - 1].type = type;
-                            Main.tile[x - 1, y].active(active: true);
-                            Main.tile[x - 1, y].frameY = (short)(num + 18);
-                            Main.tile[x - 1, y].frameX = num2;
-                            Main.tile[x - 1, y].type = type;
-                            Main.tile[x, y].active(active: true);
-                            Main.tile[x, y].frameY = (short)(num + 18);
-                            Main.tile[x, y].frameX = (short)(num2 + 18);
-                            Main.tile[x, y].type = type;
+                            Tile tile = Main.tile[x - 1, y - 1];
+                            tile.HasTile = true;
+                            tile.TileFrameY = num;
+                            tile.TileFrameX = num2;
+                            tile.TileType = type;
+                            tile = Main.tile[x, y - 1];
+                            tile.HasTile = true;
+                            tile.TileFrameY = num;
+                            tile.TileFrameX = (short)(num2 + 18);
+                            tile.TileType = type;
+                            tile = Main.tile[x - 1, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = (short)(num + 18);
+                            tile.TileFrameX = num2;
+                            tile.TileType = type;
+                            tile = Main.tile[x, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = (short)(num + 18);
+                            tile.TileFrameX = (short)(num2 + 18);
+                            tile.TileType = type;
                         }
                     }
 
                     //Slime block to SkullRight - PinkSlimeBlock-SlimeBlock
-                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.SlimeBlock && Main.tile[x - 1, y].type == TileID.PinkSlimeBlock)
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.SlimeBlock && Main.tile[x - 1, y].TileType == TileID.PinkSlimeBlock)
                     {
 
                         //kill the space the skull occupies, to remove vines and such
@@ -346,42 +382,46 @@ namespace tsorcRevamp {
                             {
                                 if (Main.tile[i, j] == null)
                                 {
-                                    Main.tile[i, j] = new Tile();
+                                    Main.tile[i, j].ClearTile();
                                 }
-                                if (Main.tile[i, j].active())
+                                if (Main.tile[i, j].HasTile)
                                 {
                                     flag = false;
                                 }
                             }
                             if (Main.tile[i, y + 1] == null)
                             {
-                                Main.tile[i, y + 1] = new Tile();
+                                Main.tile[i, y + 1].ClearTile();
                             }
                         }
                         if (flag)
                         {
                             short num2 = (short)(36 * style);
-                            Main.tile[x - 1, y - 1].active(active: true);
-                            Main.tile[x - 1, y - 1].frameY = num;
-                            Main.tile[x - 1, y - 1].frameX = num2;
-                            Main.tile[x - 1, y - 1].type = type;
-                            Main.tile[x, y - 1].active(active: true);
-                            Main.tile[x, y - 1].frameY = num;
-                            Main.tile[x, y - 1].frameX = (short)(num2 + 18);
-                            Main.tile[x, y - 1].type = type;
-                            Main.tile[x - 1, y].active(active: true);
-                            Main.tile[x - 1, y].frameY = (short)(num + 18);
-                            Main.tile[x - 1, y].frameX = num2;
-                            Main.tile[x - 1, y].type = type;
-                            Main.tile[x, y].active(active: true);
-                            Main.tile[x, y].frameY = (short)(num + 18);
-                            Main.tile[x, y].frameX = (short)(num2 + 18);
-                            Main.tile[x, y].type = type;
+                            Tile tile = Main.tile[x - 1, y - 1];
+                            tile.HasTile = true;
+                            tile.TileFrameY = num;
+                            tile.TileFrameX = num2;
+                            tile.TileType = type;
+                            tile = Main.tile[x, y - 1];
+                            tile.HasTile = true;
+                            tile.TileFrameY = num;
+                            tile.TileFrameX = (short)(num2 + 18);
+                            tile.TileType = type;
+                            tile = Main.tile[x - 1, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = (short)(num + 18);
+                            tile.TileFrameX = num2;
+                            tile.TileType = type;
+                            tile = Main.tile[x, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = (short)(num + 18);
+                            tile.TileFrameX = (short)(num2 + 18);
+                            tile.TileType = type;
                         }
                     }
 
                     //Stucco blocks to SkellyLeft - GreyStucco-GreenStuccoBlock-GreyStuccoBlock
-                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.GreenStucco && Main.tile[x + 1, y].type == TileID.GrayStucco && Main.tile[x - 1, y].type == TileID.GrayStucco)
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.GreenStucco && Main.tile[x + 1, y].TileType == TileID.GrayStucco && Main.tile[x - 1, y].TileType == TileID.GrayStucco)
                     {
 
                         //kill the space the skelly occupies, to remove vines and such
@@ -405,37 +445,40 @@ namespace tsorcRevamp {
                         {
                             if (Main.tile[i, y] == null)
                             {
-                                Main.tile[i, y] = new Tile();
+                                Main.tile[i, y].ClearTile();
                             }
-                            if (Main.tile[i, y].active())
+                            if (Main.tile[i, y].HasTile)
                             {
                                 flag = false;
                             }
                             if (Main.tile[i, y + 1] == null)
                             {
-                                Main.tile[i, y + 1] = new Tile();
+                                Main.tile[i, y + 1].ClearTile();
                             }
                         }
                         if (flag)
                         {
                             short num = (short)(54 * style);
-                            Main.tile[x - 1, y].active(active: true);
-                            Main.tile[x - 1, y].frameY = 0;
-                            Main.tile[x - 1, y].frameX = num;
-                            Main.tile[x - 1, y].type = type;
-                            Main.tile[x, y].active(active: true);
-                            Main.tile[x, y].frameY = 0;
-                            Main.tile[x, y].frameX = (short)(num + 18);
-                            Main.tile[x, y].type = type;
-                            Main.tile[x + 1, y].active(active: true);
-                            Main.tile[x + 1, y].frameY = 0;
-                            Main.tile[x + 1, y].frameX = (short)(num + 36);
-                            Main.tile[x + 1, y].type = type;
+                            Tile tile = Main.tile[x - 1, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = 0;
+                            tile.TileFrameX = num;
+                            tile.TileType = type;
+                            tile = Main.tile[x, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = 0;
+                            tile.TileFrameX = (short)(num + 18);
+                            tile.TileType = type;
+                            tile = Main.tile[x + 1, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = 0;
+                            tile.TileFrameX = (short)(num + 36);
+                            tile.TileType = type;
                         }
                     }
 
                     //Stucco blocks to SkellyRight - GreenStucco-GreyStuccoBlock-GreenStuccoBlock
-                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.GrayStucco && Main.tile[x + 1, y].type == TileID.GreenStucco && Main.tile[x - 1, y].type == TileID.GreenStucco)
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.GrayStucco && Main.tile[x + 1, y].TileType == TileID.GreenStucco && Main.tile[x - 1, y].TileType == TileID.GreenStucco)
                     {
 
                         //kill the space the skelly occupies, to remove vines and such
@@ -459,37 +502,40 @@ namespace tsorcRevamp {
                         {
                             if (Main.tile[i, y] == null)
                             {
-                                Main.tile[i, y] = new Tile();
+                                Main.tile[i, y].ClearTile();
                             }
-                            if (Main.tile[i, y].active())
+                            if (Main.tile[i, y].HasTile)
                             {
                                 flag = false;
                             }
                             if (Main.tile[i, y + 1] == null)
                             {
-                                Main.tile[i, y + 1] = new Tile();
+                                Main.tile[i, y + 1].ClearTile();
                             }
                         }
                         if (flag)
                         {
                             short num = (short)(54 * style);
-                            Main.tile[x - 1, y].active(active: true);
-                            Main.tile[x - 1, y].frameY = 0;
-                            Main.tile[x - 1, y].frameX = num;
-                            Main.tile[x - 1, y].type = type;
-                            Main.tile[x, y].active(active: true);
-                            Main.tile[x, y].frameY = 0;
-                            Main.tile[x, y].frameX = (short)(num + 18);
-                            Main.tile[x, y].type = type;
-                            Main.tile[x + 1, y].active(active: true);
-                            Main.tile[x + 1, y].frameY = 0;
-                            Main.tile[x + 1, y].frameX = (short)(num + 36);
-                            Main.tile[x + 1, y].type = type;
+                            Tile tile = Main.tile[x - 1, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = 0;
+                            tile.TileFrameX = num;
+                            tile.TileType = type;
+                            tile = Main.tile[x, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = 0;
+                            tile.TileFrameX = (short)(num + 18);
+                            tile.TileType = type;
+                            tile = Main.tile[x + 1, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = 0;
+                            tile.TileFrameX = (short)(num + 36);
+                            tile.TileType = type;
                         }
                     }
 
                     //Confetti blocks to SkellyHangingUp (wrists chained) - Confetti Block
-                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.Confetti)
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.Confetti)
                     {
 
                         //kill the space the skelly occupies, to remove vines and such
@@ -511,7 +557,7 @@ namespace tsorcRevamp {
                         {
                             for (int j = num2; j < num2 + 3; j++)
                             {
-                                if (Main.tile[i, j].active() || Main.tile[i, j].wall == 0)
+                                if (Main.tile[i, j].HasTile || Main.tile[i, j].WallType == 0)
                                 {
                                     flag = false;
                                     break;
@@ -534,16 +580,17 @@ namespace tsorcRevamp {
                         {
                             for (int l = num2; l < num2 + 3; l++)
                             {
-                                Main.tile[k, l].active(active: true);
-                                Main.tile[k, l].type = type;
-                                Main.tile[k, l].frameX = (short)(num4 + 18 * (k - num));
-                                Main.tile[k, l].frameY = (short)(num5 + 18 * (l - num2));
+                                Tile tile = Main.tile[k, l];
+                                tile.HasTile = true;
+                                tile.TileType = type;
+                                tile.TileFrameX = (short)(num4 + 18 * (k - num));
+                                tile.TileFrameY = (short)(num5 + 18 * (l - num2));
                             }
                         }
                     }
 
                     //Confetti blocks to SkellyHangingDown (ankles chained) - Confetti Black Block (aka Midnight Confetti Block)
-                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.ConfettiBlack)
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.ConfettiBlack)
                     {
 
                         //kill the space the skelly occupies, to remove vines and such
@@ -565,7 +612,7 @@ namespace tsorcRevamp {
                         {
                             for (int j = num2; j < num2 + 3; j++)
                             {
-                                if (Main.tile[i, j].active() || Main.tile[i, j].wall == 0)
+                                if (Main.tile[i, j].HasTile || Main.tile[i, j].WallType == 0)
                                 {
                                     flag = false;
                                     break;
@@ -588,18 +635,21 @@ namespace tsorcRevamp {
                         {
                             for (int l = num2; l < num2 + 3; l++)
                             {
-                                Main.tile[k, l].active(active: true);
-                                Main.tile[k, l].type = type;
-                                Main.tile[k, l].frameX = (short)(num4 + 18 * (k - num));
-                                Main.tile[k, l].frameY = (short)(num5 + 18 * (l - num2));
+                                Tile tile = Main.tile[k, l];
+                                tile.HasTile = true;
+                                tile.TileType = type;
+                                tile.TileFrameX = (short)(num4 + 18 * (k - num));
+                                tile.TileFrameY = (short)(num5 + 18 * (l - num2));
                             }
                         }
                     }
 
                 }
             }
-            for (int i = 0; i < 400; i++) {
-                if (Main.item[i].type == ItemID.Campfire && Main.item[i].active) {
+            for (int i = 0; i < 400; i++)
+            {
+                if (Main.item[i].type == ItemID.Campfire && Main.item[i].active)
+                {
                     Main.item[i].active = false; //delete ground items (in this case campfires)
                 }
             }
@@ -612,14 +662,14 @@ namespace tsorcRevamp {
             int bonfireType = ModContent.TileType<Tiles.BonfireCheckpoint>();
 
             //Only check every 3 tiles horizontally and every 4 vertically, since bonfires are 3x4 and we only want to add each of them once
-            for (int i = 1; i < (Main.tile.GetUpperBound(0) - 1); i += 3)
+            for (int i = 1; i < (Main.tile.Width - 1); i += 3)
             {
-                for (int j = 1; j < (Main.tile.GetUpperBound(1) - 1); j += 4)
+                for (int j = 1; j < (Main.tile.Height - 1); j += 4)
                 {
                     //Check if each tile is a bonfire, and is the left frame, and does not have a bonfire above it (aka just the top left tile of a bonfire)
-                    if (Main.tile[i, j] != null && Main.tile[i, j].active() && Main.tile[i, j].type == bonfireType)
+                    if (Main.tile[i, j] != null && Main.tile[i, j].HasTile && Main.tile[i, j].TileType == bonfireType)
                     {
-                        if (Main.tile[i, j].frameY / 74 != 0)
+                        if (Main.tile[i, j].TileFrameY / 74 != 0)
                         {
                             BonfireList.Add(new Vector2(i, j));
                         }
@@ -630,14 +680,14 @@ namespace tsorcRevamp {
             return BonfireList;
         }
 
-        Texture2D SHMSun1 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun1");
-        Texture2D SHMSun2 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun2");
-        Texture2D SHMSun3 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun1");
-        Texture2D SHMMoon = ModContent.GetTexture("tsorcRevamp/Textures/SHMMoon");
-        Texture2D VanillaSun1 = ModContent.GetTexture("Terraria/Sun");
-        Texture2D VanillaSun2 = ModContent.GetTexture("Terraria/Sun2");
-        Texture2D VanillaSun3 = ModContent.GetTexture("Terraria/Sun3");
-        List<Texture2D> VanillaMoonTextures;
+        Asset<Texture2D> SHMSun1 = ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun1");
+        Asset<Texture2D> SHMSun2 = ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun2");
+        Asset<Texture2D> SHMSun3 = ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun1");
+        Asset<Texture2D> SHMMoon = ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMMoon");
+        Asset<Texture2D> VanillaSun1 = ModContent.Request<Texture2D>("Terraria/Images/Sun");
+        Asset<Texture2D> VanillaSun2 = ModContent.Request<Texture2D>("Terraria/Images/Sun2");
+        Asset<Texture2D> VanillaSun3 = ModContent.Request<Texture2D>("Terraria/Images/Sun3");
+        List<Asset<Texture2D>> VanillaMoonTextures;
 
         //MAKE CATACOMBS DUNGEON BIOME - This code was blocking spawns in the catacombs, but catacombs now works as dungeon without it likely
         //because of other code improving dungeon spawn detection
@@ -648,8 +698,20 @@ namespace tsorcRevamp {
 
         //}
 
+        public override void PreUpdateWorld()
+        {
+            Terraria.GameContent.Creative.CreativePowerManager.Instance.GetPower<Terraria.GameContent.Creative.CreativePowers.StopBiomeSpreadPower>().SetPowerInfo(true);
+            
+        }
+
+        public override void PostUpdateWorld()
+        {
+            Terraria.GameContent.Creative.CreativePowerManager.Instance.GetPower<Terraria.GameContent.Creative.CreativePowers.StopBiomeSpreadPower>().SetPowerInfo(false);
+            
+        }
+
         bool initialized = false;
-        public override void PreUpdate()
+        public override void PreUpdatePlayers()
         {
             //Only do this on the first tick after loading
             if (!initialized)
@@ -681,53 +743,79 @@ namespace tsorcRevamp {
                     {
                         if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
                         {
+                            Tiles.SoulSkellyGeocache.InitializeSkellys();
                             CampfireToBonfire();
                         }
                         if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID)
                         {
                             Main.worldID = Main.rand.Next(9999999);
-                        }                        
+                        }
 
                         //Spawn in NPCs
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>()))
                         {
-                            NPC.NewNPC(4510 * 16, 737 * 16, ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
+                            NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4510 * 16, 737 * 16, ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.Dwarf>()))
                         {
-                            int npc = NPC.NewNPC(4301 * 16, 697 * 16, ModContent.NPCType<NPCs.Friendly.Dwarf>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4301 * 16, 697 * 16, ModContent.NPCType<NPCs.Friendly.Dwarf>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4301;
                             Main.npc[npc].homeTileY = 697;
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.ShamanElder>()))
                         {
-                            int npc = NPC.NewNPC(4124 * 16, 690 * 16, ModContent.NPCType<NPCs.Friendly.ShamanElder>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4124 * 16, 690 * 16, ModContent.NPCType<NPCs.Friendly.ShamanElder>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4124;
                             Main.npc[npc].homeTileY = 690;
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.TibianArcher>()))
                         {
-                            int npc = NPC.NewNPC(4145 * 16, 682 * 16, ModContent.NPCType<NPCs.Friendly.TibianArcher>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4145 * 16, 682 * 16, ModContent.NPCType<NPCs.Friendly.TibianArcher>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4145;
                             Main.npc[npc].homeTileY = 682;
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.SolaireOfAstora>()))
                         {
-                            int npc = NPC.NewNPC(4370 * 16, 667 * 16, ModContent.NPCType<NPCs.Friendly.SolaireOfAstora>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4370 * 16, 667 * 16, ModContent.NPCType<NPCs.Friendly.SolaireOfAstora>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4370;
                             Main.npc[npc].homeTileY = 667;
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.TibianMage>()))
                         {
-                            int npc = NPC.NewNPC(4176 * 16, 690 * 16, ModContent.NPCType<NPCs.Friendly.TibianMage>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, 690 * 16, ModContent.NPCType<NPCs.Friendly.TibianMage>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4176;
                             Main.npc[npc].homeTileY = 690;
-                        }                        
+                        }
+                        if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.TibianMage>()))
+                        {
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, 690 * 16, ModContent.NPCType<NPCs.Friendly.TibianMage>());
+                            Main.npc[npc].homeless = false;
+                            Main.npc[npc].homeTileX = 4176;
+                            Main.npc[npc].homeTileY = 690;
+                        }
+
+                        NPC.savedGolfer = true;
+                        NPC.savedStylist = true;
+
+                        if (!NPC.AnyNPCs(NPCID.Golfer))
+                        {
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, 690 * 16, NPCID.Golfer);
+                            Main.npc[npc].homeless = false;
+                            Main.npc[npc].homeTileX = 5881;
+                            Main.npc[npc].homeTileY = 866;
+                        }
+                        if (!NPC.AnyNPCs(NPCID.Stylist))
+                        {
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, 690 * 16, NPCID.Stylist);
+                            Main.npc[npc].homeless = false;
+                            Main.npc[npc].homeTileX = 5863;
+                            Main.npc[npc].homeTileY = 835;
+                        }
                     }
                 }
                 else
@@ -747,52 +835,63 @@ namespace tsorcRevamp {
             }
         }
 
-        public override void PostUpdate() {
-            
+        public override void PostUpdateEverything()
+        {
             if (JustPressed(Keys.Home) && JustPressed(Keys.NumPad0)) //they have to be pressed *on the same tick*. you can't hold one and then press the other.
                 CampfireToBonfire();
             bool charm = false;
-            foreach (Player p in Main.player) {
-                for (int i = 3; i <= 8; i++) {
-                    if (p.armor[i].type == ModContent.ItemType<Items.Accessories.CovenantOfArtorias>()) {
+            foreach (Player p in Main.player)
+            {
+                for (int i = 3; i <= 8; i++)
+                {
+                    if (p.armor[i].type == ModContent.ItemType<Items.Accessories.CovenantOfArtorias>())
+                    {
                         charm = true;
                         break;
                     }
                 }
             }
-            if (charm) {
+            if (charm)
+            {
                 Main.bloodMoon = true;
                 Main.moonPhase = 0;
                 Main.dayTime = false;
                 Main.time = 16240.0;
-                if (Main.GlobalTime % 120 == 0 && Main.netMode != NetmodeID.SinglePlayer) {
+                if (Main.GlobalTimeWrappedHourly % 120 == 0 && Main.netMode != NetmodeID.SinglePlayer)
+                {
                     //globaltime always ticks up unless the player is in camera mode, and lets be honest: who uses camera mode? 
                     NetMessage.SendData(MessageID.WorldData);
                 }
+
             }
-            if (!Main.dedServ) {
-                if (SuperHardMode) {
-                    for (int i = 0; i < Main.moonTexture.Length; i++) {
-                        Main.moonTexture[i] = SHMMoon;
+            if (!Main.dedServ)
+            {
+                if (SuperHardMode)
+                {
+                    for (int i = 0; i < TextureAssets.Moon.Length; i++)
+                    {
+                        TextureAssets.Moon[i] = SHMMoon;
                     }
-                    Main.sunTexture = SHMSun1;
-                    Main.sun2Texture = SHMSun2;
-                    Main.sun3Texture = SHMSun3;
+                    TextureAssets.Sun = SHMSun1;
+                    TextureAssets.Sun2 = SHMSun2;
+                    TextureAssets.Sun3 = SHMSun3;
                 }
-                if (TheEnd) { //super hardmode and the end are mutually exclusive, so there won't be any "z-fighting", but this still feels silly
-                    Main.sunTexture = VanillaSun1;
-                    Main.sun2Texture = VanillaSun2;
-                    Main.sun3Texture = VanillaSun3;
+                if (TheEnd)
+                { //super hardmode and the end are mutually exclusive, so there won't be any "z-fighting", but this still feels silly
+                    TextureAssets.Sun = VanillaSun1;
+                    TextureAssets.Sun2 = VanillaSun2;
+                    TextureAssets.Sun3 = VanillaSun3;
                     if (VanillaMoonTextures == null)
                     {
-                        VanillaMoonTextures = new List<Texture2D>();
-                        for (int i = 0; i < Main.moonTexture.Length; i++)
+                        VanillaMoonTextures = new List<Asset<Texture2D>>();
+                        for (int i = 0; i < TextureAssets.Moon.Length; i++)
                         {
-                            VanillaMoonTextures.Add(ModContent.GetTexture("Terraria/Moon_" + i));
+                            VanillaMoonTextures.Add(ModContent.Request<Texture2D>("Terraria/Images/Moon_" + i));
                         }
                     }
-                    for (int i = 0; i < Main.moonTexture.Length; i++) {
-                        Main.moonTexture[i] = VanillaMoonTextures[i];
+                    for (int i = 0; i < TextureAssets.Moon.Length; i++)
+                    {
+                        TextureAssets.Moon[i] = VanillaMoonTextures[i];
                     }
                 }
             }
@@ -812,7 +911,7 @@ namespace tsorcRevamp {
                 UsefulFunctions.BroadcastText("You have vanquished the final guardian...", c);
                 UsefulFunctions.BroadcastText("The portal from The Abyss remains closed. All is at peace...", c);
             }
-            
+
             //These are outside of the if statements just so players can still disable hardmode or superhardmode if they happen to activate them again.
             Main.hardMode = false;
             tsorcRevampWorld.SuperHardMode = false;
@@ -835,7 +934,7 @@ namespace tsorcRevamp {
             //This simply ensures even if something deeply silly happens it'll still likely register as the custom map
             if (Main.tile[7102, 137] != null && Main.tile[7103, 137] != null && Main.tile[7104, 136] != null && Main.tile[7105, 136] != null)
             {
-                if (Main.tile[7102, 137].type == 54 && Main.tile[7103, 137].type == 357 && Main.tile[7104, 136].type == 357 && Main.tile[7105, 136].type == 197)
+                if (Main.tile[7102, 137].TileType == 54 && Main.tile[7103, 137].TileType == 357 && Main.tile[7104, 136].TileType == 357 && Main.tile[7105, 136].TileType == 197)
                 {
                     return true;
                 }
@@ -849,7 +948,7 @@ namespace tsorcRevamp {
         {
             get
             {
-                if(Slain == null)
+                if (Slain == null)
                 {
                     return 0;
                 }

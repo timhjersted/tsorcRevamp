@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -16,11 +15,11 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 12;
-            item.defense = 10;
-            item.value = 2000;
-            item.rare = ItemRarityID.LightRed;
+            Item.width = 18;
+            Item.height = 12;
+            Item.defense = 10;
+            Item.value = 2000;
+            Item.rare = ItemRarityID.LightRed;
         }
 
         public override void UpdateEquip(Player player)
@@ -43,12 +42,12 @@ namespace tsorcRevamp.Items.Armors
             player.accDivingHelm = true;
             player.waterWalk = true;
             player.noKnockback = true;
-            player.allDamage += 0.14f;
-            player.rangedCrit += 14;
-            player.meleeCrit += 14;
-            player.magicCrit += 14;
-            player.thrownCrit += 14;
-            player.meleeSpeed += 0.14f;
+            player.GetDamage(DamageClass.Generic) += 0.14f;
+            player.GetCritChance(DamageClass.Ranged) += 14;
+            player.GetCritChance(DamageClass.Melee) += 14;
+            player.GetCritChance(DamageClass.Magic) += 14;
+            player.GetCritChance(DamageClass.Throwing) += 14;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.14f;
             player.moveSpeed += 0.14f;
             player.manaCost -= 0.14f;
 
@@ -67,13 +66,13 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("BlueHerosHat"), 1);
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("BlueHerosHat").Type, 1);
             recipe.AddIngredient(ItemID.SoulofSight, 2);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

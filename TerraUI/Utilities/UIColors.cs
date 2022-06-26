@@ -1,39 +1,48 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace TerraUI.Utilities {
-    public static class UIColors {
-        public static class TextBox {
+namespace TerraUI.Utilities
+{
+    public static class UIColors
+    {
+        public static class TextBox
+        {
             public static readonly Color BorderColor = Color.DarkGray;
             public static readonly Color BackColor = Color.White;
             public static readonly Color TextColor = Color.Black;
         }
 
-        public static class Label {
+        public static class Label
+        {
             public static readonly Color TextColor = Color.White;
             public static readonly Color BorderColor = Color.Black;
         }
 
-        public static class Button {
+        public static class Button
+        {
             public static readonly Color BorderColor = Color.Black;
             public static readonly Color TextColor = Color.White;
         }
 
-        public static class Scrollbar {
+        public static class Scrollbar
+        {
             public static readonly Color BorderColor = Color.White;
         }
 
-        public static class Panel {
+        public static class Panel
+        {
             public static readonly Color BorderColor = Color.Black;
         }
 
-        public static class CheckBox {
+        public static class CheckBox
+        {
             public static readonly Color BoxColor = Color.White;
             public static readonly Color TextColor = Color.White;
             public static readonly Color TickColor = Color.Black;
             public static readonly Color BoxBorderColor = Color.Black;
         }
 
-        public static class ProgressBar {
+        public static class ProgressBar
+        {
             public static readonly Color BackColor = UIColors.BackColor;
             public static readonly Color BarColor = Color.White;
             public static readonly Color BorderColor = Color.White;

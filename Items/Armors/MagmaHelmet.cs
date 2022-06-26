@@ -14,11 +14,11 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 18;
-            item.defense = 5;
-            item.value = 40000;
-            item.rare = ItemRarityID.Orange;
+            Item.width = 18;
+            Item.height = 18;
+            Item.defense = 5;
+            Item.value = 40000;
+            Item.rare = ItemRarityID.Orange;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -28,13 +28,13 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.meleeDamage += 0.17f;
+            player.GetDamage(DamageClass.Melee) += 0.17f;
         }
 
         public override void UpdateArmorSet(Player player)
         {
-            player.meleeCrit += 17;
-            player.meleeSpeed += 0.14f;
+            player.GetCritChance(DamageClass.Melee) += 17;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.14f;
             player.fireWalk = true;
             if (Main.rand.Next(3) == 0)
             {
@@ -47,12 +47,12 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MoltenHelmet, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

@@ -4,25 +4,28 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.BossItems {
-    class DarkMirror : ModItem {
+namespace tsorcRevamp.Items.BossItems
+{
+    class DarkMirror : ModItem
+    {
 
-        public override void SetDefaults() {
-            item.rare = ItemRarityID.LightRed;
-            item.width = 38;
-            item.height = 34;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useAnimation = 120;
-            item.useTime = 120;
-            item.maxStack = 1;
-            item.consumable = false;
-            item.value = -1;
+        public override void SetDefaults()
+        {
+            Item.rare = ItemRarityID.LightRed;
+            Item.width = 38;
+            Item.height = 34;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 120;
+            Item.useTime = 120;
+            Item.maxStack = 1;
+            Item.consumable = false;
+            Item.value = -1;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-            {               
-                tooltips.Add(new TooltipLine(mod, "DarkMirrorAdventure",
+            {
+                tooltips.Add(new TooltipLine(Mod, "DarkMirrorAdventure",
                 "You look into the mirror and see your reflection looking back at you... \n" +
                 "As you continue to gaze into the mirror, the background behind \n" +
                 "your reflection comes into focus, revealing a dark pyramid... \n" +
@@ -31,7 +34,7 @@ namespace tsorcRevamp.Items.BossItems {
             }
             else
             {
-                tooltips.Add(new TooltipLine(mod, "DarkMirrorDefault", 
+                tooltips.Add(new TooltipLine(Mod, "DarkMirrorDefault",
                 "You look into the mirror and see your reflection looking back at you... \n" +
                 "As you continue to gaze into the mirror, the background behind \n" +
                 "your reflection becomes murky, as if peering into a dark abyss... \n" +
@@ -40,7 +43,8 @@ namespace tsorcRevamp.Items.BossItems {
             }
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player)
+        {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>());
@@ -49,7 +53,7 @@ namespace tsorcRevamp.Items.BossItems {
             }
             else
             {
-                
+
                 for (int i = 0; i < 30; i++)
                 {
                     Vector2 offset = Main.rand.NextVector2CircularEdge(64, 64);
@@ -61,9 +65,9 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
         double timeRate;
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
-            if(player.itemTime == 0)
+            if (player.itemTime == 0)
             {
                 if (!Main.dayTime)
                 {
@@ -71,11 +75,11 @@ namespace tsorcRevamp.Items.BossItems {
                 }
                 else
                 {
-                    timeRate = 2 * (54000 - Main.time) / (item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
+                    timeRate = 2 * (54000 - Main.time) / (Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
                 }
             }
 
-            if(player.itemTime > (item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2)
+            if (player.itemTime > (Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 2)
             {
                 Main.time += timeRate;
             }
@@ -85,11 +89,11 @@ namespace tsorcRevamp.Items.BossItems {
                 if (player.itemTime == 0)
                 {
                     Main.NewText("The mirror's shadow engulfs you...", Color.Blue);
-                    player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
+                    player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
                 }
-                else if (player.itemTime == (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 4)
+                else if (player.itemTime == (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)
                 {
-                    Main.PlaySound(SoundID.Item60);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item60);
 
                     //destroy grapples
                     player.grappling[0] = -1;
@@ -119,7 +123,7 @@ namespace tsorcRevamp.Items.BossItems {
                     }
 
                 }
-                else if (player.itemTime >= (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 4)
+                else if (player.itemTime >= (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)
                 {
                     for (int i = 0; i < 35; i++)
                     {

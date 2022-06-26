@@ -2,53 +2,58 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class PhantomSeeker : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class PhantomSeeker : ModProjectile
+    {
 
         private const string TexturePath = "tsorcRevamp/Projectiles/Comet";
 
-        public override void SetDefaults() {
-            projectile.hostile = true;
-            projectile.penetrate = 3;
-            projectile.width = 15;
-            projectile.height = 15;
-            projectile.alpha = 255;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.MaxUpdates = 2;
+        public override void SetDefaults()
+        {
+            Projectile.hostile = true;
+            Projectile.penetrate = 3;
+            Projectile.width = 15;
+            Projectile.height = 15;
+            Projectile.alpha = 255;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.MaxUpdates = 2;
         }
 
         Vector2[] lastpos = new Vector2[20];
         int lastposindex = 0;
-        public override void AI() {
-            projectile.rotation = (float)Math.Atan2((double)projectile.velocity.Y, (double)projectile.velocity.X);
+        public override void AI()
+        {
+            Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X);
 
-            if (projectile.timeLeft < 100) {
-                projectile.scale *= 0.9f;
-                projectile.damage = 0;
+            if (Projectile.timeLeft < 100)
+            {
+                Projectile.scale *= 0.9f;
+                Projectile.damage = 0;
             }
 
-            if (projectile.timeLeft > 150 && projectile.timeLeft < 500) {
-                projectile.velocity.X -= (projectile.position.X - Main.player[(int)projectile.ai[0]].position.X) / 1300f;
-                projectile.velocity.Y -= (projectile.position.Y - Main.player[(int)projectile.ai[0]].position.Y) / 1300f;
+            if (Projectile.timeLeft > 150 && Projectile.timeLeft < 500)
+            {
+                Projectile.velocity.X -= (Projectile.position.X - Main.player[(int)Projectile.ai[0]].position.X) / 1300f;
+                Projectile.velocity.Y -= (Projectile.position.Y - Main.player[(int)Projectile.ai[0]].position.Y) / 1300f;
 
-                projectile.rotation = (float)Math.Atan2((double)projectile.velocity.Y, (double)projectile.velocity.X);
-                projectile.velocity.Y = (float)Math.Sin(projectile.rotation) * 8;
-                projectile.velocity.X = (float)Math.Cos(projectile.rotation) * 8;
+                Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X);
+                Projectile.velocity.Y = (float)Math.Sin(Projectile.rotation) * 8;
+                Projectile.velocity.X = (float)Math.Cos(Projectile.rotation) * 8;
             }
 
-            lastpos[lastposindex] = projectile.position;
+            lastpos[lastposindex] = Projectile.position;
             lastposindex++;
             if (lastposindex > 19) lastposindex = 0;
 
         }
-        public override void PostDraw(SpriteBatch sp, Color lightColor)
+        public override void PostDraw(Color lightColor)
         {
-            Texture2D MyTexture = Main.projectileTexture[ModContent.ProjectileType<Projectiles.Comet>()];
-            Rectangle fromrect = new Rectangle(0, 0, this.projectile.width, this.projectile.height);
+            Texture2D MyTexture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<Projectiles.Comet>()];
+            Rectangle fromrect = new Rectangle(0, 0, this.Projectile.width, this.Projectile.height);
             Vector2 PC;
             Color targetColor = new Color(0, 50, 255, 0);
             int modlastposindex = lastposindex;
@@ -58,17 +63,17 @@ namespace tsorcRevamp.Projectiles {
                 float scalemod = Main.rand.Next(50, 150) / 100f;
                 lastpos[modlastposindex].X += Main.rand.Next(-1, 1);
                 lastpos[modlastposindex].Y += Main.rand.Next(-1, 1);
-                PC = lastpos[modlastposindex] + new Vector2(this.projectile.width / 2, this.projectile.height / 2);
+                PC = lastpos[modlastposindex] + new Vector2(this.Projectile.width / 2, this.Projectile.height / 2);
 
 
-                sp.Draw(
+                Main.spriteBatch.Draw(
                             MyTexture,
                             PC - Main.screenPosition,
                             fromrect,
                             targetColor,
-                            this.projectile.rotation + rotmod,
-                            new Vector2(this.projectile.width / 2, this.projectile.height / 2),
-                            1f * (0.1f * i) * this.projectile.scale * scalemod,
+                            this.Projectile.rotation + rotmod,
+                            new Vector2(this.Projectile.width / 2, this.Projectile.height / 2),
+                            1f * (0.1f * i) * this.Projectile.scale * scalemod,
                             SpriteEffects.None,
                             0f);
                 modlastposindex++;
@@ -82,16 +87,16 @@ namespace tsorcRevamp.Projectiles {
             {
                 float rotmod = Main.rand.Next(-100, 100) / 100f;
                 float scalemod = Main.rand.Next(50, 150) / 100f;
-                PC = lastpos[modlastposindex] + new Vector2(this.projectile.width / 2, this.projectile.height / 2);
+                PC = lastpos[modlastposindex] + new Vector2(this.Projectile.width / 2, this.Projectile.height / 2);
 
-                sp.Draw(
+                Main.spriteBatch.Draw(
                             MyTexture,
                             PC - Main.screenPosition,
                             fromrect,
                             targetColor,
-                            this.projectile.rotation + rotmod,
-                            new Vector2(this.projectile.width / 2, this.projectile.height / 2),
-                            1f * (0.09f * i) * this.projectile.scale * scalemod,
+                            this.Projectile.rotation + rotmod,
+                            new Vector2(this.Projectile.width / 2, this.Projectile.height / 2),
+                            1f * (0.09f * i) * this.Projectile.scale * scalemod,
                             SpriteEffects.None,
                             0f);
                 modlastposindex++;

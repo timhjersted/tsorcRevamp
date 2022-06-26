@@ -3,9 +3,12 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items {
-    class PurgingStone : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items
+{
+    class PurgingStone : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Ash-colored stone encasing a skull" +
                                 "\nSecret treasure of Arstor, the Earl of Carim" +
                                 "\nAbsorbs curse build-up and breaks curse, restoring your max HP to 500" +
@@ -17,31 +20,33 @@ namespace tsorcRevamp.Items {
                                 "\nvia Life Crystals or Life Fruit");
         }
 
-        public override void SetDefaults() {
-            item.width = 38;
-            item.height = 38;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useAnimation = 15;
-            item.useTime = 15;
-            item.maxStack = 10;
+        public override void SetDefaults()
+        {
+            Item.width = 38;
+            Item.height = 38;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
+            Item.maxStack = 10;
             //item.healLife = 500;
-            item.consumable = true;
-            item.scale = 1;
-            item.UseSound = SoundID.Item4;
-            item.rare = ItemRarityID.Pink;
-            item.value = PriceByRarity.Pink_5;
+            Item.consumable = true;
+            Item.scale = 1;
+            Item.UseSound = SoundID.Item4;
+            Item.rare = ItemRarityID.Pink;
+            Item.value = PriceByRarity.Pink_5;
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("RedTitanite"), 5);
-            recipe.AddIngredient(mod.GetItem("WhiteTitanite"), 5);
-            recipe.AddIngredient(mod.GetItem("BlueTitanite"), 5);
-            recipe.AddIngredient(mod.GetItem("CursedSoul"), 30);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 5);
+            recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 5);
+            recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 5);
+            recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 30);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
 
         public override bool CanUseItem(Player player)
@@ -57,7 +62,7 @@ namespace tsorcRevamp.Items {
             return false;
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             if (player.statLifeMax < player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP)
             {
@@ -91,7 +96,7 @@ namespace tsorcRevamp.Items {
         {
             Player player = Main.LocalPlayer;
 
-            tooltips.Insert(11, new TooltipLine(mod, "", $"Current max: { (player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP) }"));
+            tooltips.Insert(11, new TooltipLine(Mod, "", $"Current max: {(player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP)}"));
 
         }
     }

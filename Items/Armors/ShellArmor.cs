@@ -2,32 +2,37 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Armors {
+namespace tsorcRevamp.Items.Armors
+{
     [AutoloadEquip(EquipType.Body)]
-    class ShellArmor : ModItem {
+    class ShellArmor : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Armor made from the shell of a legendary creature. \n20% chance not to consume ammo");
         }
 
-        public override void SetDefaults() {
-            item.defense = 7;
-            item.rare = ItemRarityID.LightRed;
-            item.width = 18;
-            item.height = 18;
-            item.value = 30000;
+        public override void SetDefaults()
+        {
+            Item.defense = 7;
+            Item.rare = ItemRarityID.LightRed;
+            Item.width = 18;
+            Item.height = 18;
+            Item.value = 30000;
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.NecroBreastplate);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            recipe.Register();
         }
 
-        public override void UpdateEquip(Player player) {
+        public override void UpdateEquip(Player player)
+        {
             player.ammoCost80 = true;
         }
     }

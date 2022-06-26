@@ -14,27 +14,27 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 18;
-            item.defense = 2;
-            item.value = 5000;
-            item.rare = ItemRarityID.Orange;
+            Item.width = 18;
+            Item.height = 18;
+            Item.defense = 2;
+            Item.value = 5000;
+            Item.rare = ItemRarityID.Orange;
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.doubleJumpCloud = true;
+            player.hasJumpOption_Cloud = true;
             player.jumpBoost = true;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CobaltBreastplate, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

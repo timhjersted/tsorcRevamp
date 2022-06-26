@@ -1,10 +1,8 @@
-The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack. Your journey will span 17 dungeons spread across an expansive and inter-connected world, offering a 15 to 30+ hr experience for a first playthrough. 
+The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack. Your journey will span 17 dungeons spread across an expansive and inter-connected world, offering a 15 to 30+ hr experience for a first playthrough.
 
 - The Custom Map will load automatically when you reach the world selection screen.
 
-- To download TSORC's Music Mod, click the text prompt you'll see on TML's main menu. 
-
-- Recommended, Optional Mods: Recipe Browser, Terraria Ambience
+- To download TSORC's Music Mod, click the text prompt you'll see on TML's main menu.
 
 
 TOP FEATURES
@@ -14,16 +12,16 @@ TOP FEATURES
 *Companion Soundtrack with 32 songs (Dark Souls and Zelda fans will love it).
 *Over 700 new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
 *Many hours of secret post-game content.
-*Dark Souls game mechanics.
+*Dark Souls game mechanics such as the dodge roll, which is critical to surviving many challenging bosses!
 
 
 PROJECT STATUS
-This is a beta release meant for testing. It does not represent the final version of the mod. 
+This is still in beta as we forge ahead to 1.0. It is playable from beginning to end, but we're still polishing the later parts of the mod.
 It includes all of the items, enemies and bosses from the original mod, plus a growing number of new additions. Development is focused on revamping enemies, game balance, and new content.
 
-The Mod's Homepage links to our Discord. 
+We have a Discord! https://discord.gg/4xTfbgvx
 
-Please share your feedback and suggestions under #any-suggestions or #bug-reports. 
+Please share your feedback and suggestions under #any-suggestions or #bug-reports.
 Post map related feedback to #map-suggestions-bugs.
 
 The changelogs can be found under #mod-changelog and #map-changelog.
@@ -48,5 +46,4 @@ GAME MANUAL:
 
 *New dodge roll action with i-frames can be bound to any key in the mod's config options.
 
-*Multiplayer is supported but we're still ironing out bugs. Post issues you find under #bug-reports. Thanks! The map supports up to 3 players. Class diversity recommended. Dark Souls will not drop on death in MP.
-
+*Multiplayer is supported but we're still ironing out bugs. Post issues you find under #bug-reports. Thanks! The map supports up to 3 players. Class diversity recommended.

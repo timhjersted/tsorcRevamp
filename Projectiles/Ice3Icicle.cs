@@ -2,20 +2,32 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class Ice3Icicle : ModProjectile {
-        public override void SetDefaults() {
-            projectile.width = 32;
-            projectile.height = 88;
-            projectile.friendly = true;
-            projectile.penetrate = 5;
-            projectile.magic = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 200;
+namespace tsorcRevamp.Projectiles
+{
+    class Ice3Icicle : ModProjectile
+    {
+        public override void SetDefaults()
+        {
+            Projectile.width = 32;
+            Projectile.height = 88;
+            Projectile.friendly = true;
+            Projectile.penetrate = 5;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 200;
         }
-        public override void AI() {
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            target.AddBuff(Terraria.ID.BuffID.Slow, 240);
+            if (Main.rand.NextBool(30))
+            {
+                target.AddBuff(Terraria.ID.BuffID.Frozen, 120);
+            }
+        }
+        public override void AI()
+        {
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
         }
     }
 }

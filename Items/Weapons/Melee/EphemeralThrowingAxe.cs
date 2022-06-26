@@ -1,40 +1,43 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class EphemeralThrowingAxe : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class EphemeralThrowingAxe : ModItem
+    {
 
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Passes through solid walls");
         }
 
-        public override void SetDefaults() {
-            item.damage = 30;
-            item.height = 34;
-            item.knockBack = 7;
-            item.noMelee = true;
-            item.noUseGraphic = true;
-            item.melee = true;
-            item.shootSpeed = 8;
-            item.useAnimation = 22;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 22;
-            item.value = 150000;
-            item.width = 22;
-            item.shoot = ModContent.ProjectileType<Projectiles.EphemeralThrowingAxe>();
+        public override void SetDefaults()
+        {
+            Item.damage = 30;
+            Item.height = 34;
+            Item.knockBack = 7;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
+            Item.DamageType = DamageClass.Melee;
+            Item.shootSpeed = 8;
+            Item.useAnimation = 22;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 22;
+            Item.value = 150000;
+            Item.width = 22;
+            Item.shoot = ModContent.ProjectileType<Projectiles.EphemeralThrowingAxe>();
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("ThrowingAxe"));
-            recipe.AddIngredient(mod.GetItem("EphemeralDust"), 40);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 8000);
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("ThrowingAxe").Type);
+            recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 40);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 8000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

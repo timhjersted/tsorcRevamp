@@ -10,54 +10,54 @@ namespace tsorcRevamp.Projectiles
     {
         public override void SetDefaults()
         {
-            projectile.width = 12;
-            projectile.height = 12;
-            projectile.friendly = true;
-            projectile.aiStyle = 0;
-            projectile.ranged = true;
-            projectile.tileCollide = true;
-            projectile.timeLeft = 37;
-            projectile.scale = 0.85f;
-            projectile.extraUpdates = 1;
+            Projectile.width = 12;
+            Projectile.height = 12;
+            Projectile.friendly = true;
+            Projectile.aiStyle = 0;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.tileCollide = true;
+            Projectile.timeLeft = 37;
+            Projectile.scale = 0.85f;
+            Projectile.extraUpdates = 1;
         }
         public override void AI()
         {
 
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2; // projectile faces sprite right
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2; // projectile faces sprite right
 
-            if (projectile.owner == Main.myPlayer && projectile.timeLeft == 35)
+            if (Projectile.owner == Main.myPlayer && Projectile.timeLeft == 35)
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 63, projectile.velocity.X * 0, projectile.velocity.Y * 0, 70, default(Color), 1.2f);
+                    int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 63, Projectile.velocity.X * 0, Projectile.velocity.Y * 0, 70, default(Color), 1.2f);
                     Main.dust[dust].noGravity = true;
                     Main.dust[dust].velocity *= Main.rand.NextFloat(1f, 6f);
                 }
             }
             if (Main.rand.Next(6) == 0)
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 245, projectile.velocity.X * -0.2f, projectile.velocity.Y * -0.2f, 70, default(Color), .5f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 245, Projectile.velocity.X * -0.2f, Projectile.velocity.Y * -0.2f, 70, default(Color), .5f);
                 Main.dust[dust].noGravity = true;
             }
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 91, projectile.velocity.X * -0.2f, projectile.velocity.Y * -0.2f, 70, default(Color), .6f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 91, Projectile.velocity.X * -0.2f, Projectile.velocity.Y * -0.2f, 70, default(Color), .6f);
                 Main.dust[dust].noGravity = true;
             }
 
-            if (projectile.owner == Main.myPlayer && projectile.timeLeft == 3)
+            if (Projectile.owner == Main.myPlayer && Projectile.timeLeft == 3)
             {
                 for (int d = 0; d < 10; d++)
                 {
-                    int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 91, projectile.velocity.X * 0.5f, projectile.velocity.Y * 0.5f, 30, default(Color), 0.5f);
+                    int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 91, Projectile.velocity.X * 0.5f, Projectile.velocity.Y * 0.5f, 30, default(Color), 0.5f);
                     Main.dust[dust].noGravity = true;
                 }
             }
         }
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[projectile.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
 
-            spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, new Rectangle(0, projectile.frame, 14, 38), Color.White, projectile.rotation, new Vector2(7, 0), projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame, 14, 38), Color.White, Projectile.rotation, new Vector2(7, 0), Projectile.scale, SpriteEffects.None, 0);
 
             return false;
         }
@@ -65,7 +65,7 @@ namespace tsorcRevamp.Projectiles
         {
             for (int d = 0; d < 15; d++)
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 159, projectile.velocity.X, projectile.velocity.Y, 30, default(Color), 1.2f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 159, Projectile.velocity.X, Projectile.velocity.Y, 30, default(Color), 1.2f);
                 Main.dust[dust].noGravity = true;
             }
         }
@@ -73,7 +73,7 @@ namespace tsorcRevamp.Projectiles
         {
             for (int d = 0; d < 15; d++)
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 159, projectile.velocity.X, projectile.velocity.Y, 30, default(Color), 1.2f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 159, Projectile.velocity.X, Projectile.velocity.Y, 30, default(Color), 1.2f);
                 Main.dust[dust].noGravity = true;
             }
 
@@ -94,15 +94,15 @@ namespace tsorcRevamp.Projectiles
                 int option = Main.rand.Next(3);
                 if (option == 0)
                 {
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/RicochetUno").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/RicochetUno") with { Volume = 0.6f, PitchVariance = 0.3f }, Projectile.Center);;
                 }
                 else if (option == 1)
                 {
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/RicochetDos").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/RicochetDos") with { Volume = 0.6f, PitchVariance = 0.3f }, Projectile.Center);
                 }
                 else if (option == 2)
                 {
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/RicochetTres").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/RicochetTres") with { Volume = 0.6f, PitchVariance = 0.3f }, Projectile.Center);
                 }
             }
         }

@@ -1,13 +1,11 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
+﻿using Terraria;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs
 {
     class GreenBlossom : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Green Blossom");
             Description.SetDefault("Stamina recovery speed increased!");

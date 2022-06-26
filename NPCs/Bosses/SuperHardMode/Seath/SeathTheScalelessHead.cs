@@ -1,13 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 {
@@ -16,28 +12,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
     {
         public override void SetDefaults()
         {
-            npc.width = 44; //44 works for both
-            npc.height = 44; //was 32 tried 64
-            drawOffsetY = 49; //was 60
-            npc.aiStyle = 6;
-            npc.knockBackResist = 0;
-            npc.timeLeft = 22500;
-            npc.damage = 130;
-            npc.defense = 50;
-            npc.HitSound = SoundID.NPCHit7;
-            npc.DeathSound = SoundID.NPCDeath8;
-            npc.lifeMax = 125000;
-            music = 12;
-            npc.boss = true;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.behindTiles = true;
-            npc.value = 500000;
-            npc.buffImmune[BuffID.Poisoned] = true;
-            npc.buffImmune[BuffID.Confused] = true;
-            npc.buffImmune[BuffID.OnFire] = false;
-            npc.buffImmune[BuffID.CursedInferno] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.SeathBag>();
+            NPC.width = 44; //44 works for both
+            NPC.height = 44; //was 32 tried 64
+            DrawOffsetY = 49; //was 60
+            NPC.aiStyle = 6;
+            NPC.knockBackResist = 0;
+            NPC.timeLeft = 22500;
+            NPC.damage = 130;
+            NPC.defense = 50;
+            NPC.HitSound = SoundID.NPCHit7;
+            NPC.DeathSound = SoundID.NPCDeath8;
+            NPC.lifeMax = 125000;
+            Music = 12;
+            NPC.boss = true;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.behindTiles = true;
+            NPC.value = 500000;
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.OnFire] = false;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler("Seath consumes your soul...", Color.Cyan, DustID.BlueFairy);
         }
 
@@ -47,7 +42,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         int meteorDamage = 50;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.damage = (int)(npc.damage / 2);
+            NPC.damage = (int)(NPC.damage / 2);
             breathDamage = (int)(breathDamage / 2);
             frozenTearDamage = (int)(frozenTearDamage / 2);
             meteorDamage = (int)(meteorDamage / 2);
@@ -67,20 +62,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            Player P = spawnInfo.player;
+            Player P = spawnInfo.Player;
 
-            bool Sky = spawnInfo.spawnTileY <= (Main.rockLayer * 4);
+            bool Sky = spawnInfo.SpawnTileY <= (Main.rockLayer * 4);
             bool Meteor = P.ZoneMeteor;
             bool Jungle = P.ZoneJungle;
             bool Dungeon = P.ZoneDungeon;
             bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-            bool Hallow = P.ZoneHoly;
-            bool AboveEarth = spawnInfo.spawnTileY < Main.worldSurface;
-            bool InBrownLayer = spawnInfo.spawnTileY >= Main.worldSurface && spawnInfo.spawnTileY < Main.rockLayer;
-            bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
-            bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200) * 16;
-            bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
-            bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
+            bool Hallow = P.ZoneHallow;
+            bool AboveEarth = spawnInfo.SpawnTileY < Main.worldSurface;
+            bool InBrownLayer = spawnInfo.SpawnTileY >= Main.worldSurface && spawnInfo.SpawnTileY < Main.rockLayer;
+            bool InGrayLayer = spawnInfo.SpawnTileY >= Main.rockLayer && spawnInfo.SpawnTileY < (Main.maxTilesY - 200) * 16;
+            bool InHell = spawnInfo.SpawnTileY >= (Main.maxTilesY - 200) * 16;
+            bool Ocean = spawnInfo.SpawnTileX < 3600 || spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
+            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
 
 
             if (tsorcRevampWorld.SuperHardMode && (Sky || AboveEarth) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<SeathTheScalelessHead>()) && FrozenOcean && Main.rand.Next(100) == 1) return 1;
@@ -101,28 +96,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
-            despawnHandler.TargetAndDespawn(npc.whoAmI);
+            despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
             if (NPC.AnyNPCs(ModContent.NPCType<PrimordialCrystal>()))
             {
-                npc.dontTakeDamage = true;
+                NPC.dontTakeDamage = true;
             }
             else
             {
-                npc.dontTakeDamage = false;
+                NPC.dontTakeDamage = false;
             }
 
             //Crystal spawning
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if (Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) || Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
+                if (Collision.CanHit(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1) || Collision.CanHitLine(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
                 {
                     int crystalVelocity = 16;
-                    if (!firstCrystalSpawned && npc.life <= (2 * npc.lifeMax / 3) || !secondCrystalSpawned && npc.life <= (npc.lifeMax / 3))
+                    if (!firstCrystalSpawned && NPC.life <= (2 * NPC.lifeMax / 3) || !secondCrystalSpawned && NPC.life <= (NPC.lifeMax / 3))
                     {
-                        int crystal = NPC.NewNPC((int)npc.position.X, (int)npc.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, npc.whoAmI);
+                        int crystal = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X, (int)NPC.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, NPC.whoAmI);
                         Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
-                        if(npc.life >= (npc.lifeMax / 2))
+                        if (NPC.life >= (NPC.lifeMax / 2))
                         {
                             firstCrystalSpawned = true;
                         }
@@ -133,11 +128,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                         UsefulFunctions.BroadcastText("Seath calls upon a Primordial Crystal...", Color.Cyan);
                     }
 
-                    if (!finalCrystalsSpawned && npc.life <= (npc.lifeMax / 6))
+                    if (!finalCrystalsSpawned && NPC.life <= (NPC.lifeMax / 6))
                     {
                         for (int i = 0; i < 3; i++)
                         {
-                            int crystal = NPC.NewNPC((int)npc.position.X, (int)npc.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, npc.whoAmI);
+                            int crystal = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X, (int)NPC.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, NPC.whoAmI);
                             Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
                         }
                         finalCrystalsSpawned = true;
@@ -146,21 +141,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 }
             }
 
-            Player nT = Main.player[npc.target];
+            Player nT = Main.player[NPC.target];
             if (Main.rand.Next(255) == 0)
             {
                 breath = true;
-               // Main.PlaySound(15, -1, -1, 0); This roar sound got very annoying
+                // Terraria.Audio.SoundEngine.PlaySound(15, -1, -1, 0); This roar sound got very annoying
             }
             if (breath)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     //PROJECTILE START POINT - 108f
-                    //Projectile.NewProjectile(npc.position.X + (float)npc.width / 2f, npc.position.Y + (float)npc.height / 2f, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
-                    Projectile.NewProjectile(npc.position.X + (float)npc.width, npc.position.Y + (float)npc.height * 0.5f, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
+                    //Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.position.X + (float)npc.width / 2f, npc.position.Y + (float)npc.height / 2f, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position.X + (float)NPC.width, NPC.position.Y + (float)NPC.height * 0.5f, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
                 }
-                Main.PlaySound(2, -1, -1, 20);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 breathCD--;
 
             }
@@ -168,7 +163,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             {
                 breath = false;
                 breathCD = 110;
-                //Main.PlaySound(2, -1, -1, 20);
+                //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
             }
             if (Main.rand.Next(820) == 0)
             {
@@ -176,9 +171,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile((float)nT.position.X - 800 + Main.rand.Next(1600), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 10.1f, ModContent.ProjectileType<Projectiles.Enemy.FrozenTear>(), frozenTearDamage, 2f, Main.myPlayer); //10.1f was 14.9f is speed
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 800 + Main.rand.Next(1600), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 10.1f, ModContent.ProjectileType<Projectiles.Enemy.FrozenTear>(), frozenTearDamage, 2f, Main.myPlayer); //10.1f was 14.9f is speed
                     }
-                    Main.PlaySound(2, -1, -1, 20);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 }
             }
             if (Main.rand.Next(1560) == 0)
@@ -187,19 +182,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile((float)nT.position.X - 500 + Main.rand.Next(1000), (float)nT.position.Y - 500f, (float)(-100 + Main.rand.Next(200)) / 10, 11.5f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //9.5f was 14.9f
-                    } 
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 500 + Main.rand.Next(1000), (float)nT.position.Y - 500f, (float)(-100 + Main.rand.Next(200)) / 10, 11.5f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //9.5f was 14.9f
+                    }
                 }
-                Main.PlaySound(2, -1, -1, 20);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
             }
             if (Main.rand.Next(2) == 0)
             {
-                int d = Dust.NewDust(npc.position, npc.width, npc.height, DustID.BlueFairy, npc.velocity.X / 4f, npc.velocity.Y / 4f, 100, default(Color), 1f);
+                int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.BlueFairy, NPC.velocity.X / 4f, NPC.velocity.Y / 4f, 100, default(Color), 1f);
                 Main.dust[d].noGravity = true;
             }
 
             int[] bodyTypes = new int[] { ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody2>(), ModContent.NPCType<SeathTheScalelessBody3>(), ModContent.NPCType<SeathTheScalelessBody3>() };
-            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<SeathTheScalelessHead>(), bodyTypes, ModContent.NPCType<SeathTheScalelessTail>(), 13, 6f, 10f, 0.17f, true, false, true, false, false);            
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<SeathTheScalelessHead>(), bodyTypes, ModContent.NPCType<SeathTheScalelessTail>(), 13, 6f, 10f, 0.17f, true, false, true, false, false);
         }
         #endregion
 
@@ -227,43 +222,35 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
         }
 
-        public  override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
-            SetImmune(projectile, npc);
+            SetImmune(projectile, NPC);
         }
 
-        public override void NPCLoot()
-        {
-            Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-            if (npc.life <= 0)
-            {
-                //Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), "Seath the Scaleless Head Gore", 1f, -1);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Seath the Scaleless Head Gore"), 1f);
-                //Main.gore[a].timeLeft = 1800; int a = Gore.New..etc
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SeathBag>()));
+        }
+        public override void OnKill()
+        {            
+            Gore.NewGore(NPC.GetSource_Death(), NPC.Center, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Seath the Scaleless Head Gore").Type, 1f);
 
-                if (Main.expertMode)
-                {
-                    npc.DropBossBags();
-                }
-                else
-                {
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DragonEssence>(), 35 + Main.rand.Next(5));
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 7000);
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BequeathedSoul>(), 2);
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BlueTearstoneRing>());
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.PurgingStone>());
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.DragonWings>());
-                }
-                //npc.netUpdate = true;
-            }
+            if (!Main.expertMode)
+            {
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DragonEssence>(), 35 + Main.rand.Next(5));
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 7000);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BequeathedSoul>(), 2);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.BlueTearstoneRing>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.PurgingStone>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.DragonWings>());
+            }            
         }
 
         public static Texture2D texture;
         public static void SeathInvulnerableEffect(NPC npc, SpriteBatch spriteBatch, ref Texture2D texture, float scale = 1.5f)
-        {            
+        {
             if (texture == null || texture.IsDisposed)
             {
-                texture = ModContent.GetTexture(npc.modNPC.Texture);
+                texture = (Texture2D)ModContent.Request<Texture2D>(npc.ModNPC.Texture);
             }
             if (npc.dontTakeDamage)
             {
@@ -275,21 +262,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
                 Vector2 origin = sourceRectangle.Size() / 2f;
-                spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, Color.White , npc.rotation, origin, scale, effects, 0f);
+                spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, Color.White, npc.rotation, origin, scale, effects, 0f);
                 spriteBatch.End();
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
 
             }
 
         }
-        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            SeathInvulnerableEffect(npc, spriteBatch, ref texture, 1.1f);
+            SeathInvulnerableEffect(NPC, spriteBatch, ref texture, 1.1f);
             return true;
         }
-        public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            SeathTheScalelessHead.SeathInvulnerableEffect(npc, spriteBatch, ref texture, 1.1f);
+            SeathTheScalelessHead.SeathInvulnerableEffect(NPC, spriteBatch, ref texture, 1.1f);
         }
     }
 }

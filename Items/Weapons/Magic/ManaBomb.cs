@@ -1,38 +1,43 @@
-﻿using Terraria.ModLoader;
-using Terraria.ID;
+﻿using Terraria.ID;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class ManaBomb : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class ManaBomb : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Creates a magic vortex at your location that deals high damage over time");
         }
 
-        public override void SetDefaults() {
-            item.width = 18;
-            item.height = 18;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.noUseGraphic = true;
-            item.damage = 250;
-            item.useAnimation = 30;
-            item.useTime = 30;
-            item.maxStack = 30;
-            item.consumable = true;
-            item.scale = 1;
-            item.UseSound = SoundID.Item29;
-            item.value = 150000;
-            item.useTurn = true;
-            item.rare = ItemRarityID.Green;
-            item.shoot = ModContent.ProjectileType<Projectiles.MagicalBall>();
+        public override void SetDefaults()
+        {
+            Item.width = 18;
+            Item.height = 18;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noUseGraphic = true;
+            Item.damage = 250;
+            Item.useAnimation = 30;
+            Item.useTime = 30;
+            Item.maxStack = 30;
+            Item.consumable = true;
+            Item.scale = 1;
+            Item.UseSound = SoundID.Item29;
+            Item.value = 150000;
+            Item.useTurn = true;
+            Item.rare = ItemRarityID.Green;
+            Item.shoot = ModContent.ProjectileType<Projectiles.MagicalBall>();
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ManaCrystal, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 200);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 200);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

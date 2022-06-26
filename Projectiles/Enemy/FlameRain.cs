@@ -1,7 +1,4 @@
-using Microsoft.Xna.Framework;
-using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -10,33 +7,33 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetDefaults()
         {
-            projectile.width = 14;
-            projectile.height = 14;
+            Projectile.width = 14;
+            Projectile.height = 14;
             //projectile.pretendType = 85;
-            aiType = 79;
-            projectile.alpha = 100;
-            projectile.aiStyle = 1;
-            projectile.timeLeft = 600;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.penetrate = 1;
-            projectile.light = 0.8f;
+            AIType = 79;
+            Projectile.alpha = 100;
+            Projectile.aiStyle = 1;
+            Projectile.timeLeft = 600;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.penetrate = 1;
+            Projectile.light = 0.8f;
             //projectile.tileCollide = true;
-            projectile.magic = true;
+            Projectile.DamageType = DamageClass.Magic;
 
             //projectile.aiStyle = 0; //2 aistyle declarations? hmm
             //projectile.hostile = true;
             //projectile.height = 34;
-            projectile.tileCollide = false;
+            Projectile.tileCollide = false;
             //projectile.width = 34;
             //projectile.timeLeft = 150;
             //projectile.light = .3f;
-            Main.projFrames[projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 4;
         }
 
         public override bool PreKill(int timeLeft)
         {
-            projectile.type = 15;
+            Projectile.type = 15;
             return true;
         }
     }

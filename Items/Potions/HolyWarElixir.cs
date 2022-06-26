@@ -1,40 +1,46 @@
-﻿using System.Collections.Generic;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Potions {
-    class HolyWarElixir : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Potions
+{
+    class HolyWarElixir : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Will make you invincible.\nCannot be used again for 60 seconds after wearing off.")
                 ;
         }
 
-        public override void SetDefaults() {
-            item.height = 62;
-            item.consumable = true;
-            item.height = 34;
-            item.maxStack = 30;
-            item.rare = ItemRarityID.Pink;
-            item.useAnimation = 17;
-            item.UseSound = SoundID.Item3;
-            item.useStyle = ItemUseStyleID.EatingUsing;
-            item.useTime = 17;
-            item.useTurn = true;
-            item.value = 0;
-            item.width = 14;
-            item.buffType = ModContent.BuffType<Buffs.Invincible>();
-            item.buffTime = 600;
+        public override void SetDefaults()
+        {
+            Item.height = 62;
+            Item.consumable = true;
+            Item.height = 34;
+            Item.maxStack = 30;
+            Item.rare = ItemRarityID.Pink;
+            Item.useAnimation = 17;
+            Item.UseSound = SoundID.Item3;
+            Item.useStyle = ItemUseStyleID.EatFood;
+            Item.useTime = 17;
+            Item.useTurn = true;
+            Item.value = 0;
+            Item.width = 14;
+            Item.buffType = ModContent.BuffType<Buffs.Invincible>();
+            Item.buffTime = 600;
         }
 
-        public override bool CanUseItem(Player player) {
-            if (player.HasBuff(ModContent.BuffType<Buffs.ElixirCooldown>())) {
+        public override bool CanUseItem(Player player)
+        {
+            if (player.HasBuff(ModContent.BuffType<Buffs.ElixirCooldown>()))
+            {
                 return false;
             }
             return base.CanUseItem(player);
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player)
+        {
             player.AddBuff(ModContent.BuffType<Buffs.ElixirCooldown>(), 4200);
             return base.UseItem(player);
         }

@@ -1,12 +1,14 @@
-﻿using System;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
+using System;
+using System.Text;
 using TerraUI.Utilities;
 
-namespace TerraUI.Objects {
-    public class UILabel : UIObjectBordered {
+namespace TerraUI.Objects
+{
+    public class UILabel : UIObjectBordered
+    {
         /// <summary>
         /// Text displayed in the label.
         /// </summary>
@@ -32,7 +34,8 @@ namespace TerraUI.Objects {
         /// <param name="drawBorder">whether to draw text with border</param>
         /// <param name="parent">parent UIObject</param>
         public UILabel(Vector2 position, Vector2 size, string text, DynamicSpriteFont font, byte borderWidth = 0,
-            UIObject parent = null) : base(position, size, borderWidth, parent, false) {
+            UIObject parent = null) : base(position, size, borderWidth, parent, false)
+        {
             Text = text;
             Font = font;
             TextColor = UIColors.Label.TextColor;
@@ -43,16 +46,19 @@ namespace TerraUI.Objects {
         /// Draw the UILabel.
         /// </summary>
         /// <param name="spriteBatch">drawing SpriteBatch</param>
-        public override void Draw(SpriteBatch spriteBatch) {
+        public override void Draw(SpriteBatch spriteBatch)
+        {
             Rectangle = new Rectangle((int)RelativePosition.X, (int)RelativePosition.Y, (int)Size.X, (int)Size.Y);
 
             string text = WrapText(Font, Text, Size.X);
 
-            if(BorderWidth > 0) {
+            if (BorderWidth > 0)
+            {
                 Terraria.Utils.DrawBorderStringFourWay(spriteBatch, Font, text, RelativePosition.X, RelativePosition.Y,
                     TextColor, BorderColor, Vector2.Zero, 1f);
             }
-            else {
+            else
+            {
                 spriteBatch.DrawString(Font, text, RelativePosition, TextColor);
             }
 
@@ -67,20 +73,24 @@ namespace TerraUI.Objects {
         /// <param name="text">text to wrap</param>
         /// <param name="maxLineWidth">max line width in pixels</param>
         /// <returns>formatted text</returns>
-        public string WrapText(DynamicSpriteFont font, string text, float maxLineWidth) {
+        public string WrapText(DynamicSpriteFont font, string text, float maxLineWidth)
+        {
             string[] words = text.Split(' ');
             StringBuilder builder = new StringBuilder();
             float lineWidth = 0f;
             float spaceWidth = font.MeasureString(" ").X;
 
-            foreach(string word in words) {
+            foreach (string word in words)
+            {
                 Vector2 size = font.MeasureString(word);
 
-                if(lineWidth + size.X < maxLineWidth) {
+                if (lineWidth + size.X < maxLineWidth)
+                {
                     builder.Append(word + " ");
                     lineWidth += size.X + spaceWidth;
                 }
-                else {
+                else
+                {
                     builder.Append(Environment.NewLine + word + " ");
                     lineWidth = size.X + spaceWidth;
                 }

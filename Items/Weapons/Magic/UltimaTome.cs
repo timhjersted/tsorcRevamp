@@ -1,30 +1,32 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class UltimaTome : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class UltimaTome : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Ultimate tome guarded by the Omega Weapon.");
         }
-        public override void SetDefaults() {
-            item.damage = 500;
-            item.height = 10; 
-            item.knockBack = 4;
-            item.rare = ItemRarityID.Green;
-            item.shootSpeed = 6;
-            item.noMelee = true;
-            item.magic = true;
-            item.mana = 200;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 10;
-            item.useAnimation = 10;
-            item.value = 5000000;
-            item.width = 34;
-            item.shoot = ModContent.ProjectileType<Projectiles.Ultima>();
+        public override void SetDefaults()
+        {
+            Item.damage = 500;
+            Item.height = 10;
+            Item.knockBack = 4;
+            Item.rare = ItemRarityID.Green;
+            Item.shootSpeed = 6;
+            Item.noMelee = true;
+            Item.DamageType = DamageClass.Magic;
+            Item.mana = 200;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 10;
+            Item.useAnimation = 10;
+            Item.value = 5000000;
+            Item.width = 34;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Ultima>();
         }
     }
 }

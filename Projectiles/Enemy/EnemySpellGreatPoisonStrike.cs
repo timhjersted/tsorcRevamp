@@ -1,7 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
-using Terraria.ID;
+﻿using Terraria;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -12,40 +9,40 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Enemy Spell Great Poison Strike");
-            Main.projFrames[projectile.type] = 5;
+            Main.projFrames[Projectile.type] = 5;
         }
         public override void SetDefaults()
         {
 
-            projectile.aiStyle = 4;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.width = 30;
-            projectile.height = 30;
-            projectile.light = 1f;
-            projectile.penetrate = 50;
-            projectile.magic = true;
-            projectile.scale = 1f;
-            projectile.tileCollide = true;
-            drawOriginOffsetY = -6;
-            drawOriginOffsetX = -6;
-            drawOffsetX = -6;
+            Projectile.aiStyle = 4;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.width = 30;
+            Projectile.height = 30;
+            Projectile.light = 1f;
+            Projectile.penetrate = 50;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.scale = 1f;
+            Projectile.tileCollide = true;
+            DrawOriginOffsetY = -6;
+            DrawOriginOffsetX = -6;
+            DrawOffsetX = -6;
         }
 
         #region AI
         public override void AI()
         {
-            projectile.rotation = projectile.velocity.ToRotation();
+            Projectile.rotation = Projectile.velocity.ToRotation();
 
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 3)
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 3)
             {
-                projectile.frame++;
-                projectile.frameCounter = 0;
+                Projectile.frame++;
+                Projectile.frameCounter = 0;
             }
-            if (projectile.frame >= 5)
+            if (Projectile.frame >= 5)
             {
-                projectile.Kill();
+                Projectile.Kill();
                 return;
             }
         }

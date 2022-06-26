@@ -14,23 +14,23 @@ namespace tsorcRevamp.Items.Potions
                 "\nGradually restores HP" +
                 "\nThe dull glimmer of these mysterious" +
                 "\nstones brightens with the passage of time" +
-                "\nRestores 200 HP over the course of 13 seconds"); 
+                "\nRestores 200 HP over the course of 13 seconds");
 
 
         }
 
         public override void SetDefaults()
         {
-            item.consumable = true;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.width = 24;
-            item.height = 30;
-            item.maxStack = 99;
-            item.value = 10000;
-            item.useAnimation = 90;
-            item.useTime = 90;
-            item.useTurn = true;
-            item.rare = ItemRarityID.Orange;
+            Item.consumable = true;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.width = 24;
+            Item.height = 30;
+            Item.maxStack = 99;
+            Item.value = 10000;
+            Item.useAnimation = 90;
+            Item.useTime = 90;
+            Item.useTurn = true;
+            Item.rare = ItemRarityID.Orange;
 
         }
 
@@ -56,18 +56,18 @@ namespace tsorcRevamp.Items.Potions
             }
         }
 
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             if (player.itemTime == 0)
             {
-                player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
+                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
                 player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 90);
                 player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 90);
             }
 
-            if (player.itemTime < (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2)
+            if (player.itemTime < (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 2)
             {
-                item.useStyle = ItemUseStyleID.HoldingUp;
+                Item.useStyle = ItemUseStyleID.HoldUp;
 
                 if (Main.rand.Next(4) == 0)
                 {
@@ -84,15 +84,15 @@ namespace tsorcRevamp.Items.Potions
                 }
             }
 
-            if (player.itemTime >= (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2)
+            if (player.itemTime >= (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 2)
             {
-                item.useStyle = ItemUseStyleID.HoldingOut;
+                Item.useStyle = ItemUseStyleID.Shoot;
             }
 
             if (player.itemTime == 1)
             {
-                Main.PlaySound(SoundID.Item27.WithVolume(.9f).WithPitchVariance(.3f), player.position); // Plays sound.
-                Main.PlaySound(SoundID.Item29.WithVolume(.9f).WithPitchVariance(.3f), player.position); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.9f, PitchVariance = 0.3f }, player.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.9f, PitchVariance = 0.3f }, player.Center);
 
                 for (int i = 0; i < 50; i++)
                 {
@@ -111,8 +111,8 @@ namespace tsorcRevamp.Items.Potions
                 player.AddBuff(ModContent.BuffType<Buffs.RadiantLifegemHealing>(), 800); //just over 13 seconds
                 player.AddBuff(BuffID.PotionSickness, player.pStone ? 1800 : 3600);
 
-                if (item.stack == 1) item.TurnToAir();
-                else item.stack--;
+                if (Item.stack == 1) Item.TurnToAir();
+                else Item.stack--;
 
                 if (Main.mouseItem.stack == 1) Main.mouseItem.TurnToAir();
                 else Main.mouseItem.stack--;
@@ -121,20 +121,20 @@ namespace tsorcRevamp.Items.Potions
 
         public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
         {
-            Lighting.AddLight(item.Center, 0.25f, 0.25f, 0.15f);
+            Lighting.AddLight(Item.Center, 0.25f, 0.25f, 0.15f);
 
             if (Main.rand.Next(25) == 0)
             {
-                Dust dust = Main.dust[Dust.NewDust(new Vector2(item.position.X, item.position.Y), 20, 26, 43, item.velocity.X, item.velocity.Y, 100, Color.White, Main.rand.NextFloat(.4f, .6f))];
+                Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X, Item.position.Y), 20, 26, 43, Item.velocity.X, Item.velocity.Y, 100, Color.White, Main.rand.NextFloat(.4f, .6f))];
                 dust.velocity *= 0f;
                 dust.noGravity = true;
                 dust.fadeIn = 1.3f;
             }
 
             Color color = Color.White * 0.6f;
-            Texture2D texture = Main.itemTexture[item.type];
-            spriteBatch.Draw(texture, new Vector2(item.position.X - Main.screenPosition.X + item.width * 0.5f, item.position.Y - Main.screenPosition.Y + item.height - texture.Height * 0.5f + 2f),
-                new Rectangle(0, 0, texture.Width, texture.Height), color, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            spriteBatch.Draw(texture, new Vector2(Item.position.X - Main.screenPosition.X + Item.width * 0.5f, Item.position.Y - Main.screenPosition.Y + Item.height - texture.Height * 0.5f + 2f),
+                new Rectangle(0, 0, texture.Width, texture.Height), color, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0);
         }
     }
 }

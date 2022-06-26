@@ -1,33 +1,34 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
     class ReforgedOldRapier : ModItem
     {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldRapier";
         public override void SetDefaults()
         {
-            item.damage = 11;
-            item.width = 40;
-            item.height = 40;
-            item.knockBack = 3;
-            item.maxStack = 1;
-            item.melee = true;
-            item.scale = 1;
-            item.useAnimation = 12;
-            item.rare = ItemRarityID.White;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.Stabbing;
-            item.useTime = 15;
-            item.value = 200;
+            Item.damage = 11;
+            Item.width = 40;
+            Item.height = 40;
+            Item.knockBack = 3;
+            Item.maxStack = 1;
+            Item.DamageType = DamageClass.Melee;
+            Item.scale = 1;
+            Item.useAnimation = 12;
+            Item.rare = ItemRarityID.White;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Thrust;
+            Item.useTime = 15;
+            Item.value = 200;
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("OldRapier"));
-            recipe.AddTile(mod.GetTile("SweatyCyclopsForge"));
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("OldRapier").Type);
+            recipe.AddTile(ModContent.TileType<Tiles.SweatyCyclopsForge>());
+
+            recipe.Register();
         }
     }
 }

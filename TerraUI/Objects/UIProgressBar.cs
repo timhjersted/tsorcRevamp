@@ -2,8 +2,10 @@
 using Microsoft.Xna.Framework.Graphics;
 using TerraUI.Utilities;
 
-namespace TerraUI.Objects {
-    public class UIProgressBar : UIObjectBordered {
+namespace TerraUI.Objects
+{
+    public class UIProgressBar : UIObjectBordered
+    {
         private uint value = 0;
         private uint maximum = 100;
         private uint minimum = 0;
@@ -21,16 +23,21 @@ namespace TerraUI.Objects {
         /// <summary>
         /// The maximum value of the UIProgressBar.
         /// </summary>
-        public uint Maximum {
+        public uint Maximum
+        {
             get { return maximum; }
-            set {
-                if(value < 0) {
+            set
+            {
+                if (value < 0)
+                {
                     maximum = 1;
                 }
-                else if(value <= Minimum) {
+                else if (value <= Minimum)
+                {
                     maximum = Minimum + 1;
                 }
-                else {
+                else
+                {
                     maximum = value;
                 }
             }
@@ -38,16 +45,21 @@ namespace TerraUI.Objects {
         /// <summary>
         /// The minimum value of the UIProgressBar.
         /// </summary>
-        public uint Minimum {
+        public uint Minimum
+        {
             get { return minimum; }
-            set {
-                if(value < 0) {
+            set
+            {
+                if (value < 0)
+                {
                     minimum = 0;
                 }
-                else if(value >= Maximum) {
+                else if (value >= Maximum)
+                {
                     minimum = Maximum - 1;
                 }
-                else {
+                else
+                {
                     minimum = value;
                 }
             }
@@ -55,22 +67,28 @@ namespace TerraUI.Objects {
         /// <summary>
         /// The current filled percent of the UIProgressBar (between 0 and 1).
         /// </summary>
-        public float Percent {
+        public float Percent
+        {
             get { return (float)value / Maximum; }
         }
         /// <summary>
         /// The current value of the UIProgressBar.
         /// </summary>
-        public uint Value {
+        public uint Value
+        {
             get { return value; }
-            set {
-                if(value < 0) {
+            set
+            {
+                if (value < 0)
+                {
                     this.value = value;
                 }
-                else if(value > Maximum) {
+                else if (value > Maximum)
+                {
                     this.value = Maximum;
                 }
-                else {
+                else
+                {
                     this.value = value;
                 }
             }
@@ -78,16 +96,21 @@ namespace TerraUI.Objects {
         /// <summary>
         /// The amount that the progress of the UIProgressBar changes with each Step() call.
         /// </summary>
-        public uint StepAmount {
+        public uint StepAmount
+        {
             get { return stepAmount; }
-            set {
-                if(value < 1) {
+            set
+            {
+                if (value < 1)
+                {
                     stepAmount = 1;
                 }
-                else if(value > Maximum) {
+                else if (value > Maximum)
+                {
                     stepAmount = Maximum;
                 }
-                else {
+                else
+                {
                     stepAmount = value;
                 }
             }
@@ -115,7 +138,8 @@ namespace TerraUI.Objects {
         /// <param name="stepAmount">amount progress changes with each step</param>
         /// <param name="parent">parent UIObject</param>
         public UIProgressBar(Vector2 position, Vector2 size, uint minimum = 0, uint maximum = 100, uint stepAmount = 1,
-            byte borderWidth = 1, UIObject parent = null) : base(position, size, borderWidth, parent, false) {
+            byte borderWidth = 1, UIObject parent = null) : base(position, size, borderWidth, parent, false)
+        {
             Minimum = minimum;
             Maximum = maximum;
             StepAmount = stepAmount;
@@ -129,16 +153,21 @@ namespace TerraUI.Objects {
         /// <summary>
         /// Perform a step.
         /// </summary>
-        public void Step() {
-            if(Value < Maximum) {
+        public void Step()
+        {
+            if (Value < Maximum)
+            {
                 Value += StepAmount;
 
-                if(ProgressChanged != null) {
+                if (ProgressChanged != null)
+                {
                     ProgressChanged(this, new ValueChangedEventArgs<uint>(Value - StepAmount, Value));
                 }
             }
-            else {
-                if(ProgressFinished != null && callFinished) {
+            else
+            {
+                if (ProgressFinished != null && callFinished)
+                {
                     ProgressFinished(this);
                     callFinished = false;
                 }
@@ -148,7 +177,8 @@ namespace TerraUI.Objects {
         /// <summary>
         /// Reset the UIProgressBar's progress.
         /// </summary>
-        public void Reset() {
+        public void Reset()
+        {
             Value = Minimum;
             callFinished = true;
         }
@@ -156,16 +186,19 @@ namespace TerraUI.Objects {
         /// <summary>
         /// Finish the UIProgressBar's progress.
         /// </summary>
-        public void Finish() {
+        public void Finish()
+        {
             Value = Maximum;
 
-            if(ProgressFinished != null && callFinished) {
+            if (ProgressFinished != null && callFinished)
+            {
                 ProgressFinished(this);
                 callFinished = false;
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch) {
+        public override void Draw(SpriteBatch spriteBatch)
+        {
             Rectangle = new Rectangle((int)RelativePosition.X, (int)RelativePosition.Y, (int)Size.X, (int)Size.Y);
             Rectangle barRectangle = new Rectangle((int)(RelativePosition.X + BarMargin.X), (int)(RelativePosition.Y + BarMargin.Y),
                                                    (int)(Size.X - BarMargin.X * 2), (int)(Size.Y - BarMargin.Y * 2));

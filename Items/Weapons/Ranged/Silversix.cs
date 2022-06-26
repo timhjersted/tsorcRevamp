@@ -11,38 +11,38 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             DisplayName.SetDefault("Silversix");
             Tooltip.SetDefault("Deals extra damage to corrupt/crimson creatures"
-                                +"\nDoesn't require ammo");
+                                + "\nDoesn't require ammo");
         }
 
         public override void SetDefaults()
         {
-            item.damage = 45;
-            item.ranged = true;
-            item.width = 48;
-            item.height = 34;
-            item.useTime = 14;
-            item.useAnimation = 14;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.noMelee = true;
-            item.knockBack = 4;
-            item.value = 100000;
-            item.scale = 0.9f;
-            item.rare = ItemRarityID.LightRed;
-            item.crit = 5;
-            item.UseSound = SoundID.Item40;
-            item.shoot = mod.ProjectileType("SSShot");
-            item.shootSpeed = 22f;
+            Item.damage = 45;
+            Item.DamageType = DamageClass.Ranged;
+            Item.width = 48;
+            Item.height = 34;
+            Item.useTime = 14;
+            Item.useAnimation = 14;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noMelee = true;
+            Item.knockBack = 4;
+            Item.value = 100000;
+            Item.scale = 0.9f;
+            Item.rare = ItemRarityID.LightRed;
+            Item.crit = 5;
+            Item.UseSound = SoundID.Item40;
+            Item.shoot = Mod.Find<ModProjectile>("SSShot").Type;
+            Item.shootSpeed = 22f;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Revolver);
             recipe.AddIngredient(ItemID.SoulofLight, 10);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 6000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
 
         public override Vector2? HoldoutOffset()
@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         }
 
         int ammoleft = 6;
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             ammoleft--;
             if (ammoleft > 0)
@@ -66,22 +66,22 @@ namespace tsorcRevamp.Items.Weapons.Ranged
                     {
                         if (player.direction == 1)
                         {
-                            Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(-0.2f, -1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellLight>(), 0, 0, Main.myPlayer);
+                            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, new Vector2(Main.rand.NextFloat(-0.2f, -1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellLight>(), 0, 0, Main.myPlayer);
                         }
                         if (player.direction == -1)
                         {
-                            Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(0.2f, 1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellLight>(), 0, 0, Main.myPlayer);
+                            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, new Vector2(Main.rand.NextFloat(0.2f, 1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellLight>(), 0, 0, Main.myPlayer);
                         }
                     }
                 }
 
                 if (player.direction == 1)
                 {
-                    Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(-0.2f, -1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellLight>(), 0, 0, Main.myPlayer);
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, new Vector2(Main.rand.NextFloat(-0.2f, -1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellLight>(), 0, 0, Main.myPlayer);
                 }
                 if (player.direction == -1)
                 {
-                    Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(0.2f, 1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellLight>(), 0, 0, Main.myPlayer);
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, new Vector2(Main.rand.NextFloat(0.2f, 1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellLight>(), 0, 0, Main.myPlayer);
                 }
 
                 ammoleft = 6;

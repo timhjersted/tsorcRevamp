@@ -2,7 +2,8 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
     class OldRapier : ModItem
     {
         public override void SetStaticDefaults()
@@ -13,19 +14,19 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void SetDefaults()
         {
-            item.damage = 16;
-            item.width = 40;
-            item.height = 40;
-            item.knockBack = 3;
-            item.maxStack = 1;
-            item.melee = true;
-            item.scale = 1;
-            item.useAnimation = 12;
-            item.rare = ItemRarityID.White;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.Stabbing;
-            item.useTime = 15;
-            item.value = 4000;
+            Item.damage = 16;
+            Item.width = 40;
+            Item.height = 40;
+            Item.knockBack = 3;
+            Item.maxStack = 1;
+            Item.DamageType = DamageClass.Melee;
+            Item.scale = 1;
+            Item.useAnimation = 12;
+            Item.rare = ItemRarityID.White;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Thrust;
+            Item.useTime = 15;
+            Item.value = 4000;
         }
 
         public override void HoldItem(Player player)

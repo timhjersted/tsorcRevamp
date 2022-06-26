@@ -2,32 +2,37 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class SunBlade : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class SunBlade : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A sword used to kill the undead" +
                                 "\nDoes 4x damage against the heartless");
         }
 
-        public override void SetDefaults() {
-            item.rare = ItemRarityID.LightRed;
-            item.damage = 25;
-            item.height = 36;
-            item.knockBack = 9;
-            item.maxStack = 1;
-            item.melee = true;
-            item.useAnimation = 23;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
-            item.value = PriceByRarity.LightRed_4;
-            item.width = 36;
+        public override void SetDefaults()
+        {
+            Item.rare = ItemRarityID.LightRed;
+            Item.damage = 25;
+            Item.height = 36;
+            Item.knockBack = 9;
+            Item.maxStack = 1;
+            Item.DamageType = DamageClass.Melee;
+            Item.useAnimation = 23;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 21;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.width = 36;
         }
 
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
+        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        {
             //todo add mod NPCs to this list
-            if (NPCID.Sets.Skeletons.Contains(target.type)
+            if (NPCID.Sets.Skeletons[target.type]
                     || target.type == NPCID.Zombie
                     || target.type == NPCID.BaldZombie
                     || target.type == NPCID.AngryBones
@@ -60,14 +65,15 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             }
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofLight, 10);
             recipe.AddIngredient(ItemID.LightsBane);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
 
     }

@@ -1,38 +1,42 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    public class IdealArrow : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    public class IdealArrow : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Items/Ammo/ArrowOfBard";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Ideal Arrow");
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 10;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 10;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
         public override void SetDefaults()
         {
-            projectile.height = 5;
-            projectile.width = 5;
-            projectile.ranged = true;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 360;
-            projectile.aiStyle = -1;
+            Projectile.height = 5;
+            Projectile.width = 5;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 360;
+            Projectile.aiStyle = -1;
             //Missing: aiStyle = 1;
             //Vanilla aiStyles are kinda janky. We can do better with just a few lines below in AI()...
         }
 
         public override void AI()
         {
-			projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2; //This makes it rotate to face where it's moving
-             //projectile.velocity.Y += (9.8f / 60); //This is its gravity. Comes out to about 0.16 per frame, which is actually really high!!
-            projectile.velocity.Y += 0.07f;
-            
-            Dust thisdust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.MagicMirror, 0, 0, 0, default, 1f); //This creates a dust trail
+            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2; //This makes it rotate to face where it's moving
+                                                                                         //projectile.velocity.Y += (9.8f / 60); //This is its gravity. Comes out to about 0.16 per frame, which is actually really high!!
+            Projectile.velocity.Y += 0.07f;
+
+            Dust thisdust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.MagicMirror, 0, 0, 0, default, 1f); //This creates a dust trail
             thisdust.velocity = Vector2.Zero; //This makes the dust stay still instead of wandering randomly
         }
 
@@ -41,8 +45,8 @@ namespace tsorcRevamp.Projectiles {
         {
             for (int i = 0; i < 10; i++)
             {
-                Vector2 vel = projectile.velocity + Main.rand.NextVector2Circular(5, 5);
-                Dust d = Dust.NewDustPerfect(projectile.Center, DustID.MagicMirror, vel, 10, default, 2);
+                Vector2 vel = Projectile.velocity + Main.rand.NextVector2Circular(5, 5);
+                Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.MagicMirror, vel, 10, default, 2);
                 d.noGravity = true;
                 d.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.MartianArmorDye), Main.LocalPlayer);
             }
@@ -50,36 +54,36 @@ namespace tsorcRevamp.Projectiles {
         }
 
         //Disabled multiple effects due to lag. The game is really not a fan of rapidly beginning and ending dozens of shaded spriteBatches every frame haha...
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.MartianArmorDye), Main.LocalPlayer);
             data.Apply(null);
 
             SpriteEffects spriteEffects = SpriteEffects.None;
-            if (projectile.spriteDirection == -1)
+            if (Projectile.spriteDirection == -1)
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
             //Get the premultiplied, properly transparent texture
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ElfinArrow];
-            int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
-            int startY = frameHeight * projectile.frame;
+            int frameHeight = TextureAssets.Projectile[Projectile.type].Value.Height / Main.projFrames[Projectile.type];
+            int startY = frameHeight * Projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;
-            for(int i = 0; i < 9; i++)
+            for (int i = 0; i < 9; i++)
             {
                 Main.spriteBatch.Draw(texture,
-                  projectile.oldPos[9 - i] - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
-                  sourceRectangle, Color.White * (0.15f * i), projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+                  Projectile.oldPos[9 - i] - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+                  sourceRectangle, Color.White * (0.15f * i), Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
             }
             Main.spriteBatch.Draw(texture,
-                projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
-                sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+                Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+                sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
 
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
 
             return false;
         }

@@ -1,104 +1,104 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 {
-	class JungleWyvernJuvenileTail : ModNPC
-	{
-		public override void SetDefaults()
-		{
-			npc.netAlways = true;
-			npc.npcSlots = 1;
-			npc.aiStyle = 6;
-			npc.width = 30;
-			npc.height = 30;
-			npc.knockBackResist = 0f;
-			npc.timeLeft = 1750;
-			npc.damage = 15;
-			npc.defense = 0;
-			npc.HitSound = SoundID.NPCHit7;
-			npc.DeathSound = SoundID.NPCDeath8;
-			npc.lifeMax = 60000000;
-			npc.noGravity = true;
-			npc.noTileCollide = true;
-			npc.value = 1500;
-			npc.scale = 0.7f;
-			npc.buffImmune[BuffID.Poisoned] = true;
-			npc.buffImmune[BuffID.OnFire] = true;
-			npc.buffImmune[BuffID.Confused] = true;
-			npc.buffImmune[BuffID.CursedInferno] = true;
-		}
+    class JungleWyvernJuvenileTail : ModNPC
+    {
+        public override void SetDefaults()
+        {
+            NPC.netAlways = true;
+            NPC.npcSlots = 1;
+            NPC.aiStyle = 6;
+            NPC.width = 30;
+            NPC.height = 30;
+            NPC.knockBackResist = 0f;
+            NPC.timeLeft = 1750;
+            NPC.damage = 15;
+            NPC.defense = 0;
+            NPC.HitSound = SoundID.NPCHit7;
+            NPC.DeathSound = SoundID.NPCDeath8;
+            NPC.lifeMax = 60000000;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.value = 1500;
+            NPC.scale = 0.7f;
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
+        }
 
-		public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
-		{
-			return false;
-		}
+        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            return false;
+        }
 
-		public override void SetStaticDefaults()
-		{
-			DisplayName.SetDefault("Jungle Wyvern Juvenile");
-		}
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Jungle Wyvern Juvenile");
+        }
 
-		public override void AI()
-		{
+        public override void AI()
+        {
 
-			if (!Main.npc[(int)npc.ai[1]].active)
-			{
-				npc.life = 0;
-				npc.HitEffect(0, 10.0);
-				NPCLoot();
-				for (int num36 = 0; num36 < 10; num36++)
-				{
-					Color color = new Color();
-					int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 62, Main.rand.Next(-20, 20), Main.rand.Next(-20, 20), 100, color, 5f);
-					Main.dust[dust].noGravity = false;
-					dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 62, Main.rand.Next(-20, 20), Main.rand.Next(-20, 20), 100, color, 3f);
-					Main.dust[dust].noGravity = false;
-					dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, Main.rand.Next(-20, 20), Main.rand.Next(-20, 20), 100, color, 3f);
-					Main.dust[dust].noGravity = false;
-					dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 62, 0, 0, 100, Color.White, 5f);
-					Main.dust[dust].noGravity = true;
-					//npc.netUpdate = true; //new
-				}
+            if (!Main.npc[(int)NPC.ai[1]].active)
+            {
+                NPC.life = 0;
+                NPC.HitEffect(0, 10.0);
+                OnKill();
+                for (int num36 = 0; num36 < 10; num36++)
+                {
+                    Color color = new Color();
+                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 62, Main.rand.Next(-20, 20), Main.rand.Next(-20, 20), 100, color, 5f);
+                    Main.dust[dust].noGravity = false;
+                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 62, Main.rand.Next(-20, 20), Main.rand.Next(-20, 20), 100, color, 3f);
+                    Main.dust[dust].noGravity = false;
+                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, Main.rand.Next(-20, 20), Main.rand.Next(-20, 20), 100, color, 3f);
+                    Main.dust[dust].noGravity = false;
+                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 62, 0, 0, 100, Color.White, 5f);
+                    Main.dust[dust].noGravity = true;
+                    //npc.netUpdate = true; //new
+                }
 
-				npc.active = false;
-			}
-			if (npc.position.X > Main.npc[(int)npc.ai[1]].position.X)
-			{
-				npc.spriteDirection = 1;
-			}
-			if (npc.position.X < Main.npc[(int)npc.ai[1]].position.X)
-			{
-				npc.spriteDirection = -1;
-			}
-			if (Main.rand.Next(2) == 0)
-			{
-				int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y + 10), npc.width, npc.height, 62, 0, 0, 100, Color.White, 1f);
-				Main.dust[dust].noGravity = true;
-			}
-		}
-		public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
-		{
-			damage *= 2;
-			base.OnHitByItem(player, item, damage, knockback, crit);
-		}
+                NPC.active = false;
+            }
+            if (NPC.position.X > Main.npc[(int)NPC.ai[1]].position.X)
+            {
+                NPC.spriteDirection = 1;
+            }
+            if (NPC.position.X < Main.npc[(int)NPC.ai[1]].position.X)
+            {
+                NPC.spriteDirection = -1;
+            }
+            if (Main.rand.Next(2) == 0)
+            {
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y + 10), NPC.width, NPC.height, 62, 0, 0, 100, Color.White, 1f);
+                Main.dust[dust].noGravity = true;
+            }
+        }
+        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        {
+            damage *= 2;
+            base.OnHitByItem(player, item, damage, knockback, crit);
+        }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
-		{
-			Vector2 origin = new Vector2(Main.npcTexture[npc.type].Width / 2, Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type] / 2);
-			Color alpha = Color.White;
-			SpriteEffects effects = SpriteEffects.None;
-			if (npc.spriteDirection == 1)
-			{
-				effects = SpriteEffects.FlipHorizontally;
-			}
-			spriteBatch.Draw(Main.npcTexture[npc.type], new Vector2(npc.position.X - Main.screenPosition.X + (float)(npc.width / 2) - (float)Main.npcTexture[npc.type].Width * npc.scale / 2f + origin.X * npc.scale, npc.position.Y - Main.screenPosition.Y + (float)npc.height - (float)Main.npcTexture[npc.type].Height * npc.scale / (float)Main.npcFrameCount[npc.type] + 4f + origin.Y * npc.scale + 36f), npc.frame, alpha, npc.rotation, origin, npc.scale, effects, 0f);
-			npc.alpha = 255;
-			return true;
-		}
-	}
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            Vector2 origin = new Vector2(TextureAssets.Npc[NPC.type].Value.Width / 2, TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type] / 2);
+            Color alpha = Color.White;
+            SpriteEffects effects = SpriteEffects.None;
+            if (NPC.spriteDirection == 1)
+            {
+                effects = SpriteEffects.FlipHorizontally;
+            }
+            spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, new Vector2(NPC.position.X - Main.screenPosition.X + (float)(NPC.width / 2) - (float)TextureAssets.Npc[NPC.type].Value.Width * NPC.scale / 2f + origin.X * NPC.scale, NPC.position.Y - Main.screenPosition.Y + (float)NPC.height - (float)TextureAssets.Npc[NPC.type].Value.Height * NPC.scale / (float)Main.npcFrameCount[NPC.type] + 4f + origin.Y * NPC.scale + 36f), NPC.frame, alpha, NPC.rotation, origin, NPC.scale, effects, 0f);
+            NPC.alpha = 255;
+            return true;
+        }
+    }
 }

@@ -5,7 +5,7 @@ namespace tsorcRevamp.Buffs
 {
     class SoulSiphon : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Soul Siphon");
             Description.SetDefault("Soul gain increased!");

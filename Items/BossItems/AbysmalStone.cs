@@ -15,18 +15,18 @@ namespace tsorcRevamp.Items.BossItems
         }
         public override void SetDefaults()
         {
-            item.width = 22;
-            item.height = 24;
-            item.consumable = false;
-            item.maxStack = 1;
-            item.value = 700000;
-            item.rare = ItemRarityID.Pink;
-            item.useTime = 45;
-            item.useAnimation = 45;
-            item.scale = 1f;
-            item.useStyle = ItemUseStyleID.HoldingUp;
+            Item.width = 22;
+            Item.height = 24;
+            Item.consumable = false;
+            Item.maxStack = 1;
+            Item.value = 700000;
+            Item.rare = ItemRarityID.Pink;
+            Item.useTime = 45;
+            Item.useAnimation = 45;
+            Item.scale = 1f;
+            Item.useStyle = ItemUseStyleID.HoldUp;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             //if (!Main.dayTime && !NPC.AnyNPCs(mod.NPCType("Blight"))
             if (!Main.dayTime && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>())) //placeholder, use above
@@ -44,14 +44,14 @@ namespace tsorcRevamp.Items.BossItems
         {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                ModRecipe recipe = new ModRecipe(mod);
-                recipe.AddIngredient(mod.GetItem("RedTitanite"), 5);
-                recipe.AddIngredient(mod.GetItem("WhiteTitanite"), 5);
-                recipe.AddIngredient(mod.GetItem("CursedSoul"), 35);
-                recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
+                Terraria.Recipe recipe = CreateRecipe();
+                recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 5);
+                recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 5);
+                recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 35);
+                recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
                 recipe.AddTile(TileID.DemonAltar);
-                recipe.SetResult(this);
-                recipe.AddRecipe();
+                
+                recipe.Register();
             }
         }
     }

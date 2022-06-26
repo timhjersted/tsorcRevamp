@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -11,18 +10,15 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("25% chance to not consume ammo\nInfinite breath, waterwalk, no knockback\nSet Bonus: Ranged Stats & Movement +30% + Archery Skill + No Fall DMG");
+            ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
         }
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 18;
-            item.defense = 15;
-            item.value = 300000;
-            item.rare = ItemRarityID.LightPurple;
-        }
-        public override void DrawHair(ref bool drawHair, ref bool drawAltHair)
-        {
-            drawHair = true;
+            Item.width = 18;
+            Item.height = 18;
+            Item.defense = 15;
+            Item.value = 300000;
+            Item.rare = ItemRarityID.LightPurple;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -40,8 +36,8 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.rangedDamage += 0.30f;
-            player.rangedCrit += 30;
+            player.GetDamage(DamageClass.Ranged) += 0.30f;
+            player.GetCritChance(DamageClass.Ranged) += 30;
             player.moveSpeed += 0.30f;
             player.archery = true;
             player.noFallDmg = true;
@@ -49,12 +45,11 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedHelmet, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

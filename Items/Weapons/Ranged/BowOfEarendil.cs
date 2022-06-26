@@ -1,46 +1,51 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    class BowOfEarendil : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    class BowOfEarendil : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Bow of Earendil");
             Tooltip.SetDefault("Always aim for the heart" +
                                "\nLegendary");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
-            item.damage = 90;
-            item.height = 58;
-            item.width = 20;
-            item.ranged = true;
-            item.knockBack = 4f;
-            item.maxStack = 1;
-            item.noMelee = true;
-            item.rare = ItemRarityID.Pink;
-            item.scale = 0.9f;
-            item.shoot = AmmoID.Arrow;
-            item.shootSpeed = 16;
-            item.useAmmo = AmmoID.Arrow;
-            item.useAnimation = 16;
-            item.useTime = 16;
-            item.autoReuse = true;
-            item.UseSound = SoundID.Item5;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.value = PriceByRarity.Pink_5;
+            Item.damage = 90;
+            Item.height = 58;
+            Item.width = 20;
+            Item.DamageType = DamageClass.Ranged;
+            Item.knockBack = 4f;
+            Item.maxStack = 1;
+            Item.noMelee = true;
+            Item.rare = ItemRarityID.Pink;
+            Item.scale = 0.9f;
+            Item.shoot = AmmoID.Arrow;
+            Item.shootSpeed = 16;
+            Item.useAmmo = AmmoID.Arrow;
+            Item.useAnimation = 16;
+            Item.useTime = 16;
+            Item.autoReuse = true;
+            Item.UseSound = SoundID.Item5;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.value = PriceByRarity.Pink_5;
 
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofSight, 1);
             recipe.AddIngredient(ItemID.MoltenFury, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 80000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 80000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

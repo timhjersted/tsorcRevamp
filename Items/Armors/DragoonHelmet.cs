@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -15,11 +14,11 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 12;
-            item.defense = 15;
-            item.value = 10000;
-            item.rare = ItemRarityID.Orange;
+            Item.width = 18;
+            Item.height = 12;
+            Item.defense = 15;
+            Item.value = 10000;
+            Item.rare = ItemRarityID.Orange;
         }
 
         public override void UpdateEquip(Player player)
@@ -40,35 +39,35 @@ namespace tsorcRevamp.Items.Armors
             player.breath = 9999999;
             player.waterWalk = true;
             player.noKnockback = true;
-            player.allDamage += 0.30f;
-            player.rangedCrit += 30;
-            player.meleeCrit += 30;
-            player.magicCrit += 30;
-            player.thrownCrit += 30;
-            player.meleeSpeed += 0.30f;
+            player.GetDamage(DamageClass.Generic) += 0.30f;
+            player.GetCritChance(DamageClass.Ranged) += 30;
+            player.GetCritChance(DamageClass.Melee) += 30;
+            player.GetCritChance(DamageClass.Magic) += 30;
+            player.GetCritChance(DamageClass.Throwing) += 30;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.30f;
             player.moveSpeed += 0.30f;
             player.manaCost -= 0.30f;
             player.lifeRegen += 2;
             //player.wings = 34; // looks like Jim's Wings
             //player.wingsLogic = 34;
             player.wingTimeMax = 180;
-            
+
         }
-        
-        public override void ArmorSetShadows (Player player)
+
+        public override void ArmorSetShadows(Player player)
         {
             player.armorEffectDrawShadow = true;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("RedHerosHat"), 1);
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("RedHerosHat").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

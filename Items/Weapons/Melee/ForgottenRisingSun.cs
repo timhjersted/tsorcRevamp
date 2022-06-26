@@ -1,33 +1,35 @@
-﻿using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenRisingSun : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenRisingSun : ModItem
+    {
 
-        public override void SetDefaults() {
-            item.width = 22;
-            item.height = 22;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useAnimation = 14;
-            item.useTime = 14;
-            item.autoReuse = true;
-            item.maxStack = 1;
-            item.damage = 199;
-            item.knockBack = 5;
-            item.UseSound = SoundID.Item1;
-            item.shootSpeed = 21;
-            item.noUseGraphic = true;
-            item.noMelee = true;
-            item.value = PriceByRarity.Red_10;
-            item.melee = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.ForgottenRisingSun>();
-            item.rare = ItemRarityID.Red;
+        public override void SetDefaults()
+        {
+            Item.width = 22;
+            Item.height = 22;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useAnimation = 14;
+            Item.useTime = 14;
+            Item.autoReuse = true;
+            Item.maxStack = 1;
+            Item.damage = 199;
+            Item.knockBack = 5;
+            Item.UseSound = SoundID.Item1;
+            Item.shootSpeed = 21;
+            Item.noUseGraphic = true;
+            Item.noMelee = true;
+            Item.value = PriceByRarity.Red_10;
+            Item.DamageType = DamageClass.Melee;
+            Item.shoot = ModContent.ProjectileType<Projectiles.ForgottenRisingSun>();
+            Item.rare = ItemRarityID.Red;
         }
 
-        public override bool CanUseItem(Player player) {
+        public override bool CanUseItem(Player player)
+        {
             return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.ForgottenRisingSun>()] < 10;
         }
     }

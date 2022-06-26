@@ -15,11 +15,11 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void SetDefaults()
         {
-            item.width = 26;
-            item.height = 28;
-            item.defense = 2;
-            item.value = 3000000;
-            item.rare = ItemRarityID.Lime;
+            Item.width = 26;
+            Item.height = 28;
+            Item.defense = 2;
+            Item.value = 3000000;
+            Item.rare = ItemRarityID.Lime;
         }
 
         public override void UpdateEquip(Player player)

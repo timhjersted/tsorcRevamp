@@ -3,34 +3,39 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    public class Bolt4Tome : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    public class Bolt4Tome : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Bolt 4 Tome");
             Tooltip.SetDefault("A lost legendary tome. You command the forces of the sky.\n" +
-                                "Only the most powerful mages will be able to cast this spell.");
+                                "\nElectrifies and paralyzes enemies" +
+                                "\nOnly the most powerful mages will be able to cast this spell.");
 
         }
 
-        public override void SetDefaults() {
-            item.damage = 100;
-            item.height = 10;
-            item.width = 34;
-            item.knockBack = 0;
-            item.autoReuse = true;
-            item.rare = ItemRarityID.Lime;
-            item.shootSpeed = (float)6;
-            item.magic = true;
-            item.noMelee = true;
-            item.mana = 350;
-            item.useAnimation = 30;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 30;
-            item.value = PriceByRarity.Lime_7;
-            item.shoot = ModContent.ProjectileType<Projectiles.Bolt4Ball>();
+        public override void SetDefaults()
+        {
+            Item.damage = 100;
+            Item.height = 10;
+            Item.width = 34;
+            Item.knockBack = 0;
+            Item.autoReuse = true;
+            Item.rare = ItemRarityID.Lime;
+            Item.shootSpeed = 24f;
+            Item.DamageType = DamageClass.Magic;
+            Item.noMelee = true;
+            Item.mana = 70;
+            Item.useAnimation = 60;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 60;
+            Item.value = PriceByRarity.Lime_7;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Bolt4Ball>();
         }
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             if (player.wet)
             {
@@ -40,13 +45,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             return true;
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("Bolt3Tome"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 85000);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("Bolt3Tome").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 85000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
 
 

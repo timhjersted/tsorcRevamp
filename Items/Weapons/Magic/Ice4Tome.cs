@@ -1,40 +1,43 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class Ice4Tome : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class Ice4Tome : ModItem
+    {
 
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Ice 4 Tome");
-            Tooltip.SetDefault("A lost legendary tome.");
+            Tooltip.SetDefault("A lost legendary tome. Shatter your enemies with a freezing hailstorm." +
+                "\nConstant hits are capible of completely imprisoning weaker foes.");
         }
 
         //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing
         int storeManaCost4;
-        public override void SetDefaults() {
-            item.damage = 120;
-            item.height = 10;
-            item.knockBack = 0f;
-            item.maxStack = 1;
-            item.rare = ItemRarityID.Lime;
-            item.channel = true;
-            item.autoReuse = true;
-            item.shootSpeed = 11;
-            item.magic = true;
-            item.noMelee = true;
-            item.mana = 100;
-            storeManaCost4 = item.mana;
-            item.useAnimation = 20;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 20;
-            item.value = PriceByRarity.Lime_7;
-            item.width = 34;
-            item.shoot = ModContent.ProjectileType<Projectiles.Ice4Ball>();
+        public override void SetDefaults()
+        {
+            Item.damage = 120;
+            Item.height = 10;
+            Item.knockBack = 0f;
+            Item.maxStack = 1;
+            Item.rare = ItemRarityID.Lime;
+            Item.channel = true;
+            Item.autoReuse = true;
+            Item.shootSpeed = 45;
+            Item.DamageType = DamageClass.Magic;
+            Item.noMelee = true;
+            Item.mana = 45;
+            storeManaCost4 = Item.mana;
+            Item.useAnimation = 30;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 30;
+            Item.value = PriceByRarity.Lime_7;
+            Item.width = 34;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Ice4Ball>();
         }
 
         public override bool CanUseItem(Player player)
@@ -49,13 +52,15 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             }
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("Ice3Tome"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 80000);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("Ice3Tome").Type, 1);
+            recipe.AddIngredient(ItemID.LunarTabletFragment, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 80000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

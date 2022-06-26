@@ -1,42 +1,47 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class FreezeBolt3 : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class FreezeBolt3 : ModItem
+    {
 
         public override string Texture => "tsorcRevamp/Items/Weapons/Magic/FreezeBolt2";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Freeze Bolt III");
             Tooltip.SetDefault("Casts a super fast-moving bolt of ice");
         }
 
-        public override void SetDefaults() {
-            item.width = 24;
-            item.height = 28;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 12;
-            item.useTime = 12;
-            item.damage = 150;
-            item.knockBack = 8;
-            item.autoReuse = true;
-            item.UseSound = SoundID.Item21;
-            item.rare = ItemRarityID.Cyan;
-            item.shootSpeed = 11;
-            item.mana = 12;
-            item.value = PriceByRarity.Cyan_9;
-            item.magic = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.FreezeBolt>();
+        public override void SetDefaults()
+        {
+            Item.width = 24;
+            Item.height = 28;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 12;
+            Item.useTime = 12;
+            Item.damage = 150;
+            Item.knockBack = 8;
+            Item.autoReuse = true;
+            Item.UseSound = SoundID.Item21;
+            Item.rare = ItemRarityID.Cyan;
+            Item.shootSpeed = 11;
+            Item.mana = 12;
+            Item.value = PriceByRarity.Cyan_9;
+            Item.DamageType = DamageClass.Magic;
+            Item.shoot = ModContent.ProjectileType<Projectiles.FreezeBolt>();
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("FreezeBolt2"), 1);
-            recipe.AddIngredient(mod.GetItem("SoulOfAttraidies"), 1);
-            recipe.AddIngredient(mod.GetItem("BlueTitanite"), 10);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 150000);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("FreezeBolt2").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 10);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 150000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

@@ -1,29 +1,32 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class PoisonField : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class PoisonField : ModProjectile
+    {
 
-        public override void SetStaticDefaults() {
-            Main.projFrames[projectile.type] = 5;
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[Projectile.type] = 5;
         }
 
-        public override void SetDefaults() {
-            projectile.width = 32;
-            projectile.height = 28;
-            projectile.friendly = true;
-            projectile.magic = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 180;
-            projectile.alpha = 90;
-            projectile.light = 0.3f;
-            projectile.penetrate = -1;
-            drawOffsetX = -4;
-            drawOriginOffsetY = -10;
+        public override void SetDefaults()
+        {
+            Projectile.width = 32;
+            Projectile.height = 28;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 180;
+            Projectile.alpha = 90;
+            Projectile.light = 0.3f;
+            Projectile.penetrate = -1;
+            DrawOffsetX = -4;
+            DrawOriginOffsetY = -10;
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
@@ -33,37 +36,40 @@ namespace tsorcRevamp.Projectiles {
             }
         }
 
-        public override void AI() {
+        public override void AI()
+        {
 
             if (Main.rand.Next(10) == 0)
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 74, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 100, default(Color), .8f); ;
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 74, Projectile.velocity.X * 0f, Projectile.velocity.Y * 0f, 100, default(Color), .8f); ;
                 Main.dust[dust].velocity *= 0f;
                 Main.dust[dust].noGravity = true;
-                Main.dust[dust].velocity += projectile.velocity;
+                Main.dust[dust].velocity += Projectile.velocity;
                 Main.dust[dust].fadeIn = 1f;
             }
 
-            if (projectile.timeLeft <= 55)
+            if (Projectile.timeLeft <= 55)
             {
-                projectile.alpha += 3;
+                Projectile.alpha += 3;
             }
 
 
-            if (projectile.ai[0] == 0)
+            if (Projectile.ai[0] == 0)
             {
-                projectile.velocity.X *= 0.001f;
-                projectile.velocity.Y *= 0.001f;
-                projectile.ai[0] = 1;
+                Projectile.velocity.X *= 0.001f;
+                Projectile.velocity.Y *= 0.001f;
+                Projectile.ai[0] = 1;
             }
 
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 5) {
-                projectile.frame++;
-                projectile.frameCounter = 0;
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 5)
+            {
+                Projectile.frame++;
+                Projectile.frameCounter = 0;
             }
-            if (projectile.frame >= 5) {
-                projectile.frame = 0;
+            if (Projectile.frame >= 5)
+            {
+                Projectile.frame = 0;
                 return;
             }
         }

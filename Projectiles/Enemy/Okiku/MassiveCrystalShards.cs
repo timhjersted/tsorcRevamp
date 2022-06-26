@@ -1,17 +1,20 @@
 ﻿using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Okiku {
-    class MassiveCrystalShards : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy.Okiku
+{
+    class MassiveCrystalShards : ModProjectile
+    {
         public override string Texture => "tsorcRevamp/Projectiles/Ice4Icicle";
-        public override void SetDefaults() {
-            projectile.width = 42;
-            projectile.height = 84;
-            projectile.aiStyle = 0;
-            projectile.hostile = true;
-            projectile.penetrate = 16;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 400;
+        public override void SetDefaults()
+        {
+            Projectile.width = 42;
+            Projectile.height = 84;
+            Projectile.aiStyle = 0;
+            Projectile.hostile = true;
+            Projectile.penetrate = 16;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 400;
         }
     }
 }

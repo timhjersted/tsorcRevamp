@@ -15,19 +15,20 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void SetDefaults()
         {
-            item.damage = 35;
-            item.width = 60;
-            item.height = 60;
-            item.knockBack = 6;
-            item.maxStack = 1;
-            item.melee = true;
-            item.scale = 1f;
-            item.useAnimation = 32;
-            item.rare = ItemRarityID.White;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 32;
-            item.value = 7000;
+            Item.damage = 35;
+            Item.width = 60;
+            Item.height = 60;
+            Item.knockBack = 6;
+            Item.maxStack = 1;
+            Item.DamageType = DamageClass.Melee;
+            Item.scale = 1f;
+            Item.useAnimation = 32;
+            Item.rare = ItemRarityID.White;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 32;
+            Item.value = 7000;
+            Item.shootSpeed = 2.7f;
         }
 
         public override bool AltFunctionUse(Player player)
@@ -40,18 +41,17 @@ namespace tsorcRevamp.Items.Weapons.Melee
             if (player.altFunctionUse == 2)
             {
 
-                item.useStyle = ItemUseStyleID.SwingThrow;
-                item.shoot = ProjectileID.None;
-                item.noMelee = false;
-                item.noUseGraphic = false;
+                Item.useStyle = ItemUseStyleID.Swing;
+                Item.shoot = ProjectileID.None;
+                Item.noMelee = false;
+                Item.noUseGraphic = false;
             }
             else
             {
-                item.noMelee = true;
-                item.noUseGraphic = true;
-                item.useStyle = ItemUseStyleID.HoldingOut;
-                item.shoot = ModContent.ProjectileType<Projectiles.OldHalberd>();
-                item.shootSpeed = 2.7f;
+                Item.noMelee = true;
+                Item.noUseGraphic = true;
+                Item.useStyle = ItemUseStyleID.Shoot;
+                Item.shoot = ModContent.ProjectileType<Projectiles.OldHalberd>();
             }
             return base.CanUseItem(player);
         }

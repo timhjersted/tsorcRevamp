@@ -1,28 +1,33 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Chat;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.BossItems {
-    class CursedSkull : ModItem {
+namespace tsorcRevamp.Items.BossItems
+{
+    class CursedSkull : ModItem
+    {
         public override string Texture => "tsorcRevamp/Items/BossItems/BloodySkull";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Summons Skeletron, the First of the Dead." +
                                 "\nYou must use this at the demon altar in the ancient temple ruins" +
                                 "\nBut be warned, this battle will not be easy..." +
                                 "\nItem is not consumed so you can retry the fight until victory.");
 
         }
-        public override void SetDefaults() {
-            item.width = 12;
-            item.height = 12;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useAnimation = 5;
-            item.useTime = 5;
+        public override void SetDefaults()
+        {
+            Item.width = 12;
+            Item.height = 12;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 5;
+            Item.useTime = 5;
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
 
             if (Main.netMode == NetmodeID.SinglePlayer)
@@ -31,10 +36,10 @@ namespace tsorcRevamp.Items.BossItems {
             }
             else if (Main.netMode == NetmodeID.Server)
             {
-                NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Skeletron has awoken!"), new Color(175, 75, 255));
+                ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("Skeletron has awoken!"), new Color(175, 75, 255));
             }
-            NPC.NewNPC((int)player.position.X - 1070, (int)player.position.Y - 150, NPCID.SkeletronHead, 0);
-            
+            NPC.NewNPC(player.GetSource_ItemUse(Item), (int)player.position.X - 1070, (int)player.position.Y - 150, NPCID.SkeletronHead, 0);
+
             return true;
 
         }
@@ -66,13 +71,13 @@ namespace tsorcRevamp.Items.BossItems {
                 }
             }
         }
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.Bone, 10);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1);
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.Bone, 10);            
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

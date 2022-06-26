@@ -1,9 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
-using Terraria.ID;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -13,38 +9,38 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetDefaults()
         {
-            projectile.hostile = true;
-            projectile.penetrate = -1;
-            projectile.width = 30;
-            projectile.height = 30;
-            projectile.alpha = 255; //invis
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 12;
+            Projectile.hostile = true;
+            Projectile.penetrate = -1;
+            Projectile.width = 30;
+            Projectile.height = 30;
+            Projectile.alpha = 255; //invis
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 12;
         }
 
         int difference;
         public override void AI()
         {
-            NPC owner = Main.npc[(int)projectile.ai[0]];
+            NPC owner = Main.npc[(int)Projectile.ai[0]];
 
-            if (projectile.ai[1] < 1)
+            if (Projectile.ai[1] < 1)
             {
-                ++projectile.ai[1];
-                difference = (int)projectile.Center.X - (int)owner.Center.X;
+                ++Projectile.ai[1];
+                difference = (int)Projectile.Center.X - (int)owner.Center.X;
             }
 
-            if (projectile.ai[1] >= 1)
+            if (Projectile.ai[1] >= 1)
             {
                 //Create a new Vector2 with length offsetDistance, and then rotate it toward the correct direction
                 //Add that to the npc's position
                 if (owner.direction == 1)
                 {
-                    projectile.position.X = owner.Center.X + difference - 10;
+                    Projectile.position.X = owner.Center.X + difference - 10;
                 }
                 else
                 {
-                    projectile.position.X = owner.Center.X - difference - 42;
+                    Projectile.position.X = owner.Center.X - difference - 42;
                 }
             }
         }

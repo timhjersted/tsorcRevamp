@@ -2,39 +2,42 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
+namespace tsorcRevamp.Items.Accessories
+{
     [AutoloadEquip(EquipType.HandsOn)]
 
-    public class BoneRing : ModItem {
-        public override void SetStaticDefaults() {
+    public class BoneRing : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("+8% Ranged damage" +
                                 "\n+8% Ranged critical strike chance");
         }
-        public override void DrawHands(ref bool drawHands, ref bool drawArms)
+        public override void SetDefaults()
         {
-            drawHands = true;
-        }
-        public override void SetDefaults() {
-            item.width = 24;
-            item.height = 22;
-            item.defense = 2;
-            item.accessory = true;
-            item.value = PriceByRarity.Green_2;
-            item.rare = ItemRarityID.Green;
+            Item.width = 24;
+            Item.height = 22;
+            Item.defense = 2;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Green_2;
+            Item.rare = ItemRarityID.Green;
+            ArmorIDs.Body.Sets.HidesHands[Item.handOnSlot] = true; //TODO maybe? something about "booleans in PlayerDrawSet" ?
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Bone, 30);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
 
-        public override void UpdateEquip(Player player) {
-            player.rangedDamage += 0.08f;
-            player.rangedCrit += 8;
+        public override void UpdateEquip(Player player)
+        {
+            player.GetDamage(DamageClass.Ranged) += 0.08f;
+            player.GetCritChance(DamageClass.Ranged) += 8;
         }
 
     }

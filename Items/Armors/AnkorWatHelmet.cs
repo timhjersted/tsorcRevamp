@@ -15,11 +15,11 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 12;
-            item.defense = 14;
-            item.value = 100000;
-            item.rare = ItemRarityID.Pink;
+            Item.width = 18;
+            Item.height = 12;
+            Item.defense = 14;
+            Item.value = 100000;
+            Item.rare = ItemRarityID.Pink;
         }
 
         public override void UpdateEquip(Player player)
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Armors
             return body.type == ModContent.ItemType<AnkorWatChestplate>() && legs.type == ModContent.ItemType<AnkorWatLeggings>();
         }
 
-       public override void UpdateArmorSet(Player player)
+        public override void UpdateArmorSet(Player player)
         {
             player.manaRegenBuff = true;
             player.statManaMax2 += 160;
@@ -46,20 +46,21 @@ namespace tsorcRevamp.Items.Armors
             Main.dust[dust].noGravity = true;
         }
 
-        public override void ArmorSetShadows (Player player){
+        public override void ArmorSetShadows(Player player)
+        {
 
             player.armorEffectDrawShadow = true;
-            
+
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedHeadgear, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            recipe.Register();
         }
     }
 }

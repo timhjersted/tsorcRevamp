@@ -14,30 +14,25 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void SetDefaults()
         {
-            item.width = 30;
-            item.height = 36;
-            item.defense = 7;
-            item.value = 27000;
-            item.rare = ItemRarityID.Blue;
+            Item.width = 30;
+            Item.height = 36;
+            Item.defense = 7;
+            Item.value = 27000;
+            Item.rare = ItemRarityID.Blue;
+            ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = true; //TODO maybe? 
         }
-
-        public override void DrawHands(ref bool drawHands, ref bool drawArms)
-        {
-            drawHands = true;
-        }
-
         public override void UpdateEquip(Player player)
         {
             player.manaCost -= 0.15f;
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Silk, 10);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 200);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 200);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

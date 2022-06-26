@@ -2,47 +2,51 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class Muramassa : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class Muramassa : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A sword crafted for magic users" +
                                "\nDeals +1 damage for every 20 mana the user has over 200" +
                                "\nCan be upgraded with 25,000 Dark Souls & 3 Souls of Light");
         }
 
-        public override void SetDefaults() {
-            item.width = 48;
-            item.height = 48;
-            item.useAnimation = 18;
-            item.useTime = 18;
-            item.damage = 12;
-            item.knockBack = 3;
-            item.autoReuse = true;
-            item.useTurn = true;
-            item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.Orange;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = PriceByRarity.Orange_3;
-            item.magic = true;
-            item.mana = 5;
-            item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();
-            item.shootSpeed = 11f;
+        public override void SetDefaults()
+        {
+            Item.width = 48;
+            Item.height = 48;
+            Item.useAnimation = 18;
+            Item.useTime = 18;
+            Item.damage = 12;
+            Item.knockBack = 3;
+            Item.autoReuse = true;
+            Item.useTurn = true;
+            Item.UseSound = SoundID.Item1;
+            Item.rare = ItemRarityID.Orange;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = PriceByRarity.Orange_3;
+            Item.DamageType = DamageClass.Magic;
+            Item.mana = 5;
+            Item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();
+            Item.shootSpeed = 11f;
         }
 
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Muramasa, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
-        }
 
-        public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat)
+            recipe.Register();
+        }
+        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
             if (player.statManaMax2 >= 200)
             {
-                flat += (player.statManaMax2 - 200) / 20;
+                damage.Flat += (player.statManaMax2 - 200) / 20;
             }
         }
     }

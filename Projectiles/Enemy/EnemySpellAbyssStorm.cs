@@ -1,6 +1,4 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,25 +7,25 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     class EnemySpellAbyssStorm : ModProjectile
     {
-		public override void SetStaticDefaults()
-		{
-            DisplayName.SetDefault("Dark Wave Storm");
-		}
-
-		public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
-            projectile.width = 194;
-            projectile.height = 194;
-            drawOriginOffsetX = -96;
-            drawOriginOffsetY = 94;
-            Main.projFrames[projectile.type] = 7;
-            projectile.hostile = true;
-            projectile.penetrate = 50;
-            projectile.scale = 2;
-            projectile.magic = true;
-            projectile.light = 1;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
+            DisplayName.SetDefault("Dark Wave Storm");
+        }
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 194;
+            Projectile.height = 194;
+            DrawOriginOffsetX = -96;
+            DrawOriginOffsetY = 94;
+            Main.projFrames[Projectile.type] = 7;
+            Projectile.hostile = true;
+            Projectile.penetrate = 50;
+            Projectile.scale = 2;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.light = 1;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
         }
 
         float size = 0;
@@ -44,9 +42,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 //Fade out after reaching max radius, and then despawn
                 dustCount /= 2;
-                if(dustCount <= 0)
+                if (dustCount <= 0)
                 {
-                    projectile.Kill();
+                    Projectile.Kill();
                     return;
                 }
             }
@@ -54,7 +52,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             for (int j = 0; j < dustCount; j++)
             {
                 Vector2 dir = Main.rand.NextVector2CircularEdge(size, size);
-                Vector2 dustPos = projectile.Center + dir;
+                Vector2 dustPos = Projectile.Center + dir;
                 dir.Normalize();
                 Vector2 dustVel = dir;
                 Dust.NewDustPerfect(dustPos, DustID.BlueCrystalShard, dustVel, 200).noGravity = true;
@@ -75,7 +73,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             return false;
         }

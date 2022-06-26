@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -16,32 +15,32 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void SetDefaults()
         {
-            projectile.aiStyle = 23;
-            projectile.hostile = true;
-            projectile.height = 28;
-            projectile.width = 28;
-            projectile.light = 1;
-            projectile.magic = true;
-            projectile.penetrate = 10;
-            projectile.scale = 1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 300;
-            projectile.width = 28;
-            projectile.alpha = 255;
+            Projectile.aiStyle = 23;
+            Projectile.hostile = true;
+            Projectile.height = 28;
+            Projectile.width = 28;
+            Projectile.light = 1;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.penetrate = 10;
+            Projectile.scale = 1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 300;
+            Projectile.width = 28;
+            Projectile.alpha = 255;
         }
 
         public override bool PreAI()
         {
-            projectile.ai[1]++;
+            Projectile.ai[1]++;
 
-            if (projectile.ai[1] > 3)
+            if (Projectile.ai[1] > 3)
             {
-                int dust = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, DustID.CursedTorch, projectile.velocity.X * 2f, projectile.velocity.Y * 2f, 70, default(Color), Main.rand.NextFloat(2.5f, 4f));
+                int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.CursedTorch, Projectile.velocity.X * 2f, Projectile.velocity.Y * 2f, 70, default(Color), Main.rand.NextFloat(2.5f, 4f));
                 Main.dust[dust].noGravity = true;
             }
 
             return false;
-            
+
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)

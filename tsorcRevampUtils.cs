@@ -2,117 +2,141 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using Terraria;
+using Terraria.Chat;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp {
+namespace tsorcRevamp
+{
 
     //using static tsorcRevamp.SpawnHelper;
-    public static class SpawnHelper {
+    public static class SpawnHelper
+    {
 
         //undergroundJungle, undergroundEvil, and undergroundHoly are deliberately missing. call Cavern && p.zone instead.
 
-        public static bool Cavern(Player p) { //if youre calling Cavern without a p.zone check, also call NoSpecialBiome
+        public static bool Cavern(Player p)
+        { //if youre calling Cavern without a p.zone check, also call NoSpecialBiome
             return p.position.Y >= Main.rockLayer && p.position.Y <= Main.rockLayer * 25;
         }
 
-        public static bool NoSpecialBiome(Player p) {
-            return (!p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson && !p.ZoneHoly && !p.ZoneMeteor && !p.ZoneDungeon);
+        public static bool NoSpecialBiome(Player p)
+        {
+            return (!p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson && !p.ZoneHallow && !p.ZoneMeteor && !p.ZoneDungeon);
         }
 
-        public static bool Sky(Player p) { //p.ZoneSkyHeight is more restrictive than this, so use this if an enemy uses it
+        public static bool Sky(Player p)
+        { //p.ZoneSkyHeight is more restrictive than this, so use this if an enemy uses it
             return p.position.Y < Main.worldSurface * 0.44999998807907104;
         }
 
-        public static bool Surface(Player p) {
+        public static bool Surface(Player p)
+        {
             return !Sky(p) && (p.position.Y < Main.worldSurface); //dont need to check nospecialbiome here since we're already calling Sky
         }
 
-        public static bool Underground(Player p) {
+        public static bool Underground(Player p)
+        {
             return Main.worldSurface > p.position.Y && p.position.Y < Main.rockLayer;
-        } 
+        }
 
-        public static bool Underworld(Player p) {
+        public static bool Underworld(Player p)
+        {
             int playerYTile = (int)(p.Bottom.Y + 8f) / 16;
             return playerYTile > Main.maxTilesY - 190;
         }
     }
 
     //using static tsorcRevamp.oSpawnHelper;
-    public static class oSpawnHelper { 
+    public static class oSpawnHelper
+    {
 
-        public static bool oCavern(Player p) {
+        public static bool oCavern(Player p)
+        {
             return (p.position.Y >= (Main.rockLayer * 17)) && (p.position.Y < (Main.rockLayer * 24));
         }
 
-        public static bool oCavernByTile(Player p) {
+        public static bool oCavernByTile(Player p)
+        {
             int playerYTile = (int)(p.Bottom.Y + 8f) / 16;
             return playerYTile >= (Main.maxTilesY * 0.4f) && playerYTile < (Main.maxTilesY * 0.6f);
         }
 
-        public static bool oMagmaCavern(Player p) {
+        public static bool oMagmaCavern(Player p)
+        {
             return (p.position.Y >= (Main.rockLayer * 24)) && (p.position.Y < (Main.rockLayer * 32));
         }
 
-        public static bool oMagmaCavernByTile(Player p) {
+        public static bool oMagmaCavernByTile(Player p)
+        {
             int playerYTile = (int)(p.Bottom.Y + 8f) / 16;
             return playerYTile >= (Main.maxTilesY * 0.6f) && playerYTile < (Main.maxTilesY * 0.8f);
         }
 
-        public static bool oSky(Player p) {
+        public static bool oSky(Player p)
+        {
             return p.position.Y <= Main.rockLayer * 4;
         }
 
-        public static bool oSkyByTile(Player p) {
+        public static bool oSkyByTile(Player p)
+        {
             int playerYTile = (int)(p.Bottom.Y + 8f) / 16;
             return playerYTile < (Main.maxTilesY * 0.1f);
         }
 
-        public static bool oSurface(Player p) {
+        public static bool oSurface(Player p)
+        {
             return !p.ZoneSkyHeight && (p.position.Y <= Main.worldSurface);
         }
 
-        public static bool oUnderground(Player p) {
+        public static bool oUnderground(Player p)
+        {
             return (p.position.Y >= (Main.rockLayer * 13)) && (p.position.Y < (Main.rockLayer * 17));
         }
 
-        public static bool oUndergroundByTile(Player p) {
+        public static bool oUndergroundByTile(Player p)
+        {
             int playerYTile = (int)(p.Bottom.Y + 8f) / 16;
             return playerYTile >= (Main.maxTilesY * 0.3f) && playerYTile < (Main.maxTilesY * 0.4f);
         }
 
-        public static bool oUnderSurface(Player p) {
+        public static bool oUnderSurface(Player p)
+        {
             return (p.position.Y > (Main.rockLayer * 8)) && (p.position.Y < (Main.rockLayer * 13));
         }
 
-        public static bool oUnderSurfaceByTile(Player p) {
+        public static bool oUnderSurfaceByTile(Player p)
+        {
             int playerYTile = (int)(p.Bottom.Y + 8f) / 16;
             return (playerYTile >= (Main.maxTilesY * 0.2f) && playerYTile < (Main.maxTilesY * 0.3f));
         }
 
-        public static bool oUnderworld(Player p) {
+        public static bool oUnderworld(Player p)
+        {
             return p.position.Y >= (Main.rockLayer * 32);
         }
 
-        public static bool oUnderworldByHeight(Player p) {
+        public static bool oUnderworldByHeight(Player p)
+        {
             int playerYTile = (int)(p.Bottom.Y + 8f) / 16;
             return (playerYTile >= (Main.maxTilesY * 0.8f));
         }
     }
 
-    public static class VariousConstants {
+    public static class VariousConstants
+    {
         public const int CUSTOM_MAP_WORLD_ID = 44874972;
-        public const string MUSIC_MOD_URL = "https://github.com/timhjersted/tsorcDownload/raw/main/tsorcMusic.tmod";
-        public const string MAP_URL = "https://github.com/timhjersted/tsorcDownload/raw/main/the-story-of-red-cloud.wld";
-        public const string CHANGELOG_URL = "https://raw.githubusercontent.com/timhjersted/tsorcDownload/main/changelog.txt";
+        public const string MUSIC_MOD_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4/tsorcMusic.tmod";
+        public const string MAP_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4/the-story-of-red-cloud.wld";
+        public const string CHANGELOG_URL = "https://raw.githubusercontent.com/timhjersted/tsorcDownload/1.4/changelog.txt";
     }
 
-    public static class PriceByRarity { 
-        
+    public static class PriceByRarity
+    {
+
         //minimal exploration. pre-hardmode ores. likely no items that craft from souls will use this
         public static readonly int White_0 = Item.buyPrice(platinum: 0, gold: 0, silver: 40, copper: 0);
 
@@ -136,16 +160,16 @@ namespace tsorcRevamp {
 
         //plantera, golem, chlorophyte
         public static readonly int Lime_7 = Item.buyPrice(platinum: 0, gold: 47, silver: 50, copper: 0);
-        
+
         //post-plantera dungeon, martian madness, pumpkin/frost moon
         public static readonly int Yellow_8 = Item.buyPrice(platinum: 0, gold: 55, silver: 0, copper: 0);
-        
+
         //lunar fragments, dev armor. seldom used in vanilla
         public static readonly int Cyan_9 = Item.buyPrice(platinum: 0, gold: 67, silver: 50, copper: 0);
-        
+
         //luminite, lunar fragment gear, moon lord drops
         public static readonly int Red_10 = Item.buyPrice(platinum: 0, gold: 80, silver: 0, copper: 0);
-        
+
         //no vanilla items have purple rarity base. only cyan and red with modifiers can be purple. im guessing on the price.
         public static readonly int Purple_11 = Item.buyPrice(platinum: 1, gold: 20, silver: 0, copper: 0);
 
@@ -155,6 +179,80 @@ namespace tsorcRevamp {
 
     public static class UsefulFunctions
     {
+        ///<summary> 
+        ///Gets the coordinates of the first solid thing a line fired in a certain direction will hit
+        ///Counts both tiles and NPCs as solid
+        ///Returns null if no collision
+        ///This could be a lot faster and more accurate if necessary by simply bifurcating the distance repeatedly until the exact collision point is found
+        ///That probably isn't necessary unless there's something that needs to run this every tick
+        ///</summary>         
+        ///<param name="start">The start of the vector</param>
+        ///<param name="direction">The direction it's aiming in</param>
+        ///<param name="maxDistance">How far to search for</param>
+        ///<param name="ignoreFriendly">Ignore town NPCs in collision checks</param>
+        public static Vector2 GetFirstCollision(Vector2 start, Vector2 direction, float maxDistance = 5000f, bool ignoreFriendly = false)
+        {
+            direction.Normalize();
+            Vector2 unitVector = direction;
+            direction *= 10;
+
+            Vector2 currentPosition = direction * maxDistance / 10;
+            for (float distance = 0; distance <= maxDistance / 10f; distance += 1f)
+            {
+                currentPosition = start + (direction * distance);
+
+                if (!Collision.CanHit(start, 1, 1, currentPosition, 1, 1) && !Collision.CanHitLine(start, 1, 1, currentPosition, 1, 1))
+                {
+                    distance -= 5f;
+                    break;
+                }
+            }
+
+            float closestCollision = maxDistance;
+            for(int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i] == null || Main.npc[i].active == false)
+                {
+                    continue;
+                }
+                if (ignoreFriendly && Main.npc[i].friendly) { continue; }
+                else
+                {
+                    NPC npc = Main.npc[i];
+                    float collision = maxDistance;
+
+                    //Expand the enemy hitbox slightly to increase consistency
+                    Vector2 adjustedPosition = npc.position;
+                    Vector2 adjustedSize = npc.Size;
+                    adjustedSize *= 1.5f;
+                    adjustedPosition -= (adjustedSize - npc.Size) / 2;
+                    if(Collision.CheckAABBvLineCollision(adjustedPosition, adjustedSize, start, currentPosition, 32, ref collision)){
+                        if(collision < closestCollision)
+                        {
+                            closestCollision = collision;
+                        }
+                    }
+                }
+            }
+
+            if(closestCollision < (start - currentPosition).Length())
+            {
+                currentPosition = start + (unitVector * closestCollision);
+            }
+
+            return currentPosition;
+        }
+
+        ///<summary> 
+        ///Modifies a float between 0 and 1, and returns a 'softened' value between 0 and one calculated via the easing curve sin(x * pi/2)
+        ///Useful for making smoother looking motion
+        ///</summary>         
+        ///<param name="source">A float between 0 and 1</param>
+        public static float EasingCurve(float source)
+        {
+            return (float)Math.Sin(source * MathHelper.PiOver2);
+        }
+
         ///<summary> 
         ///Returns a vector pointing from a source, to a target, with a speed.
         ///Simplifies basic projectile, enemy dash, etc aiming calculations to a single call.
@@ -167,7 +265,7 @@ namespace tsorcRevamp {
         {
             Vector2 distance = target - source;
             distance.Normalize();
-            return distance * speed;            
+            return distance * speed;
         }
 
         ///<summary> 
@@ -229,7 +327,7 @@ namespace tsorcRevamp {
         ///<param name="spriteBatch">The currently open SpriteBatch</param>
         ///<param name="projectile">The projectile to be drawn</param>
         ///<param name="texture">An empty static Texture2D variable that this function can use to cache the projectile's texture.</param>
-        public static void DrawSimpleLitProjectile(SpriteBatch spriteBatch, Projectile projectile, ref Texture2D texture)
+        public static void DrawSimpleLitProjectile(Projectile projectile, ref Texture2D texture)
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (projectile.spriteDirection == -1)
@@ -237,18 +335,18 @@ namespace tsorcRevamp {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
 
-            if(texture == null || texture.IsDisposed)
+            if (texture == null || texture.IsDisposed)
             {
-                texture = ModContent.GetTexture(projectile.modProjectile.Texture);
+                texture = (Texture2D)ModContent.Request<Texture2D>(projectile.ModProjectile.Texture);
             }
 
-            int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
+            int frameHeight = texture.Height / Main.projFrames[projectile.type];
             int startY = frameHeight * projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;
-            Main.spriteBatch.Draw(texture,
+            Main.EntitySpriteDraw(texture,
                 projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
-                sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+                sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0);
         }
 
         ///<summary> 
@@ -282,7 +380,7 @@ namespace tsorcRevamp {
             float xTerm = ((point.X - center.X) * (point.X - center.X)) / (width * width);
             float yTerm = ((point.Y - center.Y) * (point.Y - center.Y)) / (height * height);
 
-            if(xTerm + yTerm < 1)
+            if (xTerm + yTerm < 1)
             {
                 return true;
             }
@@ -316,15 +414,15 @@ namespace tsorcRevamp {
         {
             if (Main.netMode == NetmodeID.Server)
             {
-                NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), color);
+                ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), color);
             }
-            if(Main.netMode == NetmodeID.SinglePlayer)
+            if (Main.netMode == NetmodeID.SinglePlayer)
             {
                 Main.NewText(text, color);
             }
         }
 
-        
+
         ///<summary> 
         ///Gets the first npc of a given type. Basically NPC.AnyNPC, except it actually returns what it finds.
         ///Uses nullable ints, aka "int?". Will return null if it can't find one.
@@ -339,10 +437,10 @@ namespace tsorcRevamp {
                     return i;
                 }
             }
-            
-            return null;            
+
+            return null;
         }
-        
+
         ///<summary> 
         ///Gets the closest Enemy NPC to a given point. Returns that NPC's whoami.
         ///Uses nullable ints, will return null if it can't find one (like in the rare but possible situation where there *are* no NPCs). You've been warned!
@@ -376,12 +474,12 @@ namespace tsorcRevamp {
         ///<param name="tilePos">The coordinates of the tile</param>
         public static bool IsTileReallySolid(Vector2 tilePos)
         {
-            if (Main.tile.GetUpperBound(0) > tilePos.X && Main.tile.GetUpperBound(1) > tilePos.Y)
+            if (Main.tile.Width > tilePos.X && Main.tile.Height > tilePos.Y)
             {
-                Tile thisTile = Main.tile[(int)tilePos.X, (int)tilePos.Y];                
+                Tile thisTile = Main.tile[(int)tilePos.X, (int)tilePos.Y];
 
                 //null = tile is not instantiated at all (yes, that is possible) | active = tile is not air | inActive = actuated | Main.tileSolid = is it solid
-                if (thisTile != null && thisTile.active() && !thisTile.inActive() && Main.tileSolid[thisTile.type])
+                if (thisTile != null && thisTile.HasTile && !thisTile.IsActuated && Main.tileSolid[thisTile.TileType])
                 {
                     return true;
                 }
@@ -399,12 +497,11 @@ namespace tsorcRevamp {
         ///<param name="Y">The Y coordinate of the tile</param>
         public static bool IsTileReallySolid(int X, int Y)
         {
-            if (Main.tile.GetUpperBound(0) > X && Main.tile.GetUpperBound(1) > Y)
+            if (Main.tile.Width > X && Main.tile.Height > Y)
             {
                 Tile thisTile = Main.tile[X, Y];
 
-                //null = tile is not instantiated at all (yes, that is possible) | active = tile is not air | inActive = actuated | Main.tileSolid = is it solid
-                if (thisTile != null && thisTile.active() && !thisTile.inActive() && Main.tileSolid[thisTile.type])
+                if (thisTile.HasTile && !thisTile.IsActuated && Main.tileSolid[thisTile.TileType])
                 {
                     return true;
                 }
@@ -422,35 +519,42 @@ namespace tsorcRevamp {
         ///<param name="rotateTowards">Should the projectile maintain topSpeed speed and rotate towards targets, instead of standard homing?</param>
         ///<param name="homingStrength">The homing strength coefficient. Unused if rotateTowards.</param>
         ///<param name="needsLineOfSight">Does the projectile need line of sight to home on a target?</param>
-        public static void HomeOnEnemy(Projectile projectile, float homingRadius, float topSpeed, bool rotateTowards = false, float homingStrength = 1f, bool needsLineOfSight = false) {
+        public static void HomeOnEnemy(Projectile projectile, float homingRadius, float topSpeed, bool rotateTowards = false, float homingStrength = 1f, bool needsLineOfSight = false)
+        {
             if (!projectile.active || !projectile.friendly) return;
             const int BASE_STRENGTH = 30;
 
             Vector2 targetLocation = Vector2.UnitY;
             bool foundTarget = false;
 
-            for (int i = 0; i < 200; i++) {
+            for (int i = 0; i < 200; i++)
+            {
                 if (!Main.npc[i].active) continue;
                 float toNPCEdge = (Main.npc[i].width / 2) + (Main.npc[i].height / 2); //make homing on larger targets more consistent
 
                 //WithinRange is just faster Distance (skips sqrt)
-                if (Main.npc[i].CanBeChasedBy(projectile) && projectile.WithinRange(Main.npc[i].Center, homingRadius + toNPCEdge) && (!needsLineOfSight || Collision.CanHitLine(projectile.Center, 1, 1, Main.npc[i].Center, 1, 1))) {
+                if (Main.npc[i].CanBeChasedBy(projectile) && projectile.WithinRange(Main.npc[i].Center, homingRadius + toNPCEdge) && (!needsLineOfSight || Collision.CanHitLine(projectile.Center, 1, 1, Main.npc[i].Center, 1, 1)))
+                {
                     targetLocation = Main.npc[i].Center;
                     foundTarget = true;
                     break;
                 }
             }
 
-            if (foundTarget) {
+            if (foundTarget)
+            {
                 Vector2 homingDirection = Vector2.Normalize(targetLocation - projectile.Center);
                 projectile.velocity = (projectile.velocity * (BASE_STRENGTH / homingStrength) + homingDirection * topSpeed) / ((BASE_STRENGTH / homingStrength) + 1);
             }
-            if (rotateTowards) {
-                if (projectile.velocity.Length() < topSpeed) {
+            if (rotateTowards)
+            {
+                if (projectile.velocity.Length() < topSpeed)
+                {
                     projectile.velocity *= topSpeed / projectile.velocity.Length();
                 }
             }
-            if (projectile.velocity.Length() > topSpeed) {
+            if (projectile.velocity.Length() > topSpeed)
+            {
                 projectile.velocity *= topSpeed / projectile.velocity.Length();
             }
         }
@@ -466,8 +570,8 @@ namespace tsorcRevamp {
         ///<param name="includeThesePlayers">If it should only drop for specific players, pass a list of them here</param>
         public static void NewItemInstanced(Vector2 Position, Vector2 HitboxSize, int itemType, int itemStack = 1, List<int> includeThesePlayers = null)
         {
-            int dummyItemIndex = Item.NewItem(Position, HitboxSize, itemType, itemStack, true, 0, false, false);
-            Main.itemLockoutTime[dummyItemIndex] = 54000;
+            int dummyItemIndex = Item.NewItem(new Terraria.DataStructures.EntitySource_Misc("¯\\_(ツ)_/¯"), Position, HitboxSize, itemType, itemStack, true, 0, false, false);
+            Main.timeItemSlotCannotBeReusedFor[dummyItemIndex] = 54000;
             if (Main.netMode != NetmodeID.SinglePlayer)
             {
                 for (int i = 0; i < Main.maxPlayers; i++)
@@ -510,7 +614,7 @@ namespace tsorcRevamp {
         public static double CompareAngles(Vector2 firstVector, Vector2 secondVector)
         {
             double a1 = firstVector.ToRotation();
-            if(a1 < 0)
+            if (a1 < 0)
             {
                 a1 = MathHelper.TwoPi + a1;
             }
@@ -526,7 +630,7 @@ namespace tsorcRevamp {
             //The largest angle between two points on a circle should be Pi radians at most
             //If comparing them clockwise resulted in a bigger number, then compare them counterclockwise
             //Also shift them both over by a quadrant to avoid comparing across the 0/TwoPi breakpoint
-            if(Math.Abs(c) > MathHelper.Pi)
+            if (Math.Abs(c) > MathHelper.Pi)
             {
                 a1 += MathHelper.PiOver2;
                 a2 += MathHelper.PiOver2;
@@ -547,7 +651,8 @@ namespace tsorcRevamp {
         /// <summary>
         /// No more fall damage from teleports!
         /// </summary>
-        public static void SafeTeleport(this Player player, Vector2 destination) {
+        public static void SafeTeleport(this Player player, Vector2 destination)
+        {
             player.position.X = destination.X;
             player.position.Y = destination.Y;
             player.gravDir = 1;
@@ -607,7 +712,7 @@ namespace tsorcRevamp {
             //private, will be public in 1.4, together with StartRain (which has random duration)
             if (Main.cloudBGActive >= 1f || Main.numClouds > 150)
             {
-                if (Main.rand.Next(3) == 0)
+                if (Main.rand.NextBool(3))
                 {
                     Main.maxRaining = Main.rand.Next(20, 90) * 0.01f;
                 }
@@ -618,7 +723,7 @@ namespace tsorcRevamp {
             }
             else if (Main.numClouds > 100)
             {
-                if (Main.rand.Next(3) == 0)
+                if (Main.rand.NextBool(3))
                 {
                     Main.maxRaining = Main.rand.Next(10, 70) * 0.01f;
                 }
@@ -627,7 +732,7 @@ namespace tsorcRevamp {
                     Main.maxRaining = Main.rand.Next(20, 60) * 0.01f;
                 }
             }
-            else if (Main.rand.Next(3) == 0)
+            else if (Main.rand.NextBool(3))
             {
                 Main.maxRaining = Main.rand.Next(5, 40) * 0.01f;
             }
@@ -641,8 +746,30 @@ namespace tsorcRevamp {
         /// Returns the character's position from (pos + 1) frames ago. Direct array access, beware out of bounds access
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 OldPos(this Player player, int pos) {
+        public static Vector2 OldPos(this Player player, int pos)
+        {
             return player.GetModPlayer<tsorcRevampPlayer>().oldPos[pos];
         }
+
+        public static Texture2D Crop(Texture2D image, Rectangle source) {
+            Texture2D croppedImage = new Texture2D(image.GraphicsDevice, source.Width, source.Height);
+
+            Color[] imageData = new Color[image.Width * image.Height];
+            Color[] cropData = new Color[source.Width * source.Height];
+
+            image.GetData<Color>(imageData);
+
+            int index = 0;
+
+            for (int y = source.Y; y < source.Height; y++) {
+                for (int x = source.X; x < source.Width; x++) {
+                    cropData[index] = imageData[y * image.Width + x];
+                    index++;
+                }
+            }
+            croppedImage.SetData<Color>(cropData);
+            return croppedImage;
+        }
+
     }
 }
