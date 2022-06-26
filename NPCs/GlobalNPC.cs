@@ -239,7 +239,7 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff || bossAlive || player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()));
+            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff || bossAlive || player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()))
             {
                 maxSpawns = 0;
             }
