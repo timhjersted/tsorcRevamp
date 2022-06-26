@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent.UI.Elements;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 
@@ -71,6 +72,8 @@ namespace tsorcRevamp.UI
         {
             bool valid = false;
             if (item.type == ModContent.ItemType<Items.PotionBag>()) return false;
+            if (item.buffType == BuffID.WellFed || item.buffType == BuffID.WellFed2 || item.buffType == BuffID.WellFed3)
+                valid = true;
             if (Items.tsorcGlobalItem.potionList.Contains(item.type))
             {
                 valid = true;
