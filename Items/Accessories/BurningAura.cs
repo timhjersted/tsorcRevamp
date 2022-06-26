@@ -50,12 +50,9 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void UpdateVanity(Player player)
         {
-            for (int j = 0; j < 5; j++)
-            {
-                Vector2 dir = Main.rand.NextVector2CircularEdge(45, 45);
-                Vector2 dustPos = player.Center + dir;
-                Dust.NewDustPerfect(dustPos, DustID.InfernoFork, player.velocity, 200, Scale: 0.65f).noGravity = true;
-            }
+            Vector2 dir = Main.rand.NextVector2CircularEdge(60, 60);
+            Vector2 dustPos = player.Center + dir;
+            Dust.NewDustPerfect(dustPos, DustID.InfernoFork, player.velocity, 200, Scale: 0.65f).noGravity = true;
         }
 
     }
