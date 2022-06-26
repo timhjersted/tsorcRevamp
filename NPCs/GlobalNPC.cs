@@ -281,7 +281,7 @@ namespace tsorcRevamp.NPCs
 
         public override void OnKill(NPC npc)
         {
-            if(npc.type == NPCID.Golem)
+            if(npc.type == NPCID.Golem && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 UsefulFunctions.BroadcastText("Somewhere in the sky, a forcefield collapses...", Color.Cyan);
             }
