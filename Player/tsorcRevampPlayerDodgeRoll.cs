@@ -376,6 +376,7 @@ namespace tsorcRevamp
                 : Math.Max(-MathHelper.Pi * 2f, MathHelper.Lerp(dodgeStartRot, -MathHelper.TwoPi, dodgeTime / (DodgeTimeMax * 1f)));
             //Progress the dodgeroll
             dodgeTime += 1f / 60f;
+            Player.immune = true;
 
             if (dodgeTime >= DodgeTimeMax * 0.6f)
             {
@@ -392,6 +393,14 @@ namespace tsorcRevamp
             {
                 Player.runAcceleration = 0f;
             }
+        }
+
+        public override bool CanBeHitByNPC(NPC npc, ref int cooldownSlot) {
+            return !isDodging;
+        }
+
+        public override bool CanBeHitByProjectile(Projectile proj) {
+            return !isDodging;
         }
     }
 }
