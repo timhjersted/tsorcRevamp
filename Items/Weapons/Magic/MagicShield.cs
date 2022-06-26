@@ -4,13 +4,13 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
-    public class FogTome : ModItem
+    public class MagicShield : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fog Tome");
+            DisplayName.SetDefault("Magic Shield");
             Tooltip.SetDefault("A lost beginner's tome\n" +
-                                "Casts Fog on the player, raising defense by 8 for 15 seconds" +
+                                "Casts magic aura on the player, raising defense by 8 for 15 seconds" +
                                 "\nDoes not stack with Barrier, Wall or Shield spells");
 
         }
