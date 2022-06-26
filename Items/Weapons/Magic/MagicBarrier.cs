@@ -4,11 +4,11 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
-    public class BarrierTome : ModItem
+    public class MagicBarrier : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Barrier Tome");
+            DisplayName.SetDefault("Magic Barrier");
             Tooltip.SetDefault("A lost tome for artisans\n" +
                                 "Casts Barrier on the user, which adds 20 defense for 20 seconds\n" +
                                 "\nDoes not stack with Fog, Wall or Shield spells");
