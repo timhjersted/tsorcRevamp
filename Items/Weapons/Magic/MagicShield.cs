@@ -4,11 +4,11 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
-    public class ShieldTome : ModItem
+    public class magicshield : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shield Tome");
+            DisplayName.SetDefault("Magic Shield");
             Tooltip.SetDefault("A lost legendary tome\n" +
                                 "Casts Shield on the player, raising defense by 62 for 30 seconds\n" +
                                 "Does not stack with Fog, Barrier or Wall spells");
