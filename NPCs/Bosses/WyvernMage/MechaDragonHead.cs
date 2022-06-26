@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             NPC.timeLeft = 22750;
             NPC.damage = 90;
             NPC.defense = 10;
-            NPC.HitSound = SoundID.NPCHit4;
+            NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath10;
             NPC.lifeMax = 91000;
             NPC.knockBackResist = 0f;
