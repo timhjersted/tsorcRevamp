@@ -238,6 +238,20 @@ namespace tsorcRevamp
 
         public override void PreUpdate()
         {
+            bool bossAlive = false;
+
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i] != null && Main.npc[i].active && Main.npc[i].boss)
+                {
+                    bossAlive = true;
+                    break;
+                }
+            }
+            if (bossAlive)
+            {
+                Player.AddBuff(ModContent.BuffType<Buffs.BossZenBuff>(), 5);
+            }
             if (TextCooldown > 0)
             {
                 TextCooldown--;

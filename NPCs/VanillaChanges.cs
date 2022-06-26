@@ -3330,19 +3330,23 @@ namespace tsorcRevamp.NPCs
                                     Vector2 translationOffset = new Vector2(3, 0).RotatedBy(laserRotation) * (destroyerChargeTimer % 290 - 1);
 
                                     Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
-                                    foreach (Vector2 intersection in intersections)
+
+                                    if (Main.netMode != NetmodeID.MultiplayerClient)
                                     {
-                                        if (screenRect.Contains(intersection.ToPoint()) && Vector2.DistanceSquared(intersection + translationOffset, Main.player[npc.target].Center) < 250000)
+                                        foreach (Vector2 intersection in intersections)
                                         {
-                                            for (int i = 0; i < 5; i++)
+                                            if (screenRect.Contains(intersection.ToPoint()) && Vector2.DistanceSquared(intersection + translationOffset, Main.player[npc.target].Center) < 250000)
                                             {
-                                                Vector2 circularOffset = Main.rand.NextVector2CircularEdge(1, 1);
-                                                circularOffset.Normalize();
-                                                Vector2 velocity = new Vector2(0, 3).RotatedBy(laserRotation);
-                                                circularOffset *= (150 - (destroyerChargeTimer % 290));
+                                                for (int i = 0; i < 5; i++)
+                                                {
+                                                    Vector2 circularOffset = Main.rand.NextVector2CircularEdge(1, 1);
+                                                    circularOffset.Normalize();
+                                                    Vector2 velocity = new Vector2(0, 3).RotatedBy(laserRotation);
+                                                    circularOffset *= (150 - (destroyerChargeTimer % 290));
 
 
-                                                Dust.NewDustPerfect(intersection + circularOffset + translationOffset, DustID.OrangeTorch, velocity, Scale: 1).noGravity = true;
+                                                    Dust.NewDustPerfect(intersection + circularOffset + translationOffset, DustID.OrangeTorch, velocity, Scale: 1).noGravity = true;
+                                                }
                                             }
                                         }
                                     }

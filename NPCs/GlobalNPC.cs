@@ -227,8 +227,19 @@ namespace tsorcRevamp.NPCs
                 spawnRate = (int)(spawnRate * 0.8f);
                 maxSpawns = (int)(maxSpawns * 0.8f);
             }
+            bool bossAlive = false;
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff)
+            //This might look expensive but it's really not, since there are rarely a significant number of NPCs in the array at once
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i] != null && Main.npc[i].active && Main.npc[i].boss)
+                {
+                    bossAlive = true;
+                    break;
+                }
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff || bossAlive || player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()));
             {
                 maxSpawns = 0;
             }
