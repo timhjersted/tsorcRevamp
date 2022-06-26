@@ -17,7 +17,6 @@ namespace tsorcRevamp.Items
                                "\nYou deal +20% damage, receive +20% more souls and your stamina recovers much faster" +
                                "\nHowever, using weapons drains stamina, life regen is halved while stamina isn't at max," +
                                "\nand each time you die you lose 20 of your max HP (doesn't drop lower than 200)" +
-                               "\nYou can still teleport to bonfires, but must stand near one yourself to do so" +
                                "\nShine potions have no effect, you'll have to make use of other sources of light" +
                                "\nGreater Magic Mirror use is inhibited; the Village Mirror will only" +
                                "\ntake you to the village. Additionally, instant-heal items won't heal you" +
@@ -40,7 +39,7 @@ namespace tsorcRevamp.Items
             Item.maxStack = 1;
             Item.value = 1;
             Item.consumable = false;
-            Item.useAnimation = 60; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
+            Item.useAnimation = 60;
             Item.useTime = 60;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.noUseGraphic = true;
