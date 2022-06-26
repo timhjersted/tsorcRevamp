@@ -3153,10 +3153,10 @@ namespace tsorcRevamp.NPCs
                     }
 
 
-                    if (Main.GameUpdateCount % 60 == 0 && (destroyerAttackIndex == 0 || destroyerAttackIndex == 2))
+                    if (Main.GameUpdateCount % 150 == 0 && (destroyerAttackIndex == 0 || destroyerAttackIndex == 2))
                     {
                         Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
-                        if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4)
+                        if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.Pi / 6f && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.Pi / 6f)
                         {
                             Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, 1000 + npc.target, npc.whoAmI);
                         }
@@ -3364,7 +3364,20 @@ namespace tsorcRevamp.NPCs
                             }
                             if (Main.GameUpdateCount % 60 == 0)
                             {
-                                destroyerLaserSafeAngle = Main.rand.NextVector2Circular(1, 1);
+                                Vector2 sum = Vector2.Zero;
+                                float count = 0;
+                                for(int i = 0; i < Main.maxNPCs; i++)
+                                {
+                                    NPC thisNPC = Main.npc[i];
+                                    if(thisNPC.type == NPCID.TheDestroyerBody)
+                                    {
+                                        sum += UsefulFunctions.GenerateTargetingVector(thisNPC.Center, Main.player[npc.target].Center, 5);
+                                        count++;
+                                    }
+                                }
+
+                                sum /= count;
+                                destroyerLaserSafeAngle = sum.RotatedBy(MathHelper.PiOver2);
                             }
                         }
                     }

@@ -4,6 +4,7 @@ using On.Terraria.Utilities;
 using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Terraria;
@@ -278,24 +279,48 @@ namespace tsorcRevamp
         private static void DrawProjectilesPatch(On.Terraria.Main.orig_DrawProjectiles orig, Main self)
         {
             orig(self);
-
+            
             //Draw all the additive lasers in one big batch
-            Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            List<EnemyGenericLaser> LaserList = new List<EnemyGenericLaser>();
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 if (Main.projectile[i] != null && Main.projectile[i].active && Main.projectile[i].ModProjectile is EnemyGenericLaser)
                 {
                     EnemyGenericLaser laser = (EnemyGenericLaser)Main.projectile[i].ModProjectile;
-                    laser.AdditiveContext = true;
-                    if ((laser.IsAtMaxCharge && laser.TargetingMode == 0) || (laser.TargetingMode == 2))
+
+                    if (laser.Additive && ((laser.IsAtMaxCharge && laser.TargetingMode == 0) || (laser.TargetingMode == 2)))
                     {
-                        Color color = Lighting.GetColor((int)laser.Projectile.Center.X / 16, (int)(laser.Projectile.Center.Y / 16f));
-                        laser.PreDraw(ref color);
+                        LaserList.Add(laser);
                     }
-                    laser.AdditiveContext = false;
+                    else
+                    {
+                        Color c = Color.White;
+                        laser.PreDraw(ref c);
+
+                    }
                 }
             }
             Main.spriteBatch.End();
+
+
+            if (LaserList.Count > 0)
+            {
+                Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+                for (int i = 0; i < LaserList.Count; i++)
+                {
+                    LaserList[i].AdditiveContext = true;
+                    Color color = Lighting.GetColor((int)LaserList[i].Projectile.Center.X / 16, (int)(LaserList[i].Projectile.Center.Y / 16f));
+                    LaserList[i].PreDraw(ref color);
+                    LaserList[i].AdditiveContext = false;
+                }
+                Main.spriteBatch.End();
+            }
+
+
         }
 
         private static void PotionBagLootAllPatch(On.Terraria.UI.ChestUI.orig_LootAll orig)
