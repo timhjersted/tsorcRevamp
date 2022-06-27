@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
-    public class MagicBarrier : ModItem
+    public class BarrierTome : ModItem
     {
         public override void SetStaticDefaults()
         {
