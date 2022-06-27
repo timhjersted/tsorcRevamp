@@ -76,6 +76,10 @@ namespace tsorcRevamp
                         UsefulFunctions.SafeTeleport(Main.LocalPlayer, new Vector2(bonfirePoint.X, bonfirePoint.Y - 1) * 16);
                         Main.mapFullscreen = false;
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, bonfirePoint * 16);
+                        if (Main.netMode == NetmodeID.MultiplayerClient)
+                        {
+                            Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.Loading>(), 15);
+                        }
                     }
                 }
                 else

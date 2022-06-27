@@ -19,7 +19,7 @@ PROJECT STATUS
 This is still in beta as we forge ahead to 1.0. It is playable from beginning to end, but we're still polishing the later parts of the mod.
 It includes all of the items, enemies and bosses from the original mod, plus a growing number of new additions. Development is focused on revamping enemies, game balance, and new content.
 
-We have a Discord! https://discord.gg/4xTfbgvx
+We have a Discord! https://discord.gg/UGE6Mstrgz
 
 Please share your feedback and suggestions under #any-suggestions or #bug-reports.
 Post map related feedback to #map-suggestions-bugs.
