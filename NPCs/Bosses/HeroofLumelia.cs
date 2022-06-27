@@ -1009,7 +1009,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             if (!Main.expertMode)
             {
-                if (Main.rand.Next(99) < 90) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
+                if (Main.rand.Next(99) < 90) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrier>(), 1);
                 if (Main.rand.Next(99) < 6) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientWarhammer>(), 1, false, -1);
                 if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
                 if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);

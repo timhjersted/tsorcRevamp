@@ -940,7 +940,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
 
             if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.SpikedIronShield>(), 1, false, -1);
-            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1, false, -1);
+            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrier>(), 1, false, -1);
             if (Main.rand.Next(5) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.LostUndeadSoul>());
             if (Main.rand.Next(5) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.LifeforcePotion); }
             if (Main.rand.Next(3) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.EndurancePotion); }
