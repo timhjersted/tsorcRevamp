@@ -8,7 +8,7 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Barrier");
+            DisplayName.SetDefault("Magic Barrier");
             Description.SetDefault("Defense is increased by 20!");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
