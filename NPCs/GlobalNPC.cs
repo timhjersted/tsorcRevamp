@@ -222,7 +222,24 @@ namespace tsorcRevamp.NPCs
 
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
         {
-            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff)
+            if(player.statLifeMax2 <= 120)
+            {
+                spawnRate = (int)(spawnRate * 0.8f);
+                maxSpawns = (int)(maxSpawns * 0.8f);
+            }
+            bool bossAlive = false;
+
+            //This might look expensive but it's really not, since there are rarely a significant number of NPCs in the array at once
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i] != null && Main.npc[i].active && Main.npc[i].boss)
+                {
+                    bossAlive = true;
+                    break;
+                }
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff || bossAlive || player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()))
             {
                 maxSpawns = 0;
             }
@@ -264,7 +281,7 @@ namespace tsorcRevamp.NPCs
 
         public override void OnKill(NPC npc)
         {
-            if(npc.type == NPCID.Golem)
+            if(npc.type == NPCID.Golem && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 UsefulFunctions.BroadcastText("Somewhere in the sky, a forcefield collapses...", Color.Cyan);
             }
@@ -1848,7 +1865,7 @@ namespace tsorcRevamp.NPCs
             //If it has a sound to play, roll a chance for playing it
             if (randomSound != null && Main.rand.Next(soundFrequency) <= 0)
             {
-                Terraria.Audio.SoundEngine.PlaySound(randomSound.Value);
+                Terraria.Audio.SoundEngine.PlaySound(randomSound.Value, npc.Center);
             }
 
             //If we can enrage, do that
@@ -2156,7 +2173,7 @@ namespace tsorcRevamp.NPCs
                     }
                     if (shootSound != null)
                     {
-                        SoundEngine.PlaySound(shootSound.Value);
+                        SoundEngine.PlaySound(shootSound.Value, npc.Center);
                     }
                     return true;
                 }

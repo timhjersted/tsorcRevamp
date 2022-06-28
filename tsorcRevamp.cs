@@ -930,7 +930,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Death>())), // Downed variable (the one keeping track the boss has been defeated once)
                     0,
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.DeathBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.Weapons.Magic.WallTome>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), ItemID.MidnightRainbowDye }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.DeathBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.Weapons.Magic.WallTome>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrier>(), ItemID.MidnightRainbowDye }, // List containing all the loot to show in the bestiary
                     $"???", // Guide to fight the boss
                     "");
 
@@ -960,7 +960,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>())), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.SerrisBait>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.SerrisBag>(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>() }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.SerrisBag>(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrier>() }, // List containing all the loot to show in the bestiary
                     $"???", // Guide to fight the boss
                     "", // Despawning Message
                     "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/Serris");

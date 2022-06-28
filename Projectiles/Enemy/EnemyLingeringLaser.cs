@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -64,7 +65,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         Vector2 simulatedVelocity;
         public override void AI()
         {
-
             if (FiringTimeLeft > 0)
             {
                 Vector2 origin = GetOrigin();
@@ -96,8 +96,6 @@ namespace tsorcRevamp.Projectiles.Enemy
                         {
                             targetPlayer = Main.player[(int)Projectile.ai[0] - 2000];
                             target = Main.player[(int)Projectile.ai[0] - 2000].Center;
-
-
                         }
 
                         if (FiringTimeLeft > 30)
@@ -131,15 +129,23 @@ namespace tsorcRevamp.Projectiles.Enemy
                 else if (Projectile.ai[0] >= 1000)
                 {
                     TileCollide = false;
-                    TelegraphTime = 60;
+                    if(TelegraphTime == 180)
+                    {
+                        TelegraphTime = 75 + Main.rand.Next(0, 15);
+                        MaxCharge = 75 + Main.rand.Next(0, 15);
+                    }
                     FiringDuration = 15;
-                    MaxCharge = 60;
                     LaserName = "Rapid Laser";
 
                     if (target == Vector2.Zero)
                     {
-                        target = Main.player[(int)Projectile.ai[0] - 1000].Center;
-                        target += Main.player[(int)Projectile.ai[0] - 1000].velocity * 48;
+                        target = Main.player[(int)Projectile.ai[0] - 1000].Center;// + Main.rand.NextVector2Circular(48, 48);
+                        Vector2 prediction = Main.player[(int)Projectile.ai[0] - 1000].velocity * 48;
+                        //Don't randomize if it just shot the confining ring of lasers, because that's not possible to dodge
+                        if (NPCs.VanillaChanges.destroyerChargeTimer >= 300 || NPCs.VanillaChanges.destroyerChargeTimer < 0 || NPCs.VanillaChanges.destroyerAttackIndex != 0)
+                        {
+                            target += prediction * Main.rand.NextFloat(-0.25f, 1.25f);
+                        }
                     }
                     //Failsafe. If the boss charges too close to the focal point it causes the lasers to go haywire. This turns them off if that happens.
                     if (Projectile.Distance(target) < 400 || Projectile.Distance(Main.player[(int)Projectile.ai[0] - 1000].Center) < 400)
@@ -149,7 +155,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target, 1);
 
                     //Failsafe 2. If it is firing and the projectile's angle is too close to the "safe angle", don't fire. This stops lasers from sweeping across the safe area as the destroyer moves relative to it.
-                    if ((UsefulFunctions.CompareAngles(Projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.PiOver4 || UsefulFunctions.CompareAngles(-Projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.PiOver4))
+                    if ((UsefulFunctions.CompareAngles(Projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.Pi / 6f || UsefulFunctions.CompareAngles(-Projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.Pi / 6f))
                     {
                         Projectile.Kill();
                     }
@@ -299,11 +305,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
                 color *= 0.85f + 0.15f * (float)(Math.Sin(Main.GameUpdateCount / 5f));
 
-                for (int i = 0; i < 10; i++)
-                {
-                    DrawLaser(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
-                            Projectile.velocity, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, color);
-                }
+                DrawLaser(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
+                        Projectile.velocity, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, color);
             }
             else
             {

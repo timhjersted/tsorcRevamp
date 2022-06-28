@@ -92,18 +92,26 @@ namespace tsorcRevamp
 
         //This is a dictionary that will store all the info for each of our events to keep them nice and neat!
         public static Dictionary<ScriptedEventType, ScriptedEvent> ScriptedEventDict;
+
         //This is a dictionary that will store whether or not each event has run its course and should no longer be activated
         //The contents of this dictionary are saved and loaded across sessions
         public static Dictionary<ScriptedEventType, bool> ScriptedEventValues;
+
         //Stores the events that have not been triggered by the player. It will check if the player is within any of these
         public static List<ScriptedEvent> InactiveEvents;
+
         //Stores the events that have been triggered by the player and are currently active. It will run the RunEvent() code for each of these as long as they remain active.
         public static List<ScriptedEvent> ActiveEvents;
+
         //Stores events that the player has triggered and are no longer active. Upon player death, these will be restored to InactiveEvents.
         public static List<ScriptedEvent> DisabledEvents;
+
         //For multiplayer. The server sends clients a list of events, which it stores here. They are not run client-side, and exist only so dust can be drawn indicating their presence.
         //Necessary because event conditions are dynamic. There's no way for clients to know if events have ended or not unless they run them as well, which would result in duplication.
         public static List<NetworkEvent> NetworkEvents;
+
+        //If a boss is alive, events are placed in a queue instead of re-enabled when players respawn. They are re-enabled once the boss dies or despawns. This is to prevent events, including events to *spawn* that very boss, from being re-enabled mid-fight.
+        public static List<ScriptedEvent> QueuedEvents;
 
         //Each scripted event should have a definition here. I added some theoretical examples commented out
         //This name is what the event handler uses to save an event, and marks them as unique.
@@ -934,6 +942,31 @@ namespace tsorcRevamp
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+                bool bossAlive = false;
+
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i] != null && Main.npc[i].active && Main.npc[i].boss)
+                    {
+                        bossAlive = true;
+                        break;
+                    }
+                }
+
+                if (QueuedEvents == null)
+                {
+                    QueuedEvents = new List<ScriptedEvent>();
+                }
+
+                if (!bossAlive)
+                {
+                    foreach(ScriptedEvent e in QueuedEvents)
+                    {
+                        InactiveEvents.Add(e);
+                    }
+                    QueuedEvents = new List<ScriptedEvent>();
+                }
+
                 DrawnEvents = 0;
                 //Check if the player is in range of any inactive events
                 for (int i = 0; i < InactiveEvents.Count; i++)
@@ -1212,9 +1245,32 @@ namespace tsorcRevamp
         }
         public static void RefreshEvents()
         {
+            bool bossAlive = false;
+
+            for(int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i] != null && Main.npc[i].active && Main.npc[i].boss)
+                {
+                    bossAlive = true;
+                    break;
+                }
+            }
+
+            if(QueuedEvents == null)
+            {
+                QueuedEvents = new List<ScriptedEvent>();
+            }
+
             foreach (ScriptedEvent currentEvent in DisabledEvents)
             {
-                InactiveEvents.Add(currentEvent);
+                if (bossAlive)
+                {
+                    QueuedEvents.Add(currentEvent);
+                }
+                else
+                {
+                    InactiveEvents.Add(currentEvent);
+                }
             }
             DisabledEvents = new List<ScriptedEvent>();
         }
@@ -1241,6 +1297,9 @@ namespace tsorcRevamp
         public List<NPC> spawnedNPCs = new List<NPC>();
         //Stores which NPC's have been killed if in list mode
         public List<bool> deadNPCs = new List<bool>();
+
+        //Stores which players have not died while this event is active
+        //public List<bool> livingPlayers = new List<bool>();
 
         //Does it have extra loot? If so, what items and how many of them should it drop?
         public bool hasCustomDrops = false;

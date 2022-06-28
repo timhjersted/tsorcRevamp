@@ -69,8 +69,10 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                 NPC.HitEffect(0, 10.0);
                 NPC.active = false;
 
-                Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Serris Gore 2").Type, 1f);
+                Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2)); if (!Main.dedServ)
+                {
+                    Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Serris Gore 2").Type, 1f);
+                }
             }
 
             if (Main.npc[(int)NPC.ai[2]].active && Main.npc[(int)NPC.ai[2]].dontTakeDamage && Main.npc[(int)NPC.ai[2]].type == ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>())

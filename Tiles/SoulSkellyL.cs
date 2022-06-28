@@ -156,6 +156,8 @@ namespace tsorcRevamp.Tiles
                     }
                 }
             }
+
+            NetMessage.SendTileSquare(-1, i, j, 5);
             return false;
         }
     }

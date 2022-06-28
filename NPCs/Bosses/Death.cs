@@ -191,10 +191,12 @@ namespace tsorcRevamp.NPCs.Bosses
             if (NPC.life <= 0)
             {
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-
-                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Death Gore 1").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Death Gore 2").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Death Gore 3").Type, 1f);
+                if (!Main.dedServ)
+                {
+                    Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Death Gore 1").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Death Gore 2").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Death Gore 3").Type, 1f);
+                }
                 for (int num36 = 0; num36 < 50; num36++)
                 {
                     Color color = new Color();
@@ -222,7 +224,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>(), 4);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrier>(), 1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MidnightRainbowDye, 5);
                 if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
                 {

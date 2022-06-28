@@ -96,7 +96,7 @@ namespace tsorcRevamp
                 }
 
                 // Stamina drain for most (hopefully) swords and spears
-                if (item.damage >= 1 && item.DamageType == DamageClass.Melee && Player.itemAnimation == Player.itemAnimationMax - 1 && item.pick == 0 && !(item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram
+                if (item.damage >= 1 && item.DamageType == DamageClass.Melee && Player.itemAnimation == Player.itemAnimationMax - 1 && item.pick == 0 && item.axe == 0 && !(item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram
                     || item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc
                     || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>() || item.type == ItemID.FlyingKnife))
                 {
@@ -108,12 +108,6 @@ namespace tsorcRevamp
                     || item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>()))
                 {
                     Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * Player.GetAttackSpeed(DamageClass.Melee) * 1f);
-                }
-
-                // Stamina drain for pickaxes. They take you down to 30 stamina but keep working infinitely to allow for a roll or a hit or 2 on an enemy in self defence when mining. Pickaxe damage halved in GlobalItem to prevent usage as weapon.
-                if (item.damage >= 1 && item.DamageType == DamageClass.Melee && Player.itemAnimation == Player.itemAnimationMax - 1 && item.pick != 0 && Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30)
-                {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * Player.GetAttackSpeed(DamageClass.Melee) * .2f);
                 }
 
                 // Stamina drain for flails and yoyos

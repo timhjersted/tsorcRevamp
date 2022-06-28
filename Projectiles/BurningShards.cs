@@ -87,14 +87,17 @@ namespace tsorcRevamp.Projectiles
                 int? target = UsefulFunctions.GetClosestEnemyNPC(player.Center);
                 if (target != null && Main.npc[target.Value].Distance(player.Center) < 1000)
                 {
-                    Vector2 velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.npc[target.Value].Center, 10);
-                    int damage = (int)(tsorcRevampWorld.Slain.Count * 3f);
-                    if (tsorcRevampWorld.SuperHardMode)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        damage *= 2;
+                        Vector2 velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.npc[target.Value].Center, 10);
+                        int damage = 1 + (int)(tsorcRevampWorld.Slain.Count * 3f);
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {
+                            damage *= 2;
+                        }
+                        Projectile.NewProjectile(player.GetSource_FromThis(), Projectile.Center, velocity, ModContent.ProjectileType<Projectiles.HomingFireball>(), damage, 0.5f, player.whoAmI);
+                        shotCooldown = 45;
                     }
-                    Projectile.NewProjectile(player.GetSource_FromThis(), Projectile.Center, velocity, ModContent.ProjectileType<Projectiles.HomingFireball>(), damage, 0.5f, player.whoAmI);
-                    shotCooldown = 45;
                 }
             }
 

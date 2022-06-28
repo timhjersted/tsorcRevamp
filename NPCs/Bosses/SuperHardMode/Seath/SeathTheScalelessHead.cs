@@ -231,9 +231,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SeathBag>()));
         }
         public override void OnKill()
-        {            
-            Gore.NewGore(NPC.GetSource_Death(), NPC.Center, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Seath the Scaleless Head Gore").Type, 1f);
-
+        {
+            if (!Main.dedServ)
+            {
+                Gore.NewGore(NPC.GetSource_Death(), NPC.Center, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Seath the Scaleless Head Gore").Type, 1f);
+            }
             if (!Main.expertMode)
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DragonEssence>(), 35 + Main.rand.Next(5));

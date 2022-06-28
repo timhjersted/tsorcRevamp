@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Enums;
@@ -182,17 +183,19 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
-
             if ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2))
-            {
-
+            { 
                 //Additive lasers get drawn on their own outside the predraw hook in a specific context
                 if (Additive && !AdditiveContext)
                 {
                     return false;
                 }
-
                 Color color;
+
+                if (!IsAtMaxCharge)
+                {
+                    color = Color.Wheat;
+                }
                 if (LaserTexture == TransparentTextureHandler.TransparentTextureType.GenericLaser)
                 {
                     color = LaserColor;
@@ -258,30 +261,148 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
             }
 
+            //Laser head
             Vector2 startPos = start;
-            if (screenRect.Contains(startPos.ToPoint()))
+            if (FastContainsPoint(screenRect, startPos))
             {
                 Main.EntitySpriteDraw(texture, startPos - Main.screenPosition, headFrame, color, r, new Vector2(headRect.Width * .5f, headRect.Height * .5f), scale, 0, 0);
             }
             startPos += (unit * (headRect.Height) * scale);
 
+            //Stopwatch drawWatch = Stopwatch.StartNew();
+
+            int count = 0;
+            /*
+            Tuple <Vector2, Vector2> intersections = Intersections(screenRect, startPos, unit);
+
+            int count = 0;
+            if (intersections.Item1 != Vector2.Zero && intersections.Item2 != Vector2.Zero)
+            {
+                Vector2 change = intersections.Item2 - intersections.Item1;
+
+                Vector2 step = change / (bodyFrame.Height * scale);
+                int visibleSegments = (int)(change / step).X;
+
+                for(float i = 0; i < visibleSegments; i++)
+                {
+                   Vector2 drawStart = intersections.Item1 * i;
+                   Main.EntitySpriteDraw(texture, drawStart - Main.screenPosition, bodyFrame, color, r, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);
+                }
+            }*/
+
+
+            //Laser body
             float i = 0;
             for (; i <= Distance; i += (bodyFrame.Height) * scale)
             {
                 Vector2 drawStart = startPos + i * unit;
-                if (screenRect.Contains(drawStart.ToPoint()))
+                if (FastContainsPoint(screenRect, drawStart))
                 {
                     Main.EntitySpriteDraw(texture, drawStart - Main.screenPosition, bodyFrame, color, r, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);
+                    count++;
                 }
             }
+
+            //drawWatch.Stop();
+            //Main.NewText(count + " segments drawn in " + drawWatch.Elapsed);
+
+            
+            //Laser tail
             i -= (LaserTextureBody.Height) * scale;
             i += (LaserTextureTail.Height + 3) * scale; //Slightly fudged, need to find out why the laser tail is still misaligned for certain texture sizes
             startPos = startPos + i * unit;
 
-            if (screenRect.Contains(startPos.ToPoint()))
+            if (FastContainsPoint(screenRect, startPos))
             {
                 Main.EntitySpriteDraw(texture, startPos - Main.screenPosition, tailFrame, color, r, new Vector2(tailRect.Width * .5f, tailRect.Height * .5f), scale, 0, 0);
+            }         
+        }
+
+        public static Tuple<Vector2, Vector2> Intersections(Rectangle screenRect, Vector2 lineStart, Vector2 lineDirection)
+        {
+            Vector2 firstResult = Vector2.Zero;
+            Vector2 secondResult = Vector2.Zero;
+
+            float rotation = lineDirection.ToRotation();
+            float diff = (float)Math.Tan(rotation);
+            diff *= -1;
+
+            float leftIntersection = (diff * screenRect.Left) + lineStart.Y;
+            if(leftIntersection > screenRect.Top && leftIntersection < screenRect.Bottom)
+            {
+                if(firstResult == Vector2.Zero)
+                {
+                    firstResult = new Vector2(screenRect.Left, leftIntersection);
+                }
+                else
+                {
+                    secondResult = new Vector2(screenRect.Left, leftIntersection);
+                }
             }
+
+            float rightIntersection = (diff * screenRect.Right) + lineStart.Y;
+            if (rightIntersection > screenRect.Top && leftIntersection < screenRect.Bottom)
+            {
+                if (firstResult == Vector2.Zero)
+                {
+                    firstResult = new Vector2(screenRect.Right, rightIntersection);
+                }
+                else
+                {
+                    secondResult = new Vector2(screenRect.Right, rightIntersection);
+                }
+            }
+
+            float topIntersection = (screenRect.Top - lineStart.Y) / diff;
+            if (topIntersection > screenRect.Left && leftIntersection < screenRect.Right)
+            {
+                if (firstResult == Vector2.Zero)
+                {
+                    firstResult = new Vector2(topIntersection, screenRect.Top);
+                }
+                else
+                {
+                    secondResult = new Vector2(topIntersection, screenRect.Top);
+                }
+            }
+
+            float bottomIntersection = (screenRect.Bottom - lineStart.Y) / diff;
+            if (bottomIntersection > screenRect.Left && bottomIntersection < screenRect.Right)
+            {
+                if (firstResult == Vector2.Zero)
+                {
+                    firstResult = new Vector2(bottomIntersection, screenRect.Bottom);
+                }
+                else
+                {
+                    secondResult = new Vector2(bottomIntersection, screenRect.Bottom);
+                }
+            }            
+
+            return new Tuple<Vector2, Vector2>(firstResult, secondResult);
+        }
+
+        //20% Faster than converting drawStart into a Point and then running screenRect.Contains(point);
+        bool FastContainsPoint(Rectangle screenrect, Vector2 point)
+        {
+            if (point.X < screenrect.X)
+            {
+                return false;
+            }
+            if (point.Y < screenrect.Y)
+            {
+                return false;
+            }
+            if (point.X > screenrect.Right)
+            {
+                return false;
+            }
+            if (point.Y > screenrect.Bottom)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

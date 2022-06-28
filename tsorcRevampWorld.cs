@@ -737,15 +737,16 @@ namespace tsorcRevamp
                         UsefulFunctions.BroadcastText("Warning!! The setting 'Adventure Mode: Recipes and Items' is disabled!!", Color.OrangeRed);
                         UsefulFunctions.BroadcastText("Having this off can break progression and parts of the map, please enable this setting and reload mods!", Color.OrangeRed);
                     }
+                    if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+                    {
+                        Tiles.SoulSkellyGeocache.InitializeSkellys();
+                        CampfireToBonfire();
+                    }
 
                     //Stuff that should only be done by either a solo player or the server
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-                        {
-                            Tiles.SoulSkellyGeocache.InitializeSkellys();
-                            CampfireToBonfire();
-                        }
+                        
                         if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID)
                         {
                             Main.worldID = Main.rand.Next(9999999);

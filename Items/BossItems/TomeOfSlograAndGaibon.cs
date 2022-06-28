@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void AddRecipes()
         {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            //if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
                 Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(ItemID.SpellTome, 1);

@@ -45,7 +45,8 @@ namespace tsorcRevamp.Projectiles
                         if (!Main.player[i].dead)
                         {
                             playerRespawned = true;
-                            if (Main.player[i].DistanceSQ(Projectile.Center) < 48 * 48)
+                            float distance = Main.player[i].DistanceSQ(Projectile.Center);
+                            if (distance < 48 * 48)
                             {
                                 if (Main.player[i] != null && Main.player[i].active && !Main.player[i].dead)
                                 {
@@ -57,6 +58,10 @@ namespace tsorcRevamp.Projectiles
                                     Projectile.Kill();
                                     //CombatText.NewText(player.Hitbox, Color.Purple, itemText);
                                 }
+                            }
+                            else if(distance < 200 * 200)
+                            {
+                                Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.player[i].Center, 7);
                             }
                         }
                         else

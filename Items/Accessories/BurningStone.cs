@@ -44,52 +44,33 @@ namespace tsorcRevamp.Items.Accessories
                 if (Main.GameUpdateCount % 5 == 0)
                 {
                     int? target = UsefulFunctions.GetClosestEnemyNPC(player.Center);
-
-                    if (target != null && Main.npc[target.Value].Distance(player.Center) < 1000)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.npc[target.Value].Center, 10);
-                        int damage = tsorcRevampWorld.Slain.Count * 3;
-                        if (tsorcRevampWorld.SuperHardMode)
+                        if (target != null && Main.npc[target.Value].Distance(player.Center) < 1000)
                         {
-                            damage *= 2;
-                        }
+                            Vector2 velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.npc[target.Value].Center, 10);
+                            int damage = 1 + (tsorcRevampWorld.Slain.Count * 3);
+                            if (tsorcRevampWorld.SuperHardMode)
+                            {
+                                damage *= 2;
+                            }
 
-                        for (int i = 0; i < 5; i++)
-                        {
-                            Dust.NewDustPerfect(player.Center, DustID.InfernoFork, player.velocity, 200, Scale: 0.65f).noGravity = true;
+                            for (int i = 0; i < 5; i++)
+                            {
+                                Dust.NewDustPerfect(player.Center, DustID.InfernoFork, player.velocity, 200, Scale: 0.65f).noGravity = true;
+                            }
+                            Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, velocity, ModContent.ProjectileType<Projectiles.HomingFireball>(), damage, 0.5f, player.whoAmI);
                         }
-                        Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, velocity, ModContent.ProjectileType<Projectiles.HomingFireball>(), damage, 0.5f, player.whoAmI);
                     }
                 }
             }
         }
 
-        public static Texture2D texture;
-        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        public override void UpdateVanity(Player player)
         {
-            //Ending then restarting the batch to apply shaders fucks up the inventory drawing. I'm guessing it's because it uses a different view matrix than normal sprite drawing?
-            //Todo: Look at vanilla and see what it does when it starts the inventory spritebatch
-            /*
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-            ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
-            data.Apply(null);
-
-            if (texture == null || texture.IsDisposed)
-            {
-                texture = (Texture2D)ModContent.Request<Texture2D>(Item.ModItem.Texture);
-            }
-
-            spriteBatch.Draw(texture, position, frame, drawColor, 0, origin, scale, SpriteEffects.None, 0f);
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
-            */
-            return true;
-        }
-
-        public override void PostDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
-        {
+            Vector2 dir = Main.rand.NextVector2CircularEdge(60, 60);
+            Vector2 dustPos = player.Center + dir;
+            Dust.NewDustPerfect(dustPos, DustID.InfernoFork, player.velocity, 200, Scale: 0.65f).noGravity = true;
         }
     }
 }

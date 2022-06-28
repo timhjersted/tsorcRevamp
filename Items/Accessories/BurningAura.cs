@@ -31,9 +31,12 @@ namespace tsorcRevamp.Items.Accessories
         }
         public override void UpdateEquip(Player player)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.BurningShards>()] < 5 && Main.GameUpdateCount % 15 == 0)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.BurningShards>(), 0, 0, player.whoAmI);
+                if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.BurningShards>()] < 5 && Main.GameUpdateCount % 15 == 0)
+                {
+                    Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.BurningShards>(), 0, 0, player.whoAmI);
+                }
             }
             Vector2 dir = Main.rand.NextVector2CircularEdge(60, 60);
             Vector2 dustPos = player.Center + dir;
@@ -47,12 +50,9 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void UpdateVanity(Player player)
         {
-            for (int j = 0; j < 5; j++)
-            {
-                Vector2 dir = Main.rand.NextVector2CircularEdge(45, 45);
-                Vector2 dustPos = player.Center + dir;
-                Dust.NewDustPerfect(dustPos, DustID.InfernoFork, player.velocity, 200, Scale: 0.65f).noGravity = true;
-            }
+            Vector2 dir = Main.rand.NextVector2CircularEdge(60, 60);
+            Vector2 dustPos = player.Center + dir;
+            Dust.NewDustPerfect(dustPos, DustID.InfernoFork, player.velocity, 200, Scale: 0.65f).noGravity = true;
         }
 
     }

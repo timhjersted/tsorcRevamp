@@ -580,6 +580,7 @@ namespace tsorcRevamp
                     {
                         if (includeThesePlayers.Contains(i))
                         {
+                            
                             NetMessage.SendData(MessageID.InstancedItem, i, number: dummyItemIndex);
                         }
                     }

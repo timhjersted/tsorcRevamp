@@ -1,4 +1,5 @@
-﻿using Terraria.ID;
+﻿using System.Collections.Generic;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items
@@ -7,7 +8,7 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A shard of the fading Crystal of Wind.\n" + "Used to craft the crystal that summons Chaos.");
+            Tooltip.SetDefault("A shard of the fading Crystal of Wind.");
         }
 
         public override void SetDefaults()
@@ -18,6 +19,14 @@ namespace tsorcRevamp.Items
             Item.value = 1000;
             Item.maxStack = 100;
             Item.rare = ItemRarityID.LightRed;
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "chaos", "Used to craft the crystal that summons Chaos."));
+            }
         }
     }
 }
