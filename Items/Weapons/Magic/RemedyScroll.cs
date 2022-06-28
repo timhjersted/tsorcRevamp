@@ -4,10 +4,12 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
-    class EsunaTome : ModItem
+    [LegacyName("EsunaTome")]
+    class RemedyScroll : ModItem
     {
         public override void SetStaticDefaults()
         {
+            DisplayName.SetDefault("Remedy");
             Tooltip.SetDefault("A lost tome known to cure all but the rarest of ailments.");
         }
         public override void SetDefaults()
@@ -42,8 +44,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
                     || (buffType == BuffID.Slow)
                     || (buffType == BuffID.Weak)
                     || (buffType == BuffID.CursedInferno)
-                    || (buffType == BuffID.Cursed) // why are these in here? you can't use this item if you have cursed or silenced 
-                    || (buffType == BuffID.Silenced) // the original tsorc mod has these in here, so im leaving them, but im *well* aware of how stupid this is
+                    || (buffType == BuffID.Cursed)
+                    || (buffType == BuffID.Silenced)
+                    || (buffType == BuffID.Silenced)
+                    || (buffType == BuffID.Silenced)
                     )
                 {
                     player.buffTime[buffIndex] = 0;

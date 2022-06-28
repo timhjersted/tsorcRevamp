@@ -48,7 +48,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void OnKill()
         {
             if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.EphemeralThrowingSpear>(), Main.rand.Next(15, 26));
-            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldTome>());
+            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>());
         }
 
         #region Spawn

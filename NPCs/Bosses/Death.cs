@@ -222,9 +222,9 @@ namespace tsorcRevamp.NPCs.Bosses
             if (!Main.expertMode)
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldTome>(), 4);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>(), 4);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierTome>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>(), 1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MidnightRainbowDye, 5);
                 if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
                 {
