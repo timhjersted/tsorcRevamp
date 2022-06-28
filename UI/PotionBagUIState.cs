@@ -5,6 +5,7 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
+using tsorcRevamp.Items.Potions.PermanentPotions;
 
 
 namespace tsorcRevamp.UI
@@ -74,6 +75,9 @@ namespace tsorcRevamp.UI
             if (item.type == ModContent.ItemType<Items.PotionBag>()) return false;
             if (item.buffType == BuffID.WellFed || item.buffType == BuffID.WellFed2 || item.buffType == BuffID.WellFed3)
                 valid = true;
+
+            if (item.ModItem is PermanentPotion)
+                valid = true;
             if (Items.tsorcGlobalItem.potionList.Contains(item.type))
             {
                 valid = true;
@@ -87,22 +91,6 @@ namespace tsorcRevamp.UI
                 valid = true;
             }
             if (item.buffTime != 0)
-            {
-                valid = true;
-            }
-            if (item.type == ModContent.ItemType<Items.Potions.PermanentPotions.PermanentAle>())
-            {
-                valid = true;
-            }
-            if (item.type == ModContent.ItemType<Items.Potions.PermanentPotions.PermanentSoup>())
-            {
-                valid = true;
-            }
-            if (item.type == ModContent.ItemType<Items.Potions.PermanentPotions.PermanentArmorDrug>())
-            {
-                valid = true;
-            }
-            if (item.type == ModContent.ItemType<Items.Potions.PermanentPotions.PermanentDemonDrug>())
             {
                 valid = true;
             }

@@ -1124,7 +1124,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Never go hungry again.");
+            Tooltip.SetDefault("Never go hungry again. \nNot compatible with other food items");
         }
 
         public override void PotionEffect(Player player)
@@ -1148,7 +1148,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override List<int> ExclusivePermanents => ExclusiveSetWellFed;
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Tea time all the time.");
+            Tooltip.SetDefault("Tea time all the time. \nNot compatible with other food items");
         }
 
         public override void PotionEffect(Player player) {
@@ -1174,7 +1174,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override List<int> ExclusivePermanents => ExclusiveSetWellFed;
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("You could probably make a fortune by selling this...");
+            Tooltip.SetDefault("You could probably make a fortune by selling this... \nNot compatible with other food items");
         }
 
         public override void PotionEffect(Player player) {
