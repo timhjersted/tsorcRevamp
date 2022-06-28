@@ -4,11 +4,11 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
-    class Fog : ModProjectile
+    class MagicShield : ModProjectile
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fog");
+            DisplayName.SetDefault("Magic Shield");
         }
         public override void SetDefaults()
         {

@@ -245,7 +245,7 @@ namespace tsorcRevamp.Items.BossBags
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before     
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), 3 + Main.rand.Next(4));
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), 3 + Main.rand.Next(4));
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrier>(), 1);
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierTome>(), 1);
         }
     }
     public class DeathBag : BossBag
@@ -255,8 +255,8 @@ namespace tsorcRevamp.Items.BossBags
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before            
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.WallTome>(), 4);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrier>(), 1);
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldTome>(), 4);
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierTome>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ItemID.LivingRainbowDye, 5);
             player.QuickSpawnItem(player.GetSource_Loot(), ItemID.MidnightRainbowDye, 5);
         }

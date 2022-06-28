@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs
 {
-    class Barrier : ModBuff
+    class MagicBarrier : ModBuff
     {
         public override void SetStaticDefaults()
         {

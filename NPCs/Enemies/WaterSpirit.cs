@@ -66,7 +66,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            if (Main.rand.Next(100) < 3) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>());
+            if (Main.rand.Next(100) < 3) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldTome>());
         }
     }
 }

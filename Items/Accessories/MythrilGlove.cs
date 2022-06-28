@@ -26,9 +26,9 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void UpdateEquip(Player player)
         {
-            if ((player.statLife <= (player.statLifeMax * 0.30f)) && !(player.HasBuff(ModContent.BuffType<Buffs.Fog>()) || player.HasBuff(ModContent.BuffType<Buffs.Barrier>()) || player.HasBuff(ModContent.BuffType<Buffs.Shield>())))
+            if ((player.statLife <= (player.statLifeMax * 0.30f)) && !(player.HasBuff(ModContent.BuffType<Buffs.MagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.MagicBarrier>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicBarrier>())))
             {
-                player.AddBuff(ModContent.BuffType<Buffs.Wall>(), 1, false);
+                player.AddBuff(ModContent.BuffType<Buffs.GreatMagicShield>(), 1, false);
             }
 
         }

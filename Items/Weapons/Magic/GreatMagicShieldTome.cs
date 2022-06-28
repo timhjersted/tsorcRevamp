@@ -4,14 +4,15 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
-    public class WallTome : ModItem
+    [LegacyName("WallTome")]
+    public class GreatMagicShieldTome : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wall Tome");
-            Tooltip.SetDefault("A lost tome that is consumed on use\n" +
-                               "Casts Wall on the player, raising defense by 25 for 25 seconds" +
-                               "\nDoes not stack with Fog, Barrier or Shield spells" +
+            DisplayName.SetDefault("Great Magic Shield");
+            Tooltip.SetDefault("A lost scroll that is consumed on use\n" +
+                               "Casts a shield on the player, raising defense by 25 for 25 seconds" +
+                               "\nDoes not stack with other barrier or shield spells" +
                                "\nReduces damage dealt by 20% and movement speed by 15%" +
                                "\nCannot be used again for 60 seconds after wearing off");
         }
@@ -47,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override bool? UseItem(Player player)
         {
-            player.AddBuff(ModContent.BuffType<Buffs.Wall>(), 1500, false);
+            player.AddBuff(ModContent.BuffType<Buffs.GreatMagicShield>(), 1500, false);
             player.AddBuff(ModContent.BuffType<Buffs.ShieldCooldown>(), 5100); //85 seconds (60 seconds downtime)
             return true;
         }
@@ -57,7 +58,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             {
                 return false;
             }
-            if (player.HasBuff(ModContent.BuffType<Buffs.Fog>()) || player.HasBuff(ModContent.BuffType<Buffs.Barrier>()) || player.HasBuff(ModContent.BuffType<Buffs.Shield>()))
+            if (player.HasBuff(ModContent.BuffType<Buffs.MagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.MagicBarrier>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicBarrier>()))
             {
                 return false;
             }

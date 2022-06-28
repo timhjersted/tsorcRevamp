@@ -4,14 +4,15 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
-    public class MagicBarrier : ModItem
+    [LegacyName("BarrierTome")]
+    public class MagicBarrierTome : ModItem
     {
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Magic Barrier");
-            Tooltip.SetDefault("A lost tome for artisans\n" +
+            Tooltip.SetDefault("A lost scroll for artisans\n" +
                                 "Casts Barrier on the user, which adds 20 defense for 20 seconds\n" +
-                                "\nDoes not stack with Fog, Wall or Shield spells");
+                                "\nDoes not stack with other barrier or shield spells");
 
         }
         public override void SetDefaults()
@@ -46,7 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override bool? UseItem(Player player)
         {
-            player.AddBuff(ModContent.BuffType<Buffs.Barrier>(), 1200, false);
+            player.AddBuff(ModContent.BuffType<Buffs.MagicBarrier>(), 1200, false);
             // Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.position.X + (float)(player.width / 2), player.position.Y + (float)(player.height / 2), 0f, 0f, mod.ProjectileType("Barrier"), 0, 0f, player.whoAmI, 0f, 0f);
             return true;
         }
@@ -58,7 +59,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
                 return false;
             }
 
-            if (player.HasBuff(ModContent.BuffType<Buffs.Fog>()) || player.HasBuff(ModContent.BuffType<Buffs.Wall>()) || player.HasBuff(ModContent.BuffType<Buffs.Shield>()))
+            if (player.HasBuff(ModContent.BuffType<Buffs.MagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicBarrier>()))
             {
                 return false;
             }

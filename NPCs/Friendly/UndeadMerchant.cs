@@ -225,7 +225,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     continue;
                 }
 
-                if (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3 || player.CountItem(type, 50) >= 150)
+                if (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3 || player.CountItem(type, 150) >= 150)
                 {
                     return true;
                 }

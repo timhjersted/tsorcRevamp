@@ -4,11 +4,11 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
-    class Shield : ModProjectile
+    class GreatMagicBarrier : ModProjectile
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shield");
+            DisplayName.SetDefault("Great Magic Barrier");
         }
         public override void SetDefaults()
         {
