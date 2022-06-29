@@ -224,7 +224,7 @@ namespace tsorcRevamp.NPCs
         {
             if(player.statLifeMax2 <= 120)
             {
-                spawnRate = (int)(spawnRate * 0.8f);
+                spawnRate = (int)(spawnRate * 1.2f);
                 maxSpawns = (int)(maxSpawns * 0.8f);
             }
             bool bossAlive = false;
