@@ -89,51 +89,52 @@ namespace tsorcRevamp
             DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulShekel>(), 99999L));
 
             BonfireUIState = new BonfireUIState();
-            if (!Main.dedServ) BonfireUIState.Activate();
             _bonfireUIState = new UserInterface();
-            if (!Main.dedServ) _bonfireUIState.SetState(BonfireUIState);
 
             DarkSoulCounterUIState = new DarkSoulCounterUIState();
             //if (!Main.dedServ) DarkSoulCounterUIState.Activate();
             _darkSoulCounterUIState = new UserInterface();
-            if (!Main.dedServ) _darkSoulCounterUIState.SetState(DarkSoulCounterUIState);
 
             EstusFlaskUIState = new EstusFlaskUIState();
             //if (!Main.dedServ) EstusFlaskUIState.Activate();
             _estusFlaskUIState = new UserInterface();
-            if (!Main.dedServ) _estusFlaskUIState.SetState(EstusFlaskUIState);
 
             PotionUIState = new PotionBagUIState();
             PotionBagUserInterface = new UserInterface();
-            if (!Main.dedServ) PotionBagUserInterface.SetState(PotionUIState);
 
             
             DownloadUIState = new CustomMapUIState();
             DownloadUI = new UserInterface();
-            if (!Main.dedServ) DownloadUI.SetState(DownloadUIState);
             
 
             ApplyMethodSwaps();
             ApplyILs();
             PopulateArrays();
-            if (!Main.dedServ)
-            {
-                Main.QueueMainThreadAction(TransparentTextureHandler.TransparentTextureFix);
-            }
 
-            if (!Main.dedServ)
-            {
-                tsorcRevamp Instance = this;
+            if (Main.dedServ)
+                return;
 
-                    TheAbyssEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TheAbyssShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-                    Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
-                    
+            BonfireUIState.Activate();
+            _bonfireUIState.SetState(BonfireUIState);
+            _darkSoulCounterUIState.SetState(DarkSoulCounterUIState);
+            _estusFlaskUIState.SetState(EstusFlaskUIState);
+            PotionBagUserInterface.SetState(PotionUIState);
+            DownloadUI.SetState(DownloadUIState);
 
-                //AttraidiesEffect = Instance.GetEffect("Effects/ScreenFilters/AttraidiesShader");
-                //Filters.Scene["tsorcRevamp:AttraidiesShader"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(AttraidiesEffect), "AttraidiesShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
+            Main.QueueMainThreadAction(TransparentTextureHandler.TransparentTextureFix);
 
-                EmeraldHeraldUserInterface = new UserInterface();
-            }
+            tsorcRevamp Instance = this;
+
+            TheAbyssEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TheAbyssShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
+
+
+            //AttraidiesEffect = Instance.GetEffect("Effects/ScreenFilters/AttraidiesShader");
+            //Filters.Scene["tsorcRevamp:AttraidiesShader"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(AttraidiesEffect), "AttraidiesShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
+
+            EmeraldHeraldUserInterface = new UserInterface();
+
+
 
             /*
             if (!Main.dedServ)
