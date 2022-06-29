@@ -16,12 +16,13 @@ TOP FEATURES
 
 
 PROJECT STATUS
-This is still in beta as we forge ahead to 1.0. It is playable from beginning to end, but we're still polishing the later parts of the mod.
-It includes all of the items, enemies and bosses from the original mod, plus a growing number of new additions. Development is focused on revamping enemies, game balance, and new content.
+This is still in beta as we forge ahead to 1.0. Development is currently focused on polishing the later stages of the game, especially the bosses.
 
-We have a Discord! https://discord.gg/UGE6Mstrgz
 
-Please share your feedback and suggestions under #any-suggestions or #bug-reports.
+DISCORD
+Join our discord here to discuss the mod and give feedback! https://discord.gg/UGE6Mstrgz
+
+Please share mod related feedback and suggestions under #any-suggestions or #bug-reports.
 Post map related feedback to #map-suggestions-bugs.
 
 The changelogs can be found under #mod-changelog and #map-changelog.

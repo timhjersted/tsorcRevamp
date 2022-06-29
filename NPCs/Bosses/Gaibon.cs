@@ -104,7 +104,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void AI()
         {
             flyingTime++;
-            UsefulFunctions.DustRing(targetPoint, 40, DustID.ShadowbeamStaff);
+            UsefulFunctions.DustRing(targetPoint, 80, DustID.ShadowbeamStaff);
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             CurrentMove();
             FlyTowardTarget();
@@ -117,7 +117,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {                    
                     if (Main.GameUpdateCount % 60 == 0)
                     {
-                        int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.BurningSphere, 0);
+                        int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y - 48, NPCID.BurningSphere, 0);
                         Main.npc[spawned].damage = burningSphereDamage;
                         Main.npc[spawned].velocity += Main.player[NPC.target].velocity;
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);

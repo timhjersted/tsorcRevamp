@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             DisplayName.SetDefault("Great Magic Shield");
             Tooltip.SetDefault("A lost scroll that is consumed on use\n" +
-                               "Casts a Great Magic Shield on the player, raising defense by 25 for 25 seconds" +
+                               "Casts Great Magic Shield on the player, raising defense by 25 for 25 seconds" +
                                "\nDoes not stack with other barrier or shield spells" +
                                "\nReduces damage dealt by 20% and movement speed by 15%" +
                                "\nCannot be used again for 60 seconds after wearing off");
