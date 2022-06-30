@@ -31,11 +31,7 @@ namespace tsorcRevamp.Items.Accessories
         {
             foreach (Item i in player.armor)
             {
-                if (i.type == ModContent.ItemType<GazingShield>()
-                    || i.type == ModContent.ItemType<BeholderShield>()
-                    || i.type == ModContent.ItemType<BeholderShield2>()
-                    || i.type == ModContent.ItemType<EnchantedBeholderShield2>())
-                {
+                if (i.ModItem is MeleeShield) {
                     return false;
                 }
             }
@@ -190,6 +186,7 @@ namespace tsorcRevamp.Items.Accessories
             player.GetDamage(DamageClass.Ranged) -= 1.5f;
             player.GetDamage(DamageClass.Summon) -= 1.5f;
             player.manaCost += 0.7f;
+            player.buffImmune[BuffID.OnFire] = true;
         }
 
         public override void AddRecipes()
@@ -234,6 +231,17 @@ namespace tsorcRevamp.Items.Accessories
             player.GetDamage(DamageClass.Ranged) -= 3f;
             player.GetDamage(DamageClass.Summon) -= 3f;
             player.manaCost += 0.7f;
+            player.buffImmune[BuffID.Poisoned] = true;
+            player.buffImmune[BuffID.Darkness] = true;
+            player.buffImmune[BuffID.Cursed] = true;
+            player.buffImmune[BuffID.OnFire] = true;
+            player.buffImmune[BuffID.Bleeding] = true;
+            player.buffImmune[BuffID.Confused] = true;
+            player.buffImmune[BuffID.Slow] = true;
+            player.buffImmune[BuffID.Weak] = true;
+            player.buffImmune[BuffID.Silenced] = true;
+            player.buffImmune[BuffID.BrokenArmor] = true;
+            player.buffImmune[BuffID.CursedInferno] = true;
         }
 
         public override void AddRecipes()
