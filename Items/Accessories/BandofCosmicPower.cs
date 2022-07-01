@@ -10,8 +10,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Band of Cosmic Power");
-            Tooltip.SetDefault("Increases life regeneration by 2 and increases max mana by 40" +
-                                "\nCan be upgraded with 10,000 Dark Souls");
+            Tooltip.SetDefault("Increases life regeneration by 2 and increases max mana by 40");
         }
 
         public override void SetDefaults()
