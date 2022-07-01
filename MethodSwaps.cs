@@ -71,6 +71,37 @@ namespace tsorcRevamp
             On.Terraria.Player.QuickGrapple_GetItemToUse += Player_QuickGrapple_GetItemToUse;
 
             On.Terraria.Projectile.FishingCheck += Projectile_FishingCheck;
+
+            On.Terraria.Main.CraftItem += Main_CraftItem;
+        }
+
+        private static void Main_CraftItem(On.Terraria.Main.orig_CraftItem orig, Recipe r)
+        {
+            orig(r);
+
+            if (Main.mouseItem.type > 0 || r.createItem.type > 0)
+            {
+                tsorcRevampPlayer modPlayer = Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>();
+                foreach (Item ingredient in r.requiredItem)
+                {
+                    if (ingredient.type == ModContent.ItemType<Items.DarkSoul>())
+                    {
+
+                        //a recipe with souls will only be craftable if you have enough souls, even if theyre in soul slot
+                        modPlayer.SoulSlot.Item.stack -= ingredient.stack;
+
+                        //if you have exactly enough for the recipe
+                        if (modPlayer.SoulSlot.Item.stack == 0)
+                        {
+                            modPlayer.SoulSlot.Item.TurnToAir();
+                        }
+
+                    }
+                }
+
+                //force a recipe recalculation so you cant craft things without enough souls
+                Recipe.FindRecipes();
+            }
         }
 
         private static void Projectile_FishingCheck(On.Terraria.Projectile.orig_FishingCheck orig, Projectile self)

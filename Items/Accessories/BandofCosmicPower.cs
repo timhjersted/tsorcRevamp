@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Accessories
             recipe2.AddIngredient(ItemID.ManaRegenerationBand, 1);
             recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe2.AddTile(TileID.DemonAltar);
-            recipe.Register();
+            recipe2.Register();
         }
 
         public override void UpdateEquip(Player player)
