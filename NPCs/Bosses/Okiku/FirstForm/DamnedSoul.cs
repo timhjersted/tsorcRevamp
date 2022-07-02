@@ -96,14 +96,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             int dust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 62, 0f, 0f, 100, Color.White);
             Main.dust[dust].noGravity = true;
 
-            for(int i = 0; i < Main.maxNPCs; i++)
+            if (NPC.realLife != -1)
             {
-                if (Main.npc[i].whoAmI == NPC.realLife)
-                {
-                    NPC.life = Main.npc[i].life;
-                }
+                NPC.life = Main.npc[NPC.realLife].life;
             }
-
             if (AttraidiesMask != null)
             {
                 if (AttraidiesMask.ShieldBroken)
@@ -131,13 +127,13 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                 center = center.RotatedBy(Attraidies.ai[3] + (NPC.ai[0] * 2 * MathHelper.Pi / 6));
                 if (AttraidiesMask.Transform)
                 {
-                    if (Attraidies.ai[2] > 300)
+                    if (1 - (Attraidies.ai[2] / 300f) > 0.05f)
                     {
-                        center *= 0.05f;
+                        center *= 1 - (Attraidies.ai[2] / 300f);
                     }
                     else
                     {
-                        center *= 1 - (Attraidies.ai[2] / 300f);
+                        center *= 0.05f;
                     }
                 }
                 NPC.Center = Attraidies.Center + center;
@@ -205,6 +201,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                     NPC.life = 1001;
                 }
                 damage = 0;
+            }
+
+            for(int i = 0; i < Main.maxNPCs; i++)
+            {
+
             }
         }
 

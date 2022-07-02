@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -66,10 +67,28 @@ namespace tsorcRevamp.Items.BossItems
             //Flip it turnways if the player is facing the other way
             spawnPoint.X -= 14 * player.direction;
 
-            Main.dayTime = false;
-            Main.time = 0;
+            if (Main.netMode != NetmodeID.SinglePlayer && (player.whoAmI == Main.LocalPlayer.whoAmI))
+            {
+
+                if (!Main.dayTime) //If it's already night, we have to flip it turnways twice
+                {
+                    ModPacket timePacket2 = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                    timePacket2.Write(tsorcPacketID.SyncTimeChange);
+                    timePacket2.Send();
+                }
+
+                //If it's day, set it to night
+                ModPacket timePacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                timePacket.Write(tsorcPacketID.SyncTimeChange);
+                timePacket.Send();
+            }
+            else
+            {
+                Main.dayTime = false;
+                Main.time = 0;
+            }
             return true;
-        }
+        }        
 
         //Was gonna make it have to charge up for a second to activate, but... eh
         //int cast = 0;

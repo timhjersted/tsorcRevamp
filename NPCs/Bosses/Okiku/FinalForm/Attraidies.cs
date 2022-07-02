@@ -57,27 +57,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             SolarDetonationDamage = SolarDetonationDamage / 2;
             LightningStrikeDamage = LightningStrikeDamage / 2;
             DarkLaserDamage = DarkLaserDamage / 2;
-        }
-
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (NPC.AnyNPCs(ModContent.NPCType<Attraidies>()))
-            {
-                return 0;
-            }
-
-            float chance = 0;
-            var p = spawnInfo.Player;
-            bool nospecialbiome = !p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson && !p.ZoneHallow && !p.ZoneMeteor && !p.ZoneDungeon;
-            bool surface = nospecialbiome && !p.ZoneSkyHeight && (spawnInfo.SpawnTileY <= Main.worldSurface);
-
-            if (Main.hardMode && Main.bloodMoon && !tsorcRevampWorld.SuperHardMode && surface)
-            {
-                chance = (1f / 38500f);
-            }
-
-            return chance;
-        }
+        }        
 
         public float AttackMode
         {

@@ -108,14 +108,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
         public override void AI()
         {
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            Main.NewText("0 " + NPC.ai[0]);
-            Main.NewText("1 " + NPC.ai[1]);
-            Main.NewText("2 " + NPC.ai[2]);
-            Main.NewText("3 " + NPC.ai[3]);
-            Main.NewText("vel " + NPC.velocity);
 
             if (!initiate)
             {
+                UsefulFunctions.BroadcastText("You are a fool, Red. You think you can defeat me?...", new Color(175, 75, 255));
                 RotSpeed = 0.015f;
                 NPC.alpha = 255;
                 initiate = true;

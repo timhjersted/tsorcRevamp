@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -52,25 +53,46 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
         }
-        public void Teleport(float X, float Y)
+
+        public int nextPhase
         {
-            int dustDeath;
-            for (int num36 = 0; num36 < 20; num36++)
-            {
-                dustDeath = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 54, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 200, Color.White, 6f);
-                Main.dust[dustDeath].noGravity = true;
-            }
-            NPC.position.X = X;
-            NPC.position.Y = Y;
-            NPC.velocity.X = 0;
-            NPC.velocity.Y = 0;
-            for (int num36 = 0; num36 < 20; num36++)
-            {
-                dustDeath = Dust.NewDust(new Vector2(X, Y), NPC.width, NPC.height, 54, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.White, 6f);
-                Main.dust[dustDeath].noGravity = true;
-            }
+            get => (int)NPC.ai[0];
+            set => NPC.ai[0] = value;
         }
 
+        public void Teleport(Vector2 nextTeleport)
+        {
+            NPC.velocity.X = 0;
+            NPC.velocity.Y = 0;
+
+            Vector2 diff = nextTeleport - NPC.Center;
+            float length = diff.Length();
+            diff.Normalize();
+            Vector2 offset = Vector2.Zero;
+
+            for (int i = 0; i < length; i++)
+            {
+                offset += diff;
+                if (Main.rand.NextBool())
+                {
+                    Vector2 dustPoint = offset;
+                    dustPoint.X += Main.rand.NextFloat(-NPC.width / 2, NPC.width / 2);
+                    dustPoint.Y += Main.rand.NextFloat(-NPC.height / 2, NPC.height / 2);
+                    if (Main.rand.NextBool())
+                    {
+                        Dust.NewDustPerfect(NPC.Center + dustPoint, 71, diff * 5, 200, default, 0.8f).noGravity = true;
+                    }
+                    else
+                    {
+                        Dust.NewDustPerfect(NPC.Center + dustPoint, DustID.FireworkFountain_Pink, diff * 5, 200, default, 0.8f).noGravity = true;
+                    }
+                }
+            }
+
+            NPC.position = nextTeleport;
+        }
+
+        Vector2 nextTeleport;
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
@@ -81,6 +103,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
                 lookMode = 0; //0 = Stand, 1 = Player's Direction, 2 = Movement Direction.
                 ShieldBroken = false;
                 attackPhase = -1;
+                nextPhase = 1;
+                nextTeleport = Main.rand.NextVector2Circular(50, 50) - new Vector2(0, 300);
                 subPhase = 0;
                 genericTimer = 0;
                 genericTimer2 = 0;
@@ -89,8 +113,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
                 Initialized = true;
             }
 
-
-            Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width / 2), NPC.position.Y + (NPC.height / 2));
             genericTimer++;
             if (attackPhase == -1)
             {
@@ -104,8 +126,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
                 {
                     lookMode = 1;
                     phaseTime = 60;
-                    if (Main.rand.Next(2) == 0) Teleport(Main.player[NPC.target].position.X - 500, Main.player[NPC.target].position.Y + 400);
-                    else Teleport(Main.player[NPC.target].position.X + 500, Main.player[NPC.target].position.Y + 400);
                     phaseStarted = true;
                 }
                 bool left = false;
@@ -116,14 +136,16 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
                 if (genericTimer2 == 10)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
                         if (left)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, -6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 62, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, -6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 62, 0f, Main.myPlayer);
                         }
                         else
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, 6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 62, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, 6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 62, 0f, Main.myPlayer);
                         }
+                    }
                     genericTimer2 = 0;
                 }
             }
@@ -143,7 +165,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
                     }
                     lookMode = 0;
                     phaseTime = 80;
-                    Teleport(Main.player[NPC.target].position.X + Main.rand.Next(-50, 50), Main.player[NPC.target].position.Y + Main.rand.Next(-50, 50) - 300);
                     phaseStarted = true;
                 }
                 genericTimer2++;
@@ -152,18 +173,23 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
                     int randomrot = Main.rand.Next(-20, 20) / 2;
                     if (subPhase == 0) // SUB PHASE 0
                     {
-                        for (int num36 = 0; num36 < 9; num36++)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)Math.Sin(randomrot + ((360 / 13) * (1 + num36)) * 3), (float)Math.Cos(randomrot + ((360 / 13) * (1 + num36)) * 3), ModContent.ProjectileType<EnergyPulse>(), 66, 0f, Main.myPlayer);
+                            for (int i = 0; i < 9; i++)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, (float)Math.Sin(randomrot + ((360 / 13) * (1 + i)) * 3), (float)Math.Cos(randomrot + ((360 / 13) * (1 + i)) * 3), ModContent.ProjectileType<EnergyPulse>(), 66, 0f, Main.myPlayer);
+                            }
                         }
                         genericTimer2 = 0;
                     }
                     if (subPhase == 1) // SUB PHASE 1
                     {
-                        for (int num36 = 0; num36 < 6; num36++)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)Math.Sin(randomrot + ((360 / 10) * (1 + num36))) * 6, (float)Math.Cos(randomrot + ((360 / 10) * (1 + num36))) * 6, ModContent.ProjectileType<EnergyPulse>(), 58, 0f, Main.myPlayer);
-                            Main.projectile[num54].ai[0] = NPC.target;
+                            for (int i = 0; i < 6; i++)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, (float)Math.Sin(randomrot + ((360 / 10) * (1 + i))) * 6, (float)Math.Cos(randomrot + ((360 / 10) * (1 + i))) * 6, ModContent.ProjectileType<EnergyPulse>(), 58, 0f, Main.myPlayer);
+                            }
                         }
                         genericTimer2 = -200;
                     }
@@ -176,10 +202,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
                 {
                     lookMode = 2;
                     phaseTime = 60;
-                    NPC.position.X = Main.player[NPC.target].position.X + (float)((600 * Math.Cos((float)(Main.rand.Next(360) * (Math.PI / 180)))) * -1);
-                    NPC.position.Y = Main.player[NPC.target].position.Y + (float)((600 * Math.Sin((float)(Main.rand.Next(360) * (Math.PI / 180)))) * -1);
-                    Vector2 vector7 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                    float rotation = (float)Math.Atan2(vector7.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector7.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                    float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
                     NPC.velocity.X = (float)(Math.Cos(rotation) * 16) * -1;
                     NPC.velocity.Y = (float)(Math.Sin(rotation) * 16) * -1;
                     phaseStarted = true;
@@ -187,9 +210,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
                 genericTimer2++;
                 if (genericTimer2 >= 10)
                 {
-                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                    float rotation = (float)Math.Atan2(NPC.Center.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     rotation += Main.rand.Next(-50, 50) / 100;
-                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * 0.5) * -1), (float)((Math.Sin(rotation) * 0.5) * -1), ModContent.ProjectileType<PhasedMatterBlast>(), 65, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, (float)((Math.Cos(rotation) * 0.5) * -1), (float)((Math.Sin(rotation) * 0.5) * -1), ModContent.ProjectileType<PhasedMatterBlast>(), 65, 0f, Main.myPlayer);
+                    }
                     genericTimer2 = 0;
                 }
             }
@@ -200,31 +226,65 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
                 {
                     lookMode = 2;
                     phaseTime = 180;
-                    NPC.position.X = Main.player[NPC.target].position.X + (float)((600 * Math.Cos((float)(Main.rand.Next(360) * (Math.PI / 180)))) * -1);
-                    NPC.position.Y = Main.player[NPC.target].position.Y + (float)((600 * Math.Sin((float)(Main.rand.Next(360) * (Math.PI / 180)))) * -1);
                     phaseStarted = true;
                 }
-                Vector2 vector7 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                float rotation = (float)Math.Atan2(vector7.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector7.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
                 NPC.velocity.X = (float)(Math.Cos(rotation) * 5) * -1;
                 NPC.velocity.Y = (float)(Math.Sin(rotation) * 5) * -1;
                 genericTimer2++;
                 if (genericTimer2 >= 8)
                 {
-                    rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                    rotation = (float)Math.Atan2(NPC.Center.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     rotation += Main.rand.Next(-50, 50) / 100;
-                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + Main.rand.Next(-100, 100), vector8.Y + Main.rand.Next(-100, 100), (float)((Math.Cos(rotation) * (0.5f + (Main.rand.Next(-3, 3) / 10))) * -1), (float)((Math.Sin(rotation) * (0.5f + (Main.rand.Next(-3, 3) / 10))) * -1), ModContent.ProjectileType<PoisonSmog>(), 34, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-100, 100), NPC.Center.Y + Main.rand.Next(-100, 100), (float)((Math.Cos(rotation) * (0.5f + (Main.rand.Next(-3, 3) / 10))) * -1), (float)((Math.Sin(rotation) * (0.5f + (Main.rand.Next(-3, 3) / 10))) * -1), ModContent.ProjectileType<PoisonSmog>(), 34, 0f, Main.myPlayer);
+                    }
                     genericTimer2 = 0;
                 }
             }
 
             if (genericTimer >= phaseTime)
             {
-                attackPhase = Main.rand.Next(4);
+                attackPhase = nextPhase;
+                nextPhase = Main.rand.Next(4);
+
+                Teleport(nextTeleport);
+
+                if(nextPhase == 0)
+                {
+                    nextTeleport = Main.player[NPC.target].Center + new Vector2(500, 400);
+                    if (Main.rand.NextBool())
+                    {
+                        nextTeleport.X -= 1000;
+                    }
+                }
+                else if(nextPhase == 1)
+                {
+                    nextTeleport = Main.player[NPC.target].Center + Main.rand.NextVector2Circular(50, 50) - new Vector2(0, 300);
+                }
+                else
+                {
+                    nextTeleport = Main.player[NPC.target].Center + Main.rand.NextVector2CircularEdge(600, 600);
+                }
+
                 genericTimer = 0;
                 genericTimer2 = 0;
                 phaseStarted = false;
+                NPC.netUpdate = true;
             }
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(nextPhase);
+            writer.WriteVector2(nextTeleport);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            nextPhase = reader.ReadInt32();
+            nextTeleport = reader.ReadVector2();
         }
 
         public override void FindFrame(int currentFrame)
