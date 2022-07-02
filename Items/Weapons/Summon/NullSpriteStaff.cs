@@ -7,9 +7,6 @@ namespace tsorcRevamp.Items.Weapons.Summon
 {
     public class NullSpriteStaff : ModItem
     {
-
-        public override string Texture => "tsorcRevamp/Projectiles/Summon/NullSprite"; //placeholder
-
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Summons a null sprite to fight for you.");
@@ -35,7 +32,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             player.AddBuff(Item.buffType, 2);
-            position = Main.MouseWorld;
+            int p = Projectile.NewProjectile(source, position, speed, type, damage, knockBack);
+            Main.projectile[p].originalDamage = Item.damage;
             return true;
         }
     }
