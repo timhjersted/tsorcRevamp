@@ -28,6 +28,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         public override void AI()
         {
             Projectile.rotation++;
+            if (Projectile.ai[0] == 3)
+            {
+                Projectile.scale = 3;
+            }
 
             if (Main.rand.Next(2) == 0)
             {
