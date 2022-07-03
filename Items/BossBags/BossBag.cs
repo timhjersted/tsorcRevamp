@@ -588,7 +588,7 @@ namespace tsorcRevamp.Items.BossBags
             var Slain = tsorcRevampWorld.Slain;
             if (context == "bossBag")
             {
-                if (arg == ItemID.EyeOfCthulhuBossBag && !player.ZoneJungle)
+                if (arg == ItemID.EyeOfCthulhuBossBag)
                 {
                     player.QuickSpawnItem(player.GetSource_Loot(), ItemID.HermesBoots);
                     player.QuickSpawnItem(player.GetSource_Loot(), ItemID.HerosHat);
