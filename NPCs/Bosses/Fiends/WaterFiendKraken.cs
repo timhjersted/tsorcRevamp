@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             AnimationType = -1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 325000;
+            NPC.lifeMax = (int)(325000 * (1 + (0.25f * (Main.CurrentFrameFlags.ActivePlayersCount - 1))));
             NPC.timeLeft = 22500;
             NPC.friendly = false;
             NPC.noTileCollide = true;
