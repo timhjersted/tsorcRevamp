@@ -29,8 +29,6 @@ namespace tsorcRevamp.Items.BossItems
         }
         public override bool? UseItem(Player player)
         {
-            Main.NewText("I am impressed you've made it this far, Red. But I'm done playing games. It's time to end this...", 175, 75, 255);
-
             int offset = 50 * 16;
             int effectOffset = 65;
             Vector2 spawnPoint = new Vector2(player.position.X, player.position.Y);

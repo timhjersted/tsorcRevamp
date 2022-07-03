@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
@@ -62,43 +64,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player p = spawnInfo.Player;
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                if (!Main.dayTime && !Main.bloodMoon)
-                { //normal night
-                    if (spawnInfo.SpawnTileY < Main.worldSurface) { return 0.00125f; }
-                    else if (p.ZoneDirtLayerHeight) { return 0.001667f; }
-                    else if (p.ZoneRockLayerHeight) { return 0.00125f; }
-                    else if (p.ZoneDungeon) { return 0.005f; }
-                }
-
-                else if (!Main.dayTime && Main.bloodMoon)
-                {
-
-                    if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()))
-                    { //bloodmoon, witchking not slain
-                        if (p.ZoneDungeon) { return 0.1f; }
-                        else { return 0.033f; }
-                    }
-
-                    else if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Artorias>()) && p.ZoneDungeon)
-                    {//blood moon, witchking slain, artorias not slain, dungeon
-                        return 0.066f;
-                    }
-
-                    else if (spawnInfo.SpawnTileY < Main.worldSurface) { return 0.01f; } //bloodmoon, surface
-
-                }
-
-                else if (!Main.dayTime && p.townNPCs > 2f && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>())) { return 0.033f; }
-
-            }
-
-            return 0f;
-        }
 
         #region AI
         #region Movement
@@ -477,6 +442,30 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
+        public static Texture2D texture;
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (texture == null || texture.IsDisposed)
+            {
+                texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
+            }
+            if (!defenseBroken)
+            {
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+                ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.LivingOceanDye), Main.LocalPlayer);
+                data.Apply(null);
+                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                Vector2 origin = NPC.frame.Size() / 2f;
+                Vector2 offset = new Vector2(16, 0);
+                spriteBatch.Draw(texture,NPC.position - Main.screenPosition + offset, NPC.frame, Color.White, NPC.rotation, origin, 1.1f, effects, 0f);
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+
+            }
+        }
+
         public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
         {
             if (item.type == ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>() || item.type == ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>())
@@ -485,6 +474,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (!defenseBroken)
             {
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Immune!", true, false);
                 damage = 1;
             }
         }
@@ -492,6 +482,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (!defenseBroken)
             {
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Immune!", true, false);
                 damage = 1;
             }
         }
@@ -525,17 +516,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         public override void OnKill()
         {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<BrokenStrangeMagicRing>());
-            if (Main.rand.NextFloat() <= .12f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>(), 1, false, -1);
-            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<WitchkingHelmet>());
-            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<WitchkingTop>());
-            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<WitchkingBottoms>());
-            if (Main.rand.Next(20) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<RingOfPower>(), 1, false, -1);
-            if (Main.rand.NextFloat() <= .08f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<GoldenHairpin>(), 1, false, -1);
-            if (Main.rand.NextFloat() <= .15f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<GuardianSoul>());
-            if (Main.rand.Next(2) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>());
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<CovenantOfArtorias>(), 1, false, -1);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 2500);
+            if (!Main.expertMode)
+            {
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<BrokenStrangeMagicRing>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>(), 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<WitchkingHelmet>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<WitchkingTop>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<WitchkingBottoms>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<RingOfPower>(), 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<GoldenHairpin>(), 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<GuardianSoul>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<CovenantOfArtorias>(), 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 2500);
+            }            
         }
     }
 }

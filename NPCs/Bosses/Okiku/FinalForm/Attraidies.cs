@@ -92,13 +92,16 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         float RotationProgress = 0;
         //The first entry is true here because he always starts with attack 0, and the rest are only set upon changing attacks
         bool[] UsedAttacks = new bool[7] { true, false, false, false, false, false, false };
-
+        bool initialized = false;
         #region AI
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
-
-
+            if (!initialized)
+            {
+                UsefulFunctions.BroadcastText("I am impressed you've made it this far, Red. But I'm done playing games. It's time to end this...", 175, 75, 255);
+                initialized = true;
+            }
             //if(Main.netMode == NetmodeID.Server)
             //{
             //     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, this.npc.whoAmI);

@@ -402,6 +402,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.RingOfPower>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.GoldenHairpin>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.WitchkingHelmet>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.WitchkingTop>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.WitchkingBottoms>());
