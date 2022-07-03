@@ -131,8 +131,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                     TileCollide = false;
                     if(TelegraphTime == 180)
                     {
-                        TelegraphTime = 75 + Main.rand.Next(0, 15);
-                        MaxCharge = 75 + Main.rand.Next(0, 15);
+                        TelegraphTime = 85 + Main.rand.Next(0, 15);
+                        MaxCharge = 85 + Main.rand.Next(0, 15);
                     }
                     FiringDuration = 15;
                     LaserName = "Rapid Laser";

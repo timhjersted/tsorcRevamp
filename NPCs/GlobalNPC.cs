@@ -1662,6 +1662,7 @@ namespace tsorcRevamp.NPCs
                     {
                         if (despawnText != null)
                         {
+                            UsefulFunctions.BroadcastText("All players defeated!", Color.Yellow);
                             UsefulFunctions.BroadcastText(despawnText, despawnTextColor);
                         }
                         despawnTime = 240;

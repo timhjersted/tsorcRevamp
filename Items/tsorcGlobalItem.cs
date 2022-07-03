@@ -17,6 +17,7 @@ namespace tsorcRevamp.Items
         public static List<int> potionList;
         public static List<int> ammoList;
         public static List<int> torchList;
+        public static List<int> hasSoulRecipe;
 
         public override bool CanUseItem(Item item, Player player)
         {
@@ -99,6 +100,11 @@ namespace tsorcRevamp.Items
             {
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] and can't be used"));
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "You can see a strange [c/878787:skull] symbol glowing on its surface..."));
+            }
+
+            if (hasSoulRecipe.Contains(item.type))
+            {
+                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "RecipeTooltip", $"[i:{ModContent.ItemType<DarkSoul>()}][c/66fc03:Dark Soul recipe material]"));
             }
         }
 
@@ -595,7 +601,6 @@ namespace tsorcRevamp.Items
 				ItemID.Torch
             };
         }
-
         private void populateTorches()
         {
             torchList = new List<int> {
@@ -622,6 +627,25 @@ namespace tsorcRevamp.Items
                 ItemID.HallowedTorch,
                 ItemID.JungleTorch
             };
+        }
+
+        public static void populateSoulRecipes()
+        {
+            hasSoulRecipe = new List<int>();
+
+            for(int i = 0; i < Recipe.numRecipes; i++)
+            {
+                if (Main.recipe[i].HasIngredient<DarkSoul>())
+                {
+                    for (int j = 1; j < ItemLoader.ItemCount; j++)
+                    {
+                        if (Main.recipe[i].HasIngredient(j))
+                        {
+                            hasSoulRecipe.Add(j);
+                        }
+                    }
+                }
+            }
         }
     }
 }

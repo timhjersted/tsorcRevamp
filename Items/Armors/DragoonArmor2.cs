@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,7 +12,7 @@ namespace tsorcRevamp.Items.Armors
         public override string Texture => "tsorcRevamp/Items/Armors/DragoonArmor";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dragoon Armor II");
+            DisplayName.SetDefault("Supreme Dragoon Armor");
             Tooltip.SetDefault("A reforged upgrade to the legendary Dragoon Armor.\n" +
                 "You are a master of all forces, the protector of Earth, the Hero of the age.\n" +
                 "The powers of the Dragoon Cloak are embedded within its blue-plated chest piece.\n" +
@@ -43,6 +44,27 @@ namespace tsorcRevamp.Items.Armors
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 245, Color.White, 2.0f);
                 Main.dust[dust].noGravity = true;
             }
+        }
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            RasterizerState OverflowHiddenRasterizerState = new RasterizerState
+            {
+                CullMode = CullMode.None,
+                ScissorTestEnable = true
+            };
+
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null, Main.UIScaleMatrix);
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.White, 0, origin, scale, SpriteEffects.None, 0);
+            }
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null, Main.UIScaleMatrix);
+
+            return true;
         }
 
         public override void AddRecipes()

@@ -78,6 +78,16 @@ namespace tsorcRevamp.Projectiles
 
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            return base.PreDraw(ref lightColor);
+        }
+
+        public override void PostDraw(Color lightColor)
+        {
+            base.PostDraw(lightColor);
+        }
+
     }
 
 }

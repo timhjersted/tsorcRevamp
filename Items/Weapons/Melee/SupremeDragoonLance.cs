@@ -1,3 +1,6 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -35,6 +38,29 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.UseSound = SoundID.Item1;
             Item.shoot = ModContent.ProjectileType<Projectiles.DragoonLance>();
 
+        }
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            /*
+            RasterizerState OverflowHiddenRasterizerState = new RasterizerState
+            {
+                CullMode = CullMode.None,
+                ScissorTestEnable = true
+            };
+
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null, Main.UIScaleMatrix);
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            for (int i = 0; i < 5; i++)
+            {
+                Vector2 offsetPositon = Vector2.UnitX.RotatedBy((i * MathHelper.Pi / 2) + MathHelper.PiOver4);
+                offsetPositon *= 2;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.White, 0, origin, scale, SpriteEffects.None, 0);
+            }
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null, Main.UIScaleMatrix);
+            */
+            return true;
         }
 
         public override void AddRecipes()

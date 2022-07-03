@@ -64,7 +64,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             
             Terraria.Recipe recipe3 = CreateRecipe();
             recipe3.AddIngredient(Mod.Find<ModItem>("FireSpiritTome2").Type, 1);
-            recipe.AddIngredient(ItemID.InfernoFork, 1);
+            recipe3.AddIngredient(ItemID.InfernoFork, 1);
             recipe3.AddIngredient(ItemID.FragmentSolar, 10);
             recipe3.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 5);
             recipe3.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 35000);

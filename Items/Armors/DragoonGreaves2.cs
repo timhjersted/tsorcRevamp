@@ -1,4 +1,6 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -10,8 +12,8 @@ namespace tsorcRevamp.Items.Armors
         public override string Texture => "tsorcRevamp/Items/Armors/DragoonGreaves";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dragoon Greaves II");
-            Tooltip.SetDefault("Harmonized with Earth and Water\nWhen returning from death, you respawn with full health.\nJump boost and double jump skills.");
+            DisplayName.SetDefault("Supreme Dragoon Greaves");
+            Tooltip.SetDefault("Harmonized with Earth and Water");
         }
 
         public override void SetDefaults()
@@ -28,6 +30,28 @@ namespace tsorcRevamp.Items.Armors
             player.hasJumpOption_Cloud = true;
             player.jumpBoost = true;
             player.spawnMax = true;
+        }
+
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            RasterizerState OverflowHiddenRasterizerState = new RasterizerState
+            {
+                CullMode = CullMode.None,
+                ScissorTestEnable = true
+            };
+
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null, Main.UIScaleMatrix);
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.White, 0, origin, scale, SpriteEffects.None, 0);
+            }
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null, Main.UIScaleMatrix);
+
+            return true;
         }
 
         public override void AddRecipes()

@@ -801,7 +801,10 @@ namespace tsorcRevamp
                 Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
             }
         }
-
+        public override void PostAddRecipes()
+        {
+            tsorcGlobalItem.populateSoulRecipes();
+        }
         public override void PostSetupContent()
         {
             #region Boss Checklist Compatibility
