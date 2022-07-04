@@ -216,7 +216,7 @@ namespace tsorcRevamp
             ScriptedEvent KingSlimeEvent = new ScriptedEvent(new Vector2(5995, 1117), 20, NPCID.KingSlime, DustID.MagicMirror, true, true, "King Slime appears!", Color.Blue, false);
 
             //HERO OF LUMELIA FIGHT
-            ScriptedEvent HeroofLumeliaFight = new ScriptedEvent(new Vector2(4487, 732), 13, ModContent.NPCType<NPCs.Bosses.HeroofLumelia>(), DustID.OrangeTorch, true, true, "'You killed my brother, Red! ... You've unleashed hell upon this world!' A hero from Lumelia has come seeking justice... ", Color.LightGoldenrodYellow, false, LumeliaCustomCondition);
+            ScriptedEvent HeroofLumeliaFight = new ScriptedEvent(new Vector2(4413, 717), 120, ModContent.NPCType<NPCs.Bosses.HeroofLumelia>(), DustID.OrangeTorch, true, true, "'You killed my brother, Red! ... You've unleashed hell upon this world!' A hero from Lumelia has come seeking justice... ", Color.LightGoldenrodYellow, false, LumeliaCustomCondition);
             //HeroofLumeliaFight.SetCustomStats(1600, 12, 52, 1555);
             //HeroofLumeliaFight.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion }, new List<int>() { 2, 2 });
 
