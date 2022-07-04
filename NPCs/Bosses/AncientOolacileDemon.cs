@@ -16,12 +16,12 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.height = 120;
             NPC.width = 50;
             NPC.damage = 44;
-            NPC.defense = 1;
+            NPC.defense = 3;
             NPC.lifeMax = 3200;
             NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.value = 56000;
+            NPC.value = 60000;
             NPC.knockBackResist = 0.0f;
             NPC.lavaImmune = true;
 
@@ -37,17 +37,17 @@ namespace tsorcRevamp.NPCs.Bosses
             DisplayName.SetDefault("Ancient Oolacile Demon");
         }
         NPCDespawnHandler despawnHandler;
-        int meteorDamage = 17;
-        int cultistFireDamage = 18;
-        int cultistMagicDamage = 25;
-        int cultistLightningDamage = 19;
-        int fireBreathDamage = 14;
-        int lostSoulDamage = 19;
+        int meteorDamage = 21;
+        int cultistFireDamage = 22;
+        int cultistMagicDamage = 29;
+        int cultistLightningDamage = 20;
+        int fireBreathDamage = 18;
+        int lostSoulDamage = 23;
 
 
-        int greatFireballDamage = 35;
-        int blackFireDamage = 45;
-        int greatAttackDamage = 60;
+        int greatFireballDamage = 36;
+        int blackFireDamage = 47;
+        int greatAttackDamage = 62;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
