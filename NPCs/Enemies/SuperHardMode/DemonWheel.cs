@@ -77,5 +77,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         }
 
+        public override void SetStaticDefaults() {
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
+                Hide = true
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
+        }
     }
 }

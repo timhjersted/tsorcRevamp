@@ -11,7 +11,7 @@ using static tsorcRevamp.UsefulFunctions;
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
     [AutoloadBossHead]
-    [Autoload(false)]
+    //[Autoload(false)]
     class SoulOfCinder : ModNPC
     {
 
@@ -506,7 +506,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (AI_Misc < 90)
             {
                 //AI_Misc but accessors cant be passed as reference
-                ToArenaCenterWithDust(ref NPC.ai[2], DustID.Clentaminator_Cyan, DustShapes.Plus);
+                TeleportToPoint(ref NPC.ai[2], ArenaCenter, DustID.Clentaminator_Cyan, DustShapes.Plus);
             }
 
             else { AI_Timer++; }
@@ -544,17 +544,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (AI_Misc < 90)
             {
                 //AI_Misc but accessors cant be passed as reference
-                ToArenaCenterWithDust(ref NPC.ai[2], DustID.Clentaminator_Purple, DustShapes.X);
+                TeleportToPoint(ref NPC.ai[2], ArenaCenter, DustID.Clentaminator_Purple, DustShapes.X);
             }
 
             else { AI_Timer++; }
             if (AI_Timer == 1 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Enemy.Gwyn.SwordOfLordGwyn>(), 69, 0.5f, NPC.whoAmI, NPC.whoAmI);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Enemy.Gwyn.SwordOfLordGwyn>(), 69, 0.5f, Main.myPlayer, NPC.whoAmI);
             }
 
             if (AI_Timer == 60)
             {
+                //Main.NewText("killing swords");
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
                     if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.Gwyn.SwordOfLordGwyn>())
@@ -562,7 +563,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Main.projectile[i].Kill();
                     }
                 }
-                Main.NewText("hnere " + NPC.whoAmI);
                 ReturnToIdle();
             }
         }
@@ -797,7 +797,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             else
             {
                 int statePicker = 0;
-                if (true)
+                if (false)
                 {
                     switch ((int)AI_State_Counter)
                     {
@@ -836,15 +836,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     switch ((int)AI_State_Counter)
                     {
                         case 1:
-                            statePicker = (int)States.FarronHail;
+                            statePicker = (int)States.Tackle;
                             break;
                         case 3:
-                            statePicker = (int)States.FarronHail;
-                            break;
-                        case 5:
-                            statePicker = (int)States.FarronHail;
+                            statePicker = (int)States.TheArchivist;
                             AI_State_Counter = -1f;
                             break;
+/*                        case 5:
+                            statePicker = (int)States.FarronHail;
+                            AI_State_Counter = -1f;
+                            break;*/
+                        
                         default:
                             AI_State_Counter = -1f;
                             break;
@@ -854,7 +856,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return statePicker;
             }
         }
-        private void ToArenaCenterWithDust(ref float timer, int DustType, DustShapes shape)
+        private void TeleportToPoint(ref float timer, Vector2 location, int? DustType = null, DustShapes shape = default)
         {
             timer++;
             if (timer >= 0 && timer < 15)
@@ -870,14 +872,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.Center = ArenaCenter;
             }
 
-            else if (timer >= 16 && timer < 30)
-            {
-                for (int i = 0; i < 10; i++)
-                {
-                    Vector2 velocity = MakeDustShape(shape, i);
-                    Dust.NewDustPerfect(NPC.Center, DustType, velocity).noGravity = true;
+            if (DustType != null) {
+                if (timer >= 16 && timer < 30) {
+                    for (int i = 0; i < 10; i++) {
+                        Vector2 velocity = MakeDustShape(shape, i);
+                        Dust.NewDustPerfect(NPC.Center, (int)DustType, velocity).noGravity = true;
 
-                }
+                    }
+                } 
             }
 
             else if (timer >= 30 && timer < 60)

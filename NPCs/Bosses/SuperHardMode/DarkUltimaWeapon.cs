@@ -29,6 +29,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPCID.Sets.TrailCacheLength[NPC.type] = 6;
             NPCID.Sets.TrailingMode[NPC.type] = 1;
             NPCID.Sets.NeedsExpertScaling[NPC.type] = false;
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
+                Hide = true
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
         }
         public NPC HolderDarkCloud
         {

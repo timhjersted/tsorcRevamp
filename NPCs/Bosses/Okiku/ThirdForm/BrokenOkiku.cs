@@ -28,6 +28,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
         {
             Main.npcFrameCount[NPC.type] = 3;
             DisplayName.SetDefault("Mindflayer Illusion");
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
+                Hide = true
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
         }
 
         public override void SetDefaults()

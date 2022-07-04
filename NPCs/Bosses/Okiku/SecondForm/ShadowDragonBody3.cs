@@ -42,6 +42,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
         public override void SetStaticDefaults()
         {
             base.DisplayName.SetDefault("Shadow Dragon");
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
+                Hide = true
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
         }
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
