@@ -33,6 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.buffImmune[BuffID.Venom] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
             NPC.buffImmune[BuffID.Frostburn] = true;
+            NPC.buffImmune[BuffID.Frostburn2] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.ShadowFlame] = true;
             NPC.buffImmune[ModContent.BuffType<Buffs.CrescentMoonlight>()] = true;

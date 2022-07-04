@@ -5,8 +5,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Melee
 {
-    public class CrescentMoonSword : ModItem //Same DPS as the Ancient Blood Lance when at close range, less than half when only the projectile hits.
-    {                                        //Projectile has same range as the Ancient Blood Lance
+    public class CrescentMoonSword : ModItem 
+    {                                        
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Crescent Moon Sword");
@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             Item.autoReuse = true;
             Item.rare = ItemRarityID.Cyan;
-            Item.damage = 36;
+            Item.damage = 48;
             Item.width = 40;
             Item.height = 40;
             Item.knockBack = 4.5f;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = 100000;
             Item.shoot = ModContent.ProjectileType<Projectiles.CMSCrescent>();
-            Item.shootSpeed = 4.5f;
+            Item.shootSpeed = 4.5f; //Projectile has same range as the Ancient Blood Lance
         }
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
@@ -52,6 +52,18 @@ namespace tsorcRevamp.Items.Weapons.Melee
             {
                 Item.damage = 120; //change this to whatever suits your testing needs -C
             }
+        }
+
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), 1);
+            recipe.AddIngredient(ItemID.SoulofLight, 7);
+            recipe.AddIngredient(ItemID.SoulofNight, 7);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
         }
     }
 }

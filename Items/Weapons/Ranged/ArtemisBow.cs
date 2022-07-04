@@ -49,7 +49,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(ItemID.GoldBow, 1);
             recipe.AddIngredient(ItemID.AdamantiteBar, 12);
             recipe.AddIngredient(ItemID.SoulofLight, 18);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 75000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 35000);
 
             recipe.AddTile(TileID.DemonAltar);
 

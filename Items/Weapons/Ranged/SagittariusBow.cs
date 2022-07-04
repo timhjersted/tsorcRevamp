@@ -44,9 +44,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("ArtemisBow").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 90000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 50000);
             recipe.AddTile(TileID.DemonAltar);
 
+            recipe.Register();
         }
     }
 }
