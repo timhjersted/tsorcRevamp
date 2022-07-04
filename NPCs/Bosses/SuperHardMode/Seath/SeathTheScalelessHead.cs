@@ -37,9 +37,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         }
 
 
-        int breathDamage = 33;
-        int frozenTearDamage = 44;
-        int meteorDamage = 50;
+        int breathDamage = 43;
+        int frozenTearDamage = 54;
+        int meteorDamage = 60;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = (int)(NPC.damage / 2);

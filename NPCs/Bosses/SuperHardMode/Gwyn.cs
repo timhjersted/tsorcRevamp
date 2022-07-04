@@ -36,16 +36,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         int deathBallDamage = 100;
-        int phantomSeekerDamage = 45;
+        int phantomSeekerDamage = 55;
         int armageddonBallDamage = 85;
         int holdBallDamage = 35;
         int fireballBallDamage = 45;
         int blazeBallDamage = 55;
         int blackBreathDamage = 80;
-        int purpleCrushDamage = 45;
-        int fireBreathDamage = 50;
-        int iceStormDamage = 33;
-        int gravityBallDamage = 80;
+        int purpleCrushDamage = 55;
+        int fireBreathDamage = 60;
+        int iceStormDamage = 40;
+        int gravityBallDamage = 90;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
