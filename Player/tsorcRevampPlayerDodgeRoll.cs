@@ -118,15 +118,12 @@ namespace tsorcRevamp
                     && item.type != ItemID.CobaltNaginata && item.type != ItemID.PalladiumPike && item.type != ItemID.MythrilHalberd && item.type != ItemID.OrichalcumHalberd
                     && item.type != ItemID.AdamantiteGlaive && item.type != ItemID.TitaniumTrident && item.type != ItemID.Gungnir && item.type != ItemID.ChlorophytePartisan
                     && /*item.type != ItemID.MonkStaffT1 &&*/ item.type != ItemID.MonkStaffT2 && /*item.type != ItemID.MonkStaffT3 &&*/ item.type != ItemID.MushroomSpear
-                    && item.type != ItemID.ObsidianSwordfish && item.type != ItemID.NorthPole && item.type != ModContent.ItemType<Items.Weapons.Melee.CopperSpear>()
-                    && item.type != ModContent.ItemType<Items.Weapons.Melee.IronSpear>() && item.type != ModContent.ItemType<Items.Weapons.Melee.SilverSpear>()
-                    && item.type != ModContent.ItemType<Items.Weapons.Melee.GoldSpear>() && item.type != ModContent.ItemType<Items.Weapons.Melee.ForgottenPearlSpear>()
+                    && item.type != ItemID.ObsidianSwordfish && item.type != ItemID.NorthPole
                     && item.type != ModContent.ItemType<Items.Weapons.Melee.HiRyuuSpear>() && item.type != ModContent.ItemType<Items.Weapons.Melee.AncientDragonLance>()
                     && item.type != ModContent.ItemType<Items.Weapons.Melee.AncientBloodLance>() && item.type != ModContent.ItemType<Items.Weapons.Melee.AncientHolyLance>()
                     && item.type != ModContent.ItemType<Items.Weapons.Melee.CelestialLance>() && item.type != ModContent.ItemType<Items.Weapons.Melee.DragoonLance>()
                      && item.type != ModContent.ItemType<Items.Weapons.Melee.SupremeDragoonLance>()
                     && item.type != ModContent.ItemType<Items.Weapons.Melee.ForgottenImpHalberd>() && item.type != ModContent.ItemType<Items.Weapons.Melee.OldHalberd>()
-                    && item.type != ModContent.ItemType<Items.Weapons.Melee.OrcishHalberd>() && item.type != ModContent.ItemType<Items.Weapons.Melee.ReforgedOldHalberd>()
                     && item.type != ModContent.ItemType<Items.Weapons.Melee.ForgottenPolearm>()))
                 {
                     Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 0.6f; // Drain .6 stamina/tick
