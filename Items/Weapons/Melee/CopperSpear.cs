@@ -36,14 +36,5 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.shoot = ModContent.ProjectileType<Projectiles.CopperSpear>();
 
         }
-
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CopperBar, 10);
-
-            recipe.AddTile(TileID.Anvils);
-            recipe.Register();
-        }
     }
 }

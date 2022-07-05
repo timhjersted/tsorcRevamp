@@ -31,18 +31,5 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<Projectiles.MythrilBall>();
         }
-
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Chain, 3);
-            recipe.AddIngredient(ItemID.MythrilBar, 17);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2500);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
-        }
-
-
     }
 }

@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Yellow;
-            Item.damage = 50;
+            Item.damage = 30;
             Item.height = 64;
             Item.width = 64;
             Item.knockBack = 14f;
@@ -34,11 +34,9 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Excalibur, 1);
-            recipe.AddIngredient(ItemID.SoulofMight, 5);
-            recipe.AddIngredient(ItemID.SoulofSight, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 85000);
+            recipe.AddIngredient(ItemID.NightsEdge, 1);
+            recipe.AddIngredient(ItemID.SoulofLight, 5);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 12000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

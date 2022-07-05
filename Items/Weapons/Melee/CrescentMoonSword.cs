@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
-            if ((player.name == "Zeodexic")/* || (player.name == "Chroma TSORC test")*/) //Add whatever names you use -C
+            if ((player.name == "Zeodexic") || (player.name == "ChromaEquinox")//*/) //Add whatever names you use -C
             {
                 Item.damage = 120; //change this to whatever suits your testing needs -C
             }
@@ -60,7 +60,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), 1);
             recipe.AddIngredient(ItemID.SoulofLight, 7);
             recipe.AddIngredient(ItemID.SoulofNight, 7);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

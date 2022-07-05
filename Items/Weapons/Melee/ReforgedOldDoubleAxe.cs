@@ -23,13 +23,5 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useTime = 26;
             Item.value = 18000;
         }
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("OldDoubleAxe").Type);
-            recipe.AddTile(ModContent.TileType<Tiles.SweatyCyclopsForge>());
-
-            recipe.Register();
-        }
     }
 }
