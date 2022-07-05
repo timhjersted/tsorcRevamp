@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
-            if ((player.name == "Zeodexic") || (player.name == "ChromaEquinox")//*/) //Add whatever names you use -C
+            if ((player.name == "Zeodexic") || (player.name == "ChromaEquinox")) //*/) //Add whatever names you use -C
             {
                 Item.damage = 120; //change this to whatever suits your testing needs -C
             }

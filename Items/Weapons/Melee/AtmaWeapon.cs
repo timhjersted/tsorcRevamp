@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             Tooltip.SetDefault("A sword that draws power from the wielder.\n" +
                                 "The true form of your father's sword revealed.\n" +
-                                "Does 105 damage when at full health, and 80 damage at half health, scaling with current HP.");
+                                "Deals maximum damage at full health");
 
         }
 
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
 
             Item.stack = 1;
-            Item.rare = ItemRarityID.LightPurple;
+            Item.rare = ItemRarityID.Yellow;
             Item.damage = 100;
             Item.height = 58;
             Item.knockBack = (float)9;

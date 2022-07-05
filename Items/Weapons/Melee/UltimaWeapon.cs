@@ -12,14 +12,13 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Ultimate sword drawing power from the wielder" +
-                                "\nThe true form of your father's legendary sword revealed" +
-                                "\nDoes 150 damage when at full health, and 100 damage at 200 health, scaling with current HP");
+                                "\nDeals maximum damage at full health");
         }
 
         public override void SetDefaults()
         {
-            Item.rare = ItemRarityID.Yellow;
-            Item.damage = 30;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.damage = 55;
             Item.height = 64;
             Item.width = 64;
             Item.knockBack = 14f;
