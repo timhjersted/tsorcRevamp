@@ -9,14 +9,14 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+20% movement, can walk on heated grounds.");
+            Tooltip.SetDefault("+25% movement speed, can walk on heated grounds.\nIncreases your max number of minions by 1");
         }
 
         public override void SetDefaults()
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 9;
+            Item.defense = 7;
             Item.value = 40000;
             Item.rare = ItemRarityID.Orange;
         }
@@ -25,13 +25,14 @@ namespace tsorcRevamp.Items.Armors
         {
             player.moveSpeed += 0.25f;
             player.fireWalk = true;
+            player.maxMinions += 1;
         }
 
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.MoltenGreaves, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1500);
+            recipe.AddIngredient(ItemID.ObsidianPants, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
