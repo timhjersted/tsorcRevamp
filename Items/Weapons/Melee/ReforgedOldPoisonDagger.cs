@@ -44,13 +44,5 @@ namespace tsorcRevamp.Items.Weapons.Melee
                 Main.dust[dust].noGravity = true;
             }
         }
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("OldPoisonDagger").Type);
-            recipe.AddTile(ModContent.TileType<Tiles.SweatyCyclopsForge>());
-
-            recipe.Register();
-        }
     }
 }

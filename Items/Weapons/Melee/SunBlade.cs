@@ -64,17 +64,5 @@ namespace tsorcRevamp.Items.Weapons.Melee
                 damage *= 4;
             }
         }
-
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SoulofLight, 10);
-            recipe.AddIngredient(ItemID.LightsBane);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
-        }
-
     }
 }

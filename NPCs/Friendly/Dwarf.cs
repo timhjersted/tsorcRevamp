@@ -114,10 +114,6 @@ namespace tsorcRevamp.NPCs.Friendly
             chest.item[index].shopCustomPrice = 200;
             chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             index++;
-            chest.item[index].SetDefaults(ModContent.ItemType<SweatyCyclopsForgeItem>());
-            chest.item[index].shopCustomPrice = 10;
-            chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            index++;
             chest.item[index].SetDefaults(ItemID.Flipper);
             chest.item[index].shopCustomPrice = 200;
             chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;

@@ -7,6 +7,10 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class OldChainCoif : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("+1 flat minion damage");
+        }
         public override void SetDefaults()
         {
             Item.width = 26;
@@ -16,6 +20,11 @@ namespace tsorcRevamp.Items.Armors
             Item.rare = ItemRarityID.White;
         }
 
+        public override void UpdateEquip(Player player)
+        {
+            player.GetDamage(DamageClass.Summon).Flat += 1f;
+        }
+
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
             return body.type == ModContent.ItemType<OldChainArmor>() && legs.type == ModContent.ItemType<OldChainGreaves>();
@@ -23,7 +32,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.statDefense += 3;
+            player.maxMinions += 1;
         }
     }
 }

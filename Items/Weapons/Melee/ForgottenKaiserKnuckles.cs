@@ -26,5 +26,14 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.value = PriceByRarity.Green_2;
             Item.width = 21;
         }
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.BladedGlove, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1200);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
+        }
     }
 }

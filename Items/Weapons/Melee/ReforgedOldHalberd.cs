@@ -59,15 +59,5 @@ namespace tsorcRevamp.Items.Weapons.Melee
             }
             return base.CanUseItem(player);
         }
-
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("OldHalberd").Type);
-            recipe.AddTile(ModContent.TileType<Tiles.SweatyCyclopsForge>());
-
-            recipe.Register();
-
-        }
     }
 }

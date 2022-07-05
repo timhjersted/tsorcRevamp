@@ -90,63 +90,31 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void SetupShop(Chest shop, ref int nextSlot)
         {
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldSabre>());
-            shop.item[nextSlot].shopCustomPrice = 80;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldRapier>());
-            shop.item[nextSlot].shopCustomPrice = 80;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldAxe>());
-            shop.item[nextSlot].shopCustomPrice = 180;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldLongsword>());
-            shop.item[nextSlot].shopCustomPrice = 140;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldMace>());
-            shop.item[nextSlot].shopCustomPrice = 80;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldBroadsword>());
-            shop.item[nextSlot].shopCustomPrice = 140;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldMorningStar>());
-            shop.item[nextSlot].shopCustomPrice = 200;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldChainCoif>());
-            shop.item[nextSlot].shopCustomPrice = 60;
+            shop.item[nextSlot].shopCustomPrice = 20;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldChainArmor>());
-            shop.item[nextSlot].shopCustomPrice = 120;
+            shop.item[nextSlot].shopCustomPrice = 40;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldChainGreaves>());
-            shop.item[nextSlot].shopCustomPrice = 60;
+            shop.item[nextSlot].shopCustomPrice = 30;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<AncientBrassHelmet>());
-            shop.item[nextSlot].shopCustomPrice = 120;
+            shop.item[nextSlot].shopCustomPrice = 10;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<AncientBrassArmor>());
-            shop.item[nextSlot].shopCustomPrice = 180;
+            shop.item[nextSlot].shopCustomPrice = 18;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<AncientBrassGreaves>());
-            shop.item[nextSlot].shopCustomPrice = 120;
+            shop.item[nextSlot].shopCustomPrice = 12;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<CorruptedTooth>());
-            shop.item[nextSlot].shopCustomPrice = 420;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<ForgottenMetalKnuckles>());
             shop.item[nextSlot].shopCustomPrice = 100;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
@@ -154,31 +122,10 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].shopCustomPrice = 8;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
-            if (NPC.downedBoss1)
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldTwoHandedSword>());
-                shop.item[nextSlot].shopCustomPrice = 300;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }
-            if (NPC.downedBoss2)
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<ForgottenLongSword>());
-                shop.item[nextSlot].shopCustomPrice = 1200;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<ForgottenKaiserKnuckles>());
-                shop.item[nextSlot].shopCustomPrice = 600;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }
-            if (NPC.downedBoss3)
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<ForgottenKotetsu>());
-                shop.item[nextSlot].shopCustomPrice = 1500;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.SunBlade>());
+            shop.item[nextSlot].shopCustomPrice = 300;
+            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+            nextSlot++;
         }
 
         public override void HitEffect(int hitDirection, double damage)

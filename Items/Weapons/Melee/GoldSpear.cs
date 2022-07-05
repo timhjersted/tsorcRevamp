@@ -36,14 +36,5 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.shoot = ModContent.ProjectileType<Projectiles.GoldSpear>();
 
         }
-
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.GoldBar, 10);
-
-            recipe.AddTile(TileID.Anvils);
-            recipe.Register();
-        }
     }
 }

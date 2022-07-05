@@ -12,14 +12,13 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Ultimate sword drawing power from the wielder" +
-                                "\nThe true form of your father's legendary sword revealed" +
-                                "\nDoes 150 damage when at full health, and 100 damage at 200 health, scaling with current HP");
+                                "\nDeals maximum damage at full health");
         }
 
         public override void SetDefaults()
         {
-            Item.rare = ItemRarityID.Yellow;
-            Item.damage = 50;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.damage = 55;
             Item.height = 64;
             Item.width = 64;
             Item.knockBack = 14f;
@@ -34,11 +33,9 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Excalibur, 1);
-            recipe.AddIngredient(ItemID.SoulofMight, 5);
-            recipe.AddIngredient(ItemID.SoulofSight, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 85000);
+            recipe.AddIngredient(ItemID.NightsEdge, 1);
+            recipe.AddIngredient(ItemID.SoulofLight, 5);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 12000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

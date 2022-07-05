@@ -25,16 +25,5 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<Projectiles.SilverBall>();
         }
-
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SilverBar, 1);
-            recipe.AddIngredient(ItemID.Chain, 2);
-            recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 100);
-            recipe.AddTile(TileID.Anvils);
-
-            recipe.Register();
-        }
     }
 }

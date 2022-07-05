@@ -22,15 +22,5 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.value = PriceByRarity.Green_2;
             Item.width = 36;
         }
-
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("ForgottenAxe").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2000);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
-        }
     }
 }

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             Tooltip.SetDefault("A sword that draws power from the wielder.\n" +
                                 "The true form of your father's sword revealed.\n" +
-                                "Does 105 damage when at full health, and 80 damage at half health, scaling with current HP.");
+                                "Deals maximum damage at full health");
 
         }
 
@@ -18,15 +18,15 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
 
             Item.stack = 1;
-            Item.rare = ItemRarityID.LightPurple;
-            Item.damage = 55;
+            Item.rare = ItemRarityID.Yellow;
+            Item.damage = 100;
             Item.height = 58;
             Item.knockBack = (float)9;
             Item.maxStack = 1;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
-            Item.useAnimation = 19;
-            Item.useTime = 19;
+            Item.useAnimation = 17;
+            Item.useTime = 17;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.LightPurple_6;
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Excalibur, 1);
             recipe.AddIngredient(ItemID.SoulofSight, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 60000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 25000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
