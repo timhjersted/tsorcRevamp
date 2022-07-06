@@ -78,6 +78,17 @@ namespace tsorcRevamp
             RecipeRemover(ItemID.PickaxeAxe);
 
             RecipeRemover(ItemID.BladeofGrass);
+            RecipeRemover(ItemID.ThornWhip);
+            RecipeRemover(ItemID.BoneWhip);
+            RecipeRemover(ItemID.JungleHat);
+            RecipeRemover(ItemID.JungleShirt);
+            RecipeRemover(ItemID.JunglePants);
+            RecipeRemover(ItemID.NecroHelmet);
+            RecipeRemover(ItemID.NecroBreastplate);
+            RecipeRemover(ItemID.NecroGreaves);
+            RecipeRemover(ItemID.MoltenHelmet);
+            RecipeRemover(ItemID.MoltenBreastplate);
+            RecipeRemover(ItemID.MoltenGreaves);
             RecipeRemover(ItemID.RopeCoil);
             RecipeRemover(ItemID.VineRopeCoil);
             RecipeRemover(ItemID.WebRope);
