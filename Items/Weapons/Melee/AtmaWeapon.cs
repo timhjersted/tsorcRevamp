@@ -9,7 +9,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("A sword that draws power from the wielder.\n" +
-                                "The true form of your father's sword revealed.\n" +
                                 "Deals maximum damage at full health");
 
         }
@@ -36,9 +35,12 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Excalibur, 1);
-            recipe.AddIngredient(ItemID.SoulofSight, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 25000);
+
+            recipe.AddIngredient(ItemID.CobaltSword, 1); 
+            recipe.AddIngredient(ItemID.MythrilSword, 1); 
+            recipe.AddIngredient(ItemID.AdamantiteSword, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 15000);
+
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

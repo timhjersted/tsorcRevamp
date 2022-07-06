@@ -8,7 +8,6 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using tsorcRevamp.Items;
-using static tsorcRevamp.Tiles.SweatyCyclopsForge;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
