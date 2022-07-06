@@ -84,14 +84,14 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void DrawTownAttackSwing(ref Texture2D item, ref int itemSize, ref float scale, ref Vector2 offset)
         {
-            item = (Texture2D)TextureAssets.Item[ModContent.ItemType<Items.Weapons.Melee.ForgottenAxe>()];
-            itemSize = 36;
+            item = (Texture2D)TextureAssets.Item[ModContent.ItemType<Items.Weapons.Melee.AncientWarhammer>()];
+            itemSize = 38;
         }
 
         public override void TownNPCAttackSwing(ref int itemWidth, ref int itemHeight)
         {
-            itemWidth = 36;
-            itemHeight = 30;
+            itemWidth = 38;
+            itemHeight = 38;
         }
 
         public override bool CanGoToStatue(bool toKingStatue)

@@ -37,6 +37,6 @@ namespace tsorcRevamp.Prefixes
     }
 
     public class Invigorating : Refreshing {
-        public override float _power => 0.06f;
+        public override float _power => 0.08f;
     }
 }
