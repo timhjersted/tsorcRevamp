@@ -564,7 +564,6 @@ namespace tsorcRevamp
             PlaceAllowedModTiles = new List<int>()
             {
                 Find<ModTile>("EnemyBannerTile").Type,
-                Find<ModTile>("SweatyCyclopsForge").Type
 
             };
 
