@@ -95,6 +95,15 @@ namespace tsorcRevamp
             RecipeRemover(ItemID.WebRopeCoil);
             RecipeRemover(ItemID.SilkRopeCoil);
 
+            RecipeRemover(ItemID.Excalibur);
+            RecipeRemover(ItemID.HallowedHeadgear);
+            RecipeRemover(ItemID.HallowedMask);
+            RecipeRemover(ItemID.HallowedHelmet);
+            RecipeRemover(ItemID.HallowedHood);
+            RecipeRemover(ItemID.HallowedPlateMail);
+            RecipeRemover(ItemID.HallowedGreaves);
+            RecipeRemover(ItemID.SwordWhip);
+
             RecipeRemover(ItemID.DemonWings);
             RecipeRemover(ItemID.FairyWings);
             RecipeRemover(ItemID.HarpyWings);
