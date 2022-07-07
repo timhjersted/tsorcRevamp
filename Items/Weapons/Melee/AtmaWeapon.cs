@@ -40,7 +40,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
             recipe.AddIngredient(ItemID.AdamantiteSword, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 15000);
             recipe.AddTile(TileID.DemonAltar);
-
             recipe.Register();
         }
 

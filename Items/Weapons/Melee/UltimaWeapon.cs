@@ -81,7 +81,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
             //I don't care if this many parentheses aren't necessary, integer division is hell
-            damage.Scale((((float)player.statLife) / ((float)player.statLifeMax2)) * ((float)2)) ;
+            damage.Scale(((((float)player.statLife) / ((float)player.statLifeMax2))) * ((float)2)) ;
         }
     }
 }

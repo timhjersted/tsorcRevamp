@@ -75,7 +75,7 @@ namespace tsorcRevamp.Items.VanillaItems
             SimpleModTooltip(Mod, item, tooltips, ItemID.YellowWrench, "Do not use this!");
             SimpleModTooltip(Mod, item, tooltips, ItemID.MulticolorWrench, "Do not use this!");
             SimpleModTooltip(Mod, item, tooltips, ItemID.CopperAxe, "All axes do 2x damage to woody enemies");
-            SimpleModTooltip(Mod, item, tooltips, ItemID.DemonBow, "Can be upgraded with 4000 Dark Souls and 10 Shadow Scales");
+            SimpleModTooltip(Mod, item, tooltips, ItemID.DemonBow, "Can be upgraded with 4000 Dark Souls", "and 10 Shadow Scales or 10 Tissue Samples");
             SimpleModTooltip(Mod, item, tooltips, ItemID.Diamond, "Vital ingredient in the crafting of a very powerful potion");
             SimpleModTooltip(Mod, item, tooltips, ItemID.IronOre, "Perhaps you can use these for making special arrows..?");
             SimpleModTooltip(Mod, item, tooltips, ItemID.FeralClaws, "Can be upgraded with 3000 Dark Souls, an Aglet and an Anklet of the Wind");
