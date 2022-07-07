@@ -82,7 +82,7 @@ namespace tsorcRevamp.Projectiles.Summon
                         continue;
                     
                     float distance = Vector2.Distance(checkNPC.Center, Projectile.Center);
-                    if ((distance < targetDistance) && Collision.CanHitLine(Projectile.Center, Projectile.width, Projectile.height, checkNPC.Center, checkNPC.width, checkNPC.height)) {
+                    if ((distance < targetDistance) && Collision.CanHitLine(Projectile.Center, 1, 1, checkNPC.Center, 1, 1)) {
                         targetDistance = distance;
                         targetLocation = checkNPC.Center;
                         foundTarget = true;
