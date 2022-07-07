@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
 {
+    [LegacyName("ArmorOfArtorias")]
     [AutoloadEquip(EquipType.Body)]
     public class ArtoriasArmor : ModItem
     {

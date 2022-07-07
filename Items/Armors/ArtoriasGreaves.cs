@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
 {
+    [LegacyName("GreavesOfArtorias")]
     [AutoloadEquip(EquipType.Legs)]
     public class ArtoriasGreaves : ModItem
     {
