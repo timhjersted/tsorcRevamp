@@ -251,8 +251,14 @@ namespace tsorcRevamp
                     return false;
                 }
 
+                bool itemBlocking = Player.itemAnimation > 0;
+                if (Player.GetModPlayer<tsorcRevampPlayer>().ReflectionShiftEnabled)
+                {
+                    itemBlocking = false;
+                }
+
                 //Don't allow dodging on mounts and during item use.
-                if ((Player.mount != null && Player.mount.Active) || Player.itemAnimation > 0)
+                if ((Player.mount != null && Player.mount.Active) || itemBlocking)
                 {
                     return false;
                 }
