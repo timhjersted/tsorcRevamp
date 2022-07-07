@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
 {
+    [LegacyName("AncientBrassHelmet")]
     [AutoloadEquip(EquipType.Head)]
     public class BrassHelmet : ModItem
     {

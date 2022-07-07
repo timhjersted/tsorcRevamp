@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
 {
+    [LegacyName("AncientDragonScaleMail")]
     [AutoloadEquip(EquipType.Body)]
     public class DragonScaleMail : ModItem
     {

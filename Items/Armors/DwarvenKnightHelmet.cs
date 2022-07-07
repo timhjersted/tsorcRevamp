@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
 {
+    [LegacyName("AncientDwarvenHelmet")]
     [AutoloadEquip(EquipType.Head)]
     class DwarvenKnightHelmet : ModItem //To be reworked
     {
