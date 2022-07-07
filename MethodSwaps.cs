@@ -422,6 +422,11 @@ namespace tsorcRevamp
             if (item.stack <= 0 || item.type <= 0 || item.buffType <= 0 || item.CountsAsClass(DamageClass.Summon) || item.buffType == 90)
                 return;
 
+            if(item.type == ModContent.ItemType<Items.Potions.HealingElixir>() || item.type == ModContent.ItemType<Items.Potions.HolyWarElixir>())
+            {
+                return;
+            }
+
             int buffType = item.buffType;
             bool validItem = ItemLoader.CanUseItem(item, player);
             for (int j = 0; j < Player.MaxBuffs; j++)
