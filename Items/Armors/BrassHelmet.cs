@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Head)]
-    public class AncientBrassHelmet : ModItem
+    public class BrassHelmet : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == ModContent.ItemType<AncientBrassArmor>() && legs.type == ModContent.ItemType<AncientBrassGreaves>();
+            return body.type == ModContent.ItemType<Items.Armors.BrassArmor>() && legs.type == ModContent.ItemType<Items.Armors.BrassGreaves>();
         }
 
         public override void UpdateArmorSet(Player player)

@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Head)]
-    public class AncientDragonScaleHelmet : ModItem
+    public class DragonScaleHelmet : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == ModContent.ItemType<AncientDragonScaleMail>() && legs.type == ModContent.ItemType<AncientDragonScaleGreaves>();
+            return body.type == ModContent.ItemType<Items.Armors.DragonScaleMail>() && legs.type == ModContent.ItemType<Items.Armors.DragonScaleGreaves>();
         }
 
         public override void UpdateArmorSet(Player player)

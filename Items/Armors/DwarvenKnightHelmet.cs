@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Head)]
-    class AncientDwarvenHelmet : ModItem
+    class DwarvenKnightHelmet : ModItem //To be reworked
     {
 
         public override void SetStaticDefaults()
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == ModContent.ItemType<AncientDwarvenArmor>() && legs.type == ModContent.ItemType<AncientDwarvenGreaves>();
+            return body.type == ModContent.ItemType<Items.Armors.DwarvenArmor>() && legs.type == ModContent.ItemType<Items.Armors.DwarvenGreaves>();
         }
 
         public override void UpdateArmorSet(Player player)
@@ -32,16 +32,6 @@ namespace tsorcRevamp.Items.Armors
             player.GetAttackSpeed(DamageClass.Melee) += 0.07f;
             if (player.statLife < 80) player.lifeRegen += 4;
             else player.lifeRegen += 1;
-        }
-
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SilverHelmet);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
         }
     }
 }

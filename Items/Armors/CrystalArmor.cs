@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Body)]
-    public class CrystalArmor : ModItem
+    public class CrystalArmor : ModItem //To be reworked
     {
         public override void SetStaticDefaults()
         {

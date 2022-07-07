@@ -5,12 +5,11 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Head)]
-    class AncientDwarvenHelmet2 : ModItem
+    class DwarvenCrusaderHelmet : ModItem
     {
 
-        public override void SetStaticDefaults()
+        public override void SetStaticDefaults() //To be reworked
         {
-            DisplayName.SetDefault("Ancient Dwarven Helmet II");
             Tooltip.SetDefault("Set bonus grants +8 defense, +9% melee damage, and +9% melee speed. \n+6 life regen when health falls below 80, +3 otherwise.");
         }
 
@@ -23,7 +22,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == ModContent.ItemType<AncientDwarvenArmor>() && legs.type == ModContent.ItemType<AncientDwarvenGreaves>();
+            return body.type == ModContent.ItemType<Items.Armors.DwarvenArmor>() && legs.type == ModContent.ItemType<Items.Armors.DwarvenGreaves>();
         }
 
         public override void UpdateArmorSet(Player player)
@@ -33,16 +32,6 @@ namespace tsorcRevamp.Items.Armors
             player.GetAttackSpeed(DamageClass.Melee) += 0.09f;
             if (player.statLife < 80) player.lifeRegen += 6;
             else player.lifeRegen += 3;
-        }
-
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<AncientDwarvenHelmet>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
         }
     }
 }
