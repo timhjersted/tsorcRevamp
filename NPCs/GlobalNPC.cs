@@ -241,6 +241,7 @@ namespace tsorcRevamp.NPCs
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff || bossAlive || player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()))
             {
+                spawnRate = 9999999;//Higher is less spawns
                 maxSpawns = 0;
             }
 
@@ -250,6 +251,7 @@ namespace tsorcRevamp.NPCs
             {
                 if (player.HasBuff(BuffID.PeaceCandle))
                 {
+                    spawnRate = 9999999;
                     maxSpawns = 0;
                 }
             }

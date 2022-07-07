@@ -1128,7 +1128,9 @@ namespace tsorcRevamp
             }
 
             if (BossZen)
-            { return; }
+            {
+                return; 
+            }
             else
             {
                 orig();
