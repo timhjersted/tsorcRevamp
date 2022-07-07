@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Body)]
-    public class AncientMagicPlateArmor : ModItem
+    public class AncientMagicPlateArmor : ModItem //To be reworked
     {
         public override void SetStaticDefaults()
         {
@@ -26,16 +26,6 @@ namespace tsorcRevamp.Items.Armors
             player.GetAttackSpeed(DamageClass.Melee) += 0.15f;
             player.manaCost -= 0.15f;
             player.ammoCost80 = true;
-        }
-
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CobaltBreastplate, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
         }
     }
 }

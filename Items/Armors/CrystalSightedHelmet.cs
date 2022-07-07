@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Head)]
-    public class CrystalSightedHelmet : ModItem
+    public class CrystalSightedHelmet : ModItem //To be reworked
     {
         public override void SetStaticDefaults()
         {
@@ -56,17 +56,6 @@ namespace tsorcRevamp.Items.Armors
         public override void ArmorSetShadows(Player player)
         {
             player.armorEffectDrawShadow = true;
-        }
-
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CobaltHelmet, 1);
-            recipe.AddIngredient(ItemID.CrystalShard, 30);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
         }
     }
 }

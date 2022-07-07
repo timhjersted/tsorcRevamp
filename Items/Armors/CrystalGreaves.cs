@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Legs)]
-    public class CrystalGreaves : ModItem
+    public class CrystalGreaves : ModItem //To be reworked
     {
         public override void SetStaticDefaults()
         {
@@ -24,17 +24,6 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += 0.1f;
-        }
-
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CobaltLeggings, 1);
-            recipe.AddIngredient(ItemID.CrystalShard, 30);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
         }
     }
 }

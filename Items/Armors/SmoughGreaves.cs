@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Legs)]
-    public class SmoughGreaves : ModItem
+    public class SmoughGreaves : ModItem //To be reworked
     {
 
         public override void SetDefaults()

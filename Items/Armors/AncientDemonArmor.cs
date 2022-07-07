@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Forged by those who brave Annihilation.\n+13% minion damage\nSet bonus: +50% whip range, +25% whip speed and 15% extra when under 166 life");
+            Tooltip.SetDefault("Forged by those who brave Annihilation.\n+9% minion damage\nSet bonus: +50% whip range, +25% whip speed and 15% extra when under 166 life\n+15% whip damage");
             ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = false;
         }
 
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.13f;
+            player.GetDamage(DamageClass.Summon) += 0.09f;
         }
 
         public override void DrawArmorColor(Player drawPlayer, float shadow, ref Color color, ref int glowMask, ref Color glowMaskColor)

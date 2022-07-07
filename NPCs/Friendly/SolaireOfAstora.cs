@@ -102,18 +102,6 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].shopCustomPrice = 30;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<AncientBrassHelmet>());
-            shop.item[nextSlot].shopCustomPrice = 10;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<AncientBrassArmor>());
-            shop.item[nextSlot].shopCustomPrice = 18;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<AncientBrassGreaves>());
-            shop.item[nextSlot].shopCustomPrice = 12;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<CorruptedTooth>());
             shop.item[nextSlot].shopCustomPrice = 100;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;

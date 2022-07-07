@@ -5,11 +5,11 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Body)]
-    public class ArmorOfArtorias : ModItem
+    public class ArtoriasArmor : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Armor of Artorias");
+            DisplayName.SetDefault("Artorias' Armor");
             Tooltip.SetDefault("Enchanted armor of Artorias of the Abyss.\nPossesses the same power as the Titan Glove.\nSet bonus gives +37% damage, +50% move speed, 8 life regen, lava immunity and many other abilities.");
         }
 

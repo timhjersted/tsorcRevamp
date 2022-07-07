@@ -18,14 +18,14 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.LightPurple;
-            Item.damage = 55;
+            Item.damage = 200;
             Item.height = 64;
             Item.width = 64;
             Item.knockBack = 14f;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
-            Item.useAnimation = 21;
-            Item.useTime = 21;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Yellow_8;

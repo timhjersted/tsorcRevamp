@@ -43,10 +43,7 @@ namespace tsorcRevamp.Items.Armors
             player.waterWalk = true;
             player.noKnockback = true;
             player.GetDamage(DamageClass.Generic) += 0.14f;
-            player.GetCritChance(DamageClass.Ranged) += 14;
-            player.GetCritChance(DamageClass.Melee) += 14;
-            player.GetCritChance(DamageClass.Magic) += 14;
-            player.GetCritChance(DamageClass.Throwing) += 14;
+            player.GetCritChance(DamageClass.Generic) += 14;
             player.GetAttackSpeed(DamageClass.Melee) += 0.14f;
             player.moveSpeed += 0.14f;
             player.manaCost -= 0.14f;

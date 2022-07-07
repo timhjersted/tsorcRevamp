@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("You hear an evil whispering from inside.\n+13% minion damage");
+            Tooltip.SetDefault("You hear an evil whispering from inside.\n+9% minion damage");
         }
 
         public override void SetDefaults()
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.13f; 
+            player.GetDamage(DamageClass.Summon) += 0.09f; 
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -44,6 +44,7 @@ namespace tsorcRevamp.Items.Armors
                 Main.dust[dust].noGravity = true;
 
             }
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.15f;
         }
 
         public override void AddRecipes()

@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 || item.type == ItemID.FlaskofPoison
                 )
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", "Adds 10% melee damage"));
+                tooltips.Insert(3, new TooltipLine(Mod, "", "Adds 10% melee and whip damage"));
             }
             if (item.type == ItemID.FlaskofFire)
             {

@@ -37,10 +37,7 @@ namespace tsorcRevamp.Items.Armors
         {
             player.GetDamage(DamageClass.Generic) += 0.3f;
             player.GetAttackSpeed(DamageClass.Melee) += 0.3f;
-            player.GetCritChance(DamageClass.Magic) += 30;
-            player.GetCritChance(DamageClass.Melee) += 30;
-            player.GetCritChance(DamageClass.Ranged) += 30;
-            player.GetCritChance(DamageClass.Throwing) += 30; //lol
+            player.GetCritChance(DamageClass.Generic) += 30;
             player.fireWalk = true;
             player.noFallDmg = true;
             player.noKnockback = true;

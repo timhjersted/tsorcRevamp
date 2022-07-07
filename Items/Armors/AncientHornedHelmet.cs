@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Head)]
-    public class AncientHornedHelmet : ModItem
+    public class AncientHornedHelmet : ModItem //To be reworked
     {
         public override void SetStaticDefaults()
         {
@@ -38,16 +38,6 @@ namespace tsorcRevamp.Items.Armors
         {
             player.GetDamage(DamageClass.Generic) += 0.06f;
             player.statManaMax2 += 40;
-        }
-
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CobaltHelmet, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
         }
     }
 }

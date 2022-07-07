@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Body)]
-    public class SmoughArmor : ModItem
+    public class SmoughArmor : ModItem //To be reworked
     {
         public override void SetStaticDefaults()
         {

@@ -259,6 +259,10 @@ namespace tsorcRevamp.NPCs.Friendly
                 shop.item[nextSlot].shopCustomPrice = 3500; //17.5k DS, 20k to craft
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Summon.NullSpriteStaff>());
+                shop.item[nextSlot].shopCustomPrice = 4000;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
             }
             if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>()) || tsorcRevampWorld.SuperHardMode /*just in case*/)
             {

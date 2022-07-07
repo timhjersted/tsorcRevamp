@@ -11,7 +11,6 @@ namespace tsorcRevamp.Items.Armors
         {
             Tooltip.SetDefault("Crystal armor vibrates with a mysterious energy\nthat attracts enemies to you in greater numbers\nSet bonus:+40% Melee Speed, +15% Melee Damage,\n-30% Ranged and Magic Damage");
         }
-
         public override void SetDefaults()
         {
             Item.width = 18;
@@ -19,18 +18,6 @@ namespace tsorcRevamp.Items.Armors
             Item.defense = 20;
             Item.value = 7000000;
             Item.rare = ItemRarityID.Pink;
-        }
-
-
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CobaltBreastplate, 1);
-            recipe.AddIngredient(ItemID.CrystalShard, 30);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
         }
     }
 }

@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Armors
         {
             Item.width = 30;
             Item.height = 36;
-            Item.defense = 7;
+            Item.defense = 4;
             Item.value = 27000;
             Item.rare = ItemRarityID.Blue;
             ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = true; //TODO maybe? 

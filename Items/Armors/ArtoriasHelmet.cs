@@ -6,11 +6,11 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Head)]
-    public class HelmetOfArtorias : ModItem
+    public class ArtoriasHelmet : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Helmet of Artorias");
+            DisplayName.SetDefault("Artorias' Helmet");
             Tooltip.SetDefault("Enchanted helmet of Artorias.\nLonger invincibility when hit plus 30% critical chance.");
         }
 
@@ -26,14 +26,12 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.longInvince = true;
-            player.GetCritChance(DamageClass.Melee) += 30;
-            player.GetCritChance(DamageClass.Ranged) += 30;
-            player.GetCritChance(DamageClass.Magic) += 30;
+            player.GetCritChance(DamageClass.Generic) += 30;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == ModContent.ItemType<ArmorOfArtorias>() && legs.type == ModContent.ItemType<GreavesOfArtorias>();
+            return body.type == ModContent.ItemType<ArtoriasArmor>() && legs.type == ModContent.ItemType<ArtoriasGreaves>();
         }
 
         public override void UpdateArmorSet(Player player)

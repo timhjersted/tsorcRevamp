@@ -21,6 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.useTime = Item.useAnimation = 36;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = Item.buyPrice(0, 15, 0, 0);
+            Item.mana = 10;
             Item.rare = ItemRarityID.Yellow;
             Item.UseSound = SoundID.Item44;
             Item.noMelee = true;

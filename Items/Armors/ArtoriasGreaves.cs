@@ -5,11 +5,11 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Legs)]
-    public class GreavesOfArtorias : ModItem
+    public class ArtoriasGreaves : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Greaves of Artorias");
+            DisplayName.SetDefault("Artorias' Greaves");
             Tooltip.SetDefault("Enchanted armor of Artorias.\n+100 Max Mana");
         }
 

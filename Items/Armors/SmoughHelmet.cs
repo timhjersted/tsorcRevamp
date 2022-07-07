@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Head)]
-    public class SmoughHelmet : ModItem
+    public class SmoughHelmet : ModItem //To be reworked
     {
 
         public override void SetDefaults()
