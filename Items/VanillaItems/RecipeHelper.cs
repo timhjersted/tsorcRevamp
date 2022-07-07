@@ -134,6 +134,10 @@ namespace tsorcRevamp
             RecipeRemover(ItemID.MechanicalSkull);
             RecipeRemover(ItemID.MechanicalWorm);
 
+            RecipeRemover(ItemID.ThornWhip);
+            RecipeRemover(ItemID.BoneWhip);
+            RecipeRemover(ItemID.SwordWhip);
+
             RecipeIngredientAdder(ItemID.IvyWhip, ItemID.SoulofNight, 6);
             RecipeIngredientAdder(ItemID.GrapplingHook, ItemID.SoulofNight, 6);
             RecipeIngredientAdder(ItemID.AmethystHook, ItemID.SoulofNight, 6);
