@@ -93,19 +93,15 @@ namespace tsorcRevamp.NPCs.Friendly
         public override void SetupShop(Chest shop, ref int nextSlot)
         {
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.WandOfDarkness>());
-            shop.item[nextSlot].shopCustomPrice = 120;
+            shop.item[nextSlot].shopCustomPrice = 80;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.FarronDart>());
-            shop.item[nextSlot].shopCustomPrice = 120;
+            shop.item[nextSlot].shopCustomPrice = 80;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.GlintstonePebble>());
             shop.item[nextSlot].shopCustomPrice = 5;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.CosmicWatch>());
-            shop.item[nextSlot].shopCustomPrice = 250;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.RedMageHat>());
@@ -125,11 +121,11 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ItemID.SpellTome);
-            shop.item[nextSlot].shopCustomPrice = 400;
+            shop.item[nextSlot].shopCustomPrice = 50;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ItemID.MagicMirror);
-            shop.item[nextSlot].shopCustomPrice = 300;
+            shop.item[nextSlot].shopCustomPrice = 50;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             if (NPC.downedBoss1)
@@ -140,14 +136,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 nextSlot++;
                 shop.item[nextSlot].SetDefaults(ItemID.PiggyBank);
                 shop.item[nextSlot].shopCustomPrice = 100;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenIceRod>());
-                shop.item[nextSlot].shopCustomPrice = 600;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenThunderRod>());
-                shop.item[nextSlot].shopCustomPrice = 600;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
             }
@@ -178,13 +166,6 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.GreatEnergyBeamScroll>());
                 shop.item[nextSlot].shopCustomPrice = 3500;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }
-            if (NPC.downedMechBoss1) //mechboss 1 is the destroyer, 2 is the twins, 3 is skelleprime
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenStardustRod>());
-                shop.item[nextSlot].shopCustomPrice = 8000;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
             }

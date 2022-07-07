@@ -110,23 +110,23 @@ namespace tsorcRevamp.NPCs.Friendly
         public override void SetupShop(Chest chest, ref int index)
         {
             chest.item[index].SetDefaults(ModContent.ItemType<DwarvenContract>());
-            chest.item[index].shopCustomPrice = 200;
+            chest.item[index].shopCustomPrice = 100;
             chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             index++;
             chest.item[index].SetDefaults(ItemID.Flipper);
-            chest.item[index].shopCustomPrice = 200;
+            chest.item[index].shopCustomPrice = 100;
             chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             index++;
             chest.item[index].SetDefaults(ItemID.FairyBell);
-            chest.item[index].shopCustomPrice = 1200;
+            chest.item[index].shopCustomPrice = 200;
             chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             index++;
             chest.item[index].SetDefaults(ItemID.Silk);
-            chest.item[index].shopCustomPrice = 5;
+            chest.item[index].shopCustomPrice = 2;
             chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             index++;
             chest.item[index].SetDefaults(ItemID.LesserHealingPotion);
-            chest.item[index].shopCustomPrice = 6;
+            chest.item[index].shopCustomPrice = 2;
             chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             index++;
 
@@ -137,7 +137,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 index++;
                 chest.item[index].SetDefaults(ItemID.StickyBomb);
-                chest.item[index].shopCustomPrice = 10;
+                chest.item[index].shopCustomPrice = 1;
                 chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 index++;
             }
@@ -153,19 +153,19 @@ namespace tsorcRevamp.NPCs.Friendly
                 chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 index++;
                 chest.item[index].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenPearlSpear>());
-                chest.item[index].shopCustomPrice = 5000;
+                chest.item[index].shopCustomPrice = 4000;
                 chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 index++;
             }
 
-            if (NPC.downedMechBoss1)
+            if (NPC.downedMechBossAny)
             {
                 chest.item[index].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenPoisonAxe>());
                 chest.item[index].shopCustomPrice = 6000;
                 chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 index++;
                 chest.item[index].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenSwordbreaker>());
-                chest.item[index].shopCustomPrice = 7000;
+                chest.item[index].shopCustomPrice = 6000;
                 chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 index++;
                 chest.item[index].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenImpHalberd>());

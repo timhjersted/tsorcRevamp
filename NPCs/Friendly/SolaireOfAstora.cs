@@ -114,6 +114,25 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].shopCustomPrice = 300;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
+
+            if (NPC.downedBoss1)
+            {
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenIceRod>());
+                shop.item[nextSlot].shopCustomPrice = 600;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenThunderRod>());
+                shop.item[nextSlot].shopCustomPrice = 600;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
+            }
+            if (NPC.downedMechBoss1) //mechboss 1 is the destroyer, 2 is the twins, 3 is skelleprime
+            {
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenStardustRod>());
+                shop.item[nextSlot].shopCustomPrice = 8000;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
+            }
         }
 
         public override void HitEffect(int hitDirection, double damage)

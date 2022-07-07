@@ -1034,6 +1034,23 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.active = false;
                     }
+
+                    if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Bosses.TheSorrow>()))
+                    {
+                        if (npc.type == NPCID.WitchDoctor) //Move Witch Doctor to his spot
+                        {
+                            npc.homeTileX = 59;
+                            npc.homeTileY = 525;
+                            npc.homeless = false;
+                        }
+                        else
+                        {
+                            if (npc.homeTileX < 68 && npc.homeTileY < 540) //Prevent another NPC from taking his spot
+                            {
+                                npc.homeless = true;
+                            }
+                        }
+                    }
                 }
                 
                 if (npc.type == NPCID.BigRainZombie
