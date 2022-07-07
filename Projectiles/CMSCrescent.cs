@@ -16,12 +16,14 @@ namespace tsorcRevamp.Projectiles
 
         public override void SetDefaults()
         {
-            Projectile.width = 30;
-            Projectile.height = 30;
+            Projectile.width = 20;
+            Projectile.height = 20;
             Projectile.penetrate = 3;
             Projectile.friendly = true;
-            Projectile.tileCollide = false;
+            Projectile.tileCollide = true;
             Projectile.DamageType = DamageClass.Melee;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 60;
         }
 
         public override bool PreDraw(ref Color lightColor)

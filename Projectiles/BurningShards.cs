@@ -87,7 +87,7 @@ namespace tsorcRevamp.Projectiles
                 int? target = UsefulFunctions.GetClosestEnemyNPC(player.Center);
                 if (target != null && Main.npc[target.Value].Distance(player.Center) < 1000)
                 {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (Main.netMode != NetmodeID.Server && Main.player[Projectile.owner] == Main.LocalPlayer)
                     {
                         Vector2 velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.npc[target.Value].Center, 10);
                         int damage = 1 + (int)(tsorcRevampWorld.Slain.Count * 3f);

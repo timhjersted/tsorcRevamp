@@ -19,8 +19,10 @@ namespace tsorcRevamp.Projectiles
             Projectile.height = 26;
             Projectile.penetrate = 5;
             Projectile.friendly = true;
-            Projectile.tileCollide = true;
+            Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Melee;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 60;
         }
         public override bool PreDraw(ref Color lightColor)
         {

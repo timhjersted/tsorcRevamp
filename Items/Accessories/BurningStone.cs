@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Accessories
                 if (Main.GameUpdateCount % 5 == 0)
                 {
                     int? target = UsefulFunctions.GetClosestEnemyNPC(player.Center);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (Main.netMode != NetmodeID.Server && player == Main.LocalPlayer)
                     {
                         if (target != null && Main.npc[target.Value].Distance(player.Center) < 1000)
                         {

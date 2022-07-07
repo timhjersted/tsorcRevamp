@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             Item.autoReuse = true;
             Item.rare = ItemRarityID.Cyan;
-            Item.damage = 48;
+            Item.damage = 59;
             Item.width = 40;
             Item.height = 40;
             Item.knockBack = 4.5f;
@@ -37,10 +37,15 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
-            if ((player.name == "Zeodexic")/* || (player.name == "Chroma TSORC test")*/) //Add whatever names you use -C
+            if (!Main.dayTime)
             {
                 Item.shoot = ModContent.ProjectileType<Projectiles.CrescentTrue>();
-                Item.shootSpeed = 22f;
+                Item.shootSpeed = 12f;
+            }
+            else
+            {
+                Item.shoot = ModContent.ProjectileType<Projectiles.CMSCrescent>();
+                Item.shootSpeed = 4.5f; //Projectile has same range as the Ancient Blood Lance
             }
 
             return true;
@@ -58,9 +63,10 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), 1);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 5);
             recipe.AddIngredient(ItemID.SoulofLight, 7);
             recipe.AddIngredient(ItemID.SoulofNight, 7);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 15000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

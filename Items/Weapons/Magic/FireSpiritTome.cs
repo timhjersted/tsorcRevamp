@@ -30,16 +30,17 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.Fireball1>();
+            Item.noMelee = true;
         }
 
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(ItemID.Fireblossom, 50);
+            recipe.AddIngredient(ItemID.Fireblossom, 5);
             recipe.AddIngredient(ItemID.AdamantiteBar, 1);
             recipe.AddIngredient(ItemID.SoulofNight, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 45000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

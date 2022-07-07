@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories
         }
         public override void UpdateEquip(Player player)
         {
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.Server && player == Main.LocalPlayer)
             {
                 if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.BurningShards>()] < 5 && Main.GameUpdateCount % 15 == 0)
                 {
