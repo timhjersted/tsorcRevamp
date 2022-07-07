@@ -35,6 +35,15 @@ namespace tsorcRevamp.Items.Accessories
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
+
+            Terraria.Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
+            recipe2.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
+            recipe2.AddIngredient(ItemID.EmpressFlightBooster, 1);
+            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 35000);
+            recipe2.AddTile(TileID.DemonAltar);
+
+            recipe2.Register();
         }
 
         public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising,
