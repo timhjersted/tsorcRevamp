@@ -45,7 +45,6 @@ namespace tsorcRevamp.NPCs.Enemies
             bioSpitDamage = (int)(bioSpitDamage / 2);
         }
 
-        int choice = 2;
         float breathTimer = 60;
         //int previous = 0;
         //bool breath = false;

@@ -15,9 +15,9 @@ namespace tsorcRevamp.NPCs.Enemies
         bool jumpSlashing = false;
         bool shielding = false;
         bool stabbing = false;
-        bool enrage = false;
-        bool hasEnraged = false;
-        int enrageTimer;
+        //bool enrage = false;
+        //bool hasEnraged = false;
+        //int enrageTimer;
 
 
         //Anim

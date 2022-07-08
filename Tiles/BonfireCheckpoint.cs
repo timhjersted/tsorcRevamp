@@ -442,6 +442,11 @@ namespace tsorcRevamp.Tiles
                 //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, new Vector2(i * 16, j * 16));
                 UsefulFunctions.BroadcastText("Bonfire lit!", 250, 110, 90);
 
+                int spawnX = (int)((player.position.X + player.width / 2.0) / 16.0);
+                int spawnY = (int)((player.position.Y + player.height) / 16.0);
+                player.ChangeSpawn(spawnX, spawnY);
+                player.FindSpawn();
+
                 if (tsorcRevampWorld.LitBonfireList == null)
                 {
                     tsorcRevampWorld.LitBonfireList = new List<Vector2>();

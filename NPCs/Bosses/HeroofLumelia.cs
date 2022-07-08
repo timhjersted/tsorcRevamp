@@ -62,7 +62,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
         float customAi1;
         float customSpawn1;
-        float customSpawn2;
 
         NPCDespawnHandler despawnHandler;
 

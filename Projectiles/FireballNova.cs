@@ -29,9 +29,6 @@ namespace tsorcRevamp.Projectiles
             target.AddBuff(BuffID.OnFire, 300);
         }
 
-        float size = 130;
-        float velocity = 14;
-        int dustCount = 0;
         float rotation = 0;
 
         public override void AI()

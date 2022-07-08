@@ -62,7 +62,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
         }
         
         List<float> foundIndicies = new List<float>();
-        bool setRealLife = false;
         float RotSpeed = 0.015f;
         bool RotDir = false;
         NPCDespawnHandler despawnHandler;        

@@ -59,12 +59,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
         NPCDespawnHandler despawnHandler;
         bool slograDead = false;
-        int comboDamage = 0;
-        bool breakCombo = false;
-        bool chargeDamageFlag = false;
-        int chargeDamage = 0;
-        float dustRadius = 20;
-        float dustMin = 3;
 
         public int Timer
         {

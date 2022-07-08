@@ -278,7 +278,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 WorldGen.KillTile(num32, num33 - 1, false, false, false);
                                 if (Main.netMode == NetmodeID.Server)
                                 {
-                                    NetMessage.SendData(MessageID.TileChange, -1, -1, null, 0, (float)num32, (float)(num33 - 1), 0f, 0);
+                                    NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, (float)num32, (float)(num33 - 1), 0f, 0);
                                 }
                             }
                             else
@@ -291,7 +291,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 }
                                 if (Main.netMode == NetmodeID.Server && flag6)
                                 {
-                                    NetMessage.SendData(MessageID.ChangeDoor, -1, -1, null, 0, (float)num32, (float)num33, (float)NPC.direction, 0);
+                                    NetMessage.SendData(MessageID.ToggleDoorState, -1, -1, null, 0, (float)num32, (float)num33, (float)NPC.direction, 0);
                                 }
                             }
                         }
