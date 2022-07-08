@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.shoot = ModContent.ProjectileType<Projectiles.DarkTridentHeld>();
             Item.channel = true;
 
-            Item.damage = 30;
+            Item.damage = 110;
             Item.width = 24;
             Item.height = 48;
             Item.useTime = 35;

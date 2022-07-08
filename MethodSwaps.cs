@@ -10,6 +10,7 @@ using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.Personalities;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -73,7 +74,25 @@ namespace tsorcRevamp
             On.Terraria.Projectile.FishingCheck += Projectile_FishingCheck;
 
             On.Terraria.Main.CraftItem += Main_CraftItem;
+            //On.Terraria.GameContent.ItemDropRules.ItemDropResolver.ResolveRule += ItemDropResolver_ResolveRule;
         }
+
+        /*
+        private static Terraria.GameContent.ItemDropRules.ItemDropAttemptResult ItemDropResolver_ResolveRule(On.Terraria.GameContent.ItemDropRules.ItemDropResolver.orig_ResolveRule orig, Terraria.GameContent.ItemDropRules.ItemDropResolver self, Terraria.GameContent.ItemDropRules.IItemDropRule rule, Terraria.GameContent.ItemDropRules.DropAttemptInfo info)
+        {
+            if (!rule.CanDrop(info))
+            {
+                ItemDropAttemptResult itemDropAttemptResult = default(ItemDropAttemptResult);
+                itemDropAttemptResult.State = ItemDropAttemptResultState.DoesntFillConditions;
+                ItemDropAttemptResult itemDropAttemptResult2 = itemDropAttemptResult;
+                self.ResolveRuleChains(rule, info, itemDropAttemptResult2);
+                return itemDropAttemptResult2;
+            }
+
+            ItemDropAttemptResult itemDropAttemptResult3 = (rule as INestedItemDropRule)?.TryDroppingItem(info, ResolveRule) ?? rule.TryDroppingItem(info);
+            ResolveRuleChains(rule, info, itemDropAttemptResult3);
+            return itemDropAttemptResult3;
+        }*/
 
         private static void Main_CraftItem(On.Terraria.Main.orig_CraftItem orig, Recipe r)
         {

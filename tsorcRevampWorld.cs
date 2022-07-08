@@ -701,7 +701,6 @@ namespace tsorcRevamp
         public override void PreUpdateWorld()
         {
             Terraria.GameContent.Creative.CreativePowerManager.Instance.GetPower<Terraria.GameContent.Creative.CreativePowers.StopBiomeSpreadPower>().SetPowerInfo(true);
-            
         }
 
         public override void PostUpdateWorld()

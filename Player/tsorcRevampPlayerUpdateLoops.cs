@@ -1006,6 +1006,7 @@ namespace tsorcRevamp
 
             if (ReflectionShiftState != Microsoft.Xna.Framework.Vector2.Zero)
             {
+                Player.timeSinceLastDashStarted = 0;
                 //Initiate Dash
                 for (int i = 0; i < 30; i++)
                 {

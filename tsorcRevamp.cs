@@ -28,8 +28,6 @@ using static tsorcRevamp.MethodSwaps;
 
 namespace tsorcRevamp
 {
-
-
     public class tsorcRevamp : Mod
     {
 
@@ -45,6 +43,7 @@ namespace tsorcRevamp
         public static List<int> IgnoredTiles;
         public static List<int> CrossModTiles;
         public static List<int> PlaceAllowedModTiles;
+        public static List<int> BannedItems;
 
         internal BonfireUIState BonfireUIState;
         internal UserInterface _bonfireUIState; //"but zeo!", you say
@@ -571,6 +570,18 @@ namespace tsorcRevamp
 
             #endregion
             //--------
+            #region BannedItems list
+            KillAllowed = new List<int>()
+            {
+                ItemID.RodofDiscord,
+                ItemID.CorruptionKey,
+                ItemID.CrimsonKey,
+                ItemID.HallowedKey,
+                ItemID.JungleKey,
+                ItemID.FrozenKey
+            };
+            #endregion
+            //--------
             #region CustomDungeonTiles list
             CustomDungeonWalls = new bool[231];
             for (int i = 0; i < 231; i++)
@@ -590,6 +601,7 @@ namespace tsorcRevamp
             toggleDragoonBoots = null;
             reflectionShiftKey = null;
             KillAllowed = null;
+            BannedItems = null;
             PlaceAllowed = null;
             Unbreakable = null;
             IgnoredTiles = null;

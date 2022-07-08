@@ -51,7 +51,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public int lostSoulDamage = 27;
+        public int lostSoulDamage = 15;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -102,7 +102,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.07f, canTeleport: true, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.36f, enrageTopSpeed: 3f, lavaJumping: true); //sound type was 26
             bool lineOfSight = Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref lostSoulTimer, 160, ProjectileID.LostSoulHostile, lostSoulDamage, 3, lineOfSight, true, SoundID.NPCDeath9); //ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>()
+            tsorcRevampAIs.SimpleProjectile(NPC, ref lostSoulTimer, 160, ProjectileID.LostSoulHostile, lostSoulDamage, 6, lineOfSight, true, SoundID.NPCDeath9, 0); //ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>()
 
             if (lostSoulTimer >= 130)
             {

@@ -93,7 +93,7 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.WoodenArrowCrate>());
             shop.item[nextSlot].shopCustomPrice = 6;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++; 
+            nextSlot++;             
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.LeatherHelmet>());
             shop.item[nextSlot].shopCustomPrice = 50;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
@@ -135,6 +135,13 @@ namespace tsorcRevamp.NPCs.Friendly
                 nextSlot++;
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.FrostburnArrowCrate>());
                 shop.item[nextSlot].shopCustomPrice = 12;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
+            }
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Gaibon>()))
+            {
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.MeteorShotCrate>());
+                shop.item[nextSlot].shopCustomPrice = 30;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
             }

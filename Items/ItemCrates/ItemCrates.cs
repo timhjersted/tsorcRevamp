@@ -128,4 +128,69 @@ namespace tsorcRevamp.Items.ItemCrates
         }
     }
 
+    [LegacyName("SweatyCyclopsForge")]
+    [LegacyName("ReforgedOldCrossbow")]
+    [LegacyName("ReforgedOldLongbow")]
+    [LegacyName("AdamantiteFlail")]
+    [LegacyName("CopperSpear")]
+    [LegacyName("EnchangedMorningStar")]
+    [LegacyName("ForgottenAxe")]
+    [LegacyName("ForgottenGreatAxe")]
+    [LegacyName("ForgottenKotetsu")]
+    [LegacyName("ForgottenLongSword")]
+    [LegacyName("ForgottenMetalKnuckles")]
+    [LegacyName("GoldSpear")]
+    [LegacyName("IronSpear")]
+    [LegacyName("MythrilFlail")]
+    [LegacyName("OldAxe")]
+    [LegacyName("OldBroadsword")]
+    [LegacyName("OldDoubleAxe")]
+    [LegacyName("OldLongsword")]
+    [LegacyName("OldMace")]
+    [LegacyName("OldMorningStar")]
+    [LegacyName("OldPoisonDagger")]
+    [LegacyName("OldRapier")]
+    [LegacyName("OldSabre")]
+    [LegacyName("OldTwoHandedSword")]
+    [LegacyName("OrcishHalberd")]
+    [LegacyName("ReforgedOldAxe")]
+    [LegacyName("ReforgedOldBroadsword")]
+    [LegacyName("ReforgedOldDoubleAxe")]
+    [LegacyName("ReforgedOldHalberd")]
+    [LegacyName("ReforgedOldLongsword")]
+    [LegacyName("ReforgedOldMace")]
+    [LegacyName("ReforgedOldMorningStar")]
+    [LegacyName("ReforgedOldPoisonDagger")]
+    [LegacyName("ReforgedOldRapier")]
+    [LegacyName("ReforgedOldSabre")]
+    [LegacyName("ReforgedOldTwoHandedSword")]
+    [LegacyName("SilverFlail")]
+    [LegacyName("SilverSpear")]
+    public class SoulShekelCrate : ItemCrates
+    {
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("A crate containing 1000 soul shekels" +
+                                "\nGiven as weregild for an item that no longer exists" +
+                                "\n{$CommonItemTooltip.RightClickToOpen}");
+        }
+        public override void RightClick(Player player)
+        {
+            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ModContent.ItemType<Items.SoulShekel>(), 1000);
+        }
+    }
+
+    
+    public class MeteorShotCrate : ItemCrates
+    {
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("A crate containing 100 Meteor Bullets" +
+                                "\n{$CommonItemTooltip.RightClickToOpen}");
+        }
+        public override void RightClick(Player player)
+        {
+            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ItemID.MeteorShot, 100);
+        }
+    }
 }

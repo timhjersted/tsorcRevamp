@@ -83,6 +83,7 @@ namespace tsorcRevamp.Items.BossBags
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Slogra>();
         public override void OpenBossBag(Player player)
         {
+            tsorcRevampWorld.Slain[ModContent.NPCType<NPCs.Bosses.Gaibon>()] = 1;
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
@@ -96,6 +97,7 @@ namespace tsorcRevamp.Items.BossBags
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Gaibon>();
         public override void OpenBossBag(Player player)
         {
+            tsorcRevampWorld.Slain[ModContent.NPCType<NPCs.Bosses.Slogra>()] = 1;
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);

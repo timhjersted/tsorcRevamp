@@ -104,6 +104,9 @@ namespace tsorcRevamp
             RecipeRemover(ItemID.HallowedGreaves);
             RecipeRemover(ItemID.SwordWhip);
 
+            RecipeRemover(ItemID.ThornWhip);
+            RecipeRemover(ItemID.BoneWhip);
+
             RecipeRemover(ItemID.DemonWings);
             RecipeRemover(ItemID.FairyWings);
             RecipeRemover(ItemID.HarpyWings);
@@ -133,10 +136,6 @@ namespace tsorcRevamp
             RecipeRemover(ItemID.MechanicalEye);
             RecipeRemover(ItemID.MechanicalSkull);
             RecipeRemover(ItemID.MechanicalWorm);
-
-            RecipeRemover(ItemID.ThornWhip);
-            RecipeRemover(ItemID.BoneWhip);
-            RecipeRemover(ItemID.SwordWhip);
 
             RecipeIngredientAdder(ItemID.IvyWhip, ItemID.SoulofNight, 6);
             RecipeIngredientAdder(ItemID.GrapplingHook, ItemID.SoulofNight, 6);

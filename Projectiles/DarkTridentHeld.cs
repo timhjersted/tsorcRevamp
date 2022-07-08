@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles
             Item bow = owner.inventory[owner.selectedItem];
             StatModifier rangedDamage = owner.GetTotalDamage(DamageClass.Ranged);
             int bowDamage = (int)rangedDamage.ApplyTo(owner.arrowDamage.ApplyTo(bow.damage));
-            minDamage = bowDamage / 10;
+            minDamage = 1;
             maxDamage = bowDamage;
             minVelocity = bow.shootSpeed / 10;
             maxVelocity = bow.shootSpeed;
@@ -49,7 +49,7 @@ namespace tsorcRevamp.Projectiles
                 velVector.Normalize();
                 velVector *= -2;
 
-                Projectile.NewProjectile(player.GetSource_ItemUse(player.inventory[player.selectedItem]), Projectile.Center, velVector, ModContent.ProjectileType<Projectiles.DarkTridentPoke>(), maxDamage / 2, Projectile.knockBack, Projectile.owner);
+                Projectile.NewProjectile(player.GetSource_ItemUse(player.inventory[player.selectedItem]), Projectile.Center, velVector, ModContent.ProjectileType<Projectiles.DarkTridentPoke>(), maxDamage / 6, Projectile.knockBack, Projectile.owner);
             }
         }
 
