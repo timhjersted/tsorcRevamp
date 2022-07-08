@@ -518,6 +518,10 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 damage = (int)(damage * 1.5f);
             }
+            if (projectile.minion)
+            {
+                knockback = 0;
+            }
         }
 
         public override void FindFrame(int frameHeight)

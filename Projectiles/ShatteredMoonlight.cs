@@ -204,7 +204,10 @@ namespace tsorcRevamp.Projectiles
 
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
-                    Item.NewItem(Projectile.GetSource_FromThis(), Projectile.position, ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), 1, false, -1);
+                    for(int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
+                    {
+                        Item.NewItem(Projectile.GetSource_FromThis(), Projectile.position, ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), 1, false, -1);
+                    }
                     for (int i = 0; i < 10; i++)
                     {
                         Vector2 arg_92_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
