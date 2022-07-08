@@ -104,9 +104,6 @@ namespace tsorcRevamp
             RecipeRemover(ItemID.HallowedGreaves);
             RecipeRemover(ItemID.SwordWhip);
 
-            RecipeRemover(ItemID.ThornWhip);
-            RecipeRemover(ItemID.BoneWhip);
-
             RecipeRemover(ItemID.DemonWings);
             RecipeRemover(ItemID.FairyWings);
             RecipeRemover(ItemID.HarpyWings);
