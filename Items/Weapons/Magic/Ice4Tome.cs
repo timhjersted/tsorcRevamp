@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             DisplayName.SetDefault("Ice 4 Tome");
             Tooltip.SetDefault("A lost legendary tome. Shatter your enemies with a freezing hailstorm." +
-                "\nConstant hits are capible of completely imprisoning weaker foes.");
+                "\nConstant hits are capable of completely imprisoning weaker foes.");
         }
 
         //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing
@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Item.damage = 120;
             Item.height = 10;
-            Item.knockBack = 0f;
+            Item.knockBack = 0.1f;
             Item.maxStack = 1;
             Item.rare = ItemRarityID.Lime;
             Item.channel = true;

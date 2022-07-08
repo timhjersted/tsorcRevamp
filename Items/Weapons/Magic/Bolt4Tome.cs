@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.damage = 100;
             Item.height = 10;
             Item.width = 34;
-            Item.knockBack = 0;
+            Item.knockBack = 0.1f;
             Item.autoReuse = true;
             Item.rare = ItemRarityID.Lime;
             Item.shootSpeed = 24f;

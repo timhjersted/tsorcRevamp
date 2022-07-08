@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Item.damage = 15;
             Item.height = 10;
-            Item.knockBack = 0f;
+            Item.knockBack = 0.1f;
             Item.rare = ItemRarityID.Orange;
             Item.channel = true;
             Item.autoReuse = true;

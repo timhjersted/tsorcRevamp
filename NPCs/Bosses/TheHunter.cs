@@ -63,7 +63,7 @@ namespace tsorcRevamp.NPCs.Bosses
             hitTime++;
             if (NPC.ai[0] > 0) NPC.ai[0] -= hitTime / 10;
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, NPC.velocity.X, NPC.velocity.Y, 200, default, 0.5f + (15.5f * (NPC.ai[0] / (NPC.lifeMax / 10))));
+            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 89, NPC.velocity.X, NPC.velocity.Y, 200, default, 0.5f + (15.5f * (NPC.ai[0] / (NPC.lifeMax / 10))));
             Main.dust[dust].noGravity = true;
 
             if (NPC.ai[3] == 0)

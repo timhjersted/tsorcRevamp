@@ -163,7 +163,8 @@ namespace tsorcRevamp
                 4, // torch
                 5, //tree trunk
                 6, //iron
-                7, //copper
+                7, //copper                
+                TileID.Gold,
                 9, //silver
                 10, //closed door
                 11, //open door
@@ -251,7 +252,8 @@ namespace tsorcRevamp
                 134, //mythril anvil
                 138, //boulder
                 141, //explosives
-                165, //ambient objects (stalagmites / stalactites, icicles)
+                165, //ambient objects (stalagmites / stalactites, icicles)                
+                TileID.Platinum,
                 172, //sinks
                 173, //platinum candelabra
                 174, //platinum candle

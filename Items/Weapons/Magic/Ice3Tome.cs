@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.autoReuse = true; //why was it the only one without autoreuse?
             Item.damage = 32;
             Item.height = 10;
-            Item.knockBack = 0f;
+            Item.knockBack = 0.1f;
             Item.maxStack = 1;
             Item.rare = ItemRarityID.LightRed;
             Item.scale = 1;
