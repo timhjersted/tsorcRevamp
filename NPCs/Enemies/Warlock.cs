@@ -38,6 +38,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.damage = (int)(NPC.damage / 2);
             greatEnergyBeamDamage = (int)(greatEnergyBeamDamage / 2);
             energyBallDamage = (int)(energyBallDamage / 2);
+
+            if (!Main.hardMode)
+            {
+                NPC.damage = 40;
+                NPC.lifeMax = 1500;
+            }
         }
 
         int greatEnergyBeamDamage = 35;
@@ -182,7 +188,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.rand.NextBool(600) && NPC.CountNPCS(NPCID.IlluminantBat) < 5)
             {
-                NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.IlluminantBat);
+                int bat = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.IlluminantBat);
+                if (!Main.hardMode)
+                {
+                    Main.npc[bat].life /= 2;
+                    Main.npc[bat].lifeMax /= 2;
+                    Main.npc[bat].damage /= 2;
+
+                }
             }
 
             //BIG ATTACK DUST CIRCLE
