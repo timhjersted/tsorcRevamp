@@ -42,9 +42,9 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             DisplayName.SetDefault("Fire Fiend Marilith");
         }
 
-        int lightningDamage = 90;
-        int antiMatterBlastDamage = 65;
-        int crazedPurpleCrushDamage = 80;
+        int lightningDamage = 45;
+        int antiMatterBlastDamage = 45;
+        int crazedPurpleCrushDamage = 45;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = (int)(NPC.damage * 1.3 / 2);

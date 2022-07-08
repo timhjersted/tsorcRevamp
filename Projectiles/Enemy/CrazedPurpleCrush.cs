@@ -60,7 +60,6 @@ namespace tsorcRevamp.Projectiles.Enemy
                 buffLengthMod = 2;
             }
             target.AddBuff(BuffID.Poisoned, 300 / buffLengthMod, false); //poisoned
-            target.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 300 / buffLengthMod, false); //crippled
             target.AddBuff(BuffID.Bleeding, 300 / buffLengthMod, false); //bleeding
         }
     }
