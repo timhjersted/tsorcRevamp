@@ -365,6 +365,7 @@ namespace tsorcRevamp.Items.BossBags
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Humanity>(), 3);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.ReflectionShift>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.MoonlightGreatsword>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Summon.NullSpriteStaff>());
         }
     }
     public class HellkiteBag : BossBag

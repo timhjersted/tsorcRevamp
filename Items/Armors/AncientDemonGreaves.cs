@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.25f;
+            player.moveSpeed += 0.15f;
             player.fireWalk = true;
             player.maxMinions += 1;
         }

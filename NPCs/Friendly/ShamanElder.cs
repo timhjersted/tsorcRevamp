@@ -216,17 +216,22 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void SetupShop(Chest shop, ref int nextSlot)
         {
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<CosmicWatch>());
-            shop.item[nextSlot].shopCustomPrice = 150;
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldChainCoif>());
+            shop.item[nextSlot].shopCustomPrice = 50;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
-            if (Main.hardMode)
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Summon.NullSpriteStaff>());
-                shop.item[nextSlot].shopCustomPrice = 4000;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldChainArmor>());
+            shop.item[nextSlot].shopCustomPrice = 100;
+            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+            nextSlot++;
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldChainGreaves>());
+            shop.item[nextSlot].shopCustomPrice = 75;
+            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+            nextSlot++;
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<CosmicWatch>());
+            shop.item[nextSlot].shopCustomPrice = 5;
+            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+            nextSlot++;
             if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>()) || tsorcRevampWorld.SuperHardMode /*just in case*/)
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<CovenantOfArtorias>());

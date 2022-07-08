@@ -14,9 +14,9 @@ namespace tsorcRevamp.Items.Weapons.Summon
 
         public override void SetDefaults()
         {
-            Item.damage = 39;
+            Item.damage = 300;
             Item.knockBack = 1f;
-            Item.width = 44; //placeholder, item doesnt have a sprite yet
+            Item.width = 44;
             Item.height = 50;
             Item.useTime = Item.useAnimation = 36;
             Item.useStyle = ItemUseStyleID.Swing;
@@ -28,6 +28,13 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.DamageType = DamageClass.Summon;
             Item.buffType = ModContent.BuffType<Buffs.Summon.NullSpriteBuff>();
             Item.shoot = ModContent.ProjectileType<Projectiles.Summon.NullSprite>();
+        }
+        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
+        {
+            if ((player.name == "Zeodexic") || (player.name == "ChromaEquinox")) //*/) //Add whatever names you use -C
+            {
+                Item.damage = 100; //change this to whatever suits your testing needs -C
+            }
         }
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)

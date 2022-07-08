@@ -1,24 +1,31 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
 {
-    [LegacyName("AncientDwarvenHelmet")]
     [AutoloadEquip(EquipType.Head)]
-    class DwarvenKnightHelmet : ModItem //To be reworked
+    class DwarvenKnightHelmet : ModItem
     {
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Set bonus grants +4 defense, +7% melee damage, and +7% melee speed. \n+4 life regen when health falls below 80, +1 otherwise.");
+            Tooltip.SetDefault("Increases minion damage by 12%\nIncreases your max number of minions by 1\nSet Bonus: Increases your max number of minions and turrets by 1" +
+                "\nIncreases minion damage by 12%\nWhen health is above 333, gain 7% minion damage + 6 flat and 6 life regen");
         }
 
         public override void SetDefaults()
         {
             Item.height = Item.width = 18;
-            Item.defense = 4;
+            Item.defense = 12;
             Item.value = 10000;
+            Item.rare = ItemRarityID.Pink;
+        }
+        public override void UpdateEquip(Player player)
+        {
+            player.GetDamage(DamageClass.Summon) += 0.12f;
+            player.maxMinions += 1;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -28,11 +35,31 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.statDefense += 4;
-            player.GetDamage(DamageClass.Melee) += 0.07f;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.07f;
-            if (player.statLife < 80) player.lifeRegen += 4;
-            else player.lifeRegen += 1;
+            player.maxMinions += 1;
+            player.maxTurrets += 1;
+            player.GetDamage(DamageClass.Summon) += 0.12f;
+
+            if (player.statLife > 333)
+            {
+                player.GetDamage(DamageClass.Summon) += 0.07f;
+                player.GetDamage(DamageClass.Summon).Flat += 6f;
+                player.lifeRegen += 6;
+
+                int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 42, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 105, Color.Gold, 1.0f);
+                Main.dust[dust].noGravity = true;
+            }
+            else
+            {
+            }
+        }
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.HallowedHood, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6600);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
         }
     }
 }

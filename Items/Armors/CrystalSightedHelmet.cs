@@ -6,18 +6,19 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Head)]
-    public class CrystalSightedHelmet : ModItem //To be reworked
+    public class CrystalSightedHelmet : ModItem
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Dazzling armor cut from crystal\nWhen health falls below 80, ranged damage increases 50% (20% above normal)\nSighted helmet also offers +5% melee critical chance.");
+            Tooltip.SetDefault("Dazzling armor cut from crystal\nIncreases whip damage by 10%\nSet Bonus: Increases whip range by 50% and speed by 25%" +
+                "Set Bonus: When health falls below 166, gain 10% minion damage + 10% whip damage on top and 20% whip speed");
         }
 
         public override void SetDefaults()
         {
             Item.width = 26;
             Item.height = 20;
-            Item.defense = 5;
+            Item.defense = 7;
             Item.value = 7000000;
             Item.rare = ItemRarityID.Pink;
         }
@@ -29,33 +30,38 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            if (player.statLife <= 80)
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
+        }
+
+        public override void UpdateArmorSet(Player player)
+        {
+            player.whipRangeMultiplier += 0.5f;
+            player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
+            if (player.statLife < 166)
             {
-                player.GetDamage(DamageClass.Ranged) -= 0.3f;
-                player.GetDamage(DamageClass.Magic) += 0.2f;
-                player.GetCritChance(DamageClass.Melee) += 5;
+                player.GetDamage(DamageClass.Summon) += 0.1f;
+                player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
+                player.GetAttackSpeed(DamageClass.Summon) += 0.2f;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 42, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 105, Color.Aqua, 1.0f);
                 Main.dust[dust].noGravity = true;
             }
             else
             {
-                player.GetDamage(DamageClass.Ranged) -= 0.3f;
-                player.GetDamage(DamageClass.Magic) -= 0.3f;
-                player.GetCritChance(DamageClass.Melee) += 5;
             }
         }
-
-        public override void UpdateArmorSet(Player player)
-        {
-            player.GetAttackSpeed(DamageClass.Melee) += 0.4f;
-            player.GetDamage(DamageClass.Melee) += 0.15f;
-            player.enemySpawns = true;
-        }
-
         public override void ArmorSetShadows(Player player)
         {
             player.armorEffectDrawShadow = true;
+        }
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.SpiderMask, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 4400);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
         }
     }
 }

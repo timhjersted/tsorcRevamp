@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
-            Tooltip.SetDefault("Increases minion damage by 3 flat + 8%\nIncreases your max number of minions by 1");
+            Tooltip.SetDefault("Increases minion damage by 1 flat + 8%\nIncreases your max number of minions by 1");
         }
 
         public override void SetDefaults()
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon).Flat += 3f;
+            player.GetDamage(DamageClass.Summon).Flat += 1f;
             player.GetDamage(DamageClass.Summon) += 0.08f;
             player.maxMinions += 1;
         }

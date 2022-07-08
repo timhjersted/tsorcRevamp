@@ -4,13 +4,13 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
 {
+    [LegacyName("RedMageTunic")]
     [AutoloadEquip(EquipType.Body)]
-    public class RedMageTunic : ModItem
+    public class RedClothTunic : ModItem
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("-15% mana cost" +
-                                "\nSet bonus gives +20 mana and +8% magic damage");
+            Tooltip.SetDefault("Increases magic damage by 1 flat\nSet bonus: Increases max mana by 50, decreases mana costs by 10%");
         }
         public override void SetDefaults()
         {
@@ -23,16 +23,8 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.manaCost -= 0.15f;
+            player.GetDamage(DamageClass.Magic).Flat += 1;
         }
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Silk, 10);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 200);
-            recipe.AddTile(TileID.DemonAltar);
-            
-            recipe.Register();
-        }
+        //Can be dropped by many enemies
     }
 }

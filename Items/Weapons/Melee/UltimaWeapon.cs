@@ -18,15 +18,15 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.LightPurple;
-            Item.damage = 600;
+            Item.damage = 444;
             Item.height = 64;
             Item.width = 64;
             Item.knockBack = 14f;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
-            Item.useAnimation = 20;
-            Item.scale = 1.4f;
-            Item.useTime = 20;
+            Item.useAnimation = 16;
+            Item.scale = 2.1f;
+            Item.useTime = 16;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Yellow_8;
@@ -34,8 +34,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.NightsEdge, 1);
-            recipe.AddIngredient(ItemID.SoulofLight, 5);
+            recipe.AddIngredient(ItemID.TerraBlade, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 12000);
             recipe.AddTile(TileID.DemonAltar);
 

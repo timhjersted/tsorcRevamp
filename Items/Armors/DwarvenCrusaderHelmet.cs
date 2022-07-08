@@ -1,38 +1,63 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
 {
-    [LegacyName("AncientDwarvenHelmet2")]
     [AutoloadEquip(EquipType.Head)]
     class DwarvenCrusaderHelmet : ModItem
     {
 
-        public override void SetStaticDefaults() //To be reworked
+        public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Set bonus grants +8 defense, +9% melee damage, and +9% melee speed. \n+6 life regen when health falls below 80, +3 otherwise.");
+            Tooltip.SetDefault("Increases whip damage by 12%\nSet Bonus: Increases whip range by 50% and speed by 25%" +
+                "\nWhen health is above 333, gain 7% minion damage + 7% whip damage, 17% whip speed and 6 life regen");
         }
 
         public override void SetDefaults()
         {
             Item.height = Item.width = 18;
-            Item.defense = 4;
+            Item.defense = 13;
             Item.value = 15000;
+            Item.rare = ItemRarityID.Pink;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
             return body.type == ModContent.ItemType<Items.Armors.DwarvenArmor>() && legs.type == ModContent.ItemType<Items.Armors.DwarvenGreaves>();
         }
-
+        public override void UpdateEquip(Player player)
+        {
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.12f;
+        }
         public override void UpdateArmorSet(Player player)
         {
-            player.statDefense += 8;
-            player.GetDamage(DamageClass.Melee) += 0.09f;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.09f;
-            if (player.statLife < 80) player.lifeRegen += 6;
-            else player.lifeRegen += 3;
+            player.whipRangeMultiplier += 0.5f;
+            player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
+
+            if (player.statLife > 333)
+            {
+                player.GetDamage(DamageClass.Summon) += 0.07f;
+                player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.07f;
+                player.GetAttackSpeed(DamageClass.Summon) += 0.17f;
+                player.lifeRegen += 6;
+
+                int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 42, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 105, Color.Gold, 1.0f);
+                Main.dust[dust].noGravity = true;
+            }
+            else
+            {
+            }
+        }
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.HallowedHood, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6600);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
         }
     }
 }

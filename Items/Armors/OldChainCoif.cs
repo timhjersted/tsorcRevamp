@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+1 flat minion damage");
+            Tooltip.SetDefault("+3 flat minion damage");
         }
         public override void SetDefaults()
         {
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon).Flat += 1f;
+            player.GetDamage(DamageClass.Summon).Flat += 3;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -33,6 +33,7 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateArmorSet(Player player)
         {
             player.maxMinions += 1;
+            player.GetAttackSpeed(DamageClass.Summon) += 0.1f;
         }
     }
 }

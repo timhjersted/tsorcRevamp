@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+1 flat minion damage\nSet Bonus: Increases your max number of minions by 1");
+            Tooltip.SetDefault("+10% minion damage\nSet Bonus: Increases your max number of minions by 1\n+10% whip speed");
         }
         public override void SetDefaults()
         {
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon).Flat += 1f;
+            player.GetDamage(DamageClass.Summon) += 0.1f;
         }
     }
 }

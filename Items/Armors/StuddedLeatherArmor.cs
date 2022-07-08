@@ -4,26 +4,25 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
 {
-    [AutoloadEquip(EquipType.Legs)]
-    public class OldChainGreaves : ModItem
+    [AutoloadEquip(EquipType.Body)]
+    public class StuddedLeatherArmor : ModItem
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+10% movement speed");
+            Tooltip.SetDefault("Increases damage by 10%\nSet bonus: Increases all attack speed by 15%");
         }
+
         public override void SetDefaults()
         {
             Item.width = 18;
             Item.height = 18;
             Item.defense = 2;
-            Item.value = 3000;
+            Item.value = 1150;
             Item.rare = ItemRarityID.White;
         }
-
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.1f;
+            player.GetDamage(DamageClass.Generic) += 0.10f;
         }
     }
 }
-

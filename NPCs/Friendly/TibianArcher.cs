@@ -90,18 +90,6 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].shopCustomPrice = 8;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.OldLeatherHelmet>());
-            shop.item[nextSlot].shopCustomPrice = 120;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.OldLeatherArmor>());
-            shop.item[nextSlot].shopCustomPrice = 180;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.OldLeatherGreaves>());
-            shop.item[nextSlot].shopCustomPrice = 120;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.WoodenArrowCrate>());
             shop.item[nextSlot].shopCustomPrice = 6;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;

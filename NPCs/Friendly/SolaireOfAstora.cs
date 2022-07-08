@@ -90,18 +90,6 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void SetupShop(Chest shop, ref int nextSlot)
         {
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldChainCoif>());
-            shop.item[nextSlot].shopCustomPrice = 20;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldChainArmor>());
-            shop.item[nextSlot].shopCustomPrice = 40;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldChainGreaves>());
-            shop.item[nextSlot].shopCustomPrice = 30;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<CorruptedTooth>());
             shop.item[nextSlot].shopCustomPrice = 100;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases minion damage by 3 flat + 8%\nIncreases movement speed by 22%");
+            Tooltip.SetDefault("Increases minion damage by 2 flat + 8%\nIncreases movement speed by 22%");
         }
 
         public override void SetDefaults()
@@ -23,9 +23,9 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon).Flat += 3f;
+            player.GetDamage(DamageClass.Summon).Flat += 2f;
             player.GetDamage(DamageClass.Summon) += 0.08f;
-            player.moveSpeed += 0.22f;
+            player.moveSpeed += 0.15f;
         }
 
 

@@ -4,12 +4,14 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
 {
+    [LegacyName("OldStuddedLeatherArmor")]
+    [LegacyName("OldLeatherArmor")]
     [AutoloadEquip(EquipType.Body)]
-    public class OldLeatherArmor : ModItem
+    public class LeatherArmor : ModItem
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Set bonus: +5% Ranged Damage, +3 Ranged Crit\nArmor can be upgraded for 500 Dark Souls a piece");
+            Tooltip.SetDefault("Increases ranged damage by 1 flat\nSet bonus: +5% Ranged Damage, +3 Ranged Crit");
         }
 
         public override void SetDefaults()
@@ -20,12 +22,16 @@ namespace tsorcRevamp.Items.Armors
             Item.value = 18000;
             Item.rare = ItemRarityID.White;
         }
+        public override void UpdateEquip(Player player)
+        {
+            player.GetDamage(DamageClass.Ranged).Flat += 1;
+        }
 
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Leather, 10);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 65);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 400);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

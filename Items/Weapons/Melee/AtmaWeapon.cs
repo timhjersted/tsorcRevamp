@@ -26,6 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.autoReuse = true;
             Item.useAnimation = 17;
             Item.useTime = 17;
+            Item.scale = 1.5f;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.LightPurple_6;

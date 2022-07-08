@@ -4,12 +4,14 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
 {
+    [LegacyName("AncientDwarvenHelmet")]
+    [LegacyName("AncientDwarvenHelmet2")]
     [AutoloadEquip(EquipType.Head)]
     public class AncientGoldenHelmet : ModItem
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("It is the famous Helmet of the Stars. \n7% melee speed\nSet bonus boosts all critical hits by 6%, +5% melee and ranged damage, +40 mana.");
+            Tooltip.SetDefault("It is the famous Helmet of the Stars. \nIncreases melee crit chance by 6%");
         }
 
         public override void SetDefaults()
@@ -23,7 +25,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Melee) += 0.07f;
+            player.GetCritChance(DamageClass.Melee) += 6;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -33,20 +35,15 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.05f;
-            player.GetDamage(DamageClass.Ranged) += 0.05f;
-            player.statManaMax2 += 40;
-            player.GetCritChance(DamageClass.Ranged) += 6;
-            player.GetCritChance(DamageClass.Magic) += 6;
-            player.GetCritChance(DamageClass.Melee) += 6;
-            player.GetCritChance(DamageClass.Throwing) += 6; //lol
+            player.GetAttackSpeed(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.Melee) += 0.1f;
         }
 
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GoldHelmet, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 500);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 300);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

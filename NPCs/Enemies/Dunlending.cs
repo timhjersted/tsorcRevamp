@@ -132,6 +132,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion);
             }
+
             if (Main.rand.NextBool(20))
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpelunkerPotion);
