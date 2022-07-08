@@ -40,10 +40,13 @@ namespace tsorcRevamp.Tiles
             {
                 if (thisCache.cacheLocationRect.Contains((int)position.X, (int)position.Y))
                 {
-                    int index = Item.NewItem(new Terraria.DataStructures.EntitySource_Misc("Soul Skelly"), new Vector2(position.X * 16, position.Y * 16), 16, 16, thisCache.item, thisCache.itemQuantity, false, thisCache.itemPrefix);
-                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                    for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
                     {
-                        NetMessage.SendData(MessageID.SyncItem, number: index, number2: 1f);
+                        int index = Item.NewItem(new Terraria.DataStructures.EntitySource_Misc("Soul Skelly"), new Vector2(position.X * 16, position.Y * 16), 16, 16, thisCache.item, thisCache.itemQuantity, false, thisCache.itemPrefix);
+                        if (Main.netMode == NetmodeID.MultiplayerClient)
+                        {
+                            NetMessage.SendData(MessageID.SyncItem, number: index, number2: 1f);
+                        }
                     }
                 }
             }

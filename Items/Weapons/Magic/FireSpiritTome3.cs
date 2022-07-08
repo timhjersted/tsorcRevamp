@@ -34,12 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.value = PriceByRarity.Red_10;
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.Fireball3>();
-        }
-
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-        {
-            Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, velocity, ModContent.ProjectileType<Projectiles.Fireball3>(), Item.damage, 0, default).rotation = velocity.ToRotation() + MathHelper.PiOver2;
-            return false;
+            Item.noMelee = true;
         }
 
         public override void AddRecipes()
