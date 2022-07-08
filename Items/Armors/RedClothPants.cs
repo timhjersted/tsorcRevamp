@@ -24,7 +24,14 @@ namespace tsorcRevamp.Items.Armors
         {
             player.moveSpeed += 0.1f;
         }
-        //Can be dropped by many enemies
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.Silk, 5);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 150);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.Register();
+        }
     }
 }
 

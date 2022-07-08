@@ -93,13 +93,25 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.WoodenArrowCrate>());
             shop.item[nextSlot].shopCustomPrice = 6;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+            nextSlot++; 
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.LeatherHelmet>());
+            shop.item[nextSlot].shopCustomPrice = 50;
+            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+            nextSlot++;
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.LeatherArmor>());
+            shop.item[nextSlot].shopCustomPrice = 100;
+            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+            nextSlot++;
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.LeatherGreaves>());
+            shop.item[nextSlot].shopCustomPrice = 75;
+            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ItemID.LesserHealingPotion);
             shop.item[nextSlot].shopCustomPrice = 4;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ItemID.Safe);
-            shop.item[nextSlot].shopCustomPrice = 1000;
+            shop.item[nextSlot].shopCustomPrice = 250;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
 

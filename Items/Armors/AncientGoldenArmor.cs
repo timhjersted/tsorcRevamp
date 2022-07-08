@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Armors
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GoldChainmail, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 500);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 250);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

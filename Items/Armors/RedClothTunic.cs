@@ -25,6 +25,14 @@ namespace tsorcRevamp.Items.Armors
         {
             player.GetDamage(DamageClass.Magic).Flat += 1;
         }
-        //Can be dropped by many enemies
+
+        public override void AddRecipes()
+        {
+            Terraria.Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.Silk, 5);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 250);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.Register();
+        }
     }
 }
