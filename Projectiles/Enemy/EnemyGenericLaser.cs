@@ -123,8 +123,12 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         //How long should each "segment" of the laser be? This value should pretty much be fine
         private const float MOVE_DISTANCE = 20f;
-
-        public float Distance = 0;
+        public float internalDistance;
+        public float Distance
+        {
+            get => internalDistance;
+            set => internalDistance = value;
+        }
 
         /*{
             get => projectile.ai[0];
@@ -532,21 +536,24 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         private void SetLaserPosition()
         {
-            Vector2 origin = GetOrigin();
-            Vector2 start = origin + Projectile.velocity * Distance;
-            for (Distance = MOVE_DISTANCE; Distance <= LaserLength; Distance += 50f)
+            if (!TileCollide)
             {
-                if (!TileCollide)
-                {
-                    Distance = LaserLength;
-                    break;
-                }
+                Distance = LaserLength;
+                return;
+            }
+
+
+
+            for (Distance = MOVE_DISTANCE; Distance <= 2200f; Distance += 5f)
+            {
+                Vector2 origin = GetOrigin();
+                var start = origin + Projectile.velocity * Distance;
                 if (!Collision.CanHit(origin, 1, 1, start, 1, 1) && !Collision.CanHitLine(origin, 1, 1, start, 1, 1))
                 {
                     Distance -= 5f;
                     break;
                 }
-            }
+            }            
         }
 
         private void ProduceWaterRipples(Vector2 beamDims)

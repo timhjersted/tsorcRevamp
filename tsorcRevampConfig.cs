@@ -91,15 +91,16 @@ namespace tsorcRevamp
         [Tooltip("The Y position of the Estus Flask.")]
         public int EstusFlaskPosY { get; set; }
 
+        
         [Label("Disable Gravitation Effect Screen Flip")]
         [BackgroundColor(200, 80, 80, 192)]
         [SliderColor(224, 165, 56, 128)]
         [ReloadRequired]
         [DefaultValue(true)]
-        [Tooltip("Flipping gravity will only invert you instead of the whole screen." +
-            "\nSome mods may draw visuals or fire projectiles at the wrong spot while gravity is flipped.")]
+        [Tooltip("CURRENTLY DISABLED! Needs to be redone completely for 1.4" +
+            "\nFlipping gravity will only flip your character instead of the whole screen.")]
         public bool GravityFix { get; set; }
-
+        
 
 
         /*

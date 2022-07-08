@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.friendly = false;
             Projectile.hostile = true;
             Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
+            Projectile.tileCollide = true;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.hide = true;
 
@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             MaxCharge = 90;
             LaserLength = 3000;
             LaserColor = Color.Red;
-            TileCollide = false;
+            TileCollide = true;
             LaserDust = DustID.OrangeTorch;
             LineDust = true;
             LaserTexture = TransparentTextureHandler.TransparentTextureType.RedLaserTransparent;

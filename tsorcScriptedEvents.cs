@@ -962,7 +962,21 @@ namespace tsorcRevamp
                 {
                     foreach(ScriptedEvent e in QueuedEvents)
                     {
-                        InactiveEvents.Add(e);
+                        bool savedEvent = false;
+                        foreach (KeyValuePair<tsorcScriptedEvents.ScriptedEventType, ScriptedEvent> pair in tsorcScriptedEvents.ScriptedEventDict)
+                        {
+                            if (pair.Value == e)
+                            {
+                                if(ScriptedEventValues[pair.Key] == true)
+                                {
+                                    savedEvent = true;
+                                }
+                            }
+                        }
+                        if (savedEvent) //Do not re-add a queued event if it has been disabled (ie because the players beat it)
+                        {
+                            InactiveEvents.Add(e);
+                        }
                     }
                     QueuedEvents = new List<ScriptedEvent>();
                 }
@@ -1495,6 +1509,11 @@ namespace tsorcRevamp
             //Otherwise add it back to InactiveEvents
             if (!useListSpawns)
             {
+                if (spawnedNPC != null && !spawnedNPC.active)
+                {
+                    npcDead = true;
+                }
+                    
                 if (npcDead)
                 {
                     endEvent = true;

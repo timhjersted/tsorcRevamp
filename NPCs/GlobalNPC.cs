@@ -355,7 +355,6 @@ namespace tsorcRevamp.NPCs
                     if (tsorcRevampWorld.Slain.ContainsKey(npc.type))
                     {
                         DarkSoulQuantity = 0;
-                        return;
                     }
                     else
                     {
