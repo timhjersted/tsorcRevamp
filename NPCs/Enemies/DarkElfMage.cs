@@ -66,13 +66,13 @@ namespace tsorcRevamp.NPCs.Enemies
             // these are all the regular stuff you get , now lets see......
             if (spawnInfo.Player.townNPCs > 0f) return 0;
 
-            if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && Main.rand.Next(55) == 1) return 1;
+            if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && Main.rand.NextBool(55)) return 1;
 
-            if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && InBrownLayer && Main.rand.Next(35) == 1) return 1;
+            if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && InBrownLayer && Main.rand.NextBool(35)) return 1;
 
-            if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && InGrayLayer && Main.rand.Next(25) == 1) return 1;
+            if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && InGrayLayer && Main.rand.NextBool(25)) return 1;
 
-            if (Main.hardMode && FrozenOcean && Main.rand.Next(20) == 1) return 1;
+            if (Main.hardMode && FrozenOcean && Main.rand.NextBool(20)) return 1;
 
 
             return 0;

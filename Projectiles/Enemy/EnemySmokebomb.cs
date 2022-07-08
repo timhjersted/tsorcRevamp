@@ -46,7 +46,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             Projectile.rotation += 1f;
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, 50, Color.Green, 1.0f);
                 Main.dust[dust].noGravity = false;
@@ -79,7 +79,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             else
             {
                 // Smoke and fuse dust spawn.
-                if (Main.rand.Next(4) == 0)
+                if (Main.rand.NextBool(4))
                 {
                     int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 6, 0f, 0f, 100, Color.SeaGreen, 1f);
                     Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;

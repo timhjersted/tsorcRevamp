@@ -61,7 +61,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             if (NPC.ai[1] >= 10f && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 NPC.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
-                if (Main.rand.Next(70) == 1)
+                if (Main.rand.NextBool(70))
                 {
                     Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 15);
                     projVector += Main.rand.NextVector2Circular(5, 5);
@@ -69,7 +69,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     NPC.ai[1] = 1f;
                 }
-                if (Main.rand.Next(220) == 1)
+                if (Main.rand.NextBool(220))
                 {
                     Vector2 startVector = new Vector2((NPC.position.X + ((((NPC.width + 50) * 5f) * (NPC.direction * 2)) / 20f) + 130), NPC.position.Y + (NPC.height - 75));
                     Vector2 projVector = UsefulFunctions.GenerateTargetingVector(startVector, Main.player[NPC.target].Center, 8);
@@ -79,7 +79,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     NPC.ai[1] = 1f;
                 }
-                if (Main.rand.Next(20) == 1)
+                if (Main.rand.NextBool(20))
                 {
                     Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 11);
                     projVector += Main.rand.NextVector2Circular(3, 3);

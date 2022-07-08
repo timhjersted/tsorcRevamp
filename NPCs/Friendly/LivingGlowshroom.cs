@@ -67,7 +67,7 @@ namespace tsorcRevamp.NPCs.Friendly
         // Our AI here makes our NPC sit waiting for a player to enter range then spawns minions to attack.
         public override void AI()
         {
-            if ((NPC.life < NPC.lifeMax) && (Main.rand.Next(2) == 0) && Framing.GetTileSafely((int)NPC.position.X / 16, (int)NPC.position.Y / 16 + 2).TileType == TileID.MushroomGrass)
+            if ((NPC.life < NPC.lifeMax) && (Main.rand.NextBool(2)) && Framing.GetTileSafely((int)NPC.position.X / 16, (int)NPC.position.Y / 16 + 2).TileType == TileID.MushroomGrass)
             {
                 Dust.NewDust(NPC.position, NPC.width - 6, NPC.height - 16, 107, 0, 0, 0, default(Color), .75f); //regenerating hp
             }
@@ -88,7 +88,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     AI_State = State_Jump;
                     AI_Timer = 0;
                 }
-                if ((NPC.life < NPC.lifeMax) && (Main.rand.Next(8) == 0))
+                if ((NPC.life < NPC.lifeMax) && (Main.rand.NextBool(8)))
                 {
                     Dust.NewDust(NPC.position, NPC.width - 6, NPC.height - 16, 107, 0, 0, 0, default(Color), .75f); //regenerating hp
                 }
@@ -103,7 +103,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 {
                     NPC.velocity = new Vector2(NPC.direction * -2.2f, -3.6f);
                 }
-                if ((Main.rand.Next(8) == 0) && (AI_Timer == 2) && NPC.collideX /*&& Main.netMode != NetmodeID.MultiplayerClient*/)
+                if ((Main.rand.NextBool(8)) && (AI_Timer == 2) && NPC.collideX /*&& Main.netMode != NetmodeID.MultiplayerClient*/)
                 {
                     if (NPC.direction == -1) //right-facing bump
                     {

@@ -54,15 +54,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (tsorcRevampWorld.SuperHardMode) return 0;
 
-            if (Main.hardMode && !Main.dayTime && P.ZoneJungle && P.ZoneOverworldHeight && Main.rand.Next(20005) == 1) return 1;
+            if (Main.hardMode && !Main.dayTime && P.ZoneJungle && P.ZoneOverworldHeight && Main.rand.NextBool(20005)) return 1;
 
-            if (Main.hardMode && Main.bloodMoon && P.ZoneJungle && Main.rand.Next(12525) == 1) return 1;
+            if (Main.hardMode && Main.bloodMoon && P.ZoneJungle && Main.rand.NextBool(12525)) return 1;
 
-            if (Main.hardMode && !Main.dayTime && P.ZoneUnderworldHeight && Main.rand.Next(7030) == 1) return 1;
+            if (Main.hardMode && !Main.dayTime && P.ZoneUnderworldHeight && Main.rand.NextBool(7030)) return 1;
 
-            if (Main.hardMode && Main.bloodMoon && P.ZoneBeach && Main.rand.Next(8020) == 1) return 1;
+            if (Main.hardMode && Main.bloodMoon && P.ZoneBeach && Main.rand.NextBool(8020)) return 1;
 
-            if (Main.hardMode && Main.bloodMoon && P.ZoneSkyHeight && Main.rand.Next(8020) == 1) return 1;
+            if (Main.hardMode && Main.bloodMoon && P.ZoneSkyHeight && Main.rand.NextBool(8020)) return 1;
 
 
             return 0;
@@ -79,7 +79,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.TargetClosest(true);
                 if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
                 {
-                    if (Main.rand.Next(70) == 1)
+                    if (Main.rand.NextBool(70))
                     {
                         float num48 = 9f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -100,7 +100,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         }
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(220) == 1)
+                    if (Main.rand.NextBool(220))
                     {
                         float num48 = 8f;
                         Vector2 vector8 = new Vector2((NPC.position.X + ((((NPC.width + 50) * 5f) * (NPC.direction * 2)) / 20f) + 130), NPC.position.Y + (NPC.height - 75));
@@ -122,7 +122,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         }
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(20) == 1)
+                    if (Main.rand.NextBool(20))
                     {
                         float num48 = 11f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));

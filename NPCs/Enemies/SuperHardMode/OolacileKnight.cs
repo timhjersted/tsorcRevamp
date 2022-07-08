@@ -77,28 +77,28 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return 0;
             }
 
-            if (Jungle && tsorcRevampWorld.SuperHardMode && AboveEarth && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<OolacileKnight>()) && Main.rand.Next(20) == 1)
+            if (Jungle && tsorcRevampWorld.SuperHardMode && AboveEarth && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<OolacileKnight>()) && Main.rand.NextBool(20))
 
             {
                 UsefulFunctions.BroadcastText("An ancient warrior has come to banish you from existence...", 175, 75, 255);
                 return 1;
             }
 
-            if (Dungeon && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<OolacileKnight>()) && Main.rand.Next(15) == 1)
+            if (Dungeon && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<OolacileKnight>()) && Main.rand.NextBool(15))
 
             {
                 UsefulFunctions.BroadcastText("You are being hunted...", 175, 75, 255);
                 return 1;
             }
 
-            if (Meteor && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<OolacileKnight>()) && Main.rand.Next(20) == 1)
+            if (Meteor && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<OolacileKnight>()) && Main.rand.NextBool(20))
 
             {
                 UsefulFunctions.BroadcastText("You are being hunted...", 175, 75, 255);
                 return 1;
             }
 
-            if (Dungeon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<OolacileKnight>()) && Main.rand.Next(30) == 1)
+            if (Dungeon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<OolacileKnight>()) && Main.rand.NextBool(30))
 
             {
                 UsefulFunctions.BroadcastText("You are being hunted...", 175, 75, 255);
@@ -167,7 +167,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     hitCounter++;
                 }
 
-                if (hitCounter > 6 || (NPC.life < 0.1 * NPC.lifeMax && Main.rand.Next(400) == 1))
+                if (hitCounter > 6 || (NPC.life < 0.1 * NPC.lifeMax && Main.rand.NextBool(400)))
                 {
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 15);
                     NPC.netUpdate = true;
@@ -182,7 +182,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     }
                 }
 
-                if (Main.rand.Next(1000) == 0)
+                if (Main.rand.NextBool(1000))
                 {
                     int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileDemon>(), 0);
 
@@ -201,12 +201,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void OnHitPlayer(Player player, int target, bool crit)
         {
 
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 36000, false); //-20 HP curse
             }
 
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.NextBool(4))
             {
 
                 player.AddBuff(36, 600, false); //broken armor
@@ -214,7 +214,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             }
 
-            //if (Main.rand.Next(10) == 0 && player.statLifeMax > 20) 
+            //if (Main.rand.NextBool(10) && player.statLifeMax > 20) 
 
             //{
 

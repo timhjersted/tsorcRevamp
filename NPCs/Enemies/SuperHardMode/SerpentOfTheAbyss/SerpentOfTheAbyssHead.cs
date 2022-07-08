@@ -91,7 +91,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
 
             Player nT = Main.player[NPC.target];
             //190 was 90
-            if (Main.rand.Next(190) == 0)
+            if (Main.rand.NextBool(190))
             {
                 breath = true;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20);
@@ -118,7 +118,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
                 breathCD = 120;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20);
             }
-            if (Main.rand.Next(940) == 0)
+            if (Main.rand.NextBool(940))
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
@@ -129,7 +129,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20);
             }
-            if (Main.rand.Next(2760) == 0)
+            if (Main.rand.NextBool(2760))
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
@@ -140,7 +140,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20);
             }
-            if (Main.rand.Next(60) == 0)
+            if (Main.rand.NextBool(60))
             {
                 int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, 6, NPC.velocity.X / 4f, NPC.velocity.Y / 4f, 100, default(Color), 1f);
                 Main.dust[d].noGravity = true;
@@ -151,7 +151,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         {
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Humanity>(), 2);
 
-            if (Main.rand.Next(12) == 0)
+            if (Main.rand.NextBool(12))
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Humanity>(), Main.rand.Next(3, 6));
             }
@@ -171,7 +171,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.CursedInferno, 600);
                 target.AddBuff(ModContent.BuffType<Buffs.SlowedLifeRegen>(), 1200);

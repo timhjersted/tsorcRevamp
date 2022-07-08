@@ -67,7 +67,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.CursedInferno, 180);
                 target.AddBuff(ModContent.BuffType<Buffs.SlowedLifeRegen>(), 1800);

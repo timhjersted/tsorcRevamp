@@ -89,13 +89,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             // these are all the regular stuff you get , now lets see......
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && AboveEarth && Main.rand.Next(200) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && AboveEarth && Main.rand.NextBool(200)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && InBrownLayer && Main.rand.Next(500) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && InBrownLayer && Main.rand.NextBool(500)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && AboveEarth && Main.rand.Next(50) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && AboveEarth && Main.rand.NextBool(50)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Artorias>()) && AboveEarth && Main.rand.Next(2850) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Artorias>()) && AboveEarth && Main.rand.NextBool(2850)) return 1;
 
             return 0;
         }
@@ -143,7 +143,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPCSpawningTimer += (Main.rand.Next(2, 5) * 0.1f);
             if (NPCSpawningTimer >= 10f)
             {
-                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightPhantom>()) < 200) && Main.rand.Next(130) == 1)
+                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightPhantom>()) < 200) && Main.rand.NextBool(130))
                 {
                     int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightPhantom>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
@@ -154,7 +154,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     }
                 }
-                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightNemesis>()) < 2) && Main.rand.Next(3000) == 1)
+                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightNemesis>()) < 2) && Main.rand.NextBool(3000))
                 {
                     int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
@@ -164,7 +164,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
                     }
                 }
-                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.TaurusKnight>()) < 1) && Main.rand.Next(2050) == 1)
+                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.TaurusKnight>()) < 1) && Main.rand.NextBool(2050))
                 {
                     int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
@@ -190,7 +190,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (SecondAttackCounter >= 60)
             {
-                if (Main.rand.Next(20) == 0)
+                if (Main.rand.NextBool(20))
                 {
                     Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 2);
                     projVelocity.Y -= 520;
@@ -200,7 +200,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     SecondAttackCounter = 0;
                 }
 
-                if (Main.rand.Next(16) == 1)
+                if (Main.rand.NextBool(16))
                 {
                     Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileSeeker>(), seekerDamage, 0f, Main.myPlayer);
@@ -352,7 +352,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.DuskCrownRing>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>());
-                if (Main.rand.Next(1) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.PurgingStone>());
+                if (Main.rand.NextBool(1)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.PurgingStone>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 5);
             }
         }

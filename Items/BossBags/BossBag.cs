@@ -335,7 +335,7 @@ namespace tsorcRevamp.Items.BossBags
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.DarkSoul>(), 5000);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.DuskCrownRing>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Humanity>());
-            if (Main.rand.Next(1) == 0) player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.PurgingStone>());
+            if (Main.rand.NextBool(1)) player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.PurgingStone>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.RedTitanite>(), 5);
         }
     }
@@ -519,11 +519,11 @@ namespace tsorcRevamp.Items.BossBags
                 if (Main.rand.Next(99) < 66) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.NinjaHood); }
                 if (Main.rand.Next(99) < 66) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.NinjaShirt); }
                 if (Main.rand.Next(99) < 66) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.NinjaPants); }
-                if (Main.rand.Next(7) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.KingSlimeMask); }
-                if (Main.rand.Next(10) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.KingSlimeTrophy); }
-                if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimeGun); }
+                if (Main.rand.NextBool(7)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.KingSlimeMask); }
+                if (Main.rand.NextBool(10)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.KingSlimeTrophy); }
+                if (Main.rand.NextBool(2)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimeGun); }
                 player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimySaddle);
-                if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimeHook); }
+                if (Main.rand.NextBool(2)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimeHook); }
 
                 StaminaVesselOnFirstBag(NPCID.KingSlime, player);
                 SoulsOnFirstBag(NPCID.KingSlime, player);
@@ -534,7 +534,7 @@ namespace tsorcRevamp.Items.BossBags
                 //Picksaw drops from Attraidies who is Post-Golem now, and gates SuperHardMode content. We've gotta stop Golem from dropping it.
                 if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
                 {
-                    if (Main.rand.Next(3) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Picksaw); }
+                    if (Main.rand.NextBool(3)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Picksaw); }
                 }
                 else
                 {
@@ -544,8 +544,8 @@ namespace tsorcRevamp.Items.BossBags
                 //Drops that work in the traditional way. Also, adds the Crest of Stone to its drops.
                 player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CrestOfStone>());
                 player.QuickSpawnItem(player.GetSource_Loot(), ItemID.ShinyStone);
-                if (Main.rand.Next(6) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.GolemMask); }
-                if (Main.rand.Next(9) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.GolemTrophy); }
+                if (Main.rand.NextBool(6)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.GolemMask); }
+                if (Main.rand.NextBool(9)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.GolemTrophy); }
                 player.QuickSpawnItem(player.GetSource_Loot(), ItemID.GreaterHealingPotion, 5 + Main.rand.Next(10));
 
                 //Always drops one of these things, picked at random

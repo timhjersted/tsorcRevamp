@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.rotation -= MathHelper.ToRadians(180f);
             }
 
-            if (Main.rand.Next(3) == 0)
+            if (Main.rand.NextBool(3))
             {
                 Dust dust2 = Main.dust[Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 89, 0, 0, 50, default(Color), .8f)];
                 dust2.velocity *= 0;

@@ -159,7 +159,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
             if (TeleportTimer == 10) //If the boss just teleported
             {
-                if (Main.rand.Next(2) == 0 || !dragonAlive) //1 in 2 chance boss will use attack when it flies down on top of you if the dragon is alive
+                if (Main.rand.NextBool(2) || !dragonAlive) //1 in 2 chance boss will use attack when it flies down on top of you if the dragon is alive
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -172,7 +172,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
                 }
 
-                if (Main.rand.Next(14) == 0 || (dragonAlive && Main.rand.Next(7) == 0)) //1 in 15 chance boss will summon an NPC, 1/7 if the dragon is dead
+                if (Main.rand.NextBool(14) || (dragonAlive && Main.rand.NextBool(7))) //1 in 15 chance boss will summon an NPC, 1/7 if the dragon is dead
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {

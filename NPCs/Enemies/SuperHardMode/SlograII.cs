@@ -62,13 +62,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             // these are all the regular stuff you get , now lets see......
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && AboveEarth && Main.rand.Next(50) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && AboveEarth && Main.rand.NextBool(50)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && InBrownLayer && Main.rand.Next(32) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && InBrownLayer && Main.rand.NextBool(32)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && InGrayLayer && Main.rand.Next(40) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && InGrayLayer && Main.rand.NextBool(40)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && Main.bloodMoon && Main.rand.Next(5) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && Main.bloodMoon && Main.rand.NextBool(5)) return 1;
 
 
             return 0;
@@ -88,7 +88,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 //npc.knockBackResist = 0.09f;
 
                 //WHEN HIT, CHANCE TO JUMP BACKWARDS && npc.velocity.Y >= -1f
-                if (Main.rand.Next(10) == 1)//was 12
+                if (Main.rand.NextBool(10))//was 12
                 {
 
                     NPC.TargetClosest(false);
@@ -96,7 +96,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     NPC.velocity.Y = -8f;
                     NPC.velocity.X = -4f * NPC.direction;
 
-                    //if (Main.rand.Next(1) == 1)
+                    //if (Main.rand.NextBool(1))
                     //{ 
                     tridentTimer = 140f;
                     //}
@@ -105,7 +105,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
 
                 //WHEN HIT, CHANCE TO DASH STEP BACKWARDS && npc.velocity.Y >= 1f
-                else if (Main.rand.Next(8) == 1)//was 10
+                else if (Main.rand.NextBool(8))//was 10
                 {
 
                     //npc.TargetClosest(false);
@@ -116,13 +116,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     //npc.direction *= -1;
                     //npc.spriteDirection = npc.direction;
                     //npc.ai[0] = 0f;
-                    //if (Main.rand.Next(2) == 1)
+                    //if (Main.rand.NextBool(2))
                     //{
                     tridentTimer = 140f;
                     //}
 
                     //CHANCE TO JUMP AFTER DASH
-                    if (Main.rand.Next(4) == 1)
+                    if (Main.rand.NextBool(4))
                     {
                         NPC.TargetClosest(true);
                         NPC.velocity.Y = -7f;
@@ -151,7 +151,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     hitCounter++;
                 }
 
-                if (hitCounter > 6 || (NPC.life < 0.1 * NPC.lifeMax && Main.rand.Next(400) == 1))
+                if (hitCounter > 6 || (NPC.life < 0.1 * NPC.lifeMax && Main.rand.NextBool(400)))
                 {
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 15);
                     NPC.netUpdate = true;
@@ -166,7 +166,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     }
                 }
 
-                if (Main.rand.Next(500) == 0)
+                if (Main.rand.NextBool(500))
                 {
                     int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.VampireBat>(), 0);
 

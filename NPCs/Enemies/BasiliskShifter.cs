@@ -78,29 +78,29 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spawnInfo.Water) return 0f;
 
             //SPAWNS IN HM JUNGLE AT NIGHT ABOVE GROUND AFTER THE RAGE IS DEFEATED
-            if (Main.hardMode && Jungle && !Corruption && !Main.dayTime && AboveEarth && !Ocean && P.townNPCs <= 0f && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && Main.rand.Next(30) == 1) return 1;
+            if (Main.hardMode && Jungle && !Corruption && !Main.dayTime && AboveEarth && !Ocean && P.townNPCs <= 0f && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && Main.rand.NextBool(30)) return 1;
 
             //SPAWNS IN HM METEOR UNDERGROUND AT NIGHT
-            if (Main.hardMode && Meteor && !Main.dayTime && (InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.rand.Next(10) == 1) return 1;
+            if (Main.hardMode && Meteor && !Main.dayTime && (InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.rand.NextBool(10)) return 1;
 
-            if (Main.hardMode && Meteor && Main.dayTime && (InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.rand.Next(20) == 1) return 1;
+            if (Main.hardMode && Meteor && Main.dayTime && (InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.rand.NextBool(20)) return 1;
 
             //SPAWNS AGAIN IN CORRUPTION AND NOW CRIMSON
-            if (Main.hardMode && Corruption && !Main.dayTime && !Ocean && (InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.rand.Next(20) == 1) return 1;
+            if (Main.hardMode && Corruption && !Main.dayTime && !Ocean && (InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.rand.NextBool(20)) return 1;
 
-            if (Main.hardMode && Corruption && Main.dayTime && !Ocean && (InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.rand.Next(30) == 1) return 1;
+            if (Main.hardMode && Corruption && Main.dayTime && !Ocean && (InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.rand.NextBool(30)) return 1;
 
             //SPAWNS IN DUNGEON AT NIGHT RARELY
-            if (Main.hardMode && Dungeon && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(40) == 1) return 1;
+            if (Main.hardMode && Dungeon && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.NextBool(40)) return 1;
 
             //SPAWNS IN HM HALLOW 
-            if (Main.hardMode && (InBrownLayer || InGrayLayer) && Hallow && !Ocean && !spawnInfo.Water && Main.rand.Next(30) == 1) return 1;
+            if (Main.hardMode && (InBrownLayer || InGrayLayer) && Hallow && !Ocean && !spawnInfo.Water && Main.rand.NextBool(30)) return 1;
 
             //SPAWNS RARELY IN HM JUNGLE UNDERGROUND
-            if (Main.hardMode && Jungle && InGrayLayer && !Ocean && !spawnInfo.Water && Main.rand.Next(70) == 1) return 1;
+            if (Main.hardMode && Jungle && InGrayLayer && !Ocean && !spawnInfo.Water && Main.rand.NextBool(70)) return 1;
 
             //BLOODMOON HIGH SPAWN IN METEOR OR JUNGLE
-            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && (Meteor || Jungle) && !Dungeon && (AboveEarth || InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.bloodMoon && Main.rand.Next(5) == 1) return 1;
+            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && (Meteor || Jungle) && !Dungeon && (AboveEarth || InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.bloodMoon && Main.rand.NextBool(5)) return 1;
 
             return 0;
         }
@@ -116,7 +116,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (shotTimer >= 85)
             {
                 Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 1f);
-                if (Main.rand.Next(3) == 1)
+                if (Main.rand.NextBool(3))
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemEmerald, NPC.velocity.X, NPC.velocity.Y);
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemEmerald, NPC.velocity.X, NPC.velocity.Y);
@@ -128,7 +128,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.TargetClosest(true);
                     //DISRUPTOR ATTACK
                     Player player3 = Main.player[NPC.target];
-                    if (Main.rand.Next(200) == 1 && NPC.Distance(player3.Center) > 190)
+                    if (Main.rand.NextBool(200) && NPC.Distance(player3.Center) > 190)
                     {
                         Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 4f, 1.06f, true, true);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 5f, Main.myPlayer);
@@ -142,13 +142,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     //CHANCE TO JUMP BEFORE ATTACK
                     //FOR MAIN
-                    if (shotTimer == 105 && Main.rand.Next(3) == 0 && NPC.life >= 221)
+                    if (shotTimer == 105 && Main.rand.NextBool(3) && NPC.life >= 221)
                     {
                         //npc.velocity.Y = -6f;
                         NPC.velocity.Y = Main.rand.NextFloat(-10f, -4f);
                     }
                     //FOR FINAL
-                    if (shotTimer >= 185 && Main.rand.Next(2) == 0 && NPC.life <= 220)
+                    if (shotTimer >= 185 && Main.rand.NextBool(2) && NPC.life <= 220)
                     {
                         NPC.velocity.Y = Main.rand.NextFloat(-10f, 3f);
                     }
@@ -156,11 +156,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     //BREATH ATTACK
                     /*
-					if (shotTimer >= 110f && Main.rand.Next(20) == 0 && npc.Distance(player.Center) > 260 && npc.life >= 221)
+					if (shotTimer >= 110f && Main.rand.NextBool(20) && npc.Distance(player.Center) > 260 && npc.life >= 221)
 					{
 						npc.velocity.Y = Main.rand.NextFloat(-10f, -3f);
 						npc.velocity.X = npc.velocity.X + (float)npc.direction * Main.rand.NextFloat(6f, 3f);
-						//if (Main.rand.Next(2) == 1)
+						//if (Main.rand.NextBool(2))
 						//{
 						Lighting.AddLight(npc.Center, Color.BlueViolet.ToVector3() * 2f);
 						//int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Blue, 1f);
@@ -179,7 +179,7 @@ namespace tsorcRevamp.NPCs.Enemies
 							Lighting.AddLight(npc.Center, Color.BlueViolet.ToVector3() * 2f);
 							float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
 							Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X, npc.Center.Y, (float)((Math.Cos(rotation) * 7) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer); //7 was 15
-							if (Main.rand.Next(30) == 0)
+							if (Main.rand.NextBool(30))
 							{
 								Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X + Main.rand.Next(-500, 500), npc.Center.Y + Main.rand.Next(-500, 500), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
 							}
@@ -203,7 +203,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // NEW BREATH ATTACK 
             breathTimer++;
-            if (breathTimer > 480 && Main.rand.Next(2) == 1 && shotTimer <= 99f && NPC.life >= 221)
+            if (breathTimer > 480 && Main.rand.NextBool(2) && shotTimer <= 99f && NPC.life >= 221)
             {
                 breathTimer = -60;
                 shotTimer = -60f;
@@ -235,7 +235,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             int choice = Main.rand.Next(4);
-            //PURPLE MAGIC LOB ATTACK; && Main.rand.Next(2) == 1
+            //PURPLE MAGIC LOB ATTACK; && Main.rand.NextBool(2)
             if (shotTimer >= 110f && NPC.life >= 221 && choice <= 1)
             {
                 bool clearSpace = true;
@@ -294,7 +294,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //FINAL DESPERATE ATTACK
-            if (shotTimer >= 175f && Main.rand.Next(2) == 1 && NPC.life <= 220)
+            if (shotTimer >= 175f && Main.rand.NextBool(2) && NPC.life <= 220)
             {
                 int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Blue, 1f);
                 Main.dust[dust2].noGravity = true;
@@ -327,7 +327,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //MAKE SOUND WHEN JUMPING/HOVERING
-            if (Main.rand.Next(12) == 0 && NPC.velocity.Y <= -1f)
+            if (Main.rand.NextBool(12) && NPC.velocity.Y <= -1f)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.2f, Pitch = 0.1f }, NPC.Center);
             }
@@ -336,7 +336,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (shotTimer >= 100)
             {
                 Lighting.AddLight(NPC.Center, Color.Purple.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.Next(3) == 1)
+                if (Main.rand.NextBool(3))
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CursedTorch, NPC.velocity.X, NPC.velocity.Y);
                     //Dust.NewDust(npc.position, npc.width, npc.height, DustID.GemEmerald, npc.velocity.X, npc.velocity.Y);
@@ -350,7 +350,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //jump back when hit at close range; && npc.life >= 221
-            if (NPC.justHit && NPC.Distance(player.Center) < 150 && Main.rand.Next(2) == 1)
+            if (NPC.justHit && NPC.Distance(player.Center) < 150 && Main.rand.NextBool(2))
             {
 
                 NPC.velocity.Y = Main.rand.NextFloat(-6f, -4f);
@@ -360,7 +360,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //jump forward when hit at range; && npc.life >= 221
-            if (NPC.justHit && NPC.Distance(player.Center) > 150 && Main.rand.Next(2) == 1)
+            if (NPC.justHit && NPC.Distance(player.Center) > 150 && Main.rand.NextBool(2))
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(7f, 3f);
@@ -371,7 +371,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //Shift toward the player randomly
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if (Main.rand.Next(80) == 1 && NPC.Distance(player.Center) > 200)
+                if (Main.rand.NextBool(80) && NPC.Distance(player.Center) > 200)
                 {
                     Lighting.AddLight(NPC.Center, Color.Red.ToVector3() * 3f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
 
@@ -450,12 +450,12 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Debuffs
         public override void OnHitPlayer(Player player, int damage, bool crit)
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 player.AddBuff(BuffID.Poisoned, 600, false); //poisoned
 
             }
-            if (Main.rand.Next(8) == 0)
+            if (Main.rand.NextBool(8))
             {
                 player.AddBuff(BuffID.BrokenArmor, 600, false); //broken armor
                 player.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800, false);

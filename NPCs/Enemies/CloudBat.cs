@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Main.rand.Next(8) == 0)
+            if (Main.rand.NextBool(8))
             {
                 target.AddBuff(BuffID.Confused, 600, true);
             }

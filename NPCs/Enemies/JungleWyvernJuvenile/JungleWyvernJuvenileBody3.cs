@@ -78,7 +78,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
             {
                 NPC.spriteDirection = -1;
             }
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y + 10), NPC.width, NPC.height, 62, 0, 0, 100, Color.White, 1f);
                 Main.dust[dust].noGravity = true;

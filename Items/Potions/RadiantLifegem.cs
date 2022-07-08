@@ -69,7 +69,7 @@ namespace tsorcRevamp.Items.Potions
             {
                 Item.useStyle = ItemUseStyleID.HoldUp;
 
-                if (Main.rand.Next(4) == 0)
+                if (Main.rand.NextBool(4))
                 {
                     if (player.direction == 1)
                     {
@@ -123,7 +123,7 @@ namespace tsorcRevamp.Items.Potions
         {
             Lighting.AddLight(Item.Center, 0.25f, 0.25f, 0.15f);
 
-            if (Main.rand.Next(25) == 0)
+            if (Main.rand.NextBool(25))
             {
                 Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X, Item.position.Y), 20, 26, 43, Item.velocity.X, Item.velocity.Y, 100, Color.White, Main.rand.NextFloat(.4f, .6f))];
                 dust.velocity *= 0f;

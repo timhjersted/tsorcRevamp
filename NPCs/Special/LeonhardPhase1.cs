@@ -423,7 +423,7 @@ namespace tsorcRevamp.NPCs.Special
 
                     if (NPC.ai[3] > 1000 && NPC.ai[2] == 0)
                     {
-                        if (Main.rand.Next(15) == 0)
+                        if (Main.rand.NextBool(15))
                         {
                             int dust = Dust.NewDust(new Vector2(NPC.position.X + NPC.width / 2, NPC.position.Y + 14), 12, 12, 6, NPC.velocity.X * 0f, NPC.velocity.Y * 0f, 30, default(Color), 2f);
                             Main.dust[dust].noGravity = true;

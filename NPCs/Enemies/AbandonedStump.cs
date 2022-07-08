@@ -92,7 +92,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     AI_State = State_Notice;
                     AI_Timer = 0;
                 }
-                if ((NPC.life < NPC.lifeMax) && (Main.rand.Next(8) == 0))
+                if ((NPC.life < NPC.lifeMax) && (Main.rand.NextBool(8)))
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, 107, 0, 0, 0, default(Color), 1f); //regenerating hp
                 }
@@ -128,18 +128,18 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.GivenName = "Abandoned Stump";
                 //int randomness = Main.rand.Next(3);
                 spawntimer++;
-                if (Main.rand.Next(40) == 0)
+                if (Main.rand.NextBool(40))
                 {
                     Dust.NewDust(NPC.position - new Vector2(20, 0), NPC.width / 3, NPC.height / 2, 3, Main.rand.Next(-2, 0), Main.rand.Next(-2, 0), 0, default(Color), 1f); //left branch
                 }
-                if (Main.rand.Next(40) == 0)
+                if (Main.rand.NextBool(40))
                 {
                     Dust.NewDust(NPC.position - new Vector2(-42, 0), NPC.width / 3, NPC.height / 2, 3, Main.rand.Next(0, 2), Main.rand.Next(-2, 0), 0, default(Color), 1f); //right branch
                 }
 
                 if (spawntimer >= 0 && spawntimer <= 40 && (NPC.CountNPCS(Mod.Find<ModNPC>("ResentfulSeedling").Type) < 3))
                 {
-                    if (Main.rand.Next(8) == 0)
+                    if (Main.rand.NextBool(8))
                     {
                         Dust.NewDust(NPC.position - new Vector2(20, 0), NPC.width / 3, NPC.height / 2, 107, Main.rand.NextFloat(-1.1f, 1.1f), Main.rand.NextFloat(-1.1f, 1.1f), 0, default(Color), 1f); //left branch
                         Dust.NewDust(NPC.position - new Vector2(-42, 0), NPC.width / 3, NPC.height / 2, 107, Main.rand.NextFloat(-1.1f, 1.1f), Main.rand.NextFloat(-1.1f, 1.1f), 0, default(Color), 1f); //right branch
@@ -152,9 +152,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (spawntimer == 60 && (NPC.CountNPCS(Mod.Find<ModNPC>("ResentfulSeedling").Type) < 3)) //wont spawn babies if there are already 3
                 {
-                    if ((Main.rand.Next(8) == 0) && (NPC.CountNPCS(Mod.Find<ModNPC>("LivingShroom").Type) < 3) && Main.netMode != NetmodeID.MultiplayerClient)
+                    if ((Main.rand.NextBool(8)) && (NPC.CountNPCS(Mod.Find<ModNPC>("LivingShroom").Type) < 3) && Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        if ((Main.rand.Next(8) == 0) && (NPC.CountNPCS(Mod.Find<ModNPC>("LivingShroomThief").Type) < 1))
+                        if ((Main.rand.NextBool(8)) && (NPC.CountNPCS(Mod.Find<ModNPC>("LivingShroomThief").Type) < 1))
                         {
                             NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height) + NPC.velocity.Y), (Mod.Find<ModNPC>("LivingShroomThief").Type));
                         }
@@ -302,7 +302,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     damage = 20; //damage before defence
                 }
-                if (Main.rand.Next(2) == 0 && wooddropped < 5)
+                if (Main.rand.NextBool(2) && wooddropped < 5)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.Wood);
                     wooddropped++;
@@ -321,7 +321,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     damage = 20; //damage before defence
                 }
-                if (Main.rand.Next(3) == 0 && resindropped < 1)
+                if (Main.rand.NextBool(3) && resindropped < 1)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
                     resindropped++;
@@ -358,7 +358,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     damage = 20; //damage before defence
                 }
-                if (Main.rand.Next(20) == 0 && resindropped < 1)
+                if (Main.rand.NextBool(20) && resindropped < 1)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
                     resindropped++;
@@ -388,7 +388,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void OnKill()
         {
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Wood, Main.rand.Next(2, 4));
-            if (Main.rand.Next(3) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CharcoalPineResin>());
+            if (Main.rand.NextBool(3)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CharcoalPineResin>());
             if (Main.rand.NextFloat() >= 0.2f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>()); //80%
 
         }

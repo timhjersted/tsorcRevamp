@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
-            if (Main.rand.Next(10) == 0)
+            if (Main.rand.NextBool(10))
             {
                 Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X + 10, Item.position.Y + 10), 16, 16, DustID.Torch, Item.velocity.X, Item.velocity.Y - 2f, 100, default(Color), .8f)];
                 dust.noGravity = true;

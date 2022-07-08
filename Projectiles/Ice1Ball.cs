@@ -55,7 +55,7 @@ namespace tsorcRevamp.Projectiles
             float arg_2675_5 = 0f;
             int arg_2675_6 = 100;
             Color newColor = default(Color);
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 int num47 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, arg_2675_3, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 2f);
                 Dust expr_2684 = Main.dust[num47];
@@ -183,7 +183,7 @@ namespace tsorcRevamp.Projectiles
                 for (int num40 = 0; num40 < 20; num40++)
                 {
                     Color newColor = default(Color);
-                    if (Main.rand.Next(2) == 0)
+                    if (Main.rand.NextBool(2))
                     {
                         Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                         int arg_1394_1 = Projectile.width;

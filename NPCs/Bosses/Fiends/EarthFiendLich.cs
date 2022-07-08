@@ -82,7 +82,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             ProjectileTimer += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
             if (ProjectileTimer >= 10f && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if (Main.rand.Next(90) == 1)
+                if (Main.rand.NextBool(90))
                 {
                     Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
                     projVector += Main.rand.NextVector2Circular(20, 20);
@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     ProjectileTimer = 1f;
                 }
-                if (Main.rand.Next(20) == 1)
+                if (Main.rand.NextBool(20))
                 {
                     Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 12);
                     projVector += Main.rand.NextVector2Circular(10, 10);

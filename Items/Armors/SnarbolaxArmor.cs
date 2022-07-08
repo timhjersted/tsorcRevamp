@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateVanity(Player player)
         {
-            if (Main.rand.Next(10) == 0)
+            if (Main.rand.NextBool(10))
             {
                 int idx = Dust.NewDust(player.position, player.width, player.height, 96);
                 Main.dust[idx].noGravity = true;

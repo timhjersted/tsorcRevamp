@@ -52,14 +52,14 @@ namespace tsorcRevamp.NPCs.Enemies
             //now spawns in hallow, since jungle was getting crowded
             //spawns more before the rage is defeated
 
-            if (Main.hardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && !Main.dayTime && P.ZoneHallow && P.ZoneOverworldHeight && Main.rand.Next(30) == 1) return 1;
-            if (Main.hardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && !Main.dayTime && P.ZoneHallow && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.Next(25) == 1) return 1;
-            if (Main.hardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && Main.dayTime && P.ZoneHallow && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.Next(35) == 1) return 1;
-            if (Main.hardMode && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && P.ZoneHallow && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.Next(10) == 1) return 1;
-            if (Main.hardMode && spawnInfo.Lihzahrd && Main.rand.Next(45) == 1) return 1;
-            if (Main.hardMode && spawnInfo.Player.ZoneDesert && Main.rand.Next(45) == 1) return 1;
-            if (tsorcRevampWorld.SuperHardMode && P.ZoneHallow && Main.rand.Next(10) == 1) return 1;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneGlowshroom && Main.rand.Next(5) == 1) return 1;
+            if (Main.hardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && !Main.dayTime && P.ZoneHallow && P.ZoneOverworldHeight && Main.rand.NextBool(30)) return 1;
+            if (Main.hardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && !Main.dayTime && P.ZoneHallow && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.NextBool(25)) return 1;
+            if (Main.hardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && Main.dayTime && P.ZoneHallow && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.NextBool(35)) return 1;
+            if (Main.hardMode && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && P.ZoneHallow && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.NextBool(10)) return 1;
+            if (Main.hardMode && spawnInfo.Lihzahrd && Main.rand.NextBool(45)) return 1;
+            if (Main.hardMode && spawnInfo.Player.ZoneDesert && Main.rand.NextBool(45)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && P.ZoneHallow && Main.rand.NextBool(10)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneGlowshroom && Main.rand.NextBool(5)) return 1;
             return 0;
         }
         #endregion
@@ -92,7 +92,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
             //PLAY CREATURE SOUND
-            if (Main.rand.Next(1000) == 1)
+            if (Main.rand.NextBool(1000))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.3f, Pitch = -0.3f }, NPC.Center); // water sound
             }
@@ -105,14 +105,14 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 bubbleTimer = 0f;
             }
-            if (NPC.justHit && NPC.Distance(player2.Center) < 150 && Main.rand.Next(2) == 1)
+            if (NPC.justHit && NPC.Distance(player2.Center) < 150 && Main.rand.NextBool(2))
             {
                 bubbleTimer = 40f;
                 NPC.velocity.Y = Main.rand.NextFloat(-11f, -3f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-4f, -3f);
                 NPC.netUpdate = true;
             }
-            if (NPC.justHit && NPC.Distance(player2.Center) > 200 && Main.rand.Next(2) == 1)
+            if (NPC.justHit && NPC.Distance(player2.Center) > 200 && Main.rand.NextBool(2))
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-11f, -3f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(4f, 3f);

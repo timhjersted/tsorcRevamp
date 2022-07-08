@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
                 crit = false;
                 damage = 100074;//reduced to 99999 after defense
             }
-            if (Main.rand.Next(10) == 0)
+            if (Main.rand.NextBool(10))
             {
                 player.statLife += damage;
                 player.HealEffect(damage);

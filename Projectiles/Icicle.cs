@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles
             float arg_2675_5 = 0f;
             int arg_2675_6 = 100;
             Color newColor = default(Color);
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 int num47 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, arg_2675_3, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 2f);
                 Dust expr_2684 = Main.dust[num47];

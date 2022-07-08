@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles
             }
             int num40 = Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, 15, Projectile.velocity.X, Projectile.velocity.Y, 100, default(Color), 3f);
             Main.dust[num40].noGravity = true;
-            if (Main.rand.Next(10) == 0)
+            if (Main.rand.NextBool(10))
             {
                 Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 15, Projectile.velocity.X, Projectile.velocity.Y, 100, default(Color), 1.4f);
             }
@@ -79,14 +79,14 @@ namespace tsorcRevamp.Projectiles
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.NextBool(4))
             {
                 target.AddBuff(BuffID.Frozen, 240);
             }
         }
         public override void OnHitPvp(Player target, int damage, bool crit)
         {
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.NextBool(4))
             {
                 target.AddBuff(BuffID.Frozen, 240);
             }

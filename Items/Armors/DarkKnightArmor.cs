@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Armors
         /*
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 player.HealEffect(damage / 10);
                 player.statLife += (damage / 10);

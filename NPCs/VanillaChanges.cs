@@ -1751,7 +1751,7 @@ namespace tsorcRevamp.NPCs
                             num474 = 135;
                             break;
                     }
-                    if (Main.rand.Next(5) == 0 && npc.ai[1] < 120f)
+                    if (Main.rand.NextBool(5) && npc.ai[1] < 120f)
                     {
                         for (int num475 = 0; num475 < 3; num475++)
                         {
@@ -1768,7 +1768,7 @@ namespace tsorcRevamp.NPCs
                     {
                         for (int num476 = 0; num476 < 3; num476++)
                         {
-                            if (Main.rand.Next(4) == 0)
+                            if (Main.rand.NextBool(4))
                             {
                                 Dust dust77 = Main.dust[Dust.NewDust(npc.Top + new Vector2((float)(-npc.width) * (0.33f - 0.11f * (float)num476), -20f), (int)((float)npc.width * (0.66f - 0.22f * (float)num476)), 20, num474)];
                                 dust77.velocity.X = 0f;
@@ -1779,7 +1779,7 @@ namespace tsorcRevamp.NPCs
                             }
                         }
                     }
-                    if (Main.rand.Next(5) == 0 && npc.ai[1] < 150f)
+                    if (Main.rand.NextBool(5) && npc.ai[1] < 150f)
                     {
                         for (int num477 = 0; num477 < 3; num477++)
                         {
@@ -1895,7 +1895,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (npc.type == 493)
                 {
-                    if (Main.rand.Next(5) == 0)
+                    if (Main.rand.NextBool(5))
                     {
                         Dust dust80 = Main.dust[Dust.NewDust(npc.Left, npc.width, npc.height / 2, 241)];
                         dust80.position = npc.Center + Vector2.UnitY.RotatedByRandom(2.0943951606750488) * new Vector2(npc.width / 2, npc.height / 2) * (0.8f + Main.rand.NextFloat() * 0.2f);
@@ -1904,7 +1904,7 @@ namespace tsorcRevamp.NPCs
                     }
                     for (int num481 = 0; num481 < 3; num481++)
                     {
-                        if (Main.rand.Next(5) == 0)
+                        if (Main.rand.NextBool(5))
                         {
                             Dust dust58 = Main.dust[Dust.NewDust(npc.Top + new Vector2((float)(-npc.width) * (0.33f - 0.11f * (float)num481), -20f), (int)((float)npc.width * (0.66f - 0.22f * (float)num481)), 20, 135)];
                             dust58.velocity.X = 0f;
@@ -2010,7 +2010,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (npc.type == 507)
                 {
-                    if (Main.rand.Next(5) == 0)
+                    if (Main.rand.NextBool(5))
                     {
                         Dust dust59 = Main.dust[Dust.NewDust(npc.Left, npc.width, npc.height / 2, 241)];
                         dust59.position = npc.Center + Vector2.UnitY.RotatedByRandom(2.0943951606750488) * new Vector2(npc.width / 2, npc.height / 2) * (0.8f + Main.rand.NextFloat() * 0.2f);
@@ -2019,7 +2019,7 @@ namespace tsorcRevamp.NPCs
                     }
                     for (int num496 = 0; num496 < 3; num496++)
                     {
-                        if (Main.rand.Next(5) == 0)
+                        if (Main.rand.NextBool(5))
                         {
                             Dust dust60 = Main.dust[Dust.NewDust(npc.Top + new Vector2((float)(-npc.width) * (0.33f - 0.11f * (float)num496), -20f), (int)((float)npc.width * (0.66f - 0.22f * (float)num496)), 20, 242)];
                             dust60.velocity.X = 0f;
@@ -2033,7 +2033,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (npc.type == 422)
                 {
-                    if (Main.rand.Next(5) == 0)
+                    if (Main.rand.NextBool(5))
                     {
                         Dust dust61 = Main.dust[Dust.NewDust(npc.Left, npc.width, npc.height / 2, 241)];
                         dust61.position = npc.Center + Vector2.UnitY.RotatedByRandom(2.0943951606750488) * new Vector2(npc.width / 2, npc.height / 2) * (0.8f + Main.rand.NextFloat() * 0.2f);
@@ -2042,7 +2042,7 @@ namespace tsorcRevamp.NPCs
                     }
                     for (int num497 = 0; num497 < 3; num497++)
                     {
-                        if (Main.rand.Next(5) == 0)
+                        if (Main.rand.NextBool(5))
                         {
                             Dust dust62 = Main.dust[Dust.NewDust(npc.Top + new Vector2((float)(-npc.width) * (0.33f - 0.11f * (float)num497), -20f), (int)((float)npc.width * (0.66f - 0.22f * (float)num497)), 20, 229)];
                             dust62.velocity.X = 0f;
@@ -2133,7 +2133,7 @@ namespace tsorcRevamp.NPCs
                 {
                     return false;
                 }
-                if (Main.rand.Next(5) == 0)
+                if (Main.rand.NextBool(5))
                 {
                     Dust dust63 = Main.dust[Dust.NewDust(npc.Left, npc.width, npc.height / 2, 241)];
                     dust63.position = npc.Center + Vector2.UnitY.RotatedByRandom(2.0943951606750488) * new Vector2(npc.width / 2, npc.height / 2) * (0.8f + Main.rand.NextFloat() * 0.2f);
@@ -2142,7 +2142,7 @@ namespace tsorcRevamp.NPCs
                 }
                 for (int num507 = 0; num507 < 3; num507++)
                 {
-                    if (Main.rand.Next(5) == 0)
+                    if (Main.rand.NextBool(5))
                     {
                         Dust dust64 = Main.dust[Dust.NewDust(npc.Top + new Vector2((float)(-npc.width) * (0.33f - 0.11f * (float)num507), -20f), (int)((float)npc.width * (0.66f - 0.22f * (float)num507)), 20, 6)];
                         dust64.velocity.X = 0f;
@@ -2295,7 +2295,7 @@ namespace tsorcRevamp.NPCs
             {
                 npc.rotation = num1243;
             }
-            if (Main.rand.Next(5) == 0)
+            if (Main.rand.NextBool(5))
             {
                 int num1465 = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y + (float)npc.height * 0.25f), npc.width, (int)((float)npc.height * 0.5f), 5, npc.velocity.X, 2f);
                 Main.dust[num1465].velocity.X *= 0.5f;
@@ -3626,7 +3626,7 @@ namespace tsorcRevamp.NPCs
 
             if ((npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow))
             {
-                if (Main.rand.Next(10) == 0)
+                if (Main.rand.NextBool(10))
                 {
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("SymbolOfAvarice").Type);
                 }
@@ -3647,22 +3647,22 @@ namespace tsorcRevamp.NPCs
                 if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.WallofFlesh) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<EstusFlaskShard>());
             }
 
-            if (npc.type == NPCID.PossessedArmor && Main.rand.Next(50) == 0 && !Main.expertMode)
+            if (npc.type == NPCID.PossessedArmor && Main.rand.NextBool(50) && !Main.expertMode)
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("WallTome").Type);
             }
 
-            if ((npc.type == NPCID.PossessedArmor || npc.type == NPCID.Wraith) && Main.rand.Next(25) == 0 && Main.expertMode)
+            if ((npc.type == NPCID.PossessedArmor || npc.type == NPCID.Wraith) && Main.rand.NextBool(25) && Main.expertMode)
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("WallTome").Type);
             }
 
-            if (npc.type == NPCID.Shark && Main.rand.Next(20) == 0)
+            if (npc.type == NPCID.Shark && Main.rand.NextBool(20))
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("CoralSword").Type, 1, false, -1);
             }
 
-            if (Main.rand.Next(25) == 0 && ((npc.type >= NPCID.BigPantlessSkeleton && npc.type <= NPCID.SmallSkeleton) ||
+            if (Main.rand.NextBool(25) && ((npc.type >= NPCID.BigPantlessSkeleton && npc.type <= NPCID.SmallSkeleton) ||
                                 (npc.type >= NPCID.HeadacheSkeleton && npc.type <= NPCID.PantlessSkeleton) ||
                                 (npc.type >= NPCID.SkeletonTopHat && npc.type <= NPCID.SkeletonAlien) ||
                                 (npc.type >= NPCID.BoneThrowingSkeleton && npc.type <= NPCID.BoneThrowingSkeleton4) ||
@@ -3674,7 +3674,7 @@ namespace tsorcRevamp.NPCs
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
             }
 
-            if (npc.type == NPCID.Vulture && Main.rand.Next(10) == 0)
+            if (npc.type == NPCID.Vulture && Main.rand.NextBool(10))
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
             }
@@ -3692,7 +3692,7 @@ namespace tsorcRevamp.NPCs
             }
 
 
-            if (Main.rand.Next(25) == 0 && ((npc.type >= NPCID.BigFemaleZombie && npc.type <= NPCID.SmallFemaleZombie) ||
+            if (Main.rand.NextBool(25) && ((npc.type >= NPCID.BigFemaleZombie && npc.type <= NPCID.SmallFemaleZombie) ||
                                 (npc.type >= NPCID.BigTwiggyZombie && npc.type <= NPCID.SmallZombie) ||
                                 (npc.type >= NPCID.ZombieDoctor && npc.type <= NPCID.ZombiePixie) ||
                                 (npc.type >= NPCID.ZombieXmas && npc.type <= NPCID.ZombieSweater) ||
@@ -3709,12 +3709,12 @@ namespace tsorcRevamp.NPCs
             if (npc.type == NPCID.GoblinArcher || npc.type == NPCID.GoblinPeon || npc.type == NPCID.GoblinWarrior || npc.type == NPCID.GoblinSorcerer || npc.type == NPCID.GoblinThief)
             {
 
-                if (Main.rand.Next(200) == 0)
+                if (Main.rand.NextBool(200))
                 { // 0.5%
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("Pulsar").Type, 1, false, -1);
                 }
 
-                else if (Main.rand.Next(200) == 0)
+                else if (Main.rand.NextBool(200))
                 { // 0.5% 
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("ToxicCatalyzer").Type, 1, false, -1);
                 }
@@ -3736,16 +3736,16 @@ namespace tsorcRevamp.NPCs
             }
             if (npc.type == NPCID.Snatcher || npc.type == NPCID.ManEater || npc.type == NPCID.AngryTrapper)
             {
-                if (Main.rand.Next(3) == 0) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
+                if (Main.rand.NextBool(3)) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
             }
             if (npc.type == NPCID.HornetLeafy || npc.type == NPCID.BigHornetLeafy || npc.type == NPCID.LittleHornetLeafy)
             {
-                if (Main.rand.Next(5) == 0) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
+                if (Main.rand.NextBool(5)) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
             }
             if (npc.type == NPCID.WallCreeper || npc.type == NPCID.WallCreeperWall || npc.type == NPCID.BlackRecluse || npc.type == NPCID.BlackRecluseWall)
             {
-                if (Main.rand.Next(10) == 0) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Humanity>());
-                if (Main.rand.Next(10) == 0 && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Humanity>());
+                if (Main.rand.NextBool(10)) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Humanity>());
+                if (Main.rand.NextBool(10) && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Humanity>());
             }
 
 

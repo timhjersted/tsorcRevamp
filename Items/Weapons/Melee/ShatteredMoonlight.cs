@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
         {
-            if (Main.rand.Next(20) == 0)
+            if (Main.rand.NextBool(20))
             {
                 Dust dust2 = Main.dust[Dust.NewDust(new Vector2(Item.position.X, Item.position.Y), Item.width, Item.height, 89, 0, 0, 50, default(Color), .8f)];
                 dust2.velocity *= 0;

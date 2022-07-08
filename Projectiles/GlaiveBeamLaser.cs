@@ -248,13 +248,13 @@ namespace tsorcRevamp.Projectiles
                 dust = Dust.NewDust(endpoint, 16, 16, 127, speed.X * 1.2f + Main.rand.Next(-5, 5), speed.Y * 1.2f + Main.rand.Next(-5, 5), 20, default, 3.5f);
                 Main.dust[dust].noGravity = true;
             }
-            if (Main.rand.Next(2) == 1)
+            if (Main.rand.NextBool(2))
             {
                 dust = Dust.NewDust(endpoint, 16, 16, 130, speed.X, speed.Y, 20, default, 1.0f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].shader = GameShaders.Armor.GetSecondaryShader(107, Main.LocalPlayer);
             }
-            if (Main.rand.Next(3) == 1)
+            if (Main.rand.NextBool(3))
             {
                 dust = Dust.NewDust(endpoint, 30, 30, 130, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 20, default, 1.0f);
                 Main.dust[dust].noGravity = true;

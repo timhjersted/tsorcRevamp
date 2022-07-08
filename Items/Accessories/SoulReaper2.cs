@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Accessories
 
             Lighting.AddLight(player.Center, 0.4f, 0.7f, 0.6f);
 
-            if (Main.rand.Next(25) == 0)
+            if (Main.rand.NextBool(25))
             {
                 int dust = Dust.NewDust(new Vector2((float)player.position.X - 20, (float)player.position.Y - 20), player.width + 40, player.height + 20, 89, 0, 0, 0, default, .5f);
                 Main.dust[dust].velocity *= 0.25f;

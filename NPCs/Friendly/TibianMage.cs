@@ -66,7 +66,7 @@ namespace tsorcRevamp.NPCs.Friendly
         int weaponChoice;
         public override void AI()
         {
-            if (Main.rand.Next(40) == 0 && NPC.frame.Y < 1170)
+            if (Main.rand.NextBool(40) && NPC.frame.Y < 1170)
             // only change weapons if we're not in attack animation frames
             // 1170 is before the start of the first attack frame but after the start of the previous animation frame
             // in other words: arbitrary, but close enough

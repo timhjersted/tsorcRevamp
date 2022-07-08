@@ -58,7 +58,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.PotionSickness, 3600); //evil! pure evil!
             }

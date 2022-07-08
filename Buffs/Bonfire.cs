@@ -39,7 +39,7 @@ namespace tsorcRevamp.Buffs
                     {
                         player.lifeRegen = player.statLifeMax2 / 80;
 
-                        if (Main.rand.Next(8) == 0)
+                        if (Main.rand.NextBool(8))
                         {
                             int z = Dust.NewDust(player.position, player.width, player.height, 270, 0f, 0f, 120, default(Color), 1f);
                             Main.dust[z].noGravity = true;
@@ -60,7 +60,7 @@ namespace tsorcRevamp.Buffs
                     {
                         player.lifeRegen = player.statLifeMax2 / 60;
 
-                        if (Main.rand.Next(4) == 0)
+                        if (Main.rand.NextBool(4))
                         {
                             int z = Dust.NewDust(player.position, player.width, player.height, 270, 0f, 0f, 120, default(Color), 1f);
                             Main.dust[z].noGravity = true;
@@ -81,7 +81,7 @@ namespace tsorcRevamp.Buffs
                     {
                         player.lifeRegen = player.statLifeMax2 / 30;
 
-                        if (Main.rand.Next(2) == 0)
+                        if (Main.rand.NextBool(2))
                         {
                             int z = Dust.NewDust(player.position, player.width, player.height, 270, 0f, 0f, 120, default(Color), 1f);
                             Main.dust[z].noGravity = true;

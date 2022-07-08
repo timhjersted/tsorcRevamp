@@ -169,7 +169,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                     {
                         slowdownCounter--;
                         //While it slows down, add some fun in
-                        if (Main.rand.Next(2) == 0)
+                        if (Main.rand.NextBool(2))
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {

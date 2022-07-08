@@ -78,8 +78,8 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (!Main.dayTime && !Main.hardMode && !tsorcRevampWorld.SuperHardMode)
                 {
-                    if (Main.rand.Next(21000) == 1) return 1;
-                    else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.35f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && Main.rand.Next(10000) == 1) return 1;
+                    if (Main.rand.NextBool(21000)) return 1;
+                    else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.35f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && Main.rand.NextBool(10000)) return 1;
                     return 0;
                 }
 
@@ -87,18 +87,18 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     bool hunterDowned = tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheHunter>());
 
-                    if (hunterDowned && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientDemon>()) && Main.rand.Next(100) == 1) return 1;
-                    if (hunterDowned && Main.rand.Next(1000) == 1) return 1;
-                    if (hunterDowned && !Main.dayTime && Main.rand.Next(500) == 1) return 1;
-                    else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.25f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && Main.rand.Next(500) == 1) return 1;
+                    if (hunterDowned && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientDemon>()) && Main.rand.NextBool(100)) return 1;
+                    if (hunterDowned && Main.rand.NextBool(1000)) return 1;
+                    if (hunterDowned && !Main.dayTime && Main.rand.NextBool(500)) return 1;
+                    else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.25f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && Main.rand.NextBool(500)) return 1;
                     return 0;
                 }
 
                 if (tsorcRevampWorld.SuperHardMode)
                 {
-                    if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientDemon>()) && Main.rand.Next(100) == 1) return 1;
-                    if (Main.rand.Next(1000) == 1) return 1;
-                    else if (!Main.dayTime && Main.rand.Next(500) == 1) return 1;
+                    if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientDemon>()) && Main.rand.NextBool(100)) return 1;
+                    if (Main.rand.NextBool(1000)) return 1;
+                    else if (!Main.dayTime && Main.rand.NextBool(500)) return 1;
                     return 0;
                 }
                 return 0;
@@ -113,15 +113,15 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.localAI[1]++;
             bool lineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
             tsorcRevampAIs.FighterAI(NPC, 1, 0.1f, canTeleport: true, lavaJumping: true);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), poisonFireDamage, 10, Main.rand.Next(200) == 1, false, SoundID.Item17);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBeamBall>(), energyBeamDamage, 8, Main.rand.Next(200) == 1, false, SoundID.Item17);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 8, Main.rand.Next(70) == 1, false, SoundID.Item17, 0);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatFireballBall>(), greatFireballDamage, 8, lineOfSight && Main.rand.Next(200) == 1, false, SoundID.Item17, 0);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackFire>(), blackFireDamage, 13, lineOfSight && Main.rand.Next(150) == 1, false, SoundID.Item17);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.EnemyGreatAttack>(), greatAttackDamage, 8, lineOfSight && Main.rand.Next(140) == 1, false, SoundID.Item17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), poisonFireDamage, 10, Main.rand.NextBool(200), false, SoundID.Item17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBeamBall>(), energyBeamDamage, 8, Main.rand.NextBool(200), false, SoundID.Item17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 8, Main.rand.NextBool(70), false, SoundID.Item17, 0);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatFireballBall>(), greatFireballDamage, 8, lineOfSight && Main.rand.NextBool(200), false, SoundID.Item17, 0);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackFire>(), blackFireDamage, 13, lineOfSight && Main.rand.NextBool(150), false, SoundID.Item17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.EnemyGreatAttack>(), greatAttackDamage, 8, lineOfSight && Main.rand.NextBool(140), false, SoundID.Item17);
 
 
-            if ((spawnedWerewolves < 7) && Main.rand.Next(1000) == 1)
+            if ((spawnedWerewolves < 7) && Main.rand.NextBool(1000))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

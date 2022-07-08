@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         }
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
         {
-            if (Main.rand.Next(15) == 0)
+            if (Main.rand.NextBool(15))
             {
                 player.statLife += 20;
                 if (player.statLife > player.statLifeMax2)

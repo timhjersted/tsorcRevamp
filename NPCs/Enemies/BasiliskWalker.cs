@@ -84,36 +84,36 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (spawnInfo.Water) return 0f;
 
-            if (!Main.hardMode && !Main.dayTime && (Corruption || Jungle) && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && Main.rand.Next(24) == 1) return 1;
+            if (!Main.hardMode && !Main.dayTime && (Corruption || Jungle) && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && Main.rand.NextBool(24)) return 1;
 
 
             //new chance to spawn in the corruption or crimson below ground (poison and cursed aren't activated until EoW and Skeletron respectively for balance; now we'll finally have a unique mod npc that fits well in these zones)
-            if (!Main.hardMode && P.ZoneCorrupt && !Main.dayTime && !AboveEarth && Main.rand.Next(10) == 1) return 1;
+            if (!Main.hardMode && P.ZoneCorrupt && !Main.dayTime && !AboveEarth && Main.rand.NextBool(10)) return 1;
 
-            if (!Main.hardMode && P.ZoneCorrupt && Main.dayTime && !AboveEarth && Main.rand.Next(20) == 1) return 1;
+            if (!Main.hardMode && P.ZoneCorrupt && Main.dayTime && !AboveEarth && Main.rand.NextBool(20)) return 1;
 
             //higher chance to spawn in the crimson 
-            if (!Main.hardMode && P.ZoneCrimson && !Main.dayTime && Main.rand.Next(5) == 1) return 1;
+            if (!Main.hardMode && P.ZoneCrimson && !Main.dayTime && Main.rand.NextBool(5)) return 1;
 
-            if (!Main.hardMode && P.ZoneCrimson && Main.dayTime && Main.rand.Next(10) == 1) return 1;//10 is 3%, 5 is 6%
+            if (!Main.hardMode && P.ZoneCrimson && Main.dayTime && Main.rand.NextBool(10)) return 1;//10 is 3%, 5 is 6%
 
             //meteor not desert
-            if (!Main.hardMode && Meteor && !Dungeon && !Main.dayTime && !P.ZoneUndergroundDesert && (InBrownLayer || InGrayLayer) && Main.rand.Next(5) == 1) return 1;
+            if (!Main.hardMode && Meteor && !Dungeon && !Main.dayTime && !P.ZoneUndergroundDesert && (InBrownLayer || InGrayLayer) && Main.rand.NextBool(5)) return 1;
 
-            if (!Main.hardMode && Meteor && !Dungeon && Main.dayTime && !P.ZoneUndergroundDesert && InGrayLayer && Main.rand.Next(10) == 1) return 1;
+            if (!Main.hardMode && Meteor && !Dungeon && Main.dayTime && !P.ZoneUndergroundDesert && InGrayLayer && Main.rand.NextBool(10)) return 1;
             //meteor and desert
-            if (!Main.hardMode && Meteor && !Dungeon && !Main.dayTime && P.ZoneUndergroundDesert && (InBrownLayer || InGrayLayer) && Main.rand.Next(12) == 1) return 1;
+            if (!Main.hardMode && Meteor && !Dungeon && !Main.dayTime && P.ZoneUndergroundDesert && (InBrownLayer || InGrayLayer) && Main.rand.NextBool(12)) return 1;
 
-            if (!Main.hardMode && Meteor && !Dungeon && Main.dayTime && P.ZoneUndergroundDesert && InGrayLayer && Main.rand.Next(24) == 1) return 1;
+            if (!Main.hardMode && Meteor && !Dungeon && Main.dayTime && P.ZoneUndergroundDesert && InGrayLayer && Main.rand.NextBool(24)) return 1;
             //jungle
-            if (!Main.hardMode && Jungle && Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(80) == 1) return 1; //was 200
+            if (!Main.hardMode && Jungle && Main.dayTime && !Dungeon && InGrayLayer && Main.rand.NextBool(80)) return 1; //was 200
 
-            if (!Main.hardMode && Jungle && !Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(60) == 1) return 1; //was 850
+            if (!Main.hardMode && Jungle && !Main.dayTime && !Dungeon && InGrayLayer && Main.rand.NextBool(60)) return 1; //was 850
 
             //hard mode
-            if (Main.hardMode && P.townNPCs <= 0f && !Main.dayTime && (Meteor || Jungle || Corruption) && !Dungeon && (AboveEarth || InBrownLayer || InGrayLayer) && Main.rand.Next(45) == 1) return 1;
+            if (Main.hardMode && P.townNPCs <= 0f && !Main.dayTime && (Meteor || Jungle || Corruption) && !Dungeon && (AboveEarth || InBrownLayer || InGrayLayer) && Main.rand.NextBool(45)) return 1;
 
-            if (Main.hardMode && P.townNPCs <= 0f && Main.dayTime && (Meteor || Jungle || Corruption) && !Dungeon && (InBrownLayer || InGrayLayer) && Main.rand.Next(55) == 1) return 1;
+            if (Main.hardMode && P.townNPCs <= 0f && Main.dayTime && (Meteor || Jungle || Corruption) && !Dungeon && (InBrownLayer || InGrayLayer) && Main.rand.NextBool(55)) return 1;
 
             return 0;
         }
@@ -133,7 +133,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //MAKE SOUND WHEN JUMPING/HOVERING
-            if (Main.rand.Next(12) == 0 && NPC.velocity.Y <= -1f)
+            if (Main.rand.NextBool(12) && NPC.velocity.Y <= -1f)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.2f, Pitch = 0.1f }, NPC.Center);
             }
@@ -142,7 +142,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (shotTimer >= 100)
             {
                 Lighting.AddLight(NPC.Center, Color.Purple.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.Next(3) == 1)
+                if (Main.rand.NextBool(3))
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CursedTorch, NPC.velocity.X, NPC.velocity.Y);
                     //Dust.NewDust(npc.position, npc.width, npc.height, DustID.GemEmerald, npc.velocity.X, npc.velocity.Y);
@@ -155,14 +155,14 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 shotTimer = 40f;
             }
-            if (NPC.justHit && NPC.Distance(player2.Center) < 150 && Main.rand.Next(2) == 1)
+            if (NPC.justHit && NPC.Distance(player2.Center) < 150 && Main.rand.NextBool(2))
             {
                 shotTimer = 100f;
                 NPC.velocity.Y = Main.rand.NextFloat(-6f, -3f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-5f, -3f);
                 NPC.netUpdate = true;
             }
-            if (NPC.justHit && NPC.Distance(player2.Center) > 150 && Main.rand.Next(2) == 1)
+            if (NPC.justHit && NPC.Distance(player2.Center) > 150 && Main.rand.NextBool(2))
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-5f, -2f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-5f, 3f);
@@ -173,7 +173,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Player player = Main.player[NPC.target];
-                if (Main.rand.Next(200) == 1 && NPC.Distance(player.Center) > 260)
+                if (Main.rand.NextBool(200) && NPC.Distance(player.Center) > 260)
                 {
                     chargeDamageFlag = true;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -254,7 +254,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             player.AddBuff(17, 180, false); //hunter
 
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 player.AddBuff(20, 300, false); //poisoned
             }
@@ -263,7 +263,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 100
                 player.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 5;
             }
-            if (Main.rand.Next(10) == 0)
+            if (Main.rand.NextBool(10))
             {
                 player.AddBuff(36, 600, false); //broken armor
             }

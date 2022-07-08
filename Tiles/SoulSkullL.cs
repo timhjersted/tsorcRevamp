@@ -209,11 +209,11 @@ namespace tsorcRevamp.Tiles
                 Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/Sans") with { Pitch = -0.01f }); //custom sounds have to go in Sounds/Item otherwise it makes a mess
                 if (sansannoyed < 12)
                 {
-                    if (Main.rand.Next(3) == 0)
+                    if (Main.rand.NextBool(3))
                     {
                         UsefulFunctions.BroadcastText("...What do you want?", 120, 190, 240);
                     }
-                    else if (Main.rand.Next(2) == 0)
+                    else if (Main.rand.NextBool(2))
                     {
                         UsefulFunctions.BroadcastText("Heh, heh, heh, heh...", 120, 190, 240);
                         for (int b = 0; b < 12; b++)
@@ -247,7 +247,7 @@ namespace tsorcRevamp.Tiles
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.35f, Pitch = 0.3f }); // Plays sound.
                 SoulSkellyGeocache.GiveSoulSkellyLoot(new Vector2(i, j));
 
-                if (Main.rand.Next(10) == 0) // 5%, maybe rarer depending on how many are on the map
+                if (Main.rand.NextBool(10)) // 5%, maybe rarer depending on how many are on the map
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/Megalovania") with { Pitch = -0.01f });
                     int x = i - Main.tile[i, j].TileFrameX / 18 % 2; // 16 pixels in a block + 2 pixels for the buffer. 2 because its 2 blocks wide

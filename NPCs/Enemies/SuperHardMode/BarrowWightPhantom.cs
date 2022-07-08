@@ -67,7 +67,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
                 // charge forward code 
-                if (Main.rand.Next(2650) == 1)
+                if (Main.rand.NextBool(2650))
                 {
                     chargeDamageFlag = true;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
 
                 // fire breath attack
-                if (Main.rand.Next(2075) == 0)
+                if (Main.rand.NextBool(2075))
                 {
                     breath = true;
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
@@ -370,7 +370,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                                                                                      //player.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false); //-100 life after several hits	
 
 
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.NextBool(4))
             {
 
                 player.AddBuff(36, 150, false); //broken armor
@@ -379,7 +379,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             }
 
-            //	if (Main.rand.Next(14) == 0 && player.statLifeMax > 20) 
+            //	if (Main.rand.NextBool(14) && player.statLifeMax > 20) 
 
             //{
 

@@ -83,7 +83,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
             Player nT = Main.player[NPC.target];
-            if (Main.rand.Next(175) == 0)
+            if (Main.rand.NextBool(175))
             {
                 breath = true;
                 //Terraria.Audio.SoundEngine.PlaySound(15, -1, -1, 0);
@@ -104,7 +104,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 breathCD = 90;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
             }
-            if (Main.rand.Next(303) == 0)//was 833
+            if (Main.rand.NextBool(303))//was 833
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
@@ -114,7 +114,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                     NPC.netUpdate = true; //new
                 }
             }
-            if (Main.rand.Next(400) == 0)//1460, 200 was pretty awesome but a bit crazy
+            if (Main.rand.NextBool(400))//1460, 200 was pretty awesome but a bit crazy
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
@@ -124,7 +124,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                     NPC.netUpdate = true; //new
                 }
             }
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, 6, NPC.velocity.X / 4f, NPC.velocity.Y / 4f, 100, default(Color), 1f);
                 Main.dust[d].noGravity = true;

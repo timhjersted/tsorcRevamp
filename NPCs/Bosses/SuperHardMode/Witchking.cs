@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.Weak, 7200);
                 target.AddBuff(BuffID.Bleeding, 1200);
@@ -327,7 +327,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             #region Charge
             //if(Main.netMode != 1)
             //{
-            if (Main.rand.Next(300) == 1)
+            if (Main.rand.NextBool(300))
             {
                 chargeDamageFlag = true;
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -353,7 +353,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             customAi1 += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
             if (customAi1 >= 10f)
             {
-                if ((customspawn1 < 36) && Main.rand.Next(800) == 1)
+                if ((customspawn1 < 36) && Main.rand.NextBool(800))
                 { //was 2 and 900
                     int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.GhostOfTheDarkmoonKnight>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
@@ -368,7 +368,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
 
-                if (Main.rand.Next(65) == 1)
+                if (Main.rand.NextBool(65))
                 {
                     float num48 = 8f; //was 8f
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));

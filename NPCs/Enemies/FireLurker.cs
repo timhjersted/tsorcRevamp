@@ -87,11 +87,11 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spawnInfo.Water) return 0f;
 
             //ONLY SPAWNS IN HELL
-            if (!Main.hardMode && InHell && Main.rand.Next(6) == 1) return 1;
+            if (!Main.hardMode && InHell && Main.rand.NextBool(6)) return 1;
 
-            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && InHell && Main.rand.Next(5) == 1) return 1;
+            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && InHell && Main.rand.NextBool(5)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && InHell && Main.rand.Next(5) == 1) return 1; //8 is 3%, 5 is 5, 3 IS 3%???
+            if (tsorcRevampWorld.SuperHardMode && InHell && Main.rand.NextBool(5)) return 1; //8 is 3%, 5 is 5, 3 IS 3%???
             return 0;
         }
         #endregion
@@ -107,7 +107,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (lostSoulTimer >= 130)
             {
                 Lighting.AddLight(NPC.Center, Color.Green.ToVector3());
-                if (Main.rand.Next(3) == 1)
+                if (Main.rand.NextBool(3))
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CursedTorch, NPC.velocity.X, NPC.velocity.Y);
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.IchorTorch, NPC.velocity.X, NPC.velocity.Y);
@@ -166,12 +166,12 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Debuffs
         public override void OnHitPlayer(Player player, int damage, bool crit)
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 player.AddBuff(24, 600, false); //on fire!
             }
 
-            if (Main.rand.Next(10) == 0)
+            if (Main.rand.NextBool(10))
             {
                 player.AddBuff(36, 600, false); //broken armor
                 player.AddBuff(22, 180, false); //darkness
@@ -219,7 +219,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (customAi1 >= 120)
 			{
 				Lighting.AddLight(npc.Center, Color.Green.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-				if (Main.rand.Next(3) == 1)
+				if (Main.rand.NextBool(3))
 				{
 					Dust.NewDust(npc.position, npc.width, npc.height, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y);
 					Dust.NewDust(npc.position, npc.width, npc.height, DustID.IchorTorch, npc.velocity.X, npc.velocity.Y);

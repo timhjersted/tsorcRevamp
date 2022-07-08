@@ -54,15 +54,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (spawnInfo.Water) return 0f;
 
-            if (Main.hardMode && !FrozenOcean && Main.rand.Next(200) == 1) return 1;
+            if (Main.hardMode && !FrozenOcean && Main.rand.NextBool(200)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && P.ZoneDungeon && Main.rand.Next(30) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && P.ZoneDungeon && Main.rand.NextBool(30)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && P.ZoneJungle && Main.rand.Next(75) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && P.ZoneJungle && Main.rand.NextBool(75)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && InGrayLayer && Main.rand.Next(100) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && InGrayLayer && Main.rand.NextBool(100)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Main.rand.Next(100) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Main.rand.NextBool(100)) return 1;
 
             return 0;
         }
@@ -77,7 +77,7 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampAIs.SimpleProjectile(NPC, ref knifeTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>(), throwingKnifeDamage, 8, clearShot, shootSound: SoundID.Item17);
 
             //play creature sounds
-            if (Main.rand.Next(1000) == 1)
+            if (Main.rand.NextBool(1000))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit55 with { Volume = 0.3f, Pitch = -0.7f }, NPC.Center); // cultist
             }

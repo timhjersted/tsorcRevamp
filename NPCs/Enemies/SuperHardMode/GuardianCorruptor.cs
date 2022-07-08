@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void OnKill()
         {
-            if (Main.rand.Next(3) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RottenChunk, Main.rand.Next(1, 5));
+            if (Main.rand.NextBool(3)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RottenChunk, Main.rand.Next(1, 5));
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("CursedSoul").Type, Main.rand.Next(8, 16));
         }
 
@@ -222,7 +222,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     NPC.velocity.Y = -2f;
                 }
             }
-            else if (Main.rand.Next(12) == 0)
+            else if (Main.rand.NextBool(12))
             {
                 int eaterDust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y + (float)NPC.height * 0.25f), NPC.width, (int)((float)NPC.height * 0.5f), 18, NPC.velocity.X, 2f, 75);
                 Main.dust[eaterDust].velocity.X *= 0.5f;

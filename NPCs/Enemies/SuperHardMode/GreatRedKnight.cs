@@ -64,7 +64,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             // these are all the regular stuff you get , now lets see......
 
-            if (tsorcRevampWorld.SuperHardMode && BeforeFourAfterSix && Main.bloodMoon && AboveEarth && Main.rand.Next(200) == 1)
+            if (tsorcRevampWorld.SuperHardMode && BeforeFourAfterSix && Main.bloodMoon && AboveEarth && Main.rand.NextBool(200))
 
             {
                 //Main.NewText("A portal from The Abyss has been opened! ", 175, 75, 255);
@@ -72,7 +72,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return 1;
             }
 
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Dungeon && !Corruption && InGrayLayer && Main.rand.Next(400) == 1)
+            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Dungeon && !Corruption && InGrayLayer && Main.rand.NextBool(400))
 
             {
                 //Main.NewText("A portal from The Abyss has been opened! ", 175, 75, 255);
@@ -80,7 +80,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return 1;
             }
 
-            if (tsorcRevampWorld.SuperHardMode && Dungeon && Main.rand.Next(700) == 1)
+            if (tsorcRevampWorld.SuperHardMode && Dungeon && Main.rand.NextBool(700))
 
             {
                 //Main.NewText("A portal from The Abyss has been opened! ", 175, 75, 255);
@@ -88,7 +88,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return 1;
             }
 
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && BeforeFourAfterSix && InHell && Main.rand.Next(200) == 1)
+            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && BeforeFourAfterSix && InHell && Main.rand.NextBool(200))
 
             {
                 //Main.NewText("A portal from The Abyss has been opened!", 175, 75, 255);
@@ -145,7 +145,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             poisonTimer++; ;
 
             //CHANCE TO JUMP FORWARDS
-            if (NPC.Distance(player.Center) > 20 && NPC.velocity.Y == 0f && Main.rand.Next(500) == 1)
+            if (NPC.Distance(player.Center) > 20 && NPC.velocity.Y == 0f && Main.rand.NextBool(500))
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;
@@ -158,7 +158,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
 
             //CHANCE TO DASH STEP FORWARDS 
-            else if (NPC.Distance(player.Center) > 80 && NPC.velocity.Y == 0f && Main.rand.Next(300) == 1)
+            else if (NPC.Distance(player.Center) > 80 && NPC.velocity.Y == 0f && Main.rand.NextBool(300))
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;
@@ -175,14 +175,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
                 //CHANCE TO JUMP AFTER DASH
-                if (Main.rand.Next(14) == 1)
+                if (Main.rand.NextBool(14))
                 {
                     NPC.TargetClosest(true);
 
                     //npc.spriteDirection = npc.direction;
                     //npc.ai[0] = 0f;
                     Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                    if (Main.rand.Next(3) == 1)
+                    if (Main.rand.NextBool(3))
                     {
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
@@ -202,7 +202,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (poisonTimer >= 150 && poisonTimer <= 179)
             {
                 Lighting.AddLight(NPC.Center, Color.YellowGreen.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.Next(2) == 1)
+                if (Main.rand.NextBool(2))
                 {
                     int pinkDust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y);
                     //int pinkDust = Dust.NewDust(npc.position, npc.width / 2, npc.height / 2, DustID.CrystalSerpent, npc.velocity.X, npc.velocity.Y); //pink dusts
@@ -215,7 +215,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (poisonTimer <= 100 && NPC.Distance(player.Center) < 200)
             {
 
-                if (Main.rand.Next(120) == 0) //30 was cool for great red knight
+                if (Main.rand.NextBool(120)) //30 was cool for great red knight
                 {
                     //FIRE
                     for (int pcy = 0; pcy < 2; pcy++)
@@ -240,7 +240,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (poisonTimer <= 100 && NPC.Distance(player.Center) > 200)
             {
                 Player nT = Main.player[NPC.target];
-                if (Main.rand.Next(90) == 0) //30 was cool for great red knight
+                if (Main.rand.NextBool(90)) //30 was cool for great red knight
                 {
                     //FIRE
                     for (int pcy = 0; pcy < 2; pcy++)
@@ -265,7 +265,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     */
                 }
 
-                if (Main.rand.Next(600) == 0)
+                if (Main.rand.NextBool(600))
                 {
                     //BLACK FIRE
                     for (int pcy = 0; pcy < 1; pcy++)
@@ -278,7 +278,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     }
                 }
 
-                if (Main.rand.Next(150) == 0)
+                if (Main.rand.NextBool(150))
                 {
                     for (int pcy = 0; pcy < 1; pcy++)
                     {
@@ -293,10 +293,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             /*ULTIMATE DEATH ATTACK - BLANKET OF FIRE ABOVE PLAYER THAT CURSES
               Player player = Main.player[npc.target];
-              if (npc.Distance(player.Center) > 20 && Main.rand.Next(3) == 0)
+              if (npc.Distance(player.Center) > 20 && Main.rand.NextBool(3))
               {
                   Player nT = Main.player[npc.target];
-                  if (Main.rand.Next(8) == 0)
+                  if (Main.rand.NextBool(8))
                   {
                       UsefulFunctions.BroadcastText("Death!", 175, 75, 255);
                   }
@@ -312,15 +312,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
               */
 
-            if (Main.rand.Next(10) == 0 && NPC.life <= 5000)
+            if (Main.rand.NextBool(10) && NPC.life <= 5000)
             {
-                if (Main.rand.Next(180) == 0)
+                if (Main.rand.NextBool(180))
                 {
                     UsefulFunctions.BroadcastText("Death!", 175, 75, 255);
                 }
                 //ULTIMATE DEATH ATTACK - BLANKET OF FIRE ABOVE PLAYER THAT CURSES
                 //Player player = Main.player[npc.target];
-                if (NPC.Distance(player.Center) > 70 && Main.rand.Next(3) == 0)
+                if (NPC.Distance(player.Center) > 70 && Main.rand.NextBool(3))
                 {
                     Player nT = Main.player[NPC.target];
 
@@ -344,10 +344,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (poisonTimer >= 160 && poisonTimer <= 161 && NPC.Distance(player.Center) > 40)
             {
                 //CHANCE TO JUMP 
-                if (Main.rand.Next(10) == 1)
+                if (Main.rand.NextBool(10))
                 {
                     Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                    if (Main.rand.Next(3) == 1)
+                    if (Main.rand.NextBool(3))
                     {
                         //Dust.NewDust(npc.position, npc.width, npc.height, DustID.TeleportationPotion, npc.velocity.X, npc.velocity.Y);
 
@@ -376,7 +376,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                                                                                                                               //go to poison attack
                     poisonTimer = 185f;
 
-                    if (Main.rand.Next(3) == 1)
+                    if (Main.rand.NextBool(3))
                     {
                         //or chance to reset
                         poisonTimer = 1f;
@@ -390,17 +390,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             //POISON ATTACK DUST TELEGRAPH
             if (poisonTimer >= 185 && NPC.life >= 2001) //was 180
             {
-                //if(Main.rand.Next(60) == 0)
+                //if(Main.rand.NextBool(60))
                 //{
                 Lighting.AddLight(NPC.Center, Color.Yellow.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.Next(2) == 1 && NPC.Distance(player.Center) > 10)
+                if (Main.rand.NextBool(2) && NPC.Distance(player.Center) > 10)
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Teleporter, NPC.velocity.X, NPC.velocity.Y);
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Teleporter, NPC.velocity.X, NPC.velocity.Y);
                 }
 
                 //POISON ATTACK
-                if (poisonTimer >= 250 && Main.rand.Next(2) == 1) //30 was cool for great red knight
+                if (poisonTimer >= 250 && Main.rand.NextBool(2)) //30 was cool for great red knight
                 {
                     NPC.TargetClosest(true);
                     //if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 500)

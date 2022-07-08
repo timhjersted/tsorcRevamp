@@ -18,7 +18,7 @@ namespace tsorcRevamp.Buffs
         {
             player.GetModPlayer<tsorcRevampPlayer>().RadiantLifegemHealing = true;
 
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 Dust dust = Main.dust[Dust.NewDust(new Vector2(player.position.X, player.position.Y + 10), player.width, player.height, 43, 0, -1.5f, 100, Color.White, Main.rand.NextFloat(1f, 1.2f))];
                 dust.noGravity = true;

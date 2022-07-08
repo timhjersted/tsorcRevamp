@@ -78,11 +78,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
 
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && InHell && Main.rand.Next(13) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && InHell && Main.rand.NextBool(13)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && InHell && Main.rand.Next(8) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && InHell && Main.rand.NextBool(8)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && Main.dayTime && InHell && Main.rand.Next(20) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && Main.dayTime && InHell && Main.rand.NextBool(20)) return 1;
 
             return 0;
         }
@@ -234,7 +234,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
                     //Player nT = Main.player[npc.target];
-                    if (Main.rand.Next(1200) == 0)
+                    if (Main.rand.NextBool(1200))
                     {
                         breath = true;
                         //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
@@ -263,12 +263,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 
-                    //if (Main.rand.Next(35) == 0) 
+                    //if (Main.rand.NextBool(35)) 
                     //	{
                     //		int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X+Main.rand.Next(-500,500), npc.Center.Y+Main.rand.Next(-500,500), 0, 0, "Dark Explosion", 70, 0f, Main.myPlayer);
                     //	}
 
-                    if (Main.rand.Next(40) == 1)
+                    if (Main.rand.NextBool(40))
                     {
                         float num48 = 7f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -495,12 +495,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void OnHitPlayer(Player player, int target, bool crit)
         {
 
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 36000, false); //-20 HP curse
             }
 
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.NextBool(4))
             {
 
                 player.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 3600, false); //armor reduced on hit
@@ -508,7 +508,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             }
 
-            //if (Main.rand.Next(10) == 0 && player.statLifeMax > 20) 
+            //if (Main.rand.NextBool(10) && player.statLifeMax > 20) 
 
             //{
 

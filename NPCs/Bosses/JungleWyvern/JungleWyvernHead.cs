@@ -114,7 +114,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
                 }
             }
 
-            if (Main.rand.Next(240) == 0) //was 120
+            if (Main.rand.NextBool(240)) //was 120
             {
                 breath = true;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20);
@@ -286,7 +286,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
                 }
             }
             NPC.rotation = (float)Math.Atan2(NPC.velocity.Y, NPC.velocity.X) + 1.57f;
-            if (Main.rand.Next(3) == 0)
+            if (Main.rand.NextBool(3))
             {
                 int dust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 62, 0f, 0f, 100, Color.White, 2f);
                 Main.dust[dust].noGravity = true;

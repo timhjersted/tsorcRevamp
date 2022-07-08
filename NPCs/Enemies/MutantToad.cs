@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Enemies
             bool undergroundHoly = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && spawnInfo.Player.ZoneHallow;
             if (!Main.dayTime && undergroundJungle)
             {
-                if (Main.rand.Next(15) == 0)
+                if (Main.rand.NextBool(15))
                 {
                     return 1;
                 }
@@ -73,8 +73,8 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
             }
-            if (closeTownNPCs == 1 && Main.rand.Next(3) == 0) return 0;
-            if (closeTownNPCs == 2 && Main.rand.Next(2) == 0) return 0;
+            if (closeTownNPCs == 1 && Main.rand.NextBool(3)) return 0;
+            if (closeTownNPCs == 2 && Main.rand.NextBool(2)) return 0;
             if (closeTownNPCs == 3 && Main.rand.Next(3) <= 1) return 0;
             if (closeTownNPCs >= 4) return 0;
 
@@ -85,7 +85,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitPlayer(Player player, int damage, bool crit) //hook works!
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 player.AddBuff(20, 1800, false); //poisoned!
             }

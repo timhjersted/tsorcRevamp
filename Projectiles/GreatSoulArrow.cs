@@ -140,7 +140,7 @@ namespace tsorcRevamp.Projectiles
         {
             if (Projectile.owner == Main.myPlayer)
             {
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     target.AddBuff(Mod.Find<ModBuff>("Soulstruck").Type, 180);
                 }

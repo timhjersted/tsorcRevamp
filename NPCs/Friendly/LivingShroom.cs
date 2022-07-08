@@ -89,7 +89,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     AI_State = State_Jump;
                     AI_Timer = 0;
                 }
-                if ((NPC.life < NPC.lifeMax) && (Main.rand.Next(8) == 0))
+                if ((NPC.life < NPC.lifeMax) && (Main.rand.NextBool(8)))
                 {
                     Dust.NewDust(NPC.position, NPC.width - 6, NPC.height - 16, 107, 0, 0, 0, default(Color), .75f); //regenerating hp
                 }
@@ -104,7 +104,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 {
                     NPC.velocity = new Vector2(NPC.direction * -2.2f, -3.6f);
                 }
-                if ((Main.rand.Next(6) == 0) && (AI_Timer == 2) && NPC.collideX /*&& Main.netMode != NetmodeID.MultiplayerClient*/)
+                if ((Main.rand.NextBool(6)) && (AI_Timer == 2) && NPC.collideX /*&& Main.netMode != NetmodeID.MultiplayerClient*/)
                 {
                     if (NPC.direction == -1) //right-facing bump
                     {

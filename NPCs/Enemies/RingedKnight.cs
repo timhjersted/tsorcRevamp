@@ -140,7 +140,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
-            if (!stabbing && !slashing && !jumpSlashing && lifePercentage <= 60 && Main.rand.Next(4) == 0)
+            if (!stabbing && !slashing && !jumpSlashing && lifePercentage <= 60 && Main.rand.NextBool(4))
             {
                 if (NPC.direction == 1)
                 {
@@ -838,7 +838,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (20f * NPC.direction), NPC.Center.Y, 8f * NPC.direction, Main.rand.NextFloat(-1f, 0), ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>(), 20, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 25;
                         //play breath sound
-                        if (Main.rand.Next(3) == 0)
+                        if (Main.rand.NextBool(3))
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.3f, PitchVariance = 0.1f }, NPC.Center); //flame thrower sound
                         }
@@ -1048,11 +1048,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            if (Main.rand.Next(4) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
-            if (Main.rand.Next(4) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>());
+            if (Main.rand.NextBool(4)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+            if (Main.rand.NextBool(4)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>());
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
-            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientFireSword>(), 1, false, PrefixID.Legendary);
+            if (Main.rand.NextBool(10)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientFireSword>(), 1, false, PrefixID.Legendary);
             if (Main.rand.NextFloat() < 0.6f) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RagePotion); }
             if (Main.rand.NextFloat() < 0.6f) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.WrathPotion); }
             if (Main.rand.NextFloat() < 0.6f) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>()); }

@@ -30,11 +30,11 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, Projectile.Center);
             }
 
-            if (Main.rand.Next(10) == 0)
+            if (Main.rand.NextBool(10))
             {
                 Dust.NewDustPerfect(Projectile.Center, DustID.MagicMirror, Projectile.velocity * 0.5f, 100, default, 2f).noLight = true;
             }
-            if (Main.rand.Next(10) == 0)
+            if (Main.rand.NextBool(10))
             {
                 Dust.NewDustPerfect(Projectile.Center, DustID.ShadowbeamStaff, Projectile.velocity * 0.5f, 100, default, 2f).noLight = true;
             }

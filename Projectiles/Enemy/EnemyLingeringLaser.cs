@@ -90,7 +90,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                     {
                         LaserName = "Channeled Laser";
                         FiringDuration = 90;
-                        LineDust = Main.rand.Next(8) == 0;
+                        LineDust = Main.rand.NextBool(8);
                         LaserDust = DustID.OrangeTorch;
                         if (targetPlayer == null)
                         {

@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         public override void AI()
         {
             Projectile.rotation += 0.1f;
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.NextBool(4))
             {
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, 50, Color.Green, 3.0f);
                 Main.dust[dust].noGravity = true; 

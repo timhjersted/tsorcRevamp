@@ -78,7 +78,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             Lighting.AddLight(Item.Right, 0.0452f, 0.24f, 0.24f);
 
-            if (Main.rand.Next(15) == 0)
+            if (Main.rand.NextBool(15))
             {
                 Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X + 34, Item.position.Y), 8, 28, 226, 1f, 0, 100, default(Color), .4f)];
                 dust.noGravity = true;
@@ -86,7 +86,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
                 dust.fadeIn = .4f;
             }
 
-            if (Main.rand.Next(10) == 0)
+            if (Main.rand.NextBool(10))
             {
                 Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X + 34, Item.position.Y), 8, 28, 226, 0, 0, 100, default(Color), .4f)];
                 dust.velocity *= 0f;

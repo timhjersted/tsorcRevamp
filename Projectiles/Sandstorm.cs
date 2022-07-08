@@ -57,7 +57,7 @@ namespace tsorcRevamp.Projectiles
                     }
                 }
                 Projectile.ai[0] += 1f;
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     for (int i = 0; i < 1; i++)
                     {
@@ -84,7 +84,7 @@ namespace tsorcRevamp.Projectiles
                             dustDust3.velocity.X = dustDust3.velocity.X * 2f;
                             Dust dustDust3_2 = Main.dust[dust3];
                             dustDust3_2.velocity.Y = dustDust3_2.velocity.Y * 2f;
-                            if (Main.rand.Next(5) == 0)
+                            if (Main.rand.NextBool(5))
                             {
                                 int projectileMini2 = Projectile.NewProjectile(Projectile.GetSource_FromThis(),
                                     (float)dustnum155.position.X,
@@ -96,7 +96,7 @@ namespace tsorcRevamp.Projectiles
                                 Main.projectile[projectileMini2].timeLeft = 60;
                                 Main.projectile[projectileMini2].scale = 0.5f;
                             }
-                            if (Main.rand.Next(5) == 0)
+                            if (Main.rand.NextBool(5))
                             {
                                 int projectileMini3 = Projectile.NewProjectile(Projectile.GetSource_FromThis(),
                                     new Vector2(dustDust2.position.X, dustDust2.position.Y),
@@ -106,7 +106,7 @@ namespace tsorcRevamp.Projectiles
                                 Main.projectile[projectileMini3].timeLeft = 60;
                                 Main.projectile[projectileMini3].scale = 0.5f;
                             }
-                            if (Main.rand.Next(5) == 0)
+                            if (Main.rand.NextBool(5))
                             {
                                 int projectileMini4 = Projectile.NewProjectile(Projectile.GetSource_FromThis(),
                                     (float)dustDust3.position.X,
@@ -137,7 +137,7 @@ namespace tsorcRevamp.Projectiles
                         Dust dustDust3_4 = Main.dust[dust3];
                         dustDust3_4.velocity.Y = dustDust3_4.velocity.Y * 1.2f;
                         Main.dust[dust3].scale *= num152;
-                        if (Main.rand.Next(5) == 0)
+                        if (Main.rand.NextBool(5))
                         {
                             int projectileMini5 = Projectile.NewProjectile(Projectile.GetSource_FromThis(),
                                 (float)dust155.position.X,
@@ -149,7 +149,7 @@ namespace tsorcRevamp.Projectiles
                             Main.projectile[projectileMini5].timeLeft = 60;
                             Main.projectile[projectileMini5].scale = 0.5f;
                         }
-                        if (Main.rand.Next(5) == 0)
+                        if (Main.rand.NextBool(5))
                         {
                             int projectileMini6 = Projectile.NewProjectile(Projectile.GetSource_FromThis(),
                                 (float)dustDust2_3.position.X,
@@ -161,7 +161,7 @@ namespace tsorcRevamp.Projectiles
                             Main.projectile[projectileMini6].timeLeft = 60;
                             Main.projectile[projectileMini6].scale = 0.5f;
                         }
-                        if (Main.rand.Next(5) == 0)
+                        if (Main.rand.NextBool(5))
                         {
                             int projectileMini7 = Projectile.NewProjectile(Projectile.GetSource_FromThis(),
                                 (float)dustDust3_3.position.X,

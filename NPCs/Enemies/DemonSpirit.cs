@@ -73,8 +73,8 @@ namespace tsorcRevamp.NPCs.Enemies
             bool undergroundEvil = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && (p.ZoneCorrupt || p.ZoneCrimson);
             bool undergroundHoly = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && p.ZoneHallow;
 
-            if (underworld && Main.rand.Next(45) == 0) return 1;
-            else if (underworld && Main.hardMode && Main.rand.Next(1000) == 0) return 1;
+            if (underworld && Main.rand.NextBool(45)) return 1;
+            else if (underworld && Main.hardMode && Main.rand.NextBool(1000)) return 1;
             return 0;
         }
         #endregion
@@ -107,7 +107,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.TargetClosest(true);
                 if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
                 {
-                    if (Main.rand.Next(30) == 1)
+                    if (Main.rand.NextBool(30))
                     {
                         float num48 = 8f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -129,7 +129,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         }
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(20) == 1)
+                    if (Main.rand.NextBool(20))
                     {
                         float num48 = 3f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));

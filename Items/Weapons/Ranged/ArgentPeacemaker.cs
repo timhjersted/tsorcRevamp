@@ -64,7 +64,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    if (Main.rand.Next(2) == 0)
+                    if (Main.rand.NextBool(2))
                     {
                         if (player.direction == 1)
                         {

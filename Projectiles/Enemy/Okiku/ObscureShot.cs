@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 Projectile.scale = 3;
             }
 
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 62, 0, 0, 100, Color.White, 2.0f);
                 Main.dust[dust].noGravity = true;

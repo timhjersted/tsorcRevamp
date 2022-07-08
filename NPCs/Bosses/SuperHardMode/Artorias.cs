@@ -59,7 +59,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             int expertScale = 1;
             if (Main.expertMode) expertScale = 2;
 
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.NextBool(4))
             {
                 target.AddBuff(BuffID.BrokenArmor, 180 / expertScale, false);
                 target.AddBuff(BuffID.Poisoned, 3600 / expertScale, false);
@@ -364,7 +364,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (customAi1 >= 10f)
                 {
 
-                    if ((customspawn2 < 24) && Main.rand.Next(1950) == 1)
+                    if ((customspawn2 < 24) && Main.rand.NextBool(1950))
                     {
                         int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.LothricBlackKnight>(), 0); // Spawns Lothric Black Knight
                         Main.npc[Spawned].velocity.Y = -8;
@@ -376,7 +376,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
                         }
                     }
-                    if (Main.rand.Next(220) == 1)
+                    if (Main.rand.NextBool(220))
                     {
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
@@ -385,7 +385,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         NPC.ai[1] = 1f;
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(400) == 1 && NPC.Distance(player.Center) > 100)
+                    if (Main.rand.NextBool(400) && NPC.Distance(player.Center) > 100)
                     {
                         float num48 = 8f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 100 + (NPC.height / 2));
@@ -413,7 +413,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         }
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(150) == 1 && NPC.Distance(player.Center) > 100)
+                    if (Main.rand.NextBool(150) && NPC.Distance(player.Center) > 100)
                     {
                         float num48 = 10f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -436,7 +436,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         NPC.netUpdate = true;
                     }
                     /* removed because it looks broken and can't be fairly dodged
-					if (Main.rand.Next(40) == 1) {
+					if (Main.rand.NextBool(40)) {
 						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
 						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
@@ -453,7 +453,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 						npc.netUpdate = true;
 					}
 					
-					if (Main.rand.Next(200) == 1 && npc.Distance(player.Center) > 100) {
+					if (Main.rand.NextBool(200) && npc.Distance(player.Center) > 100) {
 						float num48 = 8f;
 						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
@@ -473,7 +473,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 						npc.netUpdate = true;
 					}
 					*/
-                    if (Main.rand.Next(250) == 1 && NPC.Distance(player.Center) > 100)
+                    if (Main.rand.NextBool(250) && NPC.Distance(player.Center) > 100)
                     {
                         float num48 = 9f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -494,7 +494,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         }
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(220) == 1 && NPC.Distance(player.Center) > 100)
+                    if (Main.rand.NextBool(220) && NPC.Distance(player.Center) > 100)
                     {
                         float num48 = 8f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 650 + (NPC.height / 2));
@@ -515,7 +515,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         }
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(600) == 1 && NPC.Distance(player.Center) > 300)
+                    if (Main.rand.NextBool(600) && NPC.Distance(player.Center) > 300)
                     {
                         num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position.X + 20, NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
                         Main.projectile[num58].timeLeft = 400;
@@ -528,7 +528,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(650) == 1)
+                    if (Main.rand.NextBool(650))
                     {
                         float num48 = 8f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 400 + (NPC.height / 2));
@@ -552,7 +552,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
 
-                    if (Main.rand.Next(350) == 1)
+                    if (Main.rand.NextBool(350))
                     {
                         float num48 = 8f;
                         Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 520 + (NPC.height / 2));
@@ -575,7 +575,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
 
 
-                    if (Main.rand.Next(500) == 1 && NPC.Distance(player.Center) > 300)
+                    if (Main.rand.NextBool(500) && NPC.Distance(player.Center) > 300)
                     {
                         num59 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position.X + 20, NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
                         Main.projectile[num59].timeLeft = 500;
@@ -594,7 +594,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
 
-                if (Main.rand.Next(350) == 1 && NPC.Distance(player.Center) > 100)
+                if (Main.rand.NextBool(350) && NPC.Distance(player.Center) > 100)
                 {
                     float num48 = 8f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -619,7 +619,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
 
-                if (Main.rand.Next(205) == 1)
+                if (Main.rand.NextBool(205))
                 {
                     float num48 = 9f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -640,7 +640,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                     NPC.netUpdate = true;
                 }
-                if (Main.rand.Next(500) == 1 && NPC.Distance(player.Center) > 100)
+                if (Main.rand.NextBool(500) && NPC.Distance(player.Center) > 100)
                 {
                     float num48 = 7f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));

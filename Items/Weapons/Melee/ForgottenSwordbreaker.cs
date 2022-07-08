@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
         {
-            if (Main.rand.Next(20) == 0)
+            if (Main.rand.NextBool(20))
             {
                 player.AddBuff(ModContent.BuffType<Buffs.Invincible>(), 30);
             }

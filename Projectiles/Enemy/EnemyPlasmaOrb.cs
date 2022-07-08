@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.rotation += 1f;
 
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
 
                 Lighting.AddLight((int)Projectile.position.X / 16, (int)Projectile.position.Y / 16, 15f, 0f, 0.1f);

@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Armors
             {
                 player.lifeRegen += 2;
             }
-            if (Main.rand.Next(7) == 0)
+            if (Main.rand.NextBool(7))
             {
                 int dust2 = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 200, Color.Violet, 1.0f);
                 Main.dust[dust2].noGravity = true;

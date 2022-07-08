@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items
         public override void PostUpdate()
         {
             Lighting.AddLight(Item.Center, 0.7f, 0.4f, 0.1f);
-            if (Main.rand.Next(8) == 0)
+            if (Main.rand.NextBool(8))
             {
                 Dust dust = Main.dust[Dust.NewDust(Item.position, Item.width, Item.height, 6, 0f, -5f, 50, default, Main.rand.NextFloat(1f, 1.5f))];
                 dust.noGravity = true;
@@ -74,7 +74,7 @@ namespace tsorcRevamp.Items
         public override void UseStyle(Player player, Rectangle rectangle)
         {
             // Each frame, make some dust
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 Dust dust = Main.dust[Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 6, 0f, -5f, 50, default, 1.2f)];
                 dust.velocity.Y = Main.rand.NextFloat(-5, -2.5f);

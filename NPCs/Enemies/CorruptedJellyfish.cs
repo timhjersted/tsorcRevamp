@@ -43,7 +43,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.NextBool(4))
             {
                 target.AddBuff(BuffID.ObsidianSkin, 1800, true);
                 target.AddBuff(BuffID.Bleeding, 3600, true);

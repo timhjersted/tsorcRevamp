@@ -68,7 +68,7 @@ namespace tsorcRevamp.Items.Potions
         {
             Lighting.AddLight(Item.Right, 0.25f, 0.15f, 0.15f);
 
-            if (Main.rand.Next(15) == 0)
+            if (Main.rand.NextBool(15))
             {
                 Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X, Item.position.Y), 14, 24, 114, Item.velocity.X, Item.velocity.Y, 100, default(Color), .5f)];
                 dust.velocity *= 0f;

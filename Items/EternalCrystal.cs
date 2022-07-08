@@ -145,7 +145,7 @@ namespace tsorcRevamp.Items
             }
 
 
-            if (Main.rand.Next(50) == 0) //Yellow
+            if (Main.rand.NextBool(50)) //Yellow
             {
                 Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X + 2, Item.position.Y + 24), 24, 24, 170, Item.velocity.X, Item.velocity.Y, 100, default(Color), .4f)];
                 dust.velocity *= 0f;
@@ -153,7 +153,7 @@ namespace tsorcRevamp.Items
                 dust.velocity += Item.velocity;
                 dust.fadeIn = 1f;
             }
-            if (Main.rand.Next(50) == 0) //Pink
+            if (Main.rand.NextBool(50)) //Pink
             {
                 Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X + 2, Item.position.Y + 24), 24, 24, 272, Item.velocity.X, Item.velocity.Y, 100, default(Color), .4f)]; //223, 255, 272
                 dust.velocity *= 0f;
@@ -161,7 +161,7 @@ namespace tsorcRevamp.Items
                 dust.velocity += Item.velocity;
                 dust.fadeIn = 1f;
             }
-            if (Main.rand.Next(50) == 0) //Blue
+            if (Main.rand.NextBool(50)) //Blue
             {
                 Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X + 2, Item.position.Y + 24), 24, 24, 185, Item.velocity.X, Item.velocity.Y, 100, default(Color), .4f)];
                 dust.velocity *= 0f;
@@ -169,7 +169,7 @@ namespace tsorcRevamp.Items
                 dust.velocity += Item.velocity;
                 dust.fadeIn = 1f;
             }
-            if (Main.rand.Next(50) == 0) //Green
+            if (Main.rand.NextBool(50)) //Green
             {
                 Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X + 2, Item.position.Y + 24), 24, 24, 107, Item.velocity.X, Item.velocity.Y, 100, default(Color), .4f)];
                 dust.velocity *= 0f;

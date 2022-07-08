@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override bool? UseItem(Player player)
         {
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.NextBool(4))
             {
                 Projectile.NewProjectile(player.GetSource_ItemUse(Item),
                (float)(Main.mouseX + Main.screenPosition.X) - 100 + Main.rand.Next(200),

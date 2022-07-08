@@ -53,12 +53,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode && (oUnderground || oCavern))
             {
-                if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.45f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && Main.rand.Next(350) == 1) return 1;
+                if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.45f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && Main.rand.NextBool(350)) return 1;
             }
 
             else if (Main.hardMode && oUnderworld)
             {
-                if (Main.rand.Next(150) == 1) return 1;
+                if (Main.rand.NextBool(150)) return 1;
             }
 
             return 0;

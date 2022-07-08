@@ -85,7 +85,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     AI_State = State_Jump;
                     AI_Timer = 0;
                 }
-                if ((NPC.life < NPC.lifeMax) && (Main.rand.Next(8) == 0))
+                if ((NPC.life < NPC.lifeMax) && (Main.rand.NextBool(8)))
                 {
                     Dust.NewDust(NPC.position, NPC.width - 6, NPC.height - 16, 107, 0, 0, 0, default(Color), .75f); //regenerating hp, which it will never actually do
                 }
@@ -98,7 +98,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     NPC.velocity = new Vector2(NPC.direction * -2.7f, -3.6f);
                 }
-                if ((Main.rand.Next(12) == 0) && (AI_Timer == 2) && NPC.collideX)
+                if ((Main.rand.NextBool(12)) && (AI_Timer == 2) && NPC.collideX)
                 {
                     if (NPC.direction == -1) //right-facing bump
                     {
@@ -107,7 +107,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         if (coinsdropped < 10)
                         {
                             coinsdropped++;
-                            if (Main.rand.Next(10) == 0)
+                            if (Main.rand.NextBool(10))
                             {
                                 Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.Diamond);
                             }
@@ -124,7 +124,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         if (coinsdropped < 10)
                         {
                             coinsdropped++;
-                            if (Main.rand.Next(10) == 0)
+                            if (Main.rand.NextBool(10))
                             {
                                 Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.Diamond);
                             }
@@ -158,7 +158,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         NPC.velocity += new Vector2(-.06f, 0); //breaking power after turn
                     }
-                    if ((knifetimer > 80) && (Main.rand.Next(70) == 0) && Main.netMode != NetmodeID.MultiplayerClient) //Having this timer allows at least 80 ticks between next knife thrown
+                    if ((knifetimer > 80) && (Main.rand.NextBool(70)) && Main.netMode != NetmodeID.MultiplayerClient) //Having this timer allows at least 80 ticks between next knife thrown
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.Next(3, 6), Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.ThrowingKnifeHostile>(), 8, 4);
                         knifetimer = 0;
@@ -179,7 +179,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         NPC.velocity += new Vector2(.06f, 0); //breaking power
                     }
-                    if ((knifetimer > 80) && (Main.rand.Next(70) == 0) && Main.netMode != NetmodeID.MultiplayerClient)
+                    if ((knifetimer > 80) && (Main.rand.NextBool(70)) && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.Next(-6, -3), Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.ThrowingKnifeHostile>(), 8, 4);
                         knifetimer = 0;
@@ -215,11 +215,11 @@ namespace tsorcRevamp.NPCs.Enemies
                         NPC.netUpdate = true;
                     }
                 }
-                if (coinsdropped < 5 && coindroptimer > 40 && Main.rand.Next(100) == 0)
+                if (coinsdropped < 5 && coindroptimer > 40 && Main.rand.NextBool(100))
                 {
                     coinsdropped++;
                     coindroptimer = 0;
-                    if (Main.rand.Next(8) == 0)
+                    if (Main.rand.NextBool(8))
                     {
                         Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.Diamond);
                     }
@@ -326,7 +326,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (coinsdropped < 12)
             {
                 coinsdropped++;
-                if (Main.rand.Next(8) == 0)
+                if (Main.rand.NextBool(8))
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.Diamond);
                 }

@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             if (Projectile.velocity.Y < 0)
             {
                 Projectile.alpha = 50;
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 62, 0, 0, 200, Color.White, 2.0f);
                     Main.dust[dust].noGravity = true;
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             else
             {
                 Projectile.alpha = 10;
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 62, 0, 0, 100, Color.White, 2.0f);
                     Main.dust[dust].noGravity = true;
@@ -50,14 +50,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.Weak, 600);
                 target.AddBuff(BuffID.OnFire, 180);
                 target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 7200);
             }
 
-            if (Main.rand.Next(8) == 0)
+            if (Main.rand.NextBool(8))
             {
                 target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 1800);
             }

@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             if (tsorcRevampWorld.SuperHardMode)
             {
-                if (spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneOverworldHeight && Main.rand.Next(2) == 0)
+                if (spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneOverworldHeight && Main.rand.NextBool(2))
                 {
                     return 1;
                 }
@@ -58,7 +58,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void OnHitPlayer(Player player, int target, bool crit)
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 player.AddBuff(31, 180, false); //confused!
             }

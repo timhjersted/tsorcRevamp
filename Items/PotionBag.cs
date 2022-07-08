@@ -59,7 +59,7 @@ namespace tsorcRevamp.Items
         {
             Lighting.AddLight(Item.Center, 0.3f, 0.2f, 0.4f);
 
-            if (Main.rand.Next(10) == 0)
+            if (Main.rand.NextBool(10))
             {
                 Dust dust = Main.dust[Dust.NewDust(Item.position, Item.width, Item.height, 27, 0f, 0f, 50, default, Main.rand.NextFloat(.8f, 1.2f))];
                 dust.noGravity = true;

@@ -84,7 +84,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             TimerAnim += 1f;
             if (TimerAnim > 10f)
             {
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     NPC.spriteDirection *= -1;
                 }

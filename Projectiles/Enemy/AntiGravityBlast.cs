@@ -72,7 +72,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 if (Projectile.velocity.Y < 10) Projectile.velocity.Y += 0.1f;
             }
 
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.NextBool(4))
             {
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X + 10, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.Torch, 0, 0, 200, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;

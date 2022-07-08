@@ -56,7 +56,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Main.player[Main.myPlayer].AddBuff(BuffID.OnFire, 600 / expertScaling, false); //on fire
             Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 3600, false);
 
-            if (Main.rand.Next(10) == 0)
+            if (Main.rand.NextBool(10))
             {
                 Main.player[Main.myPlayer].AddBuff(BuffID.Slow, 600 / expertScaling, false); //slow
                 Main.player[Main.myPlayer].AddBuff(BuffID.OnFire, 600 / expertScaling, false); //on fire

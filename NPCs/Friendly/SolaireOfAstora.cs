@@ -51,7 +51,7 @@ namespace tsorcRevamp.NPCs.Friendly
             if ((NPC.velocity.X == 0 && NPC.velocity.Y == 0) && Main.dayTime)
             {
                 Lighting.AddLight(NPC.Center, .850f, .850f, .450f);
-                if (Main.rand.Next(10) == 0)
+                if (Main.rand.NextBool(10))
                 {
                     int dust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 57, NPC.velocity.X * 0f, -1f, 30, default(Color), 1.5f);
                     Main.dust[dust].noGravity = true;

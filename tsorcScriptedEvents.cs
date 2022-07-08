@@ -626,7 +626,7 @@ namespace tsorcRevamp
         public static bool ArtoriasCustomAction(Player player, ScriptedEvent thisEvent)
         {
             //Spawning meteors:
-            if (Main.rand.Next(200) == 0)
+            if (Main.rand.NextBool(200))
             {
                 UsefulFunctions.BroadcastText("Artorias rains fire from the Abyss...", Color.Gold);
                 for (int i = 0; i < 10; i++)

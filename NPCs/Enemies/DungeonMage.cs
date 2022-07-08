@@ -189,7 +189,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (NPC.ai[3] >= 30) //how often the crystal attack can happen in frames per second
             {
-                if (Main.rand.Next(2) == 0) //1 in 2 chance boss will use attack when it flies down on top of you
+                if (Main.rand.NextBool(2)) //1 in 2 chance boss will use attack when it flies down on top of you
                 {
                     float num48 = 4f;
                     Vector2 myPos = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 220 + (NPC.height / 2));
@@ -237,7 +237,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion);
 
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion);
             }

@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            if (!Main.hardMode && spawnInfo.Player.ZoneDungeon && Main.rand.Next(40) == 0 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1
+            if (!Main.hardMode && spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(40) && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1
                 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.DungeonMage>()) < 1)
             {
                 //MaxSpawns = 1;
@@ -233,7 +233,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (NPC.ai[3] >= 10) //how often the crystal attack can happen in frames per second
             {
-                if (Main.rand.Next(2) == 0) //1 in 2 chance boss will use attack when it flies down on top of you
+                if (Main.rand.NextBool(2)) //1 in 2 chance boss will use attack when it flies down on top of you
                 {
                     float num48 = 6f;
                     Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 300 + (NPC.height / 2));
@@ -254,7 +254,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
 
-                if (Main.rand.Next(350) == 0) //1 in 20 chance boss will summon an NPC
+                if (Main.rand.NextBool(350)) //1 in 20 chance boss will summon an NPC
                 {
                     int Random = Main.rand.Next(80);
                     int Paraspawn = 0;

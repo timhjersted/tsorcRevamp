@@ -202,7 +202,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
             if (NPC.ai[3] >= 100) //how often the crystal attack can happen in frames per second
             {
-                if (Main.rand.Next(2) == 0) //1 in 2 chance boss will use attack when it flies down on top of you
+                if (Main.rand.NextBool(2)) //1 in 2 chance boss will use attack when it flies down on top of you
                 {
                     float num48 = 0.9f;
                     Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 220 + (NPC.height / 2));
@@ -222,7 +222,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                     }
                 }
 
-                if (Main.rand.Next(20) == 0) //1 in 20 chance boss will summon an NPC
+                if (Main.rand.NextBool(20)) //1 in 20 chance boss will summon an NPC
                 {
                     int Random = Main.rand.Next(80);
                     int Paraspawn = 0;

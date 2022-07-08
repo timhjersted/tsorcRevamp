@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 int num40 = Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, DustID.WaterCandle, Projectile.velocity.X, Projectile.velocity.Y, 100, default, 3f);
                 Main.dust[num40].noGravity = true;
-                if (Main.rand.Next(10) == 0)
+                if (Main.rand.NextBool(10))
                 {
                     Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.WaterCandle, Projectile.velocity.X, Projectile.velocity.Y, 100, default(Color), 1.4f);
                 }

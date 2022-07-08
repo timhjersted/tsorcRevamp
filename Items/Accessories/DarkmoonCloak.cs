@@ -67,7 +67,7 @@ namespace tsorcRevamp.Items.Accessories
                     Lighting.AddLight(player.Center, .250f, .250f, .650f);
                     if (player.direction == 1)
                     {
-                        if (Main.rand.Next(2) == 0) //eye dusts
+                        if (Main.rand.NextBool(2)) //eye dusts
                         {
                             Dust dust2 = Main.dust[Dust.NewDust(new Vector2(player.position.X + 8, player.position.Y + 8), 4, 4, 172, player.velocity.X, player.velocity.Y, 30, default(Color), 1f)];
                             dust2.velocity *= 0f;
@@ -79,7 +79,7 @@ namespace tsorcRevamp.Items.Accessories
                         if (player.velocity.X > 2f)
                         {
                             Lighting.AddLight(player.Center, .325f, .325f, .8f);
-                            if (Main.rand.Next(2) == 0) //cape dusts
+                            if (Main.rand.NextBool(2)) //cape dusts
                             {
                                 Dust dust = Main.dust[Dust.NewDust(new Vector2(player.position.X - 12, player.position.Y + 6), 18, 34, 68, 0f, 0f, 30, default(Color), .8f)];
                                 dust.velocity *= 0f;
@@ -99,7 +99,7 @@ namespace tsorcRevamp.Items.Accessories
                     if (player.direction == -1)
                     {
 
-                        if (Main.rand.Next(2) == 0) //eye dusts
+                        if (Main.rand.NextBool(2)) //eye dusts
                         {
                             Dust dust2 = Main.dust[Dust.NewDust(new Vector2(player.position.X + 4, player.position.Y + 8), 4, 4, 172, 0f, 0f, 30, default(Color), 1f)];
                             dust2.velocity *= 0f;
@@ -110,7 +110,7 @@ namespace tsorcRevamp.Items.Accessories
                         if (player.velocity.X < -2f)
                         {
                             Lighting.AddLight(player.Center, .325f, .325f, .8f);
-                            if (Main.rand.Next(2) == 0) //cape dusts
+                            if (Main.rand.NextBool(2)) //cape dusts
                             {
                                 Dust dust = Main.dust[Dust.NewDust(new Vector2(player.position.X + 14, player.position.Y + 6), 18, 34, 68, 0f, 0f, 30, default(Color), .8f)];
                                 dust.velocity *= 0f;
@@ -132,7 +132,7 @@ namespace tsorcRevamp.Items.Accessories
                 {
                     if (player.direction == 1)
                     {
-                        if (Main.rand.Next(8) == 0 && player.velocity.X > .5f)
+                        if (Main.rand.NextBool(8) && player.velocity.X > .5f)
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(player.position.X - 6, player.position.Y + 16), 4, 24, 68, 0f, 0f, 30, default(Color), .5f)];
                             dust.velocity *= 0f;
@@ -143,7 +143,7 @@ namespace tsorcRevamp.Items.Accessories
                     }
                     if (player.direction == -1)
                     {
-                        if (Main.rand.Next(8) == 0 && player.velocity.X < -.5f)
+                        if (Main.rand.NextBool(8) && player.velocity.X < -.5f)
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(player.position.X + 18, player.position.Y + 16), 4, 24, 68, 0f, 0f, 30, default(Color), .5f)];
                             dust.velocity *= 0f;
@@ -160,7 +160,7 @@ namespace tsorcRevamp.Items.Accessories
         {
             if (player.direction == 1)
             {
-                if (Main.rand.Next(8) == 0 && player.velocity.X > .5f)
+                if (Main.rand.NextBool(8) && player.velocity.X > .5f)
                 {
                     Dust dust = Main.dust[Dust.NewDust(new Vector2(player.position.X - 6, player.position.Y + 16), 4, 24, 68, 0f, 0f, 30, default(Color), .5f)];
                     dust.velocity *= 0f;
@@ -171,7 +171,7 @@ namespace tsorcRevamp.Items.Accessories
             }
             if (player.direction == -1)
             {
-                if (Main.rand.Next(8) == 0 && player.velocity.X < -.5f)
+                if (Main.rand.NextBool(8) && player.velocity.X < -.5f)
                 {
                     Dust dust = Main.dust[Dust.NewDust(new Vector2(player.position.X + 18, player.position.Y + 16), 4, 24, 68, 0f, 0f, 30, default(Color), .5f)];
                     dust.velocity *= 0f;

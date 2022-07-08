@@ -78,9 +78,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
 
 
-            if (tsorcRevampWorld.SuperHardMode && (Sky || AboveEarth) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<SeathTheScalelessHead>()) && FrozenOcean && Main.rand.Next(100) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && (Sky || AboveEarth) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<SeathTheScalelessHead>()) && FrozenOcean && Main.rand.NextBool(100)) return 1;
 
-            if (Main.hardMode && P.townNPCs > 2f && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Artorias>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<SeathTheScalelessHead>()) && !Main.dayTime && Main.rand.Next(1000) == 1)
+            if (Main.hardMode && P.townNPCs > 2f && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Artorias>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<SeathTheScalelessHead>()) && !Main.dayTime && Main.rand.NextBool(1000))
             {
                 UsefulFunctions.BroadcastText("The village is under attack!", 175, 75, 255);
                 UsefulFunctions.BroadcastText("Seath the Scaleless has come to destroy all...", 175, 75, 255);
@@ -142,7 +142,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
 
             Player nT = Main.player[NPC.target];
-            if (Main.rand.Next(255) == 0)
+            if (Main.rand.NextBool(255))
             {
                 breath = true;
                 // Terraria.Audio.SoundEngine.PlaySound(15, -1, -1, 0); This roar sound got very annoying
@@ -165,7 +165,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 breathCD = 110;
                 //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
             }
-            if (Main.rand.Next(820) == 0)
+            if (Main.rand.NextBool(820))
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
@@ -176,7 +176,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 }
             }
-            if (Main.rand.Next(1560) == 0)
+            if (Main.rand.NextBool(1560))
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
@@ -187,7 +187,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
             }
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.BlueFairy, NPC.velocity.X / 4f, NPC.velocity.Y / 4f, 100, default(Color), 1f);
                 Main.dust[d].noGravity = true;

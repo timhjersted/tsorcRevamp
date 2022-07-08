@@ -69,7 +69,7 @@ namespace tsorcRevamp.Projectiles
             if (Projectile.ai[1] == 1f || Projectile.type == 92)
             {
                 Projectile.light = 0.9f;
-                if (Main.rand.Next(10) == 0)
+                if (Main.rand.NextBool(10))
                 {
                     Vector2 arg_1328_0 = Projectile.position;
                     int arg_1328_1 = Projectile.width;
@@ -80,7 +80,7 @@ namespace tsorcRevamp.Projectiles
                     int arg_1328_6 = 150;
                     Dust.NewDust(arg_1328_0, arg_1328_1, arg_1328_2, arg_1328_3, arg_1328_4, arg_1328_5, arg_1328_6, default, 1.2f);
                 }
-                if (Main.rand.Next(20) == 0)
+                if (Main.rand.NextBool(20))
                 {
                     if (!Main.dedServ)
                     {

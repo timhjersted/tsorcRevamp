@@ -74,14 +74,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             // these are all the regular stuff you get , now lets see......
 
 
-            if (tsorcRevampWorld.SuperHardMode && Dungeon && Main.rand.Next(60) == 1)
+            if (tsorcRevampWorld.SuperHardMode && Dungeon && Main.rand.NextBool(60))
 
             {
                 UsefulFunctions.BroadcastText("A Taurus Knight is close... ", 175, 75, 255);
                 return 1;
             }
 
-            if (tsorcRevampWorld.SuperHardMode && InHell && Main.rand.Next(30) == 1)
+            if (tsorcRevampWorld.SuperHardMode && InHell && Main.rand.NextBool(30))
 
             {
                 UsefulFunctions.BroadcastText("A Taurus Knight is close... ", 175, 75, 255);
@@ -105,7 +105,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             tsorcRevampAIs.SimpleProjectile(NPC, ref tridentTimer, 136, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 14, clearLineofSight, true, SoundID.Item17);
             if (tridentTimer == 125f)
             {
-                if (Main.rand.Next(2) == 1)
+                if (Main.rand.NextBool(2))
                 {
                     NPC.velocity.Y = -8f;
                 }
@@ -141,7 +141,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         // charge forward code 
-                        if (Main.rand.Next(50) == 1)
+                        if (Main.rand.NextBool(50))
                         {
                             chargeDamageFlag = true;
                             NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 11);
@@ -205,7 +205,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (tridentTimer >= 117 && Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
             {
                 Lighting.AddLight(NPC.Center, Color.Yellow.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.Next(2) == 1)
+                if (Main.rand.NextBool(2))
                 {
                     Dust.NewDust(NPC.position, NPC.width / 2, NPC.height / 2, DustID.GoldFlame, NPC.velocity.X, NPC.velocity.Y);
                     Dust.NewDust(NPC.position, NPC.width / 2, NPC.height / 2, DustID.GoldFlame, NPC.velocity.X, NPC.velocity.Y); //CrystalPulse

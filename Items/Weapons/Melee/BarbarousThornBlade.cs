@@ -80,7 +80,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void MeleeEffects(Player player, Rectangle hitbox)
         {
-            if (Main.rand.Next(3) == 0) //quantity of particles
+            if (Main.rand.NextBool(3)) //quantity of particles
             {
                 if (player.altFunctionUse == 2)
                 {

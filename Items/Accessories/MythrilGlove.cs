@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items.Accessories
 
                 value10 -= new Vector2(player.bodyFrame.Width - player.width, player.bodyFrame.Height - 42) / 2f;
                 Vector2 position = player.RotatedRelativePoint(player.position + value10) - player.velocity;
-                if (Main.rand.Next(80) == 0)
+                if (Main.rand.NextBool(80))
                 {
                     for (int num183 = 0; num183 < 2; num183++)
                     {
@@ -64,19 +64,19 @@ namespace tsorcRevamp.Items.Accessories
                         dust.velocity += player.velocity;
                         dust.noLight = true; //this is being ignored oh well
 
-                        if (Main.rand.Next(2) == 0)
+                        if (Main.rand.NextBool(2))
                         {
                             dust.position += Utils.RandomVector2(Main.rand, -4f, 4f);
                             dust.scale += Main.rand.NextFloat();
 
-                            if (Main.rand.Next(2) == 0)
+                            if (Main.rand.NextBool(2))
                             {
                                 dust.customData = player;
                             }
                         }
                     }
                 }
-                if (Main.rand.Next(80) == 0)
+                if (Main.rand.NextBool(80))
                 {
                     for (int num183 = 0; num183 < 2; num183++)
                     {
@@ -88,12 +88,12 @@ namespace tsorcRevamp.Items.Accessories
                         dust.velocity += player.velocity;
                         dust.noLight = true;
 
-                        if (Main.rand.Next(2) == 0)
+                        if (Main.rand.NextBool(2))
                         {
                             dust.position += Utils.RandomVector2(Main.rand, -4f, 4f);
                             dust.scale += Main.rand.NextFloat();
 
-                            if (Main.rand.Next(2) == 0)
+                            if (Main.rand.NextBool(2))
                             {
                                 dust.customData = player;
                             }
@@ -111,12 +111,12 @@ namespace tsorcRevamp.Items.Accessories
                         dust.fadeIn = 1f;
                         dust.velocity += player.velocity;
 
-                        if (Main.rand.Next(2) == 0)
+                        if (Main.rand.NextBool(2))
                         {
                             dust.position += Utils.RandomVector2(Main.rand, -4f, 4f);
                             dust.scale += Main.rand.NextFloat();
 
-                            if (Main.rand.Next(2) == 0)
+                            if (Main.rand.NextBool(2))
                             {
                                 dust.customData = player;
                             }
@@ -142,7 +142,7 @@ namespace tsorcRevamp.Items.Accessories
 
             value10 -= new Vector2(player.bodyFrame.Width - player.width, player.bodyFrame.Height - 42) / 2f;
             Vector2 position = player.RotatedRelativePoint(player.position + value10) - player.velocity;
-            if (Main.rand.Next(80) == 0)
+            if (Main.rand.NextBool(80))
             {
                 for (int num183 = 0; num183 < 2; num183++)
                 {
@@ -154,19 +154,19 @@ namespace tsorcRevamp.Items.Accessories
                     dust.velocity += player.velocity;
                     dust.noLight = true;
 
-                    if (Main.rand.Next(2) == 0)
+                    if (Main.rand.NextBool(2))
                     {
                         dust.position += Utils.RandomVector2(Main.rand, -4f, 4f);
                         dust.scale += Main.rand.NextFloat();
 
-                        if (Main.rand.Next(2) == 0)
+                        if (Main.rand.NextBool(2))
                         {
                             dust.customData = player;
                         }
                     }
                 }
             }
-            if (Main.rand.Next(80) == 0)
+            if (Main.rand.NextBool(80))
             {
                 for (int num183 = 0; num183 < 2; num183++)
                 {
@@ -178,12 +178,12 @@ namespace tsorcRevamp.Items.Accessories
                     dust.velocity += player.velocity;
                     dust.noLight = true;
 
-                    if (Main.rand.Next(2) == 0)
+                    if (Main.rand.NextBool(2))
                     {
                         dust.position += Utils.RandomVector2(Main.rand, -4f, 4f);
                         dust.scale += Main.rand.NextFloat();
 
-                        if (Main.rand.Next(2) == 0)
+                        if (Main.rand.NextBool(2))
                         {
                             dust.customData = player;
                         }

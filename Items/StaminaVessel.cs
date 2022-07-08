@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items
         {
             Lighting.AddLight(Item.Center, 0.15f, 0.25f, 0.15f);
 
-            if (Main.rand.Next(20) == 0)
+            if (Main.rand.NextBool(20))
             {
                 Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X, Item.position.Y), 20, 26, 43, Item.velocity.X, Item.velocity.Y, 100, Color.Yellow, Main.rand.NextFloat(.2f, .4f))];
                 dust.velocity *= 0f;

@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Armors
             player.GetCritChance(DamageClass.Melee) += 17;
             player.GetAttackSpeed(DamageClass.Melee) += 0.14f;
             player.fireWalk = true;
-            if (Main.rand.Next(3) == 0)
+            if (Main.rand.NextBool(3))
             {
                 Color color = new Color();
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 200, color, 1.0f);

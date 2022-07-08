@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.alpha = 255;
 
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.NextBool(4))
             {
                 int z = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6, 0f, 0f, 120, default(Color), Main.rand.NextFloat(1.5f, 3.5f));
                 Main.dust[z].noGravity = true;

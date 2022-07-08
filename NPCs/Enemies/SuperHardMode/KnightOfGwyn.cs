@@ -69,7 +69,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             int expertScale = 1;
             if (Main.expertMode) expertScale = 2;
 
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.NextBool(4))
             {
                 target.AddBuff(BuffID.BrokenArmor, 180 / expertScale, false);
                 target.AddBuff(BuffID.Poisoned, 3600 / expertScale, false);
@@ -348,7 +348,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 if (customAi1 >= 10f)
                 {
 
-                    if ((customspawn2 < 2) && Main.rand.Next(950) == 1)
+                    if ((customspawn2 < 2) && Main.rand.NextBool(950))
                     {
                         int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.RedKnight>(), 0); // Spawns Red Knight
                         Main.npc[Spawned].velocity.Y = -8;
@@ -360,7 +360,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
                         }
                     }
-                    if (Main.rand.Next(220) == 1)
+                    if (Main.rand.NextBool(220))
                     {
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
@@ -369,7 +369,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         NPC.ai[1] = 1f;
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(200) == 1)
+                    if (Main.rand.NextBool(200))
                     {
                         float num48 = 10f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 100 + (NPC.height / 2));
@@ -395,7 +395,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         }
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(100) == 1)
+                    if (Main.rand.NextBool(100))
                     {
                         float num48 = 13f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -416,7 +416,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         }
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(40) == 1)
+                    if (Main.rand.NextBool(40))
                     {
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
@@ -434,7 +434,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         }
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(200) == 1)
+                    if (Main.rand.NextBool(200))
                     {
                         float num48 = 8f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -455,7 +455,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         }
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(150) == 1)
+                    if (Main.rand.NextBool(150))
                     {
                         float num48 = 9f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -476,7 +476,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         }
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(120) == 1)
+                    if (Main.rand.NextBool(120))
                     {
                         float num48 = 8f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 650 + (NPC.height / 2));
@@ -497,7 +497,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         }
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(200) == 1)
+                    if (Main.rand.NextBool(200))
                     {
                         num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position.X + 20, NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
                         Main.projectile[num58].timeLeft = 400;
@@ -510,7 +510,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                         NPC.netUpdate = true;
                     }
-                    if (Main.rand.Next(650) == 1)
+                    if (Main.rand.NextBool(650))
                     {
                         float num48 = 8f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 400 + (NPC.height / 2));
@@ -534,7 +534,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 
-                    if (Main.rand.Next(350) == 1)
+                    if (Main.rand.NextBool(350))
                     {
                         float num48 = 8f;
                         Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 520 + (NPC.height / 2));
@@ -557,7 +557,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     }
 
 
-                    if (Main.rand.Next(250) == 1)
+                    if (Main.rand.NextBool(250))
                     {
                         num59 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position.X + 20, NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
                         Main.projectile[num59].timeLeft = 500;
@@ -577,7 +577,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 
-                if (Main.rand.Next(350) == 1)
+                if (Main.rand.NextBool(350))
                 {
                     float num48 = 8f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -601,7 +601,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 
-                if (Main.rand.Next(205) == 1)
+                if (Main.rand.NextBool(205))
                 {
                     float num48 = 9f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -622,7 +622,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     }
                     NPC.netUpdate = true;
                 }
-                if (Main.rand.Next(1000) == 1)
+                if (Main.rand.NextBool(1000))
                 {
                     float num48 = 11f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));

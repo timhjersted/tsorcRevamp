@@ -887,7 +887,7 @@ namespace tsorcRevamp
             if (SoulSiphon)
             {
 
-                if (Main.rand.Next(3) == 0) //outermost "ring"
+                if (Main.rand.NextBool(3)) //outermost "ring"
                 {
                     int num5 = Dust.NewDust(Player.position, Player.width, Player.height, 89, 0f, 0f, 120, default, 1f);
                     Main.dust[num5].noGravity = true;
@@ -902,7 +902,7 @@ namespace tsorcRevamp
                     Main.dust[num5].position = Player.Center - vector;
                 }
 
-                if (Main.rand.Next(6) == 0)
+                if (Main.rand.NextBool(6))
                 {
                     int x = Dust.NewDust(Player.position, Player.width, Player.height, 89, Player.velocity.X, Player.velocity.Y, 120, default, 1f);
                     Main.dust[x].noGravity = true;
@@ -920,7 +920,7 @@ namespace tsorcRevamp
 
                 }
 
-                if (Main.rand.Next(3) == 0)
+                if (Main.rand.NextBool(3))
                 {
                     int z = Dust.NewDust(Player.position, Player.width, Player.height, 89, 0f, 0f, 120, default, 1f);
                     Main.dust[z].noGravity = true;
@@ -935,7 +935,7 @@ namespace tsorcRevamp
                     Main.dust[z].position = Player.Center - vectorother;
                 }
 
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     int z = Dust.NewDust(Player.position, Player.width, Player.height, 89, 0f, 0f, 120, default, 1f);
                     Main.dust[z].noGravity = true;
@@ -950,7 +950,7 @@ namespace tsorcRevamp
                     Main.dust[z].position = Player.Center - vectorother;
                 }
 
-                if (Main.rand.Next(2) == 0) //innermost "ring"
+                if (Main.rand.NextBool(2)) //innermost "ring"
                 {
                     int z = Dust.NewDust(Player.position, Player.width, Player.height, 89, 0f, 0f, 120, default, 1f);
                     Main.dust[z].noGravity = true;
@@ -1138,7 +1138,7 @@ namespace tsorcRevamp
                 }
                 Player.lifeRegenTime = 0;
                 Player.lifeRegen = -15;
-                if (Main.rand.Next(3) == 0)
+                if (Main.rand.NextBool(3))
                 {
                     int dust = Dust.NewDust(Player.position, Player.width, Player.height, 235, Player.velocity.X, Player.velocity.Y, 140, default, 0.8f);
                     Main.dust[dust].noGravity = true;

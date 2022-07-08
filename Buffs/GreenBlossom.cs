@@ -17,7 +17,7 @@ namespace tsorcRevamp.Buffs
         {
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.3f;
 
-            /*if (Main.rand.Next(4) == 0)
+            /*if (Main.rand.NextBool(4))
             {
                 Dust dust = Main.dust[Dust.NewDust(new Vector2(player.position.X, player.position.Y + 10), player.width, player.height, 43, 0, -1f, 100, Color.White, Main.rand.NextFloat(.8f, 1f))];
                 dust.noGravity = true;

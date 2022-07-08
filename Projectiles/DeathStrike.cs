@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles
         {
 
             Lighting.AddLight(Projectile.Center, Color.Purple.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-            if (Main.rand.Next(3) == 1)
+            if (Main.rand.NextBool(3))
             {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.CrystalPulse2, Projectile.velocity.X, Projectile.velocity.Y);
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PortalBolt, Projectile.velocity.X, Projectile.velocity.Y);

@@ -56,19 +56,19 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (!Main.hardMode)
             {
-                if (spawnInfo.Player.ZoneDungeon && Main.rand.Next(3000) == 1) return 1;
-                if (oUnderworld && Main.rand.Next(500) == 1) return 1;
-                if (oUnderworld && !Main.dayTime && Main.rand.Next(200) == 1) return 1;
-                if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.35f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && (oUnderground || oCavern) && Main.rand.Next(2000) == 1) return 1;
+                if (spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(3000)) return 1;
+                if (oUnderworld && Main.rand.NextBool(500)) return 1;
+                if (oUnderworld && !Main.dayTime && Main.rand.NextBool(200)) return 1;
+                if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.35f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && (oUnderground || oCavern) && Main.rand.NextBool(2000)) return 1;
                 return 0;
             }
             else if (Main.hardMode)
             {
-                if (oUnderworld && Main.dayTime && Main.rand.Next(60) == 1) return 1;
-                if (oUnderworld && !Main.dayTime && Main.rand.Next(35) == 1) return 1;
-                if (spawnInfo.Player.ZoneDungeon && Main.rand.Next(100) == 1) return 1;
-                if (spawnInfo.Player.ZoneHallow && (oUnderground || oCavern) && Main.rand.Next(120) == 1) return 1;
-                if ((spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && (oUnderground || oCavern) && Main.rand.Next(220) == 1) return 1;
+                if (oUnderworld && Main.dayTime && Main.rand.NextBool(60)) return 1;
+                if (oUnderworld && !Main.dayTime && Main.rand.NextBool(35)) return 1;
+                if (spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(100)) return 1;
+                if (spawnInfo.Player.ZoneHallow && (oUnderground || oCavern) && Main.rand.NextBool(120)) return 1;
+                if ((spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && (oUnderground || oCavern) && Main.rand.NextBool(220)) return 1;
                 return 0;
             }
             return 0;

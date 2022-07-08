@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Pets
             {
                 Projectile.timeLeft = 2;
             }
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 57, Projectile.velocity.X, Projectile.velocity.Y, 200, Color.White, 1f);
                 Main.dust[dust].noGravity = true;

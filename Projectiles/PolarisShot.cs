@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles
         {
             if (Projectile.owner == Main.myPlayer && Projectile.timeLeft <= 100)
             {
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     target.AddBuff(Mod.Find<ModBuff>("PolarisElectrocutedBuff").Type, 360);
                 }
@@ -50,7 +50,7 @@ namespace tsorcRevamp.Projectiles
                 Projectile.knockBack = 3f;
                 Projectile.DamageType = DamageClass.Ranged;
 
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     target.AddBuff(Mod.Find<ModBuff>("PolarisElectrocutedBuff").Type, 240);
                 }
@@ -133,7 +133,7 @@ namespace tsorcRevamp.Projectiles
             }
 
             //DUST SPAWNING
-            if (Main.rand.Next(3) == 0)
+            if (Main.rand.NextBool(3))
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 226, Projectile.velocity.X * 0.5f, Projectile.velocity.Y * 0.5f, 100, default(Color), .4f);
                 Main.dust[dust].noGravity = true;

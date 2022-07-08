@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items
             {
                 Item.useStyle = ItemUseStyleID.HoldUp;
 
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     if (player.direction == 1)
                     {

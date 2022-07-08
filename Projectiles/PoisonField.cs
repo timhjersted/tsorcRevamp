@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.NextBool(4))
             {
                 target.AddBuff(BuffID.Poisoned, 360);
             }
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles
         public override void AI()
         {
 
-            if (Main.rand.Next(10) == 0)
+            if (Main.rand.NextBool(10))
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 74, Projectile.velocity.X * 0f, Projectile.velocity.Y * 0f, 100, default(Color), .8f); ;
                 Main.dust[dust].velocity *= 0f;

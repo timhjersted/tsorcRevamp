@@ -57,7 +57,7 @@ namespace tsorcRevamp.Projectiles
             Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 3600, false); //
 
 
-            if (Main.rand.Next(10) == 0)
+            if (Main.rand.NextBool(10))
                 Main.player[Main.myPlayer].AddBuff(35, 120 / expertScaling, false); //silenced
             Main.player[Main.myPlayer].AddBuff(32, 600 / expertScaling, false); //slow
             Main.player[Main.myPlayer].AddBuff(39, 600 / expertScaling, false); //cursed inferno

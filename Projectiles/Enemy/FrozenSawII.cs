@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.velocity.Y *= 1.01f;
             }
 
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
 
                 Lighting.AddLight((int)Projectile.position.X / 16, (int)Projectile.position.Y / 16, 0f, 0.3f, 0.8f);
@@ -68,7 +68,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             target.AddBuff(BuffID.BrokenArmor, 300 / buffLengthMod);
-            if (Main.rand.Next(10) == 0)
+            if (Main.rand.NextBool(10))
             {
                 target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 1200);
                 target.AddBuff(BuffID.Slow, 300 / buffLengthMod);

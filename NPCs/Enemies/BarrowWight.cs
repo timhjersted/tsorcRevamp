@@ -65,7 +65,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
                 // charge forward code 
-                if (Main.rand.Next(2050) == 1)
+                if (Main.rand.NextBool(2050))
                 {
                     chargeDamageFlag = true;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -268,7 +268,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.BrokenArmor, 1200);
                 target.AddBuff(BuffID.Chilled, 1200);
@@ -338,13 +338,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            if (Main.rand.Next(5) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ShinePotion); }
-            if (Main.rand.Next(10) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion); }
-            if (Main.rand.Next(25) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MagicPowerPotion); }
-            if (Main.rand.Next(25) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion); }
-            if (Main.rand.Next(25) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpelunkerPotion); }
-            if (Main.rand.Next(5) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>(), 1, false, -1); }
-            if (Main.rand.Next(50) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>()); }
+            if (Main.rand.NextBool(5)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ShinePotion); }
+            if (Main.rand.NextBool(10)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion); }
+            if (Main.rand.NextBool(25)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MagicPowerPotion); }
+            if (Main.rand.NextBool(25)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion); }
+            if (Main.rand.NextBool(25)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpelunkerPotion); }
+            if (Main.rand.NextBool(5)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>(), 1, false, -1); }
+            if (Main.rand.NextBool(50)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>()); }
         }
 
         /* what the hell IS this? i cant find anything about it

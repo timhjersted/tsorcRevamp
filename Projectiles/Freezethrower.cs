@@ -68,12 +68,12 @@ namespace tsorcRevamp.Projectiles
                     }
                 }
                 Projectile.ai[0] += 1f;
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     for (int i = 0; i < 1; i++)
                     {
                         int num155 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 76, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default, 1f);
-                        if (Main.rand.Next(3) == 0)
+                        if (Main.rand.NextBool(3))
                         {
                             Main.dust[num155].noGravity = true;
                             Main.dust[num155].scale *= 3f;

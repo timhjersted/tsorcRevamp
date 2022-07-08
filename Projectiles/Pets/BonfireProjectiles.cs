@@ -176,7 +176,7 @@ namespace tsorcRevamp.Projectiles.Pets
             {
                 if (Main.player[i] != null && Main.player[i].active)
                 {
-                    if (Main.player[i].Distance(Projectile.Center) >= 350f && Main.rand.Next(2) == 0)
+                    if (Main.player[i].Distance(Projectile.Center) >= 350f && Main.rand.NextBool(2))
                     {
                         Projectile.alpha += 1;
                     }
@@ -247,7 +247,7 @@ namespace tsorcRevamp.Projectiles.Pets
             {
                 if (Main.player[i] != null && Main.player[i].active)
                 {
-                    if (Main.player[i].Distance(Projectile.Center) >= 350f && Main.rand.Next(2) == 0)
+                    if (Main.player[i].Distance(Projectile.Center) >= 350f && Main.rand.NextBool(2))
                     {
 
                         Projectile.alpha += 1;

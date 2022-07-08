@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles
                     Main.dust[dust].velocity *= Main.rand.NextFloat(1f, 6f);
                 }
             }
-            if (Main.rand.Next(6) == 0)
+            if (Main.rand.NextBool(6))
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 245, Projectile.velocity.X * -0.2f, Projectile.velocity.Y * -0.2f, 70, default(Color), .5f);
                 Main.dust[dust].noGravity = true;

@@ -140,7 +140,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 {
                     for (int j = 0; j < branches[i].Count - 1; j++)
                     {
-                        if (Main.rand.Next(3) == 0 && j > 5)
+                        if (Main.rand.NextBool(3) && j > 5)
                         {
                             //If it's the first set of splits, let them go longer
                             int segmentLimit = 3;

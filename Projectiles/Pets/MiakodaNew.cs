@@ -63,7 +63,7 @@ namespace tsorcRevamp.Projectiles.Pets
                 Projectile.timeLeft = 2;
             }
 
-            if ((modPlayer.MiakodaEffectsTimer > 720) && (Main.rand.Next(3) == 0))
+            if ((modPlayer.MiakodaEffectsTimer > 720) && (Main.rand.NextBool(3)))
             {
                 if (Projectile.direction == 1)
                 {

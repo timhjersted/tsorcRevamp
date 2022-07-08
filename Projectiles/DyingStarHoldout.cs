@@ -93,7 +93,7 @@ namespace tsorcRevamp.Projectiles
                     for (int i = 0; i < length - 64; i++)
                     {
                         offset += diff;
-                        if (Main.rand.Next(2) == 0)
+                        if (Main.rand.NextBool(2))
                         {
                             Vector2 dustPoint = offset;
                             //dustPoint.X += Main.rand.NextFloat(-16, 16);

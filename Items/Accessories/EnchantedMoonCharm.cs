@@ -107,7 +107,7 @@ namespace tsorcRevamp.Items.Accessories
                 NetMessage.SendData(MessageID.WorldData);
             }
 
-            if (Main.rand.Next(14) == 0 && !Main.dayTime && !Main.bloodMoon)
+            if (Main.rand.NextBool(14) && !Main.dayTime && !Main.bloodMoon)
             {
                 Main.bloodMoon = true;
                 if (Main.netMode == NetmodeID.Server)

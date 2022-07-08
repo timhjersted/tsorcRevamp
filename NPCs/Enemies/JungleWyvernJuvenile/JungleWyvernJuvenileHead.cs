@@ -135,7 +135,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
                 }
             }
 
-            if (Main.rand.Next(100) == 0 && (Math.Abs(NPC.velocity.X) > 3 || Math.Abs(NPC.velocity.Y) > 3) && Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 500) //I'm assuming 1 in 2020 was a typo
+            if (Main.rand.NextBool(100) && (Math.Abs(NPC.velocity.X) > 3 || Math.Abs(NPC.velocity.Y) > 3) && Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 500) //I'm assuming 1 in 2020 was a typo
             {
                 breath = true;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
@@ -300,7 +300,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
                 }
             }
             NPC.rotation = (float)Math.Atan2(NPC.velocity.Y, NPC.velocity.X) + 1.57f;
-            if (Main.rand.Next(3) == 0)
+            if (Main.rand.NextBool(3))
             {
                 int dust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 62, 0f, 0f, 100, Color.White, 2f);
                 Main.dust[dust].noGravity = true;

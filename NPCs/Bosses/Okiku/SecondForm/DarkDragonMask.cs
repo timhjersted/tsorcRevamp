@@ -97,7 +97,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, Main.rand.Next(-120, 120) / 10, -7, ModContent.ProjectileType<ObscureDrop>(), ObscureDropDamage, 0f, Main.myPlayer);
 
-                            if (Main.rand.Next(4) == 0)
+                            if (Main.rand.NextBool(4))
                             {
                                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, Main.rand.Next(Main.rand.Next(-160, -120), Main.rand.Next(120, 160)) / 10, -7, ModContent.ProjectileType<ObscureDrop>(), ObscureDropDamage, 0f, Main.myPlayer);
                             }

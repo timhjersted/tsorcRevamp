@@ -108,15 +108,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 NPC.alpha = 0;
             }
-            if (Main.rand.Next(200) == 1)
+            if (Main.rand.NextBool(200))
             {
                 NPC.alpha = 0;
             }
-            if (Main.rand.Next(50) == 1)
+            if (Main.rand.NextBool(50))
             {
                 NPC.alpha = 210;
             }
-            if (Main.rand.Next(250) == 1)
+            if (Main.rand.NextBool(250))
             {
                 NPC.life += 5;
                 if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;

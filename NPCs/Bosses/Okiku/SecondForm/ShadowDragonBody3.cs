@@ -60,7 +60,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
         {
             tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<ShadowDragonHead>(), bodyTypes, ModContent.NPCType<ShadowDragonTail>(), 25, 0.8f, 16f, 0.33f, true, false, true, false, false);
 
-            if (Main.rand.Next(3) == 0)
+            if (Main.rand.NextBool(3))
             {
                 int dust = Dust.NewDust(new Vector2(base.NPC.position.X, base.NPC.position.Y), base.NPC.width, base.NPC.height, 62, 0f, 0f, 100, Color.White, 2f);
                 Main.dust[dust].noGravity = true;

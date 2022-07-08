@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void AI()
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 var dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 58, Projectile.velocity.X * 0.4f, Projectile.velocity.Y * 0.4f, 100, default, 1.5f);
                 var dust2 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 67, Projectile.velocity.X * 0.4f, Projectile.velocity.Y * 0.4f, 100, default, 1.5f);

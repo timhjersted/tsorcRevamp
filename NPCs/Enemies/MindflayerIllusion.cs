@@ -91,7 +91,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 }
 
-                if (Main.rand.Next(90) == 0) //1 in 90 chance boss will use attack when it flies down on top of you
+                if (Main.rand.NextBool(90)) //1 in 90 chance boss will use attack when it flies down on top of you
                 {
                     float num48 = 2f;
                     Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 520 + (NPC.height / 2));

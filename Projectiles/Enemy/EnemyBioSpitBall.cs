@@ -38,7 +38,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             //Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)position.X, (int)position.Y, mod.GetSoundSlot(SoundType.Custom, "tsorcRevamp/Sounds/Custom/[INSERTSOUNDEFFECTHERE]"));
 
             Projectile.rotation += 1f;
-            if (Main.rand.Next(3) == 0)
+            if (Main.rand.NextBool(3))
             {
                 //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 34); //try 5 (faint woosh), 20, was 17
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, 50, Color.Green, 3.0f);

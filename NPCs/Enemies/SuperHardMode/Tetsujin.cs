@@ -100,7 +100,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
                         //Player nT = Main.player[npc.target];
-                        if (Main.rand.Next(800) == 0)
+                        if (Main.rand.NextBool(800))
                         {
                             breath = true;
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
@@ -160,7 +160,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
             //IF HIT, SOMETIMES GET INTERRUPTED 
-            if (NPC.justHit && Main.rand.Next(2) == 1)
+            if (NPC.justHit && Main.rand.NextBool(2))
             {
                 NPC.ai[2] = 0f;
             }
@@ -404,12 +404,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void OnHitPlayer(Player player, int target, bool crit)
         {
 
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 player.AddBuff(24, 600, false); //on fire
             }
 
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.NextBool(4))
             {
 
                 player.AddBuff(36, 600, false); //broken armor
@@ -417,7 +417,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             }
 
-            //if (Main.rand.Next(10) == 0 && player.statLifeMax > 20) 
+            //if (Main.rand.NextBool(10) && player.statLifeMax > 20) 
 
             //{
 
@@ -480,7 +480,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Tetsujin Gore 3").Type, 0.9f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Tetsujin Gore 3").Type, 0.9f);
             }
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CompactFrame>());
             }

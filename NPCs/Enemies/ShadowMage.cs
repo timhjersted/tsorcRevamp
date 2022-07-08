@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Enemies
             bool underworld = spawnInfo.Player.ZoneUnderworldHeight;
             if (Main.hardMode && spawnInfo.Player.ZoneDungeon || Main.hardMode && underworld)
             {
-                if (Main.rand.Next(50) == 0)
+                if (Main.rand.NextBool(50))
                 {
                     return 1;
                 }
@@ -231,7 +231,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (NPC.ai[3] >= 30) //how often the crystal attack can happen in frames per second
             {
-                if (Main.rand.Next(2) == 0) //1 in 2 chance boss will use attack when it flies down on top of you
+                if (Main.rand.NextBool(2)) //1 in 2 chance boss will use attack when it flies down on top of you
                 {
                     float num48 = 4f;
                     Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 520 + (NPC.height / 2));
@@ -255,7 +255,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     //npc.netUpdate = true; //new
 
 
-                    if (Main.rand.Next(35) == 0) //1 in 20 chance boss will summon an NPC
+                    if (Main.rand.NextBool(35)) //1 in 20 chance boss will summon an NPC
                     {
                         int Random = Main.rand.Next(80);
                         int Paraspawn = 0;

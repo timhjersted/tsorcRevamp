@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            if (spawnInfo.Player.ZoneUnderworldHeight && Main.hardMode && Main.rand.Next(3) == 0)
+            if (spawnInfo.Player.ZoneUnderworldHeight && Main.hardMode && Main.rand.NextBool(3))
             {
                 return 1;
             }

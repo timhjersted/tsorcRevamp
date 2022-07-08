@@ -299,12 +299,12 @@ namespace tsorcRevamp.NPCs
 
             if (Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
             {
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
                 }
 
-                if (Main.rand.Next(12) == 0)
+                if (Main.rand.NextBool(12))
                 {
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
                 }
@@ -635,12 +635,12 @@ namespace tsorcRevamp.NPCs
 
             if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
             {
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
                 }
 
-                if (Main.rand.Next(12) == 0)
+                if (Main.rand.NextBool(12))
                 {
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
                 }
@@ -1047,7 +1047,7 @@ namespace tsorcRevamp.NPCs
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .4f);
                     Main.dust[dust].noGravity = true;
                 }
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .4f);
                     Main.dust[dust].noGravity = false;
@@ -1059,7 +1059,7 @@ namespace tsorcRevamp.NPCs
                 drawColor = Color.LimeGreen;
                 Lighting.AddLight(npc.position, 0.125f, 0.23f, 0.065f);
 
-                if (Main.rand.Next(10) == 0)
+                if (Main.rand.NextBool(10))
                 {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 74, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .8f); ;
                     Main.dust[dust].velocity *= 0f;
@@ -1074,7 +1074,7 @@ namespace tsorcRevamp.NPCs
                 drawColor = Color.LimeGreen;
                 Lighting.AddLight(npc.position, 0.125f, 0.23f, 0.065f);
 
-                if (Main.rand.Next(6) == 0)
+                if (Main.rand.NextBool(6))
                 {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 74, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .8f); ;
                     Main.dust[dust].velocity *= 0f;
@@ -1089,7 +1089,7 @@ namespace tsorcRevamp.NPCs
                 drawColor = Color.LimeGreen;
                 Lighting.AddLight(npc.position, 0.125f, 0.23f, 0.065f);
 
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 74, npc.velocity.X * 0f, -2f, 100, default(Color), .8f); ;
                     Main.dust[dust].velocity *= 0f;
@@ -1113,7 +1113,7 @@ namespace tsorcRevamp.NPCs
             {
                 Lighting.AddLight(npc.Center, .4f, .4f, .850f);
 
-                if (Main.rand.Next(6) == 0)
+                if (Main.rand.NextBool(6))
                 {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 68, 0, 0, 30, default(Color), 1.25f);
                     Main.dust[dust].velocity *= 0f;
@@ -2320,7 +2320,7 @@ namespace tsorcRevamp.NPCs
             for (int i = 0; i < length; i++)
             {
                 offset += diff;
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     Vector2 dustPoint = offset;
                     dustPoint.X += Main.rand.NextFloat(-npc.width / 2, npc.width / 2);
@@ -2345,7 +2345,7 @@ namespace tsorcRevamp.NPCs
                 npc.knockBackResist = 0.09f;
 
                 //WHEN HIT, CHANCE TO JUMP BACKWARDS && npc.velocity.Y >= -1f
-                if (Main.rand.Next(10) == 1)
+                if (Main.rand.NextBool(10))
                 {
                     npc.TargetClosest(false);
 
@@ -2359,7 +2359,7 @@ namespace tsorcRevamp.NPCs
                 }
 
                 //WHEN HIT, CHANCE TO DASH STEP BACKWARDS && npc.velocity.Y >= 1f
-                else if (Main.rand.Next(8) == 1)//was 10
+                else if (Main.rand.NextBool(8))//was 10
                 {
                     npc.velocity.Y = -4f;
                     npc.velocity.X = -6f * npc.direction;
@@ -2367,7 +2367,7 @@ namespace tsorcRevamp.NPCs
                     npc.localAI[1] = 160f;
 
                     //CHANCE TO JUMP AFTER DASH
-                    if (Main.rand.Next(4) == 1)
+                    if (Main.rand.NextBool(4))
                     {
                         npc.TargetClosest(true);
                         npc.velocity.Y = -7f;
@@ -2378,7 +2378,7 @@ namespace tsorcRevamp.NPCs
                 }
 
                 //TELEPORT MELEE
-                if (Main.rand.Next(12) == 1)
+                if (Main.rand.NextBool(12))
                 {
                     Teleport(npc, 20, true);
                 }
@@ -2386,7 +2386,7 @@ namespace tsorcRevamp.NPCs
 
             if (!melee && Main.rand.NextBool())
             {
-                if (Main.rand.Next(2) == 1)
+                if (Main.rand.NextBool(2))
                 {
                     //customAi1 = 110f;
                     int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 1f);
@@ -2406,7 +2406,7 @@ namespace tsorcRevamp.NPCs
                     npc.netUpdate = true;
                 }
 
-                if (Main.rand.Next(4) == 1)
+                if (Main.rand.NextBool(4))
                 {
                     //npc.direction *= -1;
 
@@ -2422,7 +2422,7 @@ namespace tsorcRevamp.NPCs
                     }
 
                     //CHANCE TO JUMP AFTER DASH
-                    if (Main.rand.Next(8) == 1)
+                    if (Main.rand.NextBool(8))
                     {
                         npc.TargetClosest(true);
 
@@ -2434,7 +2434,7 @@ namespace tsorcRevamp.NPCs
 
                     npc.netUpdate = true;
                 }
-                if (npc.Distance(Main.player[npc.target].Center) > 80 && Main.rand.Next(20) == 1)
+                if (npc.Distance(Main.player[npc.target].Center) > 80 && Main.rand.NextBool(20))
                 {
                     Teleport(npc, 20, false);
                 }

@@ -47,14 +47,14 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
 
 
-            if (Main.rand.Next(3) == 0) //was 12
+            if (Main.rand.NextBool(3)) //was 12
             {
                 //Vanilla Debuffs cut in half to counter expert mode doubling them
                 target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false);
                 //target.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel += 10;
             }
 
-            if (Main.rand.Next(6) == 0)
+            if (Main.rand.NextBool(6))
             {
                 target.AddBuff(39, 150, false); //cursed flames
                 target.AddBuff(30, 1800, false); //bleeding

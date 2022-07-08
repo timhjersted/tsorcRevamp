@@ -213,7 +213,7 @@ namespace tsorcRevamp.Tiles
                                     if (bonfireEffectTimer > 0 && bonfireEffectTimer <= 12 && (player.velocity.X == 0 && player.velocity.Y == 0)) //wind up 1
                                     {
 
-                                        if (Main.rand.Next(1) == 0) //was 1/6
+                                        if (Main.rand.NextBool(1)) //was 1/6
                                         {
                                             int z = Dust.NewDust(new Vector2(i * 16 + 25, j * 16 + 32), 40, 56, dustChoice, 0f, 0f, 120, default(Color), 1f);
                                             Main.dust[z].noGravity = true;

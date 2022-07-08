@@ -161,7 +161,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         NPC.ai[2]++;
                     }
                 }
-                if (!Main.dedServ && (Main.rand.Next(360) == 0))
+                if (!Main.dedServ && (Main.rand.NextBool(360)))
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/EvilLaugh2") with { Volume = 1.1f });
                 }
@@ -276,7 +276,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (NPC.ai[3] >= 60) //how often the crystal attack can happen in frames per second
             {
-                if (Main.rand.Next(4) == 0) //1 in 4 chance boss will use attack when it flies down on top of you
+                if (Main.rand.NextBool(4)) //1 in 4 chance boss will use attack when it flies down on top of you
                 {
                     float num48 = 2f;
                     Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 620 + (NPC.height / 2));
@@ -297,7 +297,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
 
-                if (Main.rand.Next(45) == 0) //1 in 45 chance boss will summon an NPC
+                if (Main.rand.NextBool(45)) //1 in 45 chance boss will summon an NPC
                 {
                     int Random = Main.rand.Next(80);
                     int Paraspawn = 0;

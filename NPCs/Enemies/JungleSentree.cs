@@ -87,7 +87,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     AI_State = State_Notice;
                     AI_Timer = 0;
                 }
-                if ((NPC.life < NPC.lifeMax) && (Main.rand.Next(4) == 0))
+                if ((NPC.life < NPC.lifeMax) && (Main.rand.NextBool(4)))
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, 107, 0, 0, 0, default(Color), 1f); //regenerating hp
                 }
@@ -125,22 +125,22 @@ namespace tsorcRevamp.NPCs.Enemies
                 spawntimer++;
                 if (NPC.life > NPC.lifeMax / 3)
                 {
-                    if (Main.rand.Next(20) == 0)
+                    if (Main.rand.NextBool(20))
                     {
                         Dust.NewDust(NPC.position - new Vector2(20, 0), NPC.width / 3, NPC.height / 2, 18, Main.rand.Next(-2, 0), Main.rand.Next(-2, 0), 0, default(Color), 1f); //left branch
                     }
-                    if (Main.rand.Next(20) == 0)
+                    if (Main.rand.NextBool(20))
                     {
                         Dust.NewDust(NPC.position - new Vector2(-42, 0), NPC.width / 3, NPC.height / 2, 18, Main.rand.Next(0, 2), Main.rand.Next(-2, 0), 0, default(Color), 1f); //right branch
                     }
                 }
                 if (NPC.life <= NPC.lifeMax / 3)
                 {
-                    if (Main.rand.Next(10) == 0)
+                    if (Main.rand.NextBool(10))
                     {
                         Dust.NewDust(NPC.position - new Vector2(20, 0), NPC.width / 3, NPC.height / 2, 18, Main.rand.Next(-2, 0), Main.rand.Next(-2, 0), 0, default(Color), 1f); //left branch
                     }
-                    if (Main.rand.Next(10) == 0)
+                    if (Main.rand.NextBool(10))
                     {
                         Dust.NewDust(NPC.position - new Vector2(-42, 0), NPC.width / 3, NPC.height / 2, 18, Main.rand.Next(0, 2), Main.rand.Next(-2, 0), 0, default(Color), 1f); //right branch
                     }
@@ -149,7 +149,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 if (spawntimer >= 0 && spawntimer <= 40 && (NPC.CountNPCS(NPCID.JungleBat) < 6 || NPC.CountNPCS(NPCID.LittleHornetLeafy) < 6))
                 {
-                    if (Main.rand.Next(8) == 0)
+                    if (Main.rand.NextBool(8))
                     {
                         Dust.NewDust(new Vector2((int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height - 118) + NPC.velocity.Y)), 2, 2, 18, Main.rand.NextFloat(-1.1f, 1.1f), Main.rand.NextFloat(-1.1f, 1.1f), 0, default(Color), 1f);
                     }
@@ -180,7 +180,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (spawntimer == 60 && (NPC.CountNPCS(NPCID.JungleBat) < 4 || NPC.CountNPCS(NPCID.LittleHornetLeafy) < 4) && NPC.Center.Y / 16 >= Main.rockLayer) //wont spawn babies if there are already 6
                 {
-                    if (Main.rand.Next(3) == 0)
+                    if (Main.rand.NextBool(3))
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item97, NPC.Center);
                         int npcIndex = -1;
@@ -356,7 +356,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     damage = 20; //damage before defence
                 }
-                if (Main.rand.Next(2) == 0 && wooddropped < 5)
+                if (Main.rand.NextBool(2) && wooddropped < 5)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.RichMahogany);
                     wooddropped++;
@@ -373,7 +373,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     damage = 20; //damage before defence
                 }
-                if (Main.rand.Next(3) == 0 && resindropped < 1)
+                if (Main.rand.NextBool(3) && resindropped < 1)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
                     resindropped++;
@@ -412,7 +412,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     damage = 20; //damage before defence
                 }
-                if (Main.rand.Next(20) == 0 && resindropped < 1)
+                if (Main.rand.NextBool(20) && resindropped < 1)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
                     resindropped++;
@@ -446,7 +446,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RichMahogany, Main.rand.Next(3, 5));
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("BloodredMossClump").Type, Main.rand.Next(1, 3));
-            if (Main.rand.Next(5) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("CharcoalPineResin").Type);
+            if (Main.rand.NextBool(5)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("CharcoalPineResin").Type);
             if (Main.rand.NextFloat() >= 0.2f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>()); //80%
 
         }

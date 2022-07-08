@@ -69,7 +69,7 @@ namespace tsorcRevamp.Projectiles.Pets
             {
                 Lighting.AddLight(Projectile.position, .8f, .65f, .8f);
 
-                if (Main.rand.Next(3) == 0)
+                if (Main.rand.NextBool(3))
                 {
                     if (Projectile.direction == 1)
                     {

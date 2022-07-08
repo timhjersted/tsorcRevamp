@@ -50,7 +50,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 if (Projectile.velocity.Y < 10) Projectile.velocity.Y += 0.1f;
             }
 
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 27, 0, 0, 50, Color.Purple, 1.0f);
                 Main.dust[dust].noGravity = false;

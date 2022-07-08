@@ -71,8 +71,8 @@ namespace tsorcRevamp.NPCs.Enemies
             //if (spawnInfo.Player.townNPCs > 0f || spawnInfo.Player.ZoneMeteor) return 0;
             if (!Main.hardMode && oCavern)
             {
-                if (Main.rand.Next(1000) == 1) return 1;
-                else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.Next(400) == 1)
+                if (Main.rand.NextBool(1000)) return 1;
+                else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(400))
                 {
                     UsefulFunctions.BroadcastText("A Warlock is near... ", 175, 75, 255);
                     return 1;
@@ -81,8 +81,8 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (Main.hardMode && (oCavern || oUnderground || Jungle))
             {
-                if (Main.rand.Next(400) == 1) return 1;
-                else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.Next(200) == 1)
+                if (Main.rand.NextBool(400)) return 1;
+                else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(200))
                 {
                     UsefulFunctions.BroadcastText("A Warlock is hunting you... ", 175, 75, 255);
                     return 1;
@@ -122,7 +122,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (attackTimer >= 60)
             {
 
-                if (Main.rand.Next(2) == 1)
+                if (Main.rand.NextBool(2))
                 {
                     int black = Dust.NewDust(NPC.position, NPC.width, NPC.height, 54, (NPC.velocity.X * 0.2f), NPC.velocity.Y * 0.2f, 100, default, 1f); //54 is black smoke
                     Main.dust[black].noGravity = true;
@@ -133,7 +133,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (attackTimer >= 110)
             {
                 Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.Next(2) == 1)
+                if (Main.rand.NextBool(2))
                 {
                     int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
 
@@ -145,7 +145,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //(WORKS WITH 2 TELEGRAPH DUSTS, AT 60 AND 110)
             if (NPC.justHit && attackTimer <= 109)
             {
-                if (Main.rand.Next(3) == 0)
+                if (Main.rand.NextBool(3))
                 {
                     attackTimer = 110;
                 }
@@ -154,7 +154,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     attackTimer = 0;
                 }
             }
-            if (NPC.justHit && Main.rand.Next(8) == 1)
+            if (NPC.justHit && Main.rand.NextBool(8))
             {
                 tsorcRevampAIs.Teleport(NPC, 20, true);
                 attackTimer = 70f;
@@ -167,12 +167,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.alpha = 0;
                 NPC.netUpdate = true;
             }
-            if (Main.rand.Next(230) == 1)
+            if (Main.rand.NextBool(230))
             {
                 NPC.alpha = 0;
                 NPC.netUpdate = true;
             }
-            if (Main.rand.Next(150) == 1)
+            if (Main.rand.NextBool(150))
             {
                 NPC.alpha = 230;
                 NPC.netUpdate = true;
@@ -180,7 +180,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.4f, 0.4f, 0.4f);
 
-            if (Main.rand.Next(600) == 0 && NPC.CountNPCS(NPCID.IlluminantBat) < 5)
+            if (Main.rand.NextBool(600) && NPC.CountNPCS(NPCID.IlluminantBat) < 5)
             {
                 NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.IlluminantBat);
             }

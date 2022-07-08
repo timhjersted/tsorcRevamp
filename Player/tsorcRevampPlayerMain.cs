@@ -410,7 +410,7 @@ namespace tsorcRevamp
         {
             if (MeleeArmorVamp10)
             {
-                if (Main.rand.Next(10) == 0)
+                if (Main.rand.NextBool(10))
                 {
                     Player.HealEffect(10);
                     Player.statLife += (10);
@@ -419,7 +419,7 @@ namespace tsorcRevamp
             }
             if (NUVamp)
             {
-                if (Main.rand.Next(5) == 0)
+                if (Main.rand.NextBool(5))
                 {
                     Player.HealEffect(damage / 4);
                     Player.statLife += (damage / 4);
@@ -732,7 +732,7 @@ namespace tsorcRevamp
                     Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 80, 9f, 0, 0, 0);
                 }
             }
-            if (npc.type == NPCID.SkeletronPrime && Main.rand.Next(2) == 0)
+            if (npc.type == NPCID.SkeletronPrime && Main.rand.NextBool(2))
             {
                 Player.AddBuff(BuffID.Bleeding, 1800);
                 Player.AddBuff(BuffID.OnFire, 600);
@@ -770,7 +770,7 @@ namespace tsorcRevamp
                     Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 60, 8f, 0, 0, 0);
                 }
             }
-            if (projectile.type == ProjectileID.DeathLaser && Main.rand.Next(2) == 0)
+            if (projectile.type == ProjectileID.DeathLaser && Main.rand.NextBool(2))
             {
                 Player.AddBuff(BuffID.BrokenArmor, 180);
                 Player.AddBuff(BuffID.OnFire, 180);

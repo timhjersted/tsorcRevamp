@@ -78,15 +78,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             // these are all the regular stuff you get , now lets see......
 
-            if (tsorcRevampWorld.SuperHardMode && Jungle && !Dungeon && !Corruption && AboveEarth && !Ocean && Main.rand.Next(90) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && Jungle && !Dungeon && !Corruption && AboveEarth && !Ocean && Main.rand.NextBool(90)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Jungle && !Dungeon && !Corruption && !AboveEarth && !Ocean && Main.rand.Next(120) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Jungle && !Dungeon && !Corruption && !AboveEarth && !Ocean && Main.rand.NextBool(120)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && Dungeon && Main.rand.Next(30) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && Dungeon && Main.rand.NextBool(30)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Dungeon && !Corruption && !AboveEarth && Main.rand.Next(15) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Dungeon && !Corruption && !AboveEarth && Main.rand.NextBool(15)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Dungeon && Main.rand.Next(8) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Dungeon && Main.rand.NextBool(8)) return 1;
 
 
             return 0;
@@ -268,7 +268,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (NPC.ai[3] >= 60) //how often the crystal attack can happen in frames per second
             {
 
-                if (Main.rand.Next(40) == 0) //1 in 2 chance boss will use attack when it flies down on top of you
+                if (Main.rand.NextBool(40)) //1 in 2 chance boss will use attack when it flies down on top of you
                 {
 
                     float num48 = 2f;
@@ -294,7 +294,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                 }
 
-                if (Main.rand.Next(30) == 1)
+                if (Main.rand.NextBool(30))
                 {
 
                     float num48 = 8f;
@@ -322,7 +322,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 
-                if (Main.rand.Next(205) == 0) //1 in 205 chance boss will summon an NPC
+                if (Main.rand.NextBool(205)) //1 in 205 chance boss will summon an NPC
                 {
                     int Random = Main.rand.Next(80);
                     int Paraspawn = 0;

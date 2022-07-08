@@ -337,14 +337,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             int expertScale = 1;
             if (Main.expertMode) expertScale = 2;
 
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.NextBool(4))
             {
                 player.AddBuff(BuffID.BrokenArmor, 600 / expertScale, false);
                 player.AddBuff(BuffID.Poisoned, 1800 / expertScale, false);
                 player.AddBuff(BuffID.Bleeding, 1800 / expertScale, false);
 
             }
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 player.AddBuff(BuffID.BrokenArmor, 120 / expertScale, false); //broken armor
                 player.AddBuff(BuffID.OnFire, 180 / expertScale, false); //on fire!

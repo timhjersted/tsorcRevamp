@@ -76,7 +76,7 @@ namespace tsorcRevamp.Projectiles
             }
 
 
-            if (Main.rand.Next(5) == 0)
+            if (Main.rand.NextBool(5))
             {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 15, 0f, 0f, 150, default, 1.4f);
             }

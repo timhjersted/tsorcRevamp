@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             //}
 
             //projectile.rotation += 1f;
-            if (Main.rand.Next(5) == 0)
+            if (Main.rand.NextBool(5))
             {
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, 50, Color.WhiteSmoke, 1.0f);
                 Main.dust[dust].noGravity = false;

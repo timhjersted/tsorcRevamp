@@ -79,10 +79,10 @@ namespace tsorcRevamp.NPCs.Bosses
             //	return 0;
             //}
 
-            //if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.Next(500) == 1) { UsefulFunctions.BroadcastText("A hero from Lumelia has come to kill you for unleashing darkness upon the world... ", 175, 75, 255); return 1; }//why tim xD -- haha, no more preHM spawn with the new lore
-            //if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.Next(350) == 1) { UsefulFunctions.BroadcastText("A hero from Lumelia has come seeking justice for their slain brother, Aaron...", 175, 75, 255); return 1; }
-            //if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneSnow && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.Next(300) == 1) { Main.NewText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying Aaron... ", 175, 75, 255); return 1; }
-            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneDesert && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && !(P.ZoneCorrupt || P.ZoneCrimson) && !P.ZoneBeach && Main.rand.Next(500) == 1) { UsefulFunctions.BroadcastText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying his kin... ", 175, 75, 255); return 1; }
+            //if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.NextBool(500)) { UsefulFunctions.BroadcastText("A hero from Lumelia has come to kill you for unleashing darkness upon the world... ", 175, 75, 255); return 1; }//why tim xD -- haha, no more preHM spawn with the new lore
+            //if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.NextBool(350)) { UsefulFunctions.BroadcastText("A hero from Lumelia has come seeking justice for their slain brother, Aaron...", 175, 75, 255); return 1; }
+            //if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneSnow && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.NextBool(300)) { Main.NewText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying Aaron... ", 175, 75, 255); return 1; }
+            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneDesert && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && !(P.ZoneCorrupt || P.ZoneCrimson) && !P.ZoneBeach && Main.rand.NextBool(500)) { UsefulFunctions.BroadcastText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying his kin... ", 175, 75, 255); return 1; }
 
             return 0;
         }
@@ -514,12 +514,12 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     customAi1 = 1f;
                 }
-                if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.Next(3) == 1)//
+                if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(3))//
                 {
                     NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f); //was 6 and 3
                     float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-6f, -4f);
                     NPC.velocity.X = v;
-                    if (Main.rand.Next(2) == 1)
+                    if (Main.rand.NextBool(2))
                     { customAi1 = 70f; } //was 100 but knife goes away and doesn't shoot consistently
                     else
                     { customAi1 = 240f; }
@@ -527,7 +527,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     NPC.netUpdate = true;
                 }
-                if (NPC.justHit && NPC.Distance(player.Center) > 351 && Main.rand.Next(3) == 1)
+                if (NPC.justHit && NPC.Distance(player.Center) > 351 && Main.rand.NextBool(3))
                 {
                     NPC.knockBackResist = 0f;
                     NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f);
@@ -537,12 +537,12 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
 
                 //ARROWS FROM ARCHERS NEARBY ATTACK
-                if (NPC.Distance(player.Center) < 500 && Main.rand.Next(350) == 0)
+                if (NPC.Distance(player.Center) < 500 && Main.rand.NextBool(350))
                 {
                     Player nT = Main.player[NPC.target];
 
 
-                    if (Main.rand.Next(4) == 0)
+                    if (Main.rand.NextBool(4))
                     {
                         UsefulFunctions.BroadcastText("Archers nearby!", 175, 75, 255);
                     }
@@ -560,11 +560,11 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
 
                 //ARROWS FROM ARCHERS IN THE DISTANCE ATTACK
-                if (NPC.Distance(player.Center) > 800 && Main.rand.Next(100) == 0)
+                if (NPC.Distance(player.Center) > 800 && Main.rand.NextBool(100))
                 {
                     Player nT = Main.player[NPC.target];
 
-                    if (Main.rand.Next(4) == 0)
+                    if (Main.rand.NextBool(4))
                     {
                         UsefulFunctions.BroadcastText("Archers in the trees!", 175, 75, 255);
                     }
@@ -584,15 +584,15 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
                 //JUMP BEFORE KNIFE ATTACK SOMETIMES
-                if (customAi1 == 130f && NPC.velocity.Y == 0f && NPC.life >= 1001 && Main.rand.Next(2) == 1)
-                //if (customAi1 >= 130f && customAi1 <= 131f && npc.velocity.Y == 0f && Main.rand.Next(2) == 1)
+                if (customAi1 == 130f && NPC.velocity.Y == 0f && NPC.life >= 1001 && Main.rand.NextBool(2))
+                //if (customAi1 >= 130f && customAi1 <= 131f && npc.velocity.Y == 0f && Main.rand.NextBool(2))
                 {
 
                     NPC.velocity.Y = Main.rand.NextFloat(-10f, -5f);
 
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8); //0.4f, true, true																								
                     speed += Main.rand.NextVector2Circular(-4, -2);
-                    if (Main.rand.Next(4) == 1 && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
+                    if (Main.rand.NextBool(4) && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
@@ -604,7 +604,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 //DESPERATE FINAL ATTACK
                 if (customAi1 >= 130f && customAi1 <= 148f && NPC.life <= 1000)
-                //if (customAi1 >= 130f && customAi1 <= 131f && npc.velocity.Y == 0f && Main.rand.Next(2) == 1)
+                //if (customAi1 >= 130f && customAi1 <= 131f && npc.velocity.Y == 0f && Main.rand.NextBool(2))
                 {
                     if (NPC.velocity.Y == 0f)
                     {
@@ -614,7 +614,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8); //0.4f, true, true																								
                     speed += Main.rand.NextVector2Circular(-4, -2);
-                    if (Main.rand.Next(4) == 1 && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
+                    if (Main.rand.NextBool(4) && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
@@ -641,7 +641,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         customAi1 = 200f;
                         NPC.knockBackResist = 0.1f;
 
-                        if (Main.rand.Next(2) == 1)
+                        if (Main.rand.NextBool(2))
                         {
                             //or chance to reset - decided not to use for now
                             //customAi1 = 1f;
@@ -655,13 +655,13 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (customAi1 >= 220 && customAi1 >= 280) //&& npc.Distance(player.Center) > 10
                 {
                     Lighting.AddLight(NPC.Center, Color.Green.ToVector3() * 1f);
-                    if (Main.rand.Next(2) == 1 && NPC.Distance(player.Center) > 1)
+                    if (Main.rand.NextBool(2) && NPC.Distance(player.Center) > 1)
                     {
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, NPC.velocity.X, NPC.velocity.Y);
                     }
 
                     //JUMP BEFORE BOMB ATTACK SOMETIMES
-                    if (customAi1 == 260f && NPC.velocity.Y == 0f && Main.rand.Next(2) == 1)
+                    if (customAi1 == 260f && NPC.velocity.Y == 0f && Main.rand.NextBool(2))
                     {
                         NPC.velocity.Y = Main.rand.NextFloat(-8f, -4f);
                         NPC.netUpdate = true;
@@ -1030,7 +1030,7 @@ namespace tsorcRevamp.NPCs.Bosses
             player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 1200, false); // loss of flight mobility for 20 seconds, down from 4 minutes moohahaha... cough cough
 
 
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 player.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800, false);
             }

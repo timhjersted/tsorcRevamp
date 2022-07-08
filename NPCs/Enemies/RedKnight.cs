@@ -65,17 +65,17 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Player P = spawnInfo.Player;
 
-            if (Main.hardMode && P.ZoneDungeon && !(P.ZoneCorrupt || P.ZoneCrimson) && Main.rand.Next(1200) == 1) return 1;
+            if (Main.hardMode && P.ZoneDungeon && !(P.ZoneCorrupt || P.ZoneCrimson) && Main.rand.NextBool(1200)) return 1;
 
-            if (Main.hardMode && P.ZoneMeteor && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.Next(250) == 1) return 1;
+            if (Main.hardMode && P.ZoneMeteor && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.NextBool(250)) return 1;
 
-            if (Main.hardMode && !Main.dayTime && P.ZoneDungeon && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.Next(350) == 1) return 1;
+            if (Main.hardMode && !Main.dayTime && P.ZoneDungeon && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.NextBool(350)) return 1;
 
-            if (Main.hardMode && P.ZoneUnderworldHeight && Main.rand.Next(100) == 1) return 1;
+            if (Main.hardMode && P.ZoneUnderworldHeight && Main.rand.NextBool(100)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && P.ZoneDungeon && Main.rand.Next(5) == 1) return 1; //30 was 1 percent, 10 is 2.76%
+            if (tsorcRevampWorld.SuperHardMode && P.ZoneDungeon && Main.rand.NextBool(5)) return 1; //30 was 1 percent, 10 is 2.76%
 
-            if (tsorcRevampWorld.SuperHardMode && P.ZoneUnderworldHeight && Main.rand.Next(3) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && P.ZoneUnderworldHeight && Main.rand.NextBool(3)) return 1;
 
             return 0;
         }
@@ -111,7 +111,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.localAI[1]++;
 
                 //play creature sounds
-                if (Main.rand.Next(1500) == 1)
+                if (Main.rand.NextBool(1500))
                 {
 
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ominous-creature2") with { Volume = 0.5f }, NPC.Center);
@@ -120,7 +120,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
                 //CHANCE TO JUMP FORWARDS
-                if (NPC.Distance(player.Center) > 60 && NPC.velocity.Y == 0f && Main.rand.Next(500) == 1 && NPC.localAI[1] <= 166f)
+                if (NPC.Distance(player.Center) > 60 && NPC.velocity.Y == 0f && Main.rand.NextBool(500) && NPC.localAI[1] <= 166f)
                 {
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
                     Main.dust[dust].noGravity = true;
@@ -133,7 +133,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 //CHANCE TO DASH STEP FORWARDS 
-                if (NPC.Distance(player.Center) > 100 && NPC.velocity.Y == 0f && Main.rand.Next(300) == 1 && NPC.localAI[1] <= 166f)
+                if (NPC.Distance(player.Center) > 100 && NPC.velocity.Y == 0f && Main.rand.NextBool(300) && NPC.localAI[1] <= 166f)
                 {
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
                     Main.dust[dust].noGravity = true;
@@ -150,14 +150,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
                     //CHANCE TO JUMP AFTER DASH
-                    if (Main.rand.Next(14) == 1 && NPC.localAI[1] <= 166f)
+                    if (Main.rand.NextBool(14) && NPC.localAI[1] <= 166f)
                     {
 
 
 
                         //npc.ai[0] = 0f;
                         Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f);
-                        if (Main.rand.Next(3) == 1)
+                        if (Main.rand.NextBool(3))
                         {
                             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
                             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
@@ -174,10 +174,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
                 //OFFENSIVE JUMP
-                if (NPC.localAI[1] == 165 && NPC.velocity.Y <= 0f && Main.rand.Next(5) == 1) // && npc.localAI[1] <= 161 && npc.Distance(player.Center) > 80; 5 was 10
+                if (NPC.localAI[1] == 165 && NPC.velocity.Y <= 0f && Main.rand.NextBool(5)) // && npc.localAI[1] <= 161 && npc.Distance(player.Center) > 80; 5 was 10
                 {
                     Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                    if (Main.rand.Next(3) == 1)
+                    if (Main.rand.NextBool(3))
                     {
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.TeleportationPotion, NPC.velocity.X, NPC.velocity.Y);
                     }
@@ -206,7 +206,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.localAI[1] = 200f;
 
                     //or chance to reset
-                    if (Main.rand.Next(3) == 1)
+                    if (Main.rand.NextBool(3))
                     {
 
                         NPC.localAI[1] = 1f;
@@ -225,7 +225,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
 
                     Lighting.AddLight(NPC.Center, Color.Yellow.ToVector3() * 1f);
-                    if (Main.rand.Next(2) == 1 && NPC.Distance(player.Center) > 1)
+                    if (Main.rand.NextBool(2) && NPC.Distance(player.Center) > 1)
                     {
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Teleporter, NPC.velocity.X, NPC.velocity.Y);
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Teleporter, NPC.velocity.X, NPC.velocity.Y);
@@ -278,7 +278,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.localAI[1] <= 100 && NPC.Distance(player.Center) > 60)
                 {
 
-                    if (Main.rand.Next(500) == 0) //30 was cool for great red knight
+                    if (Main.rand.NextBool(500)) //30 was cool for great red knight
                     {
                         //FIRE
                         for (int pcy = 0; pcy < 2; pcy++)
@@ -298,10 +298,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 /*ULTIMATE DEATH ATTACK - BLANKET OF FIRE ABOVE PLAYER THAT CURSES
             Player player = Main.player[npc.target];
-            if (npc.Distance(player.Center) > 20 && Main.rand.Next(3) == 0)
+            if (npc.Distance(player.Center) > 20 && Main.rand.NextBool(3))
             {
                 Player nT = Main.player[npc.target];
-                if (Main.rand.Next(8) == 0)
+                if (Main.rand.NextBool(8))
                 {
                     UsefulFunctions.BroadcastText("Death!", 175, 75, 255);
                 }
@@ -384,7 +384,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             player.AddBuff(BuffID.OnFire, 180, false);
 
-            if (Main.rand.Next(5) == 0)
+            if (Main.rand.NextBool(5))
             {
                 player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 180, false); // loss of flight mobility
                 player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 1800, false);

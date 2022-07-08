@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void ModifyHitNPC(Player P, NPC target, ref int damage, ref float knockBack, ref bool crit)
         {
-            if (Main.rand.Next(15) == 0)
+            if (Main.rand.NextBool(15))
             {
                 P.HealEffect(damage / 2);
                 P.statLife += (damage / 2);

@@ -222,7 +222,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.life = 0;
                 }
             }
-            if ((peaceouttimer > 150 && Main.rand.Next(100) == 0) || peaceouttimer > 420 && (NPC.collideY))
+            if ((peaceouttimer > 150 && Main.rand.NextBool(100)) || peaceouttimer > 420 && (NPC.collideY))
             {
                 AI_State = State_PeaceOut;
                 AI_Timer = 0;
@@ -231,7 +231,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (AI_State == State_Idle || AI_State == State_Fleeing || AI_State == State_Jump) //Dusts
             {
-                if (Main.rand.Next(10) == 0) //Yellow
+                if (Main.rand.NextBool(10)) //Yellow
                 {
                     Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 170, NPC.velocity.X, NPC.velocity.Y, 100, default(Color), .4f)];
                     dust.velocity *= 0f;
@@ -239,7 +239,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     dust.velocity += NPC.velocity;
                     dust.fadeIn = 1f;
                 }
-                if (Main.rand.Next(10) == 0) //Pink
+                if (Main.rand.NextBool(10)) //Pink
                 {
                     Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 272, NPC.velocity.X, NPC.velocity.Y, 100, default(Color), .5f)]; //223, 255, 272
                     dust.velocity *= 0f;
@@ -247,7 +247,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     dust.velocity += NPC.velocity;
                     dust.fadeIn = 1f;
                 }
-                if (Main.rand.Next(10) == 0) //Blue
+                if (Main.rand.NextBool(10)) //Blue
                 {
                     Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 185, NPC.velocity.X, NPC.velocity.Y, 100, default(Color), .4f)];
                     dust.velocity *= 0f;
@@ -255,7 +255,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     dust.velocity += NPC.velocity;
                     dust.fadeIn = 1f;
                 }
-                if (Main.rand.Next(10) == 0) //Green
+                if (Main.rand.NextBool(10)) //Green
                 {
                     Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 107, NPC.velocity.X, NPC.velocity.Y, 100, default(Color), .4f)];
                     dust.velocity *= 0f;
@@ -409,25 +409,25 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.frame.Y = Frame_Fleeing_10 * frameHeight;
                     if (NPC.direction == -1)
                     {
-                        if (Main.rand.Next(10) == 0) //Yellow
+                        if (Main.rand.NextBool(10)) //Yellow
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 170, -1, -1, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Pink
+                        if (Main.rand.NextBool(10)) //Pink
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 272, -1, -1, 100, default(Color), .5f)]; //223, 255, 272
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Blue
+                        if (Main.rand.NextBool(10)) //Blue
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 185, -1, -1, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Green
+                        if (Main.rand.NextBool(10)) //Green
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 107, -1, -1, 100, default(Color), .4f)];
                             dust.noGravity = true;
@@ -436,25 +436,25 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     if (NPC.direction == 1)
                     {
-                        if (Main.rand.Next(10) == 0) //Yellow
+                        if (Main.rand.NextBool(10)) //Yellow
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 170, 1, -1, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Pink
+                        if (Main.rand.NextBool(10)) //Pink
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 272, 1, -1, 100, default(Color), .5f)]; //223, 255, 272
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Blue
+                        if (Main.rand.NextBool(10)) //Blue
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 185, 1, -1, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Green
+                        if (Main.rand.NextBool(10)) //Green
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 107, 1, -1, 100, default(Color), .4f)];
                             dust.noGravity = true;
@@ -469,25 +469,25 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (NPC.direction == -1)
                     {
                         Lighting.AddLight(((int)NPC.position.X - 24) / 16, ((int)NPC.position.Y - 36) / 16, 0.2f, 0.2f, 0.2f); //when facing right
-                        if (Main.rand.Next(10) == 0) //Yellow
+                        if (Main.rand.NextBool(10)) //Yellow
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 170, -1, -1, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Pink
+                        if (Main.rand.NextBool(10)) //Pink
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 272, -1, -1, 100, default(Color), .5f)]; //223, 255, 272
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Blue
+                        if (Main.rand.NextBool(10)) //Blue
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 185, -1, -1, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Green
+                        if (Main.rand.NextBool(10)) //Green
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 107, -1, -1, 100, default(Color), .4f)];
                             dust.noGravity = true;
@@ -497,25 +497,25 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (NPC.direction == 1)
                     {
                         Lighting.AddLight(((int)NPC.position.X + 50) / 16, ((int)NPC.position.Y - 36) / 16, 0.2f, 0.2f, 0.2f); //when facing left
-                        if (Main.rand.Next(10) == 0) //Yellow
+                        if (Main.rand.NextBool(10)) //Yellow
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 170, 1, -1, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Pink
+                        if (Main.rand.NextBool(10)) //Pink
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 272, 1, -1, 100, default(Color), .5f)]; //223, 255, 272
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Blue
+                        if (Main.rand.NextBool(10)) //Blue
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 185, 1, -1, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Green
+                        if (Main.rand.NextBool(10)) //Green
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 107, 1, -1, 100, default(Color), .4f)];
                             dust.noGravity = true;
@@ -532,25 +532,25 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         Lighting.AddLight(((int)NPC.position.X - 24) / 16, ((int)NPC.position.Y - 36) / 16, 0.25f, 0.25f, 0.25f);
 
-                        if (Main.rand.Next(10) == 0) //Yellow
+                        if (Main.rand.NextBool(10)) //Yellow
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 170, -2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Pink
+                        if (Main.rand.NextBool(10)) //Pink
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 272, -2, -2, 100, default(Color), .5f)]; //223, 255, 272
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Blue
+                        if (Main.rand.NextBool(10)) //Blue
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 185, -2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Green
+                        if (Main.rand.NextBool(10)) //Green
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 107, -2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
@@ -560,25 +560,25 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (NPC.direction == 1)
                     {
                         Lighting.AddLight(((int)NPC.position.X + 50) / 16, ((int)NPC.position.Y - 36) / 16, 0.25f, 0.25f, 0.25f);
-                        if (Main.rand.Next(10) == 0) //Yellow
+                        if (Main.rand.NextBool(10)) //Yellow
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 170, 2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Pink
+                        if (Main.rand.NextBool(10)) //Pink
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 272, 2, -2, 100, default(Color), .5f)]; //223, 255, 272
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Blue
+                        if (Main.rand.NextBool(10)) //Blue
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 185, 2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Green
+                        if (Main.rand.NextBool(10)) //Green
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 107, 2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
@@ -596,25 +596,25 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         Lighting.AddLight(((int)NPC.position.X - 24) / 16, ((int)NPC.position.Y - 36) / 16, 0.3f, 0.3f, 0.3f);
 
-                        if (Main.rand.Next(8) == 0) //Yellow
+                        if (Main.rand.NextBool(8)) //Yellow
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 170, -2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(8) == 0) //Pink
+                        if (Main.rand.NextBool(8)) //Pink
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 272, -2, -2, 100, default(Color), .5f)]; //223, 255, 272
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(8) == 0) //Blue
+                        if (Main.rand.NextBool(8)) //Blue
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 185, -2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(8) == 0) //Green
+                        if (Main.rand.NextBool(8)) //Green
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 107, -2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
@@ -625,25 +625,25 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         Lighting.AddLight(((int)NPC.position.X + 50) / 16, ((int)NPC.position.Y - 36) / 16, 0.3f, 0.3f, 0.3f);
 
-                        if (Main.rand.Next(8) == 0) //Yellow
+                        if (Main.rand.NextBool(8)) //Yellow
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 170, 2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(8) == 0) //Pink
+                        if (Main.rand.NextBool(8)) //Pink
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 272, 2, -2, 100, default(Color), .5f)]; //223, 255, 272
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(8) == 0) //Blue
+                        if (Main.rand.NextBool(8)) //Blue
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 185, 2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(8) == 0) //Green
+                        if (Main.rand.NextBool(8)) //Green
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 2), 28, 18, 107, 2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
@@ -661,25 +661,25 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         Lighting.AddLight(((int)NPC.position.X - 24) / 16, ((int)NPC.position.Y - 36) / 16, 0.35f, 0.35f, 0.35f);
 
-                        if (Main.rand.Next(6) == 0) //Yellow
+                        if (Main.rand.NextBool(6)) //Yellow
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 4), 28, 18, 170, -2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(6) == 0) //Pink
+                        if (Main.rand.NextBool(6)) //Pink
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 4), 28, 18, 272, -2, -2, 100, default(Color), .5f)]; //223, 255, 272
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(6) == 0) //Blue
+                        if (Main.rand.NextBool(6)) //Blue
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 4), 28, 18, 185, -2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(6) == 0) //Green
+                        if (Main.rand.NextBool(6)) //Green
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 4), 28, 18, 107, -2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
@@ -690,25 +690,25 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         Lighting.AddLight(((int)NPC.position.X + 50) / 16, ((int)NPC.position.Y - 36) / 16, 0.35f, 0.35f, 0.35f);
 
-                        if (Main.rand.Next(6) == 0) //Yellow
+                        if (Main.rand.NextBool(6)) //Yellow
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 4), 28, 18, 170, 2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(6) == 0) //Pink
+                        if (Main.rand.NextBool(6)) //Pink
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 4), 28, 18, 272, 2, -2, 100, default(Color), .5f)]; //223, 255, 272
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(6) == 0) //Blue
+                        if (Main.rand.NextBool(6)) //Blue
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 4), 28, 18, 185, 2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(6) == 0) //Green
+                        if (Main.rand.NextBool(6)) //Green
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y - 4), 28, 18, 107, 2, -2, 100, default(Color), .4f)];
                             dust.noGravity = true;
@@ -725,25 +725,25 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         Lighting.AddLight(((int)NPC.position.X - 24) / 16, ((int)NPC.position.Y - 36) / 16, 0.4f, 0.4f, 0.4f);
 
-                        if (Main.rand.Next(10) == 0) //Yellow
+                        if (Main.rand.NextBool(10)) //Yellow
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 170, -3, -3, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Pink
+                        if (Main.rand.NextBool(10)) //Pink
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 272, -3, -3, 100, default(Color), .5f)]; //223, 255, 272
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Blue
+                        if (Main.rand.NextBool(10)) //Blue
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 185, -3, -3, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Green
+                        if (Main.rand.NextBool(10)) //Green
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 107, -3, -3, 100, default(Color), .4f)];
                             dust.noGravity = true;
@@ -754,25 +754,25 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         Lighting.AddLight(((int)NPC.position.X + 50) / 16, ((int)NPC.position.Y - 36) / 16, 0.4f, 0.4f, 0.4f);
 
-                        if (Main.rand.Next(10) == 0) //Yellow
+                        if (Main.rand.NextBool(10)) //Yellow
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 170, 3, -3, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Pink
+                        if (Main.rand.NextBool(10)) //Pink
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 272, 3, -3, 100, default(Color), .5f)]; //223, 255, 272
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Blue
+                        if (Main.rand.NextBool(10)) //Blue
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 185, 3, -3, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Green
+                        if (Main.rand.NextBool(10)) //Green
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 107, 3, -3, 100, default(Color), .4f)];
                             dust.noGravity = true;
@@ -787,25 +787,25 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         Lighting.AddLight(((int)NPC.position.X - 24) / 16, ((int)NPC.position.Y - 36) / 16, 0.4f, 0.4f, 0.4f);
 
-                        if (Main.rand.Next(10) == 0) //Yellow
+                        if (Main.rand.NextBool(10)) //Yellow
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 170, -3, -3, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Pink
+                        if (Main.rand.NextBool(10)) //Pink
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 272, -3, -3, 100, default(Color), .5f)]; //223, 255, 272
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Blue
+                        if (Main.rand.NextBool(10)) //Blue
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 185, -3, -3, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Green
+                        if (Main.rand.NextBool(10)) //Green
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 107, -3, -3, 100, default(Color), .4f)];
                             dust.noGravity = true;
@@ -816,25 +816,25 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         Lighting.AddLight(((int)NPC.position.X + 50) / 16, ((int)NPC.position.Y - 36) / 16, 0.4f, 0.4f, 0.4f);
 
-                        if (Main.rand.Next(10) == 0) //Yellow
+                        if (Main.rand.NextBool(10)) //Yellow
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 170, 3, -3, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Pink
+                        if (Main.rand.NextBool(10)) //Pink
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 272, 3, -3, 100, default(Color), .5f)]; //223, 255, 272
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Blue
+                        if (Main.rand.NextBool(10)) //Blue
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 185, 3, -3, 100, default(Color), .4f)];
                             dust.noGravity = true;
                             dust.fadeIn = 1f;
                         }
-                        if (Main.rand.Next(10) == 0) //Green
+                        if (Main.rand.NextBool(10)) //Green
                         {
                             Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 2, NPC.position.Y - 6), 28, 18, 107, 3, -3, 100, default(Color), .4f)];
                             dust.noGravity = true;
@@ -978,7 +978,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (Main.rand.Next(2) == 0 && immuneframe >= 1 && !crit)
+            if (Main.rand.NextBool(2) && immuneframe >= 1 && !crit)
             {
                 NPC.immortal = true;
                 immuneframe = 0;

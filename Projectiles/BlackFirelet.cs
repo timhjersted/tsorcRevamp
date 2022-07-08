@@ -90,7 +90,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (Main.rand.Next(5) == 0)
+            if (Main.rand.NextBool(5))
             {
                 target.AddBuff(ModContent.BuffType<Buffs.DarkInferno>(), 240);
             }
@@ -98,7 +98,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnHitPvp(Player target, int damage, bool crit)
         {
-            if (Main.rand.Next(5) == 0)
+            if (Main.rand.NextBool(5))
             {
                 target.AddBuff(ModContent.BuffType<Buffs.DarkInferno>(), 240);
             }

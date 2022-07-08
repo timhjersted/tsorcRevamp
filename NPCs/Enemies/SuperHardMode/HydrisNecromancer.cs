@@ -55,19 +55,19 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (tsorcRevampWorld.SuperHardMode && (P.ZoneDirtLayerHeight || P.ZoneRockLayerHeight || oMagmaCavern))
             {
-                if (Hallow && Main.rand.Next(20) == 1) return 1; //was 20
-                if (spawnInfo.Player.ZoneGlowshroom && Main.rand.Next(20) == 1) return 1; //was 20
-                if (spawnInfo.Player.ZoneUndergroundDesert && Main.rand.Next(20) == 1) return 1; //was 20
-                if (Hallow && Main.bloodMoon && Main.rand.Next(6) == 1) return 1;
-                if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.35f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && Main.rand.Next(20) == 1) return 1; //was 10
-                if (spawnInfo.SpawnTileType == TileID.BoneBlock && spawnInfo.Player.ZoneDungeon && Main.rand.Next(20) == 1)
+                if (Hallow && Main.rand.NextBool(20)) return 1; //was 20
+                if (spawnInfo.Player.ZoneGlowshroom && Main.rand.NextBool(20)) return 1; //was 20
+                if (spawnInfo.Player.ZoneUndergroundDesert && Main.rand.NextBool(20)) return 1; //was 20
+                if (Hallow && Main.bloodMoon && Main.rand.NextBool(6)) return 1;
+                if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.35f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && Main.rand.NextBool(20)) return 1; //was 10
+                if (spawnInfo.SpawnTileType == TileID.BoneBlock && spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(20))
                     return 0;
             }
 
             else if (tsorcRevampWorld.SuperHardMode && oUnderworld)
             {
-                if (Main.rand.Next(60) == 1) return 1;
-                if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.35f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && Main.rand.Next(30) == 1) return 1;
+                if (Main.rand.NextBool(60)) return 1;
+                if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.35f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && Main.rand.NextBool(30)) return 1;
                 return 0;
             }
             return 0;
@@ -97,7 +97,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             //(WORKS WITH 2 TELEGRAPH DUSTS IN DRAW, AT TIMER 60 AND 110)
             if (NPC.justHit && strikeTimer <= 109)
             {
-                if (Main.rand.Next(3) == 0)
+                if (Main.rand.NextBool(3))
                 {
                     strikeTimer = 110;
                 }
@@ -106,7 +106,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     strikeTimer = 0;
                 }
             }
-            if (NPC.justHit && Main.rand.Next(18) == 1)
+            if (NPC.justHit && Main.rand.NextBool(18))
             {
                 tsorcRevampAIs.Teleport(NPC, 20, true);
                 strikeTimer = 70f;
@@ -147,7 +147,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (strikeTimer >= 60)
             {
                 Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.Next(2) == 1)
+                if (Main.rand.NextBool(2))
                 {
                     //Dust.NewDust(npc.position, npc.width, npc.height, 41, npc.velocity.X, npc.velocity.Y); //41 wassss weird anti-gravity blue dust but now I'm seeing grass clippings; not sure what happened
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, 54, (NPC.velocity.X * 0.2f), NPC.velocity.Y * 0.2f, 100, default, 1f); //54 is black smoke
@@ -159,7 +159,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (strikeTimer >= 110)
             {
                 Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.Next(2) == 1)
+                if (Main.rand.NextBool(2))
                 {
                     int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
 

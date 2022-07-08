@@ -49,7 +49,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void OnHitNPC(Player player, NPC npc, int damage, float knockBack, bool crit)
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             { //50% chance to occur
                 npc.AddBuff(BuffID.OnFire, 360, false);
             }

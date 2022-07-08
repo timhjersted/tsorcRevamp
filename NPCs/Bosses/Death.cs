@@ -68,7 +68,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 bool undergroundHoly = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && spawnInfo.Player.ZoneHallow;
                 if (!Main.dayTime && Main.bloodMoon && surface)
                 {
-                    if (Main.rand.Next(250) == 0)
+                    if (Main.rand.NextBool(250))
                     {
                         return 1;
                     }

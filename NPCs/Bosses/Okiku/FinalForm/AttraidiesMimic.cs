@@ -93,7 +93,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 {
                     lookMode = 1;
                     phaseTime = 90;
-                    if (Main.rand.Next(2) == 0) Teleport(Main.player[NPC.target].position.X - 500, Main.player[NPC.target].position.Y + 400);
+                    if (Main.rand.NextBool(2)) Teleport(Main.player[NPC.target].position.X - 500, Main.player[NPC.target].position.Y + 400);
                     else Teleport(Main.player[NPC.target].position.X + 500, Main.player[NPC.target].position.Y + 400);
                     phaseStarted = true;
                 }

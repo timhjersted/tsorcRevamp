@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 laser.LaserTarget = Vector2.Lerp(laser.LaserTarget, Main.player[(int)Projectile.ai[0]].position, 0.02f);
             }
 
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 int dust = Dust.NewDust(new Vector2((float)Projectile.Center.X, (float)Projectile.Center.Y), Projectile.width, Projectile.height, 234, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.White, 2.0f);
                 Main.dust[dust].noGravity = true;

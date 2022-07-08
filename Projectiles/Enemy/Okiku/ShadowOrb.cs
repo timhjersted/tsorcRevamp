@@ -38,14 +38,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.BrokenArmor, 120, false); //broken armor
                 target.AddBuff(BuffID.Weak, 600, false); //weak
                 target.AddBuff(BuffID.OnFire, 180, false); //on fire!
             }
 
-            if (Main.rand.Next(8) == 0)
+            if (Main.rand.NextBool(8))
             {
                 target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 1800, false);
             }

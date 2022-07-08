@@ -62,12 +62,12 @@ namespace tsorcRevamp.Projectiles.Enemy
                 {
                     num153 = 76;
                 }
-                if (num153 == 6 || Main.rand.Next(2) == 0)
+                if (num153 == 6 || Main.rand.NextBool(2))
                 {
                     for (int num154 = 0; num154 < 1; num154++)
                     {
                         int num155 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, num153, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
-                        if (Main.rand.Next(3) != 0 || (num153 == 76 && Main.rand.Next(3) == 0))
+                        if (Main.rand.Next(3) != 0 || (num153 == 76 && Main.rand.NextBool(3)))
                         {
                             Main.dust[num155].noGravity = true;
                             Main.dust[num155].scale *= 1.5f; //was 3
@@ -102,7 +102,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Main.rand.Next(6) == 0)
+            if (Main.rand.NextBool(6))
             {
                 target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 18000, false); //may lose -100 max HP after taking enough hits. It had 100% trigger before. I think that was the problem.
             }
