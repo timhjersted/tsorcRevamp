@@ -21,8 +21,8 @@ namespace tsorcRevamp.Items.Weapons
             Item.crit = 4;
             Item.width = 30;
             Item.height = 30;
-            Item.useTime = 20;
-            Item.useAnimation = 20;
+            Item.useTime = 1;
+            Item.useAnimation = 1;
             Item.UseSound = SoundID.Item11;
             Item.useTurn = true;
             Item.noMelee = true;
@@ -38,11 +38,13 @@ namespace tsorcRevamp.Items.Weapons
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             //Main.NewText(player.position / 16);            
-
-            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyLightningStrike>(), damage, knockBack, Main.myPlayer);
-            Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
-            speed.Normalize();
-            Main.NewText(Projectiles.Enemy.EnemyGenericLaser.Intersections(screenRect, position, speed));
+            NPC.NewNPC(player.GetSource_ItemUse(Item), (int)position.X, (int)position.Y, NPCID.ChaosElemental);
+            if (Main.GameUpdateCount % 30 == 0)
+            {
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyLightningStrike>(), damage, knockBack, Main.myPlayer);
+            }//Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
+            //speed.Normalize();
+            //Main.NewText(Projectiles.Enemy.EnemyGenericLaser.Intersections(screenRect, position, speed));
 
 
             /*

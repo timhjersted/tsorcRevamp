@@ -571,15 +571,18 @@ namespace tsorcRevamp
             #endregion
             //--------
             #region BannedItems list
-            KillAllowed = new List<int>()
+            BannedItems = new List<int>()
             {
                 ItemID.RodofDiscord,
                 ItemID.CorruptionKey,
                 ItemID.CrimsonKey,
                 ItemID.HallowedKey,
                 ItemID.JungleKey,
-                ItemID.FrozenKey
-            };
+                ItemID.FrozenKey,
+                ItemID.MechanicalEye,
+                ItemID.MechanicalSkull,
+                ItemID.MechanicalWorm,
+        };
             #endregion
             //--------
             #region CustomDungeonTiles list

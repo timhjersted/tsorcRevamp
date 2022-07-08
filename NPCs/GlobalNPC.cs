@@ -578,6 +578,17 @@ namespace tsorcRevamp.NPCs
                 }                
             }
         }
+
+
+        public override bool PreKill(NPC npc)
+        {
+            for(int i = 0; i < tsorcRevamp.BannedItems.Count; i++)
+            {
+                NPCLoader.blockLoot.Add(tsorcRevamp.BannedItems[i]);
+            }
+
+            return base.PreKill(npc);
+        }
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {           
 
@@ -626,9 +637,7 @@ namespace tsorcRevamp.NPCs
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                NPCLoader.blockLoot.Add(ItemID.MechanicalEye);
-                NPCLoader.blockLoot.Add(ItemID.MechanicalSkull);
-                NPCLoader.blockLoot.Add(ItemID.MechanicalWorm);
+                
 
                 
             }
