@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles
             float velocity = LerpFloat(minVelocity, maxVelocity, charge);
             Vector2 inaccuracy = (aimVector * velocity).RotatedByRandom(MathHelper.ToRadians(18f - (15f * charge)));
             int damage = (int)LerpFloat(minDamage, maxDamage, charge) + Projectile.damage;
-            Projectile.NewProjectile(player.GetSource_ItemUse(player.inventory[player.selectedItem]), player.Center, inaccuracy, ammoType, damage, Projectile.knockBack);
+            Projectile.NewProjectile(player.GetSource_ItemUse(player.inventory[player.selectedItem]), player.Center, inaccuracy, ammoType, damage, Projectile.knockBack, Projectile.owner);
         }
     }
 }
