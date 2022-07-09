@@ -23,6 +23,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.penetrate = 5;
             Projectile.width = 16;
             Projectile.tileCollide = false;
+            Projectile.timeLeft = 180;
         }
 
         public static Texture2D texture;
