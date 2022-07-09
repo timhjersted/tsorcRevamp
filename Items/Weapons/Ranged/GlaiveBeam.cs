@@ -24,7 +24,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.height = 28;
             Item.width = 12;
             Item.knockBack = 4;
-            Item.rare = ItemRarityID.Purple;
             Item.shoot = ModContent.ProjectileType<Projectiles.GlaiveBeamHoldout>();
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.UseSound = null;
@@ -33,7 +32,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.shootSpeed = 30;
             Item.useAnimation = 150;
             Item.useTime = 200;
-            Item.value = 8000000;
+            Item.rare = ItemRarityID.Purple;
+            Item.value = PriceByRarity.fromItem(Item);
 
         }
         public override bool CanUseItem(Player player)

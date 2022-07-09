@@ -17,8 +17,8 @@ namespace tsorcRevamp.Items.Armors
             Item.vanity = true;
             Item.width = 34;
             Item.height = 24;
-            Item.value = 50000;
-            Item.rare = ItemRarityID.Purple;
+            Item.rare = ItemRarityID.Expert;
+            Item.value = PriceByRarity.fromItem(Item);
         }
 
         public override void UpdateVanity(Player player)

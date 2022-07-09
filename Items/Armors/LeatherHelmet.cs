@@ -18,8 +18,8 @@ namespace tsorcRevamp.Items.Armors
             Item.width = 20;
             Item.height = 26;
             Item.defense = 3;
-            Item.value = 12000;
-            Item.rare = ItemRarityID.White;
+            Item.rare = ItemRarityID.Green;
+            Item.value = PriceByRarity.fromItem(Item);
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)

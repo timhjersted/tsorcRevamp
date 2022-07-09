@@ -173,8 +173,67 @@ namespace tsorcRevamp
         //no vanilla items have purple rarity base. only cyan and red with modifiers can be purple. im guessing on the price.
         public static readonly int Purple_11 = Item.buyPrice(platinum: 1, gold: 20, silver: 0, copper: 0);
 
+        public static int fromItem(Item item)
+        {
+            return fromRarity(item.rare);
+        }
 
+        public static int fromRarity(int rarity)
+        {
+            switch (rarity)
+            {
+                case 0:
+                    {
+                        return White_0;
+                    }
+                case 1:
+                    {
+                        return Blue_1;
+                    }
+                case 2:
+                    {
+                        return Green_2;
+                    }
+                case 3:
+                    {
+                        return Orange_3;
+                    }
+                case 4:
+                    {
+                        return LightRed_4;
+                    }
+                case 5:
+                    {
+                        return Pink_5;
+                    }
+                case 6:
+                    {
+                        return LightPurple_6;
+                    }
+                case 7:
+                    {
+                        return Lime_7;
+                    }
+                case 8:
+                    {
+                        return Yellow_8;
+                    }
+                case 9:
+                    {
+                        return Cyan_9;
+                    }
+                case 10:
+                    {
+                        return Red_10;
+                    }
+                case 11:
+                    {
+                        return Purple_11;
+                    }
+            }
 
+            return 0;
+        }
     }
 
     public static class UsefulFunctions

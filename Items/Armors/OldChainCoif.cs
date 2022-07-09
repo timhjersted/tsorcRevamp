@@ -16,8 +16,8 @@ namespace tsorcRevamp.Items.Armors
             Item.width = 26;
             Item.height = 20;
             Item.defense = 1;
-            Item.value = 3000;
-            Item.rare = ItemRarityID.White;
+            Item.rare = ItemRarityID.Green;
+            Item.value = PriceByRarity.fromItem(Item);
         }
 
         public override void UpdateEquip(Player player)

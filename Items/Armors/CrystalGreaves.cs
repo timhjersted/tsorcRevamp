@@ -24,8 +24,8 @@ namespace tsorcRevamp.Items.Armors
             Item.width = 18;
             Item.height = 18;
             Item.defense = 9;
-            Item.value = 7000000;
             Item.rare = ItemRarityID.Pink;
+            Item.value = PriceByRarity.fromItem(Item);
         }
         public override void AddRecipes()
         {

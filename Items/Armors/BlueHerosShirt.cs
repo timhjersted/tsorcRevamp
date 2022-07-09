@@ -18,8 +18,8 @@ namespace tsorcRevamp.Items.Armors
             Item.width = 18;
             Item.height = 18;
             Item.defense = 16;
-            Item.value = 2500;
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.value = PriceByRarity.fromItem(Item);
         }
 
         public override void AddRecipes()

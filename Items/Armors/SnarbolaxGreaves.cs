@@ -16,8 +16,8 @@ namespace tsorcRevamp.Items.Armors
             Item.vanity = true;
             Item.width = 30;
             Item.height = 18;
-            Item.value = 50000;
-            Item.rare = ItemRarityID.Purple;
+            Item.rare = ItemRarityID.Expert;
+            Item.value = PriceByRarity.fromItem(Item);
         }
     }
 }

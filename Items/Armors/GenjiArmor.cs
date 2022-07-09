@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Amor from the East, enchanted with magic forces\n-25% mana cost\nSet bonus: +20% Magic Crit, +100 mana, +3 Mana Regen");
+            Tooltip.SetDefault("Armor from the East, enchanted with magic forces\n-25% mana cost\nSet bonus: +20% Magic Crit, +100 mana, +3 Mana Regen");
         }
 
         public override void SetDefaults()
@@ -17,8 +17,8 @@ namespace tsorcRevamp.Items.Armors
             Item.width = 18;
             Item.height = 18;
             Item.defense = 17;
-            Item.value = 7000000;
-            Item.rare = ItemRarityID.Orange;
+            Item.rare = ItemRarityID.Lime;
+            Item.value = PriceByRarity.fromItem(Item);
         }
 
         public override void UpdateEquip(Player player)
