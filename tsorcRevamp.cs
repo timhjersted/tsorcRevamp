@@ -582,6 +582,7 @@ namespace tsorcRevamp
                 ItemID.MechanicalEye,
                 ItemID.MechanicalSkull,
                 ItemID.MechanicalWorm,
+                ItemID.FireWhip,
         };
             #endregion
             //--------
