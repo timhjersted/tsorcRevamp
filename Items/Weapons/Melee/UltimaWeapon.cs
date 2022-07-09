@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         static Texture2D baseTexture;
         public override bool? UseItem(Player player)
         {
-            Item.scale *= player.GetAttackSpeed(DamageClass.Melee);
+            //Item.scale *= player.GetAttackSpeed(DamageClass.Melee);
             return base.UseItem(player);
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
