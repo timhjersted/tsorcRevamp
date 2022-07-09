@@ -156,8 +156,20 @@ namespace tsorcRevamp
         private static Item Player_QuickGrapple_GetItemToUse(On.Terraria.Player.orig_QuickGrapple_GetItemToUse orig, Player self)
         {
             Item item = null;
-            if (Main.projHook[self.miscEquips[4].shoot] || self.miscEquips[4].type != ItemID.SlimeHook)
-                item = self.miscEquips[4];
+
+            bool restrictedHook = false;
+            if (self.miscEquips[4].type == ItemID.SlimeHook || self.miscEquips[4].type == ItemID.SquirrelHook)
+            {
+                restrictedHook = true;
+            }
+
+            if (Main.projHook[self.miscEquips[4].shoot])
+            {
+                if (NPC.downedBoss3 || !restrictedHook || !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+                {
+                    item = self.miscEquips[4];
+                }
+            }
 
             if (item == null)
             {
@@ -165,7 +177,12 @@ namespace tsorcRevamp
                 {
                     if (Main.projHook[self.inventory[i].shoot])
                     {
-                        if (NPC.downedBoss3 || self.inventory[i].type != ItemID.SlimeHook)
+                        restrictedHook = false;
+                        if(self.inventory[i].type == ItemID.SlimeHook || self.inventory[i].type == ItemID.SquirrelHook)
+                        {
+                            restrictedHook = true;
+                        }
+                        if (NPC.downedBoss3 || !restrictedHook || !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                         {
                             item = self.inventory[i];
                             break;

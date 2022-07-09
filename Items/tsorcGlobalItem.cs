@@ -21,11 +21,7 @@ namespace tsorcRevamp.Items
 
         public override bool CanUseItem(Item item, Player player)
         {
-            if(item.type == ItemID.Picksaw && !tsorcRevampWorld.SuperHardMode)
-            {
-                return false;
-            }
-            if (item.type == ItemID.SlimeHook && !tsorcRevampWorld.SuperHardMode)
+            if(item.type == ItemID.Picksaw && !tsorcRevampWorld.SuperHardMode && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 return false;
             }
@@ -80,10 +76,14 @@ namespace tsorcRevamp.Items
         
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
-            if (item.type == ItemID.Picksaw && !tsorcRevampWorld.SuperHardMode)
+            if(item.type == ItemID.DirtRod && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "[c/fc1c03:This item is disabled in adventure mode!]."));
+            }
+            if (item.type == ItemID.Picksaw && !tsorcRevampWorld.SuperHardMode && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] by [c/aa00ff:Attraidies]"));
-                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "It can not be used while he still lives..."));
+                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "The only thing that will break it is his death..."));
             }
 
             if (item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0)
@@ -96,9 +96,9 @@ namespace tsorcRevamp.Items
             }
 
             
-            if (item.type == ItemID.SlimeHook && !tsorcRevampWorld.SuperHardMode)
+            if ((item.type == ItemID.SlimeHook || item.type == ItemID.SquirrelHook) && !NPC.downedBoss3 && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] and can't be used"));
+                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] and can't be used yet"));
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "You can see a strange [c/878787:skull] symbol glowing on its surface..."));
             }
 
