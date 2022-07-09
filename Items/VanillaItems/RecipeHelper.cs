@@ -134,14 +134,14 @@ namespace tsorcRevamp
             RecipeRemover(ItemID.MechanicalSkull);
             RecipeRemover(ItemID.MechanicalWorm);
 
-            RecipeIngredientAdder(ItemID.IvyWhip, ItemID.SoulofNight, 6);
-            RecipeIngredientAdder(ItemID.GrapplingHook, ItemID.SoulofNight, 6);
-            RecipeIngredientAdder(ItemID.AmethystHook, ItemID.SoulofNight, 6);
-            RecipeIngredientAdder(ItemID.TopazHook, ItemID.SoulofNight, 6);
-            RecipeIngredientAdder(ItemID.SapphireHook, ItemID.SoulofNight, 6);
-            RecipeIngredientAdder(ItemID.EmeraldHook, ItemID.SoulofNight, 6);
-            RecipeIngredientAdder(ItemID.RubyHook, ItemID.SoulofNight, 6);
-            RecipeIngredientAdder(ItemID.DiamondHook, ItemID.SoulofNight, 6);
+            RecipeIngredientAdder(ItemID.IvyWhip, ItemID.BeeWax, 1);
+            RecipeIngredientAdder(ItemID.GrapplingHook, ItemID.BeeWax, 1);
+            RecipeIngredientAdder(ItemID.AmethystHook, ItemID.BeeWax, 1);
+            RecipeIngredientAdder(ItemID.TopazHook, ItemID.BeeWax, 1);
+            RecipeIngredientAdder(ItemID.SapphireHook, ItemID.BeeWax, 1);
+            RecipeIngredientAdder(ItemID.EmeraldHook, ItemID.BeeWax, 1);
+            RecipeIngredientAdder(ItemID.RubyHook, ItemID.BeeWax, 1);
+            RecipeIngredientAdder(ItemID.DiamondHook, ItemID.BeeWax, 1);
 
             RecipeIngredientAdder(ItemID.AmethystRobe, ModContent.ItemType<Items.DarkSoul>(), 550);
             RecipeIngredientAdder(ItemID.TopazRobe, ModContent.ItemType<Items.DarkSoul>(), 600);
