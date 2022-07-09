@@ -11,13 +11,13 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases ranged crit by 10%\nSet bonus: +5% Ranged Damage, 20% less chance to consume ammo");
+            Tooltip.SetDefault("Increases ranged crit by 10%");
         }
         public override void SetDefaults()
         {
             Item.width = 20;
             Item.height = 26;
-            Item.defense = 3;
+            Item.defense = 2;
             Item.rare = ItemRarityID.Green;
             Item.value = PriceByRarity.fromItem(Item);
         }

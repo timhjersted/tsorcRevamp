@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Dazzling armor cut from crystal\nIncreases whip damage by 10%\nSet Bonus: Increases whip range by 50% and speed by 25%" +
-                "Set Bonus: When health falls below 166, gain 10% minion damage + 10% whip damage on top and 20% whip speed");
+                "\nSet Bonus: When health falls below 166, gain 10% minion damage + 10% whip damage on top and 20% whip speed");
         }
 
         public override void SetDefaults()

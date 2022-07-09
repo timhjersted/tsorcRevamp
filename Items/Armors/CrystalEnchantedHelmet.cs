@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Dazzling armor cut from crystal\nIncreases minion damage by 10%\nIncreases your max number of minions by 1\nSet Bonus: Increases your max number of minions and turrets by 1" +
-                               "Increases minion damage by 10%\nWhen health falls below 166, gain 10% minion damage + 7 flat");
+                               "\nIncreases minion damage by 10%\nWhen health falls below 166, gain 10% minion damage + 7 flat");
         }
         public override void SetDefaults()
         {
