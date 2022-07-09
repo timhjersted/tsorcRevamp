@@ -495,7 +495,8 @@ namespace tsorcRevamp
                 TileID.VineRope,
                 TileID.SilkRope,
                 TileID.WebRope,
-                TileID.LunarMonolith //410
+                TileID.LunarMonolith, //410
+                TileID.ProjectilePressurePad
             };
             #endregion
             //--------
