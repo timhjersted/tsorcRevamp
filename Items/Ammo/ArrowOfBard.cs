@@ -44,7 +44,5 @@ namespace tsorcRevamp.Items.Ammo
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }
-
-
     }
 }
