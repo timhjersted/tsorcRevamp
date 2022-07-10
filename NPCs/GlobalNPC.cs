@@ -222,7 +222,14 @@ namespace tsorcRevamp.NPCs
 
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
         {
-            if(player.statLifeMax2 <= 120)
+            //reduces spawns by 40% until player exceeds 160 health
+            if(player.statLifeMax2 <= 160)
+            {
+                spawnRate = (int)(spawnRate * 1.4f);
+                maxSpawns = (int)(maxSpawns * 0.6f);
+            }
+            //reduces spawns by 20% after 160 health
+            if (player.statLifeMax2 > 160 && player.statLifeMax2 <= 200)
             {
                 spawnRate = (int)(spawnRate * 1.2f);
                 maxSpawns = (int)(maxSpawns * 0.8f);
