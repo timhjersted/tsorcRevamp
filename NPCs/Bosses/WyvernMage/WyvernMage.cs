@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             Main.npcFrameCount[NPC.type] = 3;
             NPC.width = 28;
             NPC.height = 44;
-            NPC.damage = 20;
+            NPC.damage = 90;
             NPC.defense = 20;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
@@ -43,8 +43,8 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         }
 
         bool OptionSpawned = false;
-        int frozenSawDamage = 45;
-        int lightningDamage = 65;
+        int frozenSawDamage = 55;
+        int lightningDamage = 75;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             frozenSawDamage = (int)(frozenSawDamage * 1.3 / 2);
