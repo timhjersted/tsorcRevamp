@@ -1015,22 +1015,6 @@ namespace tsorcRevamp.NPCs
                         break;
                     }
 
-                case (NPCID.LightMummy):
-                    {
-                        npc.knockBackResist = 0.35f;
-                        npc.damage = 85;
-                        npc.value = 10;
-                        break;
-                    }
-
-                case (NPCID.DarkMummy):
-                    {
-                        npc.knockBackResist = 0.2f;
-                        npc.damage = 70;
-                        npc.value = 10;
-                        break;
-                    }
-
                 case (NPCID.Corruptor):
                     {
                         npc.value = 10;
