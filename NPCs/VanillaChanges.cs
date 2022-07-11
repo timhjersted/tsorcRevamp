@@ -2341,7 +2341,7 @@ namespace tsorcRevamp.NPCs
                 || goblinarmy == NPCID.GoblinArcher
                     ):
                     {
-                        npc.value = 500; // x/10 * (80+[y*40]) (x = value, y = player count) for approximate total soul drops per army 
+                        npc.value = 420; // x/10 * (80+[y*40]) (x = value, y = player count) for approximate total soul drops per army 
 
                         if (npc.type == NPCID.GoblinPeon)
                         {
@@ -2390,13 +2390,13 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.GoblinSummoner):
                     {
-                        npc.value = 25690;
+                        npc.value = 15690;
                         break;
                     }
 
                 case (NPCID.ShadowFlameApparition):
                     {
-                        npc.value = 3560;
+                        npc.value = 2560;
                         break;
                     }
 
@@ -2472,13 +2472,13 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2DarkMageT1):
                     {
-                        npc.value = 11350;
+                        npc.value = 6350;
                         break;
                     }
 
                 case (NPCID.DD2DarkMageT3):
                     {
-                        npc.value = 22730;
+                        npc.value = 16730;
                         break;
                     }
 
@@ -2496,7 +2496,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2WitherBeastT2):
                     {
-                        npc.value = 16090;
+                        npc.value = 9090;
                         break;
                     }
 
@@ -2508,13 +2508,13 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2DrakinT2):
                     {
-                        npc.value = 11970;
+                        npc.value = 8970;
                         break;
                     }
 
                 case (NPCID.DD2DrakinT3):
                     {
-                        npc.value = 25010;
+                        npc.value = 19010;
                         break;
                     }
 
@@ -2544,13 +2544,13 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2OgreT2):
                     {
-                        npc.value = 35390;
+                        npc.value = 27390;
                         break;
                     }
 
                 case (NPCID.DD2OgreT3):
                     {
-                        npc.value = 47890;
+                        npc.value = 35890;
                         break;
                     }
 
@@ -2608,32 +2608,32 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.Butcher):
                     {
-                        npc.value = 10210;
+                        npc.value = 6210;
                         break;
                     }
 
                 case (NPCID.CreatureFromTheDeep):
                     {
-                        npc.value = 7380;
+                        npc.value = 4380;
                         break;
                     }
 
                 case (NPCID.Fritz):
                     {
-                        npc.value = 6730;
+                        npc.value = 3730;
                         break;
                     }
 
                 case (NPCID.Nailhead):
                     {
-                        npc.value = 40940;
+                        npc.value = 20940;
                         break;
                     }
 
                 case (NPCID.Psycho):
                     {
                         npc.damage = 250;
-                        npc.value = 8520;
+                        npc.value = 5520;
                         break;
                     }
 
@@ -2642,19 +2642,19 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = 25;
                         npc.defense = 300;
                         npc.damage = 200;
-                        npc.value = 9540;
+                        npc.value = 6540;
                         break;
                     }
 
                 case (NPCID.DrManFly):
                     {
-                        npc.value = 11120;
+                        npc.value = 6120;
                         break;
                     }
 
                 case (NPCID.ThePossessed):
                     {
-                        npc.value = 9100;
+                        npc.value = 7100;
                         break;
                     }
 
@@ -2662,31 +2662,31 @@ namespace tsorcRevamp.NPCs
                                         (vampire >= NPCID.VampireBat && vampire <= NPCID.Vampire)
                                         ):
                     {
-                        npc.value = 9840;
+                        npc.value = 6840;
                         break;
                     }
 
                 case (NPCID.Frankenstein):
                     {
-                        npc.value = 6890;
+                        npc.value = 4890;
                         break;
                     }
 
                 case (NPCID.SwampThing):
                     {
-                        npc.value = 5400;
+                        npc.value = 3400;
                         break;
                     }
 
                 case (NPCID.Reaper):
                     {
-                        npc.value = 7210;
+                        npc.value = 4210;
                         break;
                     }
 
                 case (NPCID.Eyezor):
                     {
-                        npc.value = 16420;
+                        npc.value = 10420;
                         break;
                     }
 
@@ -2695,7 +2695,7 @@ namespace tsorcRevamp.NPCs
                         npc.value = 3250;
                         if (npc.type == NPCID.Mothron)
                         {
-                            npc.value = 78380;
+                            npc.value = 48380;
                         }
                         break;
                     }
