@@ -1646,7 +1646,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 66;
                         npc.knockBackResist = 0.05f;
                         npc.scale = 0.7f;
-                        npc.value = 44000;
+                        npc.value = 22000;
                         break;
                     }
 
@@ -3130,7 +3130,6 @@ namespace tsorcRevamp.NPCs
                 if (npc.type == NPCID.BigRainZombie
                         || npc.type == NPCID.SmallRainZombie
                         || npc.type == NPCID.ZombieRaincoat
-                        || npc.type == NPCID.Clown
                         || npc.type == NPCID.UmbrellaSlime
                         || npc.type == NPCID.BigHeadacheSkeleton
                         || npc.type == NPCID.SmallHeadacheSkeleton
@@ -3139,11 +3138,8 @@ namespace tsorcRevamp.NPCs
                         || npc.type == NPCID.BlueSlime
                         || npc.type == NPCID.GreenSlime
                         || npc.type == NPCID.TheGroom
-                        || npc.type == NPCID.Unicorn
                         || npc.type == NPCID.SantaClaus
-                        || npc.type == NPCID.SnowmanGangsta
-                        || npc.type == NPCID.MisterStabby
-                        || npc.type == NPCID.SnowBalla
+                        || npc.type == NPCID.Unicorn
                         || npc.type == NPCID.ZombieEskimo
                         || npc.type == NPCID.PigronCorruption
                         || npc.type == NPCID.PigronHallow
@@ -3156,7 +3152,6 @@ namespace tsorcRevamp.NPCs
                         || npc.type == NPCID.SkeletonSniper
                         || npc.type == NPCID.TacticalSkeleton
                         || npc.type == NPCID.HoppinJack
-                        || npc.type == NPCID.ZombieDoctor
                         || npc.type == NPCID.SkeletonTopHat
                         || npc.type == NPCID.SkeletonAstonaut
                         || npc.type == NPCID.ZombieSuperman
@@ -3167,19 +3162,14 @@ namespace tsorcRevamp.NPCs
                         || npc.type == NPCID.SlimeRibbonGreen
                         || npc.type == NPCID.SlimeRibbonRed
                         || npc.type == NPCID.BunnyXmas
-                        || npc.type == NPCID.ZombieElf
-                        || npc.type == NPCID.ZombieElfBeard
-                        || npc.type == NPCID.ZombieElfGirl
                         || npc.type == NPCID.ArmedZombieEskimo
                         || npc.type == NPCID.ArmedZombieSlimed
                         || npc.type == NPCID.BoneThrowingSkeleton2
                         || npc.type == NPCID.BoneThrowingSkeleton3
                         || npc.type == NPCID.Butcher
-                        || npc.type == NPCID.BloodZombie
                         || npc.type == NPCID.TheBride
                         || npc.type == NPCID.MartianProbe
-                        //|| npc.type == NPCID.WindyBalloon
-                        || npc.type == NPCID.UmbrellaSlime
+                        || npc.type == NPCID.WindyBalloon
                         || npc.type == NPCID.ToxicSludge
                         || npc.type == NPCID.BloodCrawlerWall
                         || npc.type == NPCID.BoundGoblin
