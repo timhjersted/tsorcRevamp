@@ -1628,7 +1628,7 @@ namespace tsorcRevamp.NPCs
                         npc.defense = 20;
                         npc.knockBackResist = 0f;
                         npc.scale = 0.75f;
-                        npc.value = 77770;
+                        npc.value = 65490;
                         break;
                     }
 
@@ -1646,7 +1646,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 66;
                         npc.knockBackResist = 0.05f;
                         npc.scale = 0.7f;
-                        npc.value = 22000;
+                        npc.value = 44000;
                         break;
                     }
 
@@ -1658,14 +1658,14 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.damage = 50;
                         npc.lifeMax = 4000;
-                        npc.value = 100910;
+                        npc.value = 50910;
                         npc.defense = 35;
                         break;
                     }
 
                 case (NPCID.ChatteringTeethBomb):
                     {
-                        npc.value = 130;
+                        npc.value = 1300;
                         break;
                     }
 
@@ -1688,7 +1688,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.lifeMax = 2000;
                         npc.damage = 80;
-                        npc.value = 85580;
+                        npc.value = 65580;
                         npc.defense = 60;
                         npc.knockBackResist = 0.1f;
                         break;
@@ -1700,69 +1700,69 @@ namespace tsorcRevamp.NPCs
                         {
                             npc.damage = 80;
                         }
-                        npc.value = 76590;
+                        npc.value = 46590;
                         break;
                     }
 
                 case (NPCID.RuneWizard):
                     {
-                        npc.value = 77530;
+                        npc.value = 67530;
                         break;
                     }
 
                 case (NPCID.RockGolem):
                     {
-                        npc.value = 15750;
+                        npc.value = 8750;
                         break;
                     }
 
                 case (NPCID.Moth):
                     {
-                        npc.value = 13450;
+                        npc.value = 9450;
                         break;
                     }
 
                 case (NPCID.Medusa):
                     {
-                        npc.value = 30410;
+                        npc.value = 15410;
                         break;
                     }
 
                 case (NPCID.IceGolem):
                     {
                         npc.lifeMax = 6000;
-                        npc.value = 35240;
+                        npc.value = 30240;
                         break;
                     }
 
                 case (NPCID.SandElemental):
                     {
                         npc.lifeMax = 7000;
-                        npc.value = 44630;
+                        npc.value = 37630;
                         break;
                     }
 
                 case (NPCID.Mimic):
                     {
-                        npc.value = 15550;
+                        npc.value = 9550;
                         break;
                     }
 
                 case (NPCID.IceMimic):
                     {
-                        npc.value = 17770;
+                        npc.value = 12220;
                         break;
                     }
 
                 case int biomemimic when ((biomemimic >= NPCID.BigMimicCorruption && biomemimic <= NPCID.BigMimicJungle)):
                     {
-                        npc.value = 35400;
+                        npc.value = 21400;
                         break;
                     }
 
                 case (NPCID.Paladin):
                     {
-                        npc.value = 67390;
+                        npc.value = 47390;
                         break;
                     }
 
