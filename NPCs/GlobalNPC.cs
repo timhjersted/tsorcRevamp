@@ -82,7 +82,7 @@ namespace tsorcRevamp.NPCs
             if (spawnInfo.Player.ZoneJungle && !Main.hardMode)
             {
                 //pool.Add(the type of the npc, what chance you want it to spawn with);
-                pool.Add(NPCID.LostGirl, 0.02f);
+                pool.Add(NPCID.LostGirl, 0.005f);
                 pool.Add(NPCID.Salamander2, 0.03f);
             }
             //corrupt (not in water)
