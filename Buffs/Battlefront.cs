@@ -8,20 +8,15 @@ namespace tsorcRevamp.Buffs
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Battlefront");
-            Description.SetDefault("You feel ready for battle");
+            Description.SetDefault("You've never felt more ready for a fight...");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.statDefense += 17;
-            player.GetDamage(DamageClass.Generic) += 0.3f;
-            player.GetCritChance(DamageClass.Magic) += 6;
-            player.GetCritChance(DamageClass.Melee) += 6;
-            player.GetCritChance(DamageClass.Ranged) += 6;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.2f;
-            player.pickSpeed += 0.2f;
+            player.GetDamage(DamageClass.Generic) += 0.25f;
+            player.GetCritChance(DamageClass.Generic) += 25;
             player.thorns += 2f;
             player.enemySpawns = true;
         }

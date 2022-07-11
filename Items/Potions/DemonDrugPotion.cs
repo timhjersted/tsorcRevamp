@@ -9,9 +9,8 @@ namespace tsorcRevamp.Items.Potions
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Demon Drug");
-            Tooltip.SetDefault("Increases damage by 20% for 3 minutes\n" +
-                                "However, also lowers defence by 20\n" +
-                                "Does not stack with Armor Drug, Strength, or Battlefront Potions.");
+            Tooltip.SetDefault("Multiplies damage by 20%, lowers defense by 30\n" +
+                               "Does not stack with Armor Drug, Strength, or Battlefront Potions.");
         }
 
         public override void SetDefaults()
@@ -28,7 +27,7 @@ namespace tsorcRevamp.Items.Potions
             Item.rare = ItemRarityID.Blue;
             Item.value = 300000;
             Item.buffType = ModContent.BuffType<Buffs.DemonDrug>();
-            Item.buffTime = 10800;
+            Item.buffTime = 28800;
         }
         public override bool? UseItem(Player player)
         {
@@ -46,8 +45,11 @@ namespace tsorcRevamp.Items.Potions
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.BottledWater, 1);
+            Terraria.Recipe recipe = CreateRecipe(4);
+            recipe.AddIngredient(ItemID.MagicPowerPotion, 4);
+            recipe.AddIngredient(ItemID.ArcheryPotion, 4);
+            recipe.AddIngredient(ItemID.Ale, 4);
+            recipe.AddIngredient(ItemID.SummoningPotion, 4);
             recipe.AddIngredient(ItemID.SoulofNight, 4);
             recipe.AddTile(TileID.Bottles);
 

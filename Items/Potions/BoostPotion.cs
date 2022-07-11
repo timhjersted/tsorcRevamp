@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases critical strike chance by 5%");
+            Tooltip.SetDefault("Multiplies your movement speed by 20%");
 
         }
 
@@ -25,16 +25,17 @@ namespace tsorcRevamp.Items.Potions
             Item.rare = ItemRarityID.Blue;
             Item.value = 5000;
             Item.buffType = ModContent.BuffType<Buffs.Boost>();
-            Item.buffTime = 14400;
+            Item.buffTime = 18000;
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe(5);
-            recipe.AddIngredient(ItemID.BattlePotion, 5);
-            recipe.AddIngredient(ItemID.Deathweed, 5);
-            recipe.AddIngredient(ItemID.Gel, 5);
-            recipe.AddIngredient(ItemID.SoulofLight, 1);
+            Terraria.Recipe recipe = CreateRecipe(4);
+            recipe.AddIngredient(ItemID.SwiftnessPotion, 4);
+            recipe.AddIngredient(ItemID.Deathweed, 4);
+            recipe.AddIngredient(ItemID.Gel, 4);
+            recipe.AddIngredient(ItemID.SoulofLight, 4);
             recipe.AddTile(TileID.Bottles);
+
             recipe.Register();
         }
     }

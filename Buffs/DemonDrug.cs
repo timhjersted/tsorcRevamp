@@ -7,16 +7,16 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Demon Drug");
-            Description.SetDefault("Damage is increased by 20%, defense is lowered by 20");
+            DisplayName.SetDefault("Demonic Might");
+            Description.SetDefault("Your body can barely handle it...");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.GetDamage(DamageClass.Generic) += 0.2f;
-            player.statDefense -= 20;
+            player.GetDamage(DamageClass.Generic) *= 1.2f;
+            player.statDefense -= 30;
         }
     }
 }

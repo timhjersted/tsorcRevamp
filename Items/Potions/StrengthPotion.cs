@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases damage by 15%, critical strike chance " +
-                             "\nby 2%, defense by 15, and swing speed by 15%." +
+            Tooltip.SetDefault("Increases damage by 15%," +
+                             "\ndefense by 15, and all attack speed by 10%" +
                              "\nDoes not stack with Demon Drug, Armor Drug, or Battlefront Potions.");
         }
 
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Potions
             Item.rare = ItemRarityID.Blue;
             Item.value = 1000;
             Item.buffType = ModContent.BuffType<Buffs.Strength>();
-            Item.buffTime = 36000;
+            Item.buffTime = 28800;
         }
         public override bool? UseItem(Player player)
         {
@@ -45,11 +45,11 @@ namespace tsorcRevamp.Items.Potions
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.BottledWater, 1);
-            recipe.AddIngredient(ItemID.Deathweed, 1);
-            recipe.AddIngredient(ItemID.Diamond, 1);
-            recipe.AddIngredient(ItemID.SoulofNight, 1);
+            Terraria.Recipe recipe = CreateRecipe(4);
+            recipe.AddIngredient(ItemID.Teacup, 4);
+            recipe.AddIngredient(ItemID.Deathweed, 4);
+            recipe.AddIngredient(ItemID.Diamond, 4);
+            recipe.AddIngredient(ItemID.SoulofNight, 4);
             recipe.AddTile(TileID.Bottles);
 
             recipe.Register();

@@ -7,15 +7,16 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Armor Drug");
-            Description.SetDefault("Defense is increased by 13!");
+            DisplayName.SetDefault("Demonic Scales");
+            Description.SetDefault("Your skin is covered with hard scales...");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.statDefense += 13;
+            player.statDefense += 15;
+            player.endurance += 0.15f;
         }
     }
 }

@@ -8,10 +8,9 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases damage by 30%, critical strike chance " +
-                             "\nby 6%, defense by 12, and swing speed by 20%." +
-                              "\nAlso gives Thorns and Battle potion effects." +
-                             "\nDoes not stack with Demon Drug, Armor Drug, or Strength Potions.");
+            Tooltip.SetDefault("Increases damage and critical strike chance by 25%" +
+                               "\nGrants enhanced Thorns and the Battle potion effect" +
+                               "\nDoes not stack with Demon Drug, Armor Drug, or Strength Potions.");
         }
 
         public override void SetDefaults()
@@ -47,15 +46,12 @@ namespace tsorcRevamp.Items.Potions
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.BattlePotion, 1);
-            recipe.AddIngredient(ItemID.ThornsPotion, 1);
-            recipe.AddIngredient(ItemID.IronskinPotion, 1);
-            recipe.AddIngredient(ItemID.ArcheryPotion, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("BoostPotion").Type, 1);
-            recipe.AddIngredient(ModContent.ItemType<StrengthPotion>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<ArmorDrugPotion>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DemonDrugPotion>(), 1);
+            Terraria.Recipe recipe = CreateRecipe(4);
+            recipe.AddIngredient(ItemID.BattlePotion, 4);
+            recipe.AddIngredient(ItemID.ThornsPotion, 4);
+            recipe.AddIngredient(ItemID.WrathPotion, 4);
+            recipe.AddIngredient(ItemID.RagePotion, 4);
+            recipe.AddIngredient(ItemID.SoulofNight, 4);
             recipe.AddTile(TileID.Bottles);
 
             recipe.Register();

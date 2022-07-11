@@ -8,7 +8,7 @@ namespace tsorcRevamp.Buffs
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Strength");
-            Description.SetDefault("You feel much stronger");
+            Description.SetDefault("You feel as if you could break the world in two, with your bare hands...");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }
@@ -17,11 +17,7 @@ namespace tsorcRevamp.Buffs
         {
             player.statDefense += 15;
             player.GetDamage(DamageClass.Generic) += 0.15f;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.15f;
-            player.pickSpeed += 0.15f;
-            player.GetCritChance(DamageClass.Magic) += 2;
-            player.GetCritChance(DamageClass.Melee) += 2;
-            player.GetCritChance(DamageClass.Ranged) += 2;
+            player.GetAttackSpeed(DamageClass.Generic) += 0.1f;
         }
     }
 }

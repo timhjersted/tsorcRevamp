@@ -1873,7 +1873,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.Creeper):
                     {
-                        npc.value = 11110;
+                        npc.value = 1110;
                         break;
                     }
                 #endregion

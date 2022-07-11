@@ -8,16 +8,14 @@ namespace tsorcRevamp.Buffs
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Boost");
-            Description.SetDefault("Increased critical strike chance");
+            Description.SetDefault("Increased movement speed");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.GetCritChance(DamageClass.Magic) += 5;
-            player.GetCritChance(DamageClass.Melee) += 5;
-            player.GetCritChance(DamageClass.Ranged) += 5;
+            player.moveSpeed *= 1.2f;
         }
     }
 }
