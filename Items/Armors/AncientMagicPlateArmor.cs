@@ -25,14 +25,5 @@ namespace tsorcRevamp.Items.Armors
         {
             player.GetDamage(DamageClass.Ranged).Flat += 2;
         }
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.FossilShirt, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2800);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
-        }
     }
 }

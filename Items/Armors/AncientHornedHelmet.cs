@@ -37,14 +37,5 @@ namespace tsorcRevamp.Items.Armors
             player.GetDamage(DamageClass.Ranged) += 0.1f;
             player.ammoCost75 = true;
         }
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.FossilHelm, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2200);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
-        }
     }
 }

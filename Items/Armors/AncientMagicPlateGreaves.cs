@@ -25,15 +25,6 @@ namespace tsorcRevamp.Items.Armors
         {
             player.moveSpeed += 0.15f;
         }
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.FossilHelm, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2500);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
-        }
     }
 }
 
