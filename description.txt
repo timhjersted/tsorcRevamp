@@ -1,6 +1,6 @@
-The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack. Your journey will span 17 dungeons spread across an expansive and inter-connected world, offering a 15 to 30+ hr experience for a first playthrough.
+The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack. Your 1-4 player journey will span 17 dungeons spread across an expansive and inter-connected world, offering a 15 to 30+ hr experience for a first playthrough.
 
-- The Custom Map will load automatically when you reach the world selection screen.
+- The Custom Map will load automatically when you reach the Select World screen. To create a fresh or updated map, click New on the World screen.
 
 - To download TSORC's Music Mod, click the text prompt you'll see on TML's main menu after enabling this mod.
 
@@ -34,16 +34,18 @@ TSORC holds many secrets. If you have questions, post them to #map-questions or 
 
 GAME MANUAL:
 --------------------------------------------
-*Create a new character named Red Cloud.
+*Create a new character named Red Cloud (for multiplayer, everyone should use a different name).
 
-*Read signs in the order you come to them.
+*Read signs in the order you come to them 
 
-*Read all item tool-tips for hints and game clues, especially mod items.
+*Read all mod item tool-tips for hints and important game clues
 
 *On death, you will drop all your Dark Souls and have one chance to recover them. For a more forgiving experience, you can turn this off in the mod's Config options.
 
-*The new dodge roll action with i-frames will save your life many times throughout your journey. It can be bound to any key in TModLoader's controller settings, under the mod section. (Left Alt by default)
+*The new dodge roll action with i-frames is an essential part of TSORC. It can be bound to any key in TModLoader's controller settings, under the mod section. (Left Alt by default)
 
 *Adventure Mode should stay checked in the TSORC mod config options to play with the custom map.
 
-*Multiplayer is supported but we're still ironing out bugs. Post issues you find under #bug-reports. Thanks! The map supports up to 3 players. Class diversity recommended.
+*Multiplayer is supported for 4 players. Class diversity recommended. Post issues you find under #bug-reports. Thanks! 
+
+*Go to #tips in our Discord for more game hints
