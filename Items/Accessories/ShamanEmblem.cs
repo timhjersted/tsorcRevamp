@@ -1,20 +1,20 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories
 {
-    public class ArchmenEmblem : ModItem
+    public class ShamanEmblem : ModItem
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("15% increased ranged damage + 5 flat");
+            Tooltip.SetDefault("+13% minion damage, +1 minion slot");
         }
 
         public override void SetDefaults()
         {
-            Item.width = 24;
-            Item.height = 24;
+            Item.width = 28;
+            Item.height = 28;
             Item.accessory = true;
             Item.value = PriceByRarity.LightRed_4;
             Item.rare = ItemRarityID.LightRed;
@@ -23,10 +23,10 @@ namespace tsorcRevamp.Items.Accessories
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.RangerEmblem, 1);
-            recipe.AddIngredient(ItemID.MagicQuiver, 1);
-            recipe.AddIngredient(ItemID.SoulofLight, 5);
+            recipe.AddIngredient(ItemID.SummonerEmblem, 1);
+            recipe.AddIngredient(ItemID.PygmyNecklace, 1);
             recipe.AddIngredient(ItemID.MythrilBar, 5);
+            recipe.AddIngredient(ItemID.SoulofNight, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5000);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -35,9 +35,8 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Ranged) += 0.15f;
-            player.GetDamage(DamageClass.Ranged).Flat = 5;
+            player.GetDamage(DamageClass.Summon) += 0.13f;
+            player.maxMinions += 1;
         }
-
     }
 }

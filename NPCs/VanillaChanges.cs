@@ -1824,7 +1824,7 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = 180;
                         npc.damage = 30;
                         npc.defense = 22;
-                        npc.value = 56340;
+                        npc.value = 1;
                         npc.buffImmune[BuffID.Poisoned] = true;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.buffImmune[BuffID.Frostburn] = true;

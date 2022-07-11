@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("25% increased melee damage");
+            Tooltip.SetDefault("14% increased melee damage, 11% melee speed");
         }
 
         public override void SetDefaults()
@@ -24,6 +24,7 @@ namespace tsorcRevamp.Items.Accessories
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.WarriorEmblem, 1);
+            recipe.AddIngredient(ItemID.FeralClaws, 1);
             recipe.AddIngredient(ItemID.MythrilBar, 5);
             recipe.AddIngredient(ItemID.SoulofNight, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5000);
@@ -34,9 +35,8 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.25f;
-
+            player.GetDamage(DamageClass.Melee) += 0.14f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.11f;
         }
-
     }
 }

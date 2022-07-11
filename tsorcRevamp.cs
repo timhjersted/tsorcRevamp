@@ -414,6 +414,7 @@ namespace tsorcRevamp
                 242, //big paintings
                 245, //tall paintings
                 246, //wide paintings
+                254, //pumpkin seeds
                 270, //firefly in a bottle
                 271, //lightning bug in a bottle
                 275, //bunny cage

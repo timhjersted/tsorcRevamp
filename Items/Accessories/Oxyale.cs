@@ -8,8 +8,10 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Gear worn by Dragoons\n" +
-                                "Allows you to breathe underwater and negates water physics");
+            Tooltip.SetDefault("Gear worn by Dragoons" +
+                               "\nIncreases your max minions by 1" +
+                               "\nIncreases your minion damage by 2% for each minion slot you have" +
+                               "\nAllows you to breathe underwater and negates water physics");
 
         }
 
@@ -20,12 +22,14 @@ namespace tsorcRevamp.Items.Accessories
             Item.height = 26;
             Item.accessory = true;
             Item.maxStack = 1;
-            Item.rare = ItemRarityID.Lime; //this thing is *technically* shm tier but wow is it useless at that point, lmao
-            Item.value = PriceByRarity.Lime_7;
+            Item.rare = ItemRarityID.Cyan;
+            Item.value = PriceByRarity.Cyan_9;
         }
-
         public override void UpdateEquip(Player player)
         {
+            player.maxMinions += 1;
+            float oxyale = (float)(0.02 * player.maxMinions);
+            player.GetDamage(DamageClass.Summon) += oxyale;
             if (player.wet)
             {
                 player.gills = true;

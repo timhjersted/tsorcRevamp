@@ -16,8 +16,6 @@ namespace tsorcRevamp.Items.VanillaItems
                 || item.type == ItemID.MechanicalEye
                 || item.type == ItemID.MechanicalSkull
                 || item.type == ItemID.MechanicalWorm
-                || item.type == ItemID.PumpkinMoonMedallion
-                || item.type == ItemID.NaughtyPresent
                 || item.type == ItemID.LihzahrdPowerCell
                 || item.type == ItemID.CelestialSigil
                 )

@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Grand Wizard's Hat");
-            Tooltip.SetDefault("25% increased magic damage, +100 mana");
+            Tooltip.SetDefault("Multiplies magic damage by 10%");
         }
 
         public override void SetDefaults()
@@ -36,8 +36,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Magic) += 0.25f;
-            player.statManaMax2 += 100;
+            player.GetDamage(DamageClass.Magic) *= 1.1f;
         }
 
     }
