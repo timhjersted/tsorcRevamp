@@ -1646,7 +1646,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 66;
                         npc.knockBackResist = 0.05f;
                         npc.scale = 0.7f;
-                        npc.value = 44440;
+                        npc.value = 44000;
                         break;
                     }
 
