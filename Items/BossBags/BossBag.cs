@@ -616,13 +616,7 @@ namespace tsorcRevamp.Items.BossBags
                     {
                         if (Slain[NPCID.QueenBee] == 0)
                         {
-                            int enemyValue = 5000;
-                            float multiplier = tsorcRevampPlayer.CheckSoulsMultiplier(player);
-
-                            int DarkSoulQuantity = (int)(multiplier * enemyValue);
-
-                            StaminaVesselOnFirstBag(NPCID.QueenBee, player);
-                            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
+                            VanillaBossBag.AddBossBagSouls(NPCID.QueenBee, player, false, true);
                             Slain[NPCID.QueenBee] = 1;
                         }
                     };
@@ -708,6 +702,50 @@ namespace tsorcRevamp.Items.BossBags
                             Slain[NPCID.MoonLordCore] = 1;
                         }
                     }
+                }
+                if (arg == ItemID.QueenSlimeBossBag)
+                {
+                    if (Slain.ContainsKey(NPCID.QueenSlimeBoss))
+                    {
+                        if (Slain[NPCID.QueenSlimeBoss] == 0)
+                        {
+                            VanillaBossBag.AddBossBagSouls(NPCID.QueenSlimeBoss, player, false, true);
+                            Slain[NPCID.QueenSlimeBoss] = 1;
+                        }
+                    };
+                }
+                if (arg == ItemID.FairyQueenBossBag)
+                {
+                    if (Slain.ContainsKey(NPCID.HallowBoss))
+                    {
+                        if (Slain[NPCID.HallowBoss] == 0)
+                        {
+                            VanillaBossBag.AddBossBagSouls(NPCID.HallowBoss, player, false, true);
+                            Slain[NPCID.HallowBoss] = 1;
+                        }
+                    };
+                }
+                if (arg == ItemID.BossBagBetsy)
+                {
+                    if (Slain.ContainsKey(NPCID.DD2Betsy))
+                    {
+                        if (Slain[NPCID.DD2Betsy] == 0)
+                        {
+                            VanillaBossBag.AddBossBagSouls(NPCID.DD2Betsy, player, false, true);
+                            Slain[NPCID.DD2Betsy] = 1;
+                        }
+                    };
+                }
+                if (arg == ItemID.DeerclopsBossBag)
+                {
+                    if (Slain.ContainsKey(NPCID.Deerclops))
+                    {
+                        if (Slain[NPCID.Deerclops] == 0)
+                        {
+                            VanillaBossBag.AddBossBagSouls(NPCID.Deerclops, player, false, true);
+                            Slain[NPCID.Deerclops] = 1;
+                        }
+                    };
                 }
             }
         }

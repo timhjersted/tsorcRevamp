@@ -17,6 +17,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Items;
+using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.UI;
 
@@ -386,8 +387,21 @@ namespace tsorcRevamp
                 }
                 Main.spriteBatch.End();
             }
+            Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i] != null && Main.projectile[i].active && Main.projectile[i].ModProjectile is GenericLaser)
+                {
+                    GenericLaser laser = (GenericLaser)Main.projectile[i].ModProjectile;
+                    laser.customContext = true;
 
+                    Color c = Color.White;
+                    laser.PreDraw(ref c);
+                    laser.customContext = false;
+                }
+            }
+            Main.spriteBatch.End();
         }
 
         private static void PotionBagLootAllPatch(On.Terraria.UI.ChestUI.orig_LootAll orig)

@@ -641,7 +641,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.GraniteGolem):
                     {
-                        npc.value 440;
+                        npc.value = 440;
                         break;
                     }
 
@@ -1041,7 +1041,7 @@ namespace tsorcRevamp.NPCs
                         break;
                     }
 
-                case int sandshark when ((sandshark >= NPCID.SandShark && sandshark <= NPCID.SandsharkHallow));
+                case int sandshark when ((sandshark >= NPCID.SandShark && sandshark <= NPCID.SandsharkHallow)):
                     {
                         if (npc.type == NPCID.SandShark)
                         {

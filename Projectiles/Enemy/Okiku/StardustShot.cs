@@ -59,7 +59,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         {
             if (texture == null || texture.IsDisposed)
             {
-                texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/StardustShot");
+                texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/StardustShot", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (Projectile.spriteDirection == -1)
@@ -72,7 +72,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             Vector2 origin = sourceRectangle.Size() / 2f;
             //origin.X = (float)(projectile.spriteDirection == 1 ? sourceRectangle.Width - 20 : 20);
             Color drawColor = Projectile.GetAlpha(lightColor);
-            Main.EntitySpriteDraw(texture,
+            Main.spriteBatch.Draw(texture,
                 Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
                 sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
 
