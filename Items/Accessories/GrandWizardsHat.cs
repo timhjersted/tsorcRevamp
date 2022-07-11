@@ -4,12 +4,15 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories
 {
-    public class GrandWizardsHat : ModItem
+
+    [LegacyName("GrandWizardsHat")]
+    public class EnchantedWizardsHat : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Grand Wizard's Hat");
-            Tooltip.SetDefault("Multiplies magic damage by 10%");
+            DisplayName.SetDefault("Enchanted Wizard's Hat");
+            Tooltip.SetDefault("Multiplies magic damage and boosts by 15%" +
+                "\n+60 Mana");
         }
 
         public override void SetDefaults()
@@ -27,7 +30,7 @@ namespace tsorcRevamp.Items.Accessories
             recipe.AddIngredient(ItemID.SorcererEmblem, 1);
             recipe.AddIngredient(ItemID.WizardHat, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 5);
-            recipe.AddIngredient(ItemID.MythrilBar, 5);
+            recipe.AddIngredient(ItemID.HallowedBar, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5000);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -36,7 +39,8 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Magic) *= 1.1f;
+            player.GetDamage(DamageClass.Magic) *= 1.15f;
+            player.statManaMax2 += 60;
         }
 
     }
