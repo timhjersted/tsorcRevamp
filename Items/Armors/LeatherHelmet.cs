@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases ranged crit by 10%");
+            Tooltip.SetDefault("Increases ranged crit by 8%");
         }
         public override void SetDefaults()
         {
@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Ranged) += 0.1f;
+            player.GetCritChance(DamageClass.Ranged) += 0.08f;
         }
         public override void UpdateArmorSet(Player player)
         {

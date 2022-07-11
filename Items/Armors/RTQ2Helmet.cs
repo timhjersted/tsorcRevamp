@@ -10,14 +10,13 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("10% Less Mana Usage.\nEmergency shield kicks in +15 Defense when health is less than 61");
-            DisplayName.SetDefault("RTQ2 Helmet");
+            Tooltip.SetDefault("Increase magic crit by 10%\nEmergency shield kicks in +15 Defense when health is less than 141");
         }
         public override void SetDefaults()
         {
             Item.width = 18;
             Item.height = 12;
-            Item.defense = 6;
+            Item.defense = 8;
             Item.rare = ItemRarityID.Pink;
             Item.value = PriceByRarity.fromItem(Item);
         }
@@ -29,8 +28,8 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.manaCost -= 0.10f;
-            if (player.statLife <= 60)
+            player.GetCritChance(DamageClass.Magic) += 10;
+            if (player.statLife < 141)
             {
                 player.statDefense += 15;
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 60, (player.velocity.X) + (player.direction * 3), player.velocity.Y, 100, Color.Red, 3.0f);
@@ -40,8 +39,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.GetDamage(DamageClass.Magic) += 0.15f;
-            player.statManaMax2 += 60;
+            player.GetAttackSpeed(DamageClass.Magic) += 0.15f;
             player.spaceGun = true;
 
             int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 60, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Red, 1.0f);
@@ -52,7 +50,6 @@ namespace tsorcRevamp.Items.Armors
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MeteorHelmet, 1);
-            recipe.AddIngredient(ItemID.SoulofLight, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddTile(TileID.DemonAltar);
 
