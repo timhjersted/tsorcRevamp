@@ -13,7 +13,6 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void SetDefaults()
         {
-            Item.vanity = true;
             Item.width = 18;
             Item.height = 18;
             Item.defense = 6;
