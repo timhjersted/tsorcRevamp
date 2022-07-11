@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Essence of Mana");
-            Tooltip.SetDefault("Increases mana by 100.");
+            Tooltip.SetDefault("Increases max mana by 30%");
 
         }
 
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Accessories
         }
         public override void UpdateEquip(Player player)
         {
-            player.statManaMax2 += 100;
+            player.statManaMax2 += (int)(player.statManaMax2 * 1.3f);
         }
 
     }

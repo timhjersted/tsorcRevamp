@@ -9,8 +9,7 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Boots of Haste");
-            Tooltip.SetDefault("Adds 20% speed");
+            Tooltip.SetDefault("Multiplies your movement speed by 10%");
 
         }
 
@@ -36,7 +35,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.2f;
+            player.moveSpeed *= 1.1f;
         }
     }
 }

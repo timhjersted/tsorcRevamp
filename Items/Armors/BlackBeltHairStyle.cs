@@ -36,10 +36,13 @@ namespace tsorcRevamp.Items.Armors
             player.GetAttackSpeed(DamageClass.Melee) += 0.20f;
             player.GetDamage(DamageClass.Melee) += 0.20f;
             player.GetCritChance(DamageClass.Melee) += 7;
-            if (player.statDefense <= 30)
+            if (player.statDefense >= 30)
             {
-                player.lifeRegen += 13;
+                player.statDefense = 30;
             }
+            player.lifeRegen += 13;
+            player.moveSpeed += player.endurance;
+            player.endurance = 0f;
         }
 
         public override void ArmorSetShadows(Player player)

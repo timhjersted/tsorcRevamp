@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Armors
                 "\nThese include: Firewalk, No fall damage, No knockback, rapid pick speed, waterwalk," +
                 "\nreduced potion cooldown, double jump, jump boost, +30 % movement speed," +
                 "\narchery, immunity to fire, and night vision." +
-                "\nLife regen is dispelled if defense is higher than 60.");
+                "\nDefense is capped at 60\nDamage reduction is converted into movement speed");
         }
         public override void SetDefaults()
         {
@@ -50,10 +50,13 @@ namespace tsorcRevamp.Items.Armors
             player.archery = true;
             player.fireWalk = true;
             player.nightVision = true;
-            if (player.statDefense <= 60)
+            if(player.statDefense >=60)
             {
-                player.lifeRegen += 30;
+                player.statDefense = 60;
             }
+            player.lifeRegen += 30;
+            player.moveSpeed += player.endurance;
+            player.endurance = 0f;
         }
         public override void AddRecipes()
         {
