@@ -15,7 +15,7 @@ namespace tsorcRevamp.Buffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.statDefense += 15;
+            player.statDefense += 25;
             player.endurance += 0.15f;
         }
     }

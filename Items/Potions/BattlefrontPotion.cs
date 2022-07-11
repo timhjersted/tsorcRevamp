@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases damage and critical strike chance by 25%" +
+            Tooltip.SetDefault("Increases damage by 15% and critical strike chance by 15%" +
                                "\nGrants enhanced Thorns and the Battle potion effect" +
                                "\nDoes not stack with Demon Drug, Armor Drug, or Strength Potions.");
         }
