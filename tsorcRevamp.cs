@@ -1137,10 +1137,10 @@ namespace tsorcRevamp
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             char separator = Path.DirectorySeparatorChar;
-            string dataDir = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData";
+            string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
             string changelogPath = dataDir + separator + "tsorcChangelog.txt"; //Downloaded changelog from the github
             string curVersionPath = dataDir + separator + "tsorcCurrentVer.txt"; //Stored file recording current map and music mod versions
-            string musicTempPath = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData" + separator + "tsorcMusic.tmod"; //Where the music mod is downloaded to
+            string musicTempPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcMusic.tmod"; //Where the music mod is downloaded to
 
             //Check if the data directory exists, if not then create it
             if (!Directory.Exists(dataDir))
@@ -1271,7 +1271,7 @@ namespace tsorcRevamp
         public bool MapDownload()
         {
             char separator = Path.DirectorySeparatorChar;
-            string filePath = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData" + separator + "tsorcBaseMap.wld";
+            string filePath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcBaseMap.wld";
 
             if (File.Exists(filePath))
             {
@@ -1308,7 +1308,7 @@ namespace tsorcRevamp
             char separator = Path.DirectorySeparatorChar;
             string userMapFileName = separator + "TheStoryofRedCloud.wld";
             string worldsFolder = Main.SavePath + separator + "Worlds";
-            string dataDir = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData";
+            string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
             string baseMapFileName = separator + "tsorcBaseMap.wld";
 
             FileInfo fileToCopy = new FileInfo(dataDir + baseMapFileName);
@@ -1365,7 +1365,7 @@ namespace tsorcRevamp
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
             char separator = Path.DirectorySeparatorChar;
-            string musicTempPath = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData" + separator + "tsorcMusic.tmod"; //Where the music mod is downloaded to
+            string musicTempPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcMusic.tmod"; //Where the music mod is downloaded to
 
             thisLogger.Info("Attempting to download music file.");
             try
@@ -1391,7 +1391,7 @@ namespace tsorcRevamp
 
         public async Task<StreamReader> GetChangelogAsync() {
             char separator = Path.DirectorySeparatorChar;
-            string changelogPath = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData" + separator + "tsorcChangelog.txt";
+            string changelogPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcChangelog.txt";
 
             Logger.Info("Attempting to download changelog.");
             if (File.Exists(changelogPath)) {
@@ -1417,7 +1417,7 @@ namespace tsorcRevamp
         public void CreateDataDirectory()
         {
             char separator = Path.DirectorySeparatorChar;
-            string dataDir = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData";
+            string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
             Logger.Info("Directory " + dataDir + " not found. Creating directory.");
             try
             {
@@ -1449,7 +1449,7 @@ namespace tsorcRevamp
         public static void InstallMusicMod()
         {
             char separator = Path.DirectorySeparatorChar;
-            string musicTempPath = Main.SavePath + separator + "Mod Configs" + separator + "tsorcRevampData" + separator + "tsorcMusic.tmod"; //Where the music mod is downloaded to
+            string musicTempPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcMusic.tmod"; //Where the music mod is downloaded to
             string musicFinalPath = Main.SavePath + separator + "Mods" + separator + "tsorcMusic.tmod"; //Where the music mod should be moved to upon reload
             string configPath = Main.SavePath + separator + "Mods" + separator + "enabled.json"; //Where the config dedicing what mods to load is
 

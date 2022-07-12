@@ -180,7 +180,7 @@ namespace tsorcRevamp.UI
         {
             SoundEngine.PlaySound(SoundID.MenuOpen);
 
-            string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
+            string dataDir = Main.SavePath + "\\ModConfigs\\tsorcRevampData";
 
             string baseMapFileName = "\\tsorcBaseMap.wld";
             string userMapFileName = "\\TheStoryofRedCloud.wld";
