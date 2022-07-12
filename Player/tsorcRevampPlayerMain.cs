@@ -259,9 +259,21 @@ namespace tsorcRevamp
             //you died sound                    \
             Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/you-died") with { Volume = 0.4f }, Player.Center);
 
-            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.statLifeMax > 200)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.statLifeMax > 215)
             {
                 Player.statLifeMax -= 20;
+            }
+            else if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.statLifeMax == 215)
+            {
+                Player.statLifeMax -= 15;
+            }
+            else if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.statLifeMax == 210)
+            {
+                Player.statLifeMax -= 10;
+            }
+            else if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.statLifeMax == 205)
+            {
+                Player.statLifeMax -= 5;
             }
 
 
