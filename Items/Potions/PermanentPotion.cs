@@ -444,6 +444,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetDamage(DamageClass.Melee) += 0.1f;
             player.GetCritChance(DamageClass.Melee) += 2;
             player.GetAttackSpeed(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
         }
     }
 
@@ -463,6 +464,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 1;
             player.GetDamage(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
         }
     }
     public class PermanentFlaskOfCursedFlames : PermanentPotion
@@ -481,6 +483,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 2;
             player.GetDamage(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
         }
     }
 
@@ -500,6 +503,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 3;
             player.GetDamage(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
         }
     }
 
@@ -519,6 +523,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 4;
             player.GetDamage(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
         }
     }
 
@@ -538,6 +543,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 5;
             player.GetDamage(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
         }
     }
 
@@ -557,6 +563,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 6;
             player.GetDamage(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
         }
     }
 
@@ -576,6 +583,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 7;
             player.GetDamage(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
         }
     }
 
@@ -595,6 +603,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 8;
             player.GetDamage(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
         }
     }
 
@@ -968,7 +977,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
-            player.statDefense += 13;
+            player.statDefense += 25;
+            player.endurance += 0.15f;
         }
     }
 
@@ -986,13 +996,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
-            player.statDefense += 17;
-            player.GetDamage(DamageClass.Generic) += 0.3f;
-            player.GetCritChance(DamageClass.Magic) += 6;
-            player.GetCritChance(DamageClass.Melee) += 6;
-            player.GetCritChance(DamageClass.Ranged) += 6;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.2f;
-            player.pickSpeed += 0.2f;
+            player.GetDamage(DamageClass.Generic) += 0.15f;
+            player.GetCritChance(DamageClass.Generic) += 15;
             player.thorns += 2f;
             player.enemySpawns = true;
         }
@@ -1011,9 +1016,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
-            player.GetCritChance(DamageClass.Magic) += 5;
-            player.GetCritChance(DamageClass.Melee) += 5;
-            player.GetCritChance(DamageClass.Ranged) += 5;
+            player.moveSpeed *= 1.2f;
         }
     }
 
@@ -1049,7 +1052,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
-            player.GetDamage(DamageClass.Generic) += 0.2f;
+            player.GetDamage(DamageClass.Generic) *= 1.22f;
+            player.statDefense -= 15;
         }
     }
 
@@ -1085,12 +1089,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.statDefense += 15;
-            player.GetDamage(DamageClass.Generic) += 0.15f;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.15f;
-            player.pickSpeed += 0.15f;
-            player.GetCritChance(DamageClass.Magic) += 2;
-            player.GetCritChance(DamageClass.Melee) += 2;
-            player.GetCritChance(DamageClass.Ranged) += 2;
+            player.GetDamage(DamageClass.Generic) += 0.1f;
+            player.GetAttackSpeed(DamageClass.Generic) += 0.15f;
         }
     }
 
@@ -1131,13 +1131,12 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.wellFed = true;
             player.statDefense += 3;
-            player.GetCritChance(DamageClass.Melee) += 3;
-            player.GetCritChance(DamageClass.Ranged) += 3;
-            player.GetCritChance(DamageClass.Magic) += 3;
+            player.GetCritChance(DamageClass.Generic) += 3;
             player.GetAttackSpeed(DamageClass.Melee) += 0.075f;
             player.GetDamage(DamageClass.Generic) += 0.075f;
             player.GetKnockback(DamageClass.Summon) += 0.75f;
             player.moveSpeed += 0.30f;
+            player.pickSpeed += 0.1f;
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.2f;
         }
     }
@@ -1154,14 +1153,12 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player) {
             player.wellFed = true;
             player.statDefense += 2;
-            player.GetCritChance(DamageClass.Melee) += 2;
-            player.GetCritChance(DamageClass.Ranged) += 2;
-            player.GetCritChance(DamageClass.Magic) += 2;
+            player.GetCritChance(DamageClass.Generic) += 2;
             player.GetAttackSpeed(DamageClass.Melee) += 0.05f;
             player.GetDamage(DamageClass.Generic) += 0.05f;
             player.GetKnockback(DamageClass.Summon) += 0.5f;
             player.moveSpeed += 0.20f;
-            player.pickSpeed -= 0.1f;
+            player.pickSpeed -= 0.05f;
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f;
         }
     }
@@ -1179,10 +1176,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player) {
             player.wellFed = true;
-            player.statDefense += 2;
-            player.GetCritChance(DamageClass.Melee) += 4;
-            player.GetCritChance(DamageClass.Ranged) += 4;
-            player.GetCritChance(DamageClass.Magic) += 4;
+            player.statDefense += 4;
+            player.GetCritChance(DamageClass.Generic) += 4;
             player.GetAttackSpeed(DamageClass.Melee) += 0.1f;
             player.GetDamage(DamageClass.Generic) += 0.1f;
             player.GetKnockback(DamageClass.Summon) += 1f;

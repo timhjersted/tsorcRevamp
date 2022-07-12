@@ -1258,7 +1258,10 @@ namespace tsorcRevamp
 
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                Player.GetDamage(DamageClass.Generic) *= 1.2f;
+                Player.GetDamage(DamageClass.Melee) *= 1.2f;
+                Player.GetDamage(DamageClass.Ranged) *= 1.2f;
+                Player.GetDamage(DamageClass.Magic) *= 1.2f;
+                Player.GetDamage(DamageClass.SummonMeleeSpeed) *= 1.2f;
 
                 if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().minionStaminaCap)
                 {

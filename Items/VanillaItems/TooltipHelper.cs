@@ -89,6 +89,21 @@ namespace tsorcRevamp.Items.VanillaItems
                 SimpleGlobalModTooltip(Mod, tooltips, "Doesn't heal the [c/6d8827:Bearer of the Curse]");
             }
 
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.buffType == BuffID.WellFed)
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, "Increases stamina regen by 10% for the [c/6d8827:Bearer of the Curse]");
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.buffType == BuffID.WellFed2)
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, "Increases stamina regen by 20% for the [c/6d8827:Bearer of the Curse]");
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.buffType == BuffID.WellFed3)
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, "Increases stamina regen by 30% for the [c/6d8827:Bearer of the Curse]");
+            }
+
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer)
             {
                 SimpleModTooltip(Mod, item, tooltips, ItemID.ShinePotion, "Has no effect on the [c/6d8827:Bearer of the Curse]");
