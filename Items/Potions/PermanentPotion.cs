@@ -24,6 +24,17 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             new PermanentSoup().PermanentID,
             new PermanentGoldenDelight().PermanentID,
         };
+
+        public static readonly List<int> ExclusiveSetFlasks = new() {
+            new PermanentFlaskOfCursedFlames().PermanentID,
+            new PermanentFlaskOfFire().PermanentID,
+            new PermanentFlaskOfGold().PermanentID,
+            new PermanentFlaskOfIchor().PermanentID,
+            new PermanentFlaskOfNanites().PermanentID,
+            new PermanentFlaskOfParty().PermanentID,
+            new PermanentFlaskOfPoison().PermanentID,
+            new PermanentFlaskOfVenom().PermanentID
+        };
         public abstract int PermanentID
         {
             get;
@@ -453,6 +464,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_1340";
         public override int PermanentID => 19;
         public override int BuffType => BuffID.WeaponImbueVenom;
+        public override List<int> ExclusivePermanents => ExclusiveSetFlasks;
 
         public override void SetStaticDefaults()
         {
@@ -472,6 +484,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_1353";
         public override int PermanentID => 20;
         public override int BuffType => BuffID.WeaponImbueCursedFlames;
+        public override List<int> ExclusivePermanents => ExclusiveSetFlasks;
 
         public override void SetStaticDefaults()
         {
@@ -492,6 +505,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_1354";
         public override int PermanentID => 21;
         public override int BuffType => BuffID.WeaponImbueFire;
+        public override List<int> ExclusivePermanents => ExclusiveSetFlasks;
 
         public override void SetStaticDefaults()
         {
@@ -512,6 +526,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_1355";
         public override int PermanentID => 22;
         public override int BuffType => BuffID.WeaponImbueGold;
+        public override List<int> ExclusivePermanents => ExclusiveSetFlasks;
 
         public override void SetStaticDefaults()
         {
@@ -532,6 +547,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_1356";
         public override int PermanentID => 23;
         public override int BuffType => BuffID.WeaponImbueIchor;
+        public override List<int> ExclusivePermanents => ExclusiveSetFlasks;
 
         public override void SetStaticDefaults()
         {
@@ -552,6 +568,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_1357";
         public override int PermanentID => 24;
         public override int BuffType => BuffID.WeaponImbueNanites;
+        public override List<int> ExclusivePermanents => ExclusiveSetFlasks;
 
         public override void SetStaticDefaults()
         {
@@ -572,6 +589,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_1358";
         public override int PermanentID => 25;
         public override int BuffType => BuffID.WeaponImbueConfetti;
+        public override List<int> ExclusivePermanents => ExclusiveSetFlasks;
 
         public override void SetStaticDefaults()
         {
@@ -592,6 +610,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_1359";
         public override int PermanentID => 26;
         public override int BuffType => BuffID.WeaponImbuePoison;
+        public override List<int> ExclusivePermanents => ExclusiveSetFlasks;
 
         public override void SetStaticDefaults()
         {
