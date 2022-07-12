@@ -230,13 +230,10 @@ namespace tsorcRevamp.Projectiles
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Main.NewText("drawing");
             if (!customContext)
             {
                 return false;
             }
-
-
   
             //LaserTextureBody.Height * LaserSize
             if ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2))
@@ -329,7 +326,6 @@ namespace tsorcRevamp.Projectiles
 
         public override void AI()
         {
-            Main.NewText("running " + Main.GameUpdateCount);
             Vector2 origin = GetOrigin();
 
             if (!ProjectileSource)
