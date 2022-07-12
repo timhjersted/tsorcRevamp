@@ -11,29 +11,55 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Witchking's Sword");
+            Tooltip.SetDefault("May inflict multiple debuffs");
         }
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Red;
-            Item.damage = 107;
+            Item.damage = 337;
             Item.height = 32;
             Item.autoReuse = true;
             Item.knockBack = 8;
             Item.maxStack = 1;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 21;
+            Item.useAnimation = 15;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 15;
             Item.value = PriceByRarity.Red_10;
             Item.width = 40;
+            Item.scale = 1.4f;
         }
 
         public override void OnHitNPC(Player player, NPC npc, int damage, float knockBack, bool crit)
         {
-            if (Main.rand.NextBool(2))
+            if (Main.rand.NextBool(3))
             {
-                npc.AddBuff(BuffID.OnFire, 360, false);
+                npc.AddBuff(BuffID.OnFire3, 900, false);
+            }
+            if (Main.rand.NextBool(3))
+            {
+                npc.AddBuff(BuffID.ShadowFlame, 900, false);
+            }
+            if (Main.rand.NextBool(3))
+            {
+                npc.AddBuff(BuffID.CursedInferno, 900, false);
+            }
+            if (Main.rand.NextBool(3))
+            {
+                npc.AddBuff(BuffID.BetsysCurse, 900, false);
+            }
+            if (Main.rand.NextBool(3))
+            {
+                npc.AddBuff(BuffID.Ichor, 900, false);
+            }
+            if (Main.rand.NextBool(3))
+            {
+                npc.AddBuff(Mod.Find<ModBuff>("CrimsonBurn").Type, 900, false);
+            }
+            if (Main.rand.NextBool(3))
+            {
+                npc.AddBuff(Mod.Find<ModBuff>("DarkInferno").Type, 900, false);
             }
         }
         public override void MeleeEffects(Player player, Rectangle rectangle)

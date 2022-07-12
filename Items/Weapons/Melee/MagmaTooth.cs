@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Chance to light enemies on fire.");
+            Tooltip.SetDefault("Chance to light enemies on hellish fire.");
         }
         public override void SetDefaults()
         {
@@ -21,9 +21,9 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useAnimation = 25;
             Item.useTime = 25;
             Item.maxStack = 1;
-            Item.damage = 44;
+            Item.damage = 50;
             Item.knockBack = 8;
-            Item.scale = 1.2f;
+            Item.scale = 1.5f;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.Orange_3;
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.OnFire, 300, false);
+                target.AddBuff(BuffID.OnFire3, 600, false);
             }
         }
         public override void MeleeEffects(Player player, Rectangle hitbox)

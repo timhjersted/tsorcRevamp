@@ -12,13 +12,13 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Ultimate sword drawing power from the wielder" +
-                                "\nDeals maximum damage at full health");
+                                "\nDamage scales directly with health");
         }
 
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.LightPurple;
-            Item.damage = 444;
+            Item.damage = 696;
             Item.height = 64;
             Item.width = 64;
             Item.knockBack = 14f;
@@ -35,8 +35,10 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.TerraBlade, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 12000);
+            recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 20);
+            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 144000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

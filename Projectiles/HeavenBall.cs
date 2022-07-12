@@ -1,10 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -26,194 +25,63 @@ namespace tsorcRevamp.Projectiles
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.Melee;
-        }
 
-        public override void AI()
-        {
+			Projectile.usesLocalNPCImmunity = true; // Used for hit cooldown changes in the ai hook
+			Projectile.localNPCHitCooldown = 10; // This facilitates custom hit cooldown logic
 
-            var dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 171, Projectile.velocity.X * 0.4f, Projectile.velocity.Y * 0.4f, 0, new Color(184, 255, 0), 1f);
-            dust.shader = GameShaders.Armor.GetSecondaryShader(47, Main.LocalPlayer);
-            dust.noGravity = true;
-            dust.velocity /= 2f;
+			Projectile.aiStyle = ProjAIStyleID.Flail;
+			AIType = ProjectileID.FlowerPow;
+		}
+		public override Color? GetAlpha(Color lightColor)
+		{
+			return Color.White;
+		}
+		public override bool PreDrawExtras()
+		{
+			Projectile.type = ProjectileID.Sunfury;
+			return base.PreDrawExtras();
+		}
 
-            var player = Main.player[Projectile.owner];
+		public override bool PreDraw(ref Color lightColor)
+		{
+			Projectile.type = ModContent.ProjectileType<HeavenBall>();
 
-            if (player.dead)
-            {
-                Projectile.Kill();
-                return;
-            }
+			// This code handles the after images.
+			if (Projectile.ai[0] == 1f)
+			{
+				Texture2D projectileTexture = TextureAssets.Projectile[Projectile.type].Value;
+				Vector2 drawPosition = Projectile.position + new Vector2(Projectile.width, Projectile.height) / 2f + Vector2.UnitY * Projectile.gfxOffY - Main.screenPosition;
+				Vector2 drawOrigin = new Vector2(projectileTexture.Width, projectileTexture.Height) / 2f;
+				Color drawColor = Projectile.GetAlpha(lightColor);
+				drawColor.A = 127;
+				drawColor *= 0.5f;
+				int launchTimer = (int)Projectile.ai[1];
+				if (launchTimer > 5)
+					launchTimer = 5;
 
-            player.itemAnimation = 10;
-            player.itemTime = 10;
+				SpriteEffects spriteEffects = SpriteEffects.None;
+				if (Projectile.spriteDirection == -1)
+					spriteEffects = SpriteEffects.FlipHorizontally;
 
-            int newDirection = Projectile.Center.X > player.Center.X ? 1 : -1;
-            player.ChangeDir(newDirection);
-            Projectile.direction = newDirection;
+				for (float transparancy = 1f; transparancy >= 0f; transparancy -= 0.125f)
+				{
+					float opacity = 1f - transparancy;
+					Vector2 drawAdjustment = Projectile.velocity * -launchTimer * transparancy;
+					Main.EntitySpriteDraw(projectileTexture, drawPosition + drawAdjustment, null, drawColor * opacity, Projectile.rotation, drawOrigin, Projectile.scale * 1.15f * MathHelper.Lerp(0.5f, 1f, opacity), spriteEffects, 0);
+				}
+			}
 
-            var vectorToPlayer = player.MountedCenter - Projectile.Center;
-            float currentChainLength = vectorToPlayer.Length();
-
-            // ai[0] == 0: being thrown out
-            // ai[0] == 1: Flail has hit a tile or has reached maxChainLength, and is now swinging
-            // ai[1] == 1 or !projectile.tileCollide: forced retraction
-
-
-            if (Projectile.ai[0] == 0f)
-            {
-                float maxChainLength = 160f; //pixels
-                Projectile.tileCollide = true;
-                if (currentChainLength > maxChainLength)
-                {
-                    // If we reach maxChainLength, we change behavior.
-                    Projectile.ai[0] = 1f;
-                    Projectile.netUpdate = true;
-                }
-                else if (!player.channel)
-                { //release mouse
-
-                    if (Projectile.velocity.Y < 0f)
-                        Projectile.velocity.Y *= 0.9f;
-
-                    Projectile.velocity.Y += 1f;
-                    Projectile.velocity.X *= 0.9f;
-                }
-            }
-            else if (Projectile.ai[0] == 1f)
-            {
-                float elasticFactorA = 14f / player.GetAttackSpeed(DamageClass.Melee);
-                float elasticFactorB = 0.9f / player.GetAttackSpeed(DamageClass.Melee);
-                float maxStretchLength = 300f; //flails force retract, even through walls, when they reach this length
-
-                if (Projectile.ai[1] == 1f)
-                    Projectile.tileCollide = false;
-
-                if (!player.channel || currentChainLength > maxStretchLength || !Projectile.tileCollide)
-                {
-                    Projectile.ai[1] = 1f;
-
-                    if (Projectile.tileCollide)
-                        Projectile.netUpdate = true;
-
-                    Projectile.tileCollide = false;
-
-                    if (currentChainLength < 20f)
-                        Projectile.Kill();
-                }
-
-                if (!Projectile.tileCollide)
-                    elasticFactorB *= 2f;
-
-                int restingChainLength = 60;
-
-
-                if (currentChainLength > restingChainLength || !Projectile.tileCollide)
-                {
-                    var elasticAcceleration = vectorToPlayer * elasticFactorA / currentChainLength - Projectile.velocity;
-                    elasticAcceleration *= elasticFactorB / elasticAcceleration.Length();
-                    Projectile.velocity *= 0.98f;
-                    Projectile.velocity += elasticAcceleration;
-                }
-                else
-                {
-
-                    if (Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) < 6f)
-                    {
-                        Projectile.velocity.X *= 0.96f;
-                        Projectile.velocity.Y += 0.2f;
-                    }
-                    if (player.velocity.X == 0f)
-                        Projectile.velocity.X *= 0.96f;
-                }
-            }
-
-            Projectile.rotation = vectorToPlayer.ToRotation() - Projectile.velocity.X * 0.1f;
-
-            //add shoot projectiles here (like flower pow)
-        }
-
-        public override bool OnTileCollide(Vector2 oldVelocity)
-        {
-            //slow when bouncing
-            bool shouldMakeSound = false;
-
-            if (oldVelocity.X != Projectile.velocity.X)
-            {
-                if (Math.Abs(oldVelocity.X) > 4f)
-                {
-                    shouldMakeSound = true;
-                }
-
-                Projectile.position.X += Projectile.velocity.X;
-                Projectile.velocity.X = -oldVelocity.X * 0.2f;
-            }
-
-            if (oldVelocity.Y != Projectile.velocity.Y)
-            {
-                if (Math.Abs(oldVelocity.Y) > 4f)
-                {
-                    shouldMakeSound = true;
-                }
-
-                Projectile.position.Y += Projectile.velocity.Y;
-                Projectile.velocity.Y = -oldVelocity.Y * 0.2f;
-            }
-            Projectile.ai[0] = 1f;
-
-            if (shouldMakeSound)
-            {
-                Projectile.netUpdate = true;
-                Collision.HitTiles(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height);
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
-            }
-
-            return false;
-        }
-
-        static Texture2D chainTexture = (Texture2D)ModContent.Request<Texture2D>(ChainTexturePath, ReLogic.Content.AssetRequestMode.ImmediateLoad);
-        public override bool PreDraw(ref Color lightColor)
-        {
-            if (chainTexture == null || chainTexture.IsDisposed)
-            {
-                chainTexture = (Texture2D)ModContent.Request<Texture2D>(ChainTexturePath, ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            }
-            var player = Main.player[Projectile.owner];
-
-            Vector2 mountedCenter = player.MountedCenter;
-
-            var drawPosition = Projectile.Center;
-            var remainingVectorToPlayer = mountedCenter - drawPosition;
-
-            float rotation = remainingVectorToPlayer.ToRotation() - MathHelper.PiOver2;
-
-            if (Projectile.alpha == 0)
-            {
-                int direction = -1;
-
-                if (Projectile.Center.X < mountedCenter.X)
-                    direction = 1;
-
-                player.itemRotation = (float)Math.Atan2(remainingVectorToPlayer.Y * direction, remainingVectorToPlayer.X * direction);
-            }
-
-            //draw the chain
-            while (true)
-            {
-                float length = remainingVectorToPlayer.Length();
-
-                if (length < 25f || float.IsNaN(length))
-                    break;
-
-                //12 is height of chain image
-                drawPosition += remainingVectorToPlayer * 12 / length;
-                remainingVectorToPlayer = mountedCenter - drawPosition;
-
-                // Finally, we draw the texture at the coordinates using the lighting information of the tile coordinates of the chain section
-                Color color = Lighting.GetColor((int)drawPosition.X / 16, (int)(drawPosition.Y / 16f));
-                Main.EntitySpriteDraw(chainTexture, drawPosition - Main.screenPosition, null, color, rotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0);
-            }
-
-            return true;
-        }
-    }
+			return base.PreDraw(ref lightColor);
+		}
+		public override void AI()
+		{
+			Vector2 dropletvector = new Vector2(0, 5);
+			// The only reason this code works is because the author read the vanilla code and comprehended it well enough to tack on additional logic.
+			if (Main.myPlayer == Projectile.owner && Projectile.ai[0] == 2f && Projectile.ai[1] == 0f)
+			{
+				Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, dropletvector, ProjectileID.RainFriendly, Projectile.damage, Projectile.knockBack, Main.myPlayer);
+				Projectile.ai[1]++;
+			}
+		}
+	}
 }

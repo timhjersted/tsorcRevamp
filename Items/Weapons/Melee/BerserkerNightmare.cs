@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.channel = true;
             Item.useAnimation = 44;
             Item.useTime = 44;
-            Item.damage = 49;
+            Item.damage = 123;
             Item.knockBack = 8;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.LightPurple;
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.DaoofPow, 2);
+            recipe.AddIngredient(ItemID.DaoofPow, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 70000);
             recipe.AddTile(TileID.DemonAltar);
 

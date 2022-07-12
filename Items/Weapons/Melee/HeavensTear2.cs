@@ -20,8 +20,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
             Item.width = 32;
             Item.height = 32;
-            //item.pretendType=389;
-            //item.prefixType=368;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.channel = true;
             Item.useAnimation = 30;
@@ -58,30 +56,30 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void ModifyHitNPC(Player player, NPC npc, ref int damage, ref float knockBack, ref bool crit)
         {
             //damage = (int) ((Main.rand.Next(26)) * (P.GetDamage(DamageClass.Melee)));
-            if (npc.FullName == "Tim") damage *= 2;
-            else if (npc.FullName == "Dark Caster") damage *= 2;
-            else if (npc.FullName == "Goblin Sorcerer") damage *= 2;
-            //else if (npc.FullName == "Undead Caster") damage *= 2;
-            //else if (npc.FullName == "Mindflayer Servant") damage *= 2;
-            //else if (npc.FullName == "Dungeon Mage") damage *= 2;
-            //else if (npc.FullName == "Demon Spirit") damage *= 2;
-            //else if (npc.FullName == "Crazed Demon Spirit") damage *= 2;
-            //else if (npc.FullName == "Shadow Mage") damage *= 2;
-            //else if (npc.FullName == "Attraidies Illusion") damage *= 2;
-            //else if (npc.FullName == "Attraidies Manifestation") damage *= 2;
-            //else if (npc.FullName == "Mindflayer King") damage *= 2;
-            //else if (npc.FullName == "Dark Shogun Mask") damage *= 2;
-            //else if (npc.FullName == "Dark Dragon Mask") damage *= 2;
-            //else if (npc.FullName == "Broken Okiku") damage *= 2;
-            //else if (npc.FullName == "Okiku") damage *= 2;
-            //else if (npc.FullName == "Wyvern Mage") damage *= 2;
-            //else if (npc.FullName == "Ghost of the Forgotten Knight") damage *= 2;
-            //else if (npc.FullName == "Ghost of the Forgotten Warrior") damage *= 2;
-            //else if (npc.FullName == "Barrow Wight Nemesis") damage *= 2;
-            //else if (npc.FullName == "Oolacile Sorcerer") damage *= 2;
-            //else if (npc.FullName == "Abysmal Oolacile Sorcerer") damage *= 2;
-            //else if (npc.FullName == "Dark Cloud") damage *= 2;
-            //else if (npc.FullName == "Barrow Wight") damage *= 2;
+            if (   npc.FullName == "Tim" 
+                || npc.FullName == "Dark Caster" 
+                || npc.FullName == "Goblin Sorcerer" 
+                || npc.FullName == "Undead Caster"
+                || npc.FullName == "Mindflayer Servant"
+                || npc.FullName == "Dungeon Mage"
+                || npc.FullName == "Demon Spirit"
+                || npc.FullName == "Crazed Demon Spirit"
+                || npc.FullName == "Shadow Mage"
+                || npc.FullName == "Attraidies Illusion"
+                || npc.FullName == "Attraidies Manifestation"
+                || npc.FullName == "Mindflayer King"
+                || npc.FullName == "Dark Shogun Mask"
+                || npc.FullName == "Dark Dragon Mask"
+                || npc.FullName == "Broken Okiku"
+                || npc.FullName == "Okiku"
+                || npc.FullName == "Wyvern Mage"
+                || npc.FullName == "Ghost of the Forgotten Knight"
+                || npc.FullName == "Barrow Wight Nemesis"
+                || npc.FullName == "Oolacile Sorcerer"
+                || npc.FullName == "Abysmal Oolacile Sorcerer"
+                || npc.FullName == "Dark Cloud"
+                || npc.FullName == "Barrow Wight"
+                ) damage *= 2;
         }
 
     }

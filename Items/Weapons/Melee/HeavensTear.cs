@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Heaven's Tear");
-            Tooltip.SetDefault("'Heaven splits with each swing'\n");
+            Tooltip.SetDefault("'Heaven splits with each swing'");
             //"Does 2x damage to mages and ghosts...");
 
         }
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             Terraria.Recipe recipe = CreateRecipe();
 
-            //recipe.AddIngredient(mod.GetItem("EnchantedMorningStar", 1);
+            recipe.AddIngredient(ItemID.FlowerPow, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 20);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);
@@ -54,12 +54,12 @@ namespace tsorcRevamp.Items.Weapons.Melee
             recipe.Register();
         }
 
-        public override void ModifyHitNPC(Player player, NPC npc, ref int damage, ref float knockBack, ref bool crit)
-        {
+ //       public override void ModifyHitNPC(Player player, NPC npc, ref int damage, ref float knockBack, ref bool crit)
+    //    {
             //damage = (int) ((Main.rand.Next(26)) * (P.GetDamage(DamageClass.Melee)));
-            if (npc.FullName == "Tim") damage *= 2;
-            else if (npc.FullName == "Dark Caster") damage *= 2;
-            else if (npc.FullName == "Goblin Sorcerer") damage *= 2;
+      //      if (npc.FullName == "Tim") damage *= 2;
+        //    else if (npc.FullName == "Dark Caster") damage *= 2;
+          //  else if (npc.FullName == "Goblin Sorcerer") damage *= 2;
             //else if (npc.FullName == "Undead Caster") damage *= 2;
             //else if (npc.FullName == "Mindflayer Servant") damage *= 2;
             //else if (npc.FullName == "Dungeon Mage") damage *= 2;
@@ -81,7 +81,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             //else if (npc.FullName == "Abysmal Oolacile Sorcerer") damage *= 2;
             //else if (npc.FullName == "Dark Cloud") damage *= 2;
             //else if (npc.FullName == "Barrow Wight") damage *= 2;
-        }
+    //    }
 
     }
 }

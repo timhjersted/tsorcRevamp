@@ -9,22 +9,22 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A sword used to kill the undead" +
-                                "\nDoes 4x damage against the heartless");
+            Tooltip.SetDefault("Praise the sun!" +
+                                "\nDoes quadruple damage against the heartless");
         }
 
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.LightRed;
-            Item.damage = 25;
+            Item.damage = 36;
             Item.height = 36;
             Item.knockBack = 9;
             Item.maxStack = 1;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 23;
+            Item.useAnimation = 20;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 21;
+            Item.useTime = 20;
             Item.value = PriceByRarity.LightRed_4;
             Item.width = 36;
         }

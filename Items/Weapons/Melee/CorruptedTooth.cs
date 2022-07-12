@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("A green ooze dribbles from the tooth, which deals" +
-                                "\nextra damage to enemies of a similar nature." +
+                                "\nquadruple damage to enemies of a similar nature." +
                                 "\nHas a chance to heal the player on hit.");
         }
         public override void SetDefaults()
@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useAnimation = 21;
             Item.autoReuse = true;
             Item.useTime = 21;
-            Item.damage = 11;
+            Item.damage = 15;
             Item.knockBack = 4f;
             Item.UseSound = SoundID.Item1;
             Item.value = PriceByRarity.Blue_1;

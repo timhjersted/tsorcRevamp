@@ -4,7 +4,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Melee
 {
-    class ForgottenDiamondMace : ModItem
+    [LegacyName("ForgottenDiamondMace")]
+    class DiamondMace : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -17,6 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useTurn = true;
             Item.rare = ItemRarityID.Pink;
             Item.damage = 90;
+            Item.crit += 46;
             Item.height = 36;
             Item.knockBack = 10;
             Item.scale = 1.3f;
@@ -45,7 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             recipe.AddIngredient(ItemID.AdamantiteBar, 10);
             recipe.AddIngredient(ItemID.Diamond, 1);
             recipe.AddIngredient(ItemID.SoulofMight, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 66000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 44000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

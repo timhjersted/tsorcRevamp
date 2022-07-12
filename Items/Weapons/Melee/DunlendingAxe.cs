@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         }
         public override void SetDefaults()
         {
-            Item.damage = 5;
+            Item.damage = 8;
             Item.width = 48;
             Item.height = 44;
             Item.knockBack = 5;
