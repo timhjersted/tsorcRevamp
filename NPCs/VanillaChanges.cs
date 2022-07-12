@@ -296,7 +296,7 @@ namespace tsorcRevamp.NPCs
                 (devourer >= NPCID.DevourerHead && devourer <= NPCID.DevourerTail)
                 ):
                     {
-                        npc.lifeMax = 1000;
+                        npc.lifeMax = 800;
                         npc.npcSlots = 4;
                         npc.value = 5800;
 
@@ -326,7 +326,7 @@ namespace tsorcRevamp.NPCs
                 (dunesplicer >= NPCID.DuneSplicerHead && dunesplicer <= NPCID.DuneSplicerTail)
                 ):
                     {
-                        npc.lifeMax = 800;
+                        npc.lifeMax = 650;
                         npc.npcSlots = 4;
                         npc.value = 6000;
 
