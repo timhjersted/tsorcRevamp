@@ -60,7 +60,6 @@ namespace tsorcRevamp.NPCs
             PhazonCorruption = false;
         }
 
-
         public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
         {
 
@@ -112,6 +111,7 @@ namespace tsorcRevamp.NPCs
             }
 
             //HARD MODE SECTION
+
             //golem temple
             if (spawnInfo.SpawnTileType == TileID.LihzahrdBrick && spawnInfo.Lihzahrd && Main.hardMode)
             {
