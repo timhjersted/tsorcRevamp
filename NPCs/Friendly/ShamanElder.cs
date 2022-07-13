@@ -231,6 +231,10 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<CosmicWatch>());
             shop.item[nextSlot].shopCustomPrice = 5;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+            nextSlot++; 
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.BossRematchTome>());
+            shop.item[nextSlot].shopCustomPrice = 5;
+            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>()) || tsorcRevampWorld.SuperHardMode /*just in case*/)
             {

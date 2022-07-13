@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             if (player.gravDir == 1f && player.velocity.Y > 0 || player.gravDir == -1f && player.velocity.Y < 0)
             {
-                damage *= 1.5f;
+                damage += 1.5f;
             }
         }
 

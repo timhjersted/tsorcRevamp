@@ -43,7 +43,10 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
-            damage += 1.5f;
+            if (player.gravDir == 1f && player.velocity.Y > 0 || player.gravDir == -1f && player.velocity.Y < 0)
+            {
+                damage += 1.5f;
+            }
         }
 
         public override void AddRecipes()
