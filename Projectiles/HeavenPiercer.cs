@@ -11,6 +11,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void SetDefaults()
         {
+            Projectile.friendly = true;
             Projectile.height = 22;
             Projectile.width = 22;
             Projectile.scale = 1.1f;
@@ -20,7 +21,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.ownerHitCheck = true;
             Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Melee;
-            Projectile.penetrate = 6;
+            Projectile.penetrate = 999;
         }
 
         public override void AI()
@@ -39,10 +40,10 @@ namespace tsorcRevamp.Projectiles
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.HeavenPiercerGlowmask];
 
             Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
-            Vector2 origin = sourceRectangle.Size() / 2f;
-
+            Vector2 origin = sourceRectangle.Size() / 2;
+            origin.Y -= 16;
             Main.EntitySpriteDraw(texture,
-                Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+                Projectile.Center - Main.screenPosition,
                 sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
             base.PostDraw(lightColor);
         }
