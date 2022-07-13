@@ -42,6 +42,7 @@ namespace tsorcRevamp.Items.Accessories
             int j2 = (int)(player.position.Y + 2f) / 16;
             Lighting.AddLight(i2, j2, 0.92f, 0.8f, 0.65f);
 
+            player.GetModPlayer<tsorcRevampPlayer>().DarkmoonCloak = true;
             player.statDefense += 5;
             player.lifeRegen += 4;
             player.starCloakItem = new Item(ItemID.StarCloak);
