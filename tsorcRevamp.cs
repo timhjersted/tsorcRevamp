@@ -101,10 +101,10 @@ namespace tsorcRevamp
             PotionUIState = new PotionBagUIState();
             PotionBagUserInterface = new UserInterface();
 
-            
+
             DownloadUIState = new CustomMapUIState();
             DownloadUI = new UserInterface();
-            
+
 
             ApplyMethodSwaps();
             ApplyILs();
@@ -828,7 +828,8 @@ namespace tsorcRevamp
         {
             #region Boss Checklist Compatibility
             Mod bossChecklist;
-            if (ModLoader.TryGetMod("BossChecklist", out bossChecklist)){  //See https://github.com/JavidPack/BossChecklist/wiki/Support-using-Mod-Call for instructions
+            if (ModLoader.TryGetMod("BossChecklist", out bossChecklist))
+            {  //See https://github.com/JavidPack/BossChecklist/wiki/Support-using-Mod-Call for instructions
 
 
                 // AddBoss, bossname, order or value in terms of vanilla bosses, inline method for retrieving downed value.
@@ -911,7 +912,7 @@ namespace tsorcRevamp
                     ModContent.ItemType<Items.BossItems.FieryEgg>(),
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.TheRageBag>(), ModContent.ItemType<Items.CrestOfFire>(), ItemID.CobaltDrill }, // List containing all the loot to show in the bestiary
-                    $"Found in the depths of the earth.", // Guide to fight the boss
+                    $"Found in the depths of the Hallowed Caverns.", // Guide to fight the boss
                     "");
 
 
@@ -925,7 +926,7 @@ namespace tsorcRevamp
                     ModContent.ItemType<Items.BossItems.WateryEgg>(),
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.TheSorrowBag>(), ModContent.ItemType<Items.CrestOfWater>(), ItemID.AdamantiteDrill }, // List containing all the loot to show in the bestiary
-                    $"Follow the clues given after beating the previous boss.", // Guide to fight the boss
+                    $"Found in the depths of the Frozen Ocean.", // Guide to fight the boss
                     "");
 
 
@@ -939,7 +940,7 @@ namespace tsorcRevamp
                     ModContent.ItemType<Items.BossItems.GrassyEgg>(),
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.TheHunterBag>(), ModContent.ItemType<Items.CrestOfEarth>(), ItemID.Drax, ItemID.WaterWalkingBoots }, // List containing all the loot to show in the bestiary
-                    $"Follow the clues given after beating the previous boss.", // Guide to fight the boss
+                    $"Found deep below the Desert Ruins.", // Guide to fight the boss
                     "");
 
 
@@ -1036,7 +1037,7 @@ namespace tsorcRevamp
                     ModContent.ItemType<Items.BossItems.HellkiteStone>(),
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.HellkiteBag>(), ModContent.ItemType<Items.DragonEssence>(), ModContent.ItemType<Items.Accessories.DragonStone>() }, // List containing all the loot to show in the bestiary
-                    $"Can attack when you least expect it. Alternatively, craft and use the Hellkite Stone.", // Guide to fight the boss
+                    $"Often sighted roaming the skies above the Village, searching for its next meal .", // Guide to fight the boss
                     "", // Despawning Message
                     "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/HellkiteDragon");
 
@@ -1051,7 +1052,7 @@ namespace tsorcRevamp
                     ModContent.ItemType<Items.BossItems.DyingWaterCrystal>(),
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.KrakenBag>(), ModContent.ItemType<Items.Accessories.Melee.DragonHorn>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() }, // List containing all the loot to show in the bestiary
-                    $"Seek out the Realm of the Kraken. There you will find the materials needed to craft Dying Water Crystal.", // Guide to fight the boss
+                    $"Seek out the lihzahrd gate in the Great Chasm.", // Guide to fight the boss
                     "");
 
 
@@ -1065,7 +1066,7 @@ namespace tsorcRevamp
                     ModContent.ItemType<Items.BossItems.DyingEarthCrystal>(),
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.LichBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), ModContent.ItemType<Items.Accessories.Mobility.DragoonBoots>(), ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>() }, // List containing all the loot to show in the bestiary
-                    $"Find the Lair of the Lich King. There you will find the materials needed to craft Dying Earth Crystal.", // Guide to fight the boss
+                    $"Seek out the lihzahrd gate below the Western Ocean.", // Guide to fight the boss
                     "");
 
 
@@ -1080,7 +1081,7 @@ namespace tsorcRevamp
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.WitchkingBag>(), ModContent.ItemType<BrokenStrangeMagicRing>(), ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>(), ModContent.ItemType<Items.Armors.Summon.WitchkingHelmet>(), ModContent.ItemType<Items.Armors.Summon.WitchkingTop>(), ModContent.ItemType<Items.Armors.Summon.WitchkingBottoms>(), ModContent.ItemType<Items.Accessories.RingOfPower>(),
                     ModContent.ItemType<Items.Accessories.GoldenHairpin>(), ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<Items.BossItems.DarkMirror>(), ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>() }, // List containing all the loot to show in the bestiary
-                    $"Spawns rarely around the world, though more commonly during Blood Moons. Alternatively, find him in his lair deep underground, shrouded in extreme darkness.", // Guide to fight the boss
+                    $"Found in his lair deep underground, shrouded in extreme darkness.", // Guide to fight the boss
                     "");
 
 
@@ -1094,7 +1095,7 @@ namespace tsorcRevamp
                     ModContent.ItemType<Items.BossItems.DyingFireCrystal>(),
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.MarilithBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>(), ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() },// List containing all the loot to show in the bestiary
-                    $"Found in a place serving as a source of extreme darkness. There you will also find the crafting materials for the Dying Fire Crystal.", // Guide to fight the boss
+                    $"Seek out the lihzahrd gate in the Western Desert.", // Guide to fight the boss
                     "");
 
 
@@ -1108,7 +1109,7 @@ namespace tsorcRevamp
                     ModContent.ItemType<Items.BossItems.StoneOfSeath>(),
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.SeathBag>(), ModContent.ItemType<Items.DragonEssence>(), ModContent.ItemType<Items.BequeathedSoul>(), ModContent.ItemType<Items.Accessories.Defensive.BlueTearstoneRing>(), ModContent.ItemType<Items.PurgingStone>(), ModContent.ItemType<Items.Accessories.Mobility.DragonWings>() },// List containing all the loot to show in the bestiary
-                    $"Found deep underground in a place of extreme cold. Alternatively, craft and use a Stone of Seath.", // Guide to fight the boss
+                    $"Seek out the lihzahrd gate below the Eastern Ocean.", // Guide to fight the boss
                     "");
 
 
@@ -1122,9 +1123,34 @@ namespace tsorcRevamp
                     ModContent.ItemType<Items.BossItems.AbysmalStone>(),
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.OolacileSorcererBag>(), ModContent.ItemType<Items.Potions.HealingElixir>(), ModContent.ItemType<Items.Accessories.DuskCrownRing>(), ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<Items.PurgingStone>(), ModContent.ItemType<Items.RedTitanite>() },// List containing all the loot to show in the bestiary
-                    $"Found deep in the pits of the earth. Alternatively, craft and use an Abysmal Stone.", // Guide to fight the boss
+                    $"Seek out the lihzahrd gate below the Lihzahrd Temple.", // Guide to fight the boss
                     "");
 
+                bossChecklist.Call(
+                    "AddBoss", // Name of the call
+                    13f, // Tier (look above)
+                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>() },
+                    this, // Mod
+                    "Dark Cloud", // Boss Name
+                    (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.ItemType<Items.BossItems.DarkMirror>(),
+                    0,
+                    new List<int> { ModContent.ItemType<Items.BossBags.DarkCloudBag>(), ModContent.ItemType<Items.Weapons.Melee.MoonlightGreatsword>(), ModContent.ItemType<Items.Accessories.Mobility.ReflectionShift>() },// List containing all the loot to show in the bestiary
+                    $"The ancient pyramid grows dark once more.", // Guide to fight the boss
+                    "");
+
+                bossChecklist.Call(
+                    "AddBoss", // Name of the call
+                    14f, // Tier (look above)
+                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>() },
+                    this, // Mod
+                    "Gwyn, Lord of Cinder", // Boss Name
+                    (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.ItemType<Items.BossItems.LostScrollOfGwyn>(),
+                    0,
+                    new List<int> { ModContent.ItemType<Items.BossBags.GwynBag>() },// List containing all the loot to show in the bestiary
+                    $"Seek the tomb below the Western Ocean.", // Guide to fight the boss
+                    "");
 
 
             }
@@ -1182,7 +1208,7 @@ namespace tsorcRevamp
                         break;
                     }
                 }
-                
+
                 if (mapString == "" || musicString == "")
                 {
                     Logger.Warn("WARNING: Failed to read version data from downloaded changelog! This will prevent the mod from downloading the map, music mod, or updates!");
@@ -1389,22 +1415,26 @@ namespace tsorcRevamp
             }
         }
 
-        public async Task<StreamReader> GetChangelogAsync() {
+        public async Task<StreamReader> GetChangelogAsync()
+        {
             char separator = Path.DirectorySeparatorChar;
             string changelogPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcChangelog.txt";
 
             Logger.Info("Attempting to download changelog.");
-            if (File.Exists(changelogPath)) {
+            if (File.Exists(changelogPath))
+            {
                 File.Delete(changelogPath);
             }
 
-            try {
+            try
+            {
                 using HttpClient client = new();
                 using var netstream = await client.GetStreamAsync(new Uri(VariousConstants.CHANGELOG_URL));
                 using var fs = new FileStream(changelogPath, FileMode.CreateNew);
                 await netstream.CopyToAsync(fs);
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 //at least it isnt log and throw
                 log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
                 thisLogger.InfoFormat("GetChangelogAsync threw error {0}", e);
@@ -1455,7 +1485,7 @@ namespace tsorcRevamp
 
             //First, check if the music mod is still enabled
             bool musicLoaded = false;
-            
+
 
             if (ModLoader.TryGetMod("tsorcMusic", out _))
             {
@@ -1583,7 +1613,7 @@ namespace tsorcRevamp
             {
                 return true;
             }
-            
+
             if (Main.tile[x, y - 1].TileType == ModContent.TileType<Tiles.BonfireCheckpoint>())
             {
                 return false;
@@ -1692,7 +1722,7 @@ namespace tsorcRevamp
 
 
             else return base.CanExplode(x, y, type);
-            
+
 
         }
 
