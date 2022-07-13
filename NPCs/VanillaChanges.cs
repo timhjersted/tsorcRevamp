@@ -2627,13 +2627,13 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.Butcher):
                     {
-                        npc.value = 6210;
+                        npc.value = 4410;
                         break;
                     }
 
                 case (NPCID.CreatureFromTheDeep):
                     {
-                        npc.value = 4380;
+                        npc.value = 3780;
                         break;
                     }
 
@@ -2652,7 +2652,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.Psycho):
                     {
                         npc.damage = 250;
-                        npc.value = 5520;
+                        npc.value = 5120;
                         break;
                     }
 
@@ -2661,19 +2661,19 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = 25;
                         npc.defense = 300;
                         npc.damage = 200;
-                        npc.value = 6540;
+                        npc.value = 5340;
                         break;
                     }
 
                 case (NPCID.DrManFly):
                     {
-                        npc.value = 6120;
+                        npc.value = 5120;
                         break;
                     }
 
                 case (NPCID.ThePossessed):
                     {
-                        npc.value = 7100;
+                        npc.value = 4100;
                         break;
                     }
 
@@ -2687,7 +2687,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.Frankenstein):
                     {
-                        npc.value = 4890;
+                        npc.value = 3890;
                         break;
                     }
 
