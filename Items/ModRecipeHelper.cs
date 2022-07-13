@@ -112,6 +112,11 @@ namespace tsorcRevamp.Items
             }
             );
             recipe.Register();
+
+            recipe = Recipe.Create(ItemID.WormholePotion)
+            .AddIngredient(ItemID.BottledWater)
+            .AddTile(TileID.DemonAltar);            
+            recipe.Register();
         }
 
         #region permanent potion recipes

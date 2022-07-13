@@ -21,8 +21,8 @@ namespace tsorcRevamp.Items.Weapons
             Item.crit = 4;
             Item.width = 30;
             Item.height = 30;
-            Item.useTime = 1;
-            Item.useAnimation = 1;
+            Item.useTime = 25;
+            Item.useAnimation = 25;
             Item.UseSound = SoundID.Item11;
             Item.useTurn = true;
             Item.noMelee = true;
@@ -37,7 +37,14 @@ namespace tsorcRevamp.Items.Weapons
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
-            Main.GameMode = 2;
+            if (Main.GameMode == 1)
+            {
+                Main.GameMode = 2;
+            }
+            else
+            {
+                Main.GameMode = 1;
+            }
             Main.NewText(player.position / 16);            
             Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyLightningStrike>(), damage, knockBack, Main.myPlayer);
             //Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);

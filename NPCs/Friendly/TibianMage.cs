@@ -116,6 +116,10 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].shopCustomPrice = 50;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++; 
+            shop.item[nextSlot].SetDefaults(ItemID.WormholePotion);
+            shop.item[nextSlot].shopCustomPrice = 5;
+            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+            nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Magic.RedClothHat>());
             shop.item[nextSlot].shopCustomPrice = 50;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
