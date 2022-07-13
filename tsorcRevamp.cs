@@ -1078,7 +1078,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>())), // Downed variable (the one keeping track the boss has been defeated once)
                     0,
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.WitchkingBag>(), ModContent.ItemType<BrokenStrangeMagicRing>(), ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>(), ModContent.ItemType<Items.Armors.WitchkingHelmet>(), ModContent.ItemType<Items.Armors.WitchkingTop>(), ModContent.ItemType<Items.Armors.WitchkingBottoms>(), ModContent.ItemType<Items.Accessories.RingOfPower>(),
+                    new List<int> { ModContent.ItemType<Items.BossBags.WitchkingBag>(), ModContent.ItemType<BrokenStrangeMagicRing>(), ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>(), ModContent.ItemType<Items.Armors.Summon.WitchkingHelmet>(), ModContent.ItemType<Items.Armors.Summon.WitchkingTop>(), ModContent.ItemType<Items.Armors.Summon.WitchkingBottoms>(), ModContent.ItemType<Items.Accessories.RingOfPower>(),
                     ModContent.ItemType<Items.Accessories.GoldenHairpin>(), ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<Items.BossItems.DarkMirror>(), ModContent.ItemType<Items.Accessories.CovenantOfArtorias>() }, // List containing all the loot to show in the bestiary
                     $"Spawns rarely around the world, though more commonly during Blood Moons. Alternatively, find him in his lair deep underground, shrouded in extreme darkness.", // Guide to fight the boss
                     "");

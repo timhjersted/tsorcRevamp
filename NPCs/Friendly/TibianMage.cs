@@ -116,15 +116,15 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].shopCustomPrice = 50;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++; 
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.RedClothHat>());
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Magic.RedClothHat>());
             shop.item[nextSlot].shopCustomPrice = 50;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.RedClothTunic>());
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Magic.RedClothTunic>());
             shop.item[nextSlot].shopCustomPrice = 100;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.RedClothPants>());
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Magic.RedClothPants>());
             shop.item[nextSlot].shopCustomPrice = 75;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;

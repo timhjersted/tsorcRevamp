@@ -305,9 +305,9 @@ namespace tsorcRevamp.Items.BossBags
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before              
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.PowerArmorNUHelmet>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.PowerArmorNUTorso>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.PowerArmorNUGreaves>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.Melee.PowerArmorNUHelmet>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.Melee.PowerArmorNUTorso>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.Melee.PowerArmorNUGreaves>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.FlareTome>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Ranged.ElfinBow>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.HolyWarElixir>());
@@ -406,9 +406,9 @@ namespace tsorcRevamp.Items.BossBags
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.RingOfPower>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.GoldenHairpin>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.WitchkingHelmet>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.WitchkingTop>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.WitchkingBottoms>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.Summon.WitchkingHelmet>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.Summon.WitchkingTop>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.Summon.WitchkingBottoms>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.CovenantOfArtorias>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), 5000);

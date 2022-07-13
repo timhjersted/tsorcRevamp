@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Armors
     class ShadowNinjaMask2 : ModItem
     {
 
-        public override string Texture => "tsorcRevamp/Items/Armors/ShadowNinjaMask";
+        public override string Texture => "tsorcRevamp/Items/Armors/Melee/ShadowNinjaMask";
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Shadow Ninja Mask II");
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == ModContent.ItemType<ShadowNinjaTop>() && legs.type == ModContent.ItemType<ShadowNinjaBottoms>();
+            return body.type == ModContent.ItemType<Items.Armors.Melee.ShadowNinjaTop>() && legs.type == ModContent.ItemType<Items.Armors.Melee.ShadowNinjaBottoms>();
         }
 
         public override void UpdateArmorSet(Player player)
@@ -61,7 +61,7 @@ namespace tsorcRevamp.Items.Armors
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<ShadowNinjaMask>());
+            recipe.AddIngredient(ModContent.ItemType<Items.Armors.Melee.ShadowNinjaMask>());
             recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);

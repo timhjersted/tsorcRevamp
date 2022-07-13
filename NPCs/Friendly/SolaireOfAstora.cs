@@ -102,15 +102,15 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].shopCustomPrice = 300;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.AncientGoldenHelmet>());
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Melee.AncientGoldenHelmet>());
             shop.item[nextSlot].shopCustomPrice = 50;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.AncientGoldenArmor>());
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Melee.AncientGoldenArmor>());
             shop.item[nextSlot].shopCustomPrice = 100;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.AncientGoldenGreaves>());
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Melee.AncientGoldenGreaves>());
             shop.item[nextSlot].shopCustomPrice = 75;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;

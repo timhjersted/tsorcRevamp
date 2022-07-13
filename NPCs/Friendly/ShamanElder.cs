@@ -216,15 +216,15 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void SetupShop(Chest shop, ref int nextSlot)
         {
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.OldChainCoif>());
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Summon.OldChainCoif>());
             shop.item[nextSlot].shopCustomPrice = 50;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.OldChainArmor>());
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Summon.OldChainArmor>());
             shop.item[nextSlot].shopCustomPrice = 100;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.OldChainGreaves>());
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Summon.OldChainGreaves>());
             shop.item[nextSlot].shopCustomPrice = 75;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
