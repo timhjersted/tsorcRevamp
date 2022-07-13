@@ -193,7 +193,7 @@ namespace tsorcRevamp.Items.BossBags
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before            
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.BloomShards>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.TheEnd>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Picksaw);
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.HeavenPiercer>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.SoulOfAttraidies>(), Main.rand.Next(15, 23));
         }
     }

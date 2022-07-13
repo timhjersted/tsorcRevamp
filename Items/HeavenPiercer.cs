@@ -4,11 +4,13 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items
 {
-    public class GigaDrill : ModItem
+    public class HeavenPiercer : ModItem
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Pierce the Heavens");
+            DisplayName.SetDefault("Heaven Piercer");
+            Tooltip.SetDefault("Infused with the energy of the Picksaw and the dark magic of Attraidies" +
+                "\nEasily shatters lihzahrd bricks");
         }
 
         public override void SetDefaults()
@@ -19,27 +21,18 @@ namespace tsorcRevamp.Items
             Item.channel = true;
             Item.useAnimation = 25;
             Item.useTime = 7;
-            Item.pick = 200;
-            Item.axe = 100;
+            Item.pick = 999;
+            Item.axe = 199;
             Item.damage = 42;
             Item.knockBack = 5;
             Item.UseSound = SoundID.Item23;
-            Item.rare = ItemRarityID.Pink;
             Item.shootSpeed = 36;
             Item.noUseGraphic = true;
             Item.noMelee = true;
-            Item.value = 250000;
+            Item.rare = ItemRarityID.Purple;
+            Item.value = PriceByRarity.fromItem(Item);
             Item.DamageType = DamageClass.Melee;
-            Item.shoot = ModContent.ProjectileType<Projectiles.GigaDrill>();
-        }
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Drax, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
+            Item.shoot = ModContent.ProjectileType<Projectiles.HeavenPiercer>();
         }
     }
 }

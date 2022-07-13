@@ -128,6 +128,7 @@ namespace tsorcRevamp.Items.ItemCrates
         }
     }
 
+    [LegacyName("GigaDrill")]
     [LegacyName("SweatyCyclopsForge")]
     [LegacyName("ReforgedOldCrossbow")]
     [LegacyName("ReforgedOldLongbow")]
