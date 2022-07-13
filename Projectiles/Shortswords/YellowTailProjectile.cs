@@ -87,7 +87,7 @@ namespace tsorcRevamp.Projectiles.Shortswords
 			int HalfProjWidth = Projectile.width / 2;
 			int HalfProjHeight = Projectile.height / 2;
 
-			// Vanilla configuration for "hitbox in middle of sprite"
+			//Vanilla configuration for "hitbox in middle of sprite"
 			DrawOriginOffsetX = 0;
 			DrawOffsetX = -(HalfSpriteWidth - HalfProjWidth);
 			DrawOriginOffsetY = -(HalfSpriteHeight - HalfProjHeight);
@@ -125,7 +125,7 @@ namespace tsorcRevamp.Projectiles.Shortswords
 			// "Hit anything between the player and the tip of the sword"
 			// shootSpeed is 2.1f for reference, so this is basically plotting 12 pixels ahead from the center
 			Vector2 start = Projectile.Center;
-			Vector2 end = start + Projectile.velocity * 6f;
+			Vector2 end = start + Projectile.velocity * 11f;
 			float collisionPoint = 0f; // Don't need that variable, but required as parameter
 			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
 		}

@@ -20,8 +20,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             Item.shootSpeed = 2.1f;
             Item.noUseGraphic = true;
             Item.noMelee = true;
-            Item.useAnimation = 25;
-            Item.useTime = 25;
+            Item.useAnimation = 18;
+            Item.useTime = 18;
             Item.damage = 62;
             Item.knockBack = 6f;
             Item.autoReuse = true;
