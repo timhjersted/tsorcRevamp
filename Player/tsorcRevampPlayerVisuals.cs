@@ -323,7 +323,7 @@ namespace tsorcRevamp
             Player drawPlayer = drawInfo.drawPlayer;
             #region mana shield
             if (modPlayer.manaShield > 0 && !modPlayer.Player.dead) {
-                if (modPlayer.Player.statMana > Items.Accessories.ManaShield.manaCost) {
+                if (modPlayer.Player.statMana > Items.Accessories.Melee.ManaShield.manaCost) {
                     //If they didn't have enough mana for the shield last frame but do now, play a sound to let them know it's back up
                     if (!modPlayer.shieldUp) {
                         //Soundtype Item SoundStyle 28 is powerful magic cast

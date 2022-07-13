@@ -30,7 +30,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            if (Main.rand.NextBool(16)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.BandOfCosmicPower>());
+            if (Main.rand.NextBool(16)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.BandOfCosmicPower>());
             if (Main.rand.NextFloat() >= .2f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
             if (Main.rand.NextBool(16)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>());
             if (Main.rand.NextBool(3)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.FlaskofFire);

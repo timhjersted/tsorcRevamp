@@ -2192,7 +2192,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 3);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.ReflectionShift>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Mobility.ReflectionShift>());
             }
             if (Main.tile[5810, 1670] != null)
             {

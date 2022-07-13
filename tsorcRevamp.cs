@@ -876,7 +876,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Slogra>())), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.TomeOfSlograAndGaibon>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.SlograBag>(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), ModContent.ItemType<Items.Accessories.BloodbiteRing>() }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.SlograBag>(), ModContent.ItemType<Items.Accessories.Defensive.PoisonbiteRing>(), ModContent.ItemType<Items.Accessories.Defensive.BloodbiteRing>() }, // List containing all the loot to show in the bestiary
                     $"Found in the depths of the Meteor Temple.", // Guide to fight the boss
                     "", // Despawning Message
                     "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/SlograAndGaibon");
@@ -891,7 +891,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>())), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.JungleFeather>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.JungleWyvernBag>(), ModContent.ItemType<Items.Accessories.ChloranthyRing>(), ItemID.Sapphire, ItemID.Ruby, ItemID.Topaz, ItemID.Diamond, ItemID.Emerald, ItemID.Amethyst, ItemID.NecroHelmet, ItemID.NecroBreastplate, ItemID.NecroGreaves }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.JungleWyvernBag>(), ModContent.ItemType<Items.Accessories.Expert.ChloranthyRing>(), ItemID.Sapphire, ItemID.Ruby, ItemID.Topaz, ItemID.Diamond, ItemID.Emerald, ItemID.Amethyst, ItemID.NecroHelmet, ItemID.NecroBreastplate, ItemID.NecroGreaves }, // List containing all the loot to show in the bestiary
                     $"Found in the depths of the Forgotten City.", // Guide to fight the boss
                     "", // Despawning Message
                     "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/JungleWyvern");
@@ -967,7 +967,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>())), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.WingOfTheFallen>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.WyvernMageBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.Weapons.Melee.LionheartGunblade>(), ModContent.ItemType<Items.Weapons.Magic.LampTome>(), ModContent.ItemType<Items.Accessories.GemBox>(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), ModContent.ItemType<Items.Accessories.BloodbiteRing>() }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.WyvernMageBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.Weapons.Melee.LionheartGunblade>(), ModContent.ItemType<Items.Weapons.Magic.LampTome>(), ModContent.ItemType<Items.Accessories.Magic.GemBox>(), ModContent.ItemType<Items.Accessories.Defensive.PoisonbiteRing>(), ModContent.ItemType<Items.Accessories.Defensive.BloodbiteRing>() }, // List containing all the loot to show in the bestiary
                     $"Found high atop a mountain in a great fortress.", // Guide to fight the boss
                     "", // Despawning Message
                     "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/WyvernMage");
@@ -1050,7 +1050,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>())), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.DyingWaterCrystal>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.KrakenBag>(), ModContent.ItemType<Items.Accessories.DragonHorn>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.KrakenBag>(), ModContent.ItemType<Items.Accessories.Melee.DragonHorn>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() }, // List containing all the loot to show in the bestiary
                     $"Seek out the Realm of the Kraken. There you will find the materials needed to craft Dying Water Crystal.", // Guide to fight the boss
                     "");
 
@@ -1064,7 +1064,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>())), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.DyingEarthCrystal>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.LichBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), ModContent.ItemType<Items.Accessories.DragoonBoots>(), ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>() }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.LichBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), ModContent.ItemType<Items.Accessories.Mobility.DragoonBoots>(), ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>() }, // List containing all the loot to show in the bestiary
                     $"Find the Lair of the Lich King. There you will find the materials needed to craft Dying Earth Crystal.", // Guide to fight the boss
                     "");
 
@@ -1079,7 +1079,7 @@ namespace tsorcRevamp
                     0,
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.WitchkingBag>(), ModContent.ItemType<BrokenStrangeMagicRing>(), ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>(), ModContent.ItemType<Items.Armors.Summon.WitchkingHelmet>(), ModContent.ItemType<Items.Armors.Summon.WitchkingTop>(), ModContent.ItemType<Items.Armors.Summon.WitchkingBottoms>(), ModContent.ItemType<Items.Accessories.RingOfPower>(),
-                    ModContent.ItemType<Items.Accessories.GoldenHairpin>(), ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<Items.BossItems.DarkMirror>(), ModContent.ItemType<Items.Accessories.CovenantOfArtorias>() }, // List containing all the loot to show in the bestiary
+                    ModContent.ItemType<Items.Accessories.GoldenHairpin>(), ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<Items.BossItems.DarkMirror>(), ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>() }, // List containing all the loot to show in the bestiary
                     $"Spawns rarely around the world, though more commonly during Blood Moons. Alternatively, find him in his lair deep underground, shrouded in extreme darkness.", // Guide to fight the boss
                     "");
 
@@ -1107,7 +1107,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>())), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.StoneOfSeath>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.SeathBag>(), ModContent.ItemType<Items.DragonEssence>(), ModContent.ItemType<Items.BequeathedSoul>(), ModContent.ItemType<Items.Accessories.BlueTearstoneRing>(), ModContent.ItemType<Items.PurgingStone>(), ModContent.ItemType<Items.Accessories.DragonWings>() },// List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.SeathBag>(), ModContent.ItemType<Items.DragonEssence>(), ModContent.ItemType<Items.BequeathedSoul>(), ModContent.ItemType<Items.Accessories.Defensive.BlueTearstoneRing>(), ModContent.ItemType<Items.PurgingStone>(), ModContent.ItemType<Items.Accessories.Mobility.DragonWings>() },// List containing all the loot to show in the bestiary
                     $"Found deep underground in a place of extreme cold. Alternatively, craft and use a Stone of Seath.", // Guide to fight the boss
                     "");
 
@@ -1931,7 +1931,7 @@ namespace tsorcRevamp
                 {TransparentTextureType.UltimaWeaponGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/UltimaWeaponGlowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.DarkUltimaWeapon, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeapon", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.DarkUltimaWeaponGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeaponGlowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.ReflectionShift, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Accessories/ReflectionShift", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ReflectionShift, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Accessories/Mobility/ReflectionShift", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.PhazonRound, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/PhazonRound", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.MoonlightGreatsword, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.MoonlightGreatswordGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},

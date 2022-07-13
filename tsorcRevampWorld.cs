@@ -844,7 +844,7 @@ namespace tsorcRevamp
             {
                 for (int i = 3; i <= 8; i++)
                 {
-                    if (p.armor[i].type == ModContent.ItemType<Items.Accessories.CovenantOfArtorias>())
+                    if (p.armor[i].type == ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>())
                     {
                         charm = true;
                         break;

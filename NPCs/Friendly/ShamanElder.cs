@@ -234,7 +234,7 @@ namespace tsorcRevamp.NPCs.Friendly
             nextSlot++;
             if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>()) || tsorcRevampWorld.SuperHardMode /*just in case*/)
             {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<CovenantOfArtorias>());
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>());
                 shop.item[nextSlot].shopCustomPrice = 4000;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             }

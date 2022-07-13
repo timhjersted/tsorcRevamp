@@ -527,7 +527,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<GoldenHairpin>(), 1, false, -1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<GuardianSoul>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<CovenantOfArtorias>(), 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>(), 1, false, -1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 2500);
             }            
         }

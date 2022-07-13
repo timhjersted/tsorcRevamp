@@ -368,7 +368,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
         {
             if (!Main.expertMode)
             {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.ChloranthyRing>(), 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Expert.ChloranthyRing>(), 1, false, -1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Sapphire, Main.rand.Next(2, 10));
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Ruby, Main.rand.Next(2, 10));
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Topaz, Main.rand.Next(2, 10));

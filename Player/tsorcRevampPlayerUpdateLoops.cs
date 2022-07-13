@@ -385,7 +385,7 @@ namespace tsorcRevamp
                 //does the player have a covenant of artorias
                 for (int i = 3; i < (8 + Player.extraAccessorySlots); i++)
                 {
-                    if (Player.armor[i].type == ModContent.ItemType<Items.Accessories.CovenantOfArtorias>())
+                    if (Player.armor[i].type == ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>())
                     {
                         hasCoA = true;
                         break;

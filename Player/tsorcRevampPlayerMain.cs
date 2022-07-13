@@ -848,10 +848,10 @@ namespace tsorcRevamp
             base.Hurt(pvp, quiet, damage, hitDirection, crit);
             if (manaShield == 1)
             {
-                if (Player.statMana >= Items.Accessories.ManaShield.manaCost)
+                if (Player.statMana >= Items.Accessories.Melee.ManaShield.manaCost)
                 {
-                    Player.statMana -= Items.Accessories.ManaShield.manaCost;
-                    Player.manaRegenDelay = Items.Accessories.ManaShield.regenDelay;
+                    Player.statMana -= Items.Accessories.Melee.ManaShield.manaCost;
+                    Player.manaRegenDelay = Items.Accessories.Melee.ManaShield.regenDelay;
                 }
             }
         }
