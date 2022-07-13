@@ -29,21 +29,12 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CloudinaBalloon, 1);
-            recipe.AddIngredient(ItemID.AngelWings, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SupersonicBoots").Type, 1);
+            recipe.AddIngredient(ItemID.AngelWings, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-
-            Terraria.Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(ModContent.ItemType<ImprovedCloudInABalloon>(), 1);
-            recipe2.AddIngredient(ItemID.AngelWings, 1);
-            recipe2.AddIngredient(ModContent.ItemType<SupersonicBoots>(), 1);
-            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
-            recipe2.AddTile(TileID.DemonAltar);
-            recipe2.Register();
         }
         public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising,
                             ref float maxCanAscendMultiplier, ref float maxAscentMultiplier, ref float constantAscend)
@@ -63,14 +54,12 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         }
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.jumpBoost = true;
-            player.hasJumpOption_Cloud = true;
             player.fireWalk = true;
             player.noKnockback = true;
             player.canRocket = true;
             player.iceSkate = true;
-            player.jumpSpeedBoost = 1.3f;
             player.wingTimeMax = 180;
+            player.jumpSpeedBoost += 0.8f;
 
             bool restricted = false;
             for (int i = 3; i <= 8; i++)

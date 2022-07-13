@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Items;
 using tsorcRevamp.UI;
+using Terraria.Localization;
 
 namespace tsorcRevamp
 {
@@ -15,6 +16,10 @@ namespace tsorcRevamp
     {
         Texture2D BonfireMinimapTexture;
         public static RecipeGroup UpgradedMirrors;
+        public static RecipeGroup ImprovedBundleGroupBlue;
+        public static RecipeGroup ImprovedBundleGroupWhite;
+        public static RecipeGroup ImprovedBundleGroupYellow;
+
         public override void PostDrawFullscreenMap(ref string mouseText)
         {
             DrawMinimapBonfires();
@@ -177,6 +182,21 @@ namespace tsorcRevamp
                 ModContent.ItemType<VillageMirror>()
             );
             RecipeGroup.RegisterGroup("tsorcRevamp:UpgradedMirrors", UpgradedMirrors);
+
+            ImprovedBundleGroupBlue = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} Blue Balloons",
+                ItemID.CloudinaBalloon, ModContent.ItemType<Items.Accessories.Mobility.ImprovedBlueHorseshoeBalloon>());
+
+            RecipeGroup.RegisterGroup("tsorcRevamp:ImprovedBundleGroupBlue", ImprovedBundleGroupBlue);
+
+            ImprovedBundleGroupWhite = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} White Balloons",
+                ItemID.BlizzardinaBalloon, ModContent.ItemType<Items.Accessories.Mobility.ImprovedWhiteHorseshoeBalloon>());
+
+            RecipeGroup.RegisterGroup("tsorcRevamp:ImprovedBundleGroupWhite", ImprovedBundleGroupWhite);
+
+            ImprovedBundleGroupYellow = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} Yellow Balloons",
+                ItemID.SandstorminaBalloon, ModContent.ItemType<Items.Accessories.Mobility.ImprovedYellowHorseshoeBalloon>());
+
+            RecipeGroup.RegisterGroup("tsorcRevamp:ImprovedBundleGroupYellow", ImprovedBundleGroupYellow);
         }
 
         public override void UpdateUI(GameTime gameTime)
@@ -213,6 +233,9 @@ namespace tsorcRevamp
         public override void Unload()
         {
             UpgradedMirrors = null;
+            ImprovedBundleGroupBlue = null;
+            ImprovedBundleGroupWhite = null;
+            ImprovedBundleGroupYellow = null;
         }
 
         public override void PreSaveAndQuit()

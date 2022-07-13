@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         {
             DisplayName.SetDefault("Supersonic Wings II");
             Tooltip.SetDefault("+60% supersonic movement speed and virtually limitless flight" +
-                                "\nPlus all the previous abilities of Supersonic Wings." +
+                                "\nPlus all the previous abilities of Supersonic Wings and Improved Bundle of Balloons" +
                                 "\nDoes not work if Hermes Boots or Spectre Boots are equipped." +
                                 "\nCompatible with Dragoon Boots and Dragoon Gear.");
         }
@@ -30,6 +30,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("ImprovedBundleofBalloons").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 70000);
             recipe.AddTile(TileID.DemonAltar);
@@ -38,6 +39,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
             Terraria.Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
+            recipe2.AddIngredient(Mod.Find<ModItem>("ImprovedBundleofBalloons").Type, 1);
             recipe2.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
             recipe2.AddIngredient(ItemID.EmpressFlightBooster, 1);
             recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 35000);
@@ -67,6 +69,8 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         {
             player.jumpBoost = true;
             player.hasJumpOption_Cloud = true;
+            player.hasJumpOption_Blizzard = true;
+            player.hasJumpOption_Sandstorm = true;
             player.fireWalk = true;
             player.noKnockback = true;
             player.noFallDmg = true;
