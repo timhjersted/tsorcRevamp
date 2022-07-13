@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;
-            NPC.damage = 130;
+            NPC.damage = 390;
             NPC.defense = 50;
             NPC.HitSound = SoundID.NPCHit7;
             NPC.DeathSound = SoundID.NPCDeath8;
@@ -37,9 +37,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         }
 
 
-        int breathDamage = 43;
-        int frozenTearDamage = 54;
-        int meteorDamage = 60;
+        int breathDamage = 63;
+        int frozenTearDamage = 74;
+        int meteorDamage = 90;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = (int)(NPC.damage / 2);
@@ -162,10 +162,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             if (breathCD <= 0)
             {
                 breath = false;
-                breathCD = 110;
+                breathCD = 150; //was 110
                 //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
             }
-            if (Main.rand.NextBool(820))
+            if (Main.rand.NextBool(420))//was 820
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
@@ -176,7 +176,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 }
             }
-            if (Main.rand.NextBool(1560))
+            if (Main.rand.NextBool(1060)) //was 1560
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {

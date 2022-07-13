@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;
-            NPC.damage = 100;
+            NPC.damage = 250;
             NPC.defense = 50;
             NPC.HitSound = SoundID.NPCHit7;
             NPC.DeathSound = SoundID.NPCDeath8;
@@ -32,9 +32,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         }
 
 
-        int breathDamage = 33;
-        int flameRainDamage = 27;
-        int meteorDamage = 33;
+        int breathDamage = 63; //was 33
+        int flameRainDamage = 75; //27
+        int meteorDamage = 123; //33
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = (int)(NPC.damage / 2);
