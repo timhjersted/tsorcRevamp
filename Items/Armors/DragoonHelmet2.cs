@@ -50,6 +50,7 @@ namespace tsorcRevamp.Items.Armors
             player.moveSpeed += 0.38f;
             player.manaCost -= 0.38f;
             player.lifeRegen += 6;
+            player.GetModPlayer<tsorcRevampPlayer>().DarkmoonCloak = true;
 
             //player.wings = 34; // looks like Jim's Wings
             //player.wingsLogic = 34;
