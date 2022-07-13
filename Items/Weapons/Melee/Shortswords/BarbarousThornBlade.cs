@@ -19,8 +19,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
         {
             Item.damage = 36;
             Item.DamageType = DamageClass.Melee;
-            Item.width = 44;
-            Item.height = 44;
+            Item.width = 46;
+            Item.height = 46;
             Item.useTime = 17;
             Item.useAnimation = 17;
             Item.useStyle = ItemUseStyleID.Rapier;

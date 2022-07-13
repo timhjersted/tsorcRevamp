@@ -13,9 +13,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
 
         public override void SetDefaults()
         {
-            Item.width = 35;
-            Item.height = 35;
-            Item.useStyle = ItemUseStyleID.Thrust;
+            Item.width = 46;
+            Item.height = 46;
+            Item.useStyle = ItemUseStyleID.Rapier;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
             Item.useAnimation = 15;
             Item.autoReuse = true;
             Item.useTime = 15;
@@ -28,6 +30,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             Item.value = PriceByRarity.Blue_1;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Shortswords.YellowTailProjectile>(); // The projectile is what makes a shortsword work
+            Item.shootSpeed = 2.1f; // This value bleeds into the behavior of the projectile as velocity, keep that in mind when tweaking values
         }
 
         public override void AddRecipes()

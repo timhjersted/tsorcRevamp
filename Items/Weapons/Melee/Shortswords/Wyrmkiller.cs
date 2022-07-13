@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee
+namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
 {
     class Wyrmkiller : ModItem
     {
@@ -25,6 +25,10 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useTime = 21;
             Item.value = 140000;
             Item.width = 32;
+            Item.noUseGraphic = true;
+            Item.noMelee= true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Shortswords.WyrmkillerProjectile>(); // The projectile is what makes a shortsword work
+            Item.shootSpeed = 2.1f; // This value bleeds into the behavior of the projectile as velocity, keep that in mind when tweaking values
         }
 
         public override void AddRecipes()
