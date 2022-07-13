@@ -190,7 +190,7 @@ namespace tsorcRevamp
             ScriptedEvent TheHunter = new ScriptedEvent(new Vector2(296, 1560), 36, ModContent.NPCType<NPCs.Bosses.TheHunter>(), DustID.GoldFlame, true, true, "The hunt begins...", Color.DarkGreen, false);
 
             //THE RAGE
-            ScriptedEvent TheRage = new ScriptedEvent(new Vector2(7000, 1872), 60, ModContent.NPCType<NPCs.Bosses.TheRage>(), DustID.GoldFlame, true, true, "The Rage awakens!", Color.Red, false);
+            ScriptedEvent TheRage = new ScriptedEvent(new Vector2(7000, 1845), 30, ModContent.NPCType<NPCs.Bosses.TheRage>(), DustID.GoldFlame, true, true, "The Rage awakens!", Color.Red, false);
 
             //ANCIENT OOLACILE DEMON (EARLY-GAME)
             ScriptedEvent AODE = new ScriptedEvent(new Vector2(5652, 971), 27, ModContent.NPCType<NPCs.Bosses.AncientOolacileDemon>(), DustID.GoldFlame, true, true, "You foolish human... pitiful arrogance...", Color.MediumPurple, false);
@@ -1495,6 +1495,7 @@ namespace tsorcRevamp
                 if (Main.player[i].active && !Main.player[i].dead)
                 {
                     playerAlive = true;
+                    break;
                 }
                 //If we reach the end without hitting one, end the event.
                 if (!playerAlive)
@@ -1660,6 +1661,7 @@ namespace tsorcRevamp
 
             tsorcScriptedEvents.ActiveEvents.Remove(this);
             eventTimer = 0;
+            npcDead = false;
             deadNPCs = new List<bool>();
             spawnedNPCs = new List<NPC>();
             finishedCustomAction = false;

@@ -64,15 +64,6 @@ namespace tsorcRevamp.NPCs.Special
                 return;
             }
 
-            if (Main.LocalPlayer.Center.X < NPC.Center.X)
-            {
-                NPC.direction = -1;
-            }
-            else
-            {
-                NPC.direction = 1;
-            }
-
             NPC.spriteDirection = NPC.direction;
             NPC.ai[1] += 1f;
             float acceleration = 0.005f;

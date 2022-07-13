@@ -59,6 +59,7 @@ namespace tsorcRevamp.Projectiles
                 }
                 else
                 {
+                    Projectile.Center = Main.npc[UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Special.AttraidiesApparition>()).Value].Center;
                     if (Main.rand.NextBool(3))
                     {
                         int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 156, Projectile.velocity.X * 0f, Projectile.velocity.Y * 0f, 30, default(Color), .6f);
