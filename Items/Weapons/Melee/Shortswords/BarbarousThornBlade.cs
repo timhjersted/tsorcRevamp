@@ -46,10 +46,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             //damage = (int)(damage * .85f);
             if (player.altFunctionUse == 2)
             {
+                speed *= 5;
                 type = ModContent.ProjectileType<Projectiles.Briar>();
-                Item.shootSpeed = 8.5f;
-                Item.useTime = 34;
-                Item.useAnimation = 34;
                 float numberProjectiles = 3; //Main.rand.Next(3); // 3, 4, or 5 shots
                 float rotation = MathHelper.ToRadians(15); // Spread degrees.
                 position += Vector2.Normalize(speed) * 30f; // Distance spawned from player
@@ -58,6 +56,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
                     Vector2 perturbedSpeed = speed.RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numberProjectiles - 1))) * 1f; // The speed at which projectiles move.
                     Projectile.NewProjectile(player.GetSource_ItemUse(Item), position.X, position.Y, perturbedSpeed.X, perturbedSpeed.Y, type, damage, knockBack, player.whoAmI);
                 }
+                return false;
             }
             return true;
         }
