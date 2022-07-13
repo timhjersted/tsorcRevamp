@@ -1,10 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee
+namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
 {
     public class BarbarousThornBlade : ModItem
     {
@@ -22,14 +23,17 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.height = 44;
             Item.useTime = 17;
             Item.useAnimation = 17;
-            Item.useStyle = ItemUseStyleID.Thrust;
+            Item.useStyle = ItemUseStyleID.Rapier;
+            Item.noUseGraphic = true;
+            Item.noMelee = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Shortswords.BarbarousThornBladeProjectile>();
             Item.knockBack = 3.5f;
             Item.value = 25000;
             Item.rare = ItemRarityID.Orange;
             Item.scale = .9f;
             Item.autoReuse = true;
             Item.useTurn = false;
-            Item.shoot = 0;
+            Item.shootSpeed = 2.1f;
             Item.UseSound = SoundID.Item7;
         }
         public override bool AltFunctionUse(Player player)
@@ -37,45 +41,25 @@ namespace tsorcRevamp.Items.Weapons.Melee
             return true;
         }
 
-        public override bool CanUseItem(Player player)
-        {
-            if (player.altFunctionUse == 2)
-            {
-
-                Item.useStyle = 1;
-                Item.shoot = ModContent.ProjectileType<Projectiles.Briar>();
-                Item.shootSpeed = 8.5f;
-                Item.useTime = 34;
-                Item.useAnimation = 34;
-                Item.UseSound = SoundID.Item1;
-
-            }
-
-            else
-            {
-                Item.useStyle = 3;
-                Item.shoot = 0;
-                Item.useTime = 17;
-                Item.useAnimation = 17;
-                Item.useTurn = false;
-                Item.UseSound = SoundID.Item7;
-            }
-
-            return base.CanUseItem(player);
-        }
-
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             //damage = (int)(damage * .85f);
-            float numberProjectiles = 3; //Main.rand.Next(3); // 3, 4, or 5 shots
-            float rotation = MathHelper.ToRadians(15); // Spread degrees.
-            position += Vector2.Normalize(speed) * 30f; // Distance spawned from player
-            for (int i = 0; i < numberProjectiles; i++)
+            if (player.altFunctionUse == 2)
             {
-                Vector2 perturbedSpeed = speed.RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numberProjectiles - 1))) * 1f; // The speed at which projectiles move.
-                Projectile.NewProjectile(player.GetSource_ItemUse(Item), position.X, position.Y, perturbedSpeed.X, perturbedSpeed.Y, type, damage, knockBack, player.whoAmI);
+                type = ModContent.ProjectileType<Projectiles.Briar>();
+                Item.shootSpeed = 8.5f;
+                Item.useTime = 34;
+                Item.useAnimation = 34;
+                float numberProjectiles = 3; //Main.rand.Next(3); // 3, 4, or 5 shots
+                float rotation = MathHelper.ToRadians(15); // Spread degrees.
+                position += Vector2.Normalize(speed) * 30f; // Distance spawned from player
+                for (int i = 0; i < numberProjectiles; i++)
+                {
+                    Vector2 perturbedSpeed = speed.RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numberProjectiles - 1))) * 1f; // The speed at which projectiles move.
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), position.X, position.Y, perturbedSpeed.X, perturbedSpeed.Y, type, damage, knockBack, player.whoAmI);
+                }
             }
-            return false;
+            return true;
         }
 
         public override void MeleeEffects(Player player, Rectangle hitbox)
@@ -135,7 +119,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Melee.YellowTail>());
+            recipe.AddIngredient(ModContent.ItemType<YellowTail>());
             recipe.AddIngredient(ItemID.HellstoneBar, 10);
             recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);

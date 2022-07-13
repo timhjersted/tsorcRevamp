@@ -172,7 +172,7 @@ namespace tsorcRevamp
                     if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.UltimaWeapon>()) {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeaponGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.BarbarousThornBlade>()) {
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarbarousThornBlade>()) {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.BarbarousThornBladeGlowmask];
                     }
                     //If it's not on the list, don't bother.

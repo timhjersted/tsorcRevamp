@@ -710,7 +710,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
         {
-            if (item.type == ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>() || item.type == ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>())
+            if (item.type == ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() || item.type == ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>())
             {
                 defenseBroken = true;
             }

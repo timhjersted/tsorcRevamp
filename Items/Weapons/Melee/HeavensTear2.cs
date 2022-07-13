@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.noMelee = true;
             Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Melee;
-            Item.shoot = ModContent.ProjectileType<Projectiles.HeavenBall>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.HeavensTearBall>();
         }
 
         public override void AddRecipes()

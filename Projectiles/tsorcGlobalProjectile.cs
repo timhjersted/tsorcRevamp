@@ -85,8 +85,8 @@ namespace tsorcRevamp.Projectiles
                     }
                 }
 
-                if (projectile.owner == Main.myPlayer && (projectile.aiStyle == 99 || projectile.aiStyle == 15 || projectile.type == ModContent.ProjectileType<Projectiles.BerserkerSphere>()
-                    || projectile.type == ModContent.ProjectileType<Projectiles.HeavenBall>()) && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
+                if (projectile.owner == Main.myPlayer && (projectile.aiStyle == 99 || projectile.aiStyle == 15 || projectile.type == ModContent.ProjectileType<Projectiles.BerserkerNightmareBall>()
+                    || projectile.type == ModContent.ProjectileType<Projectiles.HeavensTearBall>()) && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
                 {
                     //projectile.Kill();
 

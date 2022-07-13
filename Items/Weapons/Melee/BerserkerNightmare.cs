@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.noMelee = true;
             Item.value = PriceByRarity.LightPurple_6;
             Item.DamageType = DamageClass.Melee;
-            Item.shoot = ModContent.ProjectileType<Projectiles.BerserkerSphere>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.BerserkerNightmareBall>();
         }
 
         public override void AddRecipes()

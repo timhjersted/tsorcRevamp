@@ -205,7 +205,7 @@ namespace tsorcRevamp.Items.BossBags
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.GoldenHairpin>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.DragonHorn>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>());
         }
     }
     public class MarilithBag : BossBag
@@ -218,7 +218,7 @@ namespace tsorcRevamp.Items.BossBags
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.FairyInABottle>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>()); //Because the Shaman Elder says she drops them
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>()); //Because the Shaman Elder says she drops them
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {

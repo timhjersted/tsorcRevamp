@@ -11,11 +11,11 @@ using ReLogic.Content;
 namespace tsorcRevamp.Projectiles
 {
 
-    public class MoonfuryBall : ModProjectile
-    {
+	public class HeavensTearBall : ModProjectile
+	{
 
-		private const string ChainTexturePath = "tsorcRevamp/Projectiles/MoonfuryChain"; // The folder path to the flail chain sprite
-		private const string ChainTextureExtraPath = "tsorcRevamp/Projectiles/MoonfuryChain2";  // This texture and related code is optional and used for a unique effect
+		private const string ChainTexturePath = "tsorcRevamp/Projectiles/HeavensTearChain"; // The folder path to the flail chain sprite
+		private const string ChainTextureExtraPath = "tsorcRevamp/Projectiles/HeavensTearChain2";  // This texture and related code is optional and used for a unique effect
 
 		private enum AIState
 		{
@@ -80,12 +80,12 @@ namespace tsorcRevamp.Projectiles
 			bool doFastThrowDust = false;
 			bool shouldOwnerHitCheck = false;
 			int launchTimeLimit = 14;  // How much time the projectile can go before retracting (speed and shootTimer will set the flail's range)
-			float launchSpeed = 36f; // How fast the projectile can move
-			float maxLaunchLength = 1050f; // How far the projectile's chain can stretch before being forced to retract when in launched state
-			float retractAcceleration = 6f; // How quickly the projectile will accelerate back towards the player while retracting
-			float maxRetractSpeed = 30f; // The max speed the projectile will have while retracting
-			float forcedRetractAcceleration = 12f; // How quickly the projectile will accelerate back towards the player while being forced to retract
-			float maxForcedRetractSpeed = 60f; // The max speed the projectile will have while being forced to retract
+			float launchSpeed = 50f; // How fast the projectile can move
+			float maxLaunchLength = 1300f; // How far the projectile's chain can stretch before being forced to retract when in launched state
+			float retractAcceleration = 12f; // How quickly the projectile will accelerate back towards the player while retracting
+			float maxRetractSpeed = 35f; // The max speed the projectile will have while retracting
+			float forcedRetractAcceleration = 24f; // How quickly the projectile will accelerate back towards the player while being forced to retract
+			float maxForcedRetractSpeed = 70f; // The max speed the projectile will have while being forced to retract
 			float unusedRetractAcceleration = 1f;
 			float unusedMaxRetractSpeed = 14f;
 			int unusedChainLength = 60;
@@ -154,11 +154,7 @@ namespace tsorcRevamp.Projectiles
 							StateTimer = 0f;
 							Projectile.netUpdate = true;
 							Projectile.velocity *= 0.2f;
-							// This is where Drippler Crippler spawns its projectile
-							/*
-							if (Main.myPlayer == Projectile.owner)
-								Projectile.NewProjectile(Projectile.GetProjectileSource_FromThis(), Projectile.Center, Projectile.velocity, 928, Projectile.damage, Projectile.knockBack, Main.myPlayer);
-							*/
+
 							break;
 						}
 						if (shouldSwitchToRetracting)
@@ -168,6 +164,11 @@ namespace tsorcRevamp.Projectiles
 							Projectile.netUpdate = true;
 							Projectile.velocity *= 0.3f;
 							// This is also where Drippler Crippler spawns its projectile, see above code.
+							Vector2 dropletvector = new Vector2(0, 5);
+							if (Main.myPlayer == Projectile.owner)
+							{
+								Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, dropletvector, ProjectileID.RainFriendly, Projectile.damage, Projectile.knockBack, Main.myPlayer);
+							}
 						}
 						player.ChangeDir((player.Center.X < Projectile.Center.X) ? 1 : (-1));
 						Projectile.localNPCHitCooldown = movingHitCooldown;
@@ -451,12 +452,12 @@ namespace tsorcRevamp.Projectiles
 			// The hitDirection is always set to hit away from the player, even if the flail damages the npc while returning
 			hitDirection = (Main.player[Projectile.owner].Center.X < target.Center.X) ? 1 : (-1);
 
-			// Knockback is only 50% as powerful when in spin mode
+			// Knockback is only 25% as powerful when in spin mode
 			if (CurrentAIState == AIState.Spinning)
-				knockback *= 0.5f;
-			// Knockback is 100% as powerful when in drop down mode
+				knockback *= 0.25f;
+			// Knockback is only 50% as powerful when in drop down mode
 			if (CurrentAIState == AIState.Dropping)
-				knockback *= 1f;
+				knockback *= 0.5f;
 
 			base.ModifyHitNPC(target, ref damage, ref knockback, ref crit, ref hitDirection);
 		}

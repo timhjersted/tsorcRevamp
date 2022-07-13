@@ -1050,7 +1050,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>())), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.DyingWaterCrystal>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.KrakenBag>(), ModContent.ItemType<Items.Accessories.DragonHorn>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>() }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.KrakenBag>(), ModContent.ItemType<Items.Accessories.DragonHorn>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() }, // List containing all the loot to show in the bestiary
                     $"Seek out the Realm of the Kraken. There you will find the materials needed to craft Dying Water Crystal.", // Guide to fight the boss
                     "");
 
@@ -1093,7 +1093,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>())), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.DyingFireCrystal>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.MarilithBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>(), ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>() },// List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.MarilithBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>(), ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() },// List containing all the loot to show in the bestiary
                     $"Found in a place serving as a source of extreme darkness. There you will also find the crafting materials for the Dying Fire Crystal.", // Guide to fight the boss
                     "");
 
@@ -1939,7 +1939,7 @@ namespace tsorcRevamp
                 {TransparentTextureType.ElfinArrow, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ElfinArrow", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.ElfinTargeting, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ElfinTargeting", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.HumanityPhantom, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/HumanityPhantom", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.BarbarousThornBladeGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/BarbarousThornBlade_Glow", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.BarbarousThornBladeGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Shortswords/BarbarousThornBlade_Glow", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.RedLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/RedLaserBeam", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.RedLaserTransparent, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyRedLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad)}, //A transparent and non-transparent version of this exists because the current focused energy beam laser projectile stacks a lot of beam midsections on top of each other, which fucks up transparency
                 {TransparentTextureType.Lightning, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyLightningStrike", ReLogic.Content.AssetRequestMode.ImmediateLoad)},

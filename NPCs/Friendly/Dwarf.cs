@@ -160,10 +160,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 chest.item[index].shopCustomPrice = 4000;
                 chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 index++;
-                chest.item[index].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenMurakumo>());
-                chest.item[index].shopCustomPrice = 3000;
-                chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                index++;
                 chest.item[index].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenPearlSpear>());
                 chest.item[index].shopCustomPrice = 4000;
                 chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;

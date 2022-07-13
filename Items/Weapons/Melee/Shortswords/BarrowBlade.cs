@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee
+namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
 {
     class BarrowBlade : ModItem
     {
@@ -23,10 +23,14 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.scale = .9f;
             Item.useAnimation = 21;
             Item.UseSound = SoundID.Item1;
-            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useStyle = ItemUseStyleID.Rapier;
+            Item.noUseGraphic = true;
+            Item.noMelee = true;
             Item.useTime = 21;
             Item.value = PriceByRarity.Blue_1;
             Item.width = 32;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Shortswords.BarrowBladeProjectile>(); // The projectile is what makes a shortsword work
+            Item.shootSpeed = 2.1f; // This value bleeds into the behavior of the projectile as velocity, keep that in mind when tweaking values
         }
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
         {
