@@ -194,7 +194,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
 
             //frozen shard
-            if (Main.rand.NextBool(220))//was 820
+            if (Main.rand.NextBool(220))
             {
                 for (int pcy = 0; pcy < 6; pcy++)
                 {
@@ -207,7 +207,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
 
             //massive ice crystal shards falling down   
-            if (Main.rand.NextBool(250))
+            if (Main.rand.NextBool(220))
             {
                 float num48 = 8f;
                 Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 520 + (NPC.height / 2));
