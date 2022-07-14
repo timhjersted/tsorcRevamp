@@ -85,19 +85,21 @@ namespace tsorcRevamp.Projectiles
                     }
                 }
 
-                if (projectile.owner == Main.myPlayer && (projectile.aiStyle == 99 || projectile.aiStyle == 15 || projectile.type == ModContent.ProjectileType<Projectiles.BerserkerNightmareBall>()
-                    || projectile.type == ModContent.ProjectileType<Projectiles.HeavensTearBall>()) && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
+                if (projectile.owner == Main.myPlayer && (projectile.aiStyle == ProjAIStyleID.Flail || projectile.aiStyle == ProjAIStyleID.Yoyo || projectile.type == ModContent.ProjectileType<Projectiles.Flails.BerserkerNightmareBall>()
+                    || projectile.type == ModContent.ProjectileType<Projectiles.Flails.HeavensTearBall>() || projectile.type == ModContent.ProjectileType<Projectiles.Flails.MoonfuryBall>()
+                    ) && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
                 {
                     //projectile.Kill();
 
-                    if (projectile.aiStyle == 99)
+                    if (projectile.aiStyle == ProjAIStyleID.Yoyo)
                     {
-                        projectile.ai[0] = -1; //return yoyo smoothly, dont just kill it. This took me ages to find :(
+                        projectile.ai[0] = -1; //return yoyo smoothly, dont just kill it. This took me ages to find :( (doesn't work)
                     }
-                    else
+                    else if (projectile.aiStyle == ProjAIStyleID.Flail)
                     {
-                        projectile.ai[1] = 1; //return flail smoothly, dont just kill it
+                        projectile.ai[1] = 1; //return flail smoothly, dont just kill it(doesn't work)
                     }
+                    else projectile.Kill();
                 }
             }
 

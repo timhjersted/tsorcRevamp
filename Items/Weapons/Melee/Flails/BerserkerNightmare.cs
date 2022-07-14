@@ -1,7 +1,7 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee
+namespace tsorcRevamp.Items.Weapons.Melee.Flails
 {
 
     public class BerserkerNightmare : ModItem
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.noMelee = true;
             Item.value = PriceByRarity.LightPurple_6;
             Item.DamageType = DamageClass.Melee;
-            Item.shoot = ModContent.ProjectileType<Projectiles.BerserkerNightmareBall>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Flails.BerserkerNightmareBall>();
         }
 
         public override void AddRecipes()

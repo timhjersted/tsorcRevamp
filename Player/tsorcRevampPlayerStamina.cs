@@ -106,15 +106,56 @@ namespace tsorcRevamp
             {
                 if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                 {
-                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == 3) //find boomerangs, if so, cut regen by 2/3
+                    //if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == ProjAIStyleID.Boomerang) //find boomerangs, if so, cut regen by 2/3
+                    //{
+                    //    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .333333f;
+                    //    break; //break to prevent it nuking the regen rate when multiple boomerangs are present
+                    //}
+                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == ProjAIStyleID.Boomerang) //Can't have boomerangs just not use any stamina, especially weapons like Bananarangs and Possessed Hatchet
                     {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .333333f;
-                        break; //break to prevent it nuking the regen rate when multiple boomerangs are present
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0.34f;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 0.17f;
+                        break;
                     }
 
-                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].type == ProjectileID.FlyingKnife)
+
+                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.VortexBeater 
+                        || Main.projectile[p].type == ProjectileID.Celeb2Weapon || Main.projectile[p].type == ProjectileID.FlyingKnife))
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .6f;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
+                        if (staminaResourceCurrent < 1)
+                        {
+                            Main.projectile[p].Kill();
+                        }
+                    }
+
+                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.Terragrim || Main.projectile[p].type == ProjectileID.Arkhalis
+                        || Main.projectile[p].type == ProjectileID.ChargedBlasterCannon || Main.projectile[p].type == ProjectileID.MedusaHead))
+                    {
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .5f;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
+                        if (staminaResourceCurrent < 1)
+                        {
+                            Main.projectile[p].Kill();
+                        }
+                    }
+
+                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].aiStyle == ProjAIStyleID.Flail))
+
+                    {
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .4f;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
+                        if (staminaResourceCurrent < 1)
+                        {
+                            Main.projectile[p].Kill();
+                        }
+                    }
+
+                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].aiStyle == ProjAIStyleID.Yoyo))
+
+                    {
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .3f;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
                         if (staminaResourceCurrent < 1)
                         {

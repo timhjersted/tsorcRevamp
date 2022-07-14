@@ -2,11 +2,11 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee
+namespace tsorcRevamp.Items.Weapons.Melee.Flails
 {
     public class HeavensTear2 : ModItem
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/HeavensTear";
+        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/Flails/HeavensTear";
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Heaven's Tear II");
@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.noMelee = true;
             Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Melee;
-            Item.shoot = ModContent.ProjectileType<Projectiles.HeavensTearBall>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Flails.HeavensTearBall>();
         }
 
         public override void AddRecipes()

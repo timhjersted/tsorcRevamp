@@ -2,7 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee
+namespace tsorcRevamp.Items.Weapons.Melee.Flails
 {
     public class HeavensTear : ModItem
     {
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.noMelee = true;
             Item.value = PriceByRarity.Red_10;
             Item.DamageType = DamageClass.Melee;
-            Item.shoot = ModContent.ProjectileType<Projectiles.HeavensTearBall>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Flails.HeavensTearBall>();
         }
 
         public override void AddRecipes()

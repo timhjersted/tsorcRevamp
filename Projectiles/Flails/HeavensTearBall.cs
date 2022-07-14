@@ -8,14 +8,14 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using ReLogic.Content;
 
-namespace tsorcRevamp.Projectiles
+namespace tsorcRevamp.Projectiles.Flails
 {
 
 	public class HeavensTearBall : ModProjectile
 	{
 
-		private const string ChainTexturePath = "tsorcRevamp/Projectiles/HeavensTearChain"; // The folder path to the flail chain sprite
-		private const string ChainTextureExtraPath = "tsorcRevamp/Projectiles/HeavensTearChain2";  // This texture and related code is optional and used for a unique effect
+		private const string ChainTexturePath = "tsorcRevamp/Projectiles/Flails/HeavensTearChain"; // The folder path to the flail chain sprite
+		private const string ChainTextureExtraPath = "tsorcRevamp/Projectiles/Flails/HeavensTearChain2";  // This texture and related code is optional and used for a unique effect
 
 		private enum AIState
 		{
@@ -80,12 +80,12 @@ namespace tsorcRevamp.Projectiles
 			bool doFastThrowDust = false;
 			bool shouldOwnerHitCheck = false;
 			int launchTimeLimit = 14;  // How much time the projectile can go before retracting (speed and shootTimer will set the flail's range)
-			float launchSpeed = 50f; // How fast the projectile can move
-			float maxLaunchLength = 1300f; // How far the projectile's chain can stretch before being forced to retract when in launched state
-			float retractAcceleration = 12f; // How quickly the projectile will accelerate back towards the player while retracting
-			float maxRetractSpeed = 35f; // The max speed the projectile will have while retracting
-			float forcedRetractAcceleration = 24f; // How quickly the projectile will accelerate back towards the player while being forced to retract
-			float maxForcedRetractSpeed = 70f; // The max speed the projectile will have while being forced to retract
+			float launchSpeed = 26f; // How fast the projectile can move
+			float maxLaunchLength = 1000f; // How far the projectile's chain can stretch before being forced to retract when in launched state
+			float retractAcceleration = 11f; // How quickly the projectile will accelerate back towards the player while retracting
+			float maxRetractSpeed = 33f; // The max speed the projectile will have while retracting
+			float forcedRetractAcceleration = 22f; // How quickly the projectile will accelerate back towards the player while being forced to retract
+			float maxForcedRetractSpeed = 66f; // The max speed the projectile will have while being forced to retract
 			float unusedRetractAcceleration = 1f;
 			float unusedMaxRetractSpeed = 14f;
 			int unusedChainLength = 60;
@@ -96,7 +96,7 @@ namespace tsorcRevamp.Projectiles
 
 			// Scaling these speeds and accelerations by the players meleeSpeed make the weapon more responsive if the player boosts their meleeSpeed
 			float meleeSpeed = player.GetAttackSpeed(DamageClass.Melee);
-			float meleeSpeedMultiplier = 1f / meleeSpeed;
+			float meleeSpeedMultiplier = 1f * meleeSpeed;
 			launchSpeed *= meleeSpeedMultiplier;
 			unusedRetractAcceleration *= meleeSpeedMultiplier;
 			unusedMaxRetractSpeed *= meleeSpeedMultiplier;
