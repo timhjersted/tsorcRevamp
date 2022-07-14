@@ -32,6 +32,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             despawnHandler = new NPCDespawnHandler("Artorias, the Abysswalker stands victorious...", Color.Gold, DustID.GoldFlame);
         }
 
+        int darkBeadDamage = 81;
         public int holdBallDamage = 20;
         public int energyBallDamage = 30;
         public int lightPillarDamage = 75;
@@ -47,6 +48,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         bool defenseBroken = false;
 
+        public float DarkBeadShotTimer
+        {
+            get => NPC.ai[0];
+            set => NPC.ai[0] = value;
+        }
+       
+        public float DarkBeadShotCounter
+        {
+            get => NPC.ai[2];
+            set => NPC.ai[2] = value;
+        }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -88,6 +100,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void AI()
         {
 
+            
 
             Player player = Main.player[NPC.target];
 
@@ -99,6 +112,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             }
 
+            DarkBeadShotTimer++; //Counts up each tick. Used to space out shots
+
+            if (DarkBeadShotTimer >= 12 && DarkBeadShotCounter < 5)
+            {
+                Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 7);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                DarkBeadShotTimer = 0;
+                DarkBeadShotCounter++;
+            } 
 
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             if (NPC.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
@@ -364,7 +387,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (customAi1 >= 10f)
                 {
 
-                    if ((customspawn2 < 24) && Main.rand.NextBool(1950))
+                    if ((customspawn2 < 24) && Main.rand.NextBool(550))
                     {
                         int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.LothricBlackKnight>(), 0); // Spawns Lothric Black Knight
                         Main.npc[Spawned].velocity.Y = -8;
@@ -435,6 +458,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         }
                         NPC.netUpdate = true;
                     }
+
+                    
                     /* removed because it looks broken and can't be fairly dodged
 					if (Main.rand.NextBool(40)) {
 						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
