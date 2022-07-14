@@ -40,8 +40,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public int ice3Damage = 25;
         public int phantomSeekerDamage = 40;
         public int lightning4Damage = 40;
-        public int shardsDamage = 40;
-        public int iceStormDamage = 30;
+        //public int shardsDamage = 40;
+        //public int iceStormDamage = 30;
         //This attack does damage equal to 25% of your max health no matter what, so its damage stat is irrelevant and only listed for readability.
         public int gravityBallDamage = 0;
 
@@ -55,15 +55,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-
             int expertScale = 1;
             if (Main.expertMode) expertScale = 2;
+            
+            target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
 
-            if (Main.rand.NextBool(4))
+            if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.BrokenArmor, 180 / expertScale, false);
                 target.AddBuff(BuffID.Poisoned, 3600 / expertScale, false);
-                target.AddBuff(BuffID.Cursed, 300 / expertScale, false);
                 target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
             }
         }
@@ -552,27 +552,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
 
-                    if (Main.rand.NextBool(350))
-                    {
-                        float num48 = 8f;
-                        Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 520 + (NPC.height / 2));
-                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
-                        {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.Okiku.MassiveCrystalShardsSpell>();
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, shardsDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 100;
-                            Main.projectile[num54].aiStyle = 4;
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.2f, Pitch = -0.3f }, NPC.Center); //ice materialize - good
-                            NPC.ai[3] = 0; ;
-                        }
-                        NPC.netUpdate = true;
-                    }
+                    
 
 
                     if (Main.rand.NextBool(500) && NPC.Distance(player.Center) > 300)
@@ -593,7 +573,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
 
-
+                /* //moving this ice spell to seath - artorias and ice doesn't fit thematically
                 if (Main.rand.NextBool(350) && NPC.Distance(player.Center) > 100)
                 {
                     float num48 = 8f;
@@ -616,7 +596,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                     NPC.netUpdate = true;
                 }
-
+                */
 
 
                 if (Main.rand.NextBool(205))

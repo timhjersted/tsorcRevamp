@@ -42,6 +42,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             flameRainDamage = (int)(flameRainDamage / 2);
             meteorDamage = (int)(meteorDamage / 2);
         }
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+
+            int expertScale = 1;
+            if (Main.expertMode) expertScale = 2;
+
+            target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
+
+            if (Main.rand.NextBool(2))
+            {
+                target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
+            }
+        }
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Seath the Scaleless");

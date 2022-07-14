@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.IO;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -37,15 +40,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         }
 
 
-        int breathDamage = 63;
-        int frozenTearDamage = 74;
-        int meteorDamage = 90;
+        public int breathDamage = 33;
+        public int smallShardDamage = 74;
+        public int iceWaterDamage = 90;
+        public int iceStormDamage = 75;
+        public int largeShardDamage = 240;
+
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = (int)(NPC.damage / 2);
             breathDamage = (int)(breathDamage / 2);
-            frozenTearDamage = (int)(frozenTearDamage / 2);
-            meteorDamage = (int)(meteorDamage / 2);
+            smallShardDamage = (int)(smallShardDamage / 2);
+            iceStormDamage = (int)(iceStormDamage / 2);
+            largeShardDamage = (int)(largeShardDamage / 2);
+            iceWaterDamage = (int)(iceWaterDamage / 2);
         }
         public override void SetStaticDefaults()
         {
@@ -58,6 +66,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         bool firstCrystalSpawned = false;
         bool secondCrystalSpawned = false;
         bool finalCrystalsSpawned = false;
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+
+            int expertScale = 1;
+            if (Main.expertMode) expertScale = 2;
+
+            target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
+
+            if (Main.rand.NextBool(2))
+            {
+                target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
+            }
+        }
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -155,7 +177,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     //Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.position.X + (float)npc.width / 2f, npc.position.Y + (float)npc.height / 2f, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position.X + (float)NPC.width, NPC.position.Y + (float)NPC.height * 0.5f, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
                 }
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                //play breath sound
+                if (Main.rand.NextBool(3))
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.8f, Pitch = 0.1f }, NPC.Center); //flame thrower
+                }
+                //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 breathCD--;
 
             }
@@ -165,28 +192,85 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 breathCD = 150; //was 110
                 //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
             }
-            if (Main.rand.NextBool(420))//was 820
+
+            //frozen shard
+            if (Main.rand.NextBool(220))//was 820
             {
-                for (int pcy = 0; pcy < 10; pcy++)
+                for (int pcy = 0; pcy < 6; pcy++)
                 {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (Main.netMode != NetmodeID.MultiplayerClient) //2000 was 1600 ModContent.ProjectileType<Projectiles.Enemy.FrozenTear>()
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 800 + Main.rand.Next(1600), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 10.1f, ModContent.ProjectileType<Projectiles.Enemy.FrozenTear>(), frozenTearDamage, 2f, Main.myPlayer); //10.1f was 14.9f is speed
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 800 + Main.rand.Next(1200), (float)nT.position.Y - 600f, (float)(-40 + Main.rand.Next(80)) / 10, 10.1f, ProjectileID.FrostShard, smallShardDamage, 1f, Main.myPlayer); //10.1f was 14.9f is speed - 1f was 2f
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 }
             }
-            if (Main.rand.NextBool(1060)) //was 1560
+
+            //massive ice crystal shards falling down   
+            if (Main.rand.NextBool(250))
             {
-                for (int pcy = 0; pcy < 10; pcy++)
+                float num48 = 8f;
+                Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 520 + (NPC.height / 2));
+                float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
+                float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
+                if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                {
+                    float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                    num51 = num48 / num51;
+                    speedX *= num51;
+                    speedY *= num51;
+                    int type = ModContent.ProjectileType<Projectiles.Enemy.Okiku.MassiveCrystalShardsSpell>();
+                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, largeShardDamage, 0f, Main.myPlayer);
+                    Main.projectile[num54].timeLeft = 100;
+                    Main.projectile[num54].aiStyle = 4;
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.2f, Pitch = -0.3f }, NPC.Center); //ice materialize - good
+                    NPC.ai[3] = 0; ;
+                }
+                NPC.netUpdate = true;
+            }
+
+            
+            //ice storm horizontal attack
+            if (Main.rand.NextBool(150))
+            {
+                float num48 = 8f;
+                Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                {
+                    float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                    num51 = num48 / num51;
+                    speedX *= num51;
+                    speedY *= num51;
+                    int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>();
+                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
+                    Main.projectile[num54].timeLeft = 1;
+                    Main.projectile[num54].aiStyle = 1;
+                    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 120, 0.3f, .1f); //ice mist howl sounds crazy
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.2f, Pitch = 0.3f }, NPC.Center); //ice materialize - good
+                    NPC.ai[3] = 0; ;
+                }
+                NPC.netUpdate = true;
+            }
+            
+
+            //ice water spit
+            if (Main.rand.NextBool(260)) //was 1560
+            {
+                for (int pcy = 0; pcy < 9; pcy++)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 500 + Main.rand.Next(1000), (float)nT.position.Y - 500f, (float)(-100 + Main.rand.Next(200)) / 10, 11.5f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //9.5f was 14.9f
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 500 + Main.rand.Next(1500), (float)nT.position.Y - 800f, (float)(-100 + Main.rand.Next(200)) / 10, 11.5f, ProjectileID.IcewaterSpit, iceWaterDamage, 2f, Main.myPlayer); //9.5f was 14.9f
                     }
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
             }
+            
+
+
+
             if (Main.rand.NextBool(2))
             {
                 int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.BlueFairy, NPC.velocity.X / 4f, NPC.velocity.Y / 4f, 100, default(Color), 1f);
