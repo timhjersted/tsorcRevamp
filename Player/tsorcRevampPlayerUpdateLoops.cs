@@ -630,7 +630,7 @@ namespace tsorcRevamp
 
             if (MiakodaCrescentBoost)
             {
-                Player.GetDamage(DamageClass.Generic) *= 0.07f;
+                Player.GetDamage(DamageClass.Generic) *= 1.07f;
             }
 
             if (MiakodaNewBoost)
