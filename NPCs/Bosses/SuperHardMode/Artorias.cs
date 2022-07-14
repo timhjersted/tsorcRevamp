@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -48,17 +50,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         bool defenseBroken = false;
 
-        public float DarkBeadShotTimer
-        {
-            get => NPC.ai[0];
-            set => NPC.ai[0] = value;
-        }
-       
-        public float DarkBeadShotCounter
-        {
-            get => NPC.ai[2];
-            set => NPC.ai[2] = value;
-        }
+        public float DarkBeadShotTimer;
+        public float DarkBeadShotCounter;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -96,6 +89,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
+        public static Texture2D texture;
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (texture == null || texture.IsDisposed)
+            {
+                texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
+            }
+            if (!defenseBroken)
+            {
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+                ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.LivingOceanDye), Main.LocalPlayer);
+                data.Apply(null);
+                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                Vector2 origin = NPC.frame.Size() / 2f;
+                Vector2 offset = new Vector2(16, 20);
+                spriteBatch.Draw(texture, NPC.position - Main.screenPosition + offset, NPC.frame, Color.White, NPC.rotation, origin, 1.1f, effects, 0f);
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+
+            }
+        }
 
         public override void AI()
         {
@@ -722,6 +738,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (!defenseBroken)
             {
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Immune!", true, false);
                 damage = 1;
             }
         }
@@ -733,6 +750,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (!defenseBroken)
             {
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Immune!", true, false);
                 damage = 1;
             }
         }
