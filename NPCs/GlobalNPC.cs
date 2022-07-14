@@ -115,7 +115,7 @@ namespace tsorcRevamp.NPCs
             //golem temple
             if (spawnInfo.SpawnTileType == TileID.LihzahrdBrick && spawnInfo.Lihzahrd && Main.hardMode)
             {
-                
+                pool.Add(NPCID.DesertDjinn, 0.075f); 
                 pool.Add(NPCID.DiabolistWhite, 0.05f); //was 0.1
                 pool.Add(ModContent.NPCType<Enemies.RingedKnight>(), 0.25f);
                 pool.Add(ModContent.NPCType<Enemies.LothricSpearKnight>(), 0.05f);
