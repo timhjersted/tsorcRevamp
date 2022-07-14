@@ -123,8 +123,8 @@ namespace tsorcRevamp.NPCs
 
             }
 
-            //desert or underground desert
-            if ((spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneUndergroundDesert) && Main.hardMode)
+            //desert or underground desert and dungeon(shadow temple)
+            if ((spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneUndergroundDesert) && spawnInfo.Player.ZoneDungeon && Main.hardMode)
             {
                 pool.Add(NPCID.DiabolistRed, 0.015f);
             }
