@@ -710,7 +710,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
         {
-            if (item.type == ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() || item.type == ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>())
+            if (//item.type == ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() doesn't work since Barrow Blade only damages with its projectile now, put that into its projectile below
+                item.type == ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>())
             {
                 defenseBroken = true;
             }
@@ -721,6 +722,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
+            if (projectile.type == ModContent.ProjectileType<Projectiles.Shortswords.BarrowBladeProjectile>())
+            {
+                defenseBroken = true;
+            }
             if (!defenseBroken)
             {
                 damage = 1;
