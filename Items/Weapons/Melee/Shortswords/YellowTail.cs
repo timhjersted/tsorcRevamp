@@ -18,9 +18,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             Item.useStyle = ItemUseStyleID.Rapier;
             Item.noMelee = true;
             Item.noUseGraphic = true;
-            Item.useAnimation = 15;
+            Item.useAnimation = 10;
             Item.autoReuse = true;
-            Item.useTime = 15;
+            Item.useTime = 10;
             Item.maxStack = 1;
             Item.damage = 17;
             Item.knockBack = 4;

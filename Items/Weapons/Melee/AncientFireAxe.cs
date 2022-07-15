@@ -30,6 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useTime = 25;
             Item.value = PriceByRarity.Green_2;
             Item.width = 40;
+            Item.scale = 1.5f;
         }
 
         public override void AddRecipes()
