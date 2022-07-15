@@ -1174,7 +1174,8 @@ namespace tsorcRevamp
             }
         }
 
-        public string PickDeathText()
+
+        public string PickDeathText(Projectile projectile = null)
         {
             string text;
 
@@ -1204,6 +1205,42 @@ namespace tsorcRevamp
                 }
             }
 
+            int currentBoss = -1;
+
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].active && Main.npc[i].boss)
+                {
+                    currentBoss = i;
+                    break;
+                }
+            }
+
+            if (currentBoss >= 0)
+            {
+                if (Main.rand.NextBool())
+                {
+                    DeathText = "Tip: Don't give up! Some bosses might take several tries to defeat";
+                }
+                else if (Main.rand.NextBool() && (Main.npc[currentBoss].type == NPCID.Retinazer || Main.npc[currentBoss].type == NPCID.Spazmatism
+                    || Main.npc[currentBoss].type == NPCID.Plantera || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Death>()
+                    || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()))
+                {
+                    DeathText = "Tip: Certain bosses can be fought earlier than necessary. If you're struggling, try waiting until you're more powerful.";
+                }
+
+                if (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>())
+                {
+                    DeathText = "Tip: You can't outrun your shadow";
+                }
+
+                //If you want to add custom text for other bosses, stick it here using the line above as a template
+            }
+
+            if (projectile != null && projectile.type == ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>() && projectile.damage > 999)
+            {
+                DeathText = "Tip: (O_O;)";
+            }
 
             return "Tip: " + text;
         }
