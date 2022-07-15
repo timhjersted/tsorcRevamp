@@ -881,7 +881,7 @@ namespace tsorcRevamp
             tsorcScriptedEvents.RefreshEvents();
             player.statLife = player.statLifeMax2;
             player.AddBuff(ModContent.BuffType<Invincible>(), 600);
-
+            setDeathText = false;
         }
 
         public static bool CheckBossZen()

@@ -175,6 +175,22 @@ namespace tsorcRevamp
         public bool GravityField;
         public float TextCooldown; //Used for if we want text to display when a Thing happens, but not to spam the player
         public float FieldTimer;
+
+        public string DeathText;
+        bool setDeathText = false;
+        public static List<string> DeathTextList
+
+         = new List<string>() {
+             "Using the dodgeroll is necessary for survival!",
+             "Crystal shards often light the path to powerful secrets...",
+             "Using potions during normal combat is often necessary to survive",
+             "Losing souls on death can be disabled in the config",
+             "Avoid getting hit by enemy attacks",
+             "Enemies in certain dark areas drop Humanity, which can restore HP lost due to curses",
+             "Item tooltips often have information vital to your survival...",
+             "Check if any of your items can be upgraded with Dark Souls"
+            };
+
         public override void ResetEffects()
         {
             SilverSerpentRing = false;
@@ -1162,6 +1178,21 @@ namespace tsorcRevamp
         {
             if (Player.whoAmI == Main.myPlayer)
             {
+                if (!setDeathText)
+                {
+                    setDeathText = true;
+                    DeathText = "Tip: ";
+                    if (BearerOfTheCurse && Main.rand.NextBool(5))
+                    {
+                        DeathText += "Bearer of the Curse mode can be disabled at any time...";
+                    }
+                    else
+                    {
+
+                        int option = Main.rand.Next(DeathTextList.Count);
+                        DeathText += DeathTextList[option];
+                    }
+                }
                 if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath)
                 {
                     if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>() && Main.mouseItem.stack > 0) {

@@ -25,7 +25,6 @@ namespace tsorcRevamp
 {
     class MethodSwaps
     {
-
         internal static void ApplyMethodSwaps()
         {
             On.Terraria.Player.Spawn += SpawnPatch;
@@ -75,7 +74,24 @@ namespace tsorcRevamp
             On.Terraria.Projectile.FishingCheck += Projectile_FishingCheck;
 
             On.Terraria.Main.CraftItem += Main_CraftItem;
+
+            On.Terraria.Main.DrawInterface_35_YouDied += Main_DrawInterface_35_YouDied;
             //On.Terraria.GameContent.ItemDropRules.ItemDropResolver.ResolveRule += ItemDropResolver_ResolveRule;
+        }
+
+        private static void Main_DrawInterface_35_YouDied(On.Terraria.Main.orig_DrawInterface_35_YouDied orig)
+        {
+            orig();
+            if (Main.player[Main.myPlayer].dead)
+            {
+                string textValue2 = Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().DeathText;
+                if(textValue2 == null)
+                {
+                    textValue2 = "";
+                }
+                float scale = 0.5f;
+                Main.spriteBatch.DrawString(FontAssets.DeathText.Value, textValue2, new Vector2((float)(Main.screenWidth / 2) - FontAssets.MouseText.Value.MeasureString(textValue2).X / 2, (float)(Main.screenHeight / 2) + 60), Main.player[Main.myPlayer].GetDeathAlpha(Microsoft.Xna.Framework.Color.Transparent), 0f, default(Vector2), scale, SpriteEffects.None, 0f);
+            }
         }
 
         /*
