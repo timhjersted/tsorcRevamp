@@ -1585,7 +1585,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.Pinky):
                     {
-                        npc.value = 4390;
+                        npc.value = 2390;
                         break;
                     }
 
@@ -1593,7 +1593,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.damage = 45;
                         npc.lifeMax = 250;
-                        npc.value = 6210;
+                        npc.value = 3210;
                         break;
                     }
 
@@ -1601,19 +1601,19 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.damage = 52;
                         npc.lifeMax = 180;
-                        npc.value = 6290;
+                        npc.value = 3390;
                         break;
                     }
 
                 case (NPCID.ZombieMerman):
                     {
-                        npc.value = 9740;
+                        npc.value = 3740;
                         break;
                     }
 
                 case (NPCID.EyeballFlyingFish):
                     {
-                        npc.value = 8970;
+                        npc.value = 3970;
                         break;
                     }
 
@@ -1632,8 +1632,8 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.ChaosBallTim):
                     {
                         npc.damage = 200;
-                        npc.value = 120;
                         npc.scale = 1.5f;
+                        npc.value = 120;
                         break;
                     }
 
@@ -1645,7 +1645,7 @@ namespace tsorcRevamp.NPCs
                         npc.defense = 20;
                         npc.knockBackResist = 0f;
                         npc.scale = 1.2f;
-                        npc.value = 65490;
+                        npc.value = 45490;
                         break;
                     }
 
@@ -1663,7 +1663,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 66;
                         npc.knockBackResist = 0.05f;
                         npc.scale = 0.7f;
-                        npc.value = 44000;
+                        npc.value = 24200;
                         break;
                     }
 
@@ -1675,14 +1675,14 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.damage = 50;
                         npc.lifeMax = 4000;
-                        npc.value = 50910;
+                        npc.value = 25910;
                         npc.defense = 35;
                         break;
                     }
 
                 case (NPCID.ChatteringTeethBomb):
                     {
-                        npc.value = 1300;
+                        npc.value = 870;
                         break;
                     }
 
@@ -1692,7 +1692,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.defense = 20;
                         npc.lifeMax = 6000;
-                        npc.value = 33560;
+                        npc.value = 6560;
 
                         if (npc.type == NPCID.WyvernHead)
                         {
@@ -1705,7 +1705,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.lifeMax = 2000;
                         npc.damage = 80;
-                        npc.value = 65580;
+                        npc.value = 8580;
                         npc.defense = 60;
                         npc.knockBackResist = 0.1f;
                         break;
@@ -1717,19 +1717,19 @@ namespace tsorcRevamp.NPCs
                         {
                             npc.damage = 120;
                         }
-                        npc.value = 46590;
+                        npc.value = 9650;
                         break;
                     }
 
                 case (NPCID.RuneWizard):
                     {
-                        npc.value = 67530;
+                        npc.value = 47530;
                         break;
                     }
 
                 case (NPCID.RockGolem):
                     {
-                        npc.value = 8750;
+                        npc.value = 5750;
                         break;
                     }
 
@@ -1738,51 +1738,51 @@ namespace tsorcRevamp.NPCs
                         npc.life = 10000;
                         npc.defense = 100;
                         npc.damage = 300;
-                        npc.value = 19450;
+                        npc.value = 6450;
                         break;
                     }
 
                 case (NPCID.Medusa):
                     {
-                        npc.value = 15410;
+                        npc.value = 8410;
                         break;
                     }
 
                 case (NPCID.IceGolem):
                     {
                         npc.lifeMax = 6000;
-                        npc.value = 30240;
+                        npc.value = 10240;
                         break;
                     }
 
                 case (NPCID.SandElemental):
                     {
                         npc.lifeMax = 7000;
-                        npc.value = 37630;
+                        npc.value = 17630;
                         break;
                     }
 
                 case (NPCID.Mimic):
                     {
-                        npc.value = 9550;
+                        npc.value = 5550;
                         break;
                     }
 
                 case (NPCID.IceMimic):
                     {
-                        npc.value = 12220;
+                        npc.value = 6220;
                         break;
                     }
 
                 case int biomemimic when ((biomemimic >= NPCID.BigMimicCorruption && biomemimic <= NPCID.BigMimicJungle)):
                     {
-                        npc.value = 21400;
+                        npc.value = 9140;
                         break;
                     }
 
                 case (NPCID.Paladin):
                     {
-                        npc.value = 47390;
+                        npc.value = 27390;
                         break;
                     }
 
