@@ -111,6 +111,21 @@ namespace tsorcRevamp
                     //    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .333333f;
                     //    break; //break to prevent it nuking the regen rate when multiple boomerangs are present
                     //}
+
+                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.CopperShortswordStab || Main.projectile[p].type == ProjectileID.TinShortswordStab
+                        || Main.projectile[p].type == ProjectileID.IronShortswordStab || Main.projectile[p].type == ProjectileID.LeadShortswordStab
+                        || Main.projectile[p].type == ProjectileID.SilverShortswordStab || Main.projectile[p].type == ProjectileID.TungstenShortswordStab
+                        || Main.projectile[p].type == ProjectileID.GoldShortswordStab || Main.projectile[p].type == ProjectileID.PlatinumShortswordStab
+                        || Main.projectile[p].type == ProjectileID.GladiusStab || Main.projectile[p].type == ProjectileID.PiercingStarlight))
+                    {
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 0.35f;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
+                        if (staminaResourceCurrent < 1)
+                        {
+                            Main.projectile[p].Kill();
+                        }
+                    }
+
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == ProjAIStyleID.Boomerang) //Can't have boomerangs just not use any stamina, especially weapons like Bananarangs and Possessed Hatchet
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0.34f;
