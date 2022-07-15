@@ -181,7 +181,7 @@ namespace tsorcRevamp
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
             
-            ScriptedEvent EoL = new ScriptedEvent(new Vector2(4484, 355), 100, NPCID.HallowBoss, DustID.RainbowTorch, true, true, "The Empress of Light awakens!", Main.DiscoColor, false);
+            ScriptedEvent EoL = new ScriptedEvent(new Vector2(4484, 355), 100, NPCID.HallowBoss, DustID.RainbowTorch, false, true, "The Empress of Light awakens!", Main.DiscoColor, false, EoLDownedCondition);
 
             //LITCH KING
             ScriptedEvent LitchKing = new ScriptedEvent(new Vector2(364, 1897), 40, ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>(), DustID.GoldFlame, true, true, "The Litch King awakens!", Color.Gold, false);
@@ -533,6 +533,10 @@ namespace tsorcRevamp
         public static bool GolemDownedCustomCondition()
         {
             return NPC.downedGolemBoss;
+        }
+        public static bool EoLDownedCondition()
+        {
+            return NPC.downedEmpressOfLight;
         }
 
         //This condition returns true if the player is in The Abyss
