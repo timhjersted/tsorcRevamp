@@ -749,6 +749,21 @@ namespace tsorcRevamp
                 Player.AddBuff(BuffID.Bleeding, 1800);
                 Player.AddBuff(BuffID.OnFire, 600);
             }
+
+            if (damage >= Player.statLife || (crit && damage * 2 >= Player.statLife))
+            {
+                if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>())
+                {
+                    DeathText = "Tip: You can't outrun your shadow.";
+                }
+                else if(npc.boss)
+                {
+                    if (Main.rand.NextBool())
+                    {
+                        DeathText = "Tip: Don't give up! Some bosses might take several tries to defeat";
+                    }
+                }
+            }
         }
 
         public override void OnHitByProjectile(Projectile projectile, int damage, bool crit)
@@ -786,6 +801,47 @@ namespace tsorcRevamp
             {
                 Player.AddBuff(BuffID.BrokenArmor, 180);
                 Player.AddBuff(BuffID.OnFire, 180);
+            }
+
+
+            if (damage >= Player.statLife || (crit && damage * 2 >= Player.statLife))
+            {
+                int currentBoss = -1;
+
+                for(int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && Main.npc[i].boss)
+                    {
+                        currentBoss = i;
+                        break;
+                    }
+                }
+
+                if(currentBoss >= 0)
+                {
+                    if (Main.rand.NextBool())
+                    {
+                        DeathText = "Tip: Don't give up! Some bosses might take several tries to defeat";
+                    }
+                    else if(Main.rand.NextBool() && (Main.npc[currentBoss].type == NPCID.Retinazer || Main.npc[currentBoss].type == NPCID.Spazmatism
+                        || Main.npc[currentBoss].type == NPCID.Plantera || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Death>()
+                        || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()))
+                    {
+                        DeathText = "Tip: Certain bosses can be fought earlier than necessary. If you're struggling, try waiting until you're more powerful.";
+                    }
+
+                    if (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>())
+                    {
+                        DeathText = "Tip: You can't outrun your shadow";
+                    }
+
+                    //If you want to add custom text for other bosses, stick it here using the line above as a template
+                }
+
+                if(projectile.type == ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>() && projectile.damage > 999)
+                {
+                    DeathText = "Tip: (O_O;)";
+                }
             }
         }
 
@@ -872,6 +928,7 @@ namespace tsorcRevamp
                 player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DiamondPickaxe>());
                 gotPickaxe = true;
             }
+            DeathText = PickDeathText();
         }
 
 
@@ -881,7 +938,7 @@ namespace tsorcRevamp
             tsorcScriptedEvents.RefreshEvents();
             player.statLife = player.statLifeMax2;
             player.AddBuff(ModContent.BuffType<Invincible>(), 600);
-            setDeathText = false;
+            DeathText = PickDeathText();
         }
 
         public static bool CheckBossZen()

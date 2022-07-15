@@ -181,14 +181,14 @@ namespace tsorcRevamp
         public static List<string> DeathTextList
 
          = new List<string>() {
-             "Using the dodgeroll is necessary for survival!",
+             "The dodgeroll makes you immune to attacks. Mastering it is necessary for survival!",
              "Crystal shards often light the path to powerful secrets...",
              "Using potions during normal combat is often necessary to survive",
              "Losing souls on death can be disabled in the config",
-             "Avoid getting hit by enemy attacks",
-             "Enemies in certain dark areas drop Humanity, which can restore HP lost due to curses",
+             "Enemies in certain dark areas drop Humanity, which can restore HP lost to curses",
              "Item tooltips often have information vital to your survival...",
-             "Check if any of your items can be upgraded with Dark Souls"
+             "Check if any of your items can be upgraded with Dark Souls",
+             "If you don't know where to go, try filling out the blank spots on your map"
             };
 
         public override void ResetEffects()
@@ -1174,24 +1174,48 @@ namespace tsorcRevamp
             }
         }
 
+        public string PickDeathText()
+        {
+            string text;
+
+            int option = Main.rand.Next(DeathTextList.Count);
+            text = DeathTextList[option];
+            if (BearerOfTheCurse && Main.rand.NextBool(5))
+            {
+                if (Main.rand.NextBool())
+                {
+                    text = "Bearer of the Curse mode can be disabled at any time...";
+                }
+                else
+                {
+                    text = "Bearer of the Curse mode is intended for experienced players";
+                }
+            }
+
+            if (Player.statLifeMax >= 200)
+            {
+                if (Main.rand.NextBool(20))
+                {
+                    text = "Avoid getting hit by enemy attacks";
+                }
+                if (Main.rand.NextBool(100))
+                {
+                    text = "Get Good :)";
+                }
+            }
+
+
+            return "Tip: " + text;
+        }
+
         public override void UpdateDead()
         {
             if (Player.whoAmI == Main.myPlayer)
             {
-                if (!setDeathText)
+                if (DeathText == null)
                 {
-                    setDeathText = true;
-                    DeathText = "Tip: ";
-                    if (BearerOfTheCurse && Main.rand.NextBool(5))
-                    {
-                        DeathText += "Bearer of the Curse mode can be disabled at any time...";
-                    }
-                    else
-                    {
-
-                        int option = Main.rand.Next(DeathTextList.Count);
-                        DeathText += DeathTextList[option];
-                    }
+                    DeathText = PickDeathText();
+                    
                 }
                 if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath)
                 {

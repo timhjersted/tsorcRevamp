@@ -90,7 +90,7 @@ namespace tsorcRevamp
                     textValue2 = "";
                 }
                 float scale = 0.5f;
-                Main.spriteBatch.DrawString(FontAssets.DeathText.Value, textValue2, new Vector2((float)(Main.screenWidth / 2) - FontAssets.MouseText.Value.MeasureString(textValue2).X / 2, (float)(Main.screenHeight / 2) + 60), Main.player[Main.myPlayer].GetDeathAlpha(Microsoft.Xna.Framework.Color.Transparent), 0f, default(Vector2), scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.DrawString(FontAssets.DeathText.Value, textValue2, new Vector2((float)(Main.screenWidth / 2) - 40 - FontAssets.MouseText.Value.MeasureString(textValue2).X / 2f, (float)(Main.screenHeight / 2) + 220), Main.player[Main.myPlayer].GetDeathAlpha(Microsoft.Xna.Framework.Color.Transparent), 0f, default(Vector2), scale, SpriteEffects.None, 0f);
             }
         }
 
