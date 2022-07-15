@@ -2286,32 +2286,32 @@ namespace tsorcRevamp.NPCs
                 #region Moon Lord
                 case (NPCID.MoonLordCore):
                     {
-                        npc.value = 464480;
+                        npc.value = 527590; //used by boss bag
                         break;
                     }
 
                 case (NPCID.MoonLordHand):
                     {
-                        npc.value = 69880;
+                        npc.value = 0; //unused
                         break;
                     }
 
                 case (NPCID.MoonLordHead):
                     {
-                        npc.value = 87650;
+                        npc.value = 0; //unused
                         break;
                     }
 
                 case (NPCID.MoonLordFreeEye):
                     {
-                        npc.value = 10; //currently unkillable
+                        npc.value = 0; //currently unkillable
                         break;
                     }
 
                 case (NPCID.MoonLordLeechBlob):
                     {
                         npc.lifeMax = 400;
-                        npc.value = 8790;
+                        npc.value = 0; //unused
                         break;
                     }
                 #endregion
