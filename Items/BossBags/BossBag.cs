@@ -693,13 +693,7 @@ namespace tsorcRevamp.Items.BossBags
                     {
                         if (Slain[NPCID.MoonLordCore] == 0)
                         {
-                            int enemyValue = 40000; // 1 platinum / 25
-                            float multiplier = tsorcRevampPlayer.CheckSoulsMultiplier(player);
-
-                            int DarkSoulQuantity = (int)(multiplier * enemyValue);
-
-                            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
-                            Slain[NPCID.MoonLordCore] = 1;
+                            SoulsOnFirstBag(NPCID.MoonLordCore, player); //idk why but there was a lot of seemingly unnecessary code here, Moon Lord will just drop his souls according to his Cores value like this once
                         }
                     }
                 }
