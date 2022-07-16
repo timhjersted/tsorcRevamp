@@ -188,7 +188,16 @@ namespace tsorcRevamp
              "Enemies in certain dark areas drop Humanity, which can restore HP lost to curses",
              "Item tooltips often have information vital to your survival...",
              "Check if any of your items can be upgraded with Dark Souls",
-             "If you don't know where to go, try filling out the blank spots on your map"
+             "Progression clues can be found on unique items dropped by bosses",
+             "If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction",
+             "Signs offer important hints",
+             "Teal Pressure Pads can only be activated with ranged attacks",
+             "Some vanilla recipes have been removed. You must find these items in the world by exploring",
+             "Get a bad modifier on a weapon? Talk to Jade, the Emerald Herald. She can remove it with her Blessing",
+             "Grey Stone Gates cannot be broken and must be opened by a lever or switch",
+             "You may be encounter bosses before you can defeat them. If in doubt, continue exploring, level up your gear, and come back when you're stronger",
+             "Play with the Recipe Browser mod to easily see if loot dropped from enemies or found in chests can be crafted into something else",
+             "Welcome to the Dark Souls of Terraria",
             };
 
         public override void ResetEffects()
