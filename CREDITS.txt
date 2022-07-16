@@ -6,7 +6,7 @@ Zeodexic / programmer
 Chroma Equinox / programmer + spriter
 RecursiveCollapse / programmer
 Vibrent / programmer + sprite editer
-MarfMasterofDesaster / beta testing
+MarfMasterofDesaster / programmer + beta testing
 NephilimDeath / spriter
 W1k / coding help and extensive content contributions
 JayTeff / programmer
