@@ -132,6 +132,10 @@ namespace tsorcRevamp.NPCs.Friendly
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
             }
+            shop.item[nextSlot].SetDefaults(ItemID.LuckyHorseshoe);
+            shop.item[nextSlot].shopCustomPrice = 50;
+            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+            nextSlot++;
         }
 
         public override void HitEffect(int hitDirection, double damage)

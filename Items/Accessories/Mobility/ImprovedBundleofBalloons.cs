@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         {
             DisplayName.SetDefault("Improved Bundle of Balloons");
             Tooltip.SetDefault("Allows the holder to quadruple jump" +
-                                "\nFurther increases jump height");
+                                "\nIncreases jump height + 120% jump speed");
         }
 
         public override void SetDefaults()
@@ -28,6 +28,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BundleofBalloons, 1);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -37,7 +38,8 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             recipe2.AddRecipeGroup(tsorcRevampSystems.ImprovedBundleGroupBlue);
             recipe2.AddRecipeGroup(tsorcRevampSystems.ImprovedBundleGroupWhite);
             recipe2.AddRecipeGroup(tsorcRevampSystems.ImprovedBundleGroupYellow);
-            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 4000);
+            recipe2.AddIngredient(ItemID.AdamantiteBar, 5);
+            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();
@@ -67,7 +69,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void UpdateEquip(Player player)
         {
-            player.jumpSpeedBoost += 1.3f;
+            player.jumpSpeedBoost += 1.2f;
             player.jumpBoost = true;
             player.hasJumpOption_Cloud = true;
             player.hasJumpOption_Blizzard = true;

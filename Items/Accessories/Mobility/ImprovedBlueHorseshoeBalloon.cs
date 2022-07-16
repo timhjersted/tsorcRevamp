@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Allows the holder to double jump" +
-                                "\nFurther increases jump height" +
+                                "\nIncreases jump height + 40% jump speed" +
                                 "\nDisables fall damage");
         }
 
@@ -28,7 +28,8 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BlueHorseshoeBalloon, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
+            recipe.AddIngredient(ItemID.ShadowScale, 5);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 400);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -57,7 +58,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void UpdateEquip(Player player)
         {
-            player.jumpSpeedBoost += 0.8f;
+            player.jumpSpeedBoost += 0.4f;
             player.jumpBoost = true;
             player.hasJumpOption_Cloud = true;
             player.noFallDmg = true;
