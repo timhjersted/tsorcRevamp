@@ -37,13 +37,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler(DustID.OrangeTorch);
         }
-        int lightningDamage = 40;
+        int lightningDamage = 50;
 
         public static int drawOffset = 52;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = (int)(NPC.damage / 2);
         }
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+
+            int expertScale = 1;
+            if (Main.expertMode) expertScale = 2;
+
+            target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
+            target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
+        }
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ghost Wyvern");

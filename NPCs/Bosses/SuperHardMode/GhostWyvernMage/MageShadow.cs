@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             Main.npcFrameCount[NPC.type] = 3;
             AnimationType = 29;
             NPC.aiStyle = 0;
-            NPC.damage = 90;
+            NPC.damage = 120;
             NPC.defense = 96;
             NPC.height = 44;
             NPC.timeLeft = 22500;
@@ -39,8 +39,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         }
 
 
-        int frozenSawDamage = 35;
-        int lightningDamage = 64;
+        int frozenSawDamage = 195;
+        int lightningDamage = 100;
         int Timer2 = -Main.rand.Next(200);
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -50,7 +50,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             lightningDamage = (int)(lightningDamage / 2);
         }
 
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
 
+            int expertScale = 1;
+            if (Main.expertMode) expertScale = 2;
+
+            target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
+            target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
+        }
 
 
         #region AI

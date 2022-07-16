@@ -388,7 +388,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
 
             //POISON ATTACK DUST TELEGRAPH
-            if (poisonTimer >= 185 && NPC.life >= 2001) //was 180
+            if (poisonTimer >= 185 && NPC.life >= 3001) //was 180
             {
                 //if(Main.rand.NextBool(60))
                 //{
@@ -423,7 +423,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
             //DD2DrakinShot FINAL ATTACK
-            if (poisonTimer >= 185f && NPC.life <= 2000)
+            if (poisonTimer >= 185f && NPC.life <= 3000)
             {
                 bool clearSpace = true;
                 for (int i = 0; i < 15; i++)
