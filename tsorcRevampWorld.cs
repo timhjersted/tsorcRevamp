@@ -943,6 +943,22 @@ namespace tsorcRevamp
             return false;
         }
 
+        public static bool bossAlive
+        {
+            get
+            {
+                for(int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && Main.npc[i].boss)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
         //Returns 0-12 for normal bosses, 13 including Gwyn
         public static int SHMDowned
         {

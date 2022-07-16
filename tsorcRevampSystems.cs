@@ -22,11 +22,6 @@ namespace tsorcRevamp
 
         public override void PostDrawFullscreenMap(ref string mouseText)
         {
-            DrawMinimapBonfires();
-        }
-
-        public void DrawMinimapBonfires()
-        {
             if (BonfireMinimapTexture == null || BonfireMinimapTexture.IsDisposed)
             {
                 BonfireMinimapTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/MinimapBonfire", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
@@ -73,9 +68,10 @@ namespace tsorcRevamp
                         Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords + offsetPositon, null, Main.DiscoColor, 0, BonfireMinimapTexture.Size() / 2, 1.04f, SpriteEffects.None, 1);
                     }
                     Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords, null, Color.White, 0, BonfireMinimapTexture.Size() / 2, 1f, SpriteEffects.None, 1);
+                    mouseText = "Teleport to Bonfire Checkpoint";
 
                     //Step 4: Check if they're left-clicking, and close the minimap + teleport them if so
-                    if (Main.mouseLeft)
+                    if (Main.mouseLeft && !tsorcRevampWorld.bossAlive)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, Main.LocalPlayer.position);
                         UsefulFunctions.SafeTeleport(Main.LocalPlayer, new Vector2(bonfirePoint.X, bonfirePoint.Y - 1) * 16);
@@ -85,6 +81,11 @@ namespace tsorcRevamp
                         {
                             Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.Loading>(), 15);
                         }
+                    }
+
+                    if (tsorcRevampWorld.bossAlive)
+                    {
+                        mouseText = "Can not teleport while a boss is alive!";
                     }
                 }
                 else

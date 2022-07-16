@@ -74,7 +74,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
-            if (Main.rand.NextBool(10))
+            if (Main.rand.NextBool(10) && !NPC.downedBoss1)
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothHat>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothTunic>());

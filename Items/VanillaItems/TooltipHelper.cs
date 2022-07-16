@@ -79,6 +79,8 @@ namespace tsorcRevamp.Items.VanillaItems
             SimpleModTooltip(Mod, item, tooltips, ItemID.IronOre, "Perhaps you can use these for making special arrows..?");
             SimpleModTooltip(Mod, item, tooltips, ItemID.FeralClaws, "Can be upgraded with Dark Souls, an Aglet, and an Anklet of the Wind");
             SimpleModTooltip(Mod, item, tooltips, ItemID.Revolver, "Can be upgraded with Dark Souls and 10 Souls of Light or Dark");
+            SimpleModTooltip(Mod, item, tooltips, ItemID.MagicMirror, "Can not be used while a boss is alive!");
+            SimpleModTooltip(Mod, item, tooltips, ItemID.RecallPotion, "Can not be used while a boss is alive!");
 
 
             Player player = Main.LocalPlayer;

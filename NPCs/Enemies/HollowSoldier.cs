@@ -819,7 +819,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.rand.NextBool(10)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("FadingSoul").Type);
             if (Main.rand.NextBool(3)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion); }
             if (Main.rand.NextBool(3)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.EndurancePotion); }
-            if (Main.rand.NextBool(10))
+            if (Main.rand.NextBool(30) && !NPC.downedBoss1)
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothHat>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothTunic>());

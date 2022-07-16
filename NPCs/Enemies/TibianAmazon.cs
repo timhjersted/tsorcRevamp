@@ -51,7 +51,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Torch);
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ThrowingKnife, Main.rand.Next(20, 50));
             if (Main.rand.NextBool(20)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DeadChicken>());
-            if (Main.rand.NextBool(10))
+            if (Main.rand.NextBool(30) && !NPC.downedBoss1)
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothHat>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothTunic>());

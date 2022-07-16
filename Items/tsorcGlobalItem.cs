@@ -21,6 +21,14 @@ namespace tsorcRevamp.Items
 
         public override bool CanUseItem(Item item, Player player)
         {
+            if(item.type == ItemID.MagicMirror || item.type == ItemID.RecallPotion)
+            {
+                if (tsorcRevampWorld.bossAlive)
+                {
+                    Main.NewText("Can not be used while a boss is alive!", Color.Yellow);
+                    return false;
+                }
+            }
             if(item.type == ItemID.Picksaw && !tsorcRevampWorld.SuperHardMode && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 return false;

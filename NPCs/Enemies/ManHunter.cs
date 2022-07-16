@@ -66,12 +66,6 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.rand.NextBool(2)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HunterPotion);
             if (Main.rand.NextBool(2)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SwiftnessPotion);
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ArcheryPotion);
-            if (Main.rand.NextBool(10))
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothHat>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothTunic>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothPants>());
-            }
         }
 
 

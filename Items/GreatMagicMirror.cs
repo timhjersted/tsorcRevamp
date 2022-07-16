@@ -76,7 +76,11 @@ namespace tsorcRevamp.Items
                 Main.NewText("The Curse prevents you from using this!", Color.OrangeRed);
                 return false;
             }
-
+            if (tsorcRevampWorld.bossAlive)
+            {
+                Main.NewText("Can not be used while a boss is alive!", Color.Yellow);
+                return false;
+            }
             if (!player.GetModPlayer<tsorcRevampPlayer>().warpSet)
             {
                 Main.NewText("You haven't set a location!", 255, 240, 20);

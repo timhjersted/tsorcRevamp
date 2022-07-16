@@ -81,7 +81,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.rand.NextBool(5)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("CharcoalPineResin").Type);
             if (Main.rand.NextBool(15)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
             if (Main.rand.NextBool(15) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-            if (Main.rand.NextBool(10))
+            if (Main.rand.NextBool(30) && !NPC.downedBoss1)
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothHat>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothTunic>());

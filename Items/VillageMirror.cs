@@ -74,7 +74,11 @@ namespace tsorcRevamp.Items
         }
         public override bool CanUseItem(Player player)
         {
-
+            if (tsorcRevampWorld.bossAlive)
+            {
+                Main.NewText("Can not be used while a boss is alive!", Color.Yellow);
+                return false;
+            }
             if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 if (!player.GetModPlayer<tsorcRevampPlayer>().townWarpSet)
