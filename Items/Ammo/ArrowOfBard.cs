@@ -33,16 +33,5 @@ namespace tsorcRevamp.Items.Ammo
             Item.width = 10;
             Item.rare = ItemRarityID.Orange;
         }
-
-        public override void AddRecipes()
-        {
-            Terraria.Recipe recipe = CreateRecipe(10);
-
-            recipe.AddIngredient(ItemID.MythrilBar, 1);
-            recipe.AddIngredient(ItemID.SoulofLight, 10);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2000);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.Register();
-        }
     }
 }

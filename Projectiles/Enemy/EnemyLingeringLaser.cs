@@ -144,7 +144,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                         //Don't randomize if it just shot the confining ring of lasers, because that's not possible to dodge
                         if (NPCs.VanillaChanges.destroyerChargeTimer >= 300 || NPCs.VanillaChanges.destroyerChargeTimer < 0 || NPCs.VanillaChanges.destroyerAttackIndex != 0)
                         {
-                            target += prediction * Main.rand.NextFloat(-0.25f, 1.25f);
+                            target += prediction * Main.rand.NextFloat(-0.15f, 1.15f);
                         }
                     }
                     //Failsafe. If the boss charges too close to the focal point it causes the lasers to go haywire. This turns them off if that happens.
