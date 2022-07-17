@@ -90,6 +90,10 @@ namespace tsorcRevamp
             RecipeRemover(ItemID.MoltenBreastplate);
             RecipeRemover(ItemID.MoltenGreaves);
             RecipeRemover(ItemID.BalloonHorseshoeSharkron);
+            RecipeRemover(ItemID.BlueHorseshoeBalloon);
+            RecipeRemover(ItemID.WhiteHorseshoeBalloon);
+            RecipeRemover(ItemID.YellowHorseshoeBalloon);
+            RecipeRemover(ItemID.BalloonHorseshoeHoney);
             RecipeRemover(ItemID.RopeCoil);
             RecipeRemover(ItemID.VineRopeCoil);
             RecipeRemover(ItemID.WebRope);

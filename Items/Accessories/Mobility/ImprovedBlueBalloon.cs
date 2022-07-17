@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddRecipeGroup(tsorcRevampSystems.ImprovedBundleGroupBlue);
+            recipe.AddIngredient(ItemID.CloudinaBalloon, 1);
             recipe.AddIngredient(ItemID.ShadowScale, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 400);
             recipe.AddTile(TileID.DemonAltar);
