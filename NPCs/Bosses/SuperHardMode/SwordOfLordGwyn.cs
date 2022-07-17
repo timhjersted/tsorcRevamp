@@ -19,14 +19,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.aiStyle = 23;
             NPC.timeLeft = 22500;
             NPC.knockBackResist = 0;
-            NPC.damage = 190;
-            NPC.defense = 75;
+            NPC.damage = 210;
+            NPC.defense = 60;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 7500;
+            NPC.lifeMax = 50000;
             NPC.value = 10000;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
+        }
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+
+            int expertScale = 1;
+            if (Main.expertMode) expertScale = 2;
+
+            target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
         }
 
         public override void AI()
