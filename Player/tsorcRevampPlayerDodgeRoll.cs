@@ -90,7 +90,7 @@ namespace tsorcRevamp
 
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                if (item.pick != 0 || item.axe != 0 || item.damage <= 1)
+                if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.damage <= 1)
                     return true;
                 if (item.useAnimation * 0.8f > Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 && Player.itemAnimation == Player.itemAnimationMax - 1)
                 {
@@ -112,28 +112,17 @@ namespace tsorcRevamp
                     Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * Player.GetAttackSpeed(DamageClass.Melee) * 1f);
                 }
 
-                // Stamina drain for flails and yoyos
-                if (item.useStyle == ItemUseStyleID.Shoot && item.DamageType == DamageClass.Melee && Player.itemAnimation != 0
-                    && (item.type != ItemID.Spear && item.type != ItemID.Trident && item.type != ItemID.TheRottedFork && item.type != ItemID.Swordfish && item.type != ItemID.DarkLance
-                    && item.type != ItemID.CobaltNaginata && item.type != ItemID.PalladiumPike && item.type != ItemID.MythrilHalberd && item.type != ItemID.OrichalcumHalberd
-                    && item.type != ItemID.AdamantiteGlaive && item.type != ItemID.TitaniumTrident && item.type != ItemID.Gungnir && item.type != ItemID.ChlorophytePartisan
-                    && /*item.type != ItemID.MonkStaffT1 &&*/ item.type != ItemID.MonkStaffT2 && /*item.type != ItemID.MonkStaffT3 &&*/ item.type != ItemID.MushroomSpear
-                    && item.type != ItemID.ObsidianSwordfish && item.type != ItemID.NorthPole
-                    && item.type != ModContent.ItemType<Items.Weapons.Melee.HiRyuuSpear>() && item.type != ModContent.ItemType<Items.Weapons.Melee.AncientDragonLance>()
-                    && item.type != ModContent.ItemType<Items.Weapons.Melee.AncientBloodLance>() && item.type != ModContent.ItemType<Items.Weapons.Melee.AncientHolyLance>()
-                    && item.type != ModContent.ItemType<Items.Weapons.Melee.CelestialLance>() && item.type != ModContent.ItemType<Items.Weapons.Melee.DragoonLance>()
-                     && item.type != ModContent.ItemType<Items.Weapons.Melee.SupremeDragoonLance>()
-                    && item.type != ModContent.ItemType<Items.Weapons.Melee.ForgottenImpHalberd>() && item.type != ModContent.ItemType<Items.Weapons.Melee.OldHalberd>()
-                    && item.type != ModContent.ItemType<Items.Weapons.Melee.ForgottenPolearm>()))
-                {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 0.6f; // Drain .6 stamina/tick
-                }
 
                 // Ranged
                 if (item.DamageType == DamageClass.Ranged && Player.itemAnimation == Player.itemAnimationMax - 1 && !(item.type == ItemID.PiranhaGun))
                 {
                     Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
 
+                }
+
+                if (item.type == ItemID.CoinGun && Player.itemAnimation == Player.itemAnimationMax - 1) //doesn't seem to work at all D:
+                {
+                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
                 }
 
                 // Magic & Throwing
@@ -164,10 +153,6 @@ namespace tsorcRevamp
                     Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .8f;
                 }
 
-                if (Player.itemAnimation != 0 && (item.type == ItemID.LaserMachinegun))
-                {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .6f;
-                }
 
                 if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Ranged.ArtemisBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.SagittariusBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()))
                 {

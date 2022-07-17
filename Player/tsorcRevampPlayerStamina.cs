@@ -126,12 +126,24 @@ namespace tsorcRevamp
                         }
                     }
 
-                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == ProjAIStyleID.Boomerang) //Can't have boomerangs just not use any stamina, especially weapons like Bananarangs and Possessed Hatchet
+                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == ProjAIStyleID.Boomerang) //Can't have boomerangs just not use any stamina, especially weapons like Bananarangs and Possessed Hatchet(their individual throws just do not use stamina currently)
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0.34f;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 0.17f;
                         break;
                     }
+
+                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].aiStyle == ProjAIStyleID.Spear))
+
+                    {
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .8f;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
+                        if (staminaResourceCurrent < 1)
+                        {
+                            Main.projectile[p].Kill();
+                        }
+                    }
+
 
 
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.VortexBeater 
