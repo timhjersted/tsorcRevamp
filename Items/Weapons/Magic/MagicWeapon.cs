@@ -12,7 +12,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Tooltip.SetDefault("Imbues melee weapons with magic,\n" +
                                 "allowing for weak magic damage scaling" +
                                 "\nAdds 50% of bonus magic damage" +
-                                "\nPlus 1 damage for every 60 max mana over 100" +
                                 "\nLasts 1 minute, 2 minute cooldown" +
                                 "\nNot compatible with other weapon imbues");
 

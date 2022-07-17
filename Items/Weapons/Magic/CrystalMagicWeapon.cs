@@ -12,7 +12,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Tooltip.SetDefault("Imbues melee weapons with crystalline magic,\n" +
                                 "allowing for incredible magic damage scaling" +
                                 "\nAdds 100% of bonus magic damage" +
-                                "\nPlus 1 damage for every 20 max mana over 100" +
                                 "\nLasts 1 minute, 2 minute cooldown" +
                                 "\nNot compatible with other weapon imbues");
 

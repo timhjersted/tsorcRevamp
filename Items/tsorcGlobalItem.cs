@@ -335,32 +335,26 @@ namespace tsorcRevamp.Items
 
                 if (modPlayer.MagicWeapon)
                 {
-                    float bonusDamage = (player.GetDamage(DamageClass.Magic).Additive - player.GetDamage(DamageClass.Magic).Multiplicative) * .5f;
-                    if (bonusDamage >= 0) { player.GetDamage(DamageClass.Melee) *= (1 + bonusDamage); }
-
-                    if (player.statManaMax2 >= 100)
+                    float bonusDamage = ((player.GetDamage(DamageClass.Magic).Additive * player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * .5f;
+                    if (bonusDamage >= 0)
                     {
-                        player.GetDamage(DamageClass.Melee).Flat += (player.statManaMax2 - 100) / 60;
+                        player.GetDamage(DamageClass.Melee) += bonusDamage; 
                     }
                 }
                 if (modPlayer.GreatMagicWeapon)
                 {
-                    float bonusDamage = (player.GetDamage(DamageClass.Magic).Additive - player.GetDamage(DamageClass.Magic).Multiplicative) * .75f;
-                    if (bonusDamage >= 0) { player.GetDamage(DamageClass.Melee) *= (1 + bonusDamage); }
-
-                    if (player.statManaMax2 >= 100)
+                    float bonusDamage = ((player.GetDamage(DamageClass.Magic).Additive * player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * .75f;
+                    if (bonusDamage >= 0)
                     {
-                        player.GetDamage(DamageClass.Melee).Flat += (player.statManaMax2 - 100) / 40;
+                        player.GetDamage(DamageClass.Melee) += bonusDamage; 
                     }
                 }
                 if (modPlayer.CrystalMagicWeapon)
                 {
-                    float bonusDamage = (player.GetDamage(DamageClass.Magic).Additive - player.GetDamage(DamageClass.Magic).Multiplicative) * 1f;
-                    if (bonusDamage >= 0) { player.GetDamage(DamageClass.Melee) *= (1 + bonusDamage); }
-
-                    if (player.statManaMax2 >= 100)
+                    float bonusDamage = (player.GetDamage(DamageClass.Magic).Additive * player.GetDamage(DamageClass.Magic).Multiplicative) * 1f;
+                    if (bonusDamage >= 0)
                     {
-                        player.GetDamage(DamageClass.Melee).Flat += (player.statManaMax2 - 100) / 20;
+                        player.GetDamage(DamageClass.Melee) += bonusDamage;
                     }
                 }
             }
