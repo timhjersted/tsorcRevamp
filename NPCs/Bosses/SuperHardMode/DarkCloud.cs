@@ -3338,21 +3338,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             potionType = ItemID.SuperHealingPotion;
         }
-        //Takes double damage from melee weapons
-        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
-        {
-            damage *= 2;
-            crit = true;
-        }
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
-        {
-            if (projectile.DamageType == DamageClass.Melee)
-            {
-                damage *= 2;
-                crit = true;
-            }
-        }
-
         #endregion       
 
         //This class exists to pair up the Move, Attack, Draw, and ID of each attack type into one nice and neat state object
