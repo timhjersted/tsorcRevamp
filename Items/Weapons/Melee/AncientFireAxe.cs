@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Green;
-            Item.damage = 25;
+            Item.damage = 26;
             Item.height = 32;
             Item.knockBack = (float)10;
             Item.maxStack = 1;
@@ -47,10 +47,10 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void OnHitNPC(Terraria.Player player, NPC npc, int damage, float knockBack, bool crit)
         {
-            if (Main.rand.NextBool(2))
-            { //50% chance to occur
-                npc.AddBuff(BuffID.OnFire, 360, false);
-            }
+            //if (Main.rand.NextBool(2))
+            //{ //50% chance to occur
+                npc.AddBuff(BuffID.OnFire, 720, false);
+            //}
         }
 
         public override void MeleeEffects(Terraria.Player player, Rectangle rectangle)
