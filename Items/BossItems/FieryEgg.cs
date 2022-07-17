@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.BossItems
             }
             else if (!player.ZoneUnderworldHeight)
             {
-                Main.NewText("You can only use this in the Underworld.");
+                UsefulFunctions.BroadcastText("You can only use this in the Underworld.");
             }
             else
             {

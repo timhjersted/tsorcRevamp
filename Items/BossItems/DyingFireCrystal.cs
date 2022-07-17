@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-            Main.NewText("Fire Fiend Maralith erupts from a pillar of dark flame", Color.OrangeRed);
+            UsefulFunctions.BroadcastText("Fire Fiend Maralith erupts from a pillar of dark flame", Color.OrangeRed);
 
             int offset = 50 * 16;
             int effectOffset = 65;

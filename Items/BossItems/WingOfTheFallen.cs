@@ -34,11 +34,11 @@ namespace tsorcRevamp.Items.BossItems
         {
             if (Main.dayTime)
             {
-                Main.NewText("The Wyvern Mage is not present in this dimension... Retry at night.", 175, 75, 255);
+                UsefulFunctions.BroadcastText("The Wyvern Mage is not present in this dimension... Retry at night.", 175, 75, 255);
             }
             else
             {
-                Main.NewText("It was a mistake to summon me... ", 175, 75, 255);
+                UsefulFunctions.BroadcastText("It was a mistake to summon me... ", 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>());
             }
             return true;

@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.BossItems
             if (player.ZoneOverworldHeight && !Main.bloodMoon && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>()))
             {
                 NPC.SpawnOnPlayer(Main.myPlayer, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>());
-                Main.NewText("\"You will be destroyed\"", 255, 50, 50);
+                UsefulFunctions.BroadcastText("\"You will be destroyed\"", 255, 50, 50);
                 return true;
             }
             else

@@ -38,12 +38,12 @@ namespace tsorcRevamp.Items.BossItems
             }
             if (Main.dayTime)
             {
-                Main.NewText("The Ghost Wyvern is not present in this dimension... Retry at night.", 175, 75, 255);
+                UsefulFunctions.BroadcastText("The Ghost Wyvern is not present in this dimension... Retry at night.", 175, 75, 255);
                 return false;
             }
             else
             {
-                Main.NewText("You think death is the end? You haven't begun to understand my powers, Red... ", 175, 75, 255);
+                UsefulFunctions.BroadcastText("You think death is the end? You haven't begun to understand my powers, Red... ", 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>());
             }
             return true;

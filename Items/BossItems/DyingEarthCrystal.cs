@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-            //Main.NewText("Earth Fiend Lich ascends from the ground", Color.GreenYellow);
+            //UsefulFunctions.BroadcastText("Earth Fiend Lich ascends from the ground", Color.GreenYellow);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>());
             return true;
         }

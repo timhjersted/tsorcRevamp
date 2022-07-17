@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.BossItems
             //}
             else
             {
-                Main.NewText("Defeat me, and you shall inherit the fire of this world... ", 175, 75, 255);
+                UsefulFunctions.BroadcastText("Defeat me, and you shall inherit the fire of this world... ", 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>());
             }
             return true;

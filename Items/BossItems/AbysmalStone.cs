@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.BossItems
             }
             else
             {
-                //Main.NewText("Nothing happens...", 175, 75, 255); //seems to write the text on every tick the item is being "used" when returning false
+                //UsefulFunctions.BroadcastText("Nothing happens...", 175, 75, 255); //seems to write the text on every tick the item is being "used" when returning false
                 return false;
             }
         }

@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.BossItems
             }
             else if (!zoneJ)
             {
-                Main.NewText("You can only use this in the Ocean.");
+                UsefulFunctions.BroadcastText("You can only use this in the Ocean.");
             }
             else
             {

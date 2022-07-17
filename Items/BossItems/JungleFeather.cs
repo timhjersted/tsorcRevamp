@@ -34,15 +34,15 @@ namespace tsorcRevamp.Items.BossItems
             }
             if (Main.dayTime)
             {
-                Main.NewText("The ancient Jungle Wyvern remains deep in slumber... Retry at night.", 175, 75, 255);
+                UsefulFunctions.BroadcastText("The ancient Jungle Wyvern remains deep in slumber... Retry at night.", 175, 75, 255);
             }
             else if (!player.ZoneRockLayerHeight)
             {
-                Main.NewText("The ancient Jungle Wyvern must be summoned underground.", 175, 75, 255);
+                UsefulFunctions.BroadcastText("The ancient Jungle Wyvern must be summoned underground.", 175, 75, 255);
             }
             else
             {
-                Main.NewText("A rumbling thunder shakes the ground below you... ", 175, 75, 255);
+                UsefulFunctions.BroadcastText("A rumbling thunder shakes the ground below you... ", 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>());
             }
             return true;

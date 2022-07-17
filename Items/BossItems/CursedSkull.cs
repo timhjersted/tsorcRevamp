@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.BossItems
 
             if (Main.netMode == NetmodeID.SinglePlayer)
             {
-                Main.NewText("Skeletron has awoken!", 175, 75, 255);
+                UsefulFunctions.BroadcastText("Skeletron has awoken!", 175, 75, 255);
             }
             else if (Main.netMode == NetmodeID.Server)
             {
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.BossItems
                 }
                 else
                 {
-                    Main.NewText("This item can only be used in the ancient temple ruins at night...", 220, 180, 180);
+                    UsefulFunctions.BroadcastText("This item can only be used in the ancient temple ruins at night...", 220, 180, 180);
                     return false;
                 }
             }
@@ -66,7 +66,7 @@ namespace tsorcRevamp.Items.BossItems
                 }
                 else
                 {
-                    Main.NewText("This item can only be used at night...", 220, 180, 180);
+                    UsefulFunctions.BroadcastText("This item can only be used at night...", 220, 180, 180);
                     return false;
                 }
             }
@@ -74,7 +74,7 @@ namespace tsorcRevamp.Items.BossItems
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Bone, 10);            
+            recipe.AddIngredient(ItemID.Bone, 1);            
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

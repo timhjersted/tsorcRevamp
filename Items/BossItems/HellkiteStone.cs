@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.BossItems
         {
             if (Main.dayTime)
             {
-                Main.NewText("Nothing happens... Retry at night.", 175, 75, 255);
+                UsefulFunctions.BroadcastText("Nothing happens... Retry at night.", 175, 75, 255);
                 return false;
             }
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()))

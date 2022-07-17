@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.BossItems
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>());
-                Main.NewText("Your shadow self has manifested from your darkest fears...", Color.Blue);
+                UsefulFunctions.BroadcastText("Your shadow self has manifested from your darkest fears...", Color.Blue);
                 return true;
             }
             else
@@ -88,7 +88,7 @@ namespace tsorcRevamp.Items.BossItems
             {
                 if (player.itemTime == 0)
                 {
-                    Main.NewText("The mirror's shadow engulfs you...", Color.Blue);
+                    UsefulFunctions.BroadcastText("The mirror's shadow engulfs you...", Color.Blue);
                     player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
                 }
                 else if (player.itemTime == (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)
