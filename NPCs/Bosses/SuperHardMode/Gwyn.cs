@@ -41,14 +41,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         //old attacks
-        int deathBallDamage = 100;
-        int phantomSeekerDamage = 175;
+        int deathBallDamage = 200;
+        int phantomSeekerDamage = 225;
         int armageddonBallDamage = 300;
         int holdBallDamage = 35;
-        int fireballBallDamage = 45;
+        int fireballBallDamage = 145;
         int blazeBallDamage = 55;
         int blackBreathDamage = 90;
-        int purpleCrushDamage = 55;
+        int purpleCrushDamage = 155;
         int iceStormDamage = 50;
         int gravityBallDamage = 300;
 
@@ -131,7 +131,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //ancient demon
         int cultistFireDamage = 192;
         int cultistMagicDamage = 259;
-        int cultistLightningDamage = 190;
+        int cultistLightningDamage = 260;
         int fireBreathDamage = 131;
         int lostSoulDamage = 223;
         int greatFireballDamage = 216;
