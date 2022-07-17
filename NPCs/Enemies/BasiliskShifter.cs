@@ -154,51 +154,9 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
 
 
-                    //BREATH ATTACK
-                    /*
-					if (shotTimer >= 110f && Main.rand.NextBool(20) && npc.Distance(player.Center) > 260 && npc.life >= 221)
-					{
-						npc.velocity.Y = Main.rand.NextFloat(-10f, -3f);
-						npc.velocity.X = npc.velocity.X + (float)npc.direction * Main.rand.NextFloat(6f, 3f);
-						//if (Main.rand.NextBool(2))
-						//{
-						Lighting.AddLight(npc.Center, Color.BlueViolet.ToVector3() * 2f);
-						//int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Blue, 1f);
-						//Main.dust[dust].noGravity = true;
-						//}
-
-						if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
-						{
-							breath = true;
-							Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 34, 0.2f, 0.2f); //flamethrower
-																										 //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-						}
-
-						if (breath)
-						{
-							Lighting.AddLight(npc.Center, Color.BlueViolet.ToVector3() * 2f);
-							float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
-							Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X, npc.Center.Y, (float)((Math.Cos(rotation) * 7) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer); //7 was 15
-							if (Main.rand.NextBool(30))
-							{
-								Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X + Main.rand.Next(-500, 500), npc.Center.Y + Main.rand.Next(-500, 500), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
-							}
-
-							breathCD--;
-						}
-						if (breathCD <= 0)
-						{
-							breath = false;
-							breathCD = 120;
-							shotTimer = 1f;
-						}
-					}
-					*/
                 }
 
             }
-
-
 
 
             // NEW BREATH ATTACK 

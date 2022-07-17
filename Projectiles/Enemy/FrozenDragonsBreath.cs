@@ -70,13 +70,13 @@ namespace tsorcRevamp.Projectiles.Enemy
                         if (Main.rand.Next(3) != 0 || (num153 == 76 && Main.rand.NextBool(3)))
                         {
                             Main.dust[num155].noGravity = true;
-                            Main.dust[num155].scale *= 1.5f; //was 3
+                            Main.dust[num155].scale *= 2f; //was 3 but 1.5 too small
                             Dust expr_6767_cp_0 = Main.dust[num155];
                             expr_6767_cp_0.velocity.X = expr_6767_cp_0.velocity.X * 2f;
                             Dust expr_6785_cp_0 = Main.dust[num155];
                             expr_6785_cp_0.velocity.Y = expr_6785_cp_0.velocity.Y * 2f;
                         }
-                        Main.dust[num155].scale *= 1f; //was 1.5
+                        Main.dust[num155].scale *= 1.5f; //was 1 but dust too small
                         Dust expr_67BC_cp_0 = Main.dust[num155];
                         expr_67BC_cp_0.velocity.X = expr_67BC_cp_0.velocity.X * 1.2f;
                         Dust expr_67DA_cp_0 = Main.dust[num155];

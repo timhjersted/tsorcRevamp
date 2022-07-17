@@ -40,11 +40,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         }
 
 
-        public int breathDamage = 33;
-        public int smallShardDamage = 74;
+        public int breathDamage = 66;
+        public int smallShardDamage = 84;
         public int iceWaterDamage = 90;
-        public int iceStormDamage = 75;
-        public int largeShardDamage = 240;
+        public int iceStormDamage = 125;
+        public int largeShardDamage = 280;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -207,7 +207,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
 
             //massive ice crystal shards falling down   
-            if (Main.rand.NextBool(220))
+            if (Main.rand.NextBool(200))
             {
                 float num48 = 8f;
                 Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 520 + (NPC.height / 2));
