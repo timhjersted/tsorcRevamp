@@ -1,50 +1,39 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Items.Accessories.Mobility
 {
-    public class ImprovedBundleofBalloons : ModItem
+    public class ImprovedBlueBalloon : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Improved Bundle of Balloons");
-            Tooltip.SetDefault("Allows the holder to quadruple jump" +
-                                "\nIncreases jump height + 120% jump speed");
+            DisplayName.SetDefault("Improved Cloud in a Balloon");
+            Tooltip.SetDefault("Allows the holder to double jump" +
+                                "\nIncreases jump height + 40% jump speed");
         }
 
         public override void SetDefaults()
         {
-            Item.width = 30;
+            Item.width = 22;
             Item.height = 28;
             Item.accessory = true;
-            Item.value = PriceByRarity.Pink_5;
-            Item.rare = ItemRarityID.Pink;
+            Item.value = PriceByRarity.Blue_1;
+            Item.rare = ItemRarityID.Blue;
         }
 
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.BundleofBalloons, 1);
-            recipe.AddIngredient(ItemID.AdamantiteBar, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
+            recipe.AddRecipeGroup(tsorcRevampSystems.ImprovedBundleGroupBlue);
+            recipe.AddIngredient(ItemID.ShadowScale, 5);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 400);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-
-            Terraria.Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(Mod.Find<ModItem>("ImprovedBlueBalloon").Type, 1);
-            recipe2.AddIngredient(Mod.Find<ModItem>("ImprovedWhiteBalloon").Type, 1);
-            recipe2.AddIngredient(Mod.Find<ModItem>("ImprovedYellowBalloon").Type, 1);
-            recipe2.AddIngredient(ItemID.AdamantiteBar, 5);
-            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
-            recipe2.AddTile(TileID.DemonAltar);
-
-            recipe2.Register();
         }
-
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
             RasterizerState OverflowHiddenRasterizerState = new RasterizerState
@@ -69,11 +58,9 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void UpdateEquip(Player player)
         {
-            player.jumpSpeedBoost += 1.2f;
+            player.jumpSpeedBoost += 0.4f;
             player.jumpBoost = true;
             player.hasJumpOption_Cloud = true;
-            player.hasJumpOption_Blizzard = true;
-            player.hasJumpOption_Sandstorm = true;
         }
 
     }

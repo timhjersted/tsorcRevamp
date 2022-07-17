@@ -185,17 +185,17 @@ namespace tsorcRevamp
             RecipeGroup.RegisterGroup("tsorcRevamp:UpgradedMirrors", UpgradedMirrors);
 
             ImprovedBundleGroupBlue = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} Blue Balloons",
-                ItemID.CloudinaBalloon, ModContent.ItemType<Items.Accessories.Mobility.ImprovedBlueHorseshoeBalloon>());
+                ItemID.CloudinaBalloon, ItemID.BlueHorseshoeBalloon);
 
             RecipeGroup.RegisterGroup("tsorcRevamp:ImprovedBundleGroupBlue", ImprovedBundleGroupBlue);
 
             ImprovedBundleGroupWhite = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} White Balloons",
-                ItemID.BlizzardinaBalloon, ModContent.ItemType<Items.Accessories.Mobility.ImprovedWhiteHorseshoeBalloon>());
+                ItemID.BlizzardinaBalloon, ItemID.WhiteHorseshoeBalloon);
 
             RecipeGroup.RegisterGroup("tsorcRevamp:ImprovedBundleGroupWhite", ImprovedBundleGroupWhite);
 
             ImprovedBundleGroupYellow = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} Yellow Balloons",
-                ItemID.SandstorminaBalloon, ModContent.ItemType<Items.Accessories.Mobility.ImprovedYellowHorseshoeBalloon>());
+                 ItemID.SandstorminaBalloon, ItemID.YellowHorseshoeBalloon);
 
             RecipeGroup.RegisterGroup("tsorcRevamp:ImprovedBundleGroupYellow", ImprovedBundleGroupYellow);
         }

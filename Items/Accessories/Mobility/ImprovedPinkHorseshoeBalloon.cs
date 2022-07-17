@@ -6,13 +6,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Items.Accessories.Mobility
 {
-    public class ImprovedBlueHorseshoeBalloon : ModItem
+    public class ImprovedPinkHorseshoeBalloon : ModItem
     {
         public override void SetStaticDefaults()
         {
+            DisplayName.SetDefault("Improved Sharkron Balloon");
             Tooltip.SetDefault("Allows the holder to double jump" +
-                                "\nIncreases jump height + 40% jump speed" +
-                                "\nDisables fall damage");
+                                "\nIncreases jump height + 50% jump speed" +
+                                "\nGrants immunity to fall damage");
         }
 
         public override void SetDefaults()
@@ -20,16 +21,17 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             Item.width = 28;
             Item.height = 48;
             Item.accessory = true;
-            Item.value = PriceByRarity.Green_2;
-            Item.rare = ItemRarityID.Green;
+            Item.value = PriceByRarity.Orange_3;
+            Item.rare = ItemRarityID.Orange;
         }
 
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.BlueHorseshoeBalloon, 1);
-            recipe.AddIngredient(ItemID.ShadowScale, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 400);
+            recipe.AddIngredient(ItemID.BalloonHorseshoeSharkron, 1);
+            recipe.AddIngredient(ItemID.CrimtaneBar, 5);
+            recipe.AddIngredient(ItemID.TissueSample, 5);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -58,9 +60,9 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void UpdateEquip(Player player)
         {
-            player.jumpSpeedBoost += 0.4f;
+            player.jumpSpeedBoost += 0.5f;
             player.jumpBoost = true;
-            player.hasJumpOption_Cloud = true;
+            player.hasJumpOption_Sail = true;
             player.noFallDmg = true;
         }
 

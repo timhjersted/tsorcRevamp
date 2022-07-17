@@ -6,19 +6,19 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Items.Accessories.Mobility
 {
-    public class ImprovedYellowHorseshoeBalloon : ModItem
+    public class ImprovedWhiteBalloon : ModItem
     {
         public override void SetStaticDefaults()
         {
+            DisplayName.SetDefault("Improved Blizzard in a Balloon");
             Tooltip.SetDefault("Allows the holder to double jump" +
-                                "\nIncreases jump height + 80% jump speed" +
-                                "\nDisables fall damage");
+                                "\nIncreases jump height + 60% jump speed");
         }
 
         public override void SetDefaults()
         {
-            Item.width = 28;
-            Item.height = 48;
+            Item.width = 22;
+            Item.height = 28;
             Item.accessory = true;
             Item.value = PriceByRarity.Green_2;
             Item.rare = ItemRarityID.Green;
@@ -27,9 +27,9 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.YellowHorseshoeBalloon, 1);
-            recipe.AddIngredient(ItemID.CobaltBar, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1500);
+            recipe.AddRecipeGroup(tsorcRevampSystems.ImprovedBundleGroupWhite);
+            recipe.AddIngredient(ItemID.Bone, 20);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 900);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -58,10 +58,9 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void UpdateEquip(Player player)
         {
-            player.jumpSpeedBoost += 0.8f;
+            player.jumpSpeedBoost += 0.6f;
             player.jumpBoost = true;
-            player.hasJumpOption_Sandstorm = true;
-            player.noFallDmg = true;
+            player.hasJumpOption_Blizzard = true;
         }
 
     }
