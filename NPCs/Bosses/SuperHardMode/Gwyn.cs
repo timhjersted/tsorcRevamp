@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.width = 20;
             Music = 12;
             NPC.damage = 295;
-            NPC.defense = 90;
+            NPC.defense = 200;
             NPC.lifeMax = 500000;
             NPC.knockBackResist = 0;
             NPC.boss = true;
@@ -43,14 +43,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //old attacks
         int deathBallDamage = 100;
         int phantomSeekerDamage = 175;
-        int armageddonBallDamage = 85;
+        int armageddonBallDamage = 300;
         int holdBallDamage = 35;
         int fireballBallDamage = 45;
         int blazeBallDamage = 55;
         int blackBreathDamage = 90;
         int purpleCrushDamage = 55;
         int iceStormDamage = 50;
-        int gravityBallDamage = 100;
+        int gravityBallDamage = 300;
 
         //basilisk attacks
         int cursedBreathDamage = 100;
@@ -58,7 +58,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int darkExplosionDamage = 135;
         int disruptDamage = 203;
         int bioSpitDamage = 185;
-        int bioSpitfinalDamage = 250;
+        int bioSpitfinalDamage = 230;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -95,13 +95,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         //lumelia attacks
         public int throwingKnifeDamage = 180;
-        public int smokebombDamage = 225;
+        public int smokebombDamage = 295;
 
         //death skull attack when player gets too far away
         public int herosArrowDamage = 400;
 
         //slogra attacks
-        public int tridentDamage = 200;
+        public int tridentDamage = 150;
         //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
         public int burningSphereDamage = 360;
 
@@ -110,14 +110,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         float customAi3;
         float customspawn1;
         float customspawn2;
-        float customspawn3;
+        
+        bool OptionSpawned = false;
 
         //basilisk
         bool breath;
         int breathCD = 120;
         float breathTimer = 60;
         float shotTimer;
-        int hypnoticDisruptorDamage = 135;
+        int hypnoticDisruptorDamage = 145;
 
         //slogra
         bool swordDead = false;
@@ -128,10 +129,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int lineOfSightTimer = 0;
 
         //ancient demon
-        int cultistFireDamage = 92;
+        int cultistFireDamage = 192;
         int cultistMagicDamage = 259;
         int cultistLightningDamage = 190;
-        int fireBreathDamage = 101;
+        int fireBreathDamage = 131;
         int lostSoulDamage = 223;
         int greatFireballDamage = 216;
         int blackFireDamage = 147;
@@ -167,6 +168,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void AI()
         {
 
+            if (OptionSpawned == false)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int swordID = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Bosses.SuperHardMode.SwordOfLordGwyn>(), NPC.whoAmI);
+                    Main.npc[swordID].velocity.Y = -10;
+                    Main.npc[swordID].netUpdate = true;
+                }
+                OptionSpawned = true;
+            }
+
 
             NPC.TargetClosest(true);
             int num58;
@@ -197,6 +209,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 iceStormDamage = 10000;
                 gravityBallDamage = 10000;
                 NPC.damage = 10000;
+                tridentDamage = 10000;
+                herosArrowDamage = 10000;
+                throwingKnifeDamage = 10000;
+                smokebombDamage = 10000;
+                cultistFireDamage = 10000;
+                cultistMagicDamage = 10000;
+                cultistLightningDamage = 10000;
+                fireBreathDamage = 10000;
+                lostSoulDamage = 10000;
+                greatFireballDamage = 10000;
+                blackFireDamage = 10000;
+                greatAttackDamage = 10000;
             }
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
@@ -208,8 +232,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Main.netMode != 1)
             {
 
-
-                //ANCIENT DEMON (NPC.life <= 150000) || (
+                //250,000 and less
+                //ANCIENT DEMON 
 
                 if (NPC.life <= 250000)
                 {
@@ -289,7 +313,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         if (NPC.life >= 75001)
                         { demonBreathTimer = -60; }
                         if (NPC.life <= 75000)
-                        { demonBreathTimer = -240; }
+                        { demonBreathTimer = -160; }
 
                     }
 
@@ -345,7 +369,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     //PLAYER RUNNING AWAY? SPAWN DesertDjinnCurse, 
                     Player player3 = Main.player[NPC.target];
-                    if (Main.rand.NextBool(110) && NPC.Distance(player3.Center) > 600 && NPC.Distance(player3.Center) < 900)
+                    if (Main.rand.NextBool(90) && NPC.Distance(player3.Center) > 600 && NPC.Distance(player3.Center) < 1000)
                     {
                         Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8f, 1.06f, true, true);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ProjectileID.DesertDjinnCurse, lostSoulDamage, 7f, Main.myPlayer);
@@ -509,47 +533,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     }
                 }
-                //end demon AI
+                //END DEMON
 
-                //*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                
 
 
                 customAi1++; ;
@@ -560,10 +546,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 //JUSTHIT CODE
 
-                //if (NPC.justHit && NPC.Distance(player.Center) < 100)
-                //{
-                //    customAi1 = 1f;
-                //}
+                if (NPC.justHit && NPC.Distance(player.Center) < 150)
+                {
+                    customAi1 = 1f;
+                    customAi3 = 1f;
+                }
                 if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(3))//
                 {
                     NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f); //was 6 and 3
@@ -587,10 +574,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
 
-                //SPAWN SWORD AND GREAT KNIGHTS
+                //SPAWN GREAT KNIGHTS
                 if (customAi1 >= 10f)
                 {
-                    if ((customspawn1 < 3) && Main.rand.NextBool(15000))
+                    if ((customspawn1 < 1) && Main.rand.NextBool(15000))
                     {
                         int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.GreatRedKnight>(), 0);
                         Main.npc[Spawned].velocity.Y = -8;
@@ -602,7 +589,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
                         }
                     }
-                    if ((customspawn2 < 5) && Main.rand.NextBool(10000))
+                    if ((customspawn2 < 2) && Main.rand.NextBool(15000))
                     {
                         int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.RingedKnight>(), 0);
                         Main.npc[Spawned].velocity.Y = -8;
@@ -614,31 +601,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
                         }
                     }
-
-                    if (customspawn3 < 1)
-                    {
-                        int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<SwordOfLordGwyn>(), 0);
-                        Main.npc[Spawned].velocity.Y = -8;
-                        Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                        NPC.ai[0] = 20 - Main.rand.Next(80);
-                        customspawn3 += 1f;
-                        if (Main.netMode == 2)
-                        {
-                            NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-                        }
-                    }
-
-
+                }
 
 
 
                     NPC.TargetClosest(true);
 
                     //old projectiles
-
-
                     //orange phantom seeker
-                    if (customAi3 >= 230 && Main.rand.NextBool(200))
+                    if (customAi3 >= 230 && Main.rand.NextBool(250))
                     {
                         num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.BurningPhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
                         Main.projectile[num58].timeLeft = 460;
@@ -664,16 +635,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             num51 = num48 / num51;
                             speedX *= num51;
                             speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellArmageddonBall>();//44;//0x37; //14;
+                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGravity4Ball>();//44;//0x37; //14;
                             int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, armageddonBallDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 0;
+                            Main.projectile[num54].timeLeft = 120;
                             Main.projectile[num54].aiStyle = -1;
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi3 = 1f;
                         }
                         NPC.netUpdate = true;
                     }
-                    #endregion
+                   
 
 
                     //ARROWS FROM ARCHERS NEARBY ATTACK
@@ -829,7 +800,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     //BASILISK HUNTER ATTACKS
                     
 
-                    if (NPC.life >= 200001 && NPC.life <= 400000)
+                    if (NPC.life >= 250001 && NPC.life <= 400000)
                     {
 
                         NPC.localAI[1]++;
@@ -1150,7 +1121,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (breathTimer > 480 && Main.rand.NextBool(2) && shotTimer <= 99f && NPC.life >= 400001)
                     {
                         breathTimer = -90;
-                        shotTimer = -90f;
+                        shotTimer = -120f; //was -90
                     }
 
                     if (breathTimer > 480 && Main.rand.NextBool(2) && shotTimer <= 99f && NPC.life <= 400000)
@@ -1180,8 +1151,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if (breathTimer == 0)
                     {
+                        //replaced spinning circle in place attack with gravity ball
                         shotTimer = 1f;
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
+                        //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGravity1Ball>(), darkExplosionDamage, 0f, Main.myPlayer);
                     }
 
 
@@ -1227,10 +1199,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                             if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                             {
-                                //  int num555 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
-                                //Main.projectile[num555].timeLeft = 300; //40
-                                //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
+                                  /*int num555 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), tridentDamage, 0f, Main.myPlayer);
+                                Main.projectile[num555].timeLeft = 300; //40
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
                                 shotTimer = 1f;
+                                  */
                             }
                         }
                     }
@@ -1324,9 +1297,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if (swordDead)
                     {
-                        //is always on currently
-                        //NPC.defense = 90; //Speed things up a bit
-                        baseCooldown = 90; //was 90
+                        
+                        NPC.defense = 100; //Speed things up a bit
+                        baseCooldown = 90; 
                     }
 
                     //&& NPC.life >= 400001 && NPC.life <= 200001
@@ -1374,13 +1347,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                     }
                                 }
 
-                            }//if (NPC.life >= 400001 && NPC.life <= 200001)
+                            }
                             else
                             {
                                 Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8, .1f, true, true);
                                 if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
-                                { //removed to make tridents fire less experiment
-                                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.player[NPC.target].velocity / 1.5f, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);
+                                {
+                                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.player[NPC.target].velocity / 1.5f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>(), gravityBallDamage, 0.5f, Main.myPlayer);
                                 }
                             }
 
@@ -1413,12 +1386,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         }
                     }
 
-                    //Check if SwordOfLordGwyn is dead. If so we don't need to keep calling AnyNPCs.
-                    if (swordDead)
-                    {   //CHECK
-                        if (!NPC.AnyNPCs(ModContent.NPCType<SwordOfLordGwyn>())) // had ! before it
+                    //Check if SwordOfLordGwyn is dead. If so we don't need to keep calling AnyNPCs. !swordDead && 
+
+                    if (OptionSpawned == true)
+                    {   
+                        if (!NPC.AnyNPCs(ModContent.NPCType<SwordOfLordGwyn>())) 
                         {
-                            swordDead = true; //was true
+                            swordDead = true; 
                         }
                     }
 
@@ -1455,7 +1429,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         moveTimer = 0;
                         NPC.netUpdate = true;
                     }
-                }
+                //} //closed spawn code before
 
                 void DashAttack()
                 {
@@ -1627,6 +1601,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         moveTimer = 0;
                         dashAttack = !dashAttack;
                     }
+
                 }
 
 
@@ -1636,7 +1611,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 if (Main.rand.NextBool(400))
                 {
-                    float num48 = 12f;
+                    float num48 = 4f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                     float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                     float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
@@ -1648,7 +1623,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         speedY *= num51;
                         int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGravity4Ball>();//44;//0x37; //14;
                         int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, gravityBallDamage, 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 60;
+                        Main.projectile[num54].timeLeft = 120;
                         Main.projectile[num54].aiStyle = 1;
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                         customAi1 = 1f;
@@ -1910,58 +1885,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     */
 
 
-                /*
-                #region Phase Through Walls
-                if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
-                {
-                    NPC.noTileCollide = false;
-                    NPC.noGravity = false;
-                }
-                if ((!Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
-                {
-                    NPC.noTileCollide = true;
-                    NPC.noGravity = true;
-                    NPC.velocity.Y = 0f;
-                    if (NPC.position.Y > Main.player[NPC.target].position.Y)
-                    {
-                        NPC.velocity.Y -= 3f;
-                    }
-                    if (NPC.position.Y < Main.player[NPC.target].position.Y)
-                    {
-                        NPC.velocity.Y += 8f;
-                    }
-                }
-                #endregion
-                */
-
-                //if (!Main.bloodMoon)
-                //{
-                //	if (npc.timeLeft > 5)
-                //	{
-                //		Main.NewText("You have broken the Covenant of The Abyss...");
-                //		for (int i = 0; i < 60; i++)
-                //		{
-                //			int dustID = Dust.NewDust(npc.position, npc.width, npc.height, 65, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
-                //			Main.dust[dustID].noGravity = true;
-                //		}
-                //		npc.active = false;
-                //		return;
-                //	}
-                //
-                //}
-
-
-
-
-
-
-
-
-
-
-
 
             }
+            #endregion
         }
 
 
@@ -1971,7 +1897,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (swordDead)
             {
-               // damage = (int)(damage * 1.5f);
+                damage = (int)(damage * 1.2f);
             }
         }
 
@@ -1979,7 +1905,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (swordDead)
             {
-                //damage = (int)(damage * 1.5f);
+                damage = (int)(damage * 1.2f);
             }
 
             if (projectile.minion)
@@ -2012,7 +1938,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
             }
             float projectileDelay = 120;
-            if (swordDead)
+            if (swordDead && OptionSpawned == true)
             {
                 projectileDelay = 90;
             }
@@ -2022,7 +1948,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
 
-                if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.SwordOfLordGwyn>()))
+                if (OptionSpawned == true && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.SwordOfLordGwyn>()))
                 {
                     ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
                     data.Apply(null);
@@ -2091,7 +2017,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //knife
             if (customAi1 >= 120 && customAi1 <= 152)
             {
-                Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 0.1f);
+                Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 0.5f); //was 0.1f
 
                 if (NPC.spriteDirection == -1)
                 {
