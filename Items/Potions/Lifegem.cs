@@ -15,7 +15,8 @@ namespace tsorcRevamp.Items.Potions
                 "\nGradually restores a small amount of HP" +
                 "\nOften found near abandoned corpses," +
                 "\nas if it were what remains of the soul" +
-                "\nRestores 120 HP over the course of 12 seconds");
+                "\nRestores 120 HP over the course of 12 seconds" +
+                "\nInflicts potion sickness");
         }
 
         public override void SetDefaults()
