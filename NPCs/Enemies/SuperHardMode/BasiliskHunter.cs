@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lifeMax = 5000;
             NPC.HitSound = SoundID.NPCHit20;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.value = 4620;
+            NPC.value = 4820;
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BasiliskHunter>();
@@ -34,10 +34,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         int cursedBreathDamage = 20;
         int cursedFlamesDamage = 20;
-        int darkExplosionDamage = 35;
-        int disruptDamage = 33;
-        int bioSpitDamage = 25;
-        int bioSpitfinalDamage = 20;
+        int darkExplosionDamage = 45;
+        int disruptDamage = 43;
+        int bioSpitDamage = 45;
+        int bioSpitfinalDamage = 50;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -103,22 +103,22 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        float breathTimer = 0;
-        float projTimer = 0;
-        float disruptTimer = 0;
+        //float breathTimer = 0;
+        //float projTimer = 0;
+        //float disruptTimer = 0;
         bool chargeDamageFlag;
         int chargeDamage;
         bool breath;
         int breathCD = 120;
 
-        float boredResetT;
-        float boredTimer;
-        float bReset;
-        float customAi1;
-        float drowningRisk;
-        float drownTimer;
-        float drownTimerMax;
-        float tBored;
+        //float boredResetT;
+        //float boredTimer;
+        //float bReset;
+        //float customAi1;
+        //float drowningRisk;
+        //float drownTimer;
+        //float drownTimerMax;
+        //float tBored;
 
 
 
@@ -247,8 +247,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             #region Projectiles
             if (Main.netMode != 1)
             {
-                //customAi1++; ;
-                //customAi2++; ;
+                
 
                 NPC.localAI[1]++;
                 NPC.localAI[2]++;
@@ -262,12 +261,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 if (NPC.localAI[2] >= 300 && NPC.life >= 1000)
                 {
                     //BREATH ATTACK
-                    //if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height)) //&& Main.rand.NextBool(6)
-                    //  {
+                    
 
                     if (NPC.localAI[2] >= 301 && NPC.localAI[2] <= 395 && NPC.Distance(player.Center) > 20 && NPC.life >= 1001)
                     {
-                        //npc.ai[3]++;
+                        
                         if (NPC.localAI[2] == 301)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item6 with { Volume = 0.01f, Pitch = -0.5f }, NPC.Center); //magic mirror
@@ -276,32 +274,19 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         NPC.velocity.X = 0f;
                         NPC.velocity.Y = 0f;
 
-                        if (Main.rand.NextBool(2)) //was 12
-                        {
-
-                            //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 46, .05f, -.2f); //hydra
-                            // Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 34, .03f, -.2f); //flamethrower
-                        }
 
                         Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
 
                         if (Main.rand.NextBool(2))
                         {
-                            //Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-                            //Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-
-                            //Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-                            //Dust.NewDust(npc.position, npc.width, npc.height, 26, npc.velocity.X, npc.velocity.Y);
-                            //Dust.NewDust(npc.position, npc.width, npc.height, 26, npc.velocity.X, npc.velocity.Y);
-                            //Dust.NewDust(npc.position, npc.width, npc.height, 26, npc.velocity.X, npc.velocity.Y);
+                            
 
                             Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 1.0f); //purple magic outward fire
                             Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 1.0f);
                             Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 2.0f); //purple magic outward fire
                             Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 2.0f);
 
-                            //int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 87, 0, 0, 50, Color.Yellow, 1.0f); 
-                            //Main.dust[dust].noGravity = false;
+                            
                         }
 
                     }
@@ -317,12 +302,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         NPC.velocity.X = 0f;
                         NPC.velocity.Y = 0f;
                         Lighting.AddLight(NPC.Center, Color.YellowGreen.ToVector3() * 3f);
-                        //float num48 = 3f;
-                        //float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
-                        //int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X, npc.Center.Y, (float)((Math.Cos(rotation) * 15) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
-                        //Main.projectile[num54].timeLeft = 100;
-
-                        //
+                       
 
                         //play breath sound
                         if (Main.rand.NextBool(3))
@@ -501,7 +481,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                     //FINAL DESPERATE ATTACK
                     if (NPC.localAI[1] >= 155f && NPC.life <= 1000)
-                    //if (Main.rand.NextBool(40))
+                    
                     {
                         Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                         if (Main.rand.NextBool(2))
@@ -531,34 +511,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
 
-            /* Alternate breath attack
-            breathTimer++;
-            if (breathTimer > 480)
-            {
-                breathTimer = -90;
-            }
-
-            if (breathTimer < 0)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 12);
-                    breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X + (5 * npc.direction), npc.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedFlamesDamage, 0f, Main.myPlayer);
-                    npc.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
-                }
-            }
-
-            if (breathTimer > 360)
-            {
-                UsefulFunctions.DustRing(npc.Center, (int)(48 * ((480 - breathTimer) / 120)), DustID.CursedTorch, 48, 4);
-                Lighting.AddLight(npc.Center, Color.GreenYellow.ToVector3() * 5);
-            }
-
-            if (breathTimer == 0)
-            {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X, npc.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
-            }*/
+           
         }
 
         #endregion
@@ -614,13 +567,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void OnHitPlayer(Player player, int target, bool crit)
         {
 
-            if (Main.rand.NextBool(2))
-            {
+            
                 player.AddBuff(37, 10800, false); //horrified
                 player.AddBuff(20, 1200, false); //poisoned
 
-            }
-            if (Main.rand.NextBool(6))
+            
+            if (Main.rand.NextBool(2))
             {
                 player.AddBuff(36, 600, false); //broken armor
                 player.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800, false);

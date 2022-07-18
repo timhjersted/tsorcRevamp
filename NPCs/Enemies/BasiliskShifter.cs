@@ -19,10 +19,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
             NPC.aiStyle = 3;
             NPC.damage = 60;
-            NPC.defense = 60;
+            NPC.defense = 65;
             NPC.height = 54;
             NPC.width = 54;
-            NPC.lifeMax = 570; //was 870
+            NPC.lifeMax = 570; 
             NPC.HitSound = SoundID.NPCHit20;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 2000;
@@ -46,8 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         float breathTimer = 60;
-        //int previous = 0;
-        //bool breath = false;
+       
 
         float shotTimer;
         int chargeDamage = 0;
@@ -144,7 +143,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     //FOR MAIN
                     if (shotTimer == 105 && Main.rand.NextBool(3) && NPC.life >= 221)
                     {
-                        //npc.velocity.Y = -6f;
+                        
                         NPC.velocity.Y = Main.rand.NextFloat(-10f, -4f);
                     }
                     //FOR FINAL
@@ -302,12 +301,12 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //reset attack timer when hit in melee range
-            if (NPC.justHit && NPC.Distance(player.Center) < 100)
+            if (NPC.justHit && NPC.Distance(player.Center) < 100 && NPC.life >= 221)
             {
                 shotTimer = 10f;
             }
 
-            //jump back when hit at close range; && npc.life >= 221
+            //jump back when hit at close range; 
             if (NPC.justHit && NPC.Distance(player.Center) < 150 && Main.rand.NextBool(2))
             {
 
