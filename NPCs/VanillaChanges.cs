@@ -1838,13 +1838,27 @@ namespace tsorcRevamp.NPCs
                     }
                 #endregion
 
+                #region Brain of Cthulhu
+                case (NPCID.BrainofCthulhu):
+                    {
+                        npc.value = 47250;
+                        break;
+                    }
+
+                case (NPCID.Creeper):
+                    {
+                        npc.value = 710; //*20 per brain, making 1420
+                        break;
+                    }
+                #endregion
+
                 #region Eater of Worlds
                 case (NPCID.EaterofWorldsHead):
                     {
                         npc.lifeMax = 180;
                         npc.damage = 30;
                         npc.defense = 22;
-                        npc.value = 1;
+                        npc.value = 56230; //this makes it drop a lot of money(5g62s per head) if you keep killing the head segments hueh, but this value is used by the bags first soul drop value so whatever, see it as a minigame
                         npc.buffImmune[BuffID.Poisoned] = true;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.buffImmune[BuffID.Frostburn] = true;
@@ -1857,7 +1871,7 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = 180;
                         npc.damage = 18; //legacy: 22
                         npc.defense = 5;
-                        npc.value = 1; //ignored
+                        npc.value = 0; //ignored
                         npc.buffImmune[BuffID.Poisoned] = true;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.buffImmune[BuffID.Frostburn] = true;
@@ -1869,7 +1883,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.lifeMax = 155;
                         npc.defense = 8;
-                        npc.value = 1; //ignored
+                        npc.value = 0; //ignored
                         npc.buffImmune[BuffID.Poisoned] = true;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.buffImmune[BuffID.Frostburn] = true;
@@ -1880,20 +1894,6 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.VileSpitEaterOfWorlds):
                     {
                         npc.value = 20;
-                        break;
-                    }
-                #endregion
-
-                #region Brain of Cthulhu
-                case (NPCID.BrainofCthulhu):
-                    {
-                        npc.value = 55550;
-                        break;
-                    }
-
-                case (NPCID.Creeper):
-                    {
-                        npc.value = 1110;
                         break;
                     }
                 #endregion
@@ -2349,7 +2349,6 @@ namespace tsorcRevamp.NPCs
                     }
 
                 #endregion
-
 
                 #endregion
 
@@ -3099,7 +3098,7 @@ namespace tsorcRevamp.NPCs
 
 
 
-                    #endregion
+        #endregion
 
         public override void ScaleExpertStats(NPC npc, int numPlayers, float bossLifeScale)
         {

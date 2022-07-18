@@ -425,21 +425,9 @@ namespace tsorcRevamp.NPCs
                 if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)))
                 {
 
-                    DarkSoulQuantity = 110;
-
-                    if (Main.expertMode)
-                    {
-                        //EoW has 5 more segments in Expert mode, so its drops per segment is reduced slightly to keep it consistent. 
-                        DarkSoulQuantity = 102;
-                    }
-                    if (NPC.downedBoss2)
-                    {
-                        //EoW still drops this many souls per segment even after the first kill. The difference between normal and expert is small enough it would get rounded away at this point.
-                        DarkSoulQuantity = 10;
-                    }
+                    DarkSoulQuantity = 24; //*72 for soul drops per eater, 1728 souls per one whole eater
 
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, DarkSoulQuantity);
-                    DarkSoulQuantity = 0;
                 }
                 #endregion
 
@@ -454,7 +442,7 @@ namespace tsorcRevamp.NPCs
                 float chance = 0.01f + (0.0005f * Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult);
                 //Main.NewText(chance);
 
-                if (!(npc.type == NPCID.EaterofWorldsBody || npc.type == NPCID.EaterofWorldsTail || npc.type == NPCID.EaterofWorldsHead))
+                if (!(npc.type == NPCID.EaterofWorldsBody || npc.type == NPCID.EaterofWorldsTail || npc.type == NPCID.EaterofWorldsHead || npc.type == NPCID.Creeper))
                 {
 
                     if ((enemyValue >= 1) && (enemyValue <= 200) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 1 and 200 dropping FadingSoul aka 1/75
