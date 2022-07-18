@@ -23,8 +23,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;
-            NPC.damage = 100;
-            NPC.defense = 10;
+            NPC.damage = 300;
+            NPC.defense = 100;
             NPC.HitSound = SoundID.NPCHit7;
             NPC.DeathSound = SoundID.NPCDeath8;
             NPC.lifeMax = 100000;
@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
-            NPC.value = 200000;
+            NPC.value = 250000;
             NPC.lavaImmune = true;
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
@@ -45,11 +45,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.damage = 120;
+                NPC.damage = 300;
                 NPC.value = 100000;
-                breathDamage = 45;
-                flameRainDamage = 37;
-                meteorDamage = 73;
+                breathDamage = 125;
+                flameRainDamage = 130;
+                meteorDamage = 150;
             }
         }
 

@@ -21,8 +21,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;
-            NPC.damage = 390;
-            NPC.defense = 50;
+            NPC.damage = 500;
+            NPC.defense = 100;
             NPC.HitSound = SoundID.NPCHit7;
             NPC.DeathSound = SoundID.NPCDeath8;
             NPC.lifeMax = 125000;
@@ -40,10 +40,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         }
 
 
-        public int breathDamage = 66;
-        public int smallShardDamage = 84;
-        public int iceWaterDamage = 90;
-        public int iceStormDamage = 125;
+        public int breathDamage = 126;
+        public int smallShardDamage = 164;
+        public int iceWaterDamage = 150;
+        public int iceStormDamage = 175;
         public int largeShardDamage = 280;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -74,11 +74,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             if (Main.expertMode) expertScale = 2;
 
             target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
-
-            if (Main.rand.NextBool(2))
-            {
-                target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
-            }
+            target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
+            
         }
 
         #region Spawn
@@ -207,7 +204,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
 
             //massive ice crystal shards falling down   
-            if (Main.rand.NextBool(200))
+            if (Main.rand.NextBool(180))
             {
                 float num48 = 8f;
                 Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 520 + (NPC.height / 2));
@@ -231,7 +228,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
             
             //ice storm horizontal attack
-            if (Main.rand.NextBool(150))
+            if (Main.rand.NextBool(120))
             {
                 float num48 = 8f;
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -256,7 +253,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             
 
             //ice water spit
-            if (Main.rand.NextBool(260)) //was 1560
+            if (Main.rand.NextBool(250)) //was 1560
             {
                 for (int pcy = 0; pcy < 9; pcy++)
                 {
