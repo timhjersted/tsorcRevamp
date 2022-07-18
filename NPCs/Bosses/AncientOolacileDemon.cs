@@ -7,6 +7,10 @@ namespace tsorcRevamp.NPCs.Bosses
 {
     class AncientOolacileDemon : ModNPC
     {
+                public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Ancient Oolacile Demon");
+        }
 
         public override void SetDefaults()
         {
@@ -32,7 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses
             despawnHandler = new NPCDespawnHandler("The ancient Oolacile Demon decides to show mercy ...", Color.Gold, DustID.GoldFlame);
 
 
-            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead))
+ //           if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead)) //unloads the mod currently
             {
                 NPC.defense = 30;
                 NPC.value = 89430;
@@ -46,7 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 blackFireDamage = 57;
                 greatAttackDamage = 72;
             }
-            else if (tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead))
+ //           if (tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead))   //unloads the mod currently
             {
                 NPC.defense = 60;
                 NPC.value = 114830;
@@ -63,12 +67,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
         }
 
-
-
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Ancient Oolacile Demon");
-        }
         NPCDespawnHandler despawnHandler;
         int meteorDamage = 21;
         int cultistFireDamage = 26;
