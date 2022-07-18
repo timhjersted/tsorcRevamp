@@ -70,19 +70,29 @@ namespace tsorcRevamp
                     //Step 4: Check if they're left-clicking, and close the minimap + teleport them if so
                     if (Main.mouseLeft && !tsorcRevampWorld.bossAlive)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, Main.LocalPlayer.position);
-                        UsefulFunctions.SafeTeleport(Main.LocalPlayer, new Vector2(bonfirePoint.X, bonfirePoint.Y - 1) * 16);
-                        Main.mapFullscreen = false;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, bonfirePoint * 16);
-                        if (Main.netMode == NetmodeID.MultiplayerClient)
-                        {
-                            Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.Loading>(), 15);
+                        if (Main.LocalPlayer.HasBuff(ModContent.BuffType<Buffs.InCombat>())) {
+                            Main.mapFullscreen = false;
+                            if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().TextCooldown >= 0) {
+                                Main.NewText("Can not teleport while in combat!");
+                            }
+                        }
+                        else {
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, Main.LocalPlayer.position);
+                            UsefulFunctions.SafeTeleport(Main.LocalPlayer, new Vector2(bonfirePoint.X, bonfirePoint.Y - 1) * 16);
+                            Main.mapFullscreen = false;
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, bonfirePoint * 16);
+                            if (Main.netMode == NetmodeID.MultiplayerClient) {
+                                Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.Loading>(), 15);
+                            }
                         }
                     }
 
                     if (tsorcRevampWorld.bossAlive)
                     {
                         mouseText = "Can not teleport while a boss is alive!";
+                    }
+                    else if (Main.LocalPlayer.HasBuff(ModContent.BuffType<Buffs.InCombat>())) {
+                        mouseText = "Can not teleport while in combat!";
                     }
                 }
                 else
