@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateArmorSet(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
+            player.GetAttackSpeed(DamageClass.Summon) += 0.35f;
             player.whipRangeMultiplier += 0.5f;
             if (player.statLife <= 166)
             {

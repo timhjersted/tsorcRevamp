@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Item.channel = true;
             Item.useAnimation = 44;
             Item.useTime = 44;
-            Item.damage = 123;
+            Item.damage = 116;
             Item.knockBack = 8;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.LightPurple;

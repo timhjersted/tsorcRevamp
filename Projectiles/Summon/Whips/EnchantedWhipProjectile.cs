@@ -29,8 +29,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.extraUpdates = 1;
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = -1;
-			Projectile.WhipSettings.Segments = 10;
-			Projectile.WhipSettings.RangeMultiplier = 1f;
+			Projectile.WhipSettings.Segments = 20;
+			Projectile.WhipSettings.RangeMultiplier = 1.15f; //only thing affecting the actual whip range
 		}
 
 		private float Timer
@@ -55,11 +55,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			// However, the use of UnitX basically turns it into a more complicated way of checking if the projectile's velocity is above or equal to zero on the X axis.
 			Projectile.spriteDirection = Projectile.velocity.X >= 0f ? 1 : -1;
 
-			// remove these 3 lines if you don't want the charging mechanic
-			if (!Charge(owner))
-			{
-				return; // timer doesn't update while charging, freezing the animation at the start.
-			}
+
 
 			Timer++;
 
@@ -80,31 +76,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			}
 		}
 
-		// This method handles a charging mechanic.
-		// If you remove this, also remove Item.channel = true from the item's SetDefaults.
-		// Returns true if fully charged
-		private bool Charge(Player owner)
-		{
-			// Like other whips, this whip updates twice per frame (Projectile.extraUpdates = 1), so 120 is equal to 1 second.
-			if (!owner.channel || ChargeTime >= 120)
-			{
-				return true; // finished charging
-			}
 
-			ChargeTime++;
-
-			if (ChargeTime % 12 == 0) // 1 segment per 12 ticks of charge.
-				Projectile.WhipSettings.Segments++;
-
-			// Increase range up to 2x for full charge.
-			Projectile.WhipSettings.RangeMultiplier += 1 / 120f;
-
-			// Reset the animation and item timer while charging.
-			owner.itemAnimation = owner.itemAnimationMax;
-			owner.itemTime = owner.itemTimeMax;
-
-			return false; // still charging
-		}
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
@@ -175,12 +147,12 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 					float t = Timer / timeToFlyOut;
 					scale = MathHelper.Lerp(0.5f, 1.5f, Utils.GetLerpValue(0.1f, 0.7f, t, true) * Utils.GetLerpValue(0.9f, 0.7f, t, true));
 				}
-				else if (i > 10)
+				else if (i > 20)
 				{
 					frame.Y = 58;
 					frame.Height = 16;
 				}
-				else if (i > 5)
+				else if (i > 10)
 				{
 					frame.Y = 42;
 					frame.Height = 16;

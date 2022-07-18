@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
         {
             DisplayName.SetDefault("Heaven's Tear II");
             Tooltip.SetDefault("'Heaven splits with each swing'\n" +
-                                "Does 2x damage to mages and ghosts...");
+                               "Does 2x damage to mages and ghosts...");
 
         }
 
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Item.useAnimation = 30;
             Item.useTime = 30;
             Item.maxStack = 1;
-            Item.damage = 2000;
+            Item.damage = 400;
             Item.knockBack = (float)10;
             Item.scale = (float)1.1;
             Item.UseSound = SoundID.Item1;

@@ -338,7 +338,7 @@ namespace tsorcRevamp.Projectiles.Flails
 				dustRate = 1;
 
 			if (Main.rand.NextBool(dustRate))
-				Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PurpleTorch, 0f, 0f, 150, default(Color), 1.3f);
+				Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldFlame, 0f, 0f, 150, default(Color), 1.3f);
 		}
 
 		public override bool OnTileCollide(Vector2 oldVelocity)

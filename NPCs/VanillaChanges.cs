@@ -1560,13 +1560,13 @@ namespace tsorcRevamp.NPCs
                         lihzard == NPCID.LihzahrdCrawler
                         ):
                     {
-                        npc.value = 4380;
+                        npc.value = 3380;
                         break;
                     }
 
                 case (NPCID.FlyingSnake):
                     {
-                        npc.value = 5430;
+                        npc.value = 4430;
                         break;
                     }
 
