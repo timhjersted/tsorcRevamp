@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.lifeMax = 380;
                 NPC.defense = 20;
-                NPC.value = 1000;
+                NPC.value = 700;
                 NPC.damage = 60;
                 hypnoticDisruptorDamage = 45;
                 bioSpitDamage = 35;
@@ -41,7 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             NPC.HitSound = SoundID.NPCHit20;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.value = 400; //was 2000
+            NPC.value = 400; 
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BasiliskWalkerBanner>();
@@ -123,7 +123,7 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: true, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.2f, enrageTopSpeed: 2);
 
             bool clearLineOfSight = Collision.CanHitLine(NPC.Center, 2, 2, Main.player[NPC.target].Center, 2, 2);
-            if (tsorcRevampAIs.SimpleProjectile(NPC, ref shotTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 8, clearLineOfSight && Main.rand.Next(15) != 0, true))
+            if (tsorcRevampAIs.SimpleProjectile(NPC, ref shotTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 8, clearLineOfSight && !Main.rand.NextBool(15), true)) //VS suggested I change the last thing to NextBool
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = 0.3f }, NPC.Center);  //fire
             }

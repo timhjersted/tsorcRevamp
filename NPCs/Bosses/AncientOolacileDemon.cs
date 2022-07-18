@@ -3,11 +3,12 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
+
 namespace tsorcRevamp.NPCs.Bosses
 {
     class AncientOolacileDemon : ModNPC
     {
-                public override void SetStaticDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ancient Oolacile Demon");
         }
@@ -35,8 +36,8 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler("The ancient Oolacile Demon decides to show mercy ...", Color.Gold, DustID.GoldFlame);
 
-
- //           if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead)) //unloads the mod currently
+            /* 
+            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead)) //unloads the mod currently /causes freeze on load
             {
                 NPC.defense = 30;
                 NPC.value = 89430;
@@ -50,7 +51,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 blackFireDamage = 57;
                 greatAttackDamage = 72;
             }
- //           if (tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead))   //unloads the mod currently
+            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead))   //unloads the mod currently
             {
                 NPC.defense = 60;
                 NPC.value = 114830;
@@ -64,6 +65,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 blackFireDamage = 67;
                 greatAttackDamage = 82;
             }
+            */
 
         }
 
@@ -79,10 +81,8 @@ namespace tsorcRevamp.NPCs.Bosses
         int greatAttackDamage = 62;
 
 
-        
 
-
-    public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, int damage, bool crit)
         {
 
 
@@ -120,10 +120,12 @@ namespace tsorcRevamp.NPCs.Bosses
             blackFireDamage = (int)(blackFireDamage / 2);
             greatAttackDamage = (int)(greatAttackDamage / 2);
         }
-        public Player player
+
+        public Player Player
         {
             get => Main.player[NPC.target];
         }
+
         //PROJECTILE HIT LOGIC
         public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
         {
@@ -171,7 +173,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.localAI[1] = 70f;
             }
             //RANGED
-            if (NPC.Distance(player.Center) > 201 && NPC.velocity.Y == 0f && Main.rand.NextBool(3))//npc.justHit &&
+            if (NPC.Distance(Player.Center) > 201 && NPC.velocity.Y == 0f && Main.rand.NextBool(3))//npc.justHit &&
             {
 
                 NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f);

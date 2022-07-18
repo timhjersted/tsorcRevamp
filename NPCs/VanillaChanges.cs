@@ -1795,7 +1795,7 @@ namespace tsorcRevamp.NPCs
                 #region King Slime
                 case (NPCID.KingSlime):
                     {
-                        npc.damage = 50;
+                        npc.damage = 60;
                         npc.defense = 15;
                         npc.scale = 1.25f;
                         npc.value = 25450;
@@ -1856,7 +1856,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.EaterofWorldsHead):
                     {
                         npc.lifeMax = 180;
-                        npc.damage = 30;
+                        npc.damage = 35; //was 30 for a long time
                         npc.defense = 22;
                         npc.value = 56230; //this makes it drop a lot of money(5g62s per head) if you keep killing the head segments hueh, but this value is used by the bags first soul drop value so whatever, see it as a minigame
                         npc.buffImmune[BuffID.Poisoned] = true;
@@ -1869,7 +1869,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.EaterofWorldsBody):
                     {
                         npc.lifeMax = 180;
-                        npc.damage = 18; //legacy: 22
+                        npc.damage = 20; //legacy: 22, was 18 for a long time
                         npc.defense = 5;
                         npc.value = 0; //ignored
                         npc.buffImmune[BuffID.Poisoned] = true;
@@ -1911,7 +1911,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.value = 84480;
                         npc.defense = 12;
-                        npc.damage = 35; //legacy: 50
+                        npc.damage = 45; //legacy: 50, then 35
                         npc.lifeMax = 4400;
                         npc.buffImmune[BuffID.OnFire] = true;
                         break;
@@ -1921,7 +1921,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.value = 5780;
                         npc.defense = 14; //legacy: 12
-                        npc.damage = 22; //legacy: 40
+                        npc.damage = 32; //legacy: 40, then 22
                         npc.lifeMax = 600;
                         npc.buffImmune[BuffID.OnFire] = true;
                         break;
@@ -2037,7 +2037,7 @@ namespace tsorcRevamp.NPCs
                         if(npc.type == NPCID.Retinazer)
                         {
                             npc.defense = 28;
-                            npc.damage = 56; //legacy: 80
+                            npc.damage = 80; //legacy: 80 //recent was 56
                             npc.lifeMax = 25000;
                         }
                         if(npc.type == NPCID.Spazmatism)
