@@ -1044,7 +1044,7 @@ namespace tsorcRevamp.NPCs
                     {
                         if (npc.type == NPCID.SandShark)
                         {
-                            npc.value = 7450;
+                            npc.value = 1850;
                         }
                         npc.value = 2990;
                         break;
