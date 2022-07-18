@@ -148,7 +148,7 @@ namespace tsorcRevamp
                     Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 14f;
                 }
 
-                if (Player.itemAnimation != 0 && (item.type == ItemID.PiranhaGun || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>() || item.type == ItemID.LastPrism || item.type == ItemID.DD2PhoenixBow || item.type == ItemID.Phantasm))
+                if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
                 {
                     Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .8f;
                 }

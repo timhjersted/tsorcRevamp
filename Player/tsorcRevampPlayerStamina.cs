@@ -112,6 +112,17 @@ namespace tsorcRevamp
                     //    break; //break to prevent it nuking the regen rate when multiple boomerangs are present
                     //}
 
+                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.ChainGuillotine
+                        || Main.projectile[p].type == ProjectileID.MechanicalPiranha))
+                    {
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .6f;
+                        if (staminaResourceCurrent < 1)
+                        {
+                            Main.projectile[p].Kill();
+                        }
+                        break;
+                    }
+
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.CopperShortswordStab || Main.projectile[p].type == ProjectileID.TinShortswordStab
                         || Main.projectile[p].type == ProjectileID.IronShortswordStab || Main.projectile[p].type == ProjectileID.LeadShortswordStab
                         || Main.projectile[p].type == ProjectileID.SilverShortswordStab || Main.projectile[p].type == ProjectileID.TungstenShortswordStab
@@ -129,7 +140,7 @@ namespace tsorcRevamp
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == ProjAIStyleID.Boomerang) //Can't have boomerangs just not use any stamina, especially weapons like Bananarangs and Possessed Hatchet(their individual throws just do not use stamina currently)
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0.34f;
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 0.17f;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 0.27f;
                         break;
                     }
 
@@ -159,7 +170,10 @@ namespace tsorcRevamp
                     }
 
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.Terragrim || Main.projectile[p].type == ProjectileID.Arkhalis
-                        || Main.projectile[p].type == ProjectileID.ChargedBlasterCannon || Main.projectile[p].type == ProjectileID.MedusaHead))
+                        || Main.projectile[p].type == ProjectileID.ChargedBlasterCannon || Main.projectile[p].type == ProjectileID.MedusaHead
+                        || Main.projectile[p].type == ProjectileID.ChainKnife || Main.projectile[p].type == ProjectileID.LastPrism
+                        || Main.projectile[p].type == ProjectileID.LaserMachinegun
+                        || Main.projectile[p].type == ProjectileID.DD2PhoenixBow || Main.projectile[p].type == ProjectileID.Phantasm))
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .5f;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
@@ -169,7 +183,8 @@ namespace tsorcRevamp
                         }
                     }
 
-                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].aiStyle == ProjAIStyleID.Flail))
+                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].aiStyle == ProjAIStyleID.Flail
+                        || Main.projectile[p].type == ProjectileID.Anchor))
 
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .4f;
@@ -180,20 +195,12 @@ namespace tsorcRevamp
                         }
                     }
 
+
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].aiStyle == ProjAIStyleID.Yoyo))
 
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .3f;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
-                        if (staminaResourceCurrent < 1)
-                        {
-                            Main.projectile[p].Kill();
-                        }
-                    }
-
-                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.MechanicalPiranha || Main.projectile[p].type == ProjectileID.LaserMachinegun
-                        || Main.projectile[p].type == ProjectileID.DD2PhoenixBow || Main.projectile[p].type == ProjectileID.Phantasm))
-                    {
                         if (staminaResourceCurrent < 1)
                         {
                             Main.projectile[p].Kill();
