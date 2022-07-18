@@ -169,14 +169,14 @@ namespace tsorcRevamp.Items.BossBags
             //if not killed before
             if (!modPlayer.bagsOpened.Contains(BossBagNPC))
             {
-                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), 20000); //Then drop the souls
+                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), 13769); //Then drop the souls
                 player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.CovetousSilverSerpentRing>());
                 player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(10, 20));
             }
             //if the boss has been killed once
             else
             {
-                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), 8000); //Then drop the souls
+                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), 5091); //Then drop the souls
                 player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(5, 10));
             }
 

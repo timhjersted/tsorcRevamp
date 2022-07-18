@@ -32,7 +32,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.lifeMax = 10000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 250000;
+            NPC.value = 107430;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0.1f;
             NPC.rarity = 4;

@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
             NPC.lifeMax = 4000;
             NPC.knockBackResist = 0.9f;
-            NPC.value = 100000;
+            NPC.value = 130000;
             NPC.noTileCollide = true;
             NPC.noGravity = true;
             despawnHandler = new NPCDespawnHandler(DustID.Torch);

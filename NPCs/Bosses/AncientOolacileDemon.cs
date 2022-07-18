@@ -35,7 +35,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead))
             {
                 NPC.defense = 30;
-                NPC.value = 120000;
+                NPC.value = 89430;
                 meteorDamage = 31;
                 cultistFireDamage = 36;
                 cultistMagicDamage = 39;
@@ -49,7 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses
             else if (tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead))
             {
                 NPC.defense = 60;
-                NPC.value = 200000;
+                NPC.value = 114830;
                 meteorDamage = 41;
                 cultistFireDamage = 46;
                 cultistMagicDamage = 59;

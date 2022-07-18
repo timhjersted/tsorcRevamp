@@ -1939,7 +1939,7 @@ namespace tsorcRevamp.NPCs
                 #region Wall of Flesh
                 case (NPCID.WallofFlesh):
                     {
-                        npc.value = 102580;
+                        npc.value = 115580;
                         npc.damage = 100;
                         npc.lifeMax = 14000;
                         break;
@@ -1993,7 +1993,7 @@ namespace tsorcRevamp.NPCs
                 #region Queen Slime
                 case (NPCID.QueenSlimeBoss):
                     {
-                        npc.value = 154780;
+                        npc.value = 134780;
                         break;
                     }
 
