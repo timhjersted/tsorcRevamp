@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Bosses
             AnimationType = 28;
             NPC.aiStyle = -1;
             NPC.timeLeft = 22750;
-            NPC.damage = 45;
+            NPC.damage = 70;
             //npc.Music = 12;
             NPC.boss = true;
             NPC.HitSound = SoundID.NPCHit1;
@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.lifeMax = 4000;
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.4f;
-            NPC.value = 100000;
+            NPC.value = 170000;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             despawnHandler = new NPCDespawnHandler("Slogra returns to the depths...", Color.DarkGreen, DustID.Demonite);
@@ -43,9 +43,9 @@ namespace tsorcRevamp.NPCs.Bosses
             DisplayName.SetDefault("Slogra, Lost Soul of the Depths");
         }
 
-        int tridentDamage = 30;
+        int tridentDamage = 40;
         //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
-        int burningSphereDamage = 60;
+        int burningSphereDamage = 120;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = (int)(NPC.damage * 1.3 / 2);

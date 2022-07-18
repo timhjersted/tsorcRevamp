@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //It genuinely had none in the original.
             NPC.defense = 0;
             Music = 12;
-            NPC.defense = 10;
+            NPC.defense = 10; //should this be here?
             NPC.boss = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
-        int burningSphereDamage = 60;
+        int burningSphereDamage = 120;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = (int)(NPC.damage * 1.3 / 2);
