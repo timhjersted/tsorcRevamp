@@ -15,8 +15,8 @@ namespace tsorcRevamp.NPCs.Bosses
 
         }
 
-        public int throwingKnifeDamage = 46;
-        public int smokebombDamage = 25;
+        public int throwingKnifeDamage = 115;
+        public int smokebombDamage = 175;
 
         public override void SetDefaults()
         {
@@ -26,14 +26,13 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.aiStyle = 3;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.damage = 75;
-            NPC.defense = 56;
+            NPC.damage = 220;
+            NPC.defense = 75;
             NPC.boss = true;
-            //npc.timeLeft = 22000;
             NPC.lifeMax = 10000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 25000;
+            NPC.value = 250000;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0.1f;
             NPC.rarity = 4;
@@ -51,9 +50,10 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.damage = (int)(NPC.damage / 2);
             herosArrowDamage = (int)(herosArrowDamage / 2);
             throwingKnifeDamage = (int)(throwingKnifeDamage / 2);
+            smokebombDamage = (int)(smokebombDamage / 2);
         }
 
-        int herosArrowDamage = 39;
+        int herosArrowDamage = 100;
         
 
         bool wolfSpawned1 = false;

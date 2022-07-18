@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.height = 120;
             NPC.width = 50;
             NPC.damage = 44;
-            NPC.defense = 3;
+            NPC.defense = 12;
             NPC.lifeMax = 3200;
             NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit1;
@@ -30,7 +30,40 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler("The ancient Oolacile Demon decides to show mercy ...", Color.Gold, DustID.GoldFlame);
+
+
+            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead))
+            {
+                NPC.defense = 30;
+                NPC.value = 120000;
+                meteorDamage = 31;
+                cultistFireDamage = 36;
+                cultistMagicDamage = 39;
+                cultistLightningDamage = 40;
+                fireBreathDamage = 33;
+                lostSoulDamage = 35;
+                greatFireballDamage = 46;
+                blackFireDamage = 57;
+                greatAttackDamage = 72;
+            }
+            else if (tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead))
+            {
+                NPC.defense = 60;
+                NPC.value = 200000;
+                meteorDamage = 41;
+                cultistFireDamage = 46;
+                cultistMagicDamage = 59;
+                cultistLightningDamage = 60;
+                fireBreathDamage = 43;
+                lostSoulDamage = 45;
+                greatFireballDamage = 56;
+                blackFireDamage = 67;
+                greatAttackDamage = 82;
+            }
+
         }
+
+
 
         public override void SetStaticDefaults()
         {
@@ -38,16 +71,42 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         NPCDespawnHandler despawnHandler;
         int meteorDamage = 21;
-        int cultistFireDamage = 22;
-        int cultistMagicDamage = 29;
-        int cultistLightningDamage = 20;
-        int fireBreathDamage = 18;
-        int lostSoulDamage = 23;
-
-
+        int cultistFireDamage = 26;
+        int cultistMagicDamage = 35;
+        int cultistLightningDamage = 30;
+        int fireBreathDamage = 23;
+        int lostSoulDamage = 25;
         int greatFireballDamage = 36;
         int blackFireDamage = 47;
         int greatAttackDamage = 62;
+
+
+        
+
+
+    public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+
+
+            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead))
+            {
+                target.AddBuff(20, 150, false); //poisoned
+                target.AddBuff(30, 150, false); //bleeding
+            }
+
+            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead))
+            {
+                target.AddBuff(70, 150, false); //acid venom
+                target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 HP after several hits
+                target.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 20;
+            }
+
+            if (Main.rand.NextBool(2))
+            {
+                target.AddBuff(39, 180, false); //cursed flames
+                target.AddBuff(33, 180, false); //weak
+            }
+        }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {

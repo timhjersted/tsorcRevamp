@@ -54,7 +54,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 //target.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel += 10;
             }
 
-            if (Main.rand.NextBool(6))
+            if (Main.rand.NextBool(2))
             {
                 target.AddBuff(39, 150, false); //cursed flames
                 target.AddBuff(30, 1800, false); //bleeding
