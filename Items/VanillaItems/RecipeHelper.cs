@@ -16,7 +16,7 @@ namespace tsorcRevamp
 
                 if (recipe.HasResult(ItemRecipeToRemove))
                 {
-                    recipe.DisableRecipe();
+                    recipe.AddIngredient(ModContent.ItemType<Items.DisabledRecipe>());
                 }
             }
 
@@ -52,7 +52,7 @@ namespace tsorcRevamp
                     && recipe.HasTile(CraftingStation)
                     && recipe.HasResult(RecipeResult))
                 {
-                    recipe.DisableRecipe();
+                    recipe.AddIngredient(ModContent.ItemType<Items.DisabledRecipe>());
                 }
             }
         }
