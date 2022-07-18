@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Heaven's Tear");
-            Tooltip.SetDefault("'Heaven splits with each swing'");
-                               "Does 2x damage to mages and ghosts...");
+            Tooltip.SetDefault("Heaven splits with each swing" +
+                "\nDeals double damage to mages and ghosts");
 
         }
 
