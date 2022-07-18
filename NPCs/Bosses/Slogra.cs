@@ -49,7 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = (int)(NPC.damage * 1.3 / 2);
-            NPC.defense = NPC.defense += 12;
+            NPC.defense = NPC.defense += 22;
             tridentDamage = (int)(tridentDamage / 2);
         }
 
