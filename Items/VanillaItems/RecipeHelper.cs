@@ -80,34 +80,69 @@ namespace tsorcRevamp
             RecipeRemover(ItemID.BladeofGrass);
             RecipeRemover(ItemID.ThornWhip);
             RecipeRemover(ItemID.BoneWhip);
+
             RecipeRemover(ItemID.JungleHat);
             RecipeRemover(ItemID.JungleShirt);
             RecipeRemover(ItemID.JunglePants);
+            RecipeRemover(ItemID.MeteorHelmet);
+            RecipeRemover(ItemID.MeteorSuit);
+            RecipeRemover(ItemID.MeteorLeggings);
             RecipeRemover(ItemID.NecroHelmet);
             RecipeRemover(ItemID.NecroBreastplate);
             RecipeRemover(ItemID.NecroGreaves);
             RecipeRemover(ItemID.MoltenHelmet);
             RecipeRemover(ItemID.MoltenBreastplate);
             RecipeRemover(ItemID.MoltenGreaves);
+            RecipeRemover(ItemID.ObsidianHelm);
+            RecipeRemover(ItemID.ObsidianShirt);
+            RecipeRemover(ItemID.ObsidianPants);
+
             RecipeRemover(ItemID.BalloonHorseshoeSharkron);
             RecipeRemover(ItemID.BlueHorseshoeBalloon);
             RecipeRemover(ItemID.WhiteHorseshoeBalloon);
             RecipeRemover(ItemID.YellowHorseshoeBalloon);
             RecipeRemover(ItemID.BalloonHorseshoeHoney);
+
             RecipeRemover(ItemID.RopeCoil);
             RecipeRemover(ItemID.VineRopeCoil);
             RecipeRemover(ItemID.WebRope);
             RecipeRemover(ItemID.WebRopeCoil);
             RecipeRemover(ItemID.SilkRopeCoil);
 
-            RecipeRemover(ItemID.Excalibur);
+            RecipeRemover(ItemID.SpiderMask); //most of these are to just stop people from feeling the need to farm for these
+            RecipeRemover(ItemID.SpiderBreastplate);
+            RecipeRemover(ItemID.SpiderGreaves);
             RecipeRemover(ItemID.HallowedHeadgear);
             RecipeRemover(ItemID.HallowedMask);
             RecipeRemover(ItemID.HallowedHelmet);
             RecipeRemover(ItemID.HallowedHood);
             RecipeRemover(ItemID.HallowedPlateMail);
             RecipeRemover(ItemID.HallowedGreaves);
+            RecipeRemover(ItemID.TurtleHelmet);
+            RecipeRemover(ItemID.TurtleScaleMail);
+            RecipeRemover(ItemID.TurtleLeggings);
+            RecipeRemover(ItemID.BeetleHelmet);
+            RecipeRemover(ItemID.BeetleShell);
+            RecipeRemover(ItemID.BeetleScaleMail);
+            RecipeRemover(ItemID.BeetleLeggings);
+            RecipeRemover(ItemID.SpectreHood);
+            RecipeRemover(ItemID.SpectreMask);
+            RecipeRemover(ItemID.SpectreRobe);
+            RecipeRemover(ItemID.SpectrePants);
+            RecipeRemover(ItemID.ShroomiteHeadgear);
+            RecipeRemover(ItemID.ShroomiteHelmet);
+            RecipeRemover(ItemID.ShroomiteMask);
+            RecipeRemover(ItemID.ShroomiteBreastplate);
+            RecipeRemover(ItemID.ShroomiteLeggings);
+            RecipeRemover(ItemID.SpookyHelmet);
+            RecipeRemover(ItemID.SpookyBreastplate);
+            RecipeRemover(ItemID.SpookyLeggings);
+
             RecipeRemover(ItemID.SwordWhip);
+            RecipeRemover(ItemID.Excalibur);
+            RecipeRemover(ItemID.CoolWhip);
+            RecipeRemover(ItemID.SpiderStaff);
+            RecipeRemover(ItemID.QueenSpiderStaff);
 
             RecipeRemover(ItemID.ObsidianSkinPotion);
 
