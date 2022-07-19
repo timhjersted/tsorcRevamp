@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = 23100;
-            NPC.damage = 100;
+            NPC.damage = 100; //unchanged, but I buffed the sorrow and hunter, who were both at 95 before
             NPC.defense = 24;
             NPC.knockBackResist = 0f;
             NPC.scale = 1.4f;
@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         int hitTime = 0;
-        int fireTrailsDamage = 45;
+        int fireTrailsDamage = 50; //45 was a bit too easy for folks based on some feedback and watching a LP
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = NPC.damage / 2;

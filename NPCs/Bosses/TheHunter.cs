@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = 30800;
-            NPC.damage = 95;
+            NPC.damage = 120;
             NPC.defense = 25;
             NPC.knockBackResist = 0f;
             NPC.scale = 1.4f;
@@ -44,7 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         int hitTime = 0;
-        int sproutDamage = 35;
+        int sproutDamage = 60; 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = NPC.damage / 2;

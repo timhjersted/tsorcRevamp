@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = 26600;
-            NPC.damage = 95;
+            NPC.damage = 110;
             NPC.defense = 20;
             NPC.knockBackResist = 0f;
             NPC.scale = 1.4f;
@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses
         //npc.ai[1] = invulnerability timer
         //npc.ai[3] = state counter
         int hitTime = 0; //How long since it's last been hit (used for reducing damage counter)
-        int waterTrailsDamage = 45;
+        int waterTrailsDamage = 55;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = NPC.damage / 2;
