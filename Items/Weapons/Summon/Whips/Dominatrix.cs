@@ -5,17 +5,13 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-	public class EnchantedWhip : ModItem
+	public class Dominatrix : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-			Tooltip.SetDefault("3 summon tag damage" +
-                "\n1% summon tag critical strike chance" +
-                "\nYour summons will focus struck enemies" +
-                "\nStrike enemies with an enchantment" +
-                "\nEnchanted enemies will be showered by stars upon minion hits" +
-                "\nStar damage scales with this whips damage");
+			Tooltip.SetDefault("5% summon tag critical strike chance" +
+				"\nYour summons will focus struck enemies");
 		}
 
 		public override void SetDefaults()
@@ -25,11 +21,11 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 42;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 20;
+			Item.damage = 23;
 			Item.knockBack = 2;
-			Item.rare = ItemRarityID.Blue;
+			Item.rare = ItemRarityID.Green;
 
-			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.EnchantedWhipProjectile>();
+			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.DominatrixProjectile>();
 			Item.shootSpeed = 4;
 
 			Item.useStyle = ItemUseStyleID.Swing;
@@ -43,9 +39,11 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void AddRecipes()
 		{
 			Terraria.Recipe recipe = CreateRecipe();
-			recipe.AddIngredient(ItemID.BlandWhip, 1);
-			recipe.AddIngredient(ItemID.FallenStar, 20);
-			recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5000);
+			recipe.AddIngredient(ItemID.DemoniteBar, 10);
+			recipe.AddIngredient(ItemID.CrimtaneBar, 10);
+			recipe.AddIngredient(ItemID.ShadowScale, 5);
+			recipe.AddIngredient(ItemID.TissueSample, 5);
+			recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6900);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();
