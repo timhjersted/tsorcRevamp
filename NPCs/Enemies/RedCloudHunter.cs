@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode)
             {
-                NPC.defense = 14;
+                NPC.defense = 24;
                 NPC.value = 3500;
                 NPC.damage = 40;
                 archerBoltDamage = 65;
@@ -43,8 +43,8 @@ namespace tsorcRevamp.NPCs.Enemies
             if (tsorcRevampWorld.SuperHardMode)
             {
                 NPC.lifeMax = 1750;
-                NPC.defense = 40;
-                NPC.value = 3700;
+                NPC.defense = 70;
+                NPC.value = 3900;
                 NPC.damage = 70;
                 archerBoltDamage = 85;
             }
@@ -61,7 +61,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            if (Main.rand.NextBool(2)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(1, 3));
+            if (Main.rand.NextBool(6)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1);
         }
 
 
@@ -72,11 +72,11 @@ namespace tsorcRevamp.NPCs.Enemies
             float chance = 0f;
 
 
-            if (!Main.hardMode && spawnInfo.Player.ZoneDungeon) return 0.02f;
+            if (!Main.hardMode && spawnInfo.Player.ZoneDungeon) return 0.01f;
 
-            if (Main.hardMode && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && !spawnInfo.Player.ZoneBeach && spawnInfo.Player.ZoneJungle) return 0.05f;
-            if (Main.hardMode && (spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return 0.09f;
-            if (Main.hardMode && spawnInfo.Player.ZoneOverworldHeight && (spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneJungle)) return 0.0125f;
+            if (Main.hardMode && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && !spawnInfo.Player.ZoneBeach && spawnInfo.Player.ZoneJungle) return 0.02f;
+            if (Main.hardMode && spawnInfo.Player.ZoneHallow && !spawnInfo.Player.ZoneDungeon) return 0.01f;
+            if (Main.hardMode && spawnInfo.Player.ZoneOverworldHeight && (spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneJungle)) return 0.0125f;
 
             if (Main.hardMode && spawnInfo.Lihzahrd) return 0.15f;
 
