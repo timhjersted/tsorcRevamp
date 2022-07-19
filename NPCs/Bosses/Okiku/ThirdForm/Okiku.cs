@@ -26,8 +26,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             NPC.width = 58;
             NPC.height = 120;
             NPC.aiStyle = -1;
-            NPC.damage = 40;
-            NPC.defense = 35;
+            NPC.damage = 70;
+            NPC.defense = 36;
             NPC.boss = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;

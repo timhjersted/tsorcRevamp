@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             NPC.width = 32;
             NPC.height = 32;
             NPC.aiStyle = 6;
-            NPC.damage = 80;
+            NPC.damage = 120;
             NPC.defense = 20;
             NPC.boss = true;
             NPC.noGravity = true;
@@ -51,7 +51,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             return false;
         }
 
-        int ObscureSawDamage = 45;
+        int ObscureSawDamage = 55;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             ObscureSawDamage = ObscureSawDamage / 2;

@@ -26,8 +26,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             NPC.width = 28;
             NPC.height = 44;
             NPC.aiStyle = -1;
-            NPC.damage = 1;
-            NPC.defense = 15;
+            NPC.damage = 1; //curious why this is 1?
+            NPC.defense = 36;
             NPC.boss = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -48,7 +48,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             DisplayName.SetDefault("Attraidies");
         }
 
-        public int ObscureDropDamage = 50;
+        public int ObscureDropDamage = 60;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
         }

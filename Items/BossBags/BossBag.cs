@@ -185,6 +185,16 @@ namespace tsorcRevamp.Items.BossBags
         }
     }
 
+    public class MindflayerIllusionBag : BossBag
+    {
+        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>();
+        public override void OpenBossBag(Player player)
+        {
+            VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before            
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>());
+        }
+    }
+
     public class AttraidiesBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>();

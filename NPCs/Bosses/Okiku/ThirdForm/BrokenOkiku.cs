@@ -39,8 +39,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             NPC.npcSlots = 10;
             NPC.width = 58;
             NPC.height = 121;
-            NPC.damage = 70;
-            NPC.defense = 30;
+            NPC.damage = 90;
+            NPC.defense = 36;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.lifeMax = 15400;
@@ -390,13 +390,24 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
                 }
             }
         }
+
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.MindflayerIllusionBag>()));
+        }
+
+
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.GreaterHealingPotion;
         }
-        public override void OnKill()
-        {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>());
-        }
+
+        //public override void OnKill()
+        //{
+            //Now drops from boss bag
+            //Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>());
+            //Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 35000);
+        //}
     }
 }
