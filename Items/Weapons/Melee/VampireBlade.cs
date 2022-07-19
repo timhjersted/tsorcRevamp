@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Heals the player when dealing damage to enemies");
+            Tooltip.SetDefault("5% lifesteal");
         }
         public override void SetDefaults()
         {
@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 27;
             Item.useTime = 23;
-            Item.damage = 42;
+            Item.damage = 48;
             Item.knockBack = 2;
             Item.scale = 1.1f;
             Item.UseSound = SoundID.Item1;

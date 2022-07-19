@@ -14,7 +14,8 @@ namespace tsorcRevamp.Items.Potions
                 "\nGradually restores HP" +
                 "\nThe dull glimmer of these mysterious" +
                 "\nstones brightens with the passage of time" +
-                "\nRestores 200 HP over the course of 13 seconds");
+                "\nRestores 200 HP over the course of 13 seconds" +
+                "\nInflicts potions sickness");
 
 
         }
@@ -135,6 +136,20 @@ namespace tsorcRevamp.Items.Potions
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             spriteBatch.Draw(texture, new Vector2(Item.position.X - Main.screenPosition.X + Item.width * 0.5f, Item.position.Y - Main.screenPosition.Y + Item.height - texture.Height * 0.5f + 2f),
                 new Rectangle(0, 0, texture.Width, texture.Height), color, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0);
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.GreaterHealingPotion, 20);
+            recipe.AddTile(TileID.Bottles);
+
+            recipe.Register();
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ItemID.SuperHealingPotion, 10);
+            recipe2.AddTile(TileID.Bottles);
+
+            recipe2.Register();
         }
     }
 }
