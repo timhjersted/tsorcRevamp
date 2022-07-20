@@ -36,36 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler("The ancient Oolacile Demon decides to show mercy ...", Color.Gold, DustID.GoldFlame);
 
-            /* 
-            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead)) //unloads the mod currently /causes freeze on load
-            {
-                NPC.defense = 30;
-                NPC.value = 89430;
-                meteorDamage = 31;
-                cultistFireDamage = 36;
-                cultistMagicDamage = 39;
-                cultistLightningDamage = 40;
-                fireBreathDamage = 33;
-                lostSoulDamage = 35;
-                greatFireballDamage = 46;
-                blackFireDamage = 57;
-                greatAttackDamage = 72;
-            }
-            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead))   //unloads the mod currently
-            {
-                NPC.defense = 60;
-                NPC.value = 114830;
-                meteorDamage = 41;
-                cultistFireDamage = 46;
-                cultistMagicDamage = 59;
-                cultistLightningDamage = 60;
-                fireBreathDamage = 43;
-                lostSoulDamage = 45;
-                greatFireballDamage = 56;
-                blackFireDamage = 67;
-                greatAttackDamage = 82;
-            }
-            */
+            
 
         }
 
@@ -119,6 +90,40 @@ namespace tsorcRevamp.NPCs.Bosses
             greatFireballDamage = (int)(greatFireballDamage / 2);
             blackFireDamage = (int)(blackFireDamage / 2);
             greatAttackDamage = (int)(greatAttackDamage / 2);
+
+
+            //alt code: if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead))
+            if (NPC.downedBoss2)  
+            {
+                NPC.defense = 22;
+                NPC.value = 9000;
+                meteorDamage = 31;
+                cultistFireDamage = 36;
+                cultistMagicDamage = 39;
+                cultistLightningDamage = 40;
+                fireBreathDamage = 33;
+                lostSoulDamage = 35;
+                greatFireballDamage = 46;
+                blackFireDamage = 57;
+                greatAttackDamage = 72;
+            }
+            //difficulty should be on par with jungle wyvern
+            if (NPC.downedBoss3)   
+            {
+                NPC.defense = 36;
+                NPC.value = 120000;
+                meteorDamage = 41;
+                cultistFireDamage = 46;
+                cultistMagicDamage = 59;
+                cultistLightningDamage = 60;
+                fireBreathDamage = 43;
+                lostSoulDamage = 45;
+                greatFireballDamage = 56;
+                blackFireDamage = 67;
+                greatAttackDamage = 82;
+            }
+           
+
         }
 
         public Player Player
@@ -534,18 +539,11 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void OnKill()
         {
-            //if not killed before (has boss bag now)
-            //if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientOolacileDemon>())))
-            //{
-            //Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.StaminaVessel>(), 1);
-            //Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Accessories.BandOfGreatCosmicPower>(), 1);
-            //Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
-            //Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.CloudinaBottle, 1);
-            //}
+ 
             if (!Main.expertMode)
             {
-                if (Main.rand.Next(99) < 40) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 1);
-                if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>(), 1);
+                if (Main.rand.Next(99) < 60) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), 3);
+                if (Main.rand.Next(99) < 60) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>(), 3);
 
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 10);
             }
