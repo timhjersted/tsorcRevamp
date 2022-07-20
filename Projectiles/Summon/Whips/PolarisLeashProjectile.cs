@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
-	public class FrigidEnchantmentProjectile : ModProjectile
+	public class PolarisLeashProjectile : ModProjectile
 	{
 
 		public override void SetStaticDefaults()
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = -1;
 			Projectile.WhipSettings.Segments = 20;
-			Projectile.WhipSettings.RangeMultiplier = 1.2f; //only thing affecting the actual whip range
+			Projectile.WhipSettings.RangeMultiplier = 1.5f; //only thing affecting the actual whip range
 		}
 
 		private float Timer
@@ -111,9 +111,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.FrigidEnchantmentDebuff>(), 240);
-			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.FrigidEnchantmentBuff>(), 600);
-			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
+			target.AddBuff(BuffID.Frostburn2, 240);
+			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.PolarisLeashBuff>(), 600);
 			Projectile.damage = (int)(damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
 		}
 		// This method draws a line between all points of the whip, in case there's empty space between the sprites.
