@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The long forgotten greaves\nIncreases movement speed by 15%");
+            Tooltip.SetDefault("The long forgotten greaves\nIncreases movement speed by 35%");
         }
 
         public override void SetDefaults()
@@ -23,8 +23,19 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.15f;
+            player.moveSpeed += 0.35f;
         }
+        /*
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.CobaltLeggings, 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
+        }
+        */
     }
 }
 

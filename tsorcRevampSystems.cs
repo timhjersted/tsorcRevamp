@@ -16,6 +16,7 @@ namespace tsorcRevamp
     {
         Texture2D BonfireMinimapTexture;
         public static RecipeGroup UpgradedMirrors;
+        public static RecipeGroup CobaltHelmets;
 
         public override void PostDrawFullscreenMap(ref string mouseText)
         {
@@ -189,7 +190,10 @@ namespace tsorcRevamp
                 ModContent.ItemType<GreatMagicMirror>(),
                 ModContent.ItemType<VillageMirror>()
             );
-            RecipeGroup.RegisterGroup("tsorcRevamp:UpgradedMirrors", UpgradedMirrors);
+            CobaltHelmets = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Lang.GetItemNameValue(ItemID.CobaltHelmet)}",
+                ItemID.CobaltHelmet, ItemID.CobaltHat, ItemID.CobaltMask);
+
+            RecipeGroup.RegisterGroup("tsorcRevamp:CobaltHelmet", CobaltHelmets);
         }
 
         public override void UpdateUI(GameTime gameTime)
@@ -226,6 +230,7 @@ namespace tsorcRevamp
         public override void Unload()
         {
             UpgradedMirrors = null;
+            CobaltHelmets = null;
         }
 
         public override void PreSaveAndQuit()

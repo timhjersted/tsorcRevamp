@@ -229,6 +229,17 @@ namespace tsorcRevamp
 
         public override void OnHitAnything(float x, float y, Entity victim)
         {
+            if (Player.HasBuff(ModContent.BuffType<MagicPlatingHard>()))
+            {
+                Player.ClearBuff(ModContent.BuffType<MagicPlatingHard>());
+                Player.AddBuff(ModContent.BuffType<MagicPlatingMedium>(), 1);
+            } else
+            if (Player.HasBuff(ModContent.BuffType<MagicPlatingMedium>()))
+            {
+                Player.ClearBuff(ModContent.BuffType<MagicPlatingMedium>());
+                Player.AddBuff(ModContent.BuffType<MagicPlatingLight>(), 1);
+            } else
+            Player.ClearBuff(ModContent.BuffType<MagicPlatingLight>());
             Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 
         }
 

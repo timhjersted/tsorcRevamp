@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A treasure from ancient Plains of Havoc\nIncreases ranged crit by 12%");
+            Tooltip.SetDefault("A treasure from ancient Plains of Havoc\nIncreases crit by 13%");
         }
 
         public override void SetDefaults()
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Ranged) += 12;
+            player.GetCritChance(DamageClass.Generic) += 13;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -33,9 +33,35 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.hasJumpOption_Sandstorm = true;
-            player.GetDamage(DamageClass.Ranged) += 0.1f;
-            player.ammoCost75 = true;
+
+
+            if (player.dpsDamage > 400 && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingHard>()))
+            {
+                {
+                    player.AddBuff(ModContent.BuffType<Buffs.MagicPlatingHard>(), 1);
+                }
+            } else
+            if (player.dpsDamage > 200 && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingMedium>()) && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingHard>()))
+                {
+                    {
+                    player.AddBuff(ModContent.BuffType<Buffs.MagicPlatingMedium>(), 1);
+                    }
+                } else
+            if (player.dpsDamage > 100 && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingLight>()) && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingMedium>()) && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingHard>()))
+            {
+                player.AddBuff(ModContent.BuffType<Buffs.MagicPlatingLight>(), 1);
+            }
         }
+/* 
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddRecipeGroup(tsorcRevampSystems.CobaltHelmets, 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
+        }
+*/
     }
 }
