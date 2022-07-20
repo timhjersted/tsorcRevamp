@@ -267,9 +267,9 @@ namespace tsorcRevamp.NPCs
                 (giantworm >= NPCID.GiantWormHead && giantworm <= NPCID.GiantWormTail)
                 ):
                     {
-                        npc.lifeMax = 70; //60, 250
+                        npc.lifeMax = 100; //60, 250
                         npc.npcSlots = 3;
-                        npc.value = 1150;
+                        npc.value = 810;
 
                         if (npc.type == NPCID.GiantWormHead)
                         {
@@ -298,17 +298,17 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.lifeMax = 200; //200, 400
                         npc.npcSlots = 4;
-                        npc.value = 1430;
+                        npc.value = 1130;
 
                         if (npc.type == NPCID.DevourerHead)
                         {
-                            npc.damage = 56; //54, 35
+                            npc.damage = 36; //54, 35
                             npc.defense = 2; //2, 4
                             npc.knockBackResist = 0.05f;
                         }
                         if (npc.type == NPCID.DevourerBody)
                         {
-                            npc.damage = 36; //32, 20
+                            npc.damage = 26; //32, 20
                             npc.defense = 8; //6, 30
                             npc.knockBackResist = 0.1f;
                         }
@@ -322,7 +322,35 @@ namespace tsorcRevamp.NPCs
                         break;
                     }
 
-                
+                case int tombcrawler when (
+                (tombcrawler >= NPCID.TombCrawlerHead && tombcrawler <= NPCID.TombCrawlerTail)
+                ):
+                    {
+                        npc.lifeMax = 300; //265, 1600
+                        npc.scale = 1.3f;
+                        npc.value = 1340; //- ,384
+
+                        if (npc.type == NPCID.TombCrawlerHead)
+                        {
+                            npc.defense = 2; //0, 15
+                            npc.damage = 53; //64, 66
+                        }
+                        if (npc.type == NPCID.TombCrawlerBody)
+                        {
+                            npc.defense = 20; //16-32, 40
+                            npc.damage = 40; //14-24, 40
+                            npc.knockBackResist = 0.1f;
+                        }
+                        if (npc.type == NPCID.TombCrawlerTail)
+                        {
+                            npc.defense = 25; //20-40, 25
+                            npc.damage = 44; //12-24, 50
+                            npc.knockBackResist = 0.2f;
+                        }
+                        break;
+                    }
+
+
 
                 case int boneserpent when (
                 (boneserpent >= NPCID.BoneSerpentHead && boneserpent <= NPCID.BoneSerpentTail)
@@ -330,7 +358,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.lifeMax = 500; //500, 1800
                         npc.npcSlots = 5;
-                        npc.value = 2420;
+                        npc.value = 1520;
 
                         if (npc.type == NPCID.BoneSerpentHead)
                         {
@@ -789,13 +817,13 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.ToxicSludge):
                     {
-                        npc.value = 1000;
+                        npc.value = 800;
                         break;
                     }
 
                 case (NPCID.HoppinJack):
                     {
-                        npc.value = 1080;
+                        npc.value = 880;
                         break;
                     }
 
@@ -804,7 +832,8 @@ namespace tsorcRevamp.NPCs
                         npc.defense = 50;
                         npc.damage = 70;
                         npc.scale = 1.5f;
-                        npc.value = 230;
+                        npc.life = 100;
+                        npc.value = 130;
                         break;
                     }
 
@@ -813,27 +842,29 @@ namespace tsorcRevamp.NPCs
                         npc.defense = 60;
                         npc.damage = 100;
                         npc.scale = 1.5f;
-                        npc.value = 910;
+                        npc.life = 150;
+                        npc.value = 810;
                         break;
                     }
 
                 case (NPCID.CorruptSlime):
                     {
                         npc.scale = 1.1f;
-                        npc.value = 560;
+                        npc.damage = 100;
+                        npc.value = 260;
                         break;
                     }
 
                 case (NPCID.Slimeling): //Corrupt Slime baby
                     {
-                        npc.value = 440;
+                        npc.value = 340;
                         break;
                     }
 
                 case (NPCID.IlluminantSlime):
                     {
                         npc.scale = 3f;
-                        npc.value = 1300;
+                        npc.value = 900;
                         break;
                     }
 
@@ -842,7 +873,7 @@ namespace tsorcRevamp.NPCs
                                           crimslime == NPCID.Crimslime
                                           ):
                     {
-                        npc.value = 1670;
+                        npc.value = 1170;
                         break;
                     }
 
@@ -865,7 +896,7 @@ namespace tsorcRevamp.NPCs
                     mosshornet == NPCID.MossHornet
                     ):
                     {
-                        npc.value = 2370;
+                        npc.value = 1570;
                         break;
                     }
 
@@ -879,7 +910,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 49;
                         npc.defense = 20;
                         npc.knockBackResist = 0.2f;
-                        npc.value = 1270;
+                        npc.value = 1070;
                         break;
                     }
 
@@ -887,19 +918,19 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.defense = 27;
                         npc.knockBackResist = 0.6f;
-                        npc.value = 1470;
+                        npc.value = 1110;
                         break;
                     }
 
                 case (NPCID.Lavabat):
                     {
-                        npc.value = 2440;
+                        npc.value = 1640;
                         break;
                     }
 
                 case (NPCID.GiantFlyingFox):
                     {
-                        npc.value = 2680;
+                        npc.value = 1380;
                         break;
                     }
 
@@ -914,22 +945,22 @@ namespace tsorcRevamp.NPCs
                         {
                             npc.lifeMax = 600; //400, 1900
                             npc.scale = 0.9f;
-                            npc.value = 2560;
+                            npc.value = 2260;
                         }
                         if (npc.type == NPCID.DiggerHead)
                         {
-                            npc.damage = 110; //90, 60
+                            npc.damage = 84; //90, 60
                             npc.defense = 5; //10, 15
                         }
                         if (npc.type == NPCID.DiggerBody)
                         {
-                            npc.damage = 80; //56, 35
+                            npc.damage = 60; //56, 35
                             npc.defense = 20; //20, 40
                             npc.knockBackResist = 0.1f;
                         }
                         if (npc.type == NPCID.DiggerTail)
                         {
-                            npc.damage = 65; //52, 45
+                            npc.damage = 70; //52, 45
                             npc.defense = 45; //30, 25
                             npc.knockBackResist = 0.2f;
                         }
@@ -940,58 +971,30 @@ namespace tsorcRevamp.NPCs
                 (dunesplicer >= NPCID.DuneSplicerHead && dunesplicer <= NPCID.DuneSplicerTail)
                 ):
                     {
-                        npc.lifeMax = 600; //1000, 450
+                        npc.lifeMax = 700; //1000, 450
                         npc.npcSlots = 4;
-                        npc.value = 1960;
+                        npc.value = 2560;
 
                         if (npc.type == NPCID.DuneSplicerHead)
                         {
-                            npc.damage = 130; //116, 40
+                            npc.damage = 90; //116, 40
                             npc.defense = 4; //18, 4
                             npc.knockBackResist = 0.05f;
                         }
                         if (npc.type == NPCID.DuneSplicerBody)
                         {
-                            npc.damage = 115; //108, 25
+                            npc.damage = 75; //108, 25
                             npc.defense = 28; //28, 30
                             npc.knockBackResist = 0.1f;
                         }
 
                         if (npc.type == NPCID.DuneSplicerTail)
                         {
-                            npc.damage = 105; //100, 35
+                            npc.damage = 85; //100, 35
                             npc.defense = 44; //34, 4
                             npc.knockBackResist = 0.2f;
                         }
                         break;
-                    }
-
-                case int tombcrawler when (
-                      (tombcrawler >= NPCID.TombCrawlerHead && tombcrawler <= NPCID.TombCrawlerTail)
-                      ):
-                    {
-                            npc.lifeMax = 300; //265, 1600
-                            npc.scale = 1.3f;
-                            npc.value = 1840; //- ,384
-
-                        if (npc.type == NPCID.TombCrawlerHead)
-                        {
-                            npc.defense = 2; //0, 15
-                            npc.damage = 70; //64, 66
-                        }
-                        if (npc.type == NPCID.TombCrawlerBody)
-                        {
-                            npc.defense = 20; //16-32, 40
-                            npc.damage = 50; //14-24, 40
-                            npc.knockBackResist = 0.1f;
-                        }
-                        if (npc.type == NPCID.TombCrawlerTail)
-                        {
-                            npc.defense = 25; //20-40, 25
-                            npc.damage = 40; //12-24, 50
-                            npc.knockBackResist = 0.2f;
-                        }
-                            break;
                     }
 
                 case int worldfeeder when (
@@ -1000,17 +1003,17 @@ namespace tsorcRevamp.NPCs
                     {
                         {
                             npc.lifeMax = 1000; //1000, 2000
-                            npc.value = 2310; //- ,441
+                            npc.value = 2910; //- ,441
                         }
                         if (npc.type == NPCID.SeekerHead)
                         {
                             npc.defense = 20; //36, 50
-                            npc.damage = 170; //140, 80
+                            npc.damage = 100; //140, 80
                         }
                         if (npc.type == NPCID.SeekerBody)
                         {
                             npc.defense = 45; //40, 35
-                            npc.damage = 125; //110, 55
+                            npc.damage = 85; //110, 55
                         }
                         if (npc.type == NPCID.SeekerTail)
                         {
@@ -1026,7 +1029,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.AnglerFish):
                     {
-                        npc.value = 1630;
+                        npc.value = 1130;
                         break;
                     }
 
@@ -1034,13 +1037,13 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.damage = 90;
                         npc.knockBackResist = 0f;
-                        npc.value = 1990;
+                        npc.value = 1390;
                         break;
                     }
 
                 case (NPCID.Arapaima):
                     {
-                        npc.value = 2360;
+                        npc.value = 1460;
                         break;
                     }
 
@@ -1050,7 +1053,7 @@ namespace tsorcRevamp.NPCs
                         {
                             npc.value = 1850;
                         }
-                        npc.value = 2990;
+                        npc.value = 1590;
                         break;
                     }
 
@@ -1063,7 +1066,7 @@ namespace tsorcRevamp.NPCs
                         blackrecluse == NPCID.BlackRecluseWall
                         ):
                     {
-                        npc.value = 3290;
+                        npc.value = 1590;
                         break;
                     }
 
@@ -1072,13 +1075,13 @@ namespace tsorcRevamp.NPCs
                 junglecreeper == NPCID.JungleCreeperWall
                 ):
                     {
-                        npc.value = 3610;
+                        npc.value = 1810;
                         break;
                     }
 
                 case int desertscorpion when (desertscorpion == NPCID.DesertScorpionWalk || desertscorpion == NPCID.DesertScorpionWall):
                     {
-                        npc.value = 3450;
+                        npc.value = 1650;
                         break;
                     }
 
@@ -1090,7 +1093,7 @@ namespace tsorcRevamp.NPCs
                 pigron == NPCID.PigronHallow
                 ):
                     {
-                        npc.value = 3040;
+                        npc.value = 1340;
                         break;
                     }
                 #endregion
@@ -1102,7 +1105,7 @@ namespace tsorcRevamp.NPCs
                 possessedweapon == NPCID.CrimsonAxe
                   ):
                     {
-                        npc.value = 2890;
+                        npc.value = 1290;
                         break;
                     }
                 #endregion
@@ -1111,7 +1114,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.PossessedArmor):
                     {
-                        npc.value = 1240;
+                        npc.value = 940;
                         break;
                     }
 
@@ -1122,7 +1125,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 43;
                         npc.knockBackResist = 0.35f;
                         npc.defense = 36;
-                        npc.value = 3490;
+                        npc.value = 1390;
                         break;
                     }
 
@@ -1133,7 +1136,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 66;
                         npc.knockBackResist = 0f;
                         npc.defense = 20;
-                        npc.value = 4340;
+                        npc.value = 1520;
                         break;
                     }
 
@@ -1142,7 +1145,7 @@ namespace tsorcRevamp.NPCs
                         npc.value = 2430;
                         npc.defense = 28;
                         npc.damage = 0;
-                        npc.value = 1870;
+                        npc.value = 970;
                         break;
                     }
 
@@ -1151,7 +1154,7 @@ namespace tsorcRevamp.NPCs
                         npc.defense = 40;
                         npc.damage = 85;
                         npc.knockBackResist = 0.1f;
-                        npc.value = 1970;
+                        npc.value = 1070;
                         break;
                     }
 
@@ -1162,7 +1165,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.GreenJellyfish):
                     {
-                        npc.value = 2250;
+                        npc.value = 1150;
                         break;
                     }
 
@@ -1171,14 +1174,14 @@ namespace tsorcRevamp.NPCs
                         npc.value = 10;
                         npc.life = 200;
                         npc.defense = 15;
-                        npc.damage = 2640;
+                        npc.damage = 1310;
                         break;
                     }
 
                 case (NPCID.BloodJelly):
                     {
                         npc.knockBackResist = 0f;
-                        npc.value = 3400;
+                        npc.value = 1440;
                         break;
                     }
 
@@ -1188,7 +1191,7 @@ namespace tsorcRevamp.NPCs
                         npc.defense = 100;
                         npc.damage = 100;
                         npc.knockBackResist = 0f;
-                        npc.value = 5440;
+                        npc.value = 2040;
                         break;
                     }
 
@@ -1200,7 +1203,7 @@ namespace tsorcRevamp.NPCs
                 (rustyarmoredbones >= NPCID.RustyArmoredBonesAxe && rustyarmoredbones <= NPCID.RustyArmoredBonesSwordNoArmor)
                 ):
                     {
-                        npc.value = 5150;
+                        npc.value = 1850;
                         break;
                     }
 
@@ -1208,7 +1211,7 @@ namespace tsorcRevamp.NPCs
                 (bluearmoredbones >= NPCID.BlueArmoredBones && bluearmoredbones <= NPCID.BlueArmoredBonesSword)
                  ):
                     {
-                        npc.value = 5370;
+                        npc.value = 1970;
                         break;
                     }
 
@@ -1216,13 +1219,13 @@ namespace tsorcRevamp.NPCs
                     (hellarmoredbones >= NPCID.HellArmoredBones && hellarmoredbones <= NPCID.HellArmoredBonesSword)
                      ):
                     {
-                        npc.value = 5530;
+                        npc.value = 2030;
                         break;
                     }
 
                 case (NPCID.BoneLee):
                     {
-                        npc.value = 9330;
+                        npc.value = 3930;
                         break;
                     }
 
@@ -1232,25 +1235,25 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DesertDjinn):
                     {
-                        npc.value = 3590;
+                        npc.value = 1890;
                         break;
                     }
 
                 case int raggedcaster when (raggedcaster == NPCID.RaggedCaster || raggedcaster == NPCID.RaggedCasterOpenCoat):
                     {
-                        npc.value = 5920;
+                        npc.value = 2120;
                         break;
                     }
 
                 case int necromancershadowbeam when (necromancershadowbeam == NPCID.Necromancer || necromancershadowbeam == NPCID.NecromancerArmored):
                     {
-                        npc.value = 6140;
+                        npc.value = 2370;
                         break;
                     }
 
                 case int diabolist when (diabolist == NPCID.DiabolistRed || diabolist == NPCID.DiabolistWhite):
                     {
-                        npc.value = 6060;
+                        npc.value = 2240;
                         break;
                     }
 
@@ -1263,7 +1266,7 @@ namespace tsorcRevamp.NPCs
                  || mummy == NPCID.BloodMummy
                 ):
                     {
-                        npc.value = 1560;
+                        npc.value = 1060;
 
                         if (npc.type == NPCID.LightMummy)
                         {
@@ -1281,7 +1284,7 @@ namespace tsorcRevamp.NPCs
                             npc.damage = 130;
                             npc.defense = 50;
                             npc.lifeMax = 2000;
-                            npc.value = 3050;
+                            npc.value = 1750;
                         }
                         break;
                     }
@@ -1290,7 +1293,7 @@ namespace tsorcRevamp.NPCs
                 (ghoul >= NPCID.DesertGhoul && ghoul <= NPCID.DesertGhoulHallow)
                 ):
                     {
-                        npc.value = 1770;
+                        npc.value = 1170;
 
                         if (npc.type == NPCID.DesertGhoulHallow)
                         {
@@ -1305,7 +1308,7 @@ namespace tsorcRevamp.NPCs
                         if (npc.type == NPCID.DesertGhoulCrimson)
                         {
                             npc.knockBackResist = 0f;
-                            npc.damage = 15000; //15,000 lmao
+                            npc.damage = 15000; //15,000 lmao(small typo but I'll leave it for funsies)
                             npc.defense = 70;
                             npc.lifeMax = 6000;
                             npc.value = 5510;
@@ -1315,7 +1318,7 @@ namespace tsorcRevamp.NPCs
 
                 case int lamia when (lamia == NPCID.DesertLamiaDark || lamia == NPCID.DesertLamiaLight):
                     {
-                        npc.value = 2210;
+                        npc.value = 1290;
                         break;
                     }
 
@@ -1333,7 +1336,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.damage = 200;
                         npc.lifeMax = 500;
-                        npc.value = 1490;
+                        npc.value = 1190;
                         break;
                     }
 
@@ -1341,7 +1344,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.damage = 300;
                         npc.lifeMax = 300;
-                        npc.value = 1990;
+                        npc.value = 1260;
                         break;
                     }
 
@@ -1350,7 +1353,7 @@ namespace tsorcRevamp.NPCs
                 mushroomzombie == NPCID.ZombieMushroomHat
                 ):
                     {
-                        npc.value = 4330;
+                        npc.value = 1630;
                         break;
                     }
 
@@ -1362,7 +1365,7 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = 1000;
                         npc.defense = 50;
                         npc.damage = 100;
-                        npc.value = 6220;
+                        npc.value = 1820;
                         break;
                     }
 
@@ -1371,32 +1374,32 @@ namespace tsorcRevamp.NPCs
                         npc.defense = 80;
                         npc.lifeMax = 1500;
                         npc.damage = 50;
-                        npc.value = 8770;
+                        npc.value = 2370;
                         break;
                     }
 
                 case (NPCID.FungiSpore):
                     {
-                        npc.value = 300;
+                        npc.value = 230;
                         npc.damage = 90;
                         break;
                     }
 
                 case (NPCID.DesertBeast):
                     {
-                        npc.value = 2210;
+                        npc.value = 1410;
                         break;
                     }
 
                 case (NPCID.WanderingEye):
                     {
-                        npc.value = 1880;
+                        npc.value = 1080;
                         break;
                     }
 
                 case (NPCID.AngryNimbus):
                     {
-                        npc.value = 2220;
+                        npc.value = 1220;
                         break;
                     }
 
@@ -1407,28 +1410,28 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = 500;
                         npc.scale = 1.2f;
                         npc.knockBackResist = 0;
-                        npc.value = 3120;
+                        npc.value = 1520;
                         break;
                     }
 
 
                 case (NPCID.Pixie):
                     {
-                        npc.value = 1850;
+                        npc.value = 1050;
                         break;
                     }
 
                 case (NPCID.Gastropod):
                     {
-                        npc.value = 2140;
+                        npc.value = 1240;
                         break;
                     }
 
-                case (NPCID.Unicorn):
+                case (NPCID.Unicorn): //blocked anyways
                     {
                         npc.knockBackResist = 0.2f;
                         npc.damage = 85;
-                        npc.value = 3690;
+                        npc.value = 2690;
                         break;
                     }
 
@@ -1438,27 +1441,27 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 46;
                         npc.defense = 25;
                         npc.knockBackResist = 0.2f;
-                        npc.value = 2990;
+                        npc.value = 1490;
                         break;
                     }
 
                 case (NPCID.Corruptor):
                     {
-                        npc.value = 2130;
+                        npc.value = 1240;
                         break;
                     }
 
                 case (NPCID.VileSpit):
                     {
                         npc.damage = 80;
-                        npc.value = 100;
+                        npc.value = 90;
                         break;
                     }
 
                 case (NPCID.Clinger):
                     {
                         npc.lifeMax = 650;
-                        npc.value = 3430;
+                        npc.value = 1330;
                         break;
                     }
 
@@ -1467,7 +1470,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 80;
                         npc.lifeMax = 400;
                         npc.knockBackResist = 0f;
-                        npc.value = 3470;
+                        npc.value = 1440;
                         break;
                     }
 
@@ -1476,7 +1479,7 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = 500;
                         npc.knockBackResist = 0f;
                         npc.damage = 60;
-                        npc.value = 3990;
+                        npc.value = 1590;
                         break;
                     }
 
@@ -1484,31 +1487,31 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.lifeMax = 400;
                         npc.defense = 40;
-                        npc.value = 3690;
+                        npc.value = 1690;
                         break;
                     }
 
                 case (NPCID.IceTortoise):
                     {
-                        npc.value = 3780;
+                        npc.value = 1780;
                         break;
                     }
 
                 case (NPCID.Wolf):
                     {
-                        npc.value = 1750;
+                        npc.value = 1150;
                         break;
                     }
 
                 case (NPCID.IceElemental):
                     {
-                        npc.value = 2470;
+                        npc.value = 1270;
                         break;
                     }
 
                 case (NPCID.IcyMerman):
                     {
-                        npc.value = 1910;
+                        npc.value = 1310;
                         break;
                     }
 
@@ -1524,38 +1527,38 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.GiantTortoise):
                     {
-                        npc.value = 4760;
+                        npc.value = 2160;
                         break;
                     }
 
                 case (NPCID.AngryTrapper):
                     {
-                        npc.value = 3390;
+                        npc.value = 1640;
                         break;
                     }
 
                 case (NPCID.Derpling):
                     {
                         npc.knockBackResist = 0f;
-                        npc.value = 2390;
+                        npc.value = 1390;
                         break;
                     }
 
                 case (NPCID.SkeletonSniper):
                     {
-                        npc.value = 8680;
+                        npc.value = 2280;
                         break;
                     }
 
                 case (NPCID.TacticalSkeleton):
                     {
-                        npc.value = 7340;
+                        npc.value = 2340;
                         break;
                     }
 
                 case (NPCID.SkeletonCommando):
                     {
-                        npc.value = 9490;
+                        npc.value = 2490;
                         break;
                     }
 
@@ -1564,13 +1567,13 @@ namespace tsorcRevamp.NPCs
                         lihzard == NPCID.LihzahrdCrawler
                         ):
                     {
-                        npc.value = 3380;
+                        npc.value = 1680;
                         break;
                     }
 
                 case (NPCID.FlyingSnake):
                     {
-                        npc.value = 4430;
+                        npc.value = 1830;
                         break;
                     }
 
@@ -1696,7 +1699,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.defense = 20;
                         npc.lifeMax = 6000;
-                        npc.value = 6560;
+                        npc.value = 4560;
 
                         if (npc.type == NPCID.WyvernHead)
                         {
@@ -1721,19 +1724,19 @@ namespace tsorcRevamp.NPCs
                         {
                             npc.damage = 120;
                         }
-                        npc.value = 9650;
+                        npc.value = 5650;
                         break;
                     }
 
                 case (NPCID.RuneWizard):
                     {
-                        npc.value = 47530;
+                        npc.value = 27530;
                         break;
                     }
 
                 case (NPCID.RockGolem):
                     {
-                        npc.value = 5750;
+                        npc.value = 3750;
                         break;
                     }
 
@@ -1742,53 +1745,67 @@ namespace tsorcRevamp.NPCs
                         npc.life = 10000;
                         npc.defense = 100;
                         npc.damage = 300;
-                        npc.value = 6450;
+                        npc.value = 3950;
                         break;
                     }
 
                 case (NPCID.Medusa):
                     {
-                        npc.value = 8410;
+                        npc.value = 4410;
                         break;
                     }
 
                 case (NPCID.IceGolem):
                     {
                         npc.lifeMax = 6000;
-                        npc.value = 10240;
+                        npc.value = 7240;
                         break;
                     }
 
                 case (NPCID.SandElemental):
                     {
                         npc.lifeMax = 7000;
-                        npc.value = 17630;
+                        npc.value = 10630;
                         break;
                     }
 
                 case (NPCID.Mimic):
                     {
-                        npc.value = 5550;
+                        npc.value = 3550;
                         break;
                     }
 
                 case (NPCID.IceMimic):
                     {
-                        npc.value = 6220;
+                        npc.value = 4220;
                         break;
                     }
 
                 case int biomemimic when ((biomemimic >= NPCID.BigMimicCorruption && biomemimic <= NPCID.BigMimicJungle)):
                     {
-                        npc.value = 9140;
+                        npc.value = 5140;
                         break;
                     }
 
                 case (NPCID.Paladin):
                     {
-                        npc.value = 27390;
+                        npc.value = 9390;
                         break;
                     }
+
+                #region Dreadnautilus
+                case (NPCID.BloodNautilus):
+                    {
+                        npc.value = 94500;
+                        break;
+                    }
+
+                case (NPCID.BloodSquid):
+                    {
+                        npc.value = 1450;
+                        break;
+                    }
+                #endregion
 
                 #endregion
 
@@ -1837,7 +1854,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.ServantofCthulhu):
                     {
                         npc.damage = 13;
-                        npc.value = 30;
+                        npc.value = 60;
                         break;
                     }
                 #endregion
@@ -1845,7 +1862,7 @@ namespace tsorcRevamp.NPCs
                 #region Brain of Cthulhu
                 case (NPCID.BrainofCthulhu):
                     {
-                        npc.value = 47250;
+                        npc.value = 42250;
                         break;
                     }
 
@@ -1862,7 +1879,7 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = 180;
                         npc.damage = 38; //was 30 for a long time
                         npc.defense = 22;
-                        npc.value = 56230; //this makes it drop a lot of money(5g62s per head) if you keep killing the head segments hueh, but this value is used by the bags first soul drop value so whatever, see it as a minigame
+                        npc.value = 43230; //this makes it drop a lot of money(4g62s per head) if you keep killing the head segments hueh, but this value is used by the bags first soul drop value so whatever, see it as a minigame
                         npc.buffImmune[BuffID.Poisoned] = true;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.buffImmune[BuffID.Frostburn] = true;
@@ -1935,7 +1952,7 @@ namespace tsorcRevamp.NPCs
                 #region Deerclops
                 case (NPCID.Deerclops):
                     {
-                        npc.value = 113520; //is dearclops that hard?
+                        npc.value = 103520; //is dearclops that hard?
                         break;
                     }
                 #endregion
@@ -1943,7 +1960,7 @@ namespace tsorcRevamp.NPCs
                 #region Wall of Flesh
                 case (NPCID.WallofFlesh):
                     {
-                        npc.value = 150580; //more souls to help start of HM
+                        npc.value = 120580; //more souls to help start of HM(I can't tolerate this after all the other balance changes smh)
                         npc.damage = 100;
                         npc.lifeMax = 14000;
                         break;
@@ -2003,33 +2020,19 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.QueenSlimeMinionBlue):
                     {
-                        npc.value = 1230;
+                        npc.value = 830;
                         break;
                     }
 
                 case (NPCID.QueenSlimeMinionPink):
                     {
-                        npc.value = 1240;
+                        npc.value = 840;
                         break;
                     }
 
                 case (NPCID.QueenSlimeMinionPurple):
                     {
-                        npc.value = 1270;
-                        break;
-                    }
-                #endregion
-
-                #region Dreadnautilus
-                case (NPCID.BloodNautilus):
-                    {
-                        npc.value = 114500;
-                        break;
-                    }
-
-                case (NPCID.BloodSquid):
-                    {
-                        npc.value = 1450;
+                        npc.value = 870;
                         break;
                     }
                 #endregion
@@ -2037,7 +2040,7 @@ namespace tsorcRevamp.NPCs
                 #region The Twins
                 case int thetwins when (thetwins ==NPCID.Retinazer || thetwins == NPCID.Spazmatism):
                     {
-                        npc.value = 164540;
+                        npc.value = 154540;
                         if(npc.type == NPCID.Retinazer)
                         {
                             npc.defense = 28;
@@ -2152,7 +2155,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.PlanterasTentacle):
                     {
-                        npc.value = 5490;
+                        npc.value = 1490;
                         break;
                     }
 
@@ -2178,13 +2181,13 @@ namespace tsorcRevamp.NPCs
 
                 case int sharkron when (sharkron == NPCID.Sharkron || sharkron == NPCID.Sharkron2):
                     {
-                        npc.value = 9460;
+                        npc.value = 5460;
                         break;
                     }
                 #endregion
 
                 #region Golem
-                case (NPCID.Golem):
+                case (NPCID.Golem): //29k souls total, increasing this once we buff him to be actually dangerous
                     {
                         npc.value = 233650;
                         break;
@@ -2207,13 +2210,13 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2Betsy):
                     {
-                        npc.value = 307890;
+                        npc.value = 257890;
                         break;
                     }
 
                 case (NPCID.DD2WyvernT3):
                     {
-                        npc.value = 3380;
+                        npc.value = 1280;
                         break;
                     }
 
@@ -2243,7 +2246,7 @@ namespace tsorcRevamp.NPCs
 
                 case int phantasmdragon when (phantasmdragon >= NPCID.CultistDragonHead && phantasmdragon <= NPCID.CultistDragonTail):
                     {
-                        npc.value = 34560;
+                        npc.value = 24560;
                         npc.lifeMax = 5000;
                         if (npc.type == NPCID.CultistDragonHead)
                         {
@@ -2266,7 +2269,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.AncientCultistSquidhead):
                     {
-                        npc.value = 67890;
+                        npc.value = 37890;
                         break;
                     }
 
@@ -2429,79 +2432,79 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2GoblinT1):
                     {
-                        npc.value = 490;
+                        npc.value = 430;
                         break;
                     }
 
                 case (NPCID.DD2GoblinT2):
                     {
-                        npc.value = 920;
+                        npc.value = 620;
                         break;
                     }
 
                 case (NPCID.DD2GoblinT3):
                     {
-                        npc.value = 1510;
+                        npc.value = 910;
                         break;
                     }
 
                 case (NPCID.DD2GoblinBomberT1):
                     {
-                        npc.value = 530;
+                        npc.value = 490;
                         break;
                     }
 
                 case (NPCID.DD2GoblinBomberT2):
                     {
-                        npc.value = 1030;
+                        npc.value = 640;
                         break;
                     }
 
                 case (NPCID.DD2GoblinBomberT3):
                     {
-                        npc.value = 2420;
+                        npc.value = 950;
                         break;
                     }
 
                 case (NPCID.DD2WyvernT1):
                     {
-                        npc.value = 690;
+                        npc.value = 570;
                         break;
                     }
 
                 case (NPCID.DD2WyvernT2): //see tier 3 at Betsy's
                     {
-                        npc.value = 1290;
+                        npc.value = 790;
                         break;
                     }
 
                 case (NPCID.DD2JavelinstT1):
                     {
-                        npc.value = 580;
+                        npc.value = 500;
                         break;
                     }
 
                 case (NPCID.DD2JavelinstT2):
                     {
-                        npc.value = 1180;
+                        npc.value = 680;
                         break;
                     }
 
                 case (NPCID.DD2JavelinstT3):
                     {
-                        npc.value = 2690;
+                        npc.value = 990;
                         break;
                     }
 
                 case (NPCID.DD2DarkMageT1):
                     {
-                        npc.value = 4350;
+                        npc.value = 3350;
                         break;
                     }
 
                 case (NPCID.DD2DarkMageT3):
                     {
-                        npc.value = 10730;
+                        npc.value = 8730;
                         break;
                     }
 
@@ -2513,67 +2516,67 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2SkeletonT3):
                     {
-                        npc.value = 130;
+                        npc.value = 110;
                         break;
                     }
 
                 case (NPCID.DD2WitherBeastT2):
                     {
-                        npc.value = 2890;
+                        npc.value = 1590;
                         break;
                     }
 
                 case (NPCID.DD2WitherBeastT3):
                     {
-                        npc.value = 4880;
+                        npc.value = 2480;
                         break;
                     }
 
                 case (NPCID.DD2DrakinT2):
                     {
-                        npc.value = 1970;
+                        npc.value = 1470;
                         break;
                     }
 
                 case (NPCID.DD2DrakinT3):
                     {
-                        npc.value = 4310;
+                        npc.value = 2310;
                         break;
                     }
 
                 case (NPCID.DD2KoboldWalkerT2):
                     {
-                        npc.value = 1100;
+                        npc.value = 710;
                         break;
                     }
 
                 case (NPCID.DD2KoboldWalkerT3):
                     {
-                        npc.value = 2280;
+                        npc.value = 1020;
                         break;
                     }
 
                 case (NPCID.DD2KoboldFlyerT2):
                     {
-                        npc.value = 1190;
+                        npc.value = 740;
                         break;
                     }
 
                 case (NPCID.DD2KoboldFlyerT3):
                     {
-                        npc.value = 2420;
+                        npc.value = 1100;
                         break;
                     }
 
                 case (NPCID.DD2OgreT2):
                     {
-                        npc.value = 14390;
+                        npc.value = 6390;
                         break;
                     }
 
                 case (NPCID.DD2OgreT3):
                     {
-                        npc.value = 20890;
+                        npc.value = 14890;
                         break;
                     }
 
@@ -2583,7 +2586,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 69;
                         npc.defense = 35;
                         npc.knockBackResist = 0.46f;
-                        npc.value = 3120;
+                        npc.value = 2120;
                         break;
                     }
 
@@ -2611,11 +2614,11 @@ namespace tsorcRevamp.NPCs
                         }
                         if (npc.type == NPCID.PirateShipCannon)
                         {
-                            npc.value = 4540;
+                            npc.value = 1540;
                         }
                         if (npc.type == NPCID.PirateShip)
                         {
-                            npc.value = 14490;
+                            npc.value = 7490;
                         }
                         break;
                     }
@@ -2631,32 +2634,32 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.Butcher):
                     {
-                        npc.value = 2410;
+                        npc.value = 1510;
                         break;
                     }
 
                 case (NPCID.CreatureFromTheDeep):
                     {
-                        npc.value = 1880;
+                        npc.value = 1380;
                         break;
                     }
 
                 case (NPCID.Fritz):
                     {
-                        npc.value = 1930;
+                        npc.value = 1430;
                         break;
                     }
 
                 case (NPCID.Nailhead):
                     {
-                        npc.value = 10940;
+                        npc.value = 8940;
                         break;
                     }
 
                 case (NPCID.Psycho):
                     {
                         npc.damage = 250;
-                        npc.value = 3620;
+                        npc.value = 1820;
                         break;
                     }
 
@@ -2665,19 +2668,19 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = 25;
                         npc.defense = 300;
                         npc.damage = 200;
-                        npc.value = 2340;
+                        npc.value = 1640;
                         break;
                     }
 
                 case (NPCID.DrManFly):
                     {
-                        npc.value = 1770;
+                        npc.value = 1570;
                         break;
                     }
 
                 case (NPCID.ThePossessed):
                     {
-                        npc.value = 1990;
+                        npc.value = 1590;
                         break;
                     }
 
@@ -2685,40 +2688,40 @@ namespace tsorcRevamp.NPCs
                                         (vampire >= NPCID.VampireBat && vampire <= NPCID.Vampire)
                                         ):
                     {
-                        npc.value = 3440;
+                        npc.value = 1940;
                         break;
                     }
 
                 case (NPCID.Frankenstein):
                     {
-                        npc.value = 1390;
+                        npc.value = 1190;
                         break;
                     }
 
                 case (NPCID.SwampThing):
                     {
-                        npc.value = 1150;
+                        npc.value = 1050;
                         break;
                     }
 
                 case (NPCID.Reaper):
                     {
-                        npc.value = 2110;
+                        npc.value = 1710;
                         break;
                     }
 
                 case (NPCID.Eyezor):
                     {
-                        npc.value = 5420;
+                        npc.value = 4420;
                         break;
                     }
 
                 case int mothron when ((mothron >= NPCID.Mothron && mothron <= NPCID.MothronSpawn)):
                     {
-                        npc.value = 3250;
+                        npc.value = 1750;
                         if (npc.type == NPCID.Mothron)
                         {
-                            npc.value = 28380;
+                            npc.value = 24380;
                         }
                         break;
                     }
@@ -2729,31 +2732,31 @@ namespace tsorcRevamp.NPCs
 
                 case int scarecrow when ((scarecrow >= NPCID.Scarecrow1 && scarecrow <= NPCID.Scarecrow10)):
                     {
-                        npc.value = 2580;
+                        npc.value = 1480;
                         break;
                     }
 
                 case (NPCID.HeadlessHorseman):
                     {
-                        npc.value = 6330;
+                        npc.value = 4330;
                         break;
                     }
 
                 case (NPCID.MourningWood):
                     {
-                        npc.value = 10339;
+                        npc.value = 8330;
                         break;
                     }
 
                 case (NPCID.Splinterling):
                     {
-                        npc.value = 2990;
+                        npc.value = 1590;
                         break;
                     }
 
                 case (NPCID.Pumpking):
                     {
-                        npc.value = 19090;
+                        npc.value = 16090;
                         break;
                     }
 
@@ -2764,13 +2767,13 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.Hellhound):
                     {
-                        npc.value = 3480;
+                        npc.value = 1930;
                         break;
                     }
 
                 case (NPCID.Poltergeist):
                     {
-                        npc.value = 4630;
+                        npc.value = 2280;
                         break;
                     }
                 #endregion
@@ -2779,67 +2782,67 @@ namespace tsorcRevamp.NPCs
 
                 case int zombieelfs when ((zombieelfs >= NPCID.ZombieElf && zombieelfs <= NPCID.ZombieElfGirl)):
                     {
-                        npc.value = 2690;
+                        npc.value = 1420;
                         break;
                     }
 
                 case (NPCID.PresentMimic):
                     {
-                        npc.value = 3580;
+                        npc.value = 2380;
                         break;
                     }
 
                 case (NPCID.GingerbreadMan):
                     {
-                        npc.value = 2830;
+                        npc.value = 1460;
                         break;
                     }
 
                 case (NPCID.Yeti):
                     {
-                        npc.value = 4530;
+                        npc.value = 2530;
                         break;
                     }
 
                 case (NPCID.Everscream):
                     {
-                        npc.value = 11490;
+                        npc.value = 9490;
                         break;
                     }
 
                 case (NPCID.IceQueen):
                     {
-                        npc.value = 23420;
+                        npc.value = 18420;
                         break;
                     }
 
                 case (NPCID.SantaNK1):
                     {
-                        npc.value = 13730;
+                        npc.value = 10730;
                         break;
                     }
 
                 case (NPCID.ElfCopter):
                     {
-                        npc.value = 4290;
+                        npc.value = 2890;
                         break;
                     }
 
                 case int nutcracker when (nutcracker == NPCID.Nutcracker || nutcracker == NPCID.NutcrackerSpinning):
                     {
-                        npc.value = 4780;
+                        npc.value = 2680;
                         break;
                     }
 
                 case (NPCID.Krampus):
                     {
-                        npc.value = 548;
+                        npc.value = 348;
                         break;
                     }
 
                 case (NPCID.Flocko):
                     {
-                        npc.value = 2930;
+                        npc.value = 1730;
                         break;
                     }
 
@@ -2935,13 +2938,13 @@ namespace tsorcRevamp.NPCs
 
                 case int pillars when (pillars == NPCID.LunarTowerVortex || pillars == NPCID.LunarTowerStardust || pillars == NPCID.LunarTowerSolar || pillars == NPCID.LunarTowerNebula):
                     {
-                        npc.value = 44440;
+                        npc.value = 26660;
                         break;
                     }
 
                 case (NPCID.SolarGoop):
                     {
-                        npc.value = 190;
+                        npc.value = 180;
                         break;
                     }
 
@@ -2949,37 +2952,37 @@ namespace tsorcRevamp.NPCs
 
                 case int milkywayweaver when ((milkywayweaver >= NPCID.StardustWormHead && milkywayweaver <= NPCID.StardustWormTail)):
                     {
-                        npc.value = 4320;
+                        npc.value = 2320;
                         break;
                     }
 
                 case int stardustcell when (stardustcell == NPCID.StardustCellBig || stardustcell == NPCID.StardustCellSmall):
                     {
-                        npc.value = 1890;
+                        npc.value = 1490;
                         break;
                     }
 
                 case int flowinvader when (flowinvader == NPCID.StardustJellyfishBig || flowinvader == NPCID.StardustJellyfishSmall):
                     {
-                        npc.value = 6850;
+                        npc.value = 3850;
                         break;
                     }
 
                 case (NPCID.StardustSpiderBig):
                     {
-                        npc.value = 4670;
+                        npc.value = 2670;
                         break;
                     }
 
                 case (NPCID.StardustSpiderSmall):
                     {
-                        npc.value = 1010;
+                        npc.value = 910;
                         break;
                     }
 
                 case (NPCID.StardustSoldier):
                     {
-                        npc.value = 4940;
+                        npc.value = 3040;
                         break;
                     }
 
@@ -2989,7 +2992,7 @@ namespace tsorcRevamp.NPCs
 
                 case int vortexsoldier when (vortexsoldier == NPCID.VortexSoldier || vortexsoldier == NPCID.VortexRifleman):
                     {
-                        npc.value = 2730;
+                        npc.value = 3140;
                         break;
                     }
 
@@ -2997,13 +3000,13 @@ namespace tsorcRevamp.NPCs
                     {
                         if (npc.type == NPCID.VortexLarva)
                         {
-                            npc.value = 1210;
+                            npc.value = 1010;
                         }
                         if (npc.type == NPCID.VortexHornet)
                         {
-                            npc.value = 1680;
+                            npc.value = 1480;
                         }
-                        npc.value = 6310;
+                        npc.value = 3510;
                         break;
                     }
 
@@ -3013,27 +3016,27 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.NebulaBrain):
                     {
-                        npc.value = 6040;
+                        npc.value = 4040;
                         break;
                     }
 
                 case (NPCID.NebulaHeadcrab):
                     {
-                        npc.value = 3230;
+                        npc.value = 2230;
 
                         break;
                     }
 
                 case (NPCID.NebulaBeast):
                     {
-                        npc.value = 4790;
+                        npc.value = 2790;
 
                         break;
                     }
 
                 case (NPCID.NebulaSoldier):
                     {
-                        npc.value = 4540;
+                        npc.value = 2840;
 
                         break;
                     }
@@ -3044,7 +3047,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.SolarSpearman):
                     {
-                        npc.value = 4380;
+                        npc.value = 3280;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.lavaImmune = true;
                         break;
@@ -3052,7 +3055,7 @@ namespace tsorcRevamp.NPCs
 
                 case int crawltipede when (crawltipede >= NPCID.SolarCrawltipedeHead && crawltipede <= NPCID.SolarCrawltipedeTail):
                     {
-                        npc.value = 9490;
+                        npc.value = 5490;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.lavaImmune = true;
                         break;
@@ -3060,7 +3063,7 @@ namespace tsorcRevamp.NPCs
 
                 case int drakomire when (drakomire == NPCID.SolarDrakomire || drakomire == NPCID.SolarDrakomireRider):
                     {
-                        npc.value = 3430;
+                        npc.value = 2630;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.lavaImmune = true;
                         break;
@@ -3068,7 +3071,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.SolarSroller):
                     {
-                        npc.value = 6390;
+                        npc.value = 3680;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.lavaImmune = true;
                         break;
@@ -3076,7 +3079,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.SolarCorite):
                     {
-                        npc.value = 3450;
+                        npc.value = 2750;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.lavaImmune = true;
                         break;
@@ -3084,7 +3087,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.SolarSolenian):
                     {
-                        npc.value = 5280;
+                        npc.value = 3390;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.lavaImmune = true;
                         break;
