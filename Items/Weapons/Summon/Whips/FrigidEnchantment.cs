@@ -1,4 +1,3 @@
-/*
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -26,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 42;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 23;
+			Item.damage = 52;
 			Item.knockBack = 2;
 			Item.rare = ItemRarityID.Green;
 

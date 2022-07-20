@@ -4,13 +4,11 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors.Summon
 {
-    [LegacyName("AncientBrassHelmet")]
     [AutoloadEquip(EquipType.Head)]
-    public class BrassHelmet : ModItem
+    public class WaspHelmet : ModItem
     {
         public override void SetStaticDefaults()
         {
-            ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
             Tooltip.SetDefault("Increases minion damage by 1 flat + 8%\nIncreases your max number of minions by 1");
         }
 
@@ -41,7 +39,7 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.maxMinions += 1;
             player.maxTurrets += 1;
         }
-        /*
+
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
@@ -50,6 +48,6 @@ namespace tsorcRevamp.Items.Armors.Summon
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }*/
+        }
     }
 }

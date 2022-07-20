@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.GetDamage(DamageClass.Summon) += 0.08f;
             player.maxMinions += 1;
         }
-
+/*
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
@@ -36,6 +36,6 @@ namespace tsorcRevamp.Items.Armors.Summon
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }
+        }*/
     }
 }

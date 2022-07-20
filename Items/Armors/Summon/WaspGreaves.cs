@@ -4,9 +4,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors.Summon
 {
-    [LegacyName("AncientBrassGreaves")]
     [AutoloadEquip(EquipType.Legs)]
-    public class BrassGreaves : ModItem
+    public class WaspGreaves : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -28,7 +27,7 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.moveSpeed += 0.15f;
         }
 
-        /*
+
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
@@ -37,7 +36,7 @@ namespace tsorcRevamp.Items.Armors.Summon
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }*/
+        }
     }
 }
 
