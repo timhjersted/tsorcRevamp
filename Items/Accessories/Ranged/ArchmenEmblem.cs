@@ -13,8 +13,8 @@ namespace tsorcRevamp.Items.Accessories.Ranged
 
         public override void SetDefaults()
         {
-            Item.width = 24;
-            Item.height = 24;
+            Item.width = 30;
+            Item.height = 30;
             Item.accessory = true;
             Item.value = PriceByRarity.LightRed_4;
             Item.rare = ItemRarityID.LightRed;

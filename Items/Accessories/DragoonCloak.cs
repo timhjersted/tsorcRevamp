@@ -15,8 +15,8 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void SetDefaults()
         {
-            Item.width = 24;
-            Item.height = 22;
+            Item.width = 38;
+            Item.height = 36;
             Item.defense = 2;
             Item.accessory = true;
             Item.value = PriceByRarity.LightPurple_6;
