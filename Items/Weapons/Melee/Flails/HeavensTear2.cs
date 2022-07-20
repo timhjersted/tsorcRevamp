@@ -6,11 +6,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
 {
     public class HeavensTear2 : ModItem
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/Flails/HeavensTear";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Heaven's Tear II");
-            Tooltip.SetDefault("Heaven splits with each swing" +
+            DisplayName.SetDefault("Sundering Light");
+            Tooltip.SetDefault("Rips apart the border of life and death" +
                 "\nDeals double damage to mages and ghosts");
 
         }
@@ -35,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Item.noMelee = true;
             Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Melee;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Flails.HeavensTearBall>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Flails.SunderingLightBall>();
         }
 
         public override void AddRecipes()

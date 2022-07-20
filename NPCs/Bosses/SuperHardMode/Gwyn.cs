@@ -140,6 +140,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         int demonBreathTimer = 0;
 
+        //chaos
+        int holdTimer = 0;
 
         #region debuffs
         public override void OnHitPlayer(Player player, int damage, bool crit)
@@ -167,6 +169,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+
+            //chaos defense move
+
+            if (holdTimer > 0)
+            {
+                holdTimer--;
+            }
+            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 1000)
+            {
+                NPC.defense = 9999;
+                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                {
+                    Main.NewText("Gwyn is protected by the soul of cinder -- you're too far away!", 175, 75, 255);
+                    holdTimer = 200;
+                }
+                else
+                {
+                    NPC.defense = 200;
+                }
+            }
 
             if (OptionSpawned == false)
             {
