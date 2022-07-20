@@ -536,7 +536,7 @@ namespace tsorcRevamp
         }
         public static bool EoLDownedCondition()
         {
-            return NPC.downedEmpressOfLight;
+            return !NPC.downedEmpressOfLight;
         }
 
         //This condition returns true if the player is in The Abyss

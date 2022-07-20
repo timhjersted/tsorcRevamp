@@ -583,20 +583,80 @@ namespace tsorcRevamp
                     }
                 }
             }
-            if (!NPC.downedGolemBoss && !NPC.AnyNPCs(NPCID.HallowBoss) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !NPC.downedEmpressOfLight)
+            if (!NPC.downedGolemBoss && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !NPC.downedEmpressOfLight)
             {
-                Vector2 arena = new Vector2(4484, 365);
+                Vector2 arena = new Vector2(4468, 365);
                 float distance = Vector2.DistanceSquared(Player.Center / 16, arena);
-                if (distance < 42500)
+
+                //If EoL isn't alive, do the big forcefield
+                if (!NPC.AnyNPCs(NPCID.HallowBoss))
                 {
-                    float proximity = distance - 22500;
+                    if (distance < 42500)
+                    {
+                        float proximity = distance - 22500;
+                        proximity /= 20000f;
+                        proximity = 1 - proximity;
+                        for (int i = 0; i < 10f * proximity * proximity; i++)
+                        {
+                            Vector2 diff = Player.Center - arena * 16;
+                            diff.Normalize();
+                            diff *= 2400;
+
+                            diff = diff.RotatedBy(Main.rand.NextFloat(-MathHelper.Pi / 30, MathHelper.Pi / 30));
+
+                            Vector2 vel = diff;
+                            vel.Normalize();
+                            vel = vel.RotatedBy(Main.rand.NextBool() ? MathHelper.PiOver2 : -MathHelper.PiOver2);
+                            Dust.NewDustPerfect(arena * 16 + diff, DustID.ShadowbeamStaff, vel, default, default, 1.5f * proximity).noGravity = true;
+                        }
+
+                        if (distance < 22500)
+                        {
+                            for (int p = 0; p < 1000; p++)
+                            {
+                                if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == 7)
+                                {
+                                    FieldTimer++;
+                                    if (FieldTimer == 1)
+                                    {
+                                        Main.NewText("Your grapple strains against the force, but...!", Color.Orange);
+                                        TextCooldown = 350;
+                                    }
+                                    if (FieldTimer >= 340)
+                                    {
+                                        Player.velocity += new Vector2(0, -15);
+                                        Player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 30);
+                                        Main.NewText("Your grapple suddenly snaps!!", Color.Red);
+                                    }
+                                }
+                            }
+
+                            Player.velocity += UsefulFunctions.GenerateTargetingVector(new Vector2(4484, 355) * 16, Player.Center, 20);
+                            if (TextCooldown <= 0)
+                            {
+                                Main.NewText("A strong forcefield expels you from the ruins!", Color.Purple);
+                                TextCooldown = 240;
+                            }
+                        }
+                        else
+                        {
+                            FieldTimer = 0;
+                        }
+                    }
+                }
+                else
+                {
+                    //If she is, do the smaller one that mainly just blocks the post-golem armors and the chest
+                    arena = new Vector2(4468, 385); 
+                    distance = Vector2.DistanceSquared(Player.Center / 16, arena);
+                    float proximity = distance - 20000;
                     proximity /= 20000f;
                     proximity = 1 - proximity;
                     for (int i = 0; i < 10f * proximity * proximity; i++)
                     {
                         Vector2 diff = Player.Center - arena * 16;
                         diff.Normalize();
-                        diff *= 2400;
+                        diff *= 900;
 
                         diff = diff.RotatedBy(Main.rand.NextFloat(-MathHelper.Pi / 30, MathHelper.Pi / 30));
 
@@ -605,43 +665,27 @@ namespace tsorcRevamp
                         vel = vel.RotatedBy(Main.rand.NextBool() ? MathHelper.PiOver2 : -MathHelper.PiOver2);
                         Dust.NewDustPerfect(arena * 16 + diff, DustID.ShadowbeamStaff, vel, default, default, 1.5f * proximity).noGravity = true;
                     }
-
-                    if (distance < 22500)
+                    if (distance < 3250)
                     {
                         for (int p = 0; p < 1000; p++)
                         {
                             if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == 7)
                             {
-                                FieldTimer++;
-                                if (FieldTimer == 1)
-                                {
-                                    Main.NewText("Your grapple strains against the force, but...!", Color.Orange);
-                                    TextCooldown = 250;
-                                }
-
-                                if(FieldTimer == 240)
-                                {
-                                    Player.velocity += new Vector2(0, -15);
-                                    Player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 30);
-                                    Main.NewText("Your grapple suddenly snaps!!", Color.Red);
-                                }
+                                Player.velocity += new Vector2(0, -15);
+                                Player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 30);
+                                Main.NewText("Your grapple suddenly snaps!!", Color.Red);
                             }
-                        }                       
+                        }
 
-                        Player.velocity += UsefulFunctions.GenerateTargetingVector(new Vector2(4484, 355) * 16, Player.Center, 20);
+                        Player.velocity += UsefulFunctions.GenerateTargetingVector(new Vector2(4484, 355) * 16, Player.Center, 10);
                         if (TextCooldown <= 0)
                         {
                             Main.NewText("A strong forcefield expels you from the ruins!", Color.Purple);
                             TextCooldown = 240;
                         }
                     }
-                    else
-                    {
-                        FieldTimer = 0;
-                    }
                 }
             }
-
         }
 
         public override void PostUpdateBuffs()
