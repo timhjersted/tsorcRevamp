@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
             {// if we find one
              //insert the extra tooltip line
                 tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "",
-                "Plus 20 defense and 4% melee damage" +
+                "Plus 8 defense and 2% melee damage" +
                 "\nReduces Ranged, Magic and Summoner Damage by 85%. +70% mana cost" +
                 "\n+5% move speed"));
             }
@@ -65,7 +65,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.defense = 20;
+            Item.defense = 8;
             Item.value = PriceByRarity.LightRed_4;
             Item.rare = ItemRarityID.LightRed;
         }
@@ -76,7 +76,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
             base.UpdateEquip(player);
             player.moveSpeed += 0.05f;
             player.manaCost += 0.7f;
-            player.GetDamage(DamageClass.Melee) += 0.04f;
+            player.GetDamage(DamageClass.Melee) += 0.02f;
             player.GetDamage(DamageClass.Magic) -= 0.85f;
             player.GetDamage(DamageClass.Ranged) -= 0.85f;
             player.GetDamage(DamageClass.Summon) -= 0.85f;
@@ -111,15 +111,15 @@ namespace tsorcRevamp.Items.Accessories.Melee
             {// if we find one
              //insert the extra tooltip line
                 tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "",
-                "Plus 40 defense and 6% melee damage" +
+                "Plus 14 defense and 3% melee damage" +
                 "\nReduces Ranged, Magic and Summoner Damage by 150%. +70% mana cost" +
-                "\n+10% move speed"));
+                "\n+8% move speed"));
             }
         }
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.defense = 40;
+            Item.defense = 14;
             Item.value = PriceByRarity.Pink_5;
             Item.rare = ItemRarityID.Pink;
         }
@@ -127,8 +127,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void UpdateEquip(Player player)
         {
             base.UpdateEquip(player);
-            player.moveSpeed += 0.10f;
-            player.GetDamage(DamageClass.Melee) += 0.06f;
+            player.moveSpeed += 0.08f;
+            player.GetDamage(DamageClass.Melee) += 0.03f;
             player.GetDamage(DamageClass.Magic) -= 1.5f;
             player.GetDamage(DamageClass.Ranged) -= 1.5f;
             player.GetDamage(DamageClass.Summon) -= 1.5f;
@@ -164,15 +164,15 @@ namespace tsorcRevamp.Items.Accessories.Melee
             {// if we find one
              //insert the extra tooltip line
                 tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "",
-                "Plus immunity to On Fire, 60 defense, and 6% melee damage" +
+                "Plus immunity to On Fire, 21 defense, and 4% melee damage" +
                 "\nReduces Ranged, Magic and Summoner Damage by 150%. +70% mana cost" +
-                "\n+15% move speed"));
+                "\n+11% move speed"));
             }
         }
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.defense = 60;
+            Item.defense = 21;
             Item.value = PriceByRarity.Cyan_9;
             Item.rare = ItemRarityID.Cyan;
         }
@@ -180,8 +180,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void UpdateEquip(Player player)
         {
             base.UpdateEquip(player);
-            player.moveSpeed += 0.15f;
-            player.GetDamage(DamageClass.Melee) += 0.06f;
+            player.moveSpeed += 0.11f;
+            player.GetDamage(DamageClass.Melee) += 0.04f;
             player.GetDamage(DamageClass.Magic) -= 1.5f;
             player.GetDamage(DamageClass.Ranged) -= 1.5f;
             player.GetDamage(DamageClass.Summon) -= 1.5f;
@@ -209,15 +209,15 @@ namespace tsorcRevamp.Items.Accessories.Melee
         {
             DisplayName.SetDefault("Enchanted Beholder Shield II");
             Tooltip.SetDefault("A legendary shield for melee warriors only" +
-                "\nGrants immunity to knockback and nearly all debuffs, plus 80 defense" +
+                "\nGrants immunity to knockback and nearly all debuffs, plus 28 defense" +
                 "\nReduces Ranged, Magic and Summoner Damage by 300%. +70% mana cost" +
-                "\n+20% move speed, +10% melee damage.");
+                "\n+14% move speed, +6% melee damage.");
         }
 
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.defense = 80;
+            Item.defense = 28;
             Item.value = PriceByRarity.Red_10;
             Item.rare = ItemRarityID.Red;
         }
@@ -225,8 +225,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void UpdateEquip(Player player)
         {
             base.UpdateEquip(player);
-            player.moveSpeed += 0.20f;
-            player.GetDamage(DamageClass.Melee) += 0.1f;
+            player.moveSpeed += 0.14f;
+            player.GetDamage(DamageClass.Melee) += 0.06f;
             player.GetDamage(DamageClass.Magic) -= 3f;
             player.GetDamage(DamageClass.Ranged) -= 3f;
             player.GetDamage(DamageClass.Summon) -= 3f;

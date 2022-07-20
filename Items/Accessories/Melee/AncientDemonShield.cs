@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         {
             Item.width = 28;
             Item.height = 38;
-            Item.defense = 10;
+            Item.defense = 3;
             Item.accessory = true;
             Item.value = PriceByRarity.Orange_3;
             Item.rare = ItemRarityID.Orange;

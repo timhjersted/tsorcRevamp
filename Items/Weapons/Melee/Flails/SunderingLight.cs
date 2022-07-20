@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Flails
 {
-    public class HeavensTear2 : ModItem
+    public class SunderingLight : ModItem
     {
         public override void SetStaticDefaults()
         {

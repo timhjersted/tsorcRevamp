@@ -214,7 +214,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.GoldenHairpin>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Melee.DragonHorn>(), 1);
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Melee.DragoonHorn>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>());
         }
     }

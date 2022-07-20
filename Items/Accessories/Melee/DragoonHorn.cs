@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Melee
 {
-    public class DragonHorn : ModItem
+    public class DragoonHorn : ModItem
     {
         public override void SetStaticDefaults()
         {

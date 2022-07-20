@@ -151,7 +151,7 @@ namespace tsorcRevamp.Projectiles.Flails {
 						// This is also where Drippler Crippler spawns its projectile, see above code.
 						Vector2 dropletvector = new Vector2(0, 5);
 						if (Main.myPlayer == Projectile.owner) {
-							Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, dropletvector, ProjectileID.RainFriendly, Projectile.damage, Projectile.knockBack, Main.myPlayer);
+							Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ProjectileID.SolarWhipSwordExplosion, Projectile.damage, Projectile.knockBack, Main.myPlayer);
 						}
 					}
 					player.ChangeDir((player.Center.X < Projectile.Center.X) ? 1 : (-1));
