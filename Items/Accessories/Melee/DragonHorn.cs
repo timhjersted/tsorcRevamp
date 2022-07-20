@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Horn inhabited by the spirit of a dragon." +
-                                "\n200% melee damage if falling.");
+                                "\n+50% melee damage if falling.");
         }
 
         public override void SetDefaults()

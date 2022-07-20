@@ -1108,7 +1108,7 @@ namespace tsorcRevamp
             }
             if (DragoonHorn && (((Player.gravDir == 1f) && (Player.velocity.Y > 0)) || ((Player.gravDir == -1f) && (Player.velocity.Y < 0))))
             {
-                Player.GetDamage(DamageClass.Melee) *= 2;
+                Player.GetDamage(DamageClass.Melee) *= 1.5f;
             }
         }
 
