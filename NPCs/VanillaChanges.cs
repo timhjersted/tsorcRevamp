@@ -260,31 +260,33 @@ namespace tsorcRevamp.NPCs
                 #endregion
 
                 #region Worms
+                //stat goal: slightly more lethal than Expert Vanilla but less tanky; hitting head rewarded, tail punished
+                //first number is EV = expert vanilla value, 2nd number is the previous mod value if changed/unchanged
 
                 case int giantworm when (
                 (giantworm >= NPCID.GiantWormHead && giantworm <= NPCID.GiantWormTail)
                 ):
                     {
+                        npc.lifeMax = 70; //60, 250
                         npc.npcSlots = 3;
                         npc.value = 1150;
 
                         if (npc.type == NPCID.GiantWormHead)
                         {
-                            npc.lifeMax = 250;
-                            npc.damage = 25;
-                            npc.defense = 20;
+                            npc.damage = 28; //16, 25
+                            npc.defense = 0; //0, 20
                         }
                         if (npc.type == NPCID.GiantWormBody)
                         {
-                            npc.damage = 10;
-                            npc.defense = 8;
+                            npc.damage = 15; //8, 10
+                            npc.defense = 4; //4, 8
                             npc.knockBackResist = 0.1f;
                         }
 
                         if (npc.type == NPCID.GiantWormTail)
                         {
-                            npc.defense = 0;
-                            npc.damage = 15;
+                            npc.damage = 12; //8, 15
+                            npc.defense = 10; //6, 0
                             npc.knockBackResist = 0.2f;
                         }
                         break;
@@ -294,86 +296,58 @@ namespace tsorcRevamp.NPCs
                 (devourer >= NPCID.DevourerHead && devourer <= NPCID.DevourerTail)
                 ):
                     {
-                        npc.lifeMax = 400;
+                        npc.lifeMax = 200; //200, 400
                         npc.npcSlots = 4;
                         npc.value = 1430;
 
                         if (npc.type == NPCID.DevourerHead)
                         {
-                            npc.damage = 35;
-                            npc.defense = 4;
+                            npc.damage = 56; //54, 35
+                            npc.defense = 2; //2, 4
                             npc.knockBackResist = 0.05f;
                         }
                         if (npc.type == NPCID.DevourerBody)
                         {
-                            npc.damage = 20;
-                            npc.defense = 30;
+                            npc.damage = 36; //32, 20
+                            npc.defense = 8; //6, 30
                             npc.knockBackResist = 0.1f;
                         }
 
                         if (npc.type == NPCID.DevourerTail)
                         {
-                            npc.damage = 30;
-                            npc.defense = 4;
+                            npc.damage = 30; //26, 30
+                            npc.defense = 16; //10, 16
                             npc.knockBackResist = 0.2f;
                         }
                         break;
                     }
 
-                case int dunesplicer when (
-                (dunesplicer >= NPCID.DuneSplicerHead && dunesplicer <= NPCID.DuneSplicerTail)
-                ):
-                    {
-                        npc.lifeMax = 450;
-                        npc.npcSlots = 4;
-                        npc.value = 1860;
-
-                        if (npc.type == NPCID.DuneSplicerHead)
-                        {
-                            npc.damage = 40;
-                            npc.defense = 4;
-                            npc.knockBackResist = 0.05f;
-                        }
-                        if (npc.type == NPCID.DuneSplicerBody)
-                        {
-                            npc.damage = 25;
-                            npc.defense = 30;
-                            npc.knockBackResist = 0.1f;
-                        }
-
-                        if (npc.type == NPCID.DuneSplicerTail)
-                        {
-                            npc.damage = 35;
-                            npc.defense = 4;
-                            npc.knockBackResist = 0.2f;
-                        }
-                        break;
-                    }
+                
 
                 case int boneserpent when (
                 (boneserpent >= NPCID.BoneSerpentHead && boneserpent <= NPCID.BoneSerpentTail)
                 ):
                     {
-                        npc.lifeMax = 1800;
+                        npc.lifeMax = 500; //500, 1800
                         npc.npcSlots = 5;
                         npc.value = 2420;
 
                         if (npc.type == NPCID.BoneSerpentHead)
                         {
-                            npc.damage = 50;
-                            npc.defense = 2;
+                            npc.damage = 80; //60, 50
+                            npc.defense = 2; //10, 2
                         }
                         if (npc.type == NPCID.BoneSerpentBody)
                         {
-                            npc.damage = 25;
-                            npc.defense = 12;
+                            npc.damage = 40; //30, 25
+                            npc.defense = 12; //12 ev, was 12
                             npc.knockBackResist = 0.1f;
                         }
 
                         if (npc.type == NPCID.BoneSerpentTail)
                         {
-                            npc.damage = 35;
-                            npc.defense = 25;
+                            npc.damage = 35; //20, 35
+                            npc.defense = 25; //18 ev, was 25
                             npc.knockBackResist = 0.2f;
                         }
                         break;
@@ -934,29 +908,59 @@ namespace tsorcRevamp.NPCs
                 #region Worms
 
                 case int digger when (
-                                          (digger >= NPCID.DiggerHead && digger <= NPCID.DiggerTail)
-                                          ):
+                        (digger >= NPCID.DiggerHead && digger <= NPCID.DiggerTail)
+                        ):
                     {
                         {
-                            npc.lifeMax = 1900;
+                            npc.lifeMax = 600; //400, 1900
                             npc.scale = 0.9f;
-                            npc.value = 3560;
+                            npc.value = 2560;
                         }
                         if (npc.type == NPCID.DiggerHead)
                         {
-                            npc.defense = 15;
-                            npc.damage = 60;
+                            npc.damage = 110; //90, 60
+                            npc.defense = 5; //10, 15
                         }
                         if (npc.type == NPCID.DiggerBody)
                         {
-                            npc.defense = 40;
-                            npc.damage = 35;
+                            npc.damage = 80; //56, 35
+                            npc.defense = 20; //20, 40
                             npc.knockBackResist = 0.1f;
                         }
                         if (npc.type == NPCID.DiggerTail)
                         {
-                            npc.defense = 25;
-                            npc.damage = 45;
+                            npc.damage = 65; //52, 45
+                            npc.defense = 45; //30, 25
+                            npc.knockBackResist = 0.2f;
+                        }
+                        break;
+                    }
+
+                case int dunesplicer when (
+                (dunesplicer >= NPCID.DuneSplicerHead && dunesplicer <= NPCID.DuneSplicerTail)
+                ):
+                    {
+                        npc.lifeMax = 600; //1000, 450
+                        npc.npcSlots = 4;
+                        npc.value = 1960;
+
+                        if (npc.type == NPCID.DuneSplicerHead)
+                        {
+                            npc.damage = 130; //116, 40
+                            npc.defense = 4; //18, 4
+                            npc.knockBackResist = 0.05f;
+                        }
+                        if (npc.type == NPCID.DuneSplicerBody)
+                        {
+                            npc.damage = 115; //108, 25
+                            npc.defense = 28; //28, 30
+                            npc.knockBackResist = 0.1f;
+                        }
+
+                        if (npc.type == NPCID.DuneSplicerTail)
+                        {
+                            npc.damage = 105; //100, 35
+                            npc.defense = 44; //34, 4
                             npc.knockBackResist = 0.2f;
                         }
                         break;
@@ -966,25 +970,25 @@ namespace tsorcRevamp.NPCs
                       (tombcrawler >= NPCID.TombCrawlerHead && tombcrawler <= NPCID.TombCrawlerTail)
                       ):
                     {
-                            npc.lifeMax = 1600;
+                            npc.lifeMax = 300; //265, 1600
                             npc.scale = 1.3f;
-                            npc.value = 3840;
+                            npc.value = 1840; //- ,384
 
                         if (npc.type == NPCID.TombCrawlerHead)
                         {
-                            npc.defense = 15;
-                            npc.damage = 66;
+                            npc.defense = 2; //0, 15
+                            npc.damage = 70; //64, 66
                         }
                         if (npc.type == NPCID.TombCrawlerBody)
                         {
-                            npc.defense = 40;
-                            npc.damage = 40;
+                            npc.defense = 20; //16-32, 40
+                            npc.damage = 50; //14-24, 40
                             npc.knockBackResist = 0.1f;
                         }
                         if (npc.type == NPCID.TombCrawlerTail)
                         {
-                            npc.defense = 25;
-                            npc.damage = 50;
+                            npc.defense = 25; //20-40, 25
+                            npc.damage = 40; //12-24, 50
                             npc.knockBackResist = 0.2f;
                         }
                             break;
@@ -995,23 +999,23 @@ namespace tsorcRevamp.NPCs
                       ):
                     {
                         {
-                            npc.lifeMax = 2000;
-                            npc.value = 4410;
+                            npc.lifeMax = 1000; //1000, 2000
+                            npc.value = 2310; //- ,441
                         }
                         if (npc.type == NPCID.SeekerHead)
                         {
-                            npc.defense = 50;
-                            npc.damage = 80;
+                            npc.defense = 20; //36, 50
+                            npc.damage = 170; //140, 80
                         }
                         if (npc.type == NPCID.SeekerBody)
                         {
-                            npc.defense = 35;
-                            npc.damage = 55;
+                            npc.defense = 45; //40, 35
+                            npc.damage = 125; //110, 55
                         }
                         if (npc.type == NPCID.SeekerTail)
                         {
-                            npc.defense = 10;
-                            npc.damage = 30;
+                            npc.defense = 60; //44, 10
+                            npc.damage = 90; //80, 30
                         }
                         break;
                     }
@@ -1274,7 +1278,7 @@ namespace tsorcRevamp.NPCs
                         if (npc.type == NPCID.BloodMummy)
                         {
                             npc.knockBackResist = 0f;
-                            npc.damage = 100;
+                            npc.damage = 130;
                             npc.defense = 50;
                             npc.lifeMax = 2000;
                             npc.value = 3050;
@@ -1301,7 +1305,7 @@ namespace tsorcRevamp.NPCs
                         if (npc.type == NPCID.DesertGhoulCrimson)
                         {
                             npc.knockBackResist = 0f;
-                            npc.damage = 15000;
+                            npc.damage = 15000; //15,000 lmao
                             npc.defense = 70;
                             npc.lifeMax = 6000;
                             npc.value = 5510;
@@ -1856,7 +1860,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.EaterofWorldsHead):
                     {
                         npc.lifeMax = 180;
-                        npc.damage = 35; //was 30 for a long time
+                        npc.damage = 38; //was 30 for a long time
                         npc.defense = 22;
                         npc.value = 56230; //this makes it drop a lot of money(5g62s per head) if you keep killing the head segments hueh, but this value is used by the bags first soul drop value so whatever, see it as a minigame
                         npc.buffImmune[BuffID.Poisoned] = true;
@@ -1869,7 +1873,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.EaterofWorldsBody):
                     {
                         npc.lifeMax = 180;
-                        npc.damage = 20; //legacy: 22, was 18 for a long time
+                        npc.damage = 22; //legacy: 22, was 18 for a long time
                         npc.defense = 5;
                         npc.value = 0; //ignored
                         npc.buffImmune[BuffID.Poisoned] = true;
@@ -1931,7 +1935,7 @@ namespace tsorcRevamp.NPCs
                 #region Deerclops
                 case (NPCID.Deerclops):
                     {
-                        npc.value = 113520;
+                        npc.value = 113520; //is dearclops that hard?
                         break;
                     }
                 #endregion
@@ -1939,7 +1943,7 @@ namespace tsorcRevamp.NPCs
                 #region Wall of Flesh
                 case (NPCID.WallofFlesh):
                     {
-                        npc.value = 115580;
+                        npc.value = 150580; //more souls to help start of HM
                         npc.damage = 100;
                         npc.lifeMax = 14000;
                         break;
@@ -1947,14 +1951,14 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.TheHungry):
                     {
-                        npc.value = 880;
+                        npc.value = 480;
                         npc.knockBackResist = 0.3f;
                         break;
                     }
 
                 case (NPCID.TheHungryII):
                     {
-                        npc.value = 450;
+                        npc.value = 300;
                         npc.knockBackResist = 0.5f;
                         break;
                     }
