@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Flails
 {
+    [LegacyName("HeavensTear2")]
     public class SunderingLight : ModItem
     {
         public override void SetStaticDefaults()
