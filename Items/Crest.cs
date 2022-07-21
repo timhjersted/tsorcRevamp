@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items
         {
             DisplayName.SetDefault("Crest of Water");
             Tooltip.SetDefault("A shard of crystallized water\n" +
-                               "A second piece. 'Are these artifacts part of a puzzle?'"\n" +
+                               "A second piece. 'Are these artifacts part of a puzzle?'\n" +
                                "This shard contains a riddle: \"Beneath the Burning hot sun,\n" +
                                "sheltered from the blistering Western Winds, Black Smoke with a faint Violet Glow illuminates the path.\"");
         }
