@@ -7,6 +7,11 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class AncientDemon : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Ancient Demon");
+        }
+
         public override void SetDefaults()
         {
             Main.npcFrameCount[NPC.type] = 16;
@@ -32,11 +37,6 @@ namespace tsorcRevamp.NPCs.Enemies
             Main.npcFrameCount[NPC.type] = 16;
 
 
-        }
-
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Ancient Demon");
         }
 
         
@@ -80,7 +80,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 if (tsorcRevampWorld.SuperHardMode)
                 {
-                    if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientDemon>()) && Main.rand.NextBool(100)) return 1;
+                    if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientDemon>()) && Main.rand.NextBool(10)) return 1;
                     if (Main.rand.NextBool(800)) return 1;
                     else if (!Main.dayTime && Main.rand.NextBool(400)) return 1;
                     return 0;
@@ -93,11 +93,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
         NPCDespawnHandler despawnHandler;
         int meteorDamage = 31;
-        int cultistFireDamage = 62;
-        int cultistMagicDamage = 69;
-        int cultistLightningDamage = 80;
-        int fireBreathDamage = 31;
-        int lostSoulDamage = 73;
+        int cultistFireDamage = 72;
+        int cultistMagicDamage = 99;
+        int cultistLightningDamage = 85;
+        int fireBreathDamage = 41;
+        int lostSoulDamage = 63;
 
 
         int greatFireballDamage = 66;
@@ -118,6 +118,22 @@ namespace tsorcRevamp.NPCs.Enemies
             blackFireDamage = (int)(blackFireDamage / 2);
             greatAttackDamage = (int)(greatAttackDamage / 2);
         }
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+                target.AddBuff(20, 600, false); //poisoned
+                target.AddBuff(30, 600, false); //bleeding
+                target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false); //reduced defense on hit
+                target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 HP after several hits
+                target.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 20;
+  
+            if (Main.rand.NextBool(2))
+            {
+                target.AddBuff(33, 600, false); //weak
+            }
+        }
+
+
         public Player player
         {
             get => Main.player[NPC.target];
@@ -134,7 +150,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.localAI[1] = 50f;
 
                 //TELEPORT MELEE
-                if (Main.rand.NextBool(6))
+                if (Main.rand.NextBool(5))
                 {
                     tsorcRevampAIs.Teleport(NPC, 25, true);
                 }
@@ -154,7 +170,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
 
             //TELEPORT RANGED
-            if (Main.rand.NextBool(16))
+            if (Main.rand.NextBool(12))
             {
                 tsorcRevampAIs.Teleport(NPC, 20, true);
                 NPC.localAI[1] = 70f;
@@ -510,20 +526,19 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void OnKill()
         {
-            if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
-            //if(Main.rand.Next(99) < 60)Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.Piercing>(), 1);
+
+            if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientDemon>()))
+            { 
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.EyeOfTheGods>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.BarrierRing>(), 1);
+            }
+
             if (Main.rand.Next(99) < 40) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>(), 1);
-            //if(Main.rand.Next(99) <= 60)Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.FiresoulPotion>(), 1);
             if (Main.rand.Next(99) < 20) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
             if (Main.rand.Next(99) < 40) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 1);
             if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>(), 1);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion, 1);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion, 1);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ArcheryPotion, 1);
-            if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.BandOfGreatCosmicPower>(), 1);
-            //Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 4000);
-            if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.BarrierRing>(), 1);
-            if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.EyeOfTheGods>(), 1);
+          
         }
     }
 }

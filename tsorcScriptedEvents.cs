@@ -117,6 +117,7 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            AncientDemon,
             LitchKing,
             TheHunter,
             TheRage,
@@ -192,6 +193,10 @@ namespace tsorcRevamp
             //THE RAGE
             ScriptedEvent TheRage = new ScriptedEvent(new Vector2(7000, 1845), 30, ModContent.NPCType<NPCs.Bosses.TheRage>(), DustID.GoldFlame, true, true, "The Rage awakens!", Color.Red, false);
 
+            //ANCIENT DEMON (FORGOTTEN CITY, CLOSE TO FIRE TEMPLE)
+            ScriptedEvent AncientDemon = new ScriptedEvent(new Vector2(5316, 1805), 25, ModContent.NPCType<NPCs.Enemies.AncientDemon>(), DustID.GoldFlame, true, false, "What did you expect to find here human?... Your hubris will be your undoing...", Color.MediumPurple, false);
+            AncientDemon.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 1, 5000 });
+
             //ANCIENT OOLACILE DEMON (EARLY-GAME)
             ScriptedEvent AODE = new ScriptedEvent(new Vector2(5652, 971), 27, ModContent.NPCType<NPCs.Bosses.AncientOolacileDemon>(), DustID.GoldFlame, true, true, "You foolish human... pitiful arrogance...", Color.MediumPurple, false);
             AODE.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 1, 1500 });
@@ -222,16 +227,16 @@ namespace tsorcRevamp
 
             //FIRE LURKER PATH OF PAIN
             ScriptedEvent FireLurkerPain = new ScriptedEvent(new Vector2(3245, 1252), 9, ModContent.NPCType<NPCs.Enemies.FireLurker>(), DustID.CursedTorch, true, true, "A cursed Fire Lurker appears...", Color.Purple, false, default, FireLurkerPainCustomAction);
-            FireLurkerPain.SetCustomStats(1600, 12, 52, 1555);
+            FireLurkerPain.SetCustomStats(1600, 12, 85, 1655);
             FireLurkerPain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion }, new List<int>() { 2, 2 });
 
             //RED KNIGHT IN PATH OF PAIN
             ScriptedEvent RedKnightPain = new ScriptedEvent(new Vector2(3897, 1219), 20, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, "A Red Knight appears...", Color.Purple, false, default, RedKnightPainCustomAction);
-            RedKnightPain.SetCustomStats(2700, 10, 60, 3255);
+            RedKnightPain.SetCustomStats(2700, 10, 75, 3255);
 
             //RED KNIGHT IN TWIN PEAKS MOUNTAIN
             ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, "A Red Knight appears...", Color.Purple, false, default, RedKnightMountainCustomAction);
-            RedKnightTwinMountain.SetCustomStats(1600, 10, 60, 2055);
+            RedKnightTwinMountain.SetCustomStats(1600, 10, 65, 2055);
 
             //JUNGLE WYVERN
             ScriptedEvent JungleWyvernEvent = new ScriptedEvent(new Vector2(4331, 1713), 16, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), DustID.CursedTorch, true, true, "You have disturbed the Ancient Wyvern of the Forgotten City!", Color.Green, false);
@@ -386,6 +391,7 @@ namespace tsorcRevamp
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
+                {ScriptedEventType.AncientDemon, AncientDemon},
                 {ScriptedEventType.LitchKing, LitchKing},
                 {ScriptedEventType.TheHunter, TheHunter},
                 {ScriptedEventType.TheRage, TheRage},
@@ -697,7 +703,7 @@ namespace tsorcRevamp
             {
                 NPCs.Enemies.FireLurker ourFireLurker = (NPCs.Enemies.FireLurker)thisEvent.spawnedNPC.ModNPC;
 
-                ourFireLurker.lostSoulDamage = 13; //was 23
+                ourFireLurker.lostSoulDamage = 16; //was 23, then 13
             }
             return true;
         }
@@ -708,7 +714,7 @@ namespace tsorcRevamp
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
                 NPCs.Enemies.RedKnight ourRedKnightPain = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.ModNPC;
-                ourRedKnightPain.redKnightsSpearDamage = 20;
+                ourRedKnightPain.redKnightsSpearDamage = 26; //was 20
             }
             return true;
         }
@@ -719,8 +725,8 @@ namespace tsorcRevamp
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
                 NPCs.Enemies.RedKnight ourRedKnight = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.ModNPC;
-                ourRedKnight.redKnightsSpearDamage = 19;
-                ourRedKnight.redMagicDamage = 19;
+                ourRedKnight.redKnightsSpearDamage = 22; //was 19
+                ourRedKnight.redMagicDamage = 22; //was 19
             }
             return true;
         }

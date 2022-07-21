@@ -11,6 +11,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             DisplayName.SetDefault("Ancient Demon of the Abyss");
         }
+
         public override void SetDefaults()
         {
             NPC.npcSlots = 10;
@@ -65,6 +66,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             greatAttackDamage = (int)(greatAttackDamage / 2);
         }
 
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            target.AddBuff(20, 1200, false); //poisoned
+            target.AddBuff(30, 1200, false); //bleeding
+            target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false); //reduced defense on hit
+            target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 HP after several hits
+            target.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 30;
+        }
+
+
         //Spawns in Lower Cavern into the Underworld. Spawns more under 2.5/10th and again after 7.5/10th (Length). Spawns in Super Hardmode. Will not spawn if there are more than 2 Town NPCs nearby (or if a Blood Moon).
 
         #region Spawn
@@ -101,8 +113,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #endregion
 
         int intspawnedSpirits = 0;
-
-
 
         public Player player
         {
