@@ -260,6 +260,7 @@ namespace tsorcRevamp
             }
             HasFracturingArmor = false;
             GravityField = false;
+            DragoonHorn = false;
         }
 
         public override void PreUpdate()
