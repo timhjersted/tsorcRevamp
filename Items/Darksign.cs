@@ -22,9 +22,8 @@ namespace tsorcRevamp.Items
                                "\nGreater Magic Mirror use is inhibited; the Village Mirror will only" +
                                "\ntake you to the village. Additionally, instant-heal items won't heal you" +
                                "\nSeek out the Emerald Herald, perhaps she has a gift for you..." +
-                               "\n[c/ca1e00:Currently toggleable and non-consumable]" +
-                               "\n[c/ca1e00:Experimental mode in alpha]" +
-                               "\nIf you find any bugs please report on our [c/7e61ab:Discord] server");
+                               "\n[c/ca1e00:This mode is intended for players experienced with the mod, and is not recommended]" +
+                               "\n[c/ca1e00:on first playthroughs. There are no special rewards for enabling this, only pain]");
 
             ItemID.Sets.ItemNoGravity[Item.type] = true; // Makes item float in world.
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(20, 6));

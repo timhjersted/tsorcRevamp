@@ -63,9 +63,9 @@ namespace tsorcRevamp.Tiles
             }
             else
             {
-                r = 0.14f;
-                g = 0.08f;
-                b = 0.02f;
+                r = 0.28f;
+                g = 0.16f;
+                b = 0.04f;
             }
         }
 
@@ -123,6 +123,10 @@ namespace tsorcRevamp.Tiles
         public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
         {
             Tile tile = Main.tile[i, j];
+            if (Main.rand.NextBool(100)) {
+                Dust dust = Dust.NewDustDirect(new Vector2(i * 16, j * 16), 16, 16, DustID.RedTorch, 0, 0);
+                dust.noGravity = true;
+            }
             Player player = Main.LocalPlayer;
             var pos = new Vector2(i + 0.5f, j); // the + .5f makes the effect reach from equal distance to left and right
             var distance = Math.Abs(Vector2.Distance(player.Center, (pos * 16)));
