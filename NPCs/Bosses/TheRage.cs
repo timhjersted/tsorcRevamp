@@ -21,10 +21,10 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.aiStyle = -1;
             NPC.lifeMax = 23100;
             NPC.damage = 100; //unchanged, but I buffed the sorrow and hunter, who were both at 95 before
-            NPC.defense = 24;
+            NPC.defense = 22;
             NPC.knockBackResist = 0f;
             NPC.scale = 1.4f;
-            NPC.value = 100000;
+            NPC.value = 120000;
             NPC.npcSlots = 6;
             NPC.boss = true;
             NPC.lavaImmune = true;
@@ -49,7 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = NPC.damage / 2;
-            NPC.defense = NPC.defense += 12;
+            NPC.defense = NPC.defense += 10;
             NPC.lifeMax = 20000;
             fireTrailsDamage = (int)(fireTrailsDamage * 1.3 / 2);
         }
@@ -72,7 +72,8 @@ namespace tsorcRevamp.NPCs.Bosses
             if (NPC.ai[3] == 0)
             {
                 NPC.alpha = 0;
-                NPC.dontTakeDamage = false;
+                //NPC.dontTakeDamage = false;
+                NPC.defense = 22;
                 if (NPC.ai[2] < 600)
                 {
                     if (Main.player[NPC.target].position.X < vector8.X)
@@ -142,7 +143,8 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 NPC.ai[3]++;
                 NPC.alpha = 200;
-                NPC.dontTakeDamage = true;
+                NPC.defense = 82;
+                //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].position.X < vector8.X)
                 {
                     if (NPC.velocity.X > -6) { NPC.velocity.X -= 0.22f; }
@@ -164,7 +166,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                 {
                     float num48 = 13f;//25 was 40
-                    float invulnDamageMult = 1.2f;
+                    float invulnDamageMult = 1.24f;
                     int type = ModContent.ProjectileType<FireTrails>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);
                     float rotation = (float)Math.Atan2(vector8.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
