@@ -43,9 +43,9 @@ namespace tsorcRevamp.Items
         {
             DisplayName.SetDefault("Crest of Water");
             Tooltip.SetDefault("A shard of crystallized water\n" +
-                               "A second piece. Are these artifacts part of a puzzle?\n" +
+                               "A second piece. 'Are these artifacts part of a puzzle?'"\n" +
                                "This shard contains a riddle: \"Beneath the Burning hot sun,\n" +
-                               "sheltered from the blistering Western Winds, a Violet Glow illuminates the path.\"");
+                               "sheltered from the blistering Western Winds, Black Smoke with a faint Violet Glow illuminates the path.\"");
         }
     }
     public class CrestOfEarth : Crest
@@ -77,7 +77,7 @@ namespace tsorcRevamp.Items
             DisplayName.SetDefault("Crest of Corruption");
             Tooltip.SetDefault("A shard of glowing demonite, oozing with phazon\n" +
                                "One of eight. On the underside it says simply:\n" +
-                               "\"Below a Broken, Familiar Bridge, you will find me.\"");
+                               "\"Below a Broken, familiar Bridge, you will find me.\"");
         }
     }
 
@@ -93,7 +93,9 @@ namespace tsorcRevamp.Items
             DisplayName.SetDefault("Crest of Sky");
             Tooltip.SetDefault("Half of a shard of oxygenated carbonate\n" +
                                "Combined with the second half, this makes one of eight. On its side it contains a clue:\n" +
-                               "\"Beneath the Burning Sun, Below the Purple Light, a Chlorophyte Gate opens the way.\"");
+                               "\"Two paths lead to my entrance. Below the Oasis in the Desert, Serris unlocks the Way.\n" +
+                               "\"From below a familiar, Violet Smoke, a Chlorophyte Gate guards the other.\"");
+                
         }
     }
 
@@ -140,10 +142,10 @@ namespace tsorcRevamp.Items
         {
             DisplayName.SetDefault("Crest of Stone");
             Tooltip.SetDefault("A shard of solar-charged masonry\n" +
-                              "One of eight. Could this be the last one? \n" +
+                              "One of eight.\n" +
                                "\"When I fit all the pieces together, there's still something missing.\"\n" +
-                               "This crest contains a riddle: \n" +
-                               "\"Towering Heights, Far to the West. The Eye of Attraidies looks to the Sky Above. He is near.\"");
+                               "This crest contains the final riddle: \n" +
+                               "\"Towering Heights, Far to the West. The Molten Eye of Attraidies looks to the Sky Above. He is near.\"");
         }
     }
 }
