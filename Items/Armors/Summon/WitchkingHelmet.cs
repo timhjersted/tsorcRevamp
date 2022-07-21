@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void UpdateArmorSet(Player player)
         {
             player.setBonus = "Set Bonus: +50% whip range, +25% whip speed\n+30% movement speed\nKnockback and fall damage immunity";
-            player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
+            player.GetAttackSpeed(DamageClass.Summon) += 0.35f;
             player.whipRangeMultiplier += 0.5f;
             player.moveSpeed += 0.3f;
             player.noKnockback = true;
