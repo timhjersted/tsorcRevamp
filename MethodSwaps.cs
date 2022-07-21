@@ -512,6 +512,10 @@ namespace tsorcRevamp
                     validItem = false;
                     break;
                 }
+                if (player.buffImmune[buffType]) {
+                    validItem = false;
+                    break;
+                }
             }
 
             if (Main.lightPet[item.buffType] || Main.vanityPet[item.buffType])
