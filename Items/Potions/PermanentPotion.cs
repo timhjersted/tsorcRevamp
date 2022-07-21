@@ -108,11 +108,10 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
                 modPlayer.ActivePermanentPotions.Add(PermanentID);
                 PotionEffect(player);
                 MakeImmuneToBuff(player);
-            }
-
-            if (ExclusivePermanents != null) {
-                foreach (PermanentPotion check in ExclusivePermanents) {
-                    check.MakeImmuneToBuff(player);
+                if (ExclusivePermanents != null) {
+                    foreach (PermanentPotion check in ExclusivePermanents) {
+                        check.MakeImmuneToBuff(player);
+                    }
                 }
             }
         }
