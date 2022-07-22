@@ -19,14 +19,29 @@ namespace tsorcRevamp.Projectiles
             Projectile.height = 30;
             Projectile.penetrate = 5;
             Projectile.friendly = true;
-            Projectile.tileCollide = false;
+            if (Main.dayTime)
+            {
+                Projectile.tileCollide = true;
+            }
+            else
+            {
+                Projectile.tileCollide = false;
+            }
             Projectile.DamageType = DamageClass.Melee;
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
-            Color color = Color.White * 1f;
+            Color color;
+            if (Main.dayTime)
+            {
+                color = lightColor;
+            }
+            else
+            {
+                color = Color.White;
+            }
 
             if (Projectile.ai[0] > 8)
             {

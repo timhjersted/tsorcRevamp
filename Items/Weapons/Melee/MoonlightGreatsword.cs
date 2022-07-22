@@ -13,7 +13,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("The Moonlight Greatsword, the sword of legend..." +
-                                "\nGlows and gains magic damage scaling at night" +
+                                "\nGlows and gains piercing projectiles at night" +
+                                "\nScales with your magic or melee stats, whichever is higher" +
                                 "\nLaunches glimmering waves of moonlight");
         }
         public override void SetDefaults()
@@ -37,18 +38,18 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            if (!Main.dayTime && player.GetTotalDamage(DamageClass.Magic).ApplyTo(100000) > 100000)
+            if (player.GetTotalDamage(DamageClass.Magic).ApplyTo(100) < player.GetTotalDamage(DamageClass.Melee).ApplyTo(100))
             {
-                damage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(damage);
+                Item.DamageType = DamageClass.Melee;
+            }
+            else
+            {
+                Item.DamageType = DamageClass.Magic;
             }
         }
 
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
         {
-            if (!Main.dayTime && player.GetTotalDamage(DamageClass.Magic).ApplyTo(100000) > 100000)
-            {
-                damage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(damage);
-            }
         }
 
         Texture2D glowTexture;

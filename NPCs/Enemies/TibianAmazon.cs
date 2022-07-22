@@ -94,10 +94,18 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             tsorcRevampAIs.FighterAI(NPC, 1.8f, 0.15f, enragePercent: 0.2f, enrageTopSpeed: 2.2f);
             tsorcRevampAIs.SimpleProjectile(NPC, ref knifeTimer, 90, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17);
+        }
 
-            if (NPC.justHit)
+        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        {
+            knifeTimer = 0;
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        {
+            if (projectile.DamageType == DamageClass.Melee)
             {
-                knifeTimer = 60;
+                knifeTimer = 0;
             }
         }
 

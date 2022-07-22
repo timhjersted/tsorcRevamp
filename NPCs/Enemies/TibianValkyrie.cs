@@ -80,10 +80,18 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             tsorcRevampAIs.FighterAI(NPC, 1.65f, 0.11f, enragePercent: 0.5f, enrageTopSpeed: 2.4f);
             tsorcRevampAIs.SimpleProjectile(NPC, ref spearTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 10, 8, Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0), shootSound: SoundID.Item17);
+        }
 
-            if (NPC.justHit)
+        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        {
+            spearTimer = 0;
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        {
+            if(projectile.DamageType == DamageClass.Melee)
             {
-                spearTimer = 150;
+                spearTimer = 0;
             }
         }
 

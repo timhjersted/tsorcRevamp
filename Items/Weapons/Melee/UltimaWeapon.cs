@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.LightPurple;
-            Item.damage = 596;
+            Item.damage = 500;
             Item.height = 64;
             Item.width = 64;
             Item.knockBack = 14f;
