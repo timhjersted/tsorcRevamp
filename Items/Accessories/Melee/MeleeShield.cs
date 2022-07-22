@@ -12,7 +12,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("For melee warriors only" +
-                                "\nGrants immunity to knockback");
+                                "\nGrants immunity to knockback and fire blocks" +
+                                "\nReduces movement speed by 20%");
         }
         public override void SetDefaults()
         {
@@ -23,6 +24,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         }
         public override void UpdateEquip(Player player)
         {
+            player.moveSpeed *= 0.8f;
             player.noKnockback = true;
             player.fireWalk = true;
             player.manaCost += 0.7f;
@@ -57,8 +59,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
              //insert the extra tooltip line
                 tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "",
                 "Plus 6% damage reduction" +
-                "\nReduces Ranged, Magic and Summoner Damage by 85%. +70% mana cost" +
-                "\n-20% move speed"));
+                "\nReduces Ranged, Magic and Summoner Damage by 85%. +70% mana cost"));
             }
         }
 
@@ -74,8 +75,6 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void UpdateEquip(Player player)
         {
             base.UpdateEquip(player);
-            player.moveSpeed -= 0.1f;
-            player.manaCost += 0.7f;
             player.endurance += 0.06f;
             player.GetDamage(DamageClass.Melee) += 0f;
             player.GetDamage(DamageClass.Magic) -= 0.85f;
@@ -113,8 +112,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
              //insert the extra tooltip line
                 tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "",
                 "Plus 8% damage reduction" +
-                "\nReduces Ranged, Magic and Summoner Damage by 150%. +70% mana cost" +
-                "\n-20% move speed"));
+                "\nReduces Ranged, Magic and Summoner Damage by 150%. +70% mana cost"));
             }
         }
         public override void SetDefaults()
@@ -128,13 +126,11 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void UpdateEquip(Player player)
         {
             base.UpdateEquip(player);
-            player.moveSpeed -= 0.2f;
             player.endurance += 0.08f;
             player.GetDamage(DamageClass.Melee) += 0f;
             player.GetDamage(DamageClass.Magic) -= 1.5f;
             player.GetDamage(DamageClass.Ranged) -= 1.5f;
             player.GetDamage(DamageClass.Summon) -= 1.5f;
-            player.manaCost += 0.7f;
         }
 
         public override void AddRecipes()
@@ -167,8 +163,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
              //insert the extra tooltip line
                 tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "",
                 "Plus immunity to On Fire and 10% damage reduction" +
-                "\nReduces Ranged, Magic and Summoner Damage by 150%. +70% mana cost" +
-                "\n-20% move speed"));
+                "\nReduces Ranged, Magic and Summoner Damage by 150%. +70% mana cost"));
             }
         }
         public override void SetDefaults()
@@ -182,13 +177,11 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void UpdateEquip(Player player)
         {
             base.UpdateEquip(player);
-            player.moveSpeed -= 0.2f;
             player.endurance += 0.1f;
             player.GetDamage(DamageClass.Melee) += 0f;
             player.GetDamage(DamageClass.Magic) -= 1.5f;
             player.GetDamage(DamageClass.Ranged) -= 1.5f;
             player.GetDamage(DamageClass.Summon) -= 1.5f;
-            player.manaCost += 0.7f;
             player.buffImmune[BuffID.OnFire] = true;
         }
 
@@ -214,7 +207,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
             Tooltip.SetDefault("A legendary shield for melee warriors only" +
                 "\nGrants immunity to knockback and nearly all debuffs, plus 12% damage reduction" +
                 "\nReduces Ranged, Magic and Summoner Damage by 300%. +70% mana cost" +
-                "\n-20% move speed");
+                "\nReduces movement speed by 20%");
         }
 
         public override void SetDefaults()
@@ -228,13 +221,11 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void UpdateEquip(Player player)
         {
             base.UpdateEquip(player);
-            player.moveSpeed -= 0.2f;
             player.endurance += 0.12f;
             player.GetDamage(DamageClass.Melee) += 0f;
             player.GetDamage(DamageClass.Magic) -= 3f;
             player.GetDamage(DamageClass.Ranged) -= 3f;
             player.GetDamage(DamageClass.Summon) -= 3f;
-            player.manaCost += 0.7f;
             player.buffImmune[BuffID.Poisoned] = true;
             player.buffImmune[BuffID.Darkness] = true;
             player.buffImmune[BuffID.Cursed] = true;

@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
             player.thorns = 1f;
             player.endurance += 0.04f;
-            player.moveSpeed += 0.05f;
+            player.moveSpeed *= 0.95f;
             player.GetDamage(DamageClass.Ranged) -= 0.25f;
             player.GetDamage(DamageClass.Magic) -= 0.25f;
             player.GetDamage(DamageClass.Summon) -= 0.25f;

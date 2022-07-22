@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
             player.thorns = 1f;
             player.fireWalk = true;
             player.endurance += 0.05f;
-            player.moveSpeed -= 0f;
+            player.moveSpeed *= 1f;
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)

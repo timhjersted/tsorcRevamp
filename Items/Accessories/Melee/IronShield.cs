@@ -30,6 +30,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void UpdateEquip(Player player)
         {
             player.endurance += 0.04f;
+            player.moveSpeed *= 0.9f;
             player.GetDamage(DamageClass.Ranged) -= 0.2f;
             player.GetDamage(DamageClass.Magic) -= 0.2f;
             player.GetDamage(DamageClass.Summon) -= 0.2f;
