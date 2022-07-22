@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.value = 60000;
             NPC.knockBackResist = 0.0f;
             NPC.lavaImmune = true;
-
+            NPC.boss = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Poisoned] = true;

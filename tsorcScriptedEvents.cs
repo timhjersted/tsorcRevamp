@@ -194,7 +194,7 @@ namespace tsorcRevamp
             ScriptedEvent TheRage = new ScriptedEvent(new Vector2(7000, 1845), 30, ModContent.NPCType<NPCs.Bosses.TheRage>(), DustID.GoldFlame, true, true, "The Rage awakens!", Color.Red, false);
 
             //ANCIENT DEMON (FORGOTTEN CITY, CLOSE TO FIRE TEMPLE)
-            ScriptedEvent AncientDemon = new ScriptedEvent(new Vector2(5316, 1805), 25, ModContent.NPCType<NPCs.Enemies.AncientDemon>(), DustID.GoldFlame, true, false, "What did you expect to find here human?... Your hubris will be your undoing...", Color.MediumPurple, false);
+            ScriptedEvent AncientDemon = new ScriptedEvent(new Vector2(5316, 1805), 25, ModContent.NPCType<NPCs.Bosses.AncientDemon>(), DustID.GoldFlame, true, false, "What did you expect to find here human?... Your hubris will be your undoing...", Color.MediumPurple, false);
             AncientDemon.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 1, 5000 });
 
             //ANCIENT OOLACILE DEMON (EARLY-GAME)

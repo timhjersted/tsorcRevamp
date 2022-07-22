@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Enemies
+namespace tsorcRevamp.NPCs.Bosses
 {
     class AncientDemon : ModNPC
     {
@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 76000;
             NPC.knockBackResist = 0;
             NPC.lavaImmune = true;
-
+            NPC.boss = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Poisoned] = true;
