@@ -13,9 +13,9 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("'Everyone will stay away from you'" +
-                             "\nReduces damage taken by 7% and gives thorn buff" +
-                             "\nbut also reduces non-melee damage by 25%" +
-                             "\nCan be upgraded with an Obsidian Shield and 10000 Dark Souls");
+                             "\nReduces damage taken by 4% and gives thorn buff" +
+                             "\nbut also reduces non-melee damage by 25% and movement speed by 5%" +
+                             "\nCan be upgraded with an Obsidian Shield and 5000 Dark Souls");
 
         }
 
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         {
             Item.width = 28;
             Item.height = 28;
-            Item.defense = 8;
+            Item.defense = 3;
             Item.rare = ItemRarityID.Green;
             Item.accessory = true;
             Item.value = PriceByRarity.Green_2;
@@ -33,7 +33,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
         {
 
             player.thorns = 1f;
-            player.endurance += 0.07f;
+            player.endurance += 0.04f;
+            player.moveSpeed += 0.05f;
             player.GetDamage(DamageClass.Ranged) -= 0.25f;
             player.GetDamage(DamageClass.Magic) -= 0.25f;
             player.GetDamage(DamageClass.Summon) -= 0.25f;

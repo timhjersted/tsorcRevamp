@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Powerful, but reduces non-melee damage by 30%" +
-                               "\nGreat Shield that reduces damage taken by 8%, grants immunity to knockback and gives thorns buff" +
+                               "\nGreat Shield that reduces damage taken by 5%, grants immunity to knockback and gives thorns buff" +
                                "\nAlso provides immunity to fire blocks");
         }
 
@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         {
             Item.width = 28;
             Item.height = 38;
-            Item.defense = 3;
+            Item.defense = 4;
             Item.accessory = true;
             Item.value = PriceByRarity.Orange_3;
             Item.rare = ItemRarityID.Orange;
@@ -33,7 +33,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
             player.GetDamage(DamageClass.Summon) -= 0.3f;
             player.thorns = 1f;
             player.fireWalk = true;
-            player.endurance += 0.08f;
+            player.endurance += 0.05f;
+            player.moveSpeed -= 0f;
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
@@ -43,7 +44,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
             if (ttindex != -1)
             {// if we find one
                 //insert the extra tooltip line
-                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "RevampShieldDR", "Reduces damage taken by 8%"));
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "RevampShieldDR", ""));
             }
         }
 
@@ -52,7 +53,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ObsidianShield);
             recipe.AddIngredient(ModContent.ItemType<SpikedIronShield>());
-            recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 10000);
+            recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 5000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
