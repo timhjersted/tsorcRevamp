@@ -117,7 +117,7 @@ namespace tsorcRevamp.Tiles
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3397, 1827, 2, 2), ModContent.ItemType<Items.PowerWithin>(), 1));
 
             //Underworld, in ceiling left of WoF summoning pedestal above lava
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3235, 1839, 2, 2), ItemID.HeartreachPotion, 5));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3235, 1839, 2, 2), ItemID.HeartreachPotion, 9));
 
             //Somewhere in the hallowed Caves
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(7070, 1383, 2, 2), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1));
