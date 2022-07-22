@@ -1,3 +1,4 @@
+/*
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -38,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		}
 		public override void AddRecipes()
 		{
-			/*
+			
 			Terraria.Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.DemoniteBar, 10);
 			recipe.AddIngredient(ItemID.CrimtaneBar, 10);
@@ -47,7 +48,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6900);
 
 			recipe.AddTile(TileID.DemonAltar);
-			recipe.Register();*/
+			recipe.Register();
 		}
 	}
 }
+*/

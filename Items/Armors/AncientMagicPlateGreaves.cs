@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿/*
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -25,7 +26,7 @@ namespace tsorcRevamp.Items.Armors
         {
             player.moveSpeed += 0.35f;
         }
-        /*
+
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
@@ -35,7 +36,6 @@ namespace tsorcRevamp.Items.Armors
 
             recipe.Register();
         }
-        */
     }
 }
-
+*/

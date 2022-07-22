@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿/*
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -27,7 +28,7 @@ namespace tsorcRevamp.Items.Armors
         {
             player.GetAttackSpeed(DamageClass.Generic) += 0.1f;
         }
-        /*
+
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
@@ -37,6 +38,6 @@ namespace tsorcRevamp.Items.Armors
 
             recipe.Register();
         }
-        */
     }
 }
+*/

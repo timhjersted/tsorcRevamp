@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿/*
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -52,7 +53,7 @@ namespace tsorcRevamp.Items.Armors
                 player.AddBuff(ModContent.BuffType<Buffs.MagicPlatingLight>(), 1);
             }
         }
-/* 
+
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
@@ -62,6 +63,6 @@ namespace tsorcRevamp.Items.Armors
 
             recipe.Register();
         }
-*/
     }
 }
+*/
