@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.extraUpdates = 1;
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = -1;
-			Projectile.WhipSettings.Segments = 22;
+			Projectile.WhipSettings.Segments = 16;
 			Projectile.WhipSettings.RangeMultiplier = 1.1f; //only thing affecting the actual whip range
 		}
 
@@ -178,47 +178,17 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 					float t = Timer / timeToFlyOut;
 					scale = MathHelper.Lerp(0.5f, 1.5f, Utils.GetLerpValue(0.1f, 0.7f, t, true) * Utils.GetLerpValue(0.9f, 0.7f, t, true));
 				}
-				else if (i == 22)
+				else if (i == 16)
 				{
 					frame.Y = 84;
 					frame.Height = 12;
 				}
-				else if (i == 21)
+				else if (i == 15)
 				{
 					frame.Y = 78;
 					frame.Height = 6;
 				}
-				else if (i == 20) //loops below
-				{
-					frame.Y = 60;
-					frame.Height = 18;
-				}
-				else if (i == 19)
-				{
-					frame.Y = 42;
-					frame.Height = 18;
-				}
-				else if (i == 18)
-				{
-					frame.Y = 60;
-					frame.Height = 18;
-				}
-				else if (i == 17)
-				{
-					frame.Y = 42;
-					frame.Height = 18;
-				}
-				else if (i == 16)
-				{
-					frame.Y = 60;
-					frame.Height = 18;
-				}
-				else if (i == 15)
-				{
-					frame.Y = 42;
-					frame.Height = 18;
-				}
-				else if (i == 14)
+				else if (i == 14) //loops below
 				{
 					frame.Y = 60;
 					frame.Height = 18;
