@@ -42,13 +42,13 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.noUseGraphic = true;
 
 		}
-		/*
 		public override void AddRecipes()
 		{
 			
 			Terraria.Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<EnchantedWhip>(), 1);
 			recipe.AddIngredient(ItemID.CoolWhip, 1);
+			recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 5);
 			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
 
 			recipe.AddTile(TileID.DemonAltar);

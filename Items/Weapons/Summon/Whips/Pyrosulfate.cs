@@ -45,6 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Terraria.Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.DemoniteBar, 4);
 			recipe.AddIngredient(ItemID.CursedFlame, 20);
+			recipe.AddIngredient(ItemID.SoulofNight, 5);
 			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
 
 			recipe.AddTile(TileID.DemonAltar);
