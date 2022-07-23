@@ -423,7 +423,7 @@ namespace tsorcRevamp
             startingItems.Add(PotionBagItem);
 
             Item MastersScroll = new Item();
-            PotionBagItem.SetDefaults(ModContent.ItemType<MastersScroll>());
+            MastersScroll.SetDefaults(ModContent.ItemType<MastersScroll>());
             startingItems.Add(MastersScroll);
 
             return startingItems;
