@@ -77,7 +77,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 				// Plays a whipcrack sound at the tip of the whip.
 				List<Vector2> points = Projectile.WhipPointsForCollision;
 				Projectile.FillWhipControlPoints(Projectile, points);
-				SoundEngine.PlaySound(SoundID.Item153, points[points.Count - 1]);
+				SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Item/SummonerWhipcrack") with { Volume = 0.6f, PitchVariance = 0.3f}, points[points.Count - 1]);
 			}
 		}
 

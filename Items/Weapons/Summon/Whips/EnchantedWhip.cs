@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -35,11 +36,12 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.useStyle = ItemUseStyleID.Swing;
 			Item.useTime = 30; // for some reason a lower use speed gives it increased range....
 			Item.useAnimation = 30;
-			Item.UseSound = SoundID.Item152;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
 
 		}
+
+
 		public override void AddRecipes()
 		{
 			Terraria.Recipe recipe = CreateRecipe();

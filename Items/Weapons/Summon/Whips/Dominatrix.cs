@@ -31,7 +31,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.useStyle = ItemUseStyleID.Swing;
 			Item.useTime = 30; // for some reason a lower use speed gives it increased range....
 			Item.useAnimation = 30;
-			Item.UseSound = SoundID.Item152;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
 
