@@ -184,8 +184,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Necromancer Gore 3").Type, 1.1f);
                 }
             }
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DyingWindShard>(), 8 + Main.rand.Next(8));
         }
         #endregion
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Ammo.TeslaBolt>(), 1, 8, 16));
+        }
     }
 }

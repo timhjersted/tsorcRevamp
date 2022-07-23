@@ -105,7 +105,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 4, 0.2f, 0.2f, 100, default(Color), 1f);
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 4, 0.2f, 0.2f, 100, default(Color), 1f);
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 4, 0.2f, 0.2f, 100, default(Color), 1f);
-            if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>());
+        }
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.FlameOfTheAbyss>(), 2));
         }
     }
 }

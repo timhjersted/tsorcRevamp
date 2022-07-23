@@ -92,8 +92,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 4, 0.2f, 0.2f, 200, default(Color), 2f);
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 4, 0.2f, 0.2f, 200, default(Color), 2f);
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 4, 0.2f, 0.2f, 200, default(Color), 2f);
+        }
 
-            if (Main.rand.Next(99) < 40) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DyingWindShard>());
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.DyingWindShard>(), 100, 1, 1, 40));
         }
     }
 }

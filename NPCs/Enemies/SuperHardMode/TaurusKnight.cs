@@ -246,10 +246,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     }
                 }
             }
-
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 5);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 7);
         }
         #endregion
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 1, 5, 5));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 7, 7));
+        }
     }
 }

@@ -53,10 +53,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             return chance;
         }
 
-        public override void OnKill()
-        {
-            if (Main.rand.NextBool(3)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RottenChunk, Main.rand.Next(1, 5));
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("CursedSoul").Type, Main.rand.Next(8, 16));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.CursedSoul>(), 1, 8, 16));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.RottenChunk, 100, 1, 5, 33));
+
         }
 
         public override void HitEffect(int hitDirection, double damage)

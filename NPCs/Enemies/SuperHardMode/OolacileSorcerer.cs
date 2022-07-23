@@ -400,20 +400,19 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Oolacile Sorcerer Gore 3").Type, 1f);
                 }
             }
-
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>());
-            if (Main.rand.Next(99) < 5) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.PurgingStone>());
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.RedTitanite>());
-            if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CursedSoul>());
-            if (Main.rand.Next(99) < 7) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
-            //if (Main.rand.Next(99) < 7) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.PiercingPotion>());
-            if (Main.rand.Next(99) < 7) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>());
-            //if (Main.rand.Next(99) < 7) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.FiresoulPotion>());
-            if (Main.rand.Next(99) < 7) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>());
-            if (Main.rand.Next(99) < 7) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>());
-            if (Main.rand.Next(99) < 7) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());
-
         }
         #endregion
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>()));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 20));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.CursedSoul>(), 2));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 100, 1, 1, 7));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.StrengthPotion>(), 100, 1, 1, 7));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 100, 1, 1, 7));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 100, 1, 1, 7));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.AttractionPotion>(), 100, 1, 1, 7));
+        }
     }
 }

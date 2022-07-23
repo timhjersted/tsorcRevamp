@@ -541,18 +541,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
         }
-        public override void OnKill()
-        {
-           
-            //if(Main.rand.Next(99) < 60)Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.Piercing>(), 1);
-            if (Main.rand.Next(99) < 40) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>(), 10);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1 + Main.rand.Next(1));
-            if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 10);
-            if (Main.rand.Next(99) < 2) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.Ragnarok>(), 1);
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.StrengthPotion>(), 100, 10, 10, 40));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 10, 10, 10));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Ragnarok>(), 50));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 1, 1, 2));
         }
     }
-
-
-
-   
 }

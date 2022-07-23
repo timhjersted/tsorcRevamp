@@ -480,17 +480,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Tetsujin Gore 3").Type, 0.9f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Tetsujin Gore 3").Type, 0.9f);
             }
-            if (Main.rand.NextBool(2))
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CompactFrame>());
-            }
-            else
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DestructionElement>());
-            }
-
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Ammo.TeslaBolt>(), 200 + Main.rand.Next(30));
         }
         #endregion
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Ammo.TeslaBolt>(), 1, 200, 230));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.OneFromOptions(1, ModContent.ItemType<Items.CompactFrame>(), ModContent.ItemType<Items.DestructionElement>()));
+        }
     }
 }
