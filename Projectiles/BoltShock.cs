@@ -7,13 +7,13 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
-    class RevampedBolt1 : Enemy.EnemyGenericLaser
+    class BoltShock : ModProjectile
     {
         //WIP for the new bolt tome attack that Neph made
 
         public override void SetDefaults()
         {
-
+            Projectile.hostile = true;
         }
         public override void AI()
         {
@@ -22,18 +22,12 @@ namespace tsorcRevamp.Projectiles
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            int? closestNPCIndex = UsefulFunctions.GetClosestEnemyNPC(Projectile.Center);
-            if(closestNPCIndex != null)
-            {
-                NPC newTarget = Main.npc[closestNPCIndex.Value];
-                Vector2 direction = UsefulFunctions.GenerateTargetingVector(Projectile.Center, newTarget.Center, 1);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, direction, ModContent.ProjectileType<RevampedBolt1>(), (int)(Projectile.damage * 1.5f), 0.5f, Projectile.owner);
-            }           
-            
             if (Main.rand.NextBool(2))
             {
                 target.AddBuff(Mod.Find<ModBuff>("ElectrocutedBuff").Type, 120);
             }
+
+            
         }
         public override void Kill(int timeLeft)
         {
@@ -42,8 +36,19 @@ namespace tsorcRevamp.Projectiles
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit53 with { Volume = 0.8f, PitchVariance = 0.3f }, Projectile.Center);
         }
 
+        public static Texture2D BoltStart;
+        public static Texture2D BoltMiddle1;
+        public static Texture2D BoltMiddle2;
+        public static Texture2D BoltEnd;
+
         public override bool PreDraw(ref Color lightColor)
         {
+            BoltStart = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/BoltBounceStart", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            BoltStart = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/BoltBounceStart", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            BoltStart = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/BoltBounceStart", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            BoltStart = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/BoltBounceStart", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            BoltStart = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/BoltBounceStart", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+
             Main.instance.LoadProjectile(Projectile.type);
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
 

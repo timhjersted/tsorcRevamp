@@ -35,7 +35,12 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useTime = 27;
             Item.value = PriceByRarity.Blue_1;
             Item.width = 34;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Bolt1Ball>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Bolt1Revamped>();
+        }
+
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+        {
+            position += velocity * 6;
         }
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
@@ -45,6 +50,14 @@ namespace tsorcRevamp.Items.Weapons.Magic
                 player.AddBuff(BuffID.Electrified, 90);
             }
 
+            //Every time the player shoots, clear the "bolt chain immunity" from every NPC so they can be hit again
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].HasBuff(ModContent.BuffType<Buffs.BoltChainImmunity>()))
+                {
+                    Main.npc[i].DelBuff(Main.npc[i].FindBuffIndex(ModContent.BuffType<Buffs.BoltChainImmunity>()));
+                }
+            }
             return true;
         }
 
