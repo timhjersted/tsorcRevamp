@@ -37,14 +37,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         int fireBreathDamage = 48;
-        int iceStormDamage = 53;
+        int iceStormDamage = 60;
         int greatFireballDamage = 49;
         int blazeBallDamage = 48;
-        int purpleCrushDamage = 35;
-        int meteorDamage = 55;
+        int purpleCrushDamage = 45;
+        int meteorDamage = 65;
         int tornadoDamage = 45;
         int obscureSeekerDamage = 50;
-        int crystalFireDamage = 50;
+        int crystalFireDamage = 60;
         int fireTrailsDamage = 35;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {

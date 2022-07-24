@@ -108,6 +108,7 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.GraniteFlyer, 0.4f);
                 pool.Add(NPCID.Salamander4, 0.4f);
+                pool.Add(NPCID.MeteorHead, 0.01f);
             }
 
             //HARD MODE SECTION
@@ -116,7 +117,7 @@ namespace tsorcRevamp.NPCs
             if (spawnInfo.SpawnTileType == TileID.LihzahrdBrick && spawnInfo.Lihzahrd && Main.hardMode)
             {
                 pool.Add(NPCID.DesertDjinn, 0.075f); 
-                pool.Add(NPCID.DiabolistWhite, 0.05f); //was 0.1
+                pool.Add(NPCID.DiabolistWhite, 0.02f); //was 0.1
                 pool.Add(ModContent.NPCType<Enemies.RingedKnight>(), 0.25f);
                 pool.Add(ModContent.NPCType<Enemies.LothricSpearKnight>(), 0.05f);
                 pool.Add(ModContent.NPCType<Enemies.LothricKnight>(), 0.05f);
@@ -132,12 +133,13 @@ namespace tsorcRevamp.NPCs
             //machine temple (in water)
             if (spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
             {
-                pool.Add(NPCID.GreenJellyfish, 1f);
+                pool.Add(NPCID.GreenJellyfish, 3f);
             }
             //machine temple (not in water)
             if (!spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
             {
-                pool.Add(NPCID.DiabolistWhite, 0.02f);
+                pool.Add(ModContent.NPCType<Enemies.SuperHardMode.IceSkeleton>(), 0.2f);
+                pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 1f);
             }
             //sky
             if (spawnInfo.Player.ZoneSkyHeight && Main.hardMode)

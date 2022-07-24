@@ -25,6 +25,17 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 200;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.MutantToadBanner>();
+
+            if (Main.hardMode)
+            {
+                NPC.defense = 24;
+                NPC.value = 500;
+                NPC.damage = 120;
+                NPC.lifeMax = 200;
+                NPC.knockBackResist = 0.1f;
+
+            }
+
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -85,9 +96,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitPlayer(Player player, int damage, bool crit) //hook works!
         {
-            if (Main.rand.NextBool(2))
-            {
+            
                 player.AddBuff(20, 1800, false); //poisoned!
+            
+
+            if (Main.hardMode)
+            {
+                //player.AddBuff(20, 1800, false); //poisoned!
+
             }
 
         }
