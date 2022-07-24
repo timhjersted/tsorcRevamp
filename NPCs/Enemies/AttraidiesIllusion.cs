@@ -390,7 +390,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.ManaRegenerationPotion, 10, 1, 1, 9));
             npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GoldenKey, 10, 1, 1, 3));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Magic.AquamarineRing>(), 20));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GreaterHealingPotion, 2, 1, 1, 3));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GreaterHealingPotion, 1, 2, 2));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
         }
     }
