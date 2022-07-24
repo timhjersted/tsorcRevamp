@@ -366,7 +366,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            for (int j = 0; j < 50; j++)
+            for (int j = 0; j < 30; j++)
             {
                 int dust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 16, Main.rand.Next(-4, 4), Main.rand.Next(-4, 4), 200, Color.Salmon, 2.5f);
                 Main.dust[dust].noGravity = true;
@@ -375,53 +375,23 @@ namespace tsorcRevamp.NPCs.Enemies
             Player player = Main.player[NPC.target];
             UsefulFunctions.BroadcastText("The Attraidies Illusion has been vanquished...", 190, 140, 150);
 
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("HealingElixir").Type);
-
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && (Main.rand.NextFloat() <= .5f))
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
             }
-            else
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 2);
-            }
-
-            if (Main.rand.NextFloat() <= .05f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("AquamarineRing").Type, 1, false, -1);
-            }
-            if (Main.rand.NextFloat() <= .3f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GoldenKey);
-            }
-            if (Main.rand.NextFloat() <= .9f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion);
-            }
-            if (Main.rand.NextFloat() <= .4f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion);
-            }
-            if (Main.rand.NextFloat() <= .01f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GillsPotion);
-            }
-            if (Main.rand.NextFloat() <= .1f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HunterPotion);
-            }
-            if (Main.rand.NextFloat() <= .6f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MagicPowerPotion);
-            }
-            if (Main.rand.NextFloat() <= .8f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion);
-            }
-            if (Main.rand.NextFloat() <= .2f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ShinePotion);
-            }
+        }
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ShinePotion, 5));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.RegenerationPotion, 5, 1, 1, 4));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.MagicPowerPotion, 5, 1, 1, 3));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HunterPotion, 5));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GillsPotion, 75));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.IronskinPotion, 5, 1, 1, 2));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.ManaRegenerationPotion, 10, 1, 1, 9));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GoldenKey, 10, 1, 1, 3));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Magic.AquamarineRing>(), 20));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GreaterHealingPotion, 2, 1, 1, 3));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
         }
     }
 }

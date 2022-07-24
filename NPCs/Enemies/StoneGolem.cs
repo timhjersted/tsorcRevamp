@@ -30,16 +30,12 @@ namespace tsorcRevamp.NPCs.Enemies
             return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.15f;
         }
 
-        public override void OnKill()
-        {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.StoneBlock, Main.rand.Next(5, 11));
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronOre, Main.rand.Next(1, 4)); //for ironskin potions/other
-            if (Main.rand.NextBool(6)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.EndurancePotion);
-            if (Main.rand.NextBool(5)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-            if (Main.rand.NextBool(15)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
-
-
-
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.StoneBlock, 1, 5, 10));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronOre, 1, 1, 4));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.EndurancePotion, 6));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.Lifegem>(), 5));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 15));
         }
     }
 }

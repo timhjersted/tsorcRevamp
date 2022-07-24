@@ -59,11 +59,9 @@ namespace tsorcRevamp.NPCs.Enemies
             archerBoltDamage = (int)(archerBoltDamage / 2);
         }
 
-        public override void OnKill()
-        {
-            if (Main.rand.NextBool(6)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1);
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 6));
         }
-
 
         #region Spawn
 

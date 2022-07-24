@@ -46,20 +46,18 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void OnKill()
-        {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Torch);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ThrowingKnife, Main.rand.Next(20, 50));
-            if (Main.rand.NextBool(20)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DeadChicken>());
-            if (Main.rand.NextBool(30) && !NPC.downedBoss1)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothHat>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothTunic>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothPants>());
-            }
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            int[] armorIDs = new int[] {
+                ModContent.ItemType<Items.Armors.Magic.RedClothHat>(),
+                ModContent.ItemType<Items.Armors.Magic.RedClothTunic>(),
+                ModContent.ItemType<Items.Armors.Magic.RedClothPants>(),
+            };
+            npcLoot.Add(new DropMultiple(armorIDs, 30, 1, !NPC.downedBoss1));
+
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.Torch));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ThrowingKnife, 1, 20, 50));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.DeadChicken>(), 20));
         }
-
-
 
 
         //Spawns on the Surface and into the Underground. Does not spawn in the Dungeon, Hardmode, Meteor, or if there are Town NPCs.

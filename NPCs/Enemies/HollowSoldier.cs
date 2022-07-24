@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -806,25 +807,25 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void OnKill()
         {
             Player player = Main.player[NPC.target];
-
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
-
-            if (Main.rand.NextBool(30)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
-            if (Main.rand.NextBool(15)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
             if (Main.rand.NextBool(15) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-            if (Main.rand.NextBool(15)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Melee.IronShield>(), 1, false, -1);
-            if (Main.rand.NextBool(15)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.CobaltShield, 1, false, -1);
-            if (Main.rand.NextBool(10)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("FadingSoul").Type);
-            if (Main.rand.NextBool(3)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion); }
-            if (Main.rand.NextBool(3)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.EndurancePotion); }
-            if (Main.rand.NextBool(30) && !NPC.downedBoss1)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothHat>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothTunic>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothPants>());
-            }
+        }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulShekel>(), 1, 3, 9));
+            npcLoot.Add(ItemDropRule.Common(ItemID.EndurancePotion, 3));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 3));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.CobaltShield, 15));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Melee.IronShield>(), 15));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Lifegem>(), 15));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 30));
+
+            int[] armorIDs = new int[] {
+                ModContent.ItemType<Items.Armors.Magic.RedClothHat>(),
+                ModContent.ItemType<Items.Armors.Magic.RedClothTunic>(),
+                ModContent.ItemType<Items.Armors.Magic.RedClothPants>(),
+            };
+            npcLoot.Add(new DropMultiple(armorIDs, 30, 1, !NPC.downedBoss1));
         }
 
         #region Drawing and Animation

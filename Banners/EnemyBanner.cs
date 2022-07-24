@@ -1031,7 +1031,7 @@ namespace tsorcRevamp.Banners
         public override string Texture => "tsorcRevamp/Banners/placeholder";
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Nearby players get a bonus against: Dworc Voodoomaster");
+            Tooltip.SetDefault("Nearby players get a bonus against: Dworc Alchemist");
         }
         public override void SetDefaults()
         {

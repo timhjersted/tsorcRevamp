@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static tsorcRevamp.SpawnHelper;
@@ -71,52 +72,35 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Player player = Main.player[NPC.target];
 
+            //this doesnt need to be bestiary'd
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
-            if (Main.rand.NextBool(10) && !NPC.downedBoss1)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothHat>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothTunic>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothPants>());
-            }
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Diamond, Main.rand.Next(1, 3));
-            if (Main.rand.NextBool(8)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.NextBool(8))
-            {
+            //and this literally *cant* be bestiary'd 
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.NextBool(8)) {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
             }
-            else
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HealingPotion, 2);
-            }
+        }
 
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(ItemDropRule.Common(ItemID.SpellTome, 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.DeadChicken>(), 20));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.AttraidiesRelic>(), 100, 1, 1, 12));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WandOfFire>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WandOfDarkness>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WoodenWand>(), 5));
+            npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 1, 1, 3));
+            npcLoot.Add(ItemDropRule.Common(ItemID.HealingPotion, 8, 2, 2));
+            npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 8));
 
-            if (Main.rand.NextFloat() <= .20f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("WoodenWand").Type, 1, false, -1);
-            }
-            if (Main.rand.NextFloat() <= .1f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("WandOfDarkness").Type, 1, false, -1);
-            }
-            if (Main.rand.NextFloat() <= .05f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("WandOfFire").Type, 1, false, -1);
-            }
-            if (Main.rand.NextFloat() <= .12f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("AttraidiesRelic").Type);
-            }
-            if (Main.rand.NextFloat() <= .05f) //lol dead chicken as rare as a fire wand
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
-            }
-            if (Main.rand.NextFloat() <= .1f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpellTome);
-            }
+            int[] armorIDs = new int[] {
+                ModContent.ItemType<Items.Armors.Magic.RedClothHat>(),
+                ModContent.ItemType<Items.Armors.Magic.RedClothTunic>(),
+                ModContent.ItemType<Items.Armors.Magic.RedClothPants>(),
+            };
+            //i just wanna say that, while terraria's convention is (denominator, numerator)
+            //and im following that convention with DropMultiple, i completely detest it
+            npcLoot.Add(new DropMultiple(armorIDs, 10, 1, !NPC.downedBoss1));
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)

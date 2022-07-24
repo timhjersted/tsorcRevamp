@@ -102,59 +102,29 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void OnKill()
         {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Torch, 1);
             Player player = Main.player[NPC.target];
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.NextBool(10))
             {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>(), Main.rand.NextBool(20) ? 3 : 1); // 1/5 chance of 3, else 1
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Lifegem>(), Main.rand.NextBool(20) ? 3 : 1); // 1/5 chance of 3, else 1
             }
-            else
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HealingPotion, Main.rand.NextBool(20) ? 6 : 1); // 1/5 chance of 6, else 1
-            }
+        }
 
-            if (Main.rand.NextFloat() < 0.6f)
-            { //60%
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ShinePotion, Main.rand.Next(1, 3));
-            }
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.CharcoalPineResin>(), 10));
+            //npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 100));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RegenerationPotion, 50));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.BattlePotion, 20));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SwiftnessPotion, 20));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SpelunkerPotion, 20));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ManaRegenerationPotion, 20));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.DunlendingAxe>(), 10));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<BoostPotion>(), 10));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.ShinePotion, 5, 1, 1, 3));
 
-            if (Main.rand.NextFloat() < 0.1f)
-            { //10%
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<BoostPotion>());
-            }
-            if (Main.rand.NextBool(10))
-            { //8%
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.DunlendingAxe>(), 1, false, -1);
-            }
-
-            if (Main.rand.NextBool(20))
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion);
-            }
-
-            if (Main.rand.NextBool(20))
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpelunkerPotion);
-            }
-            if (Main.rand.NextBool(20))
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SwiftnessPotion);
-            }
-            if (Main.rand.NextBool(20))
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.BattlePotion);
-            }
-            if (Main.rand.NextBool(50))
-            { //2%
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion, Main.rand.Next(1, 5));
-            }
-            if (Main.rand.NextBool(100))
-            { //1%
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<CrimsonPotion>());
-            }
-
-            if (Main.rand.NextBool(10)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("CharcoalPineResin").Type);
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.Torch, 50));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HealingPotion, 5));
         }
     }
 }

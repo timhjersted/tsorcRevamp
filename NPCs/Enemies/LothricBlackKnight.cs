@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -942,21 +943,22 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
 
+        }
 
-            //if (Main.rand.NextBool(10)) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenKotetsu>(), 1, false, -1);
-            //if (Main.rand.NextBool(10)) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Accessories.SpikedIronShield>(), 1, false, -1);
-            if (Main.rand.NextBool(5)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.LostUndeadSoul>());
-            if (Main.rand.NextBool(3)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RagePotion); }
-            if (Main.rand.NextBool(3)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.WrathPotion); }
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulShekel>(), 1, 36, 42));
+
+            IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
+            hmCondition.OnFailedConditions(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 4));
+            hmCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 10));
+            npcLoot.Add(hmCondition);
+
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.LostUndeadSoul>(), 5));
+            npcLoot.Add(ItemDropRule.Common(ItemID.RagePotion, 3));
+            npcLoot.Add(ItemDropRule.Common(ItemID.WrathPotion, 3));
         }
 
         #region Drawing and Animation

@@ -433,11 +433,10 @@ namespace tsorcRevamp.NPCs.Enemies
         {
 
             //UsefulFunctions.BroadcastText("A lost spirit has been freed from its curse...", 175, 75, 255);
-
-            Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
             if (NPC.life <= 0)
             {
-                for (int num36 = 0; num36 < 50; num36++)
+                //200 dust at once was a bit silly
+                for (int num36 = 0; num36 < 10; num36++)
                 {
                     {
                         Color color = new Color();

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -365,19 +366,29 @@ namespace tsorcRevamp.NPCs.Enemies
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Red Knight Gore 2").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Red Knight Gore 3").Type, 1f);
             }
-            if (Main.hardMode && Main.rand.Next(99) < 5) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenPearlSpear>(), 1);
-            if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 1);
-            if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion, 1);
-            if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion, 1);
-
-
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 1 + Main.rand.Next(1));
-                if (Main.rand.Next(99) < 5) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.PurgingStone>(), 1);
-            }
         }
         #endregion
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+
+            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.ForgottenPearlSpear>(), 20));
+
+
+            IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
+            hmCondition.OnSuccess(ItemDropRule.Common(ItemID.RegenerationPotion, 10));
+            npcLoot.Add(hmCondition);
+
+
+            IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 1, 2);
+            IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 20);
+            SuperHardmodeRule SHM = new();
+            IItemDropRule shmCondition = new LeadingConditionRule(SHM);
+            shmCondition.OnSuccess(drop);
+            shmCondition.OnSuccess(drop2);
+            npcLoot.Add(shmCondition);
+        }
 
         #region Debuffs
         public override void OnHitPlayer(Player player, int damage, bool crit)

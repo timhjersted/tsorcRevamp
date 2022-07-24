@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -194,17 +195,19 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Blood Splat").Type, 1.1f);
             }
+        }
 
-            if (Main.rand.Next(100) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion);
-            if (Main.rand.Next(100) < 30) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion);
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 2));
+            npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 100, 1, 1, 30));
 
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 1 + Main.rand.Next(1));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>());
-            }
-
-
+            IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 1, 2);
+            IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<Items.FlameOfTheAbyss>());
+            SuperHardmodeRule SHM = new();
+            IItemDropRule condition = new LeadingConditionRule(SHM);
+            condition.OnSuccess(drop);
+            condition.OnSuccess(drop2);
+            npcLoot.Add(condition);
         }
 
         /*

@@ -331,27 +331,11 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Player player = Main.player[NPC.target];
 
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>(), 1);
-            if (Main.rand.Next(100) < 20) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion, 2);
-
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 if (Main.rand.Next(100) < 35) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
                 if (Main.rand.Next(100) < 35) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
             }
-            else
-            {
-                if (Main.rand.Next(100) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 3);
-            }
-
-            if (Main.rand.Next(100) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion, 1);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion, 1);
-            if (Main.rand.Next(100) < 5) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.WandOfFrost>());
-            if (Main.rand.Next(100) < 1) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GillsPotion, 1);
-            if (Main.rand.Next(100) < 1) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HunterPotion, 1);
-            if (Main.rand.Next(100) < 60) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MagicPowerPotion, 2);
-            if (Main.rand.Next(100) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion, 1);
-            if (Main.rand.Next(100) < 20) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ShinePotion, 1);
 
             UsefulFunctions.BroadcastText("The Attraidies Illusion has been defeated...", 150, 150, 150);
             if (!Main.dedServ)
@@ -362,6 +346,20 @@ namespace tsorcRevamp.NPCs.Enemies
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Mindflayer Gore 2").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Mindflayer Gore 3").Type, 1f);
             }
+        }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ShinePotion, 5));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RegenerationPotion, 10));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.MagicPowerPotion, 10, 1, 1, 6));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HunterPotion, 50));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GillsPotion, 50));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WandOfFrost>(), 20));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ManaRegenerationPotion, 2));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GreaterHealingPotion, 2));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 5, 2, 2));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
         }
     }
 }

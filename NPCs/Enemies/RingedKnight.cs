@@ -21,9 +21,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
         //Anim
-        int shieldFrame;
-        int shieldAnimTimer;
-        bool countingUP = false;
+        //int shieldFrame;
+        //int shieldAnimTimer;
+        //bool countingUP = false;
 
 
         public override void SetStaticDefaults()
@@ -1048,14 +1048,17 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            if (Main.rand.NextBool(4)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
-            if (Main.rand.NextBool(4)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>());
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
-            if (Main.rand.NextBool(10)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientFireSword>(), 1, false, PrefixID.Legendary);
-            if (Main.rand.NextFloat() < 0.6f) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RagePotion); }
-            if (Main.rand.NextFloat() < 0.6f) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.WrathPotion); }
-            if (Main.rand.NextFloat() < 0.6f) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>()); }
+        }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 4));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 4));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.AncientFireSword>(), 10));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.RagePotion, 5, 1, 1, 3));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.WrathPotion, 5, 1, 1, 3));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 5, 1, 1, 3));
 
         }
 

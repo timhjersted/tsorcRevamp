@@ -392,5 +392,12 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.rand.NextFloat() >= 0.2f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>()); //80%
 
         }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.Wood, 1, 2, 4));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.GreenBlossom>(), 5, 1, 1, 4));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.CharcoalPineResin>(), 3));
+
+        }
     }
 }

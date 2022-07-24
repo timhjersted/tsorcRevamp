@@ -121,18 +121,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
         }
-        public override void OnKill()
-        {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("DarkSoul").Type);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Wood);
 
-            if (Main.rand.NextBool(3)) //sometimes drop 2 wood
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Wood);
-            }
-
-            if (Main.rand.NextBool(8)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
-
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.DarkSoul>()));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.Wood));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.Wood, 3));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.GreenBlossom>(), 8));
         }
     }
 }

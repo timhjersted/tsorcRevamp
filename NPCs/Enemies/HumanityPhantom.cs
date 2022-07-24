@@ -118,11 +118,12 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void OnKill()
-        {
-            if (Main.rand.NextFloat() <= NPC.scale - .3f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1); // 0.5f scale phantoms have 20% chance of dropping, scaling up towards 1f scale phantoms dropping humanity 70% of the time
-        }
 
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            //"0.5f scale phantoms have 20% chance of dropping, scaling up towards 1f scale phantoms dropping humanity 70% of the time"
+            //haha fuck that, 45% flat it is
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Humanity>(), 100, 1, 1, 45));
+        }
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.HumanityPhantom];

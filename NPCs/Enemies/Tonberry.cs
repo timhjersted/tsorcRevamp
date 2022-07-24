@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -97,16 +98,22 @@ namespace tsorcRevamp.NPCs.Enemies
                     Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Tonberry Gore 3").Type, 1f);
                 }
             }
-
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 5 + Main.rand.Next(5));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.WhiteTitanite>(), 5 + Main.rand.Next(5));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BlueTitanite>(), 5 + Main.rand.Next(5));
-            }
         }
         #endregion
 
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 5, 10);
+            IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<Items.WhiteTitanite>(), 1, 5, 10);
+            IItemDropRule drop3 = ItemDropRule.Common(ModContent.ItemType<Items.BlueTitanite>(), 1, 5, 10);
+
+            SuperHardmodeRule SHM = new();
+            IItemDropRule condition = new LeadingConditionRule(SHM);
+
+            condition.OnSuccess(drop);
+            condition.OnSuccess(drop2);
+            condition.OnSuccess(drop3);
+            npcLoot.Add(condition);
+        }
         static Texture2D spearTexture;
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {

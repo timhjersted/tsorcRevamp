@@ -57,8 +57,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Piscodemon Gore 3").Type, 1f);
             }
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 2);
-            if (Main.rand.Next(99) < 5) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.LightsBane, 1);
         }
         #endregion
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.LightsBane, 20));
+        }
     }
 }

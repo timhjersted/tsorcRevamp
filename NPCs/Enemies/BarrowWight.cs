@@ -336,15 +336,14 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void OnKill()
-        {
-            if (Main.rand.NextBool(5)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ShinePotion); }
-            if (Main.rand.NextBool(10)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion); }
-            if (Main.rand.NextBool(25)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MagicPowerPotion); }
-            if (Main.rand.NextBool(25)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion); }
-            if (Main.rand.NextBool(25)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpelunkerPotion); }
-            if (Main.rand.NextBool(5)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>(), 1, false, -1); }
-            if (Main.rand.NextBool(50)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>()); }
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ShinePotion, 5));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GreaterHealingPotion, 10));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.MagicPowerPotion, 25));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RegenerationPotion, 25));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SpelunkerPotion, 25));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>(), 5));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 40));
         }
 
         /* what the hell IS this? i cant find anything about it

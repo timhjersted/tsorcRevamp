@@ -193,11 +193,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.frame.Y = 0;
             }
         }
-        public override void OnKill()
-        {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>(), 3);
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>(), 1, 3, 3));
         }
-
         public override void HitEffect(int hitDirection, double damage)
         {
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));

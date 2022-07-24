@@ -233,26 +233,12 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void OnKill()
-        {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion);
-
-            if (Main.rand.NextBool(2))
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion);
-            }
-
-            if (Main.rand.NextFloat() <= .07f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpellTome);
-            }
-
-            if (Main.rand.NextFloat() <= .3f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>());
-            }
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.HealingElixir>(), 10, 1, 1, 3));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.SpellTome, 100, 1, 1, 7));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.ManaRegenerationPotion, 2));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GreaterHealingPotion, 1));
         }
-
 
         public override void HitEffect(int hitDirection, double damage)
         {

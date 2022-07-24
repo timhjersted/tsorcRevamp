@@ -32,22 +32,21 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.TibianValkyrieBanner>();
         }
 
-        public override void OnKill()
-        {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Torch);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.ThrowingSpear>(), Main.rand.Next(20, 76));
-            if (Main.rand.NextBool(10)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Melee.IronShield>(), 1, false, -1);
-            if (Main.rand.NextBool(10)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.OldHalberd>(), 1, false, -1);
-            if (Main.rand.NextBool(2)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Diamond);
-            if (Main.rand.NextBool(20)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DeadChicken>());
-            if (Main.rand.NextBool(30) && !NPC.downedBoss1)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothHat>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothTunic>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Magic.RedClothPants>());
-            }
-        }
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            int[] armorIDs = new int[] {
+                ModContent.ItemType<Items.Armors.Magic.RedClothHat>(),
+                ModContent.ItemType<Items.Armors.Magic.RedClothTunic>(),
+                ModContent.ItemType<Items.Armors.Magic.RedClothPants>(),
+            };
+            npcLoot.Add(new DropMultiple(armorIDs, 30, 1, !NPC.downedBoss1));
 
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.Torch));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Ranged.ThrowingSpear>(), 1, 20, 75));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Melee.IronShield>(), 10));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.OldHalberd>(), 10));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.Diamond, 2));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.DeadChicken>(), 20));
+        }
 
         #region Spawn
 

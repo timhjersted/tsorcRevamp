@@ -336,10 +336,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
         }
-        public override void OnKill()
-        {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Mushroom, Main.rand.Next(1, 3));
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ThrowingKnife, Main.rand.Next(20, 50));
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.Mushroom, 1, 1, 3));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ThrowingKnife, 1, 20, 50));
         }
     }
 }

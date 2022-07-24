@@ -64,9 +64,8 @@ namespace tsorcRevamp.NPCs.Enemies
             return 0;
         }
 
-        public override void OnKill()
-        {
-            if (Main.rand.Next(100) < 3) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>());
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>(), 100, 1, 1, 3));
         }
     }
 }

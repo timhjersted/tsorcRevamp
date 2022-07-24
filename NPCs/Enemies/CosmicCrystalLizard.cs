@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.damage = 0;
             NPC.knockBackResist = 0.6f;
             NPC.defense = 9999;
-            NPC.lifeMax = Main.rand.Next(13, 21);
+            NPC.lifeMax = 18; //it was a cool idea ;-;
             NPC.HitSound = SoundID.NPCHit42;
             NPC.DeathSound = SoundID.NPCDeath32;
             NPC.value = 0;
@@ -1005,43 +1005,6 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void OnKill()
         {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 400);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type); //always drops 1
-
-            if (Main.rand.NextFloat() >= 0.2f) // 80% chance
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.EndurancePotion);
-            }
-            if (Main.rand.NextFloat() >= 0.2f) // 80% chance
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("SoulSiphonPotion").Type);
-            }
-
-
-            if (NPC.lifeMax == 20 || NPC.lifeMax == 19) //the higher the npc.lifeMax, the higher the chance of getting a second crystal
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
-            }
-            else if (NPC.lifeMax == 18 && Main.rand.NextFloat() >= 0.15f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
-            }
-            else if (NPC.lifeMax == 17 && Main.rand.NextFloat() >= 0.3f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
-            }
-            else if (NPC.lifeMax == 16 && Main.rand.NextFloat() >= 0.45f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
-            }
-            else if (NPC.lifeMax == 15 && Main.rand.NextFloat() >= 0.6f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
-            }
-            else if (NPC.lifeMax == 14 && Main.rand.NextFloat() >= 0.75f)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
-            }
             if (!Main.dedServ)
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.15f, (float)Main.rand.Next(-30, 31) * 0.15f), Mod.Find<ModGore>("CosmicCrystalLizard_Gore1").Type, 1f);
@@ -1049,6 +1012,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.15f, (float)Main.rand.Next(-30, 31) * 0.15f), Mod.Find<ModGore>("CosmicCrystalLizard_Gore3").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.15f, (float)Main.rand.Next(-30, 31) * 0.15f), Mod.Find<ModGore>("CosmicCrystalLizard_Gore4").Type, 1f);
             }
+        }
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.DarkSoul>(), 1, 400, 400));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.EternalCrystal>()));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.SoulSiphonPotion>(), 5, 1, 1, 4));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.EndurancePotion, 5, 1, 1, 4));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.EternalCrystal>(), 5, 1, 1, 3));
         }
     }
 }

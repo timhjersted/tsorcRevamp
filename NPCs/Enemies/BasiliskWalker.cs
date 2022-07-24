@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -289,10 +290,14 @@ namespace tsorcRevamp.NPCs.Enemies
                     Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Blood Splat").Type, 1.1f);
                 }
             }
-            if (!Main.hardMode && Main.rand.Next(100) < 30) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HealingPotion);
-            if (Main.rand.Next(100) < 30) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion);
-            //if (Main.rand.Next(100) < 20) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.BossItems.TomeOfSlograAndGaibon>());
+        }
 
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
+            hmCondition.OnFailedConditions(new CommonDrop(ItemID.HealingPotion, 10, 1, 1, 3));
+            npcLoot.Add(hmCondition);
+
+            npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 10, 1, 1, 3));
         }
     }
 }

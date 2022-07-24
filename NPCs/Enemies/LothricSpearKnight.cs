@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -929,24 +930,25 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
-            if (Main.rand.NextBool(4) && !Main.hardMode) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
-            if (Main.rand.NextBool(10) && Main.hardMode) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>()); Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
-
-            if (Main.rand.NextBool(10)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Melee.SpikedIronShield>(), 1, false, -1);
-            if (Main.rand.NextBool(10)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>(), 1, false, -1);
-            if (Main.rand.NextBool(5)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.LostUndeadSoul>());
-            if (Main.rand.NextBool(5)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.LifeforcePotion); }
-            if (Main.rand.NextBool(3)) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.EndurancePotion); }
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
         }
         #endregion
 
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulShekel>(), 1, 12, 24));
+
+            IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
+            hmCondition.OnFailedConditions(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 4));
+            hmCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 10));
+            npcLoot.Add(hmCondition);
+
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Melee.SpikedIronShield>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.LostUndeadSoul>(), 5));
+            npcLoot.Add(ItemDropRule.Common(ItemID.LifeforcePotion, 5));
+            npcLoot.Add(ItemDropRule.Common(ItemID.EndurancePotion, 3));
+        }
 
         #region Drawing & Animation
 
