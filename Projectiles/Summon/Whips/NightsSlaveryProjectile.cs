@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
-	public class NIghtsSlaveryProjectile : ModProjectile
+	public class NightsSlaveryProjectile : ModProjectile
 	{
 
 		public override void SetStaticDefaults()

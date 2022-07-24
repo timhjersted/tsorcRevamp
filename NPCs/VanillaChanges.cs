@@ -2214,12 +2214,6 @@ namespace tsorcRevamp.NPCs
                         break;
                     }
 
-                case (NPCID.DD2WyvernT3):
-                    {
-                        npc.value = 1280;
-                        break;
-                    }
-
                 #endregion
 
                 #region Empress of Light
@@ -2432,79 +2426,85 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2GoblinT1):
                     {
-                        npc.value = 430;
+                        npc.value = 160;
                         break;
                     }
 
                 case (NPCID.DD2GoblinT2):
                     {
-                        npc.value = 620;
+                        npc.value = 220;
                         break;
                     }
 
                 case (NPCID.DD2GoblinT3):
                     {
-                        npc.value = 910;
+                        npc.value = 310;
                         break;
                     }
 
                 case (NPCID.DD2GoblinBomberT1):
                     {
-                        npc.value = 490;
+                        npc.value = 190;
                         break;
                     }
 
                 case (NPCID.DD2GoblinBomberT2):
                     {
-                        npc.value = 640;
+                        npc.value = 240;
                         break;
                     }
 
                 case (NPCID.DD2GoblinBomberT3):
                     {
-                        npc.value = 950;
+                        npc.value = 360;
                         break;
                     }
 
                 case (NPCID.DD2WyvernT1):
                     {
-                        npc.value = 570;
+                        npc.value = 260;
                         break;
                     }
 
-                case (NPCID.DD2WyvernT2): //see tier 3 at Betsy's
+                case (NPCID.DD2WyvernT2):
                     {
-                        npc.value = 790;
+                        npc.value = 390;
+                        break;
+                    }
+
+                case (NPCID.DD2WyvernT3):
+                    {
+                        npc.value = 550;
                         break;
                     }
 
                 case (NPCID.DD2JavelinstT1):
                     {
-                        npc.value = 500;
+                        npc.value = 200;
                         break;
                     }
 
                 case (NPCID.DD2JavelinstT2):
                     {
-                        npc.value = 680;
+                        npc.value = 330;
                         break;
                     }
 
                 case (NPCID.DD2JavelinstT3):
                     {
-                        npc.value = 990;
+                        npc.value = 420;
                         break;
                     }
 
                 case (NPCID.DD2DarkMageT1):
                     {
-                        npc.value = 3350;
+                        npc.value = 4350;
                         break;
                     }
 
                 case (NPCID.DD2DarkMageT3):
                     {
-                        npc.value = 8730;
+                        npc.value = 10730;
                         break;
                     }
 
@@ -2522,55 +2522,55 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2WitherBeastT2):
                     {
-                        npc.value = 1590;
+                        npc.value = 590;
                         break;
                     }
 
                 case (NPCID.DD2WitherBeastT3):
                     {
-                        npc.value = 2480;
+                        npc.value = 880;
                         break;
                     }
 
                 case (NPCID.DD2DrakinT2):
                     {
-                        npc.value = 1470;
+                        npc.value = 600;
                         break;
                     }
 
                 case (NPCID.DD2DrakinT3):
                     {
-                        npc.value = 2310;
+                        npc.value = 910;
                         break;
                     }
 
                 case (NPCID.DD2KoboldWalkerT2):
                     {
-                        npc.value = 710;
+                        npc.value = 350;
                         break;
                     }
 
                 case (NPCID.DD2KoboldWalkerT3):
                     {
-                        npc.value = 1020;
+                        npc.value = 430;
                         break;
                     }
 
                 case (NPCID.DD2KoboldFlyerT2):
                     {
-                        npc.value = 740;
+                        npc.value = 390;
                         break;
                     }
 
                 case (NPCID.DD2KoboldFlyerT3):
                     {
-                        npc.value = 1100;
+                        npc.value = 480;
                         break;
                     }
 
                 case (NPCID.DD2OgreT2):
                     {
-                        npc.value = 6390;
+                        npc.value = 8390;
                         break;
                     }
 
@@ -2586,7 +2586,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 69;
                         npc.defense = 35;
                         npc.knockBackResist = 0.46f;
-                        npc.value = 2120;
+                        npc.value = 1120;
                         break;
                     }
 
