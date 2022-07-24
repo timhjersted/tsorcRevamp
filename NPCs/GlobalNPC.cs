@@ -133,13 +133,13 @@ namespace tsorcRevamp.NPCs
             //machine temple (in water)
             if (spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
             {
-                pool.Add(NPCID.GreenJellyfish, 3f);
+                pool.Add(NPCID.GreenJellyfish, 8f);
             }
             //machine temple (not in water)
-            if (!spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
+            if (!spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode && !tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(ModContent.NPCType<Enemies.SuperHardMode.IceSkeleton>(), 0.2f);
-                pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 1f);
+                pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 2f);
             }
             //sky
             if (spawnInfo.Player.ZoneSkyHeight && Main.hardMode)
