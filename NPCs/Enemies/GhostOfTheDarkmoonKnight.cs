@@ -110,7 +110,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 3, 0.175f, 0.2f, true, enragePercent: 0.1f, enrageTopSpeed: 6);
+            tsorcRevampAIs.FighterAI(NPC, 2, 0.175f, 0.2f, true, enragePercent: 0.1f, enrageTopSpeed: 5);
 
             bool canFire = NPC.Distance(Main.player[NPC.target].Center) < 500 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
             tsorcRevampAIs.SimpleProjectile(NPC, ref shadowShotTimer, 170, ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(), 20, 9, canFire, true, SoundID.Item17, 0);

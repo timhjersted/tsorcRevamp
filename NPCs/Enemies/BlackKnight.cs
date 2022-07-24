@@ -56,7 +56,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 2.6f, 0.05f, enragePercent: 0.3f, enrageTopSpeed: 3.4f);
+            tsorcRevampAIs.FighterAI(NPC, 2f, 0.05f, enragePercent: 0.3f, enrageTopSpeed: 3.2f);
             bool inRange = NPC.Distance(Main.player[NPC.target].Center) < 300 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
             tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.ai[2], 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 9, inRange, true, SoundID.Item17);
 

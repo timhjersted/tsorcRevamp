@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.defense = 20;
                 NPC.value = 450;
                 NPC.damage = 60;
-                topSpeed = 3f;
+                topSpeed = 2f;
             }
 
             if (tsorcRevampWorld.SuperHardMode)
@@ -42,7 +42,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.defense = 70;
                 NPC.damage = 80;
                 NPC.value = 1000;
-                topSpeed = 4f;
+                topSpeed = 3f;
             }
         }
         public override void OnKill()
@@ -76,7 +76,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
         float spearTimer = 0;
-        float topSpeed = 1.5f;
+        float topSpeed = 1.2f;
 
         public override void AI()
         {
