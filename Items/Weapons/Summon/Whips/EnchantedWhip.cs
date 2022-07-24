@@ -11,8 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-			Tooltip.SetDefault("3 summon tag damage" +
-                "\n1% summon tag critical strike chance" +
+			Tooltip.SetDefault("4 summon tag damage" +
                 "\nYour summons will focus struck enemies" +
                 "\nStrike enemies with an enchantment" +
                 "\nEnchanted enemies will be showered by stars upon minion hits" +
@@ -26,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 52;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 20;
+			Item.damage = 18;
 			Item.knockBack = 2;
 			Item.rare = ItemRarityID.Blue;
 

@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Summon
 {
-	public class SearingLashDebuff : ModBuff
+	public class NightsSlaveryDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
@@ -16,34 +16,34 @@ namespace tsorcRevamp.Buffs.Summon
 
 		public override void Update(NPC npc, ref int buffIndex)
 		{
-			npc.GetGlobalNPC<SearingLashDebuffNPC>().markedBySearingLash = true;
+			npc.GetGlobalNPC<NightsSlaveryDebuffNPC>().markedByNightsSlavery = true;
 		}
 	}
 
-	public class SearingLashDebuffNPC : GlobalNPC
+	public class NightsSlaveryDebuffNPC : GlobalNPC
 	{
 		// This is required to store information on entities that isn't shared between them.
 		public override bool InstancePerEntity => true;
 
-		public bool markedBySearingLash;
+		public bool markedByNightsSlavery;
 
 		public override void ResetEffects(NPC npc)
 		{
-			markedBySearingLash = false;
+			markedByNightsSlavery = false;
 		}
 
 		// TODO: Inconsistent with vanilla, increasing damage AFTER it is randomised, not before. Change to a different hook in the future.
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
-			int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(30)); //30 is the base dmg of the Searing Lash
-			int tagbonusdamage = 0;
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
-			if (markedBySearingLash && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
+			if (markedByNightsSlavery && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
-				if(npc.HasBuff(BuffID.BlandWhipEnemyDebuff))
-                {
+				int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(42)); //42 is the base dmg of the Searing Lash
+				int tagbonusdamage = 0;
+				if (npc.HasBuff(BuffID.BlandWhipEnemyDebuff))
+				{
 					tagbonusdamage += 4;
-                }
+				}
 				if (npc.HasBuff(BuffID.ThornWhipNPCDebuff))
 				{
 					tagbonusdamage += 6;
@@ -80,7 +80,12 @@ namespace tsorcRevamp.Buffs.Summon
 				{
 					tagbonusdamage += 8;
 				}
-				damage += (int)((projectile.damage + tagbonusdamage) * 0.56f * whipDamage * 0.01);
+				damage += (int)((projectile.damage + tagbonusdamage) * 0.42f * whipDamage * 0.01);
+				damage += 5;
+				if (Main.rand.NextBool(33))
+				{
+					crit = true;
+				}
 			}
 		}
 	}

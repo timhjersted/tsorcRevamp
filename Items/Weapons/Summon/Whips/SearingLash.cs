@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 42;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 30;
+			Item.damage = 36;
 			Item.knockBack = 2;
 			Item.rare = ItemRarityID.Orange;
 
@@ -40,8 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		}
 		public override void AddRecipes()
 		{
-			/*
-			Terraria.Recipe recipe = CreateRecipe();
+			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.HellstoneBar, 10);
 			recipe.AddIngredient(ItemID.MeteoriteBar, 10);
 			recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 8000);

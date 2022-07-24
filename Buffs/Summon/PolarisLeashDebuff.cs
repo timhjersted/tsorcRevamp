@@ -42,11 +42,7 @@ namespace tsorcRevamp.Buffs.Summon
 			if (markedByPolarisLeash && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
 				Projectile.NewProjectile(Projectile.GetSource_None(), npc.Center + npctopleftvector, fallingstarvector, ModContent.ProjectileType<Projectiles.Summon.Whips.PolarisLeashFallingStar>(), whipDamage, 1f, Main.myPlayer);
-				damage += 5;
-				if (Main.rand.NextBool(50))
-				{
-					crit = true;
-				}
+				damage += 7;
 			}
 		}
 	}
