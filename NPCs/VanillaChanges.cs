@@ -2187,20 +2187,26 @@ namespace tsorcRevamp.NPCs
                 #endregion
 
                 #region Golem
-                case (NPCID.Golem): //29k souls total, increasing this once we buff him to be actually dangerous
+                case (NPCID.Golem): //31k souls total
                     {
-                        npc.value = 233650;
+                        npc.lifeMax = 30000;
+                        npc.damage = 140;
+                        npc.value = 253650;
                         break;
                     }
 
                 case (NPCID.GolemHead):
                     {
+                        npc.lifeMax = 16000;    
+                        npc.damage = 60;
                         npc.value = 24500;
                         break;
                     }
 
                 case int golemfists when (golemfists == NPCID.GolemFistLeft || golemfists == NPCID.GolemFistRight):
                     {
+                        npc.lifeMax = 12500;
+                        npc.damage = 110;
                         npc.value = 16980;
                         break;
                     }
@@ -2210,6 +2216,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2Betsy):
                     {
+                        npc.boss = true;
                         npc.value = 257890;
                         break;
                     }
@@ -2438,7 +2445,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2GoblinT3):
                     {
-                        npc.value = 310;
+                        npc.value = 250;
                         break;
                     }
 
@@ -2450,31 +2457,31 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2GoblinBomberT2):
                     {
-                        npc.value = 240;
+                        npc.value = 250;
                         break;
                     }
 
                 case (NPCID.DD2GoblinBomberT3):
                     {
-                        npc.value = 360;
+                        npc.value = 280;
                         break;
                     }
 
                 case (NPCID.DD2WyvernT1):
                     {
-                        npc.value = 260;
+                        npc.value = 230;
                         break;
                     }
 
                 case (NPCID.DD2WyvernT2):
                     {
-                        npc.value = 390;
+                        npc.value = 290;
                         break;
                     }
 
                 case (NPCID.DD2WyvernT3):
                     {
-                        npc.value = 550;
+                        npc.value = 370;
                         break;
                     }
 
@@ -2486,25 +2493,13 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2JavelinstT2):
                     {
-                        npc.value = 330;
+                        npc.value = 260;
                         break;
                     }
 
                 case (NPCID.DD2JavelinstT3):
                     {
-                        npc.value = 420;
-                        break;
-                    }
-
-                case (NPCID.DD2DarkMageT1):
-                    {
-                        npc.value = 4350;
-                        break;
-                    }
-
-                case (NPCID.DD2DarkMageT3):
-                    {
-                        npc.value = 10730;
+                        npc.value = 300;
                         break;
                     }
 
@@ -2522,61 +2517,73 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2WitherBeastT2):
                     {
-                        npc.value = 590;
+                        npc.value = 320;
                         break;
                     }
 
                 case (NPCID.DD2WitherBeastT3):
                     {
-                        npc.value = 880;
+                        npc.value = 440;
                         break;
                     }
 
                 case (NPCID.DD2DrakinT2):
                     {
-                        npc.value = 600;
+                        npc.value = 320;
                         break;
                     }
 
                 case (NPCID.DD2DrakinT3):
                     {
-                        npc.value = 910;
+                        npc.value = 440;
                         break;
                     }
 
                 case (NPCID.DD2KoboldWalkerT2):
                     {
-                        npc.value = 350;
+                        npc.value = 270;
                         break;
                     }
 
                 case (NPCID.DD2KoboldWalkerT3):
                     {
-                        npc.value = 430;
+                        npc.value = 300;
                         break;
                     }
 
                 case (NPCID.DD2KoboldFlyerT2):
                     {
-                        npc.value = 390;
+                        npc.value = 290;
                         break;
                     }
 
                 case (NPCID.DD2KoboldFlyerT3):
                     {
-                        npc.value = 480;
+                        npc.value = 320;
+                        break;
+                    }
+
+                case (NPCID.DD2DarkMageT1):
+                    {
+                        npc.value = 5850;
+                        break;
+                    }
+
+                case (NPCID.DD2DarkMageT3):
+                    {
+                        npc.value = 6730;
                         break;
                     }
 
                 case (NPCID.DD2OgreT2):
                     {
-                        npc.value = 8390;
+                        npc.value = 7390;
                         break;
                     }
 
                 case (NPCID.DD2OgreT3):
                     {
-                        npc.value = 14890;
+                        npc.value = 8890;
                         break;
                     }
 
@@ -2586,7 +2593,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 69;
                         npc.defense = 35;
                         npc.knockBackResist = 0.46f;
-                        npc.value = 1120;
+                        npc.value = 990;
                         break;
                     }
 

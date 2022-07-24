@@ -697,6 +697,10 @@ namespace tsorcRevamp.Items.BossBags
                     StaminaVesselOnFirstBag(NPCID.DukeFishron, player);
                     SoulsOnFirstBag(NPCID.DukeFishron, player);
                 }
+                if (arg == ItemID.BossBagBetsy)
+                {
+                    SoulsOnFirstBag(NPCID.DD2Betsy, player);
+                }
                 if (arg == ItemID.MoonLordBossBag)
                 {
                     if (Slain.ContainsKey(NPCID.MoonLordCore))
