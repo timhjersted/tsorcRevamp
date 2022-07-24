@@ -16,15 +16,15 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             Main.npcFrameCount[NPC.type] = 8;
             NPC.width = 120;
             NPC.height = 160;
-            NPC.damage = 95;
-            NPC.defense = 40;
+            NPC.damage = 195;
+            NPC.defense = 70;
             NPC.aiStyle = 22;
             NPC.alpha = 100;
             NPC.scale = 1.2f;
             AnimationType = -1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 90000;
+            NPC.lifeMax = 120000;
             NPC.timeLeft = 22500;
             NPC.friendly = false;
             NPC.noTileCollide = true;
@@ -51,8 +51,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         bool OptionSpawned = false;
         int OptionId = 0;
 
-        int lightningDamage = 70;
-        int oracleDamage = 70;
+        int lightningDamage = 85;
+        int oracleDamage = 75;
         //We can override this even further on a per-NPC basis here
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {

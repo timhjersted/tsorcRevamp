@@ -15,12 +15,12 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             Main.npcFrameCount[NPC.type] = 3;
             AnimationType = 29;
             NPC.aiStyle = 0;
-            NPC.damage = 40;
-            NPC.defense = 20;
+            NPC.damage = 140;
+            NPC.defense = 40;
             NPC.height = 44;
             NPC.boss = true;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 45000;
+            NPC.lifeMax = 50000;
             NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
@@ -41,7 +41,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             DisplayName.SetDefault("Lich King Disciple");
         }
 
-        int frozenSawDamage = 75;
+        int frozenSawDamage = 95;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
