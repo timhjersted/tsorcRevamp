@@ -228,17 +228,28 @@ namespace tsorcRevamp.NPCs
 
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
         {
-            //reduces spawns by 40% until player exceeds 160 health
+            //reduces max spawns by 40% and rate by 60% until player exceeds 160 health
             if(player.statLifeMax2 <= 160)
             {
-                spawnRate = (int)(spawnRate * 1.4f);
+                spawnRate = (int)(spawnRate * 1.6f);
                 maxSpawns = (int)(maxSpawns * 0.6f);
             }
-            //reduces spawns by 20% after 160 health
+            //reduces max spawns by 30% and spawn rate by 50% after 160 health
             if (player.statLifeMax2 > 160 && player.statLifeMax2 <= 200)
             {
-                spawnRate = (int)(spawnRate * 1.2f);
+                spawnRate = (int)(spawnRate * 1.5f);
+                maxSpawns = (int)(maxSpawns * 0.7f);
+            }
+            //reduces max spawns by 20% and spawn rate by 40% from 200-400 health
+            if (player.statLifeMax2 > 200 && player.statLifeMax2 <= 400)
+            {
+                spawnRate = (int)(spawnRate * 1.4f);
                 maxSpawns = (int)(maxSpawns * 0.8f);
+            }
+            //only reduces spawn rate by 30% above 400 health
+            if (player.statLifeMax2 > 400)
+            {
+                spawnRate = (int)(spawnRate * 1.3f);   
             }
             bool bossAlive = false;
 
