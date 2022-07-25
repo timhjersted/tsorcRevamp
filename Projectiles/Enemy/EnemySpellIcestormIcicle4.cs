@@ -25,5 +25,10 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
         }
+        public override bool PreDraw(ref Color lightColor)
+        {
+            lightColor = Color.White;
+            return base.PreDraw(ref lightColor);
+        }
     }
 }

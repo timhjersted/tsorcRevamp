@@ -115,7 +115,30 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
-            despawnHandler.TargetAndDespawn(NPC.whoAmI);
+            int[] bodyTypes = new int[] { ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody2>(), ModContent.NPCType<SeathTheScalelessBody3>(), ModContent.NPCType<SeathTheScalelessBody3>() };
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<SeathTheScalelessHead>(), bodyTypes, ModContent.NPCType<SeathTheScalelessTail>(), 13, 6f, 10f, 0.17f, true, false, true, false, false);
+
+            if (despawnHandler.TargetAndDespawn(NPC.whoAmI))
+            {
+                for(int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<PrimordialCrystal>())
+                    {
+                        for (int j = 0; j < 50; j++)
+                        {
+                            int dust;
+                            Vector2 vel = Main.rand.NextVector2Circular(20, 20);
+                            dust = Dust.NewDust(Main.npc[i].Center, 30, 30, 234, vel.X, vel.Y, 240, default, 5f);
+                            Main.dust[dust].noGravity = true;
+                            dust = Dust.NewDust(Main.npc[i].Center, 30, 30, 226, vel.X, vel.Y, 200, default, 3f);
+                            Main.dust[dust].noGravity = true;
+                        }
+                        Main.npc[i].active = false;
+                    }
+                }
+
+                return;
+            }
 
             if (NPC.AnyNPCs(ModContent.NPCType<PrimordialCrystal>()))
             {
@@ -127,7 +150,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
 
             //Crystal spawning
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.MultiplayerClient && NPC.active)
             {
                 if (Collision.CanHit(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1) || Collision.CanHitLine(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
                 {
@@ -274,8 +297,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 Main.dust[d].noGravity = true;
             }
 
-            int[] bodyTypes = new int[] { ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody2>(), ModContent.NPCType<SeathTheScalelessBody3>(), ModContent.NPCType<SeathTheScalelessBody3>() };
-            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<SeathTheScalelessHead>(), bodyTypes, ModContent.NPCType<SeathTheScalelessTail>(), 13, 6f, 10f, 0.17f, true, false, true, false, false);
+            
         }
         #endregion
 

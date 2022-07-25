@@ -547,7 +547,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             for (Distance = MOVE_DISTANCE; Distance <= 2200f; Distance += 5f)
             {
                 Vector2 origin = GetOrigin();
-                var start = origin + Projectile.velocity * Distance;
+                Vector2 start = origin + Projectile.velocity * Distance;
                 if (!Collision.CanHit(origin, 1, 1, start, 1, 1) && !Collision.CanHitLine(origin, 1, 1, start, 1, 1))
                 {
                     Distance -= 5f;

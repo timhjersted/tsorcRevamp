@@ -166,6 +166,7 @@ namespace tsorcRevamp
             }
         }
 
+
         public override void NetReceive(BinaryReader reader)
         {
             CustomMap = reader.ReadBoolean();
@@ -705,8 +706,7 @@ namespace tsorcRevamp
 
         public override void PostUpdateWorld()
         {
-            Terraria.GameContent.Creative.CreativePowerManager.Instance.GetPower<Terraria.GameContent.Creative.CreativePowers.StopBiomeSpreadPower>().SetPowerInfo(false);
-            
+            Terraria.GameContent.Creative.CreativePowerManager.Instance.GetPower<Terraria.GameContent.Creative.CreativePowers.StopBiomeSpreadPower>().SetPowerInfo(false);            
         }
 
         bool initialized = false;

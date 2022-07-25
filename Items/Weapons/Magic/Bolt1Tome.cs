@@ -49,6 +49,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             {
                 player.AddBuff(BuffID.Electrified, 90);
             }
+            Projectile.NewProjectile(source, position, speed, type, damage, knockBack, player.whoAmI, 0, 0);
 
             //Every time the player shoots, clear the "bolt chain immunity" from every NPC so they can be hit again
             for (int i = 0; i < Main.maxNPCs; i++)
@@ -58,7 +59,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
                     Main.npc[i].DelBuff(Main.npc[i].FindBuffIndex(ModContent.BuffType<Buffs.BoltChainImmunity>()));
                 }
             }
-            return true;
+            return false;
         }
 
         public override void AddRecipes()

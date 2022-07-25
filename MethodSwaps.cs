@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Terraria;
+using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
@@ -76,7 +77,37 @@ namespace tsorcRevamp
             On.Terraria.Main.CraftItem += Main_CraftItem;
 
             On.Terraria.Main.DrawInterface_35_YouDied += Main_DrawInterface_35_YouDied;
+
+            On.Terraria.Player.InZonePurity += Player_InZonePurity;
             //On.Terraria.GameContent.ItemDropRules.ItemDropResolver.ResolveRule += ItemDropResolver_ResolveRule;
+        }
+
+        //The reason the dungeon code is getting inserted here isn't because it has anything to do with ZonePurity
+        //It's just because this is a function that has the player as a parameter, and is called in UpdateBiomes *after* ZoneDungeon is set but before it is used.
+        private static bool Player_InZonePurity(On.Terraria.Player.orig_InZonePurity orig, Player self)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && NPC.downedBoss3)
+            {
+                if (Main.SceneMetrics.DungeonTileCount >= 200 || Main.SceneMetrics.DungeonTileCount >= 50 && tsorcRevampWorld.SuperHardMode)
+                {
+                    int playerTileX = (int)self.Center.X / 16;
+                    int playerTileY = (int)self.Center.Y / 16;
+                    for (int i = -10; i < 11; i++)
+                    {
+                        for (int j = 0; j < 2; j++)
+                        {
+                            int cross = (2 * j) - 1;
+                            //check in an x shape instead of checking the entire region, since checking 100 tiles every frame is a little silly
+                            if (Main.wallDungeon[Main.tile[playerTileX + i, playerTileY + (i * cross)].WallType] || tsorcRevamp.CustomDungeonWalls[Main.tile[playerTileX + i, playerTileY + (i * cross)].WallType])
+                            {
+                                self.ZoneDungeon = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return orig(self);
         }
 
         private static void Main_DrawInterface_35_YouDied(On.Terraria.Main.orig_DrawInterface_35_YouDied orig)

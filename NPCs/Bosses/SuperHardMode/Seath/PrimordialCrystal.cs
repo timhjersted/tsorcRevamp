@@ -55,6 +55,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 68, dustVel.X, dustVel.Y, 250, Color.White, 2f).noGravity = true;
                 Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 234, dustVel.X, dustVel.Y, 250, Color.White, 2f).noGravity = true;
             }
+
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()))
+            {
+                for (int i = 0; i < 50; i++)
+                {
+                    int dust;
+                    Vector2 vel = Main.rand.NextVector2Circular(20, 20);
+                    dust = Dust.NewDust(NPC.Center, 30, 30, 234, vel.X, vel.Y, 240, default, 5f);
+                    Main.dust[dust].noGravity = true;
+                    dust = Dust.NewDust(NPC.Center, 30, 30, 226, vel.X, vel.Y, 200, default, 3f);
+                    Main.dust[dust].noGravity = true;
+                }
+                NPC.active = false;
+            }
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

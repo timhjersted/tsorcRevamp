@@ -444,17 +444,17 @@ namespace tsorcRevamp.Tiles
                 //new bonfire lit sound
                 Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/bonfire-lit") with { Volume = 0.2f }, player.Center);
                 //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, new Vector2(i * 16, j * 16));
-                UsefulFunctions.BroadcastText("Bonfire lit!", 250, 110, 90);
+                UsefulFunctions.BroadcastText("Bonfire lit, spawn point set!", 250, 110, 90);
 
                 int spawnX = (int)((player.position.X + player.width / 2.0) / 16.0);
                 int spawnY = (int)((player.position.Y + player.height) / 16.0);
                 player.ChangeSpawn(spawnX, spawnY);
                 player.FindSpawn();
 
-                if (tsorcRevampWorld.LitBonfireList == null)
+                if (tsorcRevampWorld.LitBonfireList == null || tsorcRevampWorld.LitBonfireList.Count == 0)
                 {
                     tsorcRevampWorld.LitBonfireList = new List<Vector2>();
-                    UsefulFunctions.BroadcastText("Open your minimap to instantly teleport to any other lit bonfires in the world", Color.Orange);
+                    UsefulFunctions.BroadcastText("Open your minimap to instantly teleport to any bonfire in the world", Color.Orange);
                 }
 
                 tsorcRevampWorld.LitBonfireList.Add(new Vector2(i, j));

@@ -33,7 +33,7 @@ namespace tsorcRevamp.Buffs
 
                 #region Regen & Dusts
 
-                if (!Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) && player.statLife < player.statLifeMax2) //only heal when no bosses are alive and when hp isn't full
+                if (!Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) && player.statLife < player.statLifeMax) //only heal when no bosses are alive and when hp isn't full
                 {
                     if (bonfireEffectTimer > 0 && bonfireEffectTimer <= 60 && (player.velocity.X == 0 && player.velocity.Y == 0)) //wind up 1
                     {
