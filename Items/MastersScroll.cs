@@ -9,7 +9,9 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Turns on Master Mode or turns it off");
+            Tooltip.SetDefault("Turns on Master Mode or turns it off" +
+                "\nMaster Mode has not been tuned yet whatsoever, don't expect it to be well balanced" +
+                "\nAlpha mode in testing starting now.");
         }
 
         public override void SetDefaults()
