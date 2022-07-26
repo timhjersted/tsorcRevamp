@@ -45,6 +45,9 @@ namespace tsorcRevamp.Projectiles.Summon
 			Projectile.DamageType = DamageClass.Summon; // Declares the damage type (needed for it to deal damage)
 			Projectile.minionSlots = 1f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
 			Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
+
+			Projectile.usesLocalNPCImmunity = true;
+			Projectile.localNPCHitCooldown = 20;
 		}
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
@@ -52,6 +55,34 @@ namespace tsorcRevamp.Projectiles.Summon
 			ragestacksfallofftimer = 0;
 			ragestackstimer = 0;
 			ragestacks += 1;
+			if (ragestacks < 0)
+			{
+				ragestacks = 0;
+			}
+			if (ragestacks > 9)
+			{
+				ragestacks = 9;
+			}
+			if (ragestacks == 5)
+			{
+				Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 0.2), 1f, Main.myPlayer);
+			}
+			if (ragestacks == 6)
+			{
+				Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 0.4), 1f, Main.myPlayer);
+			}
+			if (ragestacks == 7)
+			{
+				Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 0.6), 1f, Main.myPlayer);
+			}
+			if (ragestacks == 8)
+			{
+				Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 0.8), 1f, Main.myPlayer);
+			}
+			if (ragestacks == 9)
+			{
+				Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 1), 1f, Main.myPlayer);
+			}
 		}
 
 	// Here you can decide if your minion breaks things like grass or pots
@@ -84,6 +115,10 @@ namespace tsorcRevamp.Projectiles.Summon
 			if (ragestacks < 0)
 			{
 				ragestacks = 0;
+			}
+			if (ragestacks > 9)
+			{
+				ragestacks = 9;
 			}
 
 			if (Main.GameUpdateCount % 60 == 0)
@@ -207,7 +242,7 @@ namespace tsorcRevamp.Projectiles.Summon
 				float between = Vector2.Distance(npc.Center, Projectile.Center);
 
 				// Reasonable distance away so it doesn't target across multiple screens
-				if (between < 2000f)
+				if (between < 300f)
 				{
 					distanceFromTarget = between;
 					targetCenter = npc.Center;
@@ -230,9 +265,10 @@ namespace tsorcRevamp.Projectiles.Summon
 						bool lineOfSight = Collision.CanHitLine(Projectile.position, Projectile.width, Projectile.height, npc.position, npc.width, npc.height);
 						// Additional check for this specific minion behavior, otherwise it will stop attacking once it dashed through an enemy while flying though tiles afterwards
 						// The number depends on various parameters seen in the movement code below. Test different ones out until it works alright
-						bool closeThroughWall = between < 100f;
+						bool closeThroughWall = between < 300f;
 
-						if (((closest && inRange) || !foundTarget) && (lineOfSight || closeThroughWall))
+						if (((closest && inRange) || (!foundTarget && inRange)) && (lineOfSight || closeThroughWall))
+
 						{
 							distanceFromTarget = between;
 							targetCenter = npc.Center;
@@ -252,7 +288,7 @@ namespace tsorcRevamp.Projectiles.Summon
 		private void Movement(bool foundTarget, float distanceFromTarget, Vector2 targetCenter, float distanceToIdlePosition, Vector2 vectorToIdlePosition)
 		{
 			// Default movement parameters (here for attacking)
-			float speed = 8f;
+			float speed = 10f;
 			float inertia = 20f;
 
 			if (foundTarget)
@@ -265,22 +301,26 @@ namespace tsorcRevamp.Projectiles.Summon
 					direction.Normalize();
 					direction *= speed;
 
-					Projectile.velocity = (Projectile.velocity * (inertia - 1) + direction) / inertia;
+					if (Main.GameUpdateCount % 20 == 0)
+					{
+						Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, targetCenter, speed * 1.2f);
+					}
+					//Projectile.velocity = (Projectile.velocity * (inertia - 1) + direction) / inertia;
 				}
 			}
 			else
 			{
 				// Minion doesn't have a target: return to player and idle
-				if (distanceToIdlePosition > 600f)
+				if (distanceToIdlePosition > 100f)
 				{
 					// Speed up the minion if it's away from the player
-					speed = 12f;
+					speed = 24f;
 					inertia = 60f;
 				}
 				else
 				{
 					// Slow down the minion if closer to the player
-					speed = 4f;
+					speed = 8f;
 					inertia = 80f;
 				}
 

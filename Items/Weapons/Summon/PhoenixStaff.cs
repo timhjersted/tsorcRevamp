@@ -1,4 +1,4 @@
-/*
+
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 		public int ragedamagemultiplier = 2;
 		public override void SetDefaults()
 		{
-			Item.damage = 20 * ragedamagemultiplier;
+			Item.damage = 20;
 			Item.knockBack = 3f;
 			Item.mana = 10;
 			Item.width = 32;
@@ -62,4 +62,3 @@ namespace tsorcRevamp.Items.Weapons.Summon
 		}
 	}
 }
-*/
