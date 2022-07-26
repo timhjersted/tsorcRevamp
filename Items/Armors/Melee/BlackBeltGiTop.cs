@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.hasJumpOption_Cloud = true;
+            player.hasJumpOption_Basilisk = true;
             player.jumpBoost = true;
         }
 
