@@ -35,7 +35,7 @@ namespace tsorcRevamp.Buffs.Summon
 		// TODO: Inconsistent with vanilla, increasing damage AFTER it is randomised, not before. Change to a different hook in the future.
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
-			int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(18)); //18 is the base dmg of the Enchanted Whip
+			int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(9)); //9 is half of the base dmg of the Enchanted Whip
 			Vector2 npctopleftvector = new Vector2(-90, -90);
 			Vector2 fallingstarvector = new Vector2(15, 15);
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.

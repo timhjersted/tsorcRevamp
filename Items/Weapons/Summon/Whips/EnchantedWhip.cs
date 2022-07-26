@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
                 "\nYour summons will focus struck enemies" +
                 "\nStrike enemies with an enchantment" +
                 "\nEnchanted enemies will be showered by stars upon minion hits" +
-                "\nStar damage scales with this whips damage");
+                "\nStar damage scales with half of this whips damage");
 		}
 
 		public override void SetDefaults()

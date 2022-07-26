@@ -12,9 +12,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 			Tooltip.SetDefault("7 summon tag damage" +
-				"\nStriking enemies will create Polaris, which scales with this whips damage" +
+				"\nStriking enemies will create Polaris, which scales with 66% of this whips damage" +
 				"\nPolaris stays on your cursor and hits enemies with a frigid enchantment" +
                 "\nEnchanted Enemies will also be showered by polar stars when struck by minions" +
+                "\nThese scale with half of this whips damage" +
 				"\nYour summons will focus enemies struck by Polaris" +
                 "\nThis whip also inflicts Frostbite");
 		}
@@ -26,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 42;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 52;
+			Item.damage = 50;
 			Item.knockBack = 2;
 			Item.rare = ItemRarityID.Green;
 
