@@ -10,8 +10,10 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("A sword used to kill magic users." +
-                                "\nDoes up to 8x damage to mages");
+                                "\nDoes up to 8x damage to mages" +
+                                "\nEvery third hit with the Blade generates a magic slash");
         }
+        public int shootstacks = 0;
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Green;
@@ -28,9 +30,12 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useTime = 20;
             Item.value = PriceByRarity.Green_2;
             Item.width = 36;
+            Item.shoot = ProjectileID.DD2SquireSonicBoom;
+            Item.shootSpeed = 7.5f;
         }
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
         {
+            shootstacks += 1;
             //todo add mod NPCs to this list
             if (target.type == NPCID.DarkCaster
                 || target.type == NPCID.GoblinSorcerer
@@ -69,11 +74,23 @@ namespace tsorcRevamp.Items.Weapons.Melee
                 damage *= 5;
             }
         }
+        public override bool CanShoot(Player player)
+        {
+            if (shootstacks < 3)
+            {
+                return false;
+            }
+            else
+            {
+                shootstacks = 0;
+                return true;
+            }
+        }
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.LightsBane);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 4000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
