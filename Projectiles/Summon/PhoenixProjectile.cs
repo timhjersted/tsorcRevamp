@@ -59,29 +59,20 @@ namespace tsorcRevamp.Projectiles.Summon
 			{
 				ragestacks = 0;
 			}
-			if (ragestacks > 9)
+			if (ragestacks > 19)
 			{
-				ragestacks = 9;
+				ragestacks = 20;
 			}
-			if (ragestacks == 5)
+			if (ragestacks > 5)
 			{
-				Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 0.2), 1f, Main.myPlayer);
-			}
-			if (ragestacks == 6)
-			{
-				Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 0.4), 1f, Main.myPlayer);
-			}
-			if (ragestacks == 7)
-			{
-				Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 0.6), 1f, Main.myPlayer);
-			}
-			if (ragestacks == 8)
-			{
-				Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 0.8), 1f, Main.myPlayer);
-			}
-			if (ragestacks == 9)
-			{
-				Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 1), 1f, Main.myPlayer);
+				if (crit == true)
+				{
+					Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)((Projectile.damage * 0.075 * (ragestacks - 5)) * 3), 1f, Main.myPlayer);
+				}
+				else
+                {
+					Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 0.075 * (ragestacks - 5)), 1f, Main.myPlayer);
+				}
 			}
 		}
 
@@ -116,9 +107,9 @@ namespace tsorcRevamp.Projectiles.Summon
 			{
 				ragestacks = 0;
 			}
-			if (ragestacks > 9)
+			if (ragestacks > 19)
 			{
-				ragestacks = 9;
+				ragestacks = 20;
 			}
 
 			if (Main.GameUpdateCount % 60 == 0)
@@ -142,15 +133,15 @@ namespace tsorcRevamp.Projectiles.Summon
             }
 			else if (ragestackstimer == 3)
             {
-				ragestacks -= 1;
+				ragestacks -= 2;
             }
 			else if (ragestackstimer == 4)
             {
-				ragestacks -= 1;
+				ragestacks -= 2;
             }
-			else if (ragestackstimer == 5)
+			else if (ragestackstimer >= 5)
             {
-				ragestacks -= 1;
+				ragestacks -= 3;
             }
 		}
 
