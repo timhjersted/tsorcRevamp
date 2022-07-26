@@ -5,19 +5,19 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Summon
 {
-	public class NightsSlaveryBuff : ModBuff
+	public class TerraFallBuff : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Nightly Ownership");
-			Description.SetDefault("+12% whip speed");
+			DisplayName.SetDefault("Terraria's Fall");
+			Description.SetDefault("+25% whip speed");
 			Main.buffNoSave[Type] = true;
 			Main.buffNoTimeDisplay[Type] = false;
 		}
 
         public override void Update(Player player, ref int buffIndex)
         {
-			player.GetAttackSpeed(DamageClass.SummonMeleeSpeed) += 0.12f;
+			player.GetAttackSpeed(DamageClass.SummonMeleeSpeed) += 0.25f;
 		}
     }
 }

@@ -72,13 +72,17 @@ namespace tsorcRevamp.Buffs.Summon
 				{
 					tagbonusdamage += 7;
 				}
-				if (npc.HasBuff(ModContent.BuffType<NightsSlaveryDebuff>()))
+				if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()))
 				{
 					tagbonusdamage += 5;
 				}
 				if (npc.HasBuff(ModContent.BuffType<PyrosulfateDebuff>()))
 				{
 					tagbonusdamage += 8;
+				}
+				if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
+				{
+					tagbonusdamage = 20;
 				}
 				damage += (int)((projectile.damage + tagbonusdamage) * 0.56f * whipDamage * 0.01);
 			}

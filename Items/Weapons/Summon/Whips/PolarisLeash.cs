@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Terraria.Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<EnchantedWhip>(), 1);
 			recipe.AddIngredient(ItemID.CoolWhip, 1);
-			recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 5);
+			recipe.AddIngredient(ItemID.HallowedBar, 5);
 			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
 
 			recipe.AddTile(TileID.DemonAltar);

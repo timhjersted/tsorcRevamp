@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
-	public class NightsSlaveryProjectile : ModProjectile
+	public class NightsCrackerProjectile : ModProjectile
 	{
 
 		public override void SetStaticDefaults()
@@ -111,8 +111,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.NightsSlaveryBuff>(), 180);
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.NightsSlaveryDebuff>(), 240);
+			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerBuff>(), 180);
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerDebuff>(), 240);
 			target.AddBuff(BuffID.ShadowFlame, 240);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.85f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f

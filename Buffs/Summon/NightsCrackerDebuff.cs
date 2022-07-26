@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Summon
 {
-	public class NightsSlaveryDebuff : ModBuff
+	public class NightsCrackerDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
@@ -16,27 +16,27 @@ namespace tsorcRevamp.Buffs.Summon
 
 		public override void Update(NPC npc, ref int buffIndex)
 		{
-			npc.GetGlobalNPC<NightsSlaveryDebuffNPC>().markedByNightsSlavery = true;
+			npc.GetGlobalNPC<NightsCrackerDebuffNPC>().markedByNightsCracker = true;
 		}
 	}
 
-	public class NightsSlaveryDebuffNPC : GlobalNPC
+	public class NightsCrackerDebuffNPC : GlobalNPC
 	{
 		// This is required to store information on entities that isn't shared between them.
 		public override bool InstancePerEntity => true;
 
-		public bool markedByNightsSlavery;
+		public bool markedByNightsCracker;
 
 		public override void ResetEffects(NPC npc)
 		{
-			markedByNightsSlavery = false;
+			markedByNightsCracker = false;
 		}
 
 		// TODO: Inconsistent with vanilla, increasing damage AFTER it is randomised, not before. Change to a different hook in the future.
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
-			if (markedByNightsSlavery && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
+			if (markedByNightsCracker && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
 				int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(42)); //42 is the base dmg of the Searing Lash
 				int tagbonusdamage = 0;
@@ -72,7 +72,7 @@ namespace tsorcRevamp.Buffs.Summon
 				{
 					tagbonusdamage += 7;
 				}
-				if (npc.HasBuff(ModContent.BuffType<NightsSlaveryDebuff>()))
+				if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()))
 				{
 					tagbonusdamage += 5;
 				}
@@ -80,6 +80,10 @@ namespace tsorcRevamp.Buffs.Summon
 				{
 					tagbonusdamage += 8;
 				}
+				if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
+                {
+					tagbonusdamage = 20;
+                }
 				damage += (int)((projectile.damage + tagbonusdamage) * 0.42f * whipDamage * 0.01);
 				damage += 5;
 				if (Main.rand.NextBool(33))
