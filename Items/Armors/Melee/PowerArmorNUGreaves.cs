@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Armors.Melee
             player.waterWalk = true;
             player.breath = 10800;
             player.noKnockback = true;
-            player.hasJumpOption_Cloud = true;
+            player.hasJumpOption_Santank = true;
             player.jumpBoost = true;
         }
 
