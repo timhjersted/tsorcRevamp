@@ -242,7 +242,7 @@ namespace tsorcRevamp.Projectiles.Summon
 				float between = Vector2.Distance(npc.Center, Projectile.Center);
 
 				// Reasonable distance away so it doesn't target across multiple screens
-				if (between < 300f)
+				if (between < 1400f)
 				{
 					distanceFromTarget = between;
 					targetCenter = npc.Center;
@@ -265,7 +265,7 @@ namespace tsorcRevamp.Projectiles.Summon
 						bool lineOfSight = Collision.CanHitLine(Projectile.position, Projectile.width, Projectile.height, npc.position, npc.width, npc.height);
 						// Additional check for this specific minion behavior, otherwise it will stop attacking once it dashed through an enemy while flying though tiles afterwards
 						// The number depends on various parameters seen in the movement code below. Test different ones out until it works alright
-						bool closeThroughWall = between < 300f;
+						bool closeThroughWall = between < 700f;
 
 						if (((closest && inRange) || (!foundTarget && inRange)) && (lineOfSight || closeThroughWall))
 
@@ -345,7 +345,7 @@ namespace tsorcRevamp.Projectiles.Summon
 		private void Visuals()
 		{
 			// So it will lean slightly towards the direction it's moving
-			Projectile.rotation = Projectile.velocity.X * 0.05f;
+			Projectile.rotation = Projectile.velocity.X * 0.1f;
 
 			// This is a simple "loop through all frames from top to bottom" animation
 			int frameSpeed = 5;
