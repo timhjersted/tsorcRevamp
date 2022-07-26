@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.height = 40;
             NPC.width = 20;
             Music = 12;
-            NPC.damage = 295;
+            NPC.damage = 205; //was 295
             NPC.defense = 200;
             NPC.lifeMax = 500000;
             NPC.knockBackResist = 0;
@@ -41,24 +41,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         //old attacks
-        int deathBallDamage = 200;
-        int phantomSeekerDamage = 225;
-        int armageddonBallDamage = 300;
+        int deathBallDamage = 200; //200
+        int phantomSeekerDamage = 180; //225
+        int armageddonBallDamage = 200; //300
         int holdBallDamage = 35;
         int fireballBallDamage = 145;
         int blazeBallDamage = 55;
         int blackBreathDamage = 90;
         int purpleCrushDamage = 155;
-        int iceStormDamage = 50;
-        int gravityBallDamage = 300;
+        int iceStormDamage = 150;
+        int gravityBallDamage = 150;//300
 
         //basilisk attacks
-        int cursedBreathDamage = 100;
-        int cursedFlamesDamage = 100;
+        int cursedBreathDamage = 106; //100
+        int cursedFlamesDamage = 102; //100
         int darkExplosionDamage = 135;
-        int disruptDamage = 203;
-        int bioSpitDamage = 185;
-        int bioSpitfinalDamage = 230;
+        int disruptDamage = 175;//203
+        int bioSpitDamage = 135;//185
+        int bioSpitfinalDamage = 145;//230
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -90,20 +90,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             greatAttackDamage = (int)(greatAttackDamage / 2);
         }
 
-        //ultimate attack
-        public int redMagicDamage = 190;
+        //ultimate attack not used yet
+        public int redMagicDamage = 190;//190
 
         //lumelia attacks
-        public int throwingKnifeDamage = 180;
-        public int smokebombDamage = 295;
+        public int throwingKnifeDamage = 140;//180
+        public int smokebombDamage = 180;//295
 
         //death skull attack when player gets too far away
-        public int herosArrowDamage = 400;
+        public int herosArrowDamage = 210; //400
 
         //slogra attacks
-        public int tridentDamage = 150;
+        public int tridentDamage = 160; //150
         //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
-        public int burningSphereDamage = 360;
+        public int burningSphereDamage = 290;//360
 
         //gwyn + hero of lumelia
         float customAi1;
@@ -118,7 +118,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int breathCD = 120;
         float breathTimer = 60;
         float shotTimer;
-        int hypnoticDisruptorDamage = 145;
+        int hypnoticDisruptorDamage = 145;//145
 
         //slogra
         bool swordDead = false;
@@ -129,14 +129,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int lineOfSightTimer = 0;
 
         //ancient demon
-        int cultistFireDamage = 192;
-        int cultistMagicDamage = 259;
-        int cultistLightningDamage = 260;
-        int fireBreathDamage = 131;
-        int lostSoulDamage = 223;
-        int greatFireballDamage = 216;
-        int blackFireDamage = 147;
-        int greatAttackDamage = 162;
+        int cultistFireDamage = 152;//192
+        int cultistMagicDamage = 230;//259
+        int cultistLightningDamage = 185;//260
+        int fireBreathDamage = 131;//131
+        int lostSoulDamage = 190;//223
+        int greatFireballDamage = 216;//216
+        int blackFireDamage = 147;//147
+        int greatAttackDamage = 162;//162
 
         int demonBreathTimer = 0;
 
@@ -154,7 +154,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             player.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 1200, false); //lose defense on hit
             player.AddBuff(ModContent.BuffType<Buffs.SlowedLifeRegen>(), 1200, false); //slowed life regen
             player.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800, false); //you lose knockback resistance
-            player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 1200, false); //you lose flight
+            player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 1800, false); //you lose flight
             if (Main.rand.NextBool(2))
             {
                 player.AddBuff(33, 7200, false); //weak
@@ -210,7 +210,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Player player = Main.player[NPC.target];
 
             //DEBUFFS
-            if (NPC.Distance(player.Center) < 600)
+            if (NPC.Distance(player.Center) < 800)
             {
                 player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
                 player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 60, false);
@@ -1919,7 +1919,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (swordDead)
             {
-                damage = (int)(damage * 1.2f);
+                damage = (int)(damage * 1.25f);
             }
         }
 
@@ -1927,7 +1927,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (swordDead)
             {
-                damage = (int)(damage * 1.2f);
+                damage = (int)(damage * 1.20f);
             }
 
             if (projectile.minion)
