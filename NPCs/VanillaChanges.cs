@@ -1877,7 +1877,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.EaterofWorldsHead):
                     {
                         npc.lifeMax = 180;
-                        npc.damage = 38; //was 30 for a long time
+                        npc.damage = 40; //was 30 for a long time, then 38 briefly
                         npc.defense = 22;
                         npc.value = 43230; //this makes it drop a lot of money(4g62s per head) if you keep killing the head segments hueh, but this value is used by the bags first soul drop value so whatever, see it as a minigame
                         npc.buffImmune[BuffID.Poisoned] = true;
@@ -1890,7 +1890,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.EaterofWorldsBody):
                     {
                         npc.lifeMax = 180;
-                        npc.damage = 22; //legacy: 22, was 18 for a long time
+                        npc.damage = 22; //legacy: 22, was 18 for a long time, then 22 briefly
                         npc.defense = 5;
                         npc.value = 0; //ignored
                         npc.buffImmune[BuffID.Poisoned] = true;
@@ -1930,7 +1930,7 @@ namespace tsorcRevamp.NPCs
                 #region Skeletron
                 case (NPCID.SkeletronHead):
                     {
-                        npc.value = 84480;
+                        npc.value = 91480;
                         npc.defense = 12;
                         npc.damage = 45; //legacy: 50, then 35
                         npc.lifeMax = 4400;
@@ -1942,7 +1942,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.value = 5780;
                         npc.defense = 14; //legacy: 12
-                        npc.damage = 32; //legacy: 40, then 22
+                        npc.damage = 40; //legacy: 40, then 22, then 32 but reports still too easy
                         npc.lifeMax = 600;
                         npc.buffImmune[BuffID.OnFire] = true;
                         break;
@@ -2040,16 +2040,16 @@ namespace tsorcRevamp.NPCs
                 #region The Twins
                 case int thetwins when (thetwins ==NPCID.Retinazer || thetwins == NPCID.Spazmatism):
                     {
-                        npc.value = 154540;
+                        npc.value = 174540;
                         if(npc.type == NPCID.Retinazer)
                         {
                             npc.defense = 28;
-                            npc.damage = 80; //legacy: 80 //recent was 56
+                            npc.damage = 85; //legacy: 80 //recent was 56
                             npc.lifeMax = 25000;
                         }
                         if(npc.type == NPCID.Spazmatism)
                         {
-                            npc.damage = 80;
+                            npc.damage = 90;
                             npc.defense = 36;
                             npc.lifeMax = 25000;
                         }
@@ -2100,7 +2100,7 @@ namespace tsorcRevamp.NPCs
                 #region Skeletron Prime
                 case (NPCID.SkeletronPrime):
                     {
-                        npc.value = 256430;
+                        npc.value = 276430;
                         npc.defense = 40;
                         npc.damage = 100;
                         npc.buffImmune[BuffID.OnFire] = true;
@@ -2121,7 +2121,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.value = 25870;
                         npc.defense = 30;
-                        npc.damage = 40;
+                        npc.damage = 46;
                         npc.buffImmune[BuffID.OnFire] = true;
                         break;
                     }
@@ -2148,19 +2148,29 @@ namespace tsorcRevamp.NPCs
                 #region Plantera
                 case (NPCID.Plantera):
                     {
-                        npc.value = 275930;
+                        npc.damage = 83; //base 70
+                        npc.value = 295930;
                         npc.lifeMax = 35000;
                         break;
                     }
 
                 case (NPCID.PlanterasTentacle):
                     {
+                        npc.damage = 76; //base 70
+                        npc.value = 1490;
+                        break;
+                    }
+
+                case (NPCID.PlanterasHook):
+                    {
+                        npc.damage = 83; //base 70
                         npc.value = 1490;
                         break;
                     }
 
                 case (NPCID.Spore):
                     {
+                        npc.damage = 79; //base 70 (ie 140)
                         npc.value = 130;
                         break;
                     }
@@ -2187,18 +2197,18 @@ namespace tsorcRevamp.NPCs
                 #endregion
 
                 #region Golem
-                case (NPCID.Golem): //31k souls total
+                case (NPCID.Golem): //35k souls total
                     {
                         npc.lifeMax = 30000;
                         npc.damage = 140;
-                        npc.value = 253650;
+                        npc.value = 293650;
                         break;
                     }
 
                 case (NPCID.GolemHead):
                     {
                         npc.lifeMax = 16000;    
-                        npc.damage = 60;
+                        npc.damage = 65;
                         npc.value = 24500;
                         break;
                     }
