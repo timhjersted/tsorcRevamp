@@ -26,6 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             Item.accessory = true;
             Item.value = PriceByRarity.LightRed_4;
             Item.rare = ItemRarityID.Expert;
+            Item.expert = true;
         }
 
 

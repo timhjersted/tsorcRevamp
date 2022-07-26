@@ -146,6 +146,7 @@ namespace tsorcRevamp.Items.BossBags
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CrestOfFire>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ItemID.CobaltDrill);
+            //player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Summon.PhoenixStaff>(), 1);
         }
     }
     public class TheSorrowBag : BossBag

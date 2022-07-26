@@ -29,7 +29,6 @@ namespace tsorcRevamp.Projectiles.Summon
 
 			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; // This is needed so your minion can properly spawn when summoned and replaced when other minions are summoned
 			ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true; // Make the cultist resistant to this projectile, as it's resistant to all homing projectiles.
-			
 		}
 
 		public sealed override void SetDefaults()
@@ -43,7 +42,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			Projectile.friendly = true; // Only controls if it deals damage to enemies on contact (more on that later)
 			Projectile.minion = true; // Declares this as a minion (has many effects)
 			Projectile.DamageType = DamageClass.Summon; // Declares the damage type (needed for it to deal damage)
-			Projectile.minionSlots = 1f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
+			Projectile.minionSlots = 2f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
 			Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
 
 			Projectile.usesLocalNPCImmunity = true;
@@ -67,7 +66,9 @@ namespace tsorcRevamp.Projectiles.Summon
 			{
 				if (crit == true)
 				{
-					Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)((Projectile.damage * 0.075 * (ragestacks - 5)) * 3), 1f, Main.myPlayer);
+					int projectileIndex = Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)((Projectile.damage * 0.075 * (ragestacks - 5)) * 1.5), 1f, Main.myPlayer);
+					Main.projectile[projectileIndex].CritChance = 100;
+					Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)((Projectile.damage * 0.075 * (ragestacks - 5)) * 1.5), 1f, Main.myPlayer);
 				}
 				else
                 {

@@ -1,4 +1,4 @@
-
+/*
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -13,14 +13,14 @@ namespace tsorcRevamp.Items.Weapons.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			Tooltip.SetDefault("Summons a raging Phoenix to fight for you");
+			Tooltip.SetDefault("Summons a raging Phoenix to fight for you" +
+                "\nDeals extra damage after warming up, this scales well with crits" +
+                "\nUses 2 minion slots");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
 			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
 		}
-
-		public int ragedamagemultiplier = 2;
 		public override void SetDefaults()
 		{
 			Item.damage = 20;
@@ -28,11 +28,12 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			Item.mana = 10;
 			Item.width = 32;
 			Item.height = 32;
-			Item.useTime = 36;
-			Item.useAnimation = 36;
+			Item.useTime = 30;
+			Item.useAnimation = 30;
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.value = Item.sellPrice(gold: 30);
-			Item.rare = ItemRarityID.Cyan;
+			Item.value = 10000;
+			Item.rare = ItemRarityID.Expert;
+			Item.expert = true;
 			Item.UseSound = SoundID.Item44;
 
 
@@ -62,3 +63,4 @@ namespace tsorcRevamp.Items.Weapons.Summon
 		}
 	}
 }
+*/
