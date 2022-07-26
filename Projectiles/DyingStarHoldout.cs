@@ -10,9 +10,7 @@ namespace tsorcRevamp.Projectiles
     {
 
         public override string Texture => "tsorcRevamp/Projectiles/GlaiveBeamHoldout";
-
-
-        // This value controls how many frames it takes for the Prism to reach "max charge". 60 frames = 1 second.
+         
         public static float MaxCharge = 60f;
 
 
@@ -20,14 +18,12 @@ namespace tsorcRevamp.Projectiles
         {
             DisplayName.SetDefault("Dying Star Holdout");
 
-            // Signals to Terraria that this projectile requires a unique identifier beyond its index in the projectile array.
-            // This prevents the issue with the vanilla Last Prism where the beams are invisible in multiplayer.
+            //Signals to Terraria that this projectile requires a unique identifier beyond its index in the projectile array.
             ProjectileID.Sets.NeedsUUID[Projectile.type] = true;
         }
 
         public override void SetDefaults()
         {
-            // Use CloneDefaults to clone all basic projectile statistics from the vanilla Last Prism.
             Projectile.CloneDefaults(ProjectileID.LastPrism);
             Projectile.DamageType = DamageClass.Magic;
             Projectile.friendly = false;
@@ -36,7 +32,6 @@ namespace tsorcRevamp.Projectiles
 
         int charge = 0;
         int altFunctionTimer = 0;
-        bool spawnedLaser = false;
         public override void AI()
         {
             altFunctionTimer++;
@@ -51,7 +46,7 @@ namespace tsorcRevamp.Projectiles
                 {
                     
                     float radius = (trueChargeTime - charge) / 3f;
-                    radius = ((radius * radius) / 4) + 64;                 
+                    radius = ((radius * radius) / 4) + 64;                
 
                    
 
@@ -159,17 +154,12 @@ namespace tsorcRevamp.Projectiles
             
 
 
-            // Update the Prism's position in the world and relevant variables of the player holding it.
             UpdatePlayerVisuals(player, rrp);
 
-            // Update the Prism's behavior: project beams on frame 1, consume mana, and despawn if out of mana.
             if (Projectile.owner == Main.myPlayer)
             {
-                // Slightly re-aim the Prism every frame so that it gradually sweeps to point towards the mouse.
                 UpdateAim(rrp, player.HeldItem.shootSpeed);
 
-                // The Prism immediately stops functioning if the player is Cursed (player.noItems) or "Crowd Controlled", e.g. the Frozen debuff.
-                // player.channel indicates whether the player is still holding down the mouse button to use the item.
                 bool stillInUse = player.channel || player.altFunctionUse == 2;                
 
                 if(player.altFunctionUse == 2 && altFunctionTimer > 32)
@@ -191,14 +181,12 @@ namespace tsorcRevamp.Projectiles
                     stillInUse = false;
                 }
 
-                // If the Prism cannot continue to be used, then destroy it immediately.
                 if (!stillInUse)
                 {
                     Projectile.Kill();
                 }
             }
 
-            // This ensures that the Prism never times out while in use.
             Projectile.timeLeft = 2;
         }
 
@@ -252,35 +240,28 @@ namespace tsorcRevamp.Projectiles
 
         private void UpdatePlayerVisuals(Player player, Vector2 playerHandPos)
         {
-            // Place the Prism directly into the player's hand at all times.
             Vector2 origin = GetOrigin();
             Projectile.Center = new Vector2(origin.X + (-25 * player.direction), origin.Y - 15);
-            // The beams emit from the tip of the Prism, not the side. As such, rotate the sprite by pi/2 (90 degrees).
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Projectile.spriteDirection = Projectile.direction;
 
-            // The Prism is a holdout projectile, so change the player's variables to reflect that.
-            // Constantly resetting player.itemTime and player.itemAnimation prevents the player from switching items or doing anything else.
             player.ChangeDir(Projectile.direction);
             //player.heldProj = projectile.whoAmI;
             player.itemTime = 2;
             player.itemAnimation = 2;
 
-            // If you do not multiply by projectile.direction, the player's hand will point the wrong direction while facing left.
             player.itemRotation = (Projectile.velocity * Projectile.direction).ToRotation();
         }
 
 
         private void UpdateAim(Vector2 source, float speed)
         {
-            // Get the player's current aiming direction as a normalized vector.
             Vector2 aim = Vector2.Normalize(Main.MouseWorld - source);
             if (aim.HasNaNs())
             {
                 aim = -Vector2.UnitY;
             }
 
-            // Change a portion of the Prism's current velocity so that it points to the mouse. This gives smooth movement over time.
             aim = Vector2.Normalize(Vector2.Lerp(Vector2.Normalize(Projectile.velocity), aim, 1));
             aim *= speed;
 

@@ -81,6 +81,8 @@ namespace tsorcRevamp.Items.VanillaItems
             SimpleModTooltip(Mod, item, tooltips, ItemID.Revolver, "Can be upgraded with Dark Souls and 10 Souls of Light or Dark");
             SimpleModTooltip(Mod, item, tooltips, ItemID.MagicMirror, "Can not be used while a boss is alive!");
             SimpleModTooltip(Mod, item, tooltips, ItemID.RecallPotion, "Can not be used while a boss is alive!");
+            SimpleModTooltip(Mod, item, tooltips, ItemID.LargeAmethyst, "A symbol resembling a large pyramid is carved into it");
+            SimpleModTooltip(Mod, item, tooltips, ItemID.LargeSapphire, "A symbol resembling a snow-capped mountain is carved into it");
 
 
             Player player = Main.LocalPlayer;

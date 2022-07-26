@@ -2092,7 +2092,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.defense = 30;
                         npc.damage = 55;
-                        npc.value = 6670;
+                        npc.value = 0;
                         break;
                     }
                 #endregion

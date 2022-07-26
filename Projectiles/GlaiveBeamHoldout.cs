@@ -11,7 +11,6 @@ namespace tsorcRevamp.Projectiles
 
         public override string Texture => "tsorcRevamp/Projectiles/GlaiveBeamHoldout";
 
-        // The vanilla Last Prism is an animated item with 5 frames of animation. We copy that here.
         private const int NumAnimationFrames = 11;
 
 
@@ -58,6 +57,7 @@ namespace tsorcRevamp.Projectiles
             else
             {
                 Projectile.frame = (int)((charge / MaxCharge) * (NumAnimationFrames));
+
                 //Stop the BotC player from using the Glaive Beam if they have either 120 stamina or are full (ensures they can still use it even if they don't have stamina vessels)
                 if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 120 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2))
                 {
@@ -71,34 +71,34 @@ namespace tsorcRevamp.Projectiles
             }
 
 
-            // Update the Prism's position in the world and relevant variables of the player holding it.
+            // Update position in the world and relevant variables of the player holding it.
             UpdatePlayerVisuals(player, rrp);
 
-            // Update the Prism's behavior: project beams on frame 1, consume mana, and despawn if out of mana.
+            // Update behavior: project beams on frame 1, consume mana, and despawn if out of mana.
             if (Projectile.owner == Main.myPlayer)
             {
-                // Slightly re-aim the Prism every frame so that it gradually sweeps to point towards the mouse.
+                // Slightly re-aim every frame so that it gradually sweeps to point towards the mouse.
                 UpdateAim(rrp, player.HeldItem.shootSpeed);
 
                 // The Prism immediately stops functioning if the player is Cursed (player.noItems) or "Crowd Controlled", e.g. the Frozen debuff.
                 // player.channel indicates whether the player is still holding down the mouse button to use the item.
                 bool stillInUse = player.channel && !player.noItems && !player.CCed;
 
-                // Spawn in the Prism's lasers on the first frame if the player is capable of using the item.
+                // Spawn in the lasers on the first frame if the player is capable of using the item.
                 if (stillInUse && !spawnedLaser)
                 {
                     FireBeams();
                     spawnedLaser = true;
                 }
 
-                // If the Prism cannot continue to be used, then destroy it immediately.
+                // If it cannot continue to be used, then destroy it immediately.
                 else if (!stillInUse)
                 {
                     Projectile.Kill();
                 }
             }
 
-            // This ensures that the Prism never times out while in use.
+            // This ensures it never times out while in use.
             Projectile.timeLeft = 2;
         }
 
