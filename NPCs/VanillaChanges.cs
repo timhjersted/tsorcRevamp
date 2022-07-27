@@ -2076,7 +2076,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.scale = 1.25f;
                         npc.damage = 60; //legacy: 60, vanilla: 55
-                        npc.defense = 55; //legacy: 55, vanilla: 30
+                        npc.defense = 40; //legacy: 55, vanilla: 30
                         break;
                     }
 
