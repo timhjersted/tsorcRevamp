@@ -1,6 +1,5 @@
 
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
@@ -9,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-	public class PhoenixStaff : ModItem
+	public class PhoenixEgg : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
@@ -23,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 		}
 		public override void SetDefaults()
 		{
-			Item.damage = 14;
+			Item.damage = 24;
 			Item.knockBack = 3f;
 			Item.mana = 10;
 			Item.width = 32;

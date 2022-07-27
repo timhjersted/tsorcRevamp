@@ -61,15 +61,14 @@ namespace tsorcRevamp.Projectiles.Summon
 			{
 				ragestacks = 20;
 			}
+			if (crit)
+			{
+				Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoomCrit>(), (int)((Projectile.damage * 0.075 * (ragestacks - 5)) * 2), 1f, Main.myPlayer);
+			}
 			if (ragestacks > 5)
 			{
-				if (crit == true)
-				{
-					int projectileIndex = Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)((Projectile.damage * 0.075 * (ragestacks - 5)) * 1.5), 1f, Main.myPlayer);
-					Main.projectile[projectileIndex].CritChance = 100;
-					Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)((Projectile.damage * 0.075 * (ragestacks - 5)) * 1.5), 1f, Main.myPlayer);
-				}
-				else
+
+				if (!crit)
                 {
 					Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 0.075 * (ragestacks - 5)), 1f, Main.myPlayer);
 				}
@@ -108,9 +107,18 @@ namespace tsorcRevamp.Projectiles.Summon
 			{
 				ragestacks = 0;
 			}
+			if (ragestacks > 5)
+            {
+				Dust.NewDust(Projectile.Center, 10, 10, DustID.GoldFlame, 0f, 0f, 150, Color.Yellow, 0.5f);
+			} else
+			if (ragestacks > 10)
+            {
+				Dust.NewDust(Projectile.Center, 20, 20, DustID.GoldFlame, 0f, 0f, 200, Color.Orange, 1f);
+			} else
 			if (ragestacks > 19)
 			{
 				ragestacks = 20;
+				Dust.NewDust(Projectile.Center, 80, 80, DustID.SolarFlare, 0f, 0f, 250, Color.OrangeRed, 1.5f);
 			}
 
 			if (Main.GameUpdateCount % 60 == 0)
@@ -144,7 +152,6 @@ namespace tsorcRevamp.Projectiles.Summon
             {
 				ragestacks -= 3;
             }
-			Dust.NewDust(Projectile.Center, 100, 100, DustID.GoldFlame, 0f, 0f, 150, Color.OrangeRed, 1f);
 	}
 
 		// This is the "active check", makes sure the minion is alive while the player is alive, and despawns if not
