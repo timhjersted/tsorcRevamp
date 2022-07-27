@@ -33,9 +33,8 @@ namespace tsorcRevamp.Projectiles.Summon
 
 		public sealed override void SetDefaults()
 		{
-			Projectile.width = 208;
-			Projectile.height = 186;
-			Projectile.scale = 0.5f;
+			Projectile.width = 104;
+			Projectile.height = 93;
 			Projectile.tileCollide = false; // Makes the minion go through tiles freely
 
 			// These below are needed for a minion weapon
@@ -46,7 +45,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
 
 			Projectile.usesLocalNPCImmunity = true;
-			Projectile.localNPCHitCooldown = 20;
+			Projectile.localNPCHitCooldown = 15;
 		}
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
@@ -92,6 +91,7 @@ namespace tsorcRevamp.Projectiles.Summon
 		// The AI of this minion is split into multiple methods to avoid bloat. This method just passes values between calls actual parts of the AI.
 		public override void AI()
 		{
+
 			Player owner = Main.player[Projectile.owner];
 
 			if (!CheckActive(owner))
@@ -144,7 +144,8 @@ namespace tsorcRevamp.Projectiles.Summon
             {
 				ragestacks -= 3;
             }
-		}
+			Dust.NewDust(Projectile.Center, 100, 100, DustID.GoldFlame, 0f, 0f, 150, Color.OrangeRed, 1f);
+	}
 
 		// This is the "active check", makes sure the minion is alive while the player is alive, and despawns if not
 		private bool CheckActive(Player owner)
@@ -286,16 +287,16 @@ namespace tsorcRevamp.Projectiles.Summon
 			if (foundTarget)
 			{
 				// Minion has a target: attack (here, fly towards the enemy)
-				if (distanceFromTarget > 40f)
+				if (distanceFromTarget > 10f)
 				{
 					// The immediate range around the target (so it doesn't latch onto it when close)
 					Vector2 direction = targetCenter - Projectile.Center;
 					direction.Normalize();
 					direction *= speed;
 
-					if (Main.GameUpdateCount % 20 == 0)
+					if (Main.GameUpdateCount % 30 == 0)
 					{
-						Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, targetCenter, speed * 1.2f);
+						Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, targetCenter, speed * 1.3f);
 					}
 					//Projectile.velocity = (Projectile.velocity * (inertia - 1) + direction) / inertia;
 				}

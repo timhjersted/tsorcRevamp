@@ -1,6 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
@@ -31,6 +32,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			{
 				Projectile.timeLeft = 2;
 			}
+			Dust.NewDust(Projectile.Center, 10, 10, DustID.IceRod, 0f, 0f, 150, default(Color), 1f);
 		}
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{

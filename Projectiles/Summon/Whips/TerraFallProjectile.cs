@@ -72,11 +72,12 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			}
 
 			owner.heldProj = Projectile.whoAmI;
+			// Plays a whipcrack sound at the tip of the whip.
+			List<Vector2> points = Projectile.WhipPointsForCollision;
+			Projectile.FillWhipControlPoints(Projectile, points);
+			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.TerraBlade, 0f, 0f, 150, default(Color), 1f);
 			if (Timer == swingTime / 2)
 			{
-				// Plays a whipcrack sound at the tip of the whip.
-				List<Vector2> points = Projectile.WhipPointsForCollision;
-				Projectile.FillWhipControlPoints(Projectile, points);
 				SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Item/SummonerWhipcrack") with { Volume = 0.6f, PitchVariance = 0.3f }, points[points.Count - 1]);
 			}
 		}
