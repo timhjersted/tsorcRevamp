@@ -15,6 +15,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.CloneDefaults(ProjectileID.CoolWhipProj);
 
 			AIType = ProjectileID.CoolWhipProj;
+			Projectile.width = 22;
+			Projectile.height = 18;
 			Projectile.tileCollide = false;
 			Projectile.DamageType = DamageClass.SummonMeleeSpeed;
 			Projectile.friendly = true;

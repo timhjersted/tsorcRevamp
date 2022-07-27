@@ -15,6 +15,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.CloneDefaults(ProjectileID.FallingStar);
 
 			AIType = ProjectileID.Starfury;
+			Projectile.width = 22;
+			Projectile.height = 18;
 			Projectile.tileCollide = false;
 			Projectile.DamageType = DamageClass.SummonMeleeSpeed;
 			Projectile.penetrate += 3;

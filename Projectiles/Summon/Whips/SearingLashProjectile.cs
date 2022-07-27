@@ -20,8 +20,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void SetDefaults()
 		{
-			Projectile.width = 18;
-			Projectile.height = 18;
+			Projectile.width = 12;
+			Projectile.height = 38;
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 			Projectile.tileCollide = false;
@@ -165,36 +165,26 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			{
 				// These two values are set to suit this projectile's sprite, but won't necessarily work for your own.
 				// You can change them if they don't!
-				Rectangle frame = new Rectangle(0, 0, 10, 26);
-				Vector2 origin = new Vector2(5, 8);
+				Rectangle frame = new Rectangle(0, 0, 12, 40);
+				Vector2 origin = new Vector2(4, 15);
 				float scale = 1;
 
 				// These statements determine what part of the spritesheet to draw for the current segment.
 				// They can also be changed to suit your sprite.
 				if (i == list.Count - 2)
 				{
-					frame.Y = 74;
-					frame.Height = 18;
+					frame.Y = 60;
+					frame.Height = 12;
 
 					// For a more impactful look, this scales the tip of the whip up when fully extended, and down when curled up.
 					Projectile.GetWhipSettings(Projectile, out float timeToFlyOut, out int _, out float _);
 					float t = Timer / timeToFlyOut;
 					scale = MathHelper.Lerp(0.5f, 1.5f, Utils.GetLerpValue(0.1f, 0.7f, t, true) * Utils.GetLerpValue(0.9f, 0.7f, t, true));
 				}
-				else if (i > 20)
-				{
-					frame.Y = 58;
-					frame.Height = 16;
-				}
-				else if (i > 10)
-				{
-					frame.Y = 42;
-					frame.Height = 16;
-				}
 				else if (i > 0)
 				{
-					frame.Y = 26;
-					frame.Height = 16;
+					frame.Y = 40;
+					frame.Height = 20;
 				}
 
 				Vector2 element = list[i];

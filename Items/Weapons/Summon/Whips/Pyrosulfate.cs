@@ -1,4 +1,3 @@
-/*
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -20,8 +19,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void SetDefaults()
 		{
 
-			Item.height = 42;
-			Item.width = 42;
+			Item.height = 70;
+			Item.width = 74;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
 			Item.damage = 54;
@@ -52,4 +51,3 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		}
 	}
 }
-*/

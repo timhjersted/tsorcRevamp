@@ -928,7 +928,28 @@ namespace tsorcRevamp.NPCs
                 shop.item[2].SetDefaults(ModContent.ItemType<DisabledSale>());
                 shop.item[3].SetDefaults(ModContent.ItemType<DisabledSale>());
                 shop.item[4].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[5].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[6].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[7].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[8].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[9].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[10].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[11].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[12].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[13].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[14].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[15].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[16].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[17].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[18].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[19].SetDefaults(ModContent.ItemType<DisabledSale>());
                 shop.item[20].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[22].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[23].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[24].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[25].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[26].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[27].SetDefaults(ModContent.ItemType<DisabledSale>());
             }
         }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit)
