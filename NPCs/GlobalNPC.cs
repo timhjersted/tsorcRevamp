@@ -921,6 +921,15 @@ namespace tsorcRevamp.NPCs
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
             }
+            if (type == NPCID.Mechanic)
+            {
+                shop.item[0].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[1].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[2].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[3].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[4].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[20].SetDefaults(ModContent.ItemType<DisabledSale>());
+            }
         }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit)
         {
