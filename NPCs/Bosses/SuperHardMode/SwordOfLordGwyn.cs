@@ -17,16 +17,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.width = 152;
             NPC.height = 152;
             NPC.aiStyle = 23;
-            NPC.timeLeft = 22500;
+            //NPC.timeLeft = 22500;
             NPC.knockBackResist = 0;
-            NPC.damage = 250;
-            NPC.defense = 60;
+            NPC.damage = 185;
+            NPC.defense = 35;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.lifeMax = 50000;
             NPC.value = 10000;
-            NPC.noGravity = true;
+            NPC.noGravity = false;
             NPC.noTileCollide = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)

@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.penetrate = 1;
             Projectile.hostile = true;
             Projectile.tileCollide = true;
-            Projectile.timeLeft = 250;
+            Projectile.timeLeft = 60;//was 250
             Projectile.aiStyle = 0;
         }
         public override void AI()
@@ -29,8 +29,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
             {
                 Projectile.soundDelay = 10;
-                //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
-                Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item9 with { Volume = 0.1f, Pitch = 0.3f }, Projectile.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item105 with { Volume = 0.3f }, Projectile.Center);//was 9
             }
             int num47 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 2f);
             Dust expr_2684 = Main.dust[num47];
@@ -53,9 +52,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void Kill(int timeLeft)
         {
+           
+
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2), 0, 0, ModContent.ProjectileType<EnemySpellLightning4Bolt>(), (int)(this.Projectile.damage), 8f, Projectile.owner);
+
             }
         }
     }
