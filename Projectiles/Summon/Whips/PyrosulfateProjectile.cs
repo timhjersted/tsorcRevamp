@@ -24,6 +24,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.height = 34;
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
+			Projectile.DamageType = DamageClass.SummonMeleeSpeed;
 			Projectile.tileCollide = false;
 			Projectile.ownerHitCheck = true; // This prevents the projectile from hitting through solid tiles.
 			Projectile.extraUpdates = 1;

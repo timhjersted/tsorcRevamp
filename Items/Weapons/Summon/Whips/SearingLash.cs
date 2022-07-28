@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 			Tooltip.SetDefault("Enemies struck by this whip will burn horribly" +
-                "\nand increase minion damage by 56% of this whips damage in +%" +
+                "\nand increase minion damage by 66% of this whips damage in +%" +
                 "\nThis stacks on top of other whip tag dmg" +
                 "\nYour minions will focus struck enemies");
 		}
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.HellstoneBar, 10);
 			recipe.AddIngredient(ItemID.MeteoriteBar, 10);
-			recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 8000);
+			recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5500);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();

@@ -84,7 +84,7 @@ namespace tsorcRevamp.Buffs.Summon
 				{
 					tagbonusdamage = 20;
 				}
-				damage += (int)((projectile.damage + tagbonusdamage) * 0.56f * whipDamage * 0.01);
+				damage += (int)((projectile.damage + tagbonusdamage) * 0.66f * whipDamage * 0.01);
 			}
 		}
 	}

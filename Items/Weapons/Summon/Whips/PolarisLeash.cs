@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.AddIngredient(ModContent.ItemType<EnchantedWhip>(), 1);
 			recipe.AddIngredient(ItemID.CoolWhip, 1);
 			recipe.AddIngredient(ItemID.HallowedBar, 5);
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();

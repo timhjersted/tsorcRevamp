@@ -22,9 +22,14 @@ namespace tsorcRevamp.Projectiles.Summon.SummonProjectiles
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
         }
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-                Dust.NewDust(target.Center, 30, 30, DustID.GoldFlame, 0f, 0f, 150, Color.Red, 1.5f);
+            Dust.NewDust(target.Center, 30, 30, DustID.GoldFlame, 0f, 0f, 150, Color.Red, 1.5f);
+            if (crit == true)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<PhoenixBoomCrit>(), Projectile.damage * 2, 1f, Main.myPlayer);
+            }
         }
 
     }
@@ -46,7 +51,7 @@ namespace tsorcRevamp.Projectiles.Summon.SummonProjectiles
             Projectile.localNPCHitCooldown = -1;
             Projectile.CritChance = 100;
         }
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 0.4f, PitchVariance = 0.1f });
                 Dust.NewDust(target.Center, 100, 100, DustID.FlameBurst, 0f, 0f, 250, Color.DarkRed, 2.5f);

@@ -11,7 +11,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 {
 	public class EnchantedWhipProjectile : ModProjectile
 	{
-		bool doFastThrowDust = false;
 		public override void SetStaticDefaults()
 		{
 			// This makes the projectile use whip collision detection and allows flasks to be applied to it.
@@ -24,6 +23,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.height = 18;
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
+			Projectile.DamageType = DamageClass.SummonMeleeSpeed;
 			Projectile.tileCollide = false;
 			Projectile.ownerHitCheck = true; // This prevents the projectile from hitting through solid tiles.
 			Projectile.extraUpdates = 1;

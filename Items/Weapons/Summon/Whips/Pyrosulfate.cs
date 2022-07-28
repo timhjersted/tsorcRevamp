@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 74;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 54;
+			Item.damage = 52;
 			Item.knockBack = 2;
 			Item.rare = ItemRarityID.LightRed;
 
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.AddIngredient(ItemID.DemoniteBar, 4);
 			recipe.AddIngredient(ItemID.CursedFlame, 20);
 			recipe.AddIngredient(ItemID.SoulofNight, 5);
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6900);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();
