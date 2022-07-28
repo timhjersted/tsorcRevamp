@@ -323,7 +323,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), Main.player[NPC.target].position.X - 100 + Main.rand.Next(300), Main.player[NPC.target].position.Y - 530.0f, (float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Enemy.EnemyMeteor>(), meteorDamage, 2.0f, Main.myPlayer);
                 }
-
+                /*
                 if (Main.rand.NextBool(1200))
                 {
                     Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 4);
@@ -332,6 +332,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     NPC.ai[1] = 1f;
                 }
+                */
                 if (Main.rand.NextBool(220))
                 {
                     Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
