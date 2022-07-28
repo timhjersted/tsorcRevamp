@@ -44,8 +44,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 44;
             NPC.width = 20;
             NPC.lifeMax = 1000;
-            if (Main.hardMode) { NPC.lifeMax = 1500; NPC.defense = 30; NPC.value = 10200; }
-            if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 3000; NPC.defense = 55; NPC.damage = 90; NPC.value = 16000; }
+            if (Main.hardMode) { NPC.lifeMax = 1500; NPC.defense = 40; NPC.value = 10200; }
+            if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 3000; NPC.defense = 85; NPC.damage = 100; NPC.value = 16000; }
             NPC.value = 7200;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
@@ -943,22 +943,28 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
+            if (!tsorcRevampWorld.SuperHardMode)
+            {
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
+            }
 
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulShekel>(), 1, 36, 42));
+            
 
-            IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
-            hmCondition.OnFailedConditions(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 4));
-            hmCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 10));
-            npcLoot.Add(hmCondition);
-
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.LostUndeadSoul>(), 5));
-            npcLoot.Add(ItemDropRule.Common(ItemID.RagePotion, 3));
-            npcLoot.Add(ItemDropRule.Common(ItemID.WrathPotion, 3));
+            if (!tsorcRevampWorld.SuperHardMode)
+            {
+                IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
+                hmCondition.OnFailedConditions(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 4));
+                hmCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 10));
+                npcLoot.Add(hmCondition);
+                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.LostUndeadSoul>(), 5));
+                npcLoot.Add(ItemDropRule.Common(ItemID.RagePotion, 3));
+                npcLoot.Add(ItemDropRule.Common(ItemID.WrathPotion, 3));
+                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulShekel>(), 1, 36, 42));
+            }
         }
 
         #region Drawing and Animation
