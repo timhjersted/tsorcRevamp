@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Enums;
 using Terraria.ModLoader;
+using Terraria.ID;
 
 namespace tsorcRevamp.Projectiles.Shortswords
 {
@@ -9,8 +10,9 @@ namespace tsorcRevamp.Projectiles.Shortswords
 	// The "hitbox" itself is closer to the player, the sprite is centered on it
 	// However the interactions with the world will occur offset from this hitbox, closer to the sword's tip (CutTiles, Colliding)
 	// Values chosen mostly correspond to Iron Shortword
-	public class MurakumoProjectile : ModProjectile
+	public class SteelTempestProjectile : ModProjectile
 	{
+		public static int steeltempest = 0;
 		public const int FadeInDuration = 7;
 		public const int FadeOutDuration = 4;
 
@@ -81,8 +83,8 @@ namespace tsorcRevamp.Projectiles.Shortswords
 		private void SetVisualOffsets()
 		{
 			// 32 is the sprite size (here both width and height equal)
-			const int HalfSpriteWidth = 52 / 2;
-			const int HalfSpriteHeight = 54 / 2;
+			const int HalfSpriteWidth = 54 / 2;
+			const int HalfSpriteHeight = 52 / 2;
 
 			int HalfProjWidth = Projectile.width / 2;
 			int HalfProjHeight = Projectile.height / 2;
@@ -129,5 +131,9 @@ namespace tsorcRevamp.Projectiles.Shortswords
 			float collisionPoint = 0f; // Don't need that variable, but required as parameter
 			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
 		}
-	}
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+			steeltempest += 1;
+        }
+    }
 }
