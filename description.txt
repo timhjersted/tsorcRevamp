@@ -1,4 +1,4 @@
-The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack. Your 1-4 player journey will span 17 dungeons spread across an expansive and inter-connected world, offering a 15 to 30+ hr experience for a first playthrough.
+The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack. Your 1-4 player journey will span 17 dungeons spread across an expansive, hand-crafted open world, offering a 20 to 30+ hr experience for a first playthrough.
 
 - The Custom Map will load automatically when you reach the Select World screen. To create a fresh or updated map, click New on the World screen.
 
@@ -6,17 +6,20 @@ The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside t
 
 
 TOP FEATURES
-*17 dungeons spread across a large open world filled with villages, forests, mountains, lakes, temples, deserts, and hidden paths
-*39 bosses (17 vanilla plus 22 mod bosses).
-*100+ new NPCS including 8 friendly NPCs.
-*Companion Soundtrack with 32 songs (Dark Souls and Zelda fans will love it).
+*Explore a vast, interconnected and richly illustrated world, developed over the span of 4 years
+*Companion Soundtrack with 59 songs! (Dark Souls, Elden Ring and Zelda fans will love it)
+*39 bosses (17 vanilla plus 22 mod bosses)
+*100+ new NPCS including 8 friendly NPCs
 *Over 700 new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
-*Many hours of secret post-game content.
+*Many hours of secret post-game content
 *Dark Souls game mechanics, including bonfire save points and the dodge roll (bound to Left Alt by default)
+*The mod enforces old school adventure map rules, so if you can do it, it's okay to do it!
+
 
 
 PROJECT STATUS
 This is still in beta as we forge ahead to 1.0. Development is currently focused on polishing the later stages of the game, especially the bosses.
+
 
 
 DISCORD
@@ -42,7 +45,7 @@ GAME MANUAL:
 
 *On death, you will drop all your Dark Souls and have one chance to recover them. For a more forgiving experience, you can turn this off in the mod's Config options.
 
-*The new dodge roll action with i-frames is an essential part of TSORC. It can be bound to any key in TModLoader's controller settings, under the mod section. (Left Alt by default)
+*The new dodge roll action with i-frames is an essential part of TSORC. It can be bound to any key in TModLoader's controller settings, under the mod section. (Left Alt by default. Left Shift also recommended.)
 
 *Adventure Mode should stay checked in the TSORC mod config options to play with the custom map.
 
