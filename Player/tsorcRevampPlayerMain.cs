@@ -584,24 +584,7 @@ namespace tsorcRevamp
                 damage = (int)(damage * damageMult);
             }
             if (crit)
-            {
-                if (item.DamageType == DamageClass.Melee)
-                {
-                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Melee));
-                }
-                else if (item.DamageType == DamageClass.Magic)
-                {
-                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Magic));
-                }
-                else if (item.DamageType == DamageClass.Ranged)
-                {
-                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Ranged));
-                }
-                else if (item.DamageType == DamageClass.Throwing)
-                {
-                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Throwing)); //lol
-                }
-            }
+                DoMultiCrits(ref damage, Player.GetTotalCritChance(item.DamageType));
         }
 
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
@@ -619,26 +602,8 @@ namespace tsorcRevamp
             {
                 damage = (int)(damage * 0.55);
             }
-
             if (crit)
-            {
-                if (proj.CountsAsClass(DamageClass.Melee))
-                {
-                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Melee));
-                }
-                else if (proj.CountsAsClass(DamageClass.Magic))
-                {
-                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Magic));
-                }
-                else if (proj.CountsAsClass(DamageClass.Ranged))
-                {
-                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Ranged));
-                }
-                else if (proj.CountsAsClass(DamageClass.Throwing))
-                {
-                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Throwing)); //lol
-                }
-            }
+                DoMultiCrits(ref damage, Player.GetTotalCritChance(proj.DamageType));
         }
 
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit)
