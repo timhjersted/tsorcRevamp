@@ -10,6 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public float cooldown = 0;
         public float attackspeedscaling;
+        public float doublecritchancetimer = 0;
+        public static bool doublecritchance = false;
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Doubled crit chance" +
@@ -50,14 +52,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
-
+            doublecritchancetimer = 0.5f;
             if (Main.mouseRight & !Main.mouseLeft & Projectiles.Shortswords.SteelTempestProjectile.steeltempest == 2 & cooldown <= 0)
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
-                Item.shoot = ProjectileID.WeatherPainShot;
+                Item.shoot = ModContent.ProjectileType<Projectiles.Shortswords.SteelTempestTornado>();
                 cooldown = ((3 / attackspeedscaling) + 1);
                 Projectiles.Shortswords.SteelTempestProjectile.steeltempest = 0;
             } else
@@ -80,11 +82,25 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             }
 
         }
-        public override void UpdateInventory(Player player)
+        public override void HoldItem(Player player)
         {
+            doublecritchancetimer = 0.1f;
+            doublecritchance = true;
+
+        }
+        public override void UpdateInventory(Player player)
+        {   
             if (Main.GameUpdateCount % 1 == 0)
             {
                 cooldown -= 0.0167f;
+            }
+            if (Main.GameUpdateCount % 1 == 0)
+            {
+                doublecritchancetimer -= 0.0167f;
+            }
+            if (doublecritchancetimer <= 0)
+            {
+                doublecritchance = false;
             }
         }
 

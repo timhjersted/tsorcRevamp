@@ -13,6 +13,7 @@ namespace tsorcRevamp.Projectiles.Shortswords
 	public class SteelTempestProjectile : ModProjectile
 	{
 		public static int steeltempest = 0;
+		public static int steeltempesthittimer = 0;
 		public const int FadeInDuration = 7;
 		public const int FadeOutDuration = 4;
 
@@ -47,11 +48,13 @@ namespace tsorcRevamp.Projectiles.Shortswords
 		{
 			Player player = Main.player[Projectile.owner];
 
+
 			Timer += 1;
 			if (Timer >= TotalDuration)
 			{
-				// Kill the projectile if it reaches it's intented lifetime
+				// Kill the projectile if it reaches it's intended lifetime
 				Projectile.Kill();
+				steeltempesthittimer = 0;
 				return;
 			}
 			else
@@ -133,7 +136,11 @@ namespace tsorcRevamp.Projectiles.Shortswords
 		}
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-			steeltempest += 1;
+			if (steeltempesthittimer == 0)
+            {
+				steeltempest += 1;
+				steeltempesthittimer = 1;
+            }
         }
     }
 }
