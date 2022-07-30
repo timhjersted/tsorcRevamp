@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using System;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
@@ -94,17 +95,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             if (Main.rand.NextBool(175))
             {
                 breath = true;
-                //Terraria.Audio.SoundEngine.PlaySound(15, -1, -1, 0);
+                
             }
             if (breath)
             {
-                //while (breathCD > 0) {
-                //for (int pcy = 0; pcy < 10; pcy++) {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position.X + (float)NPC.width / 2f, NPC.position.Y + (float)NPC.height / 2f, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
-                //}
-                NPC.netUpdate = true; //new
+                float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (2.5f * NPC.direction), NPC.Center.Y, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 3.2f, Main.myPlayer); //1f was 1.2f
+
+                //play breath sound
+                if (Main.rand.NextBool(3))
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.8f, Pitch = 0.1f }, NPC.Center); //flame thrower
+                }
+
+                NPC.netUpdate = true; 
                 breathCD--;
-                //}
+                
             }
             if (breathCD <= 0)
             {
@@ -115,29 +121,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 {
                     MeteorShotCounter = 0;
                 }
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                
             }
-
-            /*
-            if (Main.rand.NextBool(3303))//was 833 temp removing
-            {
-                for (int pcy = 0; pcy < 10; pcy++)
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 4.5f, ProjectileID.Fireball, flameRainDamage, 2f, Main.myPlayer); //6.5 too fast
-                    //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 6.5f, ModContent.ProjectileType<Projectiles.Enemy.FlameRain>(), flameRainDamage, 2f, Main.myPlayer);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                    NPC.netUpdate = true; //new
-                }
-            }
-            */
-
-           
 
             //FIRE FROM ABOVE ATTACK
-            
-                //Counts up each tick. Used to space out shots
-                if (DarkBeadShotTimer >= 25 && DarkBeadShotCounter < 8)
-                {
+            //Counts up each tick. Used to space out shots
+            if (DarkBeadShotTimer >= 25 && DarkBeadShotCounter < 8)
+            {
                     
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 4.5f, ProjectileID.Fireball, flameRainDamage, 2f, Main.myPlayer); //6.5 too fast
                         //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 6.5f, ModContent.ProjectileType<Projectiles.Enemy.FlameRain>(), flameRainDamage, 2f, Main.myPlayer);
@@ -147,7 +137,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                     DarkBeadShotTimer = 0;
                     DarkBeadShotCounter++;
 
-                }
+            }
 
 
             //METEOR SPACED OUT ATTACK

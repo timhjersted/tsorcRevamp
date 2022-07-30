@@ -7,6 +7,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     class EnemyBioSpitBall : ModProjectile
     {
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Acid Spit");
+
+        }
         public override void SetDefaults()
         {
             Projectile.aiStyle = 1;
@@ -28,7 +33,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Dust.NewDust(Projectile.position, Projectile.height, Projectile.width, 71, 0.2f, 0.2f, 200, default, 2f);
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 71, 0.2f, 0.2f, 200, default, 2f);
             Main.dust[dust].noGravity = false;
-            //projectile.type = 96; //killpretendtype
+            
             return true;
         }
 
@@ -40,7 +45,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.rotation += 1f;
             if (Main.rand.NextBool(3))
             {
-                //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 34); //try 5 (faint woosh), 20, was 17
+                
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, 50, Color.Green, 3.0f);
                 Main.dust[dust].noGravity = false;
             }
@@ -59,7 +64,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             
-            target.AddBuff(BuffID.Blackout, 360, false); //darkness
+            target.AddBuff(BuffID.Blackout, 120, false); //darkness
 
             if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead))
             {

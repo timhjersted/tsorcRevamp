@@ -15,8 +15,9 @@ namespace tsorcRevamp.Buffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.moveSpeed *= 0.8f;
-            player.velocity.X *= 0.9f;
+            player.moveSpeed *= 0.9f;
+            player.velocity.X *= 0.95f;
+            player.velocity.Y *= 0.95f;
             player.jump = (int)(player.jump * 0.5);
             player.GetAttackSpeed(DamageClass.Melee) *= 0.5f;
             player.statDefense -= 20;

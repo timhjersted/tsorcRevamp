@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;
-            NPC.damage = 500;
+            NPC.damage = 300;
             NPC.defense = 100;
             NPC.HitSound = SoundID.NPCHit7;
             NPC.DeathSound = SoundID.NPCDeath8;
@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             Music = 12;
             NPC.boss = true;
             NPC.noGravity = true;
-            NPC.noTileCollide = true;
+            NPC.noTileCollide = false;
             NPC.behindTiles = true;
             NPC.value = 500000;
             NPC.buffImmune[BuffID.Poisoned] = true;
@@ -40,11 +40,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         }
 
 
-        public int breathDamage = 126;
-        public int smallShardDamage = 164;
-        public int iceWaterDamage = 150;
-        public int iceStormDamage = 175;
-        public int largeShardDamage = 280;
+        public int breathDamage = 96;
+        public int smallShardDamage = 94;
+        public int iceWaterDamage = 100;
+        public int iceStormDamage = 100;
+        public int largeShardDamage = 142;
 
         public float FrostShotTimer;
         public float FrostShotCounter;
@@ -71,13 +71,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         bool firstCrystalSpawned = false;
         bool secondCrystalSpawned = false;
         bool finalCrystalsSpawned = false;
-
+        float customspawn1;
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
 
             int expertScale = 1;
             if (Main.expertMode) expertScale = 2;
-
+            target.AddBuff(ModContent.BuffType<Buffs.Chilled>(), 600, false);
             target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
             target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
             
@@ -192,20 +192,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             if (Main.rand.NextBool(255))
             {
                 breath = true;
-                // Terraria.Audio.SoundEngine.PlaySound(15, -1, -1, 0); This roar sound got very annoying
+                
             }
             if (breath)
             {
+
+                if (breathCD == 110)
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/breath1") with { Volume = 0.8f }, NPC.Center);
+                }
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    //PROJECTILE START POINT - 108f
-                    //Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.position.X + (float)npc.width / 2f, npc.position.Y + (float)npc.height / 2f, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position.X + (float)NPC.width, NPC.position.Y + (float)NPC.height * 0.5f, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
+                    float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
+
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (2.5f * NPC.direction), NPC.Center.Y, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
+                
                 }
                 //play breath sound
                 if (Main.rand.NextBool(3))
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.8f, Pitch = 0.1f }, NPC.Center); //flame thrower
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.3f, Pitch = -0.6f }, NPC.Center); //flame thrower
                 }
                 
                 breathCD--;
@@ -214,12 +221,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             if (breathCD <= 0)
             {
                 breath = false;
-                breathCD = 150; //was 110
+                breathCD = 110; //was 110
                 if (Main.rand.NextBool(2))
                 {
                     FrostShotCounter = 0;
                 }
-                if (Main.rand.NextBool(3))
+                if (Main.rand.NextBool(2))
                 {
                     FrostShot2Counter = 0;
                 }
@@ -234,16 +241,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
             //FROST SPACED ATTACK
             //Counts up each tick. Used to space out shots
-            if (FrostShotTimer >= 45 && FrostShotCounter < 6)
+            if (FrostShotTimer >= 55 && FrostShotCounter < 9)
             {
 
                 if (Main.netMode != NetmodeID.MultiplayerClient) //ModContent.ProjectileType<Projectiles.Enemy.FrozenTear>()
                 {
 
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(600), (float)nT.position.Y - 620f, (float)(-50 + Main.rand.Next(100)) / 10, 2.1f, ProjectileID.FrostBlastHostile, smallShardDamage, 2f, Main.myPlayer); //ProjectileID.FrostShard 5 was 10.1f was 14.9f is speed - 1f was 2f
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.2f, Pitch = 0.7f }, NPC.Center); //ice materialize - good
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 500 + Main.rand.Next(500), (float)nT.position.Y - 600f, (float)(-50 + Main.rand.Next(100)) / 10, 2.1f, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), smallShardDamage, 2f, Main.myPlayer); //ProjectileID.FrostBlastHostile //ProjectileID.FrostShard 5 was 10.1f was 14.9f is speed - 1f was 2f
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit5 with { Volume = 0.3f, Pitch = 0.0f }, NPC.Center); //
                 }
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                
                 NPC.netUpdate = true; //new
 
                 FrostShotTimer = 0;
@@ -260,10 +267,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 if (Main.netMode != NetmodeID.MultiplayerClient) //ModContent.ProjectileType<Projectiles.Enemy.FrozenTear>()
                 {
 
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 200 + Main.rand.Next(200), (float)nT.position.Y - 650f, (float)(-50 + Main.rand.Next(100)) / 10, 1.1f, ProjectileID.FrostBlastHostile, smallShardDamage, 6f, Main.myPlayer); //ProjectileID.FrostShard 5 was 10.1f was 14.9f is speed - 1f was 2f
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 200 + Main.rand.Next(200), (float)nT.position.Y - 600f, (float)(-50 + Main.rand.Next(100)) / 10, 3.1f, ProjectileID.FrostBlastHostile, smallShardDamage, 6f, Main.myPlayer); //ProjectileID.FrostBlastHostile //ModContent.ProjectileType<Projectiles.Enemy.Bubble>() ProjectileID.FrostShard 5 was 10.1f was 14.9f is speed - 1f was 2f
                     Lighting.AddLight(NPC.Center, Color.DeepPink.ToVector3() * 3f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.2f, Pitch = 0.9f }, NPC.Center); //ice materialize - good
-
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal with { Volume = 0.2f, Pitch = 0.0f }, NPC.Center); //ice materialize - good, NPCHit5 is a nice ice sound
+                      //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.2f, Pitch = 0.1f }, NPC.Center); //flame thrower
 
                 }
                 
@@ -277,10 +284,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
 
             //massive ice crystal shards falling down   
-            if (Main.rand.NextBool(210))
+            if (Main.rand.NextBool(235))
             {
                 float num48 = 6f;
-                Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 1020 + (NPC.height / 2)); //* 0.5
+                Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 1150 + Main.rand.Next(200)); //* 0.5
                 float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
                 float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
                 if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
@@ -293,16 +300,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, largeShardDamage, 0f, Main.myPlayer);
                     Main.projectile[num54].timeLeft = 100;
                     Main.projectile[num54].aiStyle = 4;
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.2f, Pitch = -0.3f }, NPC.Center); //ice materialize - good
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.2f, Pitch = -0.9f }, NPC.Center); //ice materialize - good
                     Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 2f);
                     Dust.NewDust(NPC.position, NPC.width * 2, NPC.height * 2, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y);
                     NPC.ai[3] = 0; ;
-
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.4f, Pitch = 0f }, NPC.Center); //item 29- sheen, 28- standard ice, item 30- magical ice
+                    //Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 120, 0.3f, .1f); //ice mist howl sounds crazy
                     if (Main.rand.NextBool(4))
                     {
                         FrostShotCounter = 0;
                     }
-                    if (Main.rand.NextBool(2))
+                    if (Main.rand.NextBool(3))
                     {
                         FrostShot2Counter = 0;
                     }
@@ -312,9 +320,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
             
             //ice storm horizontal attack
-            if (Main.rand.NextBool(160))
+            if (Main.rand.NextBool(165))
             {
-                float num48 = 7f;
+                float num48 = 6f;
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width / 2), NPC.position.Y + (NPC.height / 2)); //.2 was .5
                 float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                 float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
@@ -329,7 +337,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     Main.projectile[num54].timeLeft = 1;
                     Main.projectile[num54].aiStyle = 1;
                     //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 120, 0.3f, .1f); //ice mist howl sounds crazy
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.2f, Pitch = 0.3f }, NPC.Center); //ice materialize - good
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.1f, Pitch = -0.6f }, NPC.Center); //ice materialize - good
+                    //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.1f, Pitch = -0.9f }, NPC.Center); //flame thrower
+                    Color color = new Color();
+                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 62, 0, 0, 100, color, 3.0f);
+                    Main.dust[dust].noGravity = true;
                     NPC.ai[3] = 0; ;
 
                    
@@ -337,7 +349,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 }
                 NPC.netUpdate = true;
             }
-            
+
 
             //FROST WAVE
             /*
@@ -362,6 +374,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
             
             */
+
+
+
+            //spawn
+            
+
+                if ((customspawn1 < 50) && Main.rand.NextBool(2000))
+                {
+                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.SuperHardMode.IceSkeleton>(), 0); 
+                    Main.npc[Spawned].velocity.Y = -8;
+                    Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
+                    
+                    customspawn1 += 1f;
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
+                    }
+                }
+            
+
 
 
             if (Main.rand.NextBool(2))

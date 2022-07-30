@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Enemy Spell Ice Storm");
+            DisplayName.SetDefault("Ice Storm");
 
         }
         public override void AI()
@@ -27,6 +27,10 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override bool PreDraw(ref Color lightColor)
         {
+            Color color = new Color();
+            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 62, 0, 0, 100, color, 1.0f);
+            Main.dust[dust].noGravity = true;
+
             lightColor = Color.White;
             return base.PreDraw(ref lightColor);
         }

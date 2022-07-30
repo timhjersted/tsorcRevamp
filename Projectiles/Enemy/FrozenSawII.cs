@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreKill(int timeLeft)
         {
-            Projectile.type = 44;
+            Projectile.type = 645;
             return true;
         }
         public override void AI()
@@ -66,13 +66,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 buffLengthMod = 2;
             }
-
+            target.AddBuff(BuffID.Slow, 300 / buffLengthMod);
             target.AddBuff(BuffID.BrokenArmor, 300 / buffLengthMod);
-            if (Main.rand.NextBool(10))
-            {
-                target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 1200);
-                target.AddBuff(BuffID.Slow, 300 / buffLengthMod);
-            }
+            target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 1200);
+            
         }
     }
 }
