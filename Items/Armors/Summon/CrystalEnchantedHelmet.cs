@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Dazzling armor cut from crystal\nIncreases minion damage by 10%\nIncreases your max number of minions by 1\nSet Bonus: Increases your max number of minions and turrets by 1" +
-                               "\nIncreases minion damage by 10%\nWhen health falls below 166, gain 10% minion damage + 7 flat");
+                               "\nIncreases minion damage by 10%\nWhen health falls below 166, gain 10% minion damage + 6 flat");
         }
         public override void SetDefaults()
         {
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Armors.Summon
             if (player.statLife < 166)
             {
                 player.GetDamage(DamageClass.Summon) += 0.1f;
-                player.GetDamage(DamageClass.Summon).Flat += 7f;
+                player.GetDamage(DamageClass.Summon).Flat += 6f;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 42, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 105, Color.Aqua, 1.0f);
                 Main.dust[dust].noGravity = true;

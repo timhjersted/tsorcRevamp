@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases whip damage by 12%\nSet Bonus: Increases whip range by 50% and speed by 35%" +
+            Tooltip.SetDefault("Increases whip damage by 12%\nSet Bonus: Increases whip range by 20% and speed by 25%" +
                 "\nWhen health is above 333, gain 7% minion damage + 7% whip damage, 17% whip speed and 6 life regen");
         }
 
@@ -33,8 +33,8 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.whipRangeMultiplier += 0.5f;
-            player.GetAttackSpeed(DamageClass.Summon) += 0.35f;
+            player.whipRangeMultiplier += 0.2f;
+            player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
 
             if (player.statLife > 333)
             {

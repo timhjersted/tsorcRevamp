@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Dazzling armor cut from crystal\nIncreases whip damage by 10%\nSet Bonus: Increases whip range by 50% and speed by 35%" +
+            Tooltip.SetDefault("Dazzling armor cut from crystal\nIncreases whip damage by 10%\nSet Bonus: Increases whip range by 20% and speed by 25%" +
                 "\nSet Bonus: When health falls below 166, gain 10% minion damage + 10% whip damage on top and 20% whip speed");
         }
 
@@ -35,8 +35,8 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateArmorSet(Player player)
         {
-            player.whipRangeMultiplier += 0.5f;
-            player.GetAttackSpeed(DamageClass.Summon) += 0.35f;
+            player.whipRangeMultiplier += 0.2f;
+            player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
             if (player.statLife < 166)
             {
                 player.GetDamage(DamageClass.Summon) += 0.1f;

@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("25% minion damage\nIncreases your max number of minions by 2\nGrants immunity to 'On Fire'");
+            Tooltip.SetDefault("+25% minion damage\nIncreases your max number of minions by 2\nGrants immunity to 'On Fire'");
         }
         public override void SetDefaults()
         {

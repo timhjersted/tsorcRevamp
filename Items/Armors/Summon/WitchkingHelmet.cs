@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("25% minion damage\nIncreases your max number of minions by 2\nGrants night vision");
+            Tooltip.SetDefault("+25% minion damage\nIncreases your max number of minions by 2\nGrants night vision");
         }
 
         public override void SetDefaults()
@@ -35,9 +35,10 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateArmorSet(Player player)
         {
-            player.setBonus = "Set Bonus: +50% whip range, +25% whip speed\n+30% movement speed\nKnockback and fall damage immunity";
-            player.GetAttackSpeed(DamageClass.Summon) += 0.35f;
-            player.whipRangeMultiplier += 0.5f;
+            player.setBonus = "Set Bonus: +1 Turret Slot\n+20% whip range, +25% whip speed\n+30% movement speed\nKnockback and fall damage immunity";
+            player.maxTurrets += 1;
+            player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
+            player.whipRangeMultiplier += 0.2f;
             player.moveSpeed += 0.3f;
             player.noKnockback = true;
             player.noFallDmg = true;
