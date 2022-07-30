@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;
-            NPC.damage = 300;
+            NPC.damage = 290;
             NPC.defense = 100;
             NPC.HitSound = SoundID.NPCHit7;
             NPC.DeathSound = SoundID.NPCDeath8;
@@ -45,15 +45,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.damage = 300;
+                NPC.damage = 290;
                 NPC.value = 100000;
-                breathDamage = 125;
-                flameRainDamage = 130;
-                meteorDamage = 150;
+                breathDamage = 115;
+                flameRainDamage = 100;
+                meteorDamage = 120;
             }
         }
 
+        //oolicile sorcerer
+        public float DarkBeadShotTimer;
+        public float DarkBeadShotCounter;
 
+        public float MeteorShotTimer;
+        public float MeteorShotCounter;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -82,6 +87,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         {
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
+            DarkBeadShotTimer++;
+            MeteorShotTimer++;
+
             Player nT = Main.player[NPC.target];
             if (Main.rand.NextBool(175))
             {
@@ -101,10 +109,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             if (breathCD <= 0)
             {
                 breath = false;
-                breathCD = 90;
+                breathCD = 160;
+
+                if (Main.rand.NextBool(2))
+                {
+                    MeteorShotCounter = 0;
+                }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
             }
-            if (Main.rand.NextBool(303))//was 833
+
+            /*
+            if (Main.rand.NextBool(3303))//was 833 temp removing
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
@@ -114,16 +129,56 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                     NPC.netUpdate = true; //new
                 }
             }
+            */
+
+           
+
+            //FIRE FROM ABOVE ATTACK
+            
+                //Counts up each tick. Used to space out shots
+                if (DarkBeadShotTimer >= 25 && DarkBeadShotCounter < 8)
+                {
+                    
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 4.5f, ProjectileID.Fireball, flameRainDamage, 2f, Main.myPlayer); //6.5 too fast
+                        //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 6.5f, ModContent.ProjectileType<Projectiles.Enemy.FlameRain>(), flameRainDamage, 2f, Main.myPlayer);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                        NPC.netUpdate = true; //new
+                    
+                    DarkBeadShotTimer = 0;
+                    DarkBeadShotCounter++;
+
+                }
+
+
+            //METEOR SPACED OUT ATTACK
+
+            //Counts up each tick. Used to space out shots
+            if (MeteorShotTimer >= 58 && MeteorShotCounter < 9)
+            {
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 200 + Main.rand.Next(500), (float)nT.position.Y - 600f, (float)(-50 + Main.rand.Next(100)) / Main.rand.Next(3, 10), 5.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //8.9f is speed, 4.9 too slow, (float)nT.position.Y - 400f starts projectile closer above the player vs 500?
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                NPC.netUpdate = true; //new      
+                MeteorShotTimer = 0;
+                MeteorShotCounter++;
+
+                if (Main.rand.NextBool(2))
+                {
+                    DarkBeadShotCounter = 0;
+                }
+            }
+            /*
             if (Main.rand.NextBool(400))//1460, 200 was pretty awesome but a bit crazy
             {
-                for (int pcy = 0; pcy < 10; pcy++)
+                for (int pcy = 0; pcy < 8; pcy++)
                 {
                     //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 200 + Main.rand.Next(500), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / Main.rand.Next(3, 10), 5.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //8.9f is speed, 4.9 too slow, (float)nT.position.Y - 400f starts projectile closer above the player vs 500?
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     NPC.netUpdate = true; //new
+                    DarkBeadShotCounter = 0;
                 }
             }
+            */
             if (Main.rand.NextBool(2))
             {
                 int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, 6, NPC.velocity.X / 4f, NPC.velocity.Y / 4f, 100, default(Color), 1f);

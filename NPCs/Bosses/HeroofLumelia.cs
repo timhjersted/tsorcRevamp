@@ -15,8 +15,8 @@ namespace tsorcRevamp.NPCs.Bosses
 
         }
 
-        public int throwingKnifeDamage = 115;
-        public int smokebombDamage = 175;
+        public int throwingKnifeDamage = 90;
+        public int smokebombDamage = 145;
 
         public override void SetDefaults()
         {
@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.aiStyle = 3;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.damage = 220;
+            NPC.damage = 150;
             NPC.defense = 75;
             NPC.boss = true;
             NPC.lifeMax = 10000;
@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 107430;
             NPC.lavaImmune = true;
-            NPC.knockBackResist = 0.1f;
+            NPC.knockBackResist = 0f;
             NPC.rarity = 4;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Bosses
             smokebombDamage = (int)(smokebombDamage / 2);
         }
 
-        int herosArrowDamage = 100;
+        int herosArrowDamage = 90;
         
 
         bool wolfSpawned1 = false;
@@ -514,7 +514,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     customAi1 = 1f;
                 }
-                if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(3))//
+                if (NPC.justHit && NPC.Distance(player.Center) < 400 && Main.rand.NextBool(3))//
                 {
                     NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f); //was 6 and 3
                     float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-6f, -4f);
@@ -527,7 +527,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     NPC.netUpdate = true;
                 }
-                if (NPC.justHit && NPC.Distance(player.Center) > 351 && Main.rand.NextBool(3))
+                if (NPC.justHit && NPC.Distance(player.Center) > 451 && Main.rand.NextBool(3))
                 {
                     NPC.knockBackResist = 0f;
                     NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f);

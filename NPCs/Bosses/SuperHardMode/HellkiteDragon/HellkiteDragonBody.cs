@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.buffImmune[BuffID.CursedInferno] = true;
         }
 
-        int fireDamage = 150;
+        int fireDamage = 100;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = (int)(NPC.damage / 2);

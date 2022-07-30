@@ -276,7 +276,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (poisonTimer <= 100 && NPC.Distance(player.Center) > 250)
                 {
 
-                    if (Main.rand.NextBool(120)) //30 was cool for great red knight
+                    if (Main.rand.NextBool(140)) //30 was cool for great red knight
                     {
                         //FIRE
                         for (int pcy = 0; pcy < 6; pcy++)
@@ -302,7 +302,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (poisonTimer <= 100)
                 {
                     Player nT = Main.player[NPC.target];
-                    if (Main.rand.NextBool(290)) //30 was cool for great red knight
+                    if (Main.rand.NextBool(310)) //30 was cool for great red knight
                     {
                         //FIRE
                         for (int pcy = 0; pcy < 2; pcy++)
@@ -331,7 +331,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         */
                     }
 
-                    if (Main.rand.NextBool(200))
+                    if (Main.rand.NextBool(220))
                     {
                         for (int pcy = 0; pcy < 3; pcy++)
                         {
@@ -511,7 +511,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             if (poisonTimer >= 255)
                             {
                                 poisonTimer = 1f;
-                                DarkBeadShotCounter = 0;
+                                if(Main.rand.NextBool(3))
+                                {
+                                    DarkBeadShotCounter = 0;
+                                }
+                                
                             }
                             //}
                         }
@@ -560,7 +564,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (customAi1 >= 10f)
                     {
 
-                        if ((customspawn2 < 27) && Main.rand.NextBool(700))
+                        if ((customspawn2 < 27) && Main.rand.NextBool(1500))
                         {
                             int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.LothricBlackKnight>(), 0); // Spawns Lothric Black Knight
                             Main.npc[Spawned].velocity.Y = -8;
