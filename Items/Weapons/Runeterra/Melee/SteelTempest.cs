@@ -1,6 +1,6 @@
+/*
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -129,7 +129,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
                 return true;
         }
 
-/*        public override void AddRecipes()
+        public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
 
@@ -140,6 +140,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
 
             recipe.Register();
         }
-*/
     }
 }
+*/

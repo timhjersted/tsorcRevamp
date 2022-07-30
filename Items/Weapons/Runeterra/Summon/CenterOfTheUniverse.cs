@@ -1,3 +1,4 @@
+/*
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -7,13 +8,13 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-	public class PhoenixEgg : ModItem
+	public class CenterOfTheUniverse : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
-			Tooltip.SetDefault("Summons a raging Phoenix to fight for you" +
-                "\nDeals extra damage after warming up, this scales well with crits" +
-                "\nUses 2 minion slots");
+			DisplayName.SetDefault("Center of the Universe");
+			Tooltip.SetDefault("Summons stars to rotate around you and damage enemies in their way" +
+                "\nIcrease or decrease their radius by right-clicking");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
@@ -21,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 		}
 		public override void SetDefaults()
 		{
-			Item.damage = 24;
+			Item.damage = 20;
 			Item.knockBack = 3f;
 			Item.mana = 10;
 			Item.width = 32;
@@ -29,22 +30,21 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			Item.useTime = 30;
 			Item.useAnimation = 30;
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.value = 10000;
-			Item.rare = ItemRarityID.Expert;
-			Item.expert = true;
+			Item.value = 1000;
+			Item.rare = ItemRarityID.Green;
 			Item.UseSound = SoundID.Item44;
 
 
 			Item.noMelee = true;
 			Item.DamageType = DamageClass.Summon;
-			Item.buffType = ModContent.BuffType<Buffs.Summon.PhoenixBuff>();
-			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.PhoenixProjectile>();
+			Item.buffType = ModContent.BuffType<CenterOfTheUniverseBuff>();
+			Item.shoot = ModContent.ProjectileType<CenterOfTheUniverseProjectile>();
 		}
 
 		public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
 		{
 			// Here you can change where the minion is spawned. Most vanilla minions spawn at the cursor position
-			position = Main.MouseWorld;
+			position = player.Bottom;
 		}
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -61,3 +61,4 @@ namespace tsorcRevamp.Items.Weapons.Summon
 		}
 	}
 }
+*/
