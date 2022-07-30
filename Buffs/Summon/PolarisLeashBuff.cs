@@ -18,7 +18,7 @@ namespace tsorcRevamp.Buffs.Summon
         public override void Update(Player player, ref int buffIndex)
         {
 
-			int whipDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(33); //33 is 66% of the base dmg of Polaris Leash
+			int whipDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(39); //39 is 66% of the base dmg of Polaris Leash
 			bool PolarisExists = false;
 			for (int i = 0; i < Main.maxProjectiles; i++)
 			{

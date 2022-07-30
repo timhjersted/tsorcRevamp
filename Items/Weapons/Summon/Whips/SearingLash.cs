@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 			Tooltip.SetDefault("Enemies struck by this whip will burn horribly" +
-                "\nand increase minion damage by 66% of this whips damage in +%" +
+                "\nand increase minion damage by 66% of this whips base damage in +%" +
                 "\nThis stacks on top of other whip tag dmg" +
                 "\nYour minions will focus struck enemies");
 		}
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 88;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 36;
+			Item.damage = 30;
 			Item.knockBack = 2;
 			Item.rare = ItemRarityID.Orange;
 

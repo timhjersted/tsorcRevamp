@@ -60,10 +60,6 @@ namespace tsorcRevamp.Buffs.Summon
 				{
 					tagbonusdamage += 5;
 				}
-				if (npc.HasBuff(BuffID.RainbowWhipNPCDebuff))
-				{
-					tagbonusdamage += 20;
-				}
 				if (npc.HasBuff(ModContent.BuffType<EnchantedWhipDebuff>()))
 				{
 					tagbonusdamage += 4;

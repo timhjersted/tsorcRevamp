@@ -17,12 +17,6 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.accessory = true;
             }
-            if (item.type == ItemID.NightsEdge)
-            {
-                item.autoReuse = true;
-                item.useAnimation = 21;
-                item.useTime = 21;
-            }
             if (item.type == ItemID.FieryGreatsword)
             {
                 item.useAnimation = 30;

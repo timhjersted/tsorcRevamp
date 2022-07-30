@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
                 "\nStriking Enemies with this whip increases your whip attack speed" +
                 "\nand inflicts Shadowflame" +
                 "\nPerforms better against multiple targets than most whips" +
-				"\nand increases minion damage by 42% of this whips damage in +%" +
+				"\nand increases minion damage by 33% of this whips base damage in +%" +
 				"\nThis stacks on top of other whip tag dmg" +
 				"\nYour summons will focus struck enemies");
 		}
