@@ -469,7 +469,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
         {
             if (//item.type == ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() see artorias for an explanation
-                item.type == ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>())
+                item.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenGaiaSword>())
             {
                 defenseBroken = true;
             }
@@ -524,7 +524,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (!Main.expertMode)
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<BrokenStrangeMagicRing>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>(), 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.WitchkingsSword>(), 1, false, -1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Summon.WitchkingHelmet>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Summon.WitchkingTop>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.Summon.WitchkingBottoms>());

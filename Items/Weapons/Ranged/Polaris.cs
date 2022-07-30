@@ -98,7 +98,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(ItemID.LihzahrdPowerCell, 2);
             recipe.AddIngredient(ItemID.ShroomiteBar, 10);
             recipe.AddIngredient(ItemID.ElectrosphereLauncher);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 125000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 125000);
             recipe.AddTile(TileID.MythrilAnvil);
 
             recipe.Register();

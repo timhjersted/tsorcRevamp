@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items.BossItems
                 recipe.AddIngredient(ItemID.SoulofFlight, 15);
                 recipe.AddIngredient(ItemID.Feather, 13);
                 recipe.AddIngredient(ItemID.ShadowScale, 1);
-                recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100);
+                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100);
                 recipe.AddTile(TileID.DemonAltar);
 
                 recipe.Register();

@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MythrilHalberd);
             recipe.AddIngredient(ItemID.SoulofLight);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Armors
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HerosPants, 1);
             recipe.AddIngredient(ItemID.MythrilBar, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

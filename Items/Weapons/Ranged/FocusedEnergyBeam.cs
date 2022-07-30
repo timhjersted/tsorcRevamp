@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(Mod.Find<ModItem>("CompactFrame").Type);
             recipe.AddIngredient(Mod.Find<ModItem>("DestructionElement").Type);
             recipe.AddIngredient(ItemID.SpaceGun, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 90000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
 
             recipe.AddTile(TileID.DemonAltar);
 

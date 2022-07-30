@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void SetupShop(Chest shop, ref int nextSlot)
         {
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<CorruptedTooth>());
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Broadswords.CorruptedTooth>());
             shop.item[nextSlot].shopCustomPrice = 100;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
@@ -98,7 +98,7 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].shopCustomPrice = 8;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.SunBlade>());
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Broadswords.SunBlade>());
             shop.item[nextSlot].shopCustomPrice = 300;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
@@ -116,11 +116,11 @@ namespace tsorcRevamp.NPCs.Friendly
             nextSlot++;
             if (NPC.downedBoss1)
             {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenIceRod>());
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenIceRod>());
                 shop.item[nextSlot].shopCustomPrice = 600;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenThunderRod>());
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenThunderRod>());
                 shop.item[nextSlot].shopCustomPrice = 600;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
@@ -134,7 +134,7 @@ namespace tsorcRevamp.NPCs.Friendly
             }
             if (NPC.downedMechBoss1) //mechboss 1 is the destroyer, 2 is the twins, 3 is skelleprime
             {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenStardustRod>());
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenStardustRod>());
                 shop.item[nextSlot].shopCustomPrice = 8000;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
@@ -172,7 +172,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void DrawTownAttackSwing(ref Texture2D item, ref int itemSize, ref float scale, ref Vector2 offset)
         {
-            item = (Texture2D)TextureAssets.Item[ModContent.ItemType<Items.Weapons.Melee.SunBlade>()];
+            item = (Texture2D)TextureAssets.Item[ModContent.ItemType<Items.Weapons.Melee.Broadswords.SunBlade>()];
             scale = .8f;
             itemSize = 36;
         }

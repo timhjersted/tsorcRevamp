@@ -30,20 +30,20 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpectreBoots, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 7000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
 
             Terraria.Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.LightningBoots, 1);
-            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 4000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.Register();
 
             Recipe recipe3 = CreateRecipe();
             recipe3.AddIngredient(ItemID.FrostsparkBoots, 1);
-            recipe3.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2000);
+            recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
             recipe3.AddTile(TileID.DemonAltar);
             recipe3.Register();
         }

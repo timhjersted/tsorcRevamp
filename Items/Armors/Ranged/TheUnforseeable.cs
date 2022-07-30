@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedPlateMail, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
             
             recipe.Register();

@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(Mod.Find<ModItem>("WandOfFrost").Type, 1);
             recipe.AddIngredient(ItemID.CrystalShard, 60);
             recipe.AddIngredient(ItemID.SoulofLight, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 25000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

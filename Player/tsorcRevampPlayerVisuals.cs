@@ -166,10 +166,10 @@ namespace tsorcRevamp
                     if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Biohazard>()) {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.BiohazardGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.MoonlightGreatsword>() && !Main.dayTime) {
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.MoonlightGreatsword >() && !Main.dayTime) {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.MoonlightGreatswordGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.UltimaWeapon>()) {
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.UltimaWeapon>()) {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeaponGlowmask];
                     }
 

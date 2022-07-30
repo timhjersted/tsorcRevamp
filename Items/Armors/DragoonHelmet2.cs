@@ -94,7 +94,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(Mod.Find<ModItem>("DragoonHelmet").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 10);
             recipe.AddIngredient(Mod.Find<ModItem>("DyingWindShard").Type, 10);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 40000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

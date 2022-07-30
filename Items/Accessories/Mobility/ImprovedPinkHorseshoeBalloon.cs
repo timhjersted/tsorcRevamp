@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             recipe.AddIngredient(ItemID.LuckyHorseshoe, 1);
             recipe.AddIngredient(ItemID.CrimtaneBar, 5);
             recipe.AddIngredient(ItemID.TissueSample, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2500);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

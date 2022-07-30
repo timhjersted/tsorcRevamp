@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BundleofBalloons, 1);
             recipe.AddIngredient(ItemID.AdamantiteBar, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             recipe2.AddIngredient(Mod.Find<ModItem>("ImprovedWhiteBalloon").Type, 1);
             recipe2.AddIngredient(Mod.Find<ModItem>("ImprovedYellowBalloon").Type, 1);
             recipe2.AddIngredient(ItemID.AdamantiteBar, 5);
-            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();

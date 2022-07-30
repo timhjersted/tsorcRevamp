@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.AdamantiteBreastplate, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 4000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

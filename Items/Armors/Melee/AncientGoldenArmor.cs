@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GoldChainmail, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 250);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 250);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -111,7 +111,7 @@ namespace tsorcRevamp.Tiles
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4090, 1580, 2, 2), ModContent.ItemType<Items.ProudKnightSoul>(), 1));
 
             //Behind safehouse under Forgotten City leading to early Underworld 
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4810, 1819, 2, 2), ModContent.ItemType<Items.Weapons.Melee.RuneBlade>(), 1, PrefixID.Legendary));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4810, 1819, 2, 2), ModContent.ItemType<Items.Weapons.Melee.Broadswords.RuneBlade>(), 1, PrefixID.Legendary));
 
             //WoF summoning pedestal
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3397, 1827, 2, 2), ModContent.ItemType<Items.PowerWithin>(), 1));

@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ObsidianPants, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2500);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BlizzardinaBalloon, 1);
             recipe.AddIngredient(ItemID.Bone, 20);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 900);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 900);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

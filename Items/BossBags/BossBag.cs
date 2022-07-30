@@ -245,7 +245,7 @@ namespace tsorcRevamp.Items.BossBags
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Mobility.DragoonBoots>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>(), 1);
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenGaiaSword>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
         }
     }
@@ -281,7 +281,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before          
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 2);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.LionheartGunblade>(), 1);
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.LionheartGunblade>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.LampTome>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Magic.GemBox>(), 1);
         }
@@ -377,7 +377,7 @@ namespace tsorcRevamp.Items.BossBags
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Humanity>(), 3);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Mobility.ReflectionShift>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.MoonlightGreatsword>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.MoonlightGreatsword>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Summon.NullSpriteStaff>());
         }
     }
@@ -421,7 +421,7 @@ namespace tsorcRevamp.Items.BossBags
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.Summon.WitchkingTop>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.Summon.WitchkingBottoms>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.WitchkingsSword > ());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), 5000);
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {

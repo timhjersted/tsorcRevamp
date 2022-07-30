@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Pets
             {
                 Terraria.Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(Mod.Find<ModItem>("MiakodaCrescent").Type);
-                recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100);
+                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100);
                 recipe.AddTile(TileID.DemonAltar);
 
                 recipe.Register();
@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.Pets
             {
                 Terraria.Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(Mod.Find<ModItem>("MiakodaNew").Type);
-                recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100);
+                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100);
                 recipe.AddTile(TileID.DemonAltar);
 
                 recipe.Register();

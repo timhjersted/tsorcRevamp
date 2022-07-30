@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedHood, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6600);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6600);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

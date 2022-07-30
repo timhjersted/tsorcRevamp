@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedHeadgear, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

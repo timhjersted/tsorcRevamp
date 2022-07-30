@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("CovetousSilverSerpentRing").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulReaper2").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

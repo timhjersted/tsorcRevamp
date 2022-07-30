@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(Mod.Find<ModItem>("ThrowingSpear").Type, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 30);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

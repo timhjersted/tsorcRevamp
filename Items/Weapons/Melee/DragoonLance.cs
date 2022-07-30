@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("GaeBolg").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 70000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

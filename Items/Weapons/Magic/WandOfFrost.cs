@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Terraria.Recipe recipe = CreateRecipe(); ;
             recipe.AddIngredient(Mod.Find<ModItem>("WoodenWand").Type, 1);
             recipe.AddIngredient(ItemID.CrystalShard, 100);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

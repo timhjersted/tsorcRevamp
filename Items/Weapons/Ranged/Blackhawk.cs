@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Revolver);
             recipe.AddIngredient(ItemID.SoulofNight, 10);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

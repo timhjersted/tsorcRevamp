@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GoldShortsword, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

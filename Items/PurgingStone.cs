@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items
             recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 30);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

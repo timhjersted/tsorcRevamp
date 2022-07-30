@@ -128,7 +128,7 @@ namespace tsorcRevamp.Items.Accessories
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddIngredient(ItemID.MoonCharm, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

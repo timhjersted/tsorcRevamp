@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 16000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 16000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

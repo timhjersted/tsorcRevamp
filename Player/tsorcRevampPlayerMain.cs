@@ -1020,7 +1020,7 @@ namespace tsorcRevamp
         public void DoMultiCrits(ref int damage, float critType)
         {
             int critLevel = (int)(Math.Floor(critType / 100f));
-            if (Items.Weapons.Melee.Broadswords.SteelTempest.doublecritchance == true)
+            if (Items.Weapons.Runeterra.Melee.SteelTempest.doublecritchance == true)
             { 
                 critLevel *= 2;
             }
@@ -1033,7 +1033,7 @@ namespace tsorcRevamp
                         damage *= 2;
                     }
                 }
-                if (Items.Weapons.Melee.Broadswords.SteelTempest.doublecritchance == true)
+                if (Items.Weapons.Runeterra.Melee.SteelTempest.doublecritchance == true)
                 {
                     if (Main.rand.Next(1, 101) <= (critType * 2) - (100 * critLevel))
                     {

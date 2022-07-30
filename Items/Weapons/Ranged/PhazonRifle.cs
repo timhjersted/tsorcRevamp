@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(ItemID.ClockworkAssaultRifle);
             recipe.AddIngredient(ItemID.MeteoriteBar, 30);
             recipe.AddIngredient(ItemID.MythrilBar, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 15000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

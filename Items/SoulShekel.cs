@@ -71,16 +71,16 @@ namespace tsorcRevamp.Items
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5);
 
             recipe.Register();
 
             Terraria.Recipe recipe2 = CreateRecipe(10);
-            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 50);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 50);
             recipe2.Register();
 
             Recipe recipe3 = CreateRecipe(100);
-            recipe3.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 500);
+            recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
             recipe3.Register();
         }
 

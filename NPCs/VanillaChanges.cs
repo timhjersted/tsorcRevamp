@@ -5682,7 +5682,7 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.KingSlime)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 500);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), 500);
                 if (!Main.expertMode)
                 {
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.GoldCoin, 10); //obtained from boss bag in Expert mode (see tsorcGlobalItem for boss bag edits)
@@ -5691,7 +5691,7 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.QueenBee)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 2000);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), 2000);
             }
 
             if (npc.type == NPCID.TheDestroyer && !Main.expertMode)
@@ -5725,12 +5725,12 @@ namespace tsorcRevamp.NPCs
 
             if (npc.netID == NPCID.GreenSlime)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>());
             }
 
             if (npc.netID == NPCID.RedSlime)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 2);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), 2);
             }
 
             if ((npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow))

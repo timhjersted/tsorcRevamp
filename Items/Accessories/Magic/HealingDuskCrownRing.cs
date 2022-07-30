@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
             recipe.AddIngredient(Mod.Find<ModItem>("DuskCrownRing").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 7);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 60000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -129,7 +129,7 @@ namespace tsorcRevamp.Items
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Silk, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 75);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 75);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

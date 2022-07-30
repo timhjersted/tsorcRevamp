@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             //recipe.AddIngredient(null, "oddscrapmetal", 10);
             recipe.AddIngredient(ItemID.IronBar, 5);
             recipe.AddIngredient(ItemID.Diamond, 2);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1200);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1200);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             //recipe.AddIngredient(null, "oddscrapmetal", 10);
             recipe2.AddIngredient(ItemID.LeadBar, 5);
             recipe2.AddIngredient(ItemID.Diamond, 2);
-            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1200);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 1200);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();

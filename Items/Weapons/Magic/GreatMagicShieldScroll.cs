@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.IronskinPotion);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 600);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 600);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

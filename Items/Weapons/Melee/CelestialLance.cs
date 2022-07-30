@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 20);
             recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 30);
             recipe.AddIngredient(ItemID.FallenStar, 20);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 240000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 240000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

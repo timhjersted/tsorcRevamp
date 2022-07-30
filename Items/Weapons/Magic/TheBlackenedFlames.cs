@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(ItemID.Fireblossom, 50);
             recipe.AddIngredient(ItemID.AdamantiteBar, 1);
             recipe.AddIngredient(ItemID.SoulofNight, 20);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 65000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 65000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

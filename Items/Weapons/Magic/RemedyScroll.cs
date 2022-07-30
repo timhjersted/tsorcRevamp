@@ -63,7 +63,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(ItemID.SpellTome);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("HealingElixir").Type, 10);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 70000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

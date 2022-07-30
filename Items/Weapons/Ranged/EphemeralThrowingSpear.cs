@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Terraria.Recipe recipe = CreateRecipe(30);
             recipe.AddIngredient(Mod.Find<ModItem>("RoyalThrowingSpear").Type, 30);
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 90);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

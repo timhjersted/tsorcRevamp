@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.FossilHelm, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2200);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2200);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

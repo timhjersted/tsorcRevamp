@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories.Ranged
             recipe.AddIngredient(ItemID.MagicQuiver, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 5);
             recipe.AddIngredient(ItemID.HallowedBar, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

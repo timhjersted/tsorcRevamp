@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofMight, 2);
             recipe.AddIngredient(Mod.Find<ModItem>("MeteorShower").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 45000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 45000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             recipe4.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
             recipe4.AddIngredient(ItemID.EmpressFlightBooster, 1);
             recipe4.AddIngredient(Mod.Find<ModItem>("ImprovedBundleofBalloons").Type, 1);
-            recipe4.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
+            recipe4.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe4.AddTile(TileID.DemonAltar);
             recipe4.Register();
 
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             recipe3.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
             recipe3.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
             recipe3.AddIngredient(Mod.Find<ModItem>("ImprovedBundleofBalloons").Type, 1);
-            recipe3.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 35000);
+            recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
             recipe3.AddTile(TileID.DemonAltar);
             recipe3.Register();
 
@@ -49,14 +49,14 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             recipe2.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
             recipe2.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
             recipe2.AddIngredient(ItemID.EmpressFlightBooster, 1);
-            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 50000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.Register();
 
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register(); 
         }

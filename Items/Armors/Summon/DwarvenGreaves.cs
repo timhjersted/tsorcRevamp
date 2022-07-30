@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedGreaves, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 7200);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7200);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

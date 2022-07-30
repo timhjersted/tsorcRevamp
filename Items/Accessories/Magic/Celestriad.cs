@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
             recipe.AddIngredient(Mod.Find<ModItem>("GemBox").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 30);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfBlight").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 400000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 400000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

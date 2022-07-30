@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Accessories
             recipe.AddIngredient(Mod.Find<ModItem>("DarkCloak").Type);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkmoonCloak").Type);
             recipe.AddIngredient(ItemID.ChlorophyteBar, 3);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 70000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

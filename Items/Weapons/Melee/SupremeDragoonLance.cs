@@ -70,7 +70,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 170000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 170000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

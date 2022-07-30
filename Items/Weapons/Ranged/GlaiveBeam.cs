@@ -60,7 +60,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Ranged.FocusedEnergyBeam>(), 1);
             recipe.AddIngredient(ModContent.ItemType<Items.GhostWyvernSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<Items.BequeathedSoul>(), 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 200000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

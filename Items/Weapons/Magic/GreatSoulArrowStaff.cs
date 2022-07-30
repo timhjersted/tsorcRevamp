@@ -83,7 +83,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("SoulArrowStaff").Type);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulSiphonPotion").Type);
             recipe.AddTile(TileID.DemonAltar);
 

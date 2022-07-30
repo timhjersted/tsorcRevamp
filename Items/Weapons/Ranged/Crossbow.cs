@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Wood, 10);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 150);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

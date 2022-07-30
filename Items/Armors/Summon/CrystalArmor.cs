@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpiderBreastplate, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5200);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5200);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

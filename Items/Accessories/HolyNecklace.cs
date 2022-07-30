@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories
             recipe.AddIngredient(Mod.Find<ModItem>("FrozenStarlight").Type, 1);
             recipe.AddIngredient(ItemID.StarCloak, 1);
             recipe.AddIngredient(ItemID.CrossNecklace, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Accessories
             Terraria.Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(Mod.Find<ModItem>("FrozenStarlight").Type, 1);
             recipe2.AddIngredient(ItemID.StarVeil, 1);
-            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.Register();
         }

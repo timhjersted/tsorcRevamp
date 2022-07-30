@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             recipe.AddIngredient(Mod.Find<ModItem>("WolfRing").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("BandOfSupremeCosmicPower").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("PoisonbloodRing").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Ammo
             Terraria.Recipe recipe = CreateRecipe(10);
 
             recipe.AddIngredient(ItemID.Wood, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

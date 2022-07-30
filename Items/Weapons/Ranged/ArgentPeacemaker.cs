@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(null, "Silversix");
             recipe.AddIngredient(ItemID.HallowedBar, 10);
             recipe.AddIngredient(ItemID.PixieDust, 35);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

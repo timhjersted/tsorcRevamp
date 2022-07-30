@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
             recipe.AddIngredient(Mod.Find<ModItem>("SpikedNecklace").Type, 1);
             recipe.AddIngredient(ItemID.CobaltShield, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 300);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 300);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CopperBar, 2);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 300);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 300);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

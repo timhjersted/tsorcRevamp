@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofLight, 15);
             recipe.AddIngredient(Mod.Find<ModItem>("Bolt2Tome").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 25000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

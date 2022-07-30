@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             recipe.AddIngredient(Mod.Find<ModItem>("BlueTearstoneRing").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 5);
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 15);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 60000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

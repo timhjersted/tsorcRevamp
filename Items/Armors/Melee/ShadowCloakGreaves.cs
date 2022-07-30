@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ShadowGreaves, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
             
             recipe.Register();

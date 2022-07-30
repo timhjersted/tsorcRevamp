@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             recipe.AddIngredient(ItemID.SilverBar, 1);
             recipe.AddIngredient(ItemID.SoulofNight, 6);
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 30);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 9000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 9000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

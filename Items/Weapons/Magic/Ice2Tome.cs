@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("Ice1Tome").Type, 1);
             recipe.AddIngredient(ItemID.JungleSpores, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 8000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

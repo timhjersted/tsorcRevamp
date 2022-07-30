@@ -116,7 +116,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("VirulentCatalyzer").Type);
             recipe.AddIngredient(ItemID.ShroomiteBar, 10);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 150000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

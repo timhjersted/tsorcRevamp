@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             recipe.AddIngredient(ItemID.AdamantiteBar, 3);
             recipe.AddIngredient(ItemID.Emerald, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 20);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 70000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

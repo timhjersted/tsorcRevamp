@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
             recipe.AddIngredient(Mod.Find<ModItem>("DragoonBoots").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DragoonHorn").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
 
             recipe.AddTile(TileID.DemonAltar);
 

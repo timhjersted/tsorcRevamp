@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BeeBreastplate, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3300);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3300);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

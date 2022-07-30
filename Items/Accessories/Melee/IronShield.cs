@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.IronBar, 4);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 600);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 600);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

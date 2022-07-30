@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddIngredient(ItemID.SoulofNight, 3);
             recipe.AddIngredient(ItemID.StarCloak, 1);
             recipe.AddTile(TileID.DemonAltar);

@@ -75,7 +75,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(Mod.Find<ModItem>("FireSpiritTome3").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<Items.SoulOfBlight>(), 1);
             recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Magic.FlareTome>(), 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

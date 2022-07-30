@@ -440,7 +440,7 @@ namespace tsorcRevamp.NPCs
 
                     DarkSoulQuantity = 24; //*72 for soul drops per eater, 1728 souls per one whole eater
 
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, DarkSoulQuantity);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
                 }
                 #endregion
 

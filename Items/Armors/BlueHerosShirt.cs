@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.Flipper, 1);
             recipe.AddIngredient(ItemID.DivingHelmet, 1);
             recipe.AddIngredient(ItemID.MythrilBar, 3);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Armors
             recipe2.AddIngredient(ItemID.HerosShirt, 1);
             recipe2.AddIngredient(ItemID.DivingGear, 1);
             recipe2.AddIngredient(ItemID.MythrilBar, 3);
-            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.Register();
 
@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Armors
             recipe3.AddIngredient(ItemID.HerosShirt, 1);
             recipe3.AddIngredient(ItemID.JellyfishDivingGear, 1);
             recipe3.AddIngredient(ItemID.MythrilBar, 3);
-            recipe3.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
+            recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe3.AddTile(TileID.DemonAltar);
             recipe3.Register();
 
@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.Armors
             recipe4.AddIngredient(ItemID.HerosShirt, 1);
             recipe4.AddIngredient(ItemID.ArcticDivingGear, 1);
             recipe4.AddIngredient(ItemID.MythrilBar, 3);
-            recipe4.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
+            recipe4.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe4.AddTile(TileID.DemonAltar);
             recipe4.Register();
         }

@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BeeGreaves, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2600);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2600);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

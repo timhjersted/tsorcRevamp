@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(Mod.Find<ModItem>("FreezeBolt2").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 10);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 150000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
