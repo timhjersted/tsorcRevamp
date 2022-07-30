@@ -22,6 +22,12 @@ namespace tsorcRevamp.Buffs
         {
             if (player == Main.LocalPlayer)
             {
+                //clears incombat debuff near bonfire
+                if (player.HasBuff(ModContent.BuffType<InCombat>()))
+                {
+                    player.ClearBuff(ModContent.BuffType<InCombat>());
+                    
+                }
 
                 player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff = true;
                 bonfireEffectTimer++;

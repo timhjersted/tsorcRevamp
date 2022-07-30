@@ -55,8 +55,8 @@ namespace tsorcRevamp.Items
             Item.CloneDefaults(ItemID.MagicMirror);
             Item.accessory = true;
             Item.value = 25000;
-            Item.useTime = 240;
-            Item.useAnimation = 240;
+            Item.useTime = 300;
+            Item.useAnimation = 300;
 
         }
 
@@ -66,7 +66,7 @@ namespace tsorcRevamp.Items
                                 "\nActivate by left-clicking the mirror in your toolbar." +
                                 "\nWarp point saves on quit." +
                                 "\nReduces defense to 0 and slows movement while equipped and setting your warp point." +
-                                "\nChannel time is four seconds and you cannot move during the channel.");
+                                "\nChannel time is five seconds and you cannot move during the channel.");
         }
 
         public override bool CanUseItem(Player player)

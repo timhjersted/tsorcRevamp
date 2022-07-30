@@ -223,7 +223,7 @@ namespace tsorcRevamp
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
             if (Player.HasBuff(ModContent.BuffType<Invincible>())) return false;
-            Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 
+            Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s  
             return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource);
         }
 
@@ -240,7 +240,7 @@ namespace tsorcRevamp
                 Player.AddBuff(ModContent.BuffType<MagicPlatingLight>(), 1);
             } else
             Player.ClearBuff(ModContent.BuffType<MagicPlatingLight>());
-            Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 
+            Player.AddBuff(ModContent.BuffType<InCombat>(), 300); //5s, was 10s 
         }
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
