@@ -2399,7 +2399,7 @@ namespace tsorcRevamp.NPCs
                 npc.localAI[1] = 100f;
                 npc.knockBackResist = 0.09f;
 
-                //WHEN HIT, CHANCE TO JUMP BACKWARDS && npc.velocity.Y >= -1f
+                //WHEN HIT, CHANCE TO JUMP BACKWARDS 
                 if (Main.rand.NextBool(10))
                 {
                     npc.TargetClosest(false);
@@ -2413,7 +2413,7 @@ namespace tsorcRevamp.NPCs
                     npc.netUpdate = true;
                 }
 
-                //WHEN HIT, CHANCE TO DASH STEP BACKWARDS && npc.velocity.Y >= 1f
+                //WHEN HIT, CHANCE TO DASH STEP BACKWARDS 
                 else if (Main.rand.NextBool(8))//was 10
                 {
                     npc.velocity.Y = -4f;
@@ -2441,19 +2441,19 @@ namespace tsorcRevamp.NPCs
 
             if (!melee && Main.rand.NextBool())
             {
-                if (Main.rand.NextBool(2))
+                if (Main.rand.NextBool(4))
                 {
                     //customAi1 = 110f;
                     int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 1f);
                     Main.dust[dust].noGravity = true;
-                    //npc.spriteDirection = npc.direction;
+                    
 
 
                     npc.velocity.Y = -9f; //9
                     npc.velocity.X = 4f * npc.direction; //was -4
 
                     npc.TargetClosest(true);
-                    //npc.velocity.X = npc.velocity.X + (float)npc.direction * 4f;  //was 2  accellerate fwd; can happen midair
+                    
                     if ((float)npc.direction * npc.velocity.X > 4)
                     {
                         npc.velocity.X = (float)npc.direction * 4;  //  but cap at top speed
@@ -2461,15 +2461,15 @@ namespace tsorcRevamp.NPCs
                     npc.netUpdate = true;
                 }
 
-                if (Main.rand.NextBool(4))
+                if (Main.rand.NextBool(6))
                 {
-                    //npc.direction *= -1;
+                    
 
                     npc.ai[0] = 0f;
                     npc.velocity.Y = -5f;
                     npc.velocity.X = npc.velocity.X * 4f; // burst forward
                     npc.TargetClosest(true);
-                    //npc.velocity.X = npc.direction * -4f;
+                    
                     npc.velocity.X = npc.velocity.X + (float)npc.direction * 5f;  //  accellerate fwd; can happen midair
                     if ((float)npc.direction * npc.velocity.X > 5)
                     {

@@ -20,8 +20,8 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             NPC.height = 40;
             NPC.width = 20;
-            NPC.damage = 38;
-            NPC.defense = 35;
+            NPC.damage = 45;
+            NPC.defense = 65;
             NPC.lifeMax = 3000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -70,10 +70,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
+            target.AddBuff(BuffID.Slow, 300);
+
             if (Main.rand.NextBool(4))
             {
-                target.AddBuff(BuffID.Bleeding, 300);
-                target.AddBuff(BuffID.Poisoned, 300);
+                target.AddBuff(BuffID.Poisoned, 600);
                 target.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800);
             }
         }
@@ -115,9 +116,9 @@ namespace tsorcRevamp.NPCs.Enemies
             bool canFire = NPC.Distance(Main.player[NPC.target].Center) < 500 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
             tsorcRevampAIs.SimpleProjectile(NPC, ref shadowShotTimer, 170, ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(), 20, 9, canFire, true, SoundID.Item17, 0);
 
-            if (NPC.justHit)
+            if (NPC.justHit && shadowShotTimer < 120f && Main.rand.NextBool(3))
             {
-                shadowShotTimer = 100f;
+                shadowShotTimer = 90f;
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient)

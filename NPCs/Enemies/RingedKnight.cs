@@ -42,8 +42,9 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 400;
-            if (Main.hardMode) { NPC.lifeMax = 1200; NPC.defense = 45; NPC.damage = 140; }
-            if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 5000; NPC.defense = 100; NPC.damage = 230; NPC.value = 6000; }
+            //stats not doubled with scale expert method yet (!)(oops)
+            if (Main.hardMode) { NPC.lifeMax = 800; NPC.defense = 45; NPC.damage = 82; }
+            if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 2500; NPC.defense = 100; NPC.damage = 130; NPC.value = 6000; }
             NPC.value = 1500;
             NPC.HitSound = SoundID.NPCHit48;
             NPC.DeathSound = SoundID.NPCDeath2;

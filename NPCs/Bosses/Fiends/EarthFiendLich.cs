@@ -16,11 +16,11 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             Main.npcFrameCount[NPC.type] = 8;
             NPC.width = 120;
             NPC.height = 160;
-            NPC.damage = 195;
+            NPC.damage = 155;
             NPC.defense = 70;
             NPC.aiStyle = 22;
             NPC.alpha = 100;
-            NPC.scale = 1.2f;
+            NPC.scale = 1.1f;
             AnimationType = -1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
@@ -51,13 +51,16 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         bool OptionSpawned = false;
         int OptionId = 0;
 
-        int lightningDamage = 85;
+        int lightningDamage = 89;
         int oracleDamage = 75;
         //We can override this even further on a per-NPC basis here
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            NPC.damage = (int)(NPC.damage * 1.3 / 2);
+            NPC.damage = (int)(NPC.damage / 2);
             NPC.defense = NPC.defense += 12;
+            lightningDamage = (int)(lightningDamage / 2);
+            oracleDamage = (int)(oracleDamage / 2);
+            
         }
 
         #region AI
@@ -77,6 +80,18 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 }
                 OptionSpawned = true;
             }
+
+
+            //Proximity Debuffs
+            Player player = Main.player[NPC.target];
+            if (NPC.Distance(player.Center) < 600)
+            {
+                player.AddBuff(BuffID.OnFire, 120, false); //on fire
+                player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
+                player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 60, false);
+
+            }
+
 
             bool flag25 = false;
             ProjectileTimer += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;

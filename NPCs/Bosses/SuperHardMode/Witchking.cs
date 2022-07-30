@@ -43,7 +43,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             despawnHandler = new NPCDespawnHandler("The Witchking claims another victim...", Color.Purple, DustID.PurpleTorch);
         }
 
-        int blackBreathDamage = 43;
+        int blackBreathDamage = 53;
         bool defenseBroken = false;
 
 
@@ -339,7 +339,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (chargeDamageFlag == true)
             {
-                NPC.damage = 180;
+                NPC.damage = 150;
                 chargeDamage++;
             }
             if (chargeDamage >= 101)
@@ -351,6 +351,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             #endregion
             #region Projectiles
             customAi1 += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
+
+            //Proximity Debuffs
+            Player player = Main.player[NPC.target];
+            if (NPC.Distance(player.Center) < 600)
+            {
+                player.AddBuff(BuffID.Slow, 60, false); 
+                player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
+                player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 60, false);
+               
+            }
+            if (NPC.Distance(player.Center) < 150)
+            {
+                player.AddBuff(BuffID.Silenced, 180, false);
+            }
+
+
             if (customAi1 >= 10f)
             {
                 if ((customspawn1 < 36) && Main.rand.NextBool(800))
