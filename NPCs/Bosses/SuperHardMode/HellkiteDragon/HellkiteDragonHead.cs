@@ -91,6 +91,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             DarkBeadShotTimer++;
             MeteorShotTimer++;
 
+            
+            
+
             Player nT = Main.player[NPC.target];
             if (Main.rand.NextBool(175))
             {
@@ -99,8 +102,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             }
             if (breath)
             {
-                float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (2.5f * NPC.direction), NPC.Center.Y, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 3.2f, Main.myPlayer); //1f was 1.2f
+                //float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
+                //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (2.5f * NPC.direction), NPC.Center.Y, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 3.2f, Main.myPlayer); //1f was 1.2f
+
+                Vector2 spawnOffset = NPC.velocity; //Create a vector pointing in whatever direction the NPC is moving. We can transform this into an offset we can use.
+                spawnOffset.Normalize(); //Shorten the vector to make it have a length of 1
+                spawnOffset *= 64; //Multiply it so it has a length of 16. The length determines how far offset the projectile will be, 16 units = 1 tile
+
+                //float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), (int)(NPC.Center.X + spawnOffset.X), (int)(NPC.Center.Y + spawnOffset.Y), NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 3.2f, Main.myPlayer);
+
 
                 //play breath sound
                 if (Main.rand.NextBool(3))

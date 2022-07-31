@@ -29,7 +29,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             AIType = 4;
         }
 
-
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        {
+            behindNPCs.Add(index);
+        }
 
         public override void AI()
         {
@@ -121,10 +124,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
-        {
-            behindNPCs.Add(index);
-        }
+        
+
+       
 
     }
 
