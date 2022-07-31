@@ -3,9 +3,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic
+namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 {
-    public class OrbOfDeception : ModItem
+    public class OfDItem1 : ModItem
     {
         public override void SetStaticDefaults()
         {

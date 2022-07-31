@@ -3,11 +3,10 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
 {
-    public class SteelTempestTornado : ModProjectile
+    public class STNado1 : ModProjectile
     {
         public int soundtimer = 0;
         public override void SetStaticDefaults()

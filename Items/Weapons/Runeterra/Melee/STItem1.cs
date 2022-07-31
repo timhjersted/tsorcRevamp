@@ -1,4 +1,4 @@
-/*
+
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
 {
-    public class SteelTempest : ModItem
+    public class STItem1: ModItem
     {
         public float cooldown = 0;
         public float attackspeedscaling;
@@ -53,15 +53,15 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
             doublecritchancetimer = 0.5f;
-            if (Main.mouseRight & !Main.mouseLeft & SteelTempestProjectile.steeltempest == 2 & cooldown <= 0)
+            if (Main.mouseRight & !Main.mouseLeft & STStab1.steeltempest == 2 & cooldown <= 0)
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
-                Item.shoot = ModContent.ProjectileType<SteelTempestTornado>();
+                Item.shoot = ModContent.ProjectileType<STNado1>();
                 cooldown = ((3 / attackspeedscaling) + 1);
-                SteelTempestProjectile.steeltempest = 0;
+                STStab1.steeltempest = 0;
             } else
             if (Main.mouseRight & !Main.mouseLeft)
             {
@@ -70,7 +70,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
                 cooldown = ((3 / attackspeedscaling) + 1);
-                Item.shoot = ModContent.ProjectileType<SteelTempestProjectile>();
+                Item.shoot = ModContent.ProjectileType<STStab1>();
             }
             if (Main.mouseLeft)
             {
@@ -134,7 +134,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.Katana, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
 
             recipe.AddTile(TileID.DemonAltar);
 
@@ -142,4 +142,3 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         }
     }
 }
-*/
