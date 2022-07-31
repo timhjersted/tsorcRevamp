@@ -803,12 +803,12 @@ namespace tsorcRevamp
         }
 
         /// <summary>
-        /// Returns the character's position from (pos + 1) frames ago. Direct array access, beware out of bounds access
+        /// Returns the character's position from (pos) frames ago. Max 59
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 OldPos(this Player player, int pos)
-        {
-            return player.GetModPlayer<tsorcRevampPlayer>().oldPos[pos];
+        public static Vector2 OldPos(this Player player, int pos) {
+            int index = pos > 59 ? 59 : pos;
+            return player.GetModPlayer<tsorcRevampPlayer>().oldPos[index];
         }
 
         public static Texture2D Crop(Texture2D image, Rectangle source) {

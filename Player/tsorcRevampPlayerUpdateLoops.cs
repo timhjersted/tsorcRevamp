@@ -176,6 +176,10 @@ namespace tsorcRevamp
         public float TextCooldown; //Used for if we want text to display when a Thing happens, but not to spam the player
         public float FieldTimer;
 
+        public bool startedQuest;
+        public bool finishedQuest;
+        public bool touchedSurface;
+
         public string DeathText;
         bool setDeathText = false;
         public static List<string> DeathTextList
@@ -544,6 +548,63 @@ namespace tsorcRevamp
             if (MaxAcquiredHP < Player.statLifeMax)
             {
                 MaxAcquiredHP = Player.statLifeMax;
+            }
+
+            //--------------------
+
+            //TODO REMOVE WHEN FINALIZED
+
+            //--------------------
+            return;
+
+
+
+
+            if (finishedQuest)
+                return;
+            //{72, 492} is the house on the very left edge, where the shaman elder lives
+            //64x32 rectangle to start the quest
+            if (Collision.CheckAABBvAABBCollision(Player.position, new Vector2(Player.width, Player.height), new Vector2(72, 492) * 16, new Vector2(64, 32) * 16) && !startedQuest) {
+                startedQuest = true;
+                Main.NewText("Quest started!");
+            }
+            if (Player.whoAmI != Main.myPlayer)
+                return;
+            if (!startedQuest)
+                return;
+
+            //stay underground!
+            if (!Player.ShoppingZone_BelowSurface) {
+                touchedSurface = true;
+            }
+
+            //if the player is on the left edge of the world and hasnt gone past the angler's house, they're in the grace zone
+            if (Player.position.ToTileCoordinates16().X < 350) {
+                touchedSurface = false;
+            }
+
+            if (touchedSurface) {
+                startedQuest = false;
+                Main.NewText("Disqualified: You touched the surface!");
+            }
+
+            //teleporting through a one block thick wall horizontally with a
+            //rod of discord gives just over 36.1f distance if done perfectly.
+            //with max movespeed gear the most i could get was around 27f falling
+            //flying can get you as high as 38ish, but that's only possible outdoors
+            //because there are no ceilings, and at that point youre already disqualified.
+            //its possible to get over 36f by flying up the side of the pyramid though...
+            //just dont do that, i guess? its kinda hard anyway
+            if (Vector2.Distance(Player.OldPos(1), Player.position) > 36f) {
+                startedQuest = false;
+                Main.NewText("Disqualified: Teleporting is not allowed!");
+            }
+
+            //{7909, 1081} is the underwater observatory's top left corner, and {320, 119} is its rectangular size
+            if (Collision.CheckAABBvAABBCollision(Player.position, new Vector2(Player.width, Player.height), new Vector2(7909, 1081) * 16, new Vector2(320, 119) * 16)) {
+                Main.NewText("You finished the quest!");
+                Player.QuickSpawnItem(Player.GetSource_GiftOrReward(), ItemID.RodofDiscord);
+                finishedQuest = true;
             }
         }
 

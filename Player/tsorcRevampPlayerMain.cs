@@ -135,6 +135,7 @@ namespace tsorcRevamp
 
             List<bool> permaBuffs = PermanentBuffToggles.ToList();
             tag.Add("PermanentBuffToggles", permaBuffs);
+            tag.Add("finishedQuest", finishedQuest);
         }
 
         public override void LoadData(TagCompound tag)
@@ -194,6 +195,9 @@ namespace tsorcRevamp
                 }
             }
             PermanentBuffToggles = permaBuffs.ToArray<bool>();
+
+            bool? quest = tag.GetBool("finishedQuest");
+            finishedQuest = quest ?? false;
         }
 
         public void SetDirection() => SetDirection(false);
