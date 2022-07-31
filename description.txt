@@ -36,7 +36,7 @@ TSORC holds many secrets. If you have questions, post them to #map-questions or 
 
 
 GAME MANUAL:
---------------------------------------------
+------------------------------------------
 *Create a new character named Red Cloud (for multiplayer, everyone should use a different name).
 
 *Read signs in the order you come to them 
