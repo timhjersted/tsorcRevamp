@@ -14,6 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         public static bool doublecritchance = false;
         public override void SetStaticDefaults()
         {
+            DisplayName.SetDefault("Steel Tempest");
             Tooltip.SetDefault("Doubled crit chance" +
                 "\nStabs on right click, with a 4 second cooldown, scaling down with attack speed" +
                 "\nGain a stack of Steel Tempest upon stabbing an enemy" +
