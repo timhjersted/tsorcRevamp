@@ -13,16 +13,16 @@ namespace tsorcRevamp.Items
 
 
 
-        int playerXLocation(Player player)
+        public static int playerXLocation(Player player)
         {
             return (int)((player.position.X + player.width / 2.0 + 8.0) / 16.0);
         }
-        int playerYLocation(Player player)
+        public static int playerYLocation(Player player)
         {
             return (int)((player.position.Y + player.height) / 16.0);
         }
 
-        bool checkWarpLocation(int x, int y)
+        public static bool checkWarpLocation(int x, int y)
         {
             if (x < 10 || x > Main.maxTilesX - 10 || y < 10 || y > Main.maxTilesY - 10)
             {
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items
 
             for (int sanityX = x - 1; sanityX < x + 1; sanityX++)
             {
-                for (int sanityY = y - 3; sanityY < y; sanityY++)
+                for (int sanityY = y - 1; sanityY < y + 1; sanityY++)
                 {
                     Tile tile = Framing.GetTileSafely(sanityX, sanityY);
                     if (tile.HasTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType])
@@ -46,10 +46,6 @@ namespace tsorcRevamp.Items
         }
 
         double warpSetDelay;
-        public void Initialize()
-        {
-            warpSetDelay = Main.time - 120.0;
-        }
         public override void SetDefaults()
         {
             Item.CloneDefaults(ItemID.MagicMirror);

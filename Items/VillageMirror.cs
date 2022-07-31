@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static tsorcRevamp.Items.GreatMagicMirror;
 
 
 namespace tsorcRevamp.Items
@@ -11,49 +12,8 @@ namespace tsorcRevamp.Items
     public class VillageMirror : ModItem
     {
 
-
-        int playerXLocation2(Player player)
-        {
-            return (int)((player.position.X + player.width / 2.0 + 8.0) / 16.0);
-        }
-        int playerYLocation2(Player player)
-        {
-            return (int)((player.position.Y + player.height) / 16.0);
-        }
-
-        bool checkWarpLocation2(int x, int y)
-        {
-            Player player = Main.LocalPlayer;
-            if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {
-                if (x < 10 || x > Main.maxTilesX - 10 || y < 10 || y > Main.maxTilesY - 10)
-                {
-                    Main.NewText("Your warp is bugged! (outside the world)", 255, 240, 20);
-                    return false;
-                }
-
-                for (int sanityX = x - 1; sanityX < x + 1; sanityX++)
-                {
-                    for (int sanityY = y - 3; sanityY < y; sanityY++)
-                    {
-                        Tile tile = Framing.GetTileSafely(sanityX, sanityY);
-                        if (tile.HasTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType])
-                        {
-                            WorldGen.KillTile(sanityX, sanityY);
-                        }
-
-                    }
-                }
-                return true;
-            }
-            return true;
-        }
-
         double warpSetDelay2;
-        public void Initialize()
-        {
-            warpSetDelay2 = Main.time - 120.0;
-        }
+
         public override void SetDefaults()
         {
             Item.CloneDefaults(ItemID.MagicMirror);
@@ -96,7 +56,7 @@ namespace tsorcRevamp.Items
         }
         public override void UseStyle(Player player, Rectangle rectangle)
         {
-            if (checkWarpLocation2(player.GetModPlayer<tsorcRevampPlayer>().townWarpX, player.GetModPlayer<tsorcRevampPlayer>().townWarpY) || player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (checkWarpLocation(player.GetModPlayer<tsorcRevampPlayer>().townWarpX, player.GetModPlayer<tsorcRevampPlayer>().townWarpY) || player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 if (player.itemTime > (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)
                 {
@@ -188,8 +148,8 @@ namespace tsorcRevamp.Items
             player.statDefense -= player.statDefense;
             if (!player.GetModPlayer<tsorcRevampPlayer>().townWarpSet)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().townWarpX = playerXLocation2(player);
-                player.GetModPlayer<tsorcRevampPlayer>().townWarpY = playerYLocation2(player);
+                player.GetModPlayer<tsorcRevampPlayer>().townWarpX = playerXLocation(player);
+                player.GetModPlayer<tsorcRevampPlayer>().townWarpY = playerYLocation(player);
                 player.GetModPlayer<tsorcRevampPlayer>().townWarpWorld = Main.worldID;
                 player.GetModPlayer<tsorcRevampPlayer>().townWarpSet = true;
                 Main.NewText("New warp location set!", 255, 240, 30);
@@ -199,8 +159,8 @@ namespace tsorcRevamp.Items
                 double timeDifference2 = Main.time - warpSetDelay2;
                 if ((timeDifference2 > 120.0) || (timeDifference2 < 0.0))
                 {
-                    player.GetModPlayer<tsorcRevampPlayer>().townWarpX = playerXLocation2(player);
-                    player.GetModPlayer<tsorcRevampPlayer>().townWarpY = playerYLocation2(player);
+                    player.GetModPlayer<tsorcRevampPlayer>().townWarpX = playerXLocation(player);
+                    player.GetModPlayer<tsorcRevampPlayer>().townWarpY = playerYLocation(player);
                     player.GetModPlayer<tsorcRevampPlayer>().townWarpWorld = Main.worldID;
                     player.GetModPlayer<tsorcRevampPlayer>().townWarpSet = true;
                     warpSetDelay2 = Main.time;
