@@ -17,8 +17,8 @@ TOP FEATURES
 
 
 
-PROJECT STATUS
-This is still in beta as we forge ahead to 1.0. Development is currently focused on polishing the later stages of the game, especially the bosses.
+PROJECT STATUS: BETA
+The game is fairly polished up to the end of the main story (defeating Attraidies). Development is currently focused on balancing and revamping the sizeable post-Attraidies content, especially the bosses. We recommend waiting to play this third chapter when we're out of beta, unless you'd like to be a part of the journey to 1.0. 
 
 
 
