@@ -187,6 +187,7 @@ namespace tsorcRevamp
          = new List<string>() {
              "The dodgeroll makes you immune to attacks. Mastering it is necessary for survival!",
              "The dodgeroll key can be changed in controls / mod config. It is set to Left Alt by default.",
+             "You can dodge mid-air to avoid attacks and reverse your momentum instantly...",
              "Crystal shards often light the path to powerful secrets...",
              "Using potions during normal combat is often necessary to survive",
              "Losing souls on death can be disabled in the config",

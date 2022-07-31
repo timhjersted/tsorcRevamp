@@ -53,6 +53,7 @@ namespace tsorcRevamp.NPCs.Friendly
             WeightedRandom<string> chat = new WeightedRandom<string>();
             chat.Add("Time is a force we sorcerers will master one day.");
             chat.Add("Any sorcerer dedicates their whole life to the study of the arcane arts.");
+            chat.Add("Come back some time later and I may have new items in my collection.");
             chat.Add("Sorry, I only sell spells to sorcerers.");
             chat.Add("I could tell you much about all sorcerer spells, but you won't understand it. Anyway, feel free to ask me.");
             chat.Add("I'll teach you a very seldom spell.");
@@ -155,10 +156,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 nextSlot++;
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.DeathStrikeScroll>());
                 shop.item[nextSlot].shopCustomPrice = 3000;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.CovetousSilverSerpentRing>());
-                shop.item[nextSlot].shopCustomPrice = 3500;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.ManaBomb>());
