@@ -103,6 +103,12 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			// Increase range up to 2x for full charge.
 			Projectile.WhipSettings.RangeMultiplier += 1 / 120f;
 
+			owner = Main.player[Projectile.owner];
+			Vector2 mountedCenter = owner.MountedCenter;
+			Vector2 unitVectorTowardsMouse = mountedCenter.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * owner.direction);
+			owner.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
+			Projectile.velocity = unitVectorTowardsMouse * 4;
+
 			// Reset the animation and item timer while charging.
 			owner.itemAnimation = owner.itemAnimationMax;
 			owner.itemTime = owner.itemTimeMax;
