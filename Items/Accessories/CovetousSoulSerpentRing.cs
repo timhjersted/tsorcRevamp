@@ -45,5 +45,18 @@ namespace tsorcRevamp.Items.Accessories
             Lighting.AddLight(posX, posY, 0.9f, 0.8f, 0.7f);
         }
 
+        public override bool CanEquipAccessory(Player player, int slot, bool modded)
+        {
+            foreach (Item i in player.armor)
+            {
+                if (i.ModItem is CovetousSilverSerpentRing)
+                {
+                    return false;
+                }
+            }
+
+            return base.CanEquipAccessory(player, slot, modded);
+        }
+
     }
 }
