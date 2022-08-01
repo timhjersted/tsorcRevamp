@@ -73,6 +73,9 @@ namespace tsorcRevamp
         public PlayerFrames? forcedLegFrame;
         public int forcedDirection;
 
+        
+
+
         public override bool PreItemCheck()
         {
             UpdateDodging();
@@ -364,7 +367,38 @@ namespace tsorcRevamp
 
             if (dodgeTime >= DodgeTimeMax * 0.6f)
             {
-                Player.velocity.X *= 0.85f;
+                //chloranthy ring effect
+                foreach (Player p in Main.player)
+                {
+                    for (int i = 3; i <= 8; i++)
+                    {
+                        if (p.armor[i].type == ModContent.ItemType<Items.Accessories.Expert.ChloranthyRing>())
+                        {
+                               Player.velocity.X *= 1.04f;       
+                               DodgeImmuneTime = 21;
+                               dodgeCooldown = 10;
+                               break;
+                        }
+                    }
+                }
+                
+                //chloranthy ring II effect
+                foreach (Player p in Main.player)
+                {
+                    for (int i = 3; i <= 8; i++)
+                    {
+                        if (p.armor[i].type == ModContent.ItemType<Items.Accessories.Expert.ChloranthyRing2>())
+                        {
+                            Player.velocity.X *= 1.08f;
+                            DodgeImmuneTime = 23;
+                            dodgeCooldown = 0;
+                            break;
+                        }
+                    }
+                }
+
+                //normal effect
+                Player.velocity.X *= 0.85f; 
             }
 
             if (dodgeTime >= DodgeTimeMax)

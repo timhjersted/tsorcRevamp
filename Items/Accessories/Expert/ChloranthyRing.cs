@@ -10,8 +10,10 @@ namespace tsorcRevamp.Items.Accessories.Expert
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases Stamina recovery speed by 20%" +
-                               "\nIncreases Stamina Droplet pickup range" +
+            DisplayName.SetDefault("Chloranthy Ring I");
+            Tooltip.SetDefault("Increases Stamina recovery speed by 15%," +
+                                "\nEnhances your agility and evasiveness when dodge rolling" +
+                               "\nIncreases Stamina Droplet pickup range" +  
                                "\nThis old ring is named for its decorative green" +
                                "\nblossom, but its luster is long since faded" +
                                "\n+2 defense");
@@ -29,9 +31,22 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
         public override void UpdateEquip(Player player)
         {
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.2f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.15f;
             player.GetModPlayer<tsorcRevampPlayer>().StaminaReaper = 4;
             player.statDefense += 2;
+        }
+
+        public override bool CanEquipAccessory(Player player, int slot, bool modded)
+        {
+            foreach (Item i in player.armor)
+            {
+                if (i.ModItem is ChloranthyRing2)
+                {
+                    return false;
+                }
+            }
+
+            return base.CanEquipAccessory(player, slot, modded);
         }
 
     }
