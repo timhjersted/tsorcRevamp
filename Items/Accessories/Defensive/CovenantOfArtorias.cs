@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             DisplayName.SetDefault("Covenant of Artorias");
             Tooltip.SetDefault("Allows you to enter The Abyss when worn. Remove the ring to escape from The Abyss!" +
-                                "\nThe Abyss pervades the entire world, like a mirror of our own, but the darkness it holds is far greater." +
+                                "\nThe Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous." +
                                 "\nAlso grants immunity to lava, knockback, and fire blocks." +
                                 "\n+7% Melee speed" +
                                 "\n+7% Move speed" +

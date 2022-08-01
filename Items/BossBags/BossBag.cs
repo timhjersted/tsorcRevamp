@@ -536,7 +536,7 @@ namespace tsorcRevamp.Items.BossBags
                 if (Main.rand.NextBool(7)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.KingSlimeMask); }
                 if (Main.rand.NextBool(10)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.KingSlimeTrophy); }
                 if (Main.rand.NextBool(2)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimeGun); }
-                player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimySaddle);
+                //player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimySaddle); //didn't want such a powerful mobility tool obtainable from such a relatively easy, early-game mini-boss; also wanted sequence breaking to be done via the map if they found it rather than vanilla terraria knowledge
                 if (Main.rand.NextBool(2)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimeHook); }
 
                 StaminaVesselOnFirstBag(NPCID.KingSlime, player);
