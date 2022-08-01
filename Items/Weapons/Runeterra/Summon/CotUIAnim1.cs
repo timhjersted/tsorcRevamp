@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 
             // Some visuals here
             Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 0.78f);
-            Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror);
+            Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
         }
     }
 }

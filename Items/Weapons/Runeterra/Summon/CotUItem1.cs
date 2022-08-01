@@ -64,17 +64,17 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		}
 		public override void HoldItem(Player player)
         {
-			bool CotUItemAnim1 = false;
+			bool CotUItemAnim1Exists = false;
 			CotUIAnim1.holditemtimer1 = 0.2f;
 			for (int i = 0; i < Main.maxProjectiles; i++)
 			{
 				if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<CotUIAnim1>() && Main.projectile[i].owner == player.whoAmI)
 				{
-					CotUItemAnim1 = true;
+					CotUItemAnim1Exists = true;
 					break;
 				}
 			}
-			if (!CotUItemAnim1)
+			if (!CotUItemAnim1Exists)
 			{
 				Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<CotUIAnim1>(), 0, 0, Main.myPlayer);
 			}

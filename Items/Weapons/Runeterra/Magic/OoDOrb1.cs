@@ -3,11 +3,11 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
+namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 {
-    public class CotUIAnim2 : ModProjectile
+    public class OoDOrb1 : ModProjectile
     {
-        public static float holditemtimer2 = 0f;
+        public static float holditemtimer1 = 0f;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 9;
@@ -27,11 +27,12 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
             if (owner.direction == 1)
             {
                 Projectile.position = Main.player[Projectile.owner].Center + new Vector2(7, -34);//7
-            } else
+            }
+            else
             {
                 Projectile.position = Main.player[Projectile.owner].Center + new Vector2(-34, -34);
             }
-            if (holditemtimer2 <= 0)
+            if (holditemtimer1 <= 0)
             {
                 Projectile.Kill();
             }

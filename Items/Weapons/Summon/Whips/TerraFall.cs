@@ -29,6 +29,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.knockBack = 2;
 			Item.rare = ItemRarityID.Red;
 
+			Item.channel = true;
+
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.TerraFallProjectile>();
 			Item.shootSpeed = 4;
 
