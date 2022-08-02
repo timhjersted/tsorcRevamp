@@ -5,9 +5,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 {
-    public class OoDOrb1 : ModProjectile
+    public class OoDIAnim1 : ModProjectile
     {
-        public static float returntimer1 = 0f;
+        public static float holditemtimer1 = 0f;
+        public static bool OoDOrb1Exists = false;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 9;
@@ -16,31 +17,38 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
         {
             Projectile.width = 24;
             Projectile.height = 24;
-            Projectile.DamageType = DamageClass.Magic;
-            Projectile.penetrate = -1;
-            Projectile.extraUpdates = 1;
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 10;
             Projectile.friendly = true;
+            Projectile.aiStyle = 1;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 240;
+            Projectile.timeLeft = 999999999;
         }
         public override void AI()
         {
             Player owner = Main.player[Projectile.owner];
 
-            if (returntimer1 <= 0)
+            for (int i = 0; i < Main.maxProjectiles; i++)
             {
+                if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<OoDOrb1>() && Main.projectile[i].owner == owner.whoAmI)
+                {
+                    OoDOrb1Exists = true;
+                    break;
+                }
+            }
+
+            if (owner.direction == 1)
+            {
+                Projectile.position = Main.player[Projectile.owner].Center + new Vector2(7, -34);//7
+            }
+            else
+            {
+                Projectile.position = Main.player[Projectile.owner].Center + new Vector2(-34, -34);
+            }
+            if (holditemtimer1 <= 0 | OoDOrb1Exists)
+            {
+                Projectile.Kill();
             }
 
             Visuals();
-        }
-        public override void Kill(int timeLeft)
-        {
-            if (timeLeft <= 1)
-            {
-                OoDIAnim1.OoDOrb1Exists = false;
-            }
         }
         private void Visuals()
         {

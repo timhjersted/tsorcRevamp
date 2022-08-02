@@ -32,6 +32,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Item.channel = true;
             Item.useTurn = false;
             Item.useStyle = ItemUseStyleID.Shoot;
+            Item.shoot = ModContent.ProjectileType<OoDOrb1>();
+            Item.shootSpeed = 4f;
             Item.holdStyle = ItemHoldStyleID.HoldFront;
             Item.useAnimation = 30;
             Item.useTime = 30;
@@ -39,7 +41,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Item.autoReuse = false;
             Item.rare = ItemRarityID.Green;
             Item.value = Item.buyPrice(0, 10, 0, 0);
-            Item.shootSpeed = 1f;
             Item.mana = 100;
             Item.DamageType = DamageClass.Magic;
         }
@@ -47,26 +48,26 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
         {
             if (Main.GameUpdateCount % 1 == 0)
             {
-                OoDOrb1.holditemtimer1 -= 0.3f;
+                OoDIAnim1.holditemtimer1 -= 0.3f;
             }
         }
+
         public override void HoldItem(Player player)
         {
-            bool OoDOrb1Exists = false;
-            OoDOrb1.holditemtimer1 = 0.2f;
+            bool OoDIAnim1Exists = false;
+            OoDIAnim1.holditemtimer1 = 0.2f;
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<OoDOrb1>() && Main.projectile[i].owner == player.whoAmI)
+                if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<OoDIAnim1>() && Main.projectile[i].owner == player.whoAmI)
                 {
-                    OoDOrb1Exists = true;
+                    OoDIAnim1Exists = true;
                     break;
                 }
             }
-            if (!OoDOrb1Exists)
+            if (!OoDIAnim1Exists)
             {
-                Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OoDOrb1>(), 0, 0, Main.myPlayer);
+                Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OoDIAnim1>(), 0, 0, Main.myPlayer);
             }
         }
     }
-}
-*/
+}*/
