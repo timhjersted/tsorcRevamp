@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.width = 18;
             NPC.aiStyle = -1;
             NPC.height = 48;
-            NPC.knockBackResist = 0.5f;
+            NPC.knockBackResist = 0.3f;
             NPC.rarity = 3;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AssassinBanner>();
@@ -47,6 +47,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 5));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.AttractionPotion>(), 50));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 3));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HolyArrow, 1, 100, 150));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.UnicornHorn, 1, 2, 4));
         }
         
             

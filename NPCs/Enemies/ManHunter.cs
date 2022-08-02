@@ -60,11 +60,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ArcheryPotion));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 10));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 4));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HunterPotion, 2));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SwiftnessPotion, 2));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.HealingPotion, 100, 1, 3, 8));
-
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.HealingPotion, 100, 1, 1, 2));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HolyArrow, 1, 10, 20));
         }
 
 
