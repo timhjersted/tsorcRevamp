@@ -338,15 +338,39 @@ namespace tsorcRevamp
             {
                 return;
             }
+
+            bool chloranthyRing = false;
+            for (int i = 3; i <= (8 + Player.extraAccessorySlots); i++) {
+                if (Player.armor[i].type == ModContent.ItemType<Items.Accessories.Expert.ChloranthyRing>()) {
+                    chloranthyRing = true;
+                    break;
+                }
+            }
+            
+            bool chloranthyRing2 = false;
+            for (int i = 3; i <= (8 + Player.extraAccessorySlots); i++) {
+                if (Player.armor[i].type == ModContent.ItemType<Items.Accessories.Expert.ChloranthyRing2>()) {
+                    chloranthyRing2 = true;
+                    break;
+                }
+            }
+
             //Apply velocity
             if (dodgeTime < DodgeTimeMax * 0.5f)
             {
+                float dodgeSpeed = 8f;
 
-                float newVelX = (onGround ? 12f : 8f) * dodgeDirection;
+                if (onGround)
+                    dodgeSpeed = 12f;
 
-                if (Math.Abs(Player.velocity.X) < Math.Abs(newVelX) || Math.Sign(newVelX) != Math.Sign(Player.velocity.X))
+
+
+
+                dodgeSpeed *= dodgeDirection;
+
+                if (Math.Abs(Player.velocity.X) < Math.Abs(dodgeSpeed) || Math.Sign(dodgeSpeed) != Math.Sign(Player.velocity.X))
                 {
-                    Player.velocity.X = newVelX;
+                    Player.velocity.X = dodgeSpeed;
                 }
 
             }
@@ -368,37 +392,23 @@ namespace tsorcRevamp
             if (dodgeTime >= DodgeTimeMax * 0.6f)
             {
                 //chloranthy ring effect
-                foreach (Player p in Main.player)
-                {
-                    for (int i = 3; i <= 8; i++)
-                    {
-                        if (p.armor[i].type == ModContent.ItemType<Items.Accessories.Expert.ChloranthyRing>())
-                        {
-                               Player.velocity.X *= 1.04f;       
-                               DodgeImmuneTime = 21;
-                               dodgeCooldown = 10;
-                               break;
-                        }
-                    }
+                float decelerationRate = 0.85f;
+                if (chloranthyRing) {
+                    decelerationRate = 0.9f;       
+                    DodgeImmuneTime = 21;
+                    dodgeCooldown = 10;
                 }
                 
                 //chloranthy ring II effect
-                foreach (Player p in Main.player)
-                {
-                    for (int i = 3; i <= 8; i++)
-                    {
-                        if (p.armor[i].type == ModContent.ItemType<Items.Accessories.Expert.ChloranthyRing2>())
-                        {
-                            Player.velocity.X *= 1.08f;
-                            DodgeImmuneTime = 23;
-                            dodgeCooldown = 0;
-                            break;
-                        }
-                    }
+                if (chloranthyRing2) {
+                    decelerationRate = 0.95f;
+                    DodgeImmuneTime = 23;
+                    dodgeCooldown = 0;
                 }
 
+
                 //normal effect
-                Player.velocity.X *= 0.85f; 
+                Player.velocity.X *= decelerationRate; 
             }
 
             if (dodgeTime >= DodgeTimeMax)
