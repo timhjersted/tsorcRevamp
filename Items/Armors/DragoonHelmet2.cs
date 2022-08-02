@@ -38,7 +38,8 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.setBonus = "Harmonized with the four elements: fire, water, earth and air, including +6 life regen and 38% boost to all stats";
+            player.setBonus = "Harmonized with the four elements: fire, water, earth and air, including +6 life regen and flight" +
+                "\nBoosts damage, crit chance, melee and movement speed by 38% and reduces mana costs by 17%";
             player.lavaImmune = true;
             player.fireWalk = true;
             player.breath = 9999999;
@@ -48,7 +49,7 @@ namespace tsorcRevamp.Items.Armors
             player.GetCritChance(DamageClass.Generic) += 38;
             player.GetAttackSpeed(DamageClass.Melee) += 0.38f;
             player.moveSpeed += 0.38f;
-            player.manaCost -= 0.38f;
+            player.manaCost -= 0.17f;
             player.lifeRegen += 6;
             player.GetModPlayer<tsorcRevampPlayer>().DarkmoonCloak = true;
 

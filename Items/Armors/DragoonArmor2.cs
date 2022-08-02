@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Armors
             Tooltip.SetDefault("A reforged upgrade to the legendary Dragoon Armor.\n" +
                 "You are a master of all forces, the protector of Earth, the Hero of the age.\n" +
                 "The powers of the Dragoon Cloak are embedded within its blue-plated chest piece.\n" +
-                "Set bonus adds +38% to all stats and +6 HP Regen, while Dragoon Cloak effects kick in at 160 HP.");
+                "Dragoon Cloak effects kick in at 160 HP. Set Bonus also grants Supreme Stats!");
         }
 
         public override void SetDefaults()

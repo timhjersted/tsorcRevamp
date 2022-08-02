@@ -33,7 +33,8 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.setBonus = "Harmonized with the four elements: fire, water, earth and air, including +2 life regen, flight, and a 30% boost to all stats";
+            player.setBonus = "Harmonized with the four elements: fire, water, earth and air, including +2 life regen and flight" +
+                "\nBoosts damage, crit chance, melee and movement speed by 30% and reduces mana costs by 14%";
             player.lavaImmune = true;
             player.fireWalk = true;
             player.breath = 9999999;
@@ -43,7 +44,7 @@ namespace tsorcRevamp.Items.Armors
             player.GetCritChance(DamageClass.Generic) += 30;
             player.GetAttackSpeed(DamageClass.Melee) += 0.30f;
             player.moveSpeed += 0.30f;
-            player.manaCost -= 0.30f;
+            player.manaCost -= 0.14f;
             player.lifeRegen += 2;
             //player.wings = 34; // looks like Jim's Wings
             //player.wingsLogic = 34;
