@@ -91,24 +91,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             int num54;
 
-            //chaos defense move
-            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 1500)
-            {
-                NPC.defense = 9999;
-                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
-                {
-                    Main.NewText("Blight encloses itself in impenetrable light -- you're too far away!", 75, 75, 255);
-                    holdTimer = 2000;
-                }
-                else
-                {
-                    NPC.defense = 90;
-                }
-            }
-            if (holdTimer > 0)
-            {
-                holdTimer--;
-            }
+            
 
 
             //If it's too far away, target the closest player and charge them
@@ -397,6 +380,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 targetspazzlevel = 0;
             }
+
+            //chaos defense move
+            if (holdTimer > 0)
+            {
+                holdTimer--;
+            }
+
+            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 1600)
+            {
+                NPC.defense = 9999;
+                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                {
+                    Main.NewText("Blight encloses itself in impenetrable light -- you're too far away!", 45, 75, 255);
+                    holdTimer = 200;
+                }
+                else
+                {
+                    NPC.defense = 90;
+                }
+            }
+            
+
 
         }
 
