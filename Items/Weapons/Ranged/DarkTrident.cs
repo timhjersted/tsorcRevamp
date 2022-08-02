@@ -12,9 +12,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Pierces enemies with dark magic" +
-                "\nLeft click to stab, hold right click to charge a throw" +
-                "\nChanges between ranged or melee damage depending on which stat is higher" +
-                "\nFully charged throws set hit enemies ablaze");
+                "\nHold left click to charge a throw, right click to stab" +
+                "\nChanges its damage type between ranged or melee depending your highest stats" +
+                "\nFully charged tridents ignite, setting hit enemies ablaze");
         }
 
         public override void SetDefaults()
@@ -36,7 +36,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.rare = ItemRarityID.Expert;
             Item.UseSound = SoundID.Item7;
             Item.shootSpeed = 24f;
-            //Item.shoot = ModContent.ProjectileType<Projectiles.GoldSpear>();
             Item.channel = true;
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
