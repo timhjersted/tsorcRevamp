@@ -224,12 +224,12 @@ namespace tsorcRevamp
                 }
             }
         }
-        [System.Obsolete]
-        public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
-        {
-            if (Player.HasBuff(ModContent.BuffType<Invincible>())) return false;
+
+        public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource, ref int cooldownCounter) {
+            if (Player.HasBuff(ModContent.BuffType<Invincible>()))
+                return false;
             Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s  
-            return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource);
+            return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource, ref cooldownCounter);
         }
 
         public override void OnHitAnything(float x, float y, Entity victim)
@@ -837,10 +837,9 @@ namespace tsorcRevamp
         //The latter is absolutely necessary, because natural mana regen scales with your base mana
         //Even as melee there are mana boosting accessories you can stack, as well as armor like Dragoon that makes mana regen obscenely powerful.
         //This means you can tank until your mana bar is exhausted, then have to back off for a bit and actually dodge
-        [System.Obsolete]
-        public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit)
+        public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit, int cooldownCounter)
         {
-            base.Hurt(pvp, quiet, damage, hitDirection, crit);
+            base.Hurt(pvp, quiet, damage, hitDirection, crit, cooldownCounter);
             if (manaShield == 1)
             {
                 if (Player.statMana >= Items.Accessories.Melee.ManaShield.manaCost)

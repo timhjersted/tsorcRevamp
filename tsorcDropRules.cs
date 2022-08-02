@@ -27,12 +27,12 @@ namespace tsorcRevamp {
         }
 
         public bool CanDrop(DropAttemptInfo info) => _condition;
-        [System.Obsolete]
+
         public ItemDropAttemptResult TryDroppingItem(DropAttemptInfo info) {
             ItemDropAttemptResult result = default;
             if (info.player.RollLuck(_chanceDenominator) < _chanceNumerator) {
                 for (int i = 0; i < _drops.Length; i++) {
-                    CommonCode.DropItemFromNPC(info.npc, _drops[i], 1);
+                    CommonCode.DropItem(info, _drops[i], 1);
                 }
                 result.State = ItemDropAttemptResultState.Success;
                 return result;
