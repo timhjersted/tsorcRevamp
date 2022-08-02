@@ -1,4 +1,4 @@
-
+/*
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -37,11 +37,11 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Item.useTime = 30;
             Item.damage = 40;
             Item.autoReuse = false;
-            Item.rare = ItemRarityID.Cyan;
+            Item.rare = ItemRarityID.Green;
+            Item.value = Item.buyPrice(0, 10, 0, 0);
             Item.shootSpeed = 1f;
             Item.mana = 100;
             Item.DamageType = DamageClass.Magic;
-            Item.value = PriceByRarity.Cyan_9;
         }
         public override void UpdateInventory(Player player)
         {
@@ -69,3 +69,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
         }
     }
 }
+*/

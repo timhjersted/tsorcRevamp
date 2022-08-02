@@ -1,3 +1,4 @@
+/*
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			Item.holdStyle = ItemHoldStyleID.HoldFront;
 			Item.noUseGraphic = true;
 			Item.useTurn = false;
-			Item.value = 1000;
+			Item.value = Item.buyPrice(0, 10, 0, 0);
 			Item.rare = ItemRarityID.Green;
 			Item.UseSound = SoundID.Item117;
 
@@ -120,4 +121,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			recipe.Register();
 		}
 	}
-}
+}*/

@@ -1,4 +1,4 @@
-
+/*
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -24,6 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         {
             Item.stack = 1;
             Item.rare = ItemRarityID.Green;
+            Item.value = Item.buyPrice(0, 10, 0, 0);
             Item.damage = 20;
             Item.crit = 4;
             Item.width = 52;
@@ -37,7 +38,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
             Item.noUseGraphic = false;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.value = PriceByRarity.Green_2;
             Item.shootSpeed = 4.2f;
             Item.useTurn = false;
         }
@@ -143,3 +143,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         }
     }
 }
+*/

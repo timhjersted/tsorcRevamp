@@ -1,4 +1,4 @@
-
+/*
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -31,7 +31,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
 			Item.damage = 42;
 			Item.knockBack = 2;
-			Item.rare = ItemRarityID.LightRed;
+			Item.rare = ItemRarityID.Pink;
+			Item.value = Item.buyPrice(0, 30, 0, 0);
 
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.NightsCrackerProjectile>();
 			Item.shootSpeed = 4;
@@ -59,3 +60,4 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		}
 	}
 }
+*/

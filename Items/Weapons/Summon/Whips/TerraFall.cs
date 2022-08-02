@@ -1,4 +1,4 @@
-
+/*
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -28,6 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.damage = 115;
 			Item.knockBack = 2;
 			Item.rare = ItemRarityID.Red;
+			Item.value = Item.buyPrice(1, 50, 0, 0);
 
 			Item.channel = true;
 
@@ -55,3 +56,4 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		}
 	}
 }
+*/

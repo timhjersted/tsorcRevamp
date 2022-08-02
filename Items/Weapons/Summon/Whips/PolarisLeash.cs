@@ -28,7 +28,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
 			Item.damage = 60;
 			Item.knockBack = 2;
-			Item.rare = ItemRarityID.Green;
+			Item.rare = ItemRarityID.LightPurple;
+			Item.value = Item.buyPrice(0, 45, 0, 0);
 
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.PolarisLeashProjectile>();
 			Item.shootSpeed = 4;

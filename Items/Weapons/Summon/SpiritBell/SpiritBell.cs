@@ -30,9 +30,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.SpiritBell
 			Item.useTime = 30;
 			Item.useAnimation = 30;
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.value = 10000;
-			Item.rare = ItemRarityID.Expert;
-			Item.expert = true;
+			Item.value = Item.buyPrice(0, 2, 80, 0);
+			Item.rare = ItemRarityID.Blue;
 			Item.UseSound = SoundID.Item44;
 
 

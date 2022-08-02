@@ -26,6 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.damage = 52;
 			Item.knockBack = 2;
 			Item.rare = ItemRarityID.LightRed;
+			Item.value = Item.buyPrice(0, 14, 50, 0);
 
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.PyrosulfateProjectile>();
 			Item.shootSpeed = 4;
