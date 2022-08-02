@@ -27,7 +27,7 @@ namespace tsorcRevamp {
         }
 
         public bool CanDrop(DropAttemptInfo info) => _condition;
-
+        [System.Obsolete]
         public ItemDropAttemptResult TryDroppingItem(DropAttemptInfo info) {
             ItemDropAttemptResult result = default;
             if (info.player.RollLuck(_chanceDenominator) < _chanceNumerator) {

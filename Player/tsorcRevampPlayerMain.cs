@@ -224,6 +224,7 @@ namespace tsorcRevamp
                 }
             }
         }
+        [System.Obsolete]
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
             if (Player.HasBuff(ModContent.BuffType<Invincible>())) return false;
@@ -836,6 +837,7 @@ namespace tsorcRevamp
         //The latter is absolutely necessary, because natural mana regen scales with your base mana
         //Even as melee there are mana boosting accessories you can stack, as well as armor like Dragoon that makes mana regen obscenely powerful.
         //This means you can tank until your mana bar is exhausted, then have to back off for a bit and actually dodge
+        [System.Obsolete]
         public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit)
         {
             base.Hurt(pvp, quiet, damage, hitDirection, crit);

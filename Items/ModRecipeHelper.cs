@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -102,10 +103,11 @@ namespace tsorcRevamp.Items
             .AddTile(TileID.Bottles);
             recipe.Register();
 
+            
             recipe = Recipe.Create(ItemID.MagicMirror)
             .AddRecipeGroup(tsorcRevampSystems.UpgradedMirrors)
             .AddTile(TileID.DemonAltar)
-            .AddOnCraftCallback(delegate (Recipe recipe, Item item)
+            .AddOnCraftCallback(delegate (Recipe recipe, Item item, List<Item> consumedItems)
             { //refund the player's souls when they revert to a base mirror
                 Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), Main.LocalPlayer.getRect(), ModContent.ItemType<DarkSoul>(), 100);
             }

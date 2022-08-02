@@ -70,17 +70,18 @@ namespace tsorcRevamp.Items.BossBags
     public class OolacileDemonBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<AncientOolacileDemon>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before            
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Defensive.BandOfGreatCosmicPower>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ItemID.CloudinaBottle, 1);
-
         }
     }
     public class SlograBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Slogra>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             tsorcRevampWorld.Slain[ModContent.NPCType<NPCs.Bosses.Gaibon>()] = 1;
@@ -95,6 +96,7 @@ namespace tsorcRevamp.Items.BossBags
     public class GaibonBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Gaibon>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             tsorcRevampWorld.Slain[ModContent.NPCType<NPCs.Bosses.Slogra>()] = 1;
@@ -109,6 +111,7 @@ namespace tsorcRevamp.Items.BossBags
     public class JungleWyvernBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before
@@ -130,6 +133,7 @@ namespace tsorcRevamp.Items.BossBags
     public class TheHunterBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<TheHunter>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
@@ -141,6 +145,7 @@ namespace tsorcRevamp.Items.BossBags
     public class TheRageBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<TheRage>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
@@ -152,6 +157,7 @@ namespace tsorcRevamp.Items.BossBags
     public class TheSorrowBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<TheSorrow>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
@@ -163,6 +169,7 @@ namespace tsorcRevamp.Items.BossBags
     public class HeroofLumeliaBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<HeroofLumelia>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {          
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
@@ -189,6 +196,7 @@ namespace tsorcRevamp.Items.BossBags
     public class MindflayerIllusionBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before            
@@ -199,6 +207,7 @@ namespace tsorcRevamp.Items.BossBags
     public class AttraidiesBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before            
@@ -211,6 +220,7 @@ namespace tsorcRevamp.Items.BossBags
     public class KrakenBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before
@@ -222,6 +232,7 @@ namespace tsorcRevamp.Items.BossBags
     public class MarilithBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before
@@ -240,6 +251,7 @@ namespace tsorcRevamp.Items.BossBags
     public class LichBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before
@@ -253,6 +265,7 @@ namespace tsorcRevamp.Items.BossBags
     public class SerrisBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before     
@@ -264,6 +277,7 @@ namespace tsorcRevamp.Items.BossBags
     public class DeathBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Death>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before            
@@ -277,6 +291,7 @@ namespace tsorcRevamp.Items.BossBags
     public class WyvernMageBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before          
@@ -292,6 +307,7 @@ namespace tsorcRevamp.Items.BossBags
     public class GwynBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<Gwyn>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
@@ -303,6 +319,7 @@ namespace tsorcRevamp.Items.BossBags
     public class BlightBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<Blight>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before           
@@ -313,6 +330,7 @@ namespace tsorcRevamp.Items.BossBags
     public class ChaosBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<Chaos>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before              
@@ -329,6 +347,7 @@ namespace tsorcRevamp.Items.BossBags
     public class MageShadowBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before             
@@ -341,6 +360,7 @@ namespace tsorcRevamp.Items.BossBags
     public class OolacileSorcererBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<AbysmalOolacileSorcerer>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before           
@@ -355,6 +375,7 @@ namespace tsorcRevamp.Items.BossBags
     public class ArtoriasBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<Artorias>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before
@@ -372,6 +393,7 @@ namespace tsorcRevamp.Items.BossBags
     public class DarkCloudBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<DarkCloud>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
@@ -384,6 +406,7 @@ namespace tsorcRevamp.Items.BossBags
     public class HellkiteBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before            
@@ -398,6 +421,7 @@ namespace tsorcRevamp.Items.BossBags
     public class SeathBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
@@ -412,6 +436,7 @@ namespace tsorcRevamp.Items.BossBags
     public class WitchkingBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>();
+        [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before
@@ -521,6 +546,7 @@ namespace tsorcRevamp.Items.BossBags
                 }
             }
         }
+        [System.Obsolete]
         public override bool PreOpenVanillaBag(string context, Player player, int arg)
         {
 
