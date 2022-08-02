@@ -26,6 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.damage = 30;
 			Item.knockBack = 2;
 			Item.rare = ItemRarityID.Orange;
+			Item.value = Item.buyPrice(0, 8, 50, 0);
 
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.SearingLashProjectile>();
 			Item.shootSpeed = 4;

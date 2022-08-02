@@ -24,6 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.damage = 23;
 			Item.knockBack = 2;
 			Item.rare = ItemRarityID.Green;
+			Item.value = Item.buyPrice(0, 6, 0, 0);
 
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.DominatrixProjectile>();
 			Item.shootSpeed = 4;

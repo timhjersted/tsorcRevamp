@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			Item.useTime = 30;
 			Item.useAnimation = 30;
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.value = 10000;
+			Item.value = Item.buyPrice(0, 50, 0, 0);
 			Item.rare = ItemRarityID.Expert;
 			Item.expert = true;
 			Item.UseSound = SoundID.Item44;

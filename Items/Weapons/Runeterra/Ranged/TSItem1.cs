@@ -1,3 +1,4 @@
+/*
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.Creative;
@@ -21,6 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
             Item.width = 38;
             Item.height = 8;
             Item.rare = ItemRarityID.Green;
+            Item.value = Item.buyPrice(0, 4, 0, 0);
             Item.useTime = 20;
             Item.useAnimation = 20;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -53,4 +55,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
             }
         }
     }
-}
+}*/

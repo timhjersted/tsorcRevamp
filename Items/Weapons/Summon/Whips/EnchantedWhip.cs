@@ -28,6 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.damage = 18;
 			Item.knockBack = 2;
 			Item.rare = ItemRarityID.Blue;
+			Item.value = Item.buyPrice(0, 3, 50, 0);
 
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.EnchantedWhipProjectile>();
 			Item.shootSpeed = 4;
