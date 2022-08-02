@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases magic damage by 1 flat\nSet bonus: Increases max mana by 50, decreases mana costs by 10%");
+            Tooltip.SetDefault("Increases magic damage by 1 flat\nSet bonus: Increases max mana by 50, decreases mana costs by 6%");
         }
         public override void SetDefaults()
         {

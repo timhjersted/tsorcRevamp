@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("30% Less Mana Usage.\n+15 Defense when health is less than 120");
+            Tooltip.SetDefault("15% Less Mana Usage.\n+15 Defense when health is less than 120");
         }
 
         public override void SetDefaults()
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors.Magic
 
         public override void UpdateEquip(Player player)
         {
-            player.manaCost -= 0.30f;
+            player.manaCost -= 0.15f;
 
             if (player.statLife <= 120)
             {

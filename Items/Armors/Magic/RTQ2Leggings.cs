@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases magic damage by 6 flat\n+20% Movespeed");
+            Tooltip.SetDefault("Increases magic damage by 4 flat\n+20% Movespeed");
         }
         public override void SetDefaults()
         {
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors.Magic
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Magic).Flat += 6;
+            player.GetDamage(DamageClass.Magic).Flat += 4;
             player.moveSpeed += 0.2f;
         }
 

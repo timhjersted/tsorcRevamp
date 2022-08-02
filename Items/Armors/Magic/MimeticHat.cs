@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Armors.Magic
 
         public override void UpdateArmorSet(Player player)
         {
-            player.manaCost -= 0.3f;
+            player.manaCost -= 0.13f;
             player.GetDamage(DamageClass.Magic) += 0.15f;
             player.GetCritChance(DamageClass.Magic) += 6;
         }

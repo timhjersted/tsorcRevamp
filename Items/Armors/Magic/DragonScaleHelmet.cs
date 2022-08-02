@@ -35,23 +35,23 @@ namespace tsorcRevamp.Items.Armors.Magic
 
         public override void UpdateArmorSet(Player player)
         {
+            player.manaCost -= 0.9f;
+            player.statManaMax2 += 60;
             if (player.statLife <= 100)
             {
-                player.manaCost -= 0.17f;
+
                 player.manaRegenBuff = true;
                 player.starCloakItem = new Item(ItemID.StarCloak); ;
                 player.GetCritChance(DamageClass.Magic) += 40;
                 player.GetDamage(DamageClass.Magic) += 0.60f;
-                player.statManaMax2 += 60;
+
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 65, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Blue, 2.0f);
                 Main.dust[dust].noGravity = true;
             }
             else
             {
-                player.manaCost -= 0.17f;
                 player.GetCritChance(DamageClass.Magic) += 20;
                 player.GetDamage(DamageClass.Magic) += .30f;
-                player.statManaMax2 += 60;
             }
         }
 

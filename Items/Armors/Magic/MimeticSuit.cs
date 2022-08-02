@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Burning Mana Skill activates +5 Mana Regen when life falls below 120\nSet bonus: 30% Reduced Mana Cost, +6% Magic Crit, +15% Magic Damage");
+            Tooltip.SetDefault("Burning Mana Skill activates +5 Mana Regen when life falls below 120\nSet bonus: 13% Reduced Mana Cost, +6% Magic Crit, +15% Magic Damage");
         }
 
         public override void SetDefaults()

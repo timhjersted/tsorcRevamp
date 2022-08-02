@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A powerful magic/low defense set chosen by skilled Paladins with a taste for high risk/reward combat\nSet bonus: 20% magic crit, +30% magic damage, +60 mana, -17% mana cost + Darkmoon Cloak skill\nDarkmoon Cloak activates rapid mana regen, Star Cloak & Doubles magic crit and damage when life falls below 100");
+            Tooltip.SetDefault("A powerful magic/low defense set chosen by skilled Paladins with a taste for high risk/reward combat\nSet bonus: 20% magic crit, +30% magic damage, +60 mana, -9% mana cost + Darkmoon Cloak skill\nDarkmoon Cloak activates rapid mana regen, Star Cloak & Doubles magic crit and damage when life falls below 100");
         }
 
         public override void SetDefaults()
