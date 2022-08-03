@@ -103,7 +103,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 				Projectile.WhipSettings.RangeMultiplier += 0.06f;
 				Projectile.WhipSettings.Segments++;
 			}
-			if (ChargeTime % 60 == 0) // Double damage every 120 ticks of charge.
+			if (ChargeTime % 60 == 0) // Double damage every 60 ticks of charge.
 			{
 				Projectile.damage *= 2;
 			}
@@ -147,7 +147,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 				Vector2 diff = list[i + 1] - element;
 
 				float rotation = diff.ToRotation() - MathHelper.PiOver2;
-				Color color = Lighting.GetColor(element.ToTileCoordinates(), Color.White);
+				Color color = Lighting.GetColor(element.ToTileCoordinates(), Color.OrangeRed);
 				Vector2 scale = new Vector2(1, (diff.Length() + 2) / frame.Height);
 
 				Main.EntitySpriteDraw(texture, pos - Main.screenPosition, frame, color, rotation, origin, scale, SpriteEffects.None, 0);
