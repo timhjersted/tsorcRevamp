@@ -98,11 +98,24 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 			ChargeTime++;
 
-			if (ChargeTime % 12 == 0) // 1 segment per 12 ticks of charge.
+			if (ChargeTime % 12 == 0) // 1 segment and 10% range per 12 tick of charge.
+			{
+				Projectile.WhipSettings.RangeMultiplier += 0.06f;
 				Projectile.WhipSettings.Segments++;
+			}
+			if (ChargeTime % 60 == 0) // Double damage every 120 ticks of charge.
+			{
+				Projectile.damage *= 2;
+			}
 
 			// Increase range up to 2x for full charge.
 			Projectile.WhipSettings.RangeMultiplier += 1 / 120f;
+
+			owner = Main.player[Projectile.owner];
+			Vector2 mountedCenter = owner.MountedCenter;
+			Vector2 unitVectorTowardsMouse = mountedCenter.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * owner.direction);
+			owner.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
+			Projectile.velocity = unitVectorTowardsMouse * 4;
 
 			// Reset the animation and item timer while charging.
 			owner.itemAnimation = owner.itemAnimationMax;

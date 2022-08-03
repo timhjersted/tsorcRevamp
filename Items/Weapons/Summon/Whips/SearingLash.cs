@@ -13,6 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Tooltip.SetDefault("Enemies struck by this whip will burn horribly" +
                 "\nand increase minion damage by 66% of this whips base damage in +%" +
                 "\nThis stacks on top of other whip tag dmg" +
+                "\nThis whip can be charged up for increased range and damage" +
                 "\nYour minions will focus struck enemies");
 		}
 
@@ -30,6 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.SearingLashProjectile>();
 			Item.shootSpeed = 4;
+			Item.channel = true;
 
 			Item.useStyle = ItemUseStyleID.Swing;
 			Item.useTime = 30; // for some reason a lower use speed gives it increased range....
