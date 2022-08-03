@@ -20,8 +20,8 @@ namespace tsorcRevamp.NPCs.Bosses
             AnimationType = 28;
             NPC.height = 120;
             NPC.width = 50;
-            NPC.damage = 44;
-            NPC.defense = 12;
+            NPC.damage = 46;
+            NPC.defense = 14;
             NPC.lifeMax = 3200;
             NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit1;
@@ -42,14 +42,14 @@ namespace tsorcRevamp.NPCs.Bosses
 
         NPCDespawnHandler despawnHandler;
         int meteorDamage = 21;
-        int cultistFireDamage = 26;
-        int cultistMagicDamage = 35;
-        int cultistLightningDamage = 30;
-        int fireBreathDamage = 23;
-        int lostSoulDamage = 25;
-        int greatFireballDamage = 36;
-        int blackFireDamage = 47;
-        int greatAttackDamage = 62;
+        int cultistFireDamage = 29;
+        int cultistMagicDamage = 38;
+        int cultistLightningDamage = 33;
+        int fireBreathDamage = 26;
+        int lostSoulDamage = 28;
+        int greatFireballDamage = 39;
+        int blackFireDamage = 50;
+        int greatAttackDamage = 65;
 
 
 
@@ -57,7 +57,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
 
 
-            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead))
+            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EyeofCthulhu))
             {
                 target.AddBuff(20, 150, false); //poisoned
                 target.AddBuff(30, 150, false); //bleeding
@@ -73,7 +73,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (Main.rand.NextBool(2))
             {
                 target.AddBuff(39, 180, false); //cursed flames
-                target.AddBuff(33, 180, false); //weak
+                target.AddBuff(33, 300, false); //weak
             }
         }
 
@@ -93,13 +93,13 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
             //alt code: if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead))
-            if (NPC.downedBoss2)  
+            if (NPC.downedBoss1)  
             {
                 NPC.defense = 22;
                 NPC.value = 9000;
                 meteorDamage = 31;
                 cultistFireDamage = 36;
-                cultistMagicDamage = 39;
+                cultistMagicDamage = 42;
                 cultistLightningDamage = 40;
                 fireBreathDamage = 33;
                 lostSoulDamage = 35;
@@ -107,10 +107,12 @@ namespace tsorcRevamp.NPCs.Bosses
                 blackFireDamage = 57;
                 greatAttackDamage = 72;
             }
+
+            
             //difficulty should be on par with jungle wyvern
             if (NPC.downedBoss3)   
             {
-                NPC.defense = 36;
+                NPC.defense = 40;
                 NPC.value = 120000;
                 meteorDamage = 41;
                 cultistFireDamage = 46;
@@ -267,11 +269,11 @@ namespace tsorcRevamp.NPCs.Bosses
             breathTimer++;
             if (breathTimer > 480)
             {
-                NPC.localAI[1] = -50;
+                NPC.localAI[1] = -60;
                 if (NPC.life >= 1001)
                 { breathTimer = -20; }
                 if (NPC.life <= 1000)
-                { breathTimer = -60; }
+                { breathTimer = -70; }
 
             }
 
@@ -326,7 +328,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             //PLAYER RUNNING AWAY? SPAWN DesertDjinnCurse, 
             Player player3 = Main.player[NPC.target];
-            if (Main.rand.NextBool(110) && NPC.Distance(player3.Center) > 700)
+            if (Main.rand.NextBool(100) && NPC.Distance(player3.Center) > 600)
             {
                 Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8f, 1.06f, true, true);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ProjectileID.DesertDjinnCurse, lostSoulDamage, 7f, Main.myPlayer);
