@@ -30,9 +30,9 @@ namespace tsorcRevamp.Items
                 return false;
             }
 
-            for (int sanityX = x - 1; sanityX < x + 1; sanityX++)
+            for (int sanityX = x - 1; sanityX < x; sanityX++)
             {
-                for (int sanityY = y - 1; sanityY < y + 1; sanityY++)
+                for (int sanityY = y - 1; sanityY < y; sanityY++)
                 {
                     Tile tile = Framing.GetTileSafely(sanityX, sanityY);
                     if (tile.HasTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType])
