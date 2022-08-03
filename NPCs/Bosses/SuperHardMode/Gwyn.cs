@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.width = 20;
             NPC.scale = 1.3f;
             Music = 12;
-            NPC.damage = 100; //was 295
+            NPC.damage = 105; //was 295
             NPC.defense = 220;
             NPC.lifeMax = 500000;
             NPC.knockBackResist = 0;
@@ -42,21 +42,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         //old attacks, not all used
         int deathBallDamage = 100; //200
-        int phantomSeekerDamage = 110; //225
+        int phantomSeekerDamage = 130; //225
         int armageddonBallDamage = 110; //300
         int holdBallDamage = 35;
         int fireballBallDamage = 145;
         int blazeBallDamage = 55;
         int blackBreathDamage = 90;
         int purpleCrushDamage = 155;
-        int iceStormDamage = 90;
+        int iceStormDamage = 92;
         int gravityBallDamage = 150;//300
 
         //basilisk attacks
         int cursedBreathDamage = 66; //100
-        int cursedFlamesDamage = 72; //100
+        int cursedFlamesDamage = 75; //100
         int disruptDamage = 85;//203
-        int bioSpitDamage = 75;//185
+        int bioSpitDamage = 80;//185
         int bioSpitfinalDamage = 85;//230
 
         //ultimate attack not used yet
@@ -67,10 +67,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public int smokebombDamage = 150;//295
 
         //death skull attack when player gets too far away
-        public int herosArrowDamage = 90; //400
+        public int herosArrowDamage = 96; //400
 
         //slogra attacks
-        public int tridentDamage = 95; //150
+        public int tridentDamage = 100; //150
         //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
         public int burningSphereDamage = 279;//360
 
@@ -95,19 +95,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int lineOfSightTimer = 0;
 
         //serris x
-        int plasmaOrbDamage = 122;
+        int plasmaOrbDamage = 137;
 
         //oolicile sorcerer
         public float DarkBeadShotTimer;
         public float DarkBeadShotCounter;
-        int darkBeadDamage = 81;
+        int darkBeadDamage = 91;
 
         //ancient demon
-        int cultistFireDamage = 95;//192
+        int cultistFireDamage = 100;//192
         int cultistMagicDamage = 160;//259
         int cultistLightningDamage = 105;//260
-        int fireBreathDamage = 85;//131
-        int lostSoulDamage = 90;//223
+        int fireBreathDamage = 90;//131
+        int lostSoulDamage = 95;//223
         int greatFireballDamage = 96;//216
         int blackFireDamage = 147;//147
         int greatAttackDamage = 102;//162
@@ -197,23 +197,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
             //chaos defense move
+            if (holdTimer > 0)
+            {
+                holdTimer--;
+            }
+
             if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 1300)
             {
                 NPC.defense = 9999;
                 if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
                 {
                     Main.NewText("Gwyn is protected by the soul of cinder -- you're too far away!", 175, 75, 255);
-                    holdTimer = 2000;
+                    holdTimer = 200;
                 }
                 else
                 {
                     NPC.defense = 220;
                 }
             }
-            if (holdTimer > 0)
-            {
-                holdTimer--;
-            }
+            
             //spawn sword
             if (OptionSpawned == false)
             {
@@ -658,7 +660,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5f, 1.06f, true, true);
                                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), plasmaOrbDamage, 5f, Main.myPlayer);
                             
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item96 with { Volume = 0.3f, Pitch = -0.5f }, player.Center); //wobble
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item96 with { Volume = 0.3f, Pitch = -0.5f }, player.Center); //pasheww
                                                                                                                                          
                                 shotTimer = 1f;
 
@@ -1003,7 +1005,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         {
                             Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 6f, 1.06f, true, true);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.Okiku.PhasedMatterBlast>(), disruptDamage, 5f, Main.myPlayer);
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.2f, Pitch = 0.4f }, NPC.Center); //wobble
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.2f, Pitch = 0.4f }, NPC.Center); //new sound
 
                             NPC.localAI[1] = 1f;
                             NPC.netUpdate = true;

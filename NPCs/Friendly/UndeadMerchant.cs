@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.Utilities;
+using tsorcRevamp.Buffs;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -50,6 +51,7 @@ namespace tsorcRevamp.NPCs.Friendly
             chat.Add("Oh? Still not popped your clogs?");
             chat.Add("Oh, there you are. Still keeping your marbles all together? Then, go ahead, don't be a nitwit. Never hurts to splurge when your days are numbered! Nee hee hee hee hee!");
             chat.Add("Eh? I'm not here to chit-chat. We talk business, or we talk nothing at all.");
+            chat.Add("[c/ffbf00:If our paths cross again, I may have new items for sale. Don't ask where I got'em!]");
 
             return chat;
         }
@@ -141,6 +143,10 @@ namespace tsorcRevamp.NPCs.Friendly
 
             if (Main.hardMode)
             {
+                shop.item[nextSlot].SetDefaults(ItemID.SlimySaddle);
+                shop.item[nextSlot].shopCustomPrice = 1000;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Potions.RadiantLifegem>());
                 shop.item[nextSlot].shopCustomPrice = 60;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
@@ -153,9 +159,18 @@ namespace tsorcRevamp.NPCs.Friendly
                 shop.item[nextSlot].shopCustomPrice = 50;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
+                
             }
 
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>()) || tsorcRevampWorld.SuperHardMode /*just in case*/)
+            if (NPC.downedMechBoss3) //Skeletron Prime
+            {
+                shop.item[nextSlot].SetDefaults(ItemID.QueenSlimeMountSaddle);
+                shop.item[nextSlot].shopCustomPrice = 2000;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
+            }
+
+                if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>()) || tsorcRevampWorld.SuperHardMode /*just in case*/)
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.PurgingStone>());
                 shop.item[nextSlot].shopCustomPrice = 10000;
@@ -184,7 +199,7 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             if (Main.hardMode)
             {
-                damage = 90;
+                damage = 100;
                 knockback = 7f;
             }
             else
@@ -225,7 +240,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     continue;
                 }
 
-                if (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3 || player.CountItem(type, 150) >= 150)
+                if (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3 || player.CountItem(type, 150) >= 150 || player.HasBuff(ModContent.BuffType<Bonfire>()))
                 {
                     return true;
                 }

@@ -364,6 +364,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (NPC.Distance(player.Center) < 150)
             {
                 player.AddBuff(BuffID.Silenced, 180, false);
+                player.AddBuff(BuffID.Bleeding, 180, false);
             }
 
 

@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Item.autoReuse = true;
             Item.rare = ItemRarityID.Cyan;
-            Item.damage = 59;
+            Item.damage = 61;
             Item.width = 40;
             Item.height = 40;
             Item.knockBack = 4.5f;
@@ -41,6 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             {
                 Item.shoot = ModContent.ProjectileType<Projectiles.CrescentTrue>();
                 Item.shootSpeed = 12f;
+
             }
             else
             {

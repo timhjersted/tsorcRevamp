@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Purple Crush");
+            DisplayName.SetDefault("Void Toxin");
         }
 
         public override bool PreKill(int timeLeft)
@@ -43,6 +43,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 100, color, 1.0f);
             Main.dust[dust].noGravity = true;
 
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
+            {
+                int dust2 = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width / 2, Projectile.height / 2, 6, Projectile.velocity.X, Projectile.velocity.Y, 80, Color.Yellow, 1f);
+                Main.dust[dust2].noGravity = true;
+            }
             Projectile.rotation++;
 
             if (Projectile.velocity.X <= 10 && Projectile.velocity.Y <= 10 && Projectile.velocity.X >= -10 && Projectile.velocity.Y >= -10)
@@ -59,8 +64,14 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 buffLengthMod = 2;
             }
-            target.AddBuff(BuffID.Poisoned, 300 / buffLengthMod, false); //poisoned
-            target.AddBuff(BuffID.Bleeding, 300 / buffLengthMod, false); //bleeding
+            target.AddBuff(BuffID.Poisoned, 1200 / buffLengthMod, false); //poisoned
+
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
+            {
+                target.AddBuff(BuffID.OnFire, 180 / buffLengthMod, false); //on fire   
+            }
+            //target.AddBuff(BuffID.Bleeding, 300 / buffLengthMod, false); //bleeding
+
         }
     }
 }

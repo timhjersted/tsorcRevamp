@@ -23,8 +23,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.timeLeft = 22500;
             NPC.damage = 300;
             NPC.defense = 120;
-            NPC.HitSound = SoundID.NPCHit7;
-            NPC.DeathSound = SoundID.NPCDeath8;
+            NPC.HitSound = SoundID.NPCHit6;//6 is werewolf, 7 is the worst, generic hit sound evvarrr, 13, 21 worth trying
+            NPC.DeathSound = SoundID.Item119;//good dragon death sound
             NPC.lifeMax = 125000;
             Music = 12;
             NPC.boss = true;
@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         public int iceWaterDamage = 100;
         public int iceStormDamage = 100;
         public int largeShardDamage = 142;
-
+        public float flapWings;
         public float FrostShotTimer;
         public float FrostShotCounter;
         public float FrostShot2Timer;
@@ -133,6 +133,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 NPC.noTileCollide = false;
             }
             */
+
+
+
+            flapWings++;
+
+            //Flap Wings
+            if (flapWings == 30 || flapWings == 60)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 0.4f, Pitch = 0.0f }, NPC.position); //wing flap sound
+
+            }
+            if (flapWings == 90)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 0.4f, Pitch = 0.1f }, NPC.position);
+                flapWings = 0;
+            }
+
+
+
             int[] bodyTypes = new int[] { ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody2>(), ModContent.NPCType<SeathTheScalelessBody3>(), ModContent.NPCType<SeathTheScalelessBody3>() };
             tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<SeathTheScalelessHead>(), bodyTypes, ModContent.NPCType<SeathTheScalelessTail>(), 13, 6f, 10f, 0.17f, true, false, true, false, false);
 
@@ -239,7 +258,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 //play breath sound
                 if (Main.rand.NextBool(3))
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.3f, Pitch = -0.6f }, NPC.Center); //flame thrower
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.4f, Pitch = -0.6f }, NPC.Center); //flame thrower
                 }
                 
                 breathCD--;

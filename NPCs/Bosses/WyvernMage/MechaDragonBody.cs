@@ -44,7 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         }
         public static int[] bodyTypes;
 
-        public int CrystalFireDamage = 35;
+        public int CrystalFireDamage = 42;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Wyvern Mage Disciple");

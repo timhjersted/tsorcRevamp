@@ -18,10 +18,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             AnimationType = 29;
             NPC.aiStyle = 0;
             NPC.damage = 120;
-            NPC.defense = 96;
+            NPC.defense = 56;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 1;
+            NPC.lifeMax = 1000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.noGravity = false;
@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         }
 
 
-        int frozenSawDamage = 195;
+        int frozenSawDamage = 150;
         int lightningDamage = 100;
         int Timer2 = -Main.rand.Next(200);
 
@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
             int expertScale = 1;
             if (Main.expertMode) expertScale = 2;
-
+            target.AddBuff(BuffID.Blackout, 120, false);
             target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
             target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
         }
@@ -66,7 +66,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         public override void AI()
         {
 
+            //Proximity Debuffs
+            Player player = Main.player[NPC.target];
+            if (NPC.Distance(player.Center) < 300)
+            {
+               
+                player.AddBuff(BuffID.Darkness, 60, false);
 
+            }
+            if (NPC.Distance(player.Center) < 200)
+            {
+                player.AddBuff(BuffID.CursedInferno, 60, false);
+                player.AddBuff(BuffID.Obstructed, 60, false);
+                player.AddBuff(BuffID.ManaSickness, 180, false);
+            }
 
             NPC.netUpdate = false;
             NPC.ai[0]++; // Timer Scythe

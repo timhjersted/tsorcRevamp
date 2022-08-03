@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void SetDefaults()
         {
             NPC.knockBackResist = 0;
-            NPC.damage = 190;
+            NPC.damage = 110;
             NPC.defense = 0;
             NPC.height = 40;
             NPC.width = 30;
@@ -59,6 +59,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public float DarkBeadShotCounter;
         public float poisonTimer = 0;
         public float poisonTimer2 = 0;
+
+        //chaos
+        int holdTimer = 0;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -186,23 +189,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             Player player = Main.player[NPC.target];
 
-            if (NPC.Distance(player.Center) < 600)
-            {
 
+          
+            //chaos code: announce proximity debuffs once
+            if (holdTimer > 1)
+            {
+                holdTimer--;
+            }
+            //Proximity Debuffs
+            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1200)
+            {
+                
                 player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
-                //player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 60, false);
+
+                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                {
+                    Main.NewText("Artorias is protected by a magical barrier. Only the Shaman Elder knows how to break it!", 175, 75, 255);
+                    holdTimer = 3000;
+                }
 
             }
-
-            if (NPC.Distance(player.Center) > 1000)
-            {
-
-                //poisonTimer = 305f;
-
-            }
-
-
-
 
 
             despawnHandler.TargetAndDespawn(NPC.whoAmI);

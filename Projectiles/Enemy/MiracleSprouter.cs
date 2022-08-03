@@ -39,6 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 int projIndex = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X, Projectile.position.Y, 0, -3f, ModContent.ProjectileType<MiracleVines>(), Projectile.damage, 0f, Main.myPlayer); Projectile.active = false;
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item60 with { Volume = 0.5f, Pitch = -0.1f }, Projectile.position);
                 if (Main.netMode == NetmodeID.Server)
                 {
                     NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, projIndex);

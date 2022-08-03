@@ -46,6 +46,7 @@ namespace tsorcRevamp.NPCs.Bosses
         //npc.ai[0] = damage taken counter
         //npc.ai[1] = invulnerability timer
         //npc.ai[3] = state counter
+        public float flapWings;
         int hitTime = 0; //How long since it's last been hit (used for reducing damage counter)
         int waterTrailsDamage = 55;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -68,6 +69,19 @@ namespace tsorcRevamp.NPCs.Bosses
             int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 29, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 0.5f + (15.5f * (NPC.ai[0] / (NPC.lifeMax / 10))));
             Main.dust[dust].noGravity = true;
 
+            flapWings++;
+
+            //Flap Wings
+            if (flapWings == 30 || flapWings == 60)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 1f, Pitch = 0.0f }, NPC.position); //wing flap sound
+
+            }
+            if (flapWings == 95)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 1f, Pitch = 0.1f }, NPC.position);
+                flapWings = 0;
+            }
 
             if (NPC.ai[3] == 0)
             {
@@ -109,7 +123,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         }
 
                         int type = ModContent.ProjectileType<WaterTrail>();
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.SplashWeak, vector8);
 
                         //Get the vector that points from the NPC to the player
                         Vector2 difference = Main.player[NPC.target].Center - NPC.Center;
@@ -194,7 +208,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     float num48 = 13f;
                     float invulnDamageMult = 1.27f;
                     int type = ModContent.ProjectileType<WaterTrail>();
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.SplashWeak, vector8);
                     float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     //yes do it manually. im not using a loop. i don't care //Understandable, have a nice day.
                     if (Main.netMode != NetmodeID.MultiplayerClient)

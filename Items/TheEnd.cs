@@ -12,8 +12,8 @@ namespace tsorcRevamp.Items
                                "\nYou feel relieved, but notice your heart is still not at peace. Attraidies was known for his games." +
                                "\nEven in death you suspect his sway over the world has not ended." +
                                "\nYou remember the magic spell that he put on Aaron and wonder if he cast the same spell on himself..." +
-                               "\nLooking down, you notice a drill lying in the ashes, still hot to the touch..." +
-                               "\nCongratulations on beating the game! We hope you enjoyed it!- Tim Hjersted & the Revamp Team");
+                               "\n[c/00ffd4:Looking down, you notice a drill lying in the ashes, still hot to the touch...]" +
+                               "\n[c/ffbf00:Congratulations on beating the game! We hope you enjoyed it!- Tim Hjersted & the Revamp Team]");
         }
 
         public override void SetDefaults()

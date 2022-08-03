@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(BuffID.PotionSickness, 600);
+            target.AddBuff(BuffID.PotionSickness, 660);
             Projectile.timeLeft = 2;
         }
 
@@ -81,7 +81,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 // Smoke and fuse dust spawn.
                 if (Main.rand.NextBool(4))
                 {
-                    int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 6, 0f, 0f, 100, Color.SeaGreen, 1f);
+                    int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 6, 0f, 0f, 100, Color.SeaGreen, 2f);
                     Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;
                     Main.dust[dustIndex].fadeIn = .5f + (float)Main.rand.Next(5) * 0.1f;
                     Main.dust[dustIndex].noGravity = true;

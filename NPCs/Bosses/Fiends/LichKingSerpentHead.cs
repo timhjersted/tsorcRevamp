@@ -20,9 +20,9 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.aiStyle = 6;
             NPC.defense = 10;
             NPC.timeLeft = 22500;
-            NPC.damage = 350;
+            NPC.damage = 250;
             NPC.HitSound = SoundID.NPCHit1;
-            NPC.DeathSound = SoundID.NPCDeath5;
+            NPC.DeathSound = SoundID.Item119;
             NPC.lifeMax = 120000;
             NPC.knockBackResist = 0;
             NPC.lavaImmune = true;

@@ -51,6 +51,9 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         bool OptionSpawned = false;
         int OptionId = 0;
 
+        //chaos
+        int holdTimer = 0;
+
         int lightningDamage = 89;
         int oracleDamage = 75;
         //We can override this even further on a per-NPC basis here
@@ -82,16 +85,26 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             }
 
 
-            //Proximity Debuffs
+
             Player player = Main.player[NPC.target];
-            if (NPC.Distance(player.Center) < 600)
+            //chaos code: announce proximity debuffs once
+            if (holdTimer > 1)
+            {
+                holdTimer--;
+            }
+            //Proximity Debuffs
+            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1200)
             {
                 player.AddBuff(BuffID.OnFire, 120, false); //on fire
                 player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
-                player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 60, false);
+                
+                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                {
+                    Main.NewText("The Lich King emanates the heat of the Earth's magma core!", 255, 255, 0); //yellow
+                    holdTimer = 3000;
+                }
 
             }
-
 
             bool flag25 = false;
             ProjectileTimer += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;

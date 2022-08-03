@@ -85,7 +85,8 @@ namespace tsorcRevamp.NPCs.Friendly
             chat.Add("Tuscarora once said they are not dead who live in the hearts they leave behind.");
             if (!tsorcRevampWorld.SuperHardMode && !tsorcRevampWorld.TheEnd)
             {
-                chat.Add("If you are able to defeat Attraidies, come and find me. I will have something for you...");
+                chat.Add("[c/ffbf00:If you are able to defeat Attraidies, come and find me at my home beyond the Western Sea.] I will have something for you...");
+                chat.Add("[c/ffbf00:In some time I will leave Ashen Peak and return to my home beyond the Western Sea.] Come find me there...");
             }
             return chat;
         }
@@ -125,24 +126,24 @@ namespace tsorcRevamp.NPCs.Friendly
                                         "\nThe ancenstors tell me that the portal can be closed, but" +
                                         "\nyou must first defeat the 3 Elemental Fiends: one of" +
                                         "\n[c/2f8ee0:Water], one of [c/2d9e2b:Earth], and one of [c/f53d0a:Fire]." +
-                                        "\nYou must also defeat 5 more guardians of the Abyss:" +
-                                        "\n[c/ffbf00:Artorias], [c/fcff00:Chaos], [c/00ffd4:Blight], [c/aa00ff:The Wyvern Mage Shadow], and [c/18ffe2:Seath the Scaleless].";
+                                        "\nYou must also defeat 4 more lords of the Abyss:" +
+                                        "\n[c/ffbf00:Artorias], [c/00ffd4:Blight], [c/aa00ff:The Wyvern Mage Shadow], and [c/18ffe2:Seath the Scaleless]."; //[c/fcff00:Chaos]
                         chatState = 1;
                         return;
                     }
                     if (chatState == 1)
                     {
                         Main.npcChatText = "My heart despairs for you, Red. It will not be easy. But if you succeed, you will have the strength " +
-                                        "to face the final guardian." +
+                                        "to face the final lord, who has tended the flame of the Abyss since the world began." +
                                         "\nTo the ancenstors, he was known as [c/ff6618:Gwyn, Lord of Cinder]. " +
-                                        "\nGwyn's old tome is buried somewhere beneath the Western sea, but he will surely kill you " +
-                                        "if you have not yet gathered the strength obtained from the other guardians of the Abyss.";
+                                        "\nGwyn's old tomb is buried somewhere beneath the Western sea, but he will surely kill you " +
+                                        "if you have not yet gathered the strength obtained from the other lords of the Abyss.";
                         chatState = 2;
                         return;
                     }
                     if (chatState == 2)
                     {
-                        Main.npcChatText = "Have you seen the Lihzahrd Gates scattered across this world? They will lead you towards your goal." +
+                        Main.npcChatText = "Have you seen the [c/ffbf00:Lihzahrd Gates] scattered across this world? They will lead you towards your goal." +
                                         "\nI would start with the one deep inside the Great Chasm, which leads to the Old One's Tree." +
                                         "\nThere is another, to the East of Elengad's Desert Ruins. The rest, I'm sure you will find. The ancestors will help guide you.";
                         chatState = 3;
@@ -153,8 +154,8 @@ namespace tsorcRevamp.NPCs.Friendly
                         Main.npcChatText = "There is one thing you should know about [c/ffbf00:Artorias], and another dark being that now stalks these lands," +
                                     "\nknown as the [c/383838:Witchking]." +
                                     "\nBoth The Witchking and Artorias are protected by dark spells, making them practically invincible, but I have heard that " +
-                                    "[c/f53d0a:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce\nmagic." +
-                                    "\nSuch a blade may just be strong enough to shatter their protection...";
+                                    "\n[c/f53d0a:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic." + //fierce\nmagic.
+                                    "\n[c/fcff00:The Barrow Blade] may just be strong enough to shatter their protection...";
                         chatState = 4;
                         return;
                     }

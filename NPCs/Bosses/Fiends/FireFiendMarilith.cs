@@ -42,9 +42,17 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             DisplayName.SetDefault("Fire Fiend Marilith");
         }
 
-        int lightningDamage = 85;
-        int antiMatterBlastDamage = 65;
-        int crazedPurpleCrushDamage = 75;
+        int lightningDamage = 86;
+        int antiMatterBlastDamage = 96;
+        int crazedPurpleCrushDamage = 76;
+
+        //oolicile sorcerer
+        public float FlameShotTimer;
+        public float FlameShotCounter;
+
+        //chaos
+        int holdTimer = 0;
+
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = (int)(NPC.damage * 1.3 / 2);
@@ -58,15 +66,67 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             bool flag25 = false;
 
+            //Flame attack starts at 2/3 health
+            if (NPC.life <= 200000)
+            { 
+                FlameShotTimer++;
+            }
+
+            Player player = Main.player[NPC.target];
+            //chaos code: announce proximity debuffs once
+            if (holdTimer > 1)
+            {
+                holdTimer--;
+            }
+            //Proximity Debuffs
+            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1200)
+            {
+                player.AddBuff(BuffID.Oiled, 600, false);
+                player.AddBuff(BuffID.Poisoned, 60, false);
+
+                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                {
+                    Main.NewText("Marilith has poisoned the air with an incendiary fog!", 199, 21, 133);//medium violet red
+                    holdTimer = 3000;
+                }
+                
+            }
+            //getting close to marilith triggers on fire!
+            if (NPC.Distance(player.Center) < 350)
+            {
+                player.AddBuff(BuffID.OnFire, 120, false);
+                
+            }
+
+            //FIRE FROM ABOVE ATTACK
+            //Counts up each tick. Used to space out shots
+            if (FlameShotTimer >= 25 && FlameShotCounter < 11)
+            {
+
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 500 + Main.rand.Next(600), (float)player.position.Y - 600f, (float)(-40 + Main.rand.Next(80)) / 10, 4.5f, ProjectileID.CultistBossFireBall, crazedPurpleCrushDamage, 2f, Main.myPlayer); //ProjectileID.NebulaBlaze2 would be cool to use at the end of attraidies or gwyn fight with the text, "The spirit of your father summons cosmic light to aid you!"
+
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                NPC.netUpdate = true; //new
+
+                FlameShotTimer = 0;
+                FlameShotCounter++;
+
+            }
+            //Chance to trigger fire from above
+            if (Main.rand.NextBool(900))
+            {
+                FlameShotCounter = 0;
+            }
+
             if (NPC.ai[1] >= 10f && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 NPC.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
-                if (Main.rand.NextBool(70))
+                if (Main.rand.NextBool(90))
                 {
                     Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 15);
                     projVector += Main.rand.NextVector2Circular(5, 5);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>(), lightningDamage, 0f, Main.myPlayer, Main.rand.Next(30, 180));
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                    //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.1f, Pitch = -0.1f }, NPC.Center);//magic ice
                     NPC.ai[1] = 1f;
                 }
                 if (Main.rand.NextBool(220))
@@ -76,7 +136,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                     projVector += Main.rand.NextVector2Circular(7, 7);
                     projVector += Main.player[NPC.target].velocity / 2;
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.Okiku.PhasedMatterBlast>(), antiMatterBlastDamage, 0f, Main.myPlayer);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.8f, Pitch = 0.0f }, player.Center); //wobble
                     NPC.ai[1] = 1f;
                 }
                 if (Main.rand.NextBool(20))
@@ -85,7 +145,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                     projVector += Main.rand.NextVector2Circular(3, 3);
                     projVector += Main.player[NPC.target].velocity / 2;
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>(), crazedPurpleCrushDamage, 0f, Main.myPlayer);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.3f, Pitch = 0.5f }, NPC.Center); //acid flame
                     NPC.ai[1] = 1f;
                 }
             }

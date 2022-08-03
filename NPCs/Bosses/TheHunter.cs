@@ -44,7 +44,8 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         int hitTime = 0;
-        int sproutDamage = 60; 
+        int sproutDamage = 60;
+        public float flapWings;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = NPC.damage / 2;
@@ -65,6 +66,21 @@ namespace tsorcRevamp.NPCs.Bosses
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
             int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 89, NPC.velocity.X, NPC.velocity.Y, 200, default, 0.5f + (15.5f * (NPC.ai[0] / (NPC.lifeMax / 10))));
             Main.dust[dust].noGravity = true;
+
+
+            flapWings++;
+
+            //Flap Wings
+            if (flapWings == 30 || flapWings == 60)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 1f, Pitch = 0.0f }, NPC.position); //wing flap sound
+            }
+            if (flapWings == 95)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 1f, Pitch = -0.1f }, NPC.position);
+                flapWings = 0;
+            }
+
 
             if (NPC.ai[3] == 0)
             {
@@ -98,7 +114,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         float num48 = 14f;
 
                         int type = ModContent.ProjectileType<MiracleSprouter>();
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass, vector8);
                         float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {

@@ -26,14 +26,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.timeLeft = 22500;
             NPC.damage = 290;
             NPC.defense = 100;
-            NPC.HitSound = SoundID.NPCHit7;
-            NPC.DeathSound = SoundID.NPCDeath8;
+            NPC.HitSound = SoundID.NPCHit13; //better flesh hit
+            NPC.DeathSound = SoundID.Item119;//dragon death
             NPC.lifeMax = 100000;
             Music = 12;
             NPC.boss = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.behindTiles = true;
+            NPC.behindTiles = false;
             NPC.value = 250000;
             NPC.lavaImmune = true;
             NPC.buffImmune[BuffID.Poisoned] = true;
@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 meteorDamage = 120;
             }
         }
-
+        public float flapWings;
         //oolicile sorcerer
         public float DarkBeadShotTimer;
         public float DarkBeadShotCounter;
@@ -91,8 +91,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             DarkBeadShotTimer++;
             MeteorShotTimer++;
 
-            
-            
+            flapWings++;
+
+            //Flap Wings
+            if (flapWings == 30 || flapWings == 60)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 0.4f, PitchVariance = 0.2f }, NPC.position); //wing flap sound
+
+            }
+            if (flapWings == 90)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 0.4f, Pitch = 0.2f }, NPC.position);
+                flapWings = 0;
+            }
+
 
             Player nT = Main.player[NPC.target];
             if (Main.rand.NextBool(175))
@@ -116,7 +128,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 //play breath sound
                 if (Main.rand.NextBool(3))
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.8f, Pitch = 0.1f }, NPC.Center); //flame thrower
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.3f, Pitch = -0.6f }, NPC.Center); //flame thrower
                 }
 
                 NPC.netUpdate = true; 
@@ -142,7 +154,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                     
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 4.5f, ProjectileID.Fireball, flameRainDamage, 2f, Main.myPlayer); //6.5 too fast
                         //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 6.5f, ModContent.ProjectileType<Projectiles.Enemy.FlameRain>(), flameRainDamage, 2f, Main.myPlayer);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.1f, PitchVariance = 0.2f }, NPC.Center);
                         NPC.netUpdate = true; //new
                     
                     DarkBeadShotTimer = 0;
@@ -157,7 +169,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             if (MeteorShotTimer >= 58 && MeteorShotCounter < 9)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 200 + Main.rand.Next(500), (float)nT.position.Y - 600f, (float)(-50 + Main.rand.Next(100)) / Main.rand.Next(3, 10), 5.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //8.9f is speed, 4.9 too slow, (float)nT.position.Y - 400f starts projectile closer above the player vs 500?
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.1f, PitchVariance = 0.2f}, NPC.Center);
                 NPC.netUpdate = true; //new      
                 MeteorShotTimer = 0;
                 MeteorShotCounter++;

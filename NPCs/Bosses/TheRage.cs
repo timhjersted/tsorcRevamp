@@ -44,6 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses
             despawnHandler = new NPCDespawnHandler("The Rage is satisfied...", Color.OrangeRed, 127);
         }
 
+        public float flapWings;
         int hitTime = 0;
         int fireTrailsDamage = 50; //45 was a bit too easy for folks based on some feedback and watching a LP
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -68,6 +69,24 @@ namespace tsorcRevamp.NPCs.Bosses
             //Fun fact: Dusts apparently have a max Scale of 16. For an incredibly good reason, i'm sure.
             int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 0.5f + (15.5f * (NPC.ai[0] / (NPC.lifeMax / 10))));
             Main.dust[dust].noGravity = true;
+
+
+            
+
+            flapWings++;
+
+            //Flap Wings
+            if (flapWings == 30 || flapWings == 60)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 1f, Pitch = 0.0f }, NPC.position); //wing flap sound
+
+            }
+            if (flapWings == 95)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 1f, Pitch = 0.1f }, NPC.position);
+                flapWings = 0; 
+            }
+
 
             if (NPC.ai[3] == 0)
             {
@@ -100,7 +119,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     {
                         float num48 = 5f;//25 was 40
                         int type = ModContent.ProjectileType<FireTrails>();
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.5f, Pitch = 0.0f }, NPC.Center); //flame thrower
                         float rotation = (float)Math.Atan2(vector8.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + 500, vector8.Y - 100, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 100, (float)((Math.Cos(rotation + 0.2) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
@@ -222,6 +241,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.frameCounter += 1.0;
             if (NPC.frameCounter >= 4.0)
             {
+                
                 NPC.frame.Y = NPC.frame.Y + num;
                 NPC.frameCounter = 0.0;
             }

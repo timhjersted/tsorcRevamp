@@ -12,8 +12,8 @@ namespace tsorcRevamp.Items.Accessories.Expert
         {
             DisplayName.SetDefault("Chloranthy Ring II");
             Tooltip.SetDefault("Increases Stamina recovery speed by 25%" +
-                               "\nFurther enhances your agility and evasiveness when dodge rolling" +
-                               "\nGrants a 10% chance to evade attacks when hit" +
+                               "\n[c/ffbf00:Further enhances your agility and evasiveness when dodge rolling]" +
+                               "\n[c/ffbf00:Grants a 10% chance to evade attacks when hit & superior mid-air dexterity]" +
                                "\nThis ring is named for its decorative green" +
                                "\nblossom. Its luster has now been fully restored." +
                                "\n+4 defense");

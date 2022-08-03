@@ -890,7 +890,7 @@ namespace tsorcRevamp
                 Player.jumpBoost = false;
                 Player.jumpSpeedBoost = 0f;
                 Player.wingTime = 0;
-                Player.moveSpeed *= 0.8f;
+                Player.moveSpeed *= 0.9f;
             }
 
             for (int i = 0; i < 50; i++)

@@ -363,7 +363,21 @@ namespace tsorcRevamp
                 if (onGround)
                     dodgeSpeed = 12f;
 
+                if (chloranthyRing)
+                {
+                    dodgeSpeed = 11f;
 
+                    if (onGround)
+                        dodgeSpeed = 13f;
+                }
+
+                if (chloranthyRing2)
+                {
+                    dodgeSpeed = 14f;
+
+                    if (onGround)
+                        dodgeSpeed = 14f;
+                }
 
 
                 dodgeSpeed *= dodgeDirection;
@@ -392,17 +406,17 @@ namespace tsorcRevamp
             if (dodgeTime >= DodgeTimeMax * 0.6f)
             {
                 //chloranthy ring effect
-                float decelerationRate = 0.85f;
+                float decelerationRate = 0.85f; 
                 if (chloranthyRing) {
-                    decelerationRate = 0.9f;       
+                    decelerationRate = 0.88f;       
                     DodgeImmuneTime = 21;
                     dodgeCooldown = 10;
                 }
                 
                 //chloranthy ring II effect
                 if (chloranthyRing2) {
-                    decelerationRate = 0.95f;
-                    DodgeImmuneTime = 23;
+                    decelerationRate = 0.91f;
+                    DodgeImmuneTime = 24;
                     dodgeCooldown = 0;
                 }
 

@@ -11,8 +11,7 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Summons a mindflayer illusion from the legion army of Attraidies!" +
-                                "\nDrops 600 souls of utterly corrupt darkness, among other random things." +
-                                "\n\"You feel compelled to try this...\"");
+                                "\n\"[c/00ffd4:You feel compelled to try this...]\"");
         }
         public override void SetDefaults()
         {

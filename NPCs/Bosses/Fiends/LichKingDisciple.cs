@@ -41,7 +41,9 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             DisplayName.SetDefault("Lich King Disciple");
         }
 
-        int frozenSawDamage = 95;
+        int frozenSawDamage = 105;
+        //chaos
+        int holdTimer = 0;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -70,14 +72,41 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.ai[1]++; // Timer Teleport
                          // npc.ai[2]++; // Shots
 
-            if (NPC.life > 3000)
+            Player player = Main.player[NPC.target];
+            //chaos code: announce proximity debuffs once
+            if (holdTimer > 1)
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, 150, Color.Black, 1f);
+                holdTimer--;
+            }
+            //Proximity Debuffs
+            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 300)
+            {
+                player.AddBuff(BuffID.Ichor, 600, false);
+                //player.AddBuff(BuffID.PotionSickness, 60, false);
+
+                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                {
+                    Main.NewText("The Lich King's Disciple emanates a miasma of Ichor around him!", 199, 21, 133);//medium violet red
+                    holdTimer = 3000;
+                }
+
+            }
+
+            //causes potion sickness at 20k health
+            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 320 && NPC.life <= 19999)
+            {
+                player.AddBuff(BuffID.PotionSickness, 60, false);
+                player.AddBuff(BuffID.Hunter, 60, false);
+                player.AddBuff(BuffID.Blackout, 60, false);
+            }
+            if (NPC.life > 20000)
+            {
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X - 70, (float)NPC.position.Y - 60), NPC.width * 7, NPC.height * 7 , DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, 150, Color.Black, 2f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 3000)
+            else if (NPC.life <= 19999)
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, 100, Color.Black, 2f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X - 70, (float)NPC.position.Y-60), NPC.width * 7, NPC.height * 7, DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, 100, Color.Yellow, 3f);
                 Main.dust[dust].noGravity = true;
             }
 
