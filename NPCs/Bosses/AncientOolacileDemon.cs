@@ -21,8 +21,8 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.height = 120;
             NPC.width = 50;
             NPC.damage = 46;
-            NPC.defense = 14;
-            NPC.lifeMax = 3200;
+            NPC.defense = 12;
+            NPC.lifeMax = 6000;
             NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
@@ -140,7 +140,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             //JUSTHIT CODE
             //MELEE RANGE
-            if (NPC.Distance(player.Center) < 100 && NPC.localAI[1] < 70f) //npc.justHit && 
+            if (NPC.Distance(player.Center) < 100 && NPC.localAI[1] < 70f) 
             {
                 NPC.localAI[1] = 50f;
 
@@ -151,7 +151,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
             //RISK ZONE
-            if (NPC.Distance(player.Center) < 300 && NPC.localAI[1] < 70f && Main.rand.NextBool(5))//npc.justHit && 
+            if (NPC.Distance(player.Center) < 300 && NPC.localAI[1] < 70f && Main.rand.NextBool(5))
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
                 float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-10f, -7f);
@@ -172,15 +172,15 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
 
-            //tsorcRevampAIs.RedKnightOnHit(npc, projectile.DamageType == DamageClass.Melee);
+            
             //TELEPORT RANGED
-            if (Main.rand.NextBool(26))
+            if (Main.rand.NextBool(24))
             {
                 tsorcRevampAIs.Teleport(NPC, 20, true);
                 NPC.localAI[1] = 70f;
             }
             //RANGED
-            if (NPC.Distance(Player.Center) > 201 && NPC.velocity.Y == 0f && Main.rand.NextBool(3))//npc.justHit &&
+            if (NPC.Distance(Player.Center) > 201 && NPC.velocity.Y == 0f && Main.rand.NextBool(3))
             {
 
                 NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f);
@@ -190,8 +190,6 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
-
-        //int breathTimer = 0;
 
         //int breathTimer gives weird cool arrow shape, float does the circle
         float breathTimer = 0;
@@ -204,14 +202,14 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
             //CHANCE TO JUMP BEFORE ATTACK  
-            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(50) && NPC.life >= 1001)
+            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(50) && NPC.life >= 2001)
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-9f, -6f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 1f);
                 NPC.netUpdate = true;
             }
 
-            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(33) && NPC.life <= 1000)
+            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(33) && NPC.life <= 2000)
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-7f, -4f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 1f);
@@ -229,7 +227,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.localAI[1]++;
             bool lineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
             tsorcRevampAIs.FighterAI(NPC, 1, 0.1f, canTeleport: false, lavaJumping: true);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 179, ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.rand.NextBool(220), false, SoundID.Item17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 179, ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.rand.NextBool(200), false, SoundID.Item17);
             tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 179, ProjectileID.CultistBossFireBall, cultistMagicDamage, 1, Main.rand.NextBool(20), false, SoundID.NPCHit34);
             //tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], 160, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 8, Main.rand.NextBool(2), false, 2, 34, 0);
             //tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatFireballBall>(), greatFireballDamage, 8, lineOfSight && Main.rand.NextBool(200), false, 2, 34, 0);
@@ -269,10 +267,10 @@ namespace tsorcRevamp.NPCs.Bosses
             breathTimer++;
             if (breathTimer > 480)
             {
-                NPC.localAI[1] = -60;
-                if (NPC.life >= 1001)
-                { breathTimer = -20; }
-                if (NPC.life <= 1000)
+                NPC.localAI[1] = -50;
+                if (NPC.life >= 2001)
+                { breathTimer = -30; }
+                if (NPC.life <= 2000)
                 { breathTimer = -70; }
 
             }
@@ -341,7 +339,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], ProjectileID.LostSoulHostile, lostSoulDamage, 3, lineOfSight, true, 4, 9);
 
             //SPAWN FIRE LURKER
-            if ((spawnedDemons < 2) && NPC.life >= 2000 && Main.rand.NextBool(3000))
+            if ((spawnedDemons < 2) && NPC.life >= 4000 && Main.rand.NextBool(3000))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -361,7 +359,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
             //CHOICES
-            if (NPC.localAI[1] >= 160f && (choice == 0 || choice == 4) && NPC.life >= 1001)
+            if (NPC.localAI[1] >= 160f && (choice == 0 || choice == 4) && NPC.life >= 2001)
             {
                 bool clearSpace = true;
                 for (int i = 0; i < 15; i++)
@@ -372,7 +370,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
                 }
                 //LOB ATTACK PURPLE; 
-                if (NPC.life >= 1001 && NPC.life <= 2000 && clearSpace)
+                if (NPC.life >= 2001 && NPC.life <= 4000 && clearSpace)
                 {
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
 
@@ -389,7 +387,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     { NPC.localAI[1] = 1f; }
                 }
                 //LOB ATTACK >> BOUNCING FIRE
-                if (NPC.life >= 2001 && clearSpace)
+                if (NPC.life >= 4001 && clearSpace)
 
                 {
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
@@ -409,14 +407,9 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             NPC.TargetClosest(true);
-            //Player player = Main.player[npc.target];
-
-
-
-
-
+            
             //MULTI-FIRE 1 ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life >= 1001 && choice == 1) //&& Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0)
+            if (NPC.localAI[1] >= 160f && NPC.life >= 2001 && choice == 1) 
             {
 
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(4), 7);
@@ -435,7 +428,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.netUpdate = true;
             }
             //MULTI-BOUNCING DESPERATE FIRE ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life <= 1000 && (choice == 1 || choice == 2))
+            if (NPC.localAI[1] >= 160f && NPC.life <= 2000 && (choice == 1 || choice == 2))
             {
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 3);
                 speed.Y += Main.rand.NextFloat(2f, -2f);
@@ -453,9 +446,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.netUpdate = true;
             }
             //LIGHTNING ATTACK
-            if (NPC.localAI[1] == 160f && NPC.life >= 101 && NPC.life <= 2000 && (choice == 5 || choice == 4)) //&& Main.rand.NextBool(8) 
+            if (NPC.localAI[1] == 160f && NPC.life >= 1001 && NPC.life <= 4000 && (choice == 5 || choice == 4)) 
             {
-                //&& Main.rand.NextBool(10) Main.rand.NextBool(2) &&
+                
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(1), 1);
                 //speed += Main.player[npc.target].velocity / 4;
 
@@ -465,16 +458,13 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                 {
                     int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.CultistBossLightningOrb, cultistLightningDamage, 0f, Main.myPlayer);
-                    //ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()
-                    //DesertDjinnCurse; ProjectileID.DD2DrakinShot
-
+                   
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
 
                 }
-                //if (npc.localAI[1] >= 161f)
-                //{ 
+                
                 NPC.localAI[1] = -50f;
-                //}
+                
 
             }
 
@@ -489,7 +479,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			}
 			*/
             //FINAL JUNGLE FLAMES DESPERATE ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life <= 1000 && (choice == 0 || choice == 3))
+            if (NPC.localAI[1] >= 160f && NPC.life <= 2000 && (choice == 0 || choice == 3))
             //if (Main.rand.NextBool(40))
             {
                 Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
