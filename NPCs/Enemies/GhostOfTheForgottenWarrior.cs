@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.width = 20;
             NPC.aiStyle = -1;
             NPC.height = 40;
-            NPC.knockBackResist = 0.1f;
+            NPC.knockBackResist = 0.0f;
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.GhostOfTheForgottenWarriorBanner>();
@@ -27,13 +27,15 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.GoblinWarrior;
             Main.npcFrameCount[NPC.type] = 16;
 
+            
+
             if (Main.hardMode)
             {
                 NPC.lifeMax = 300;
                 NPC.defense = 20;
                 NPC.value = 450;
                 NPC.damage = 60;
-                topSpeed = 2f;
+                topSpeed = 1.1f;
             }
 
             if (tsorcRevampWorld.SuperHardMode)
@@ -42,7 +44,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.defense = 70;
                 NPC.damage = 80;
                 NPC.value = 1000;
-                topSpeed = 3f;
+                topSpeed = 1.8f;
             }
         }
         public override void OnKill()
@@ -76,16 +78,16 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
         float spearTimer = 0;
-        float topSpeed = 1.2f;
+        float topSpeed = 0.8f;
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, topSpeed, .04f, 0.2f, true, enragePercent: 0.2f, enrageTopSpeed: 2.4f);
+            tsorcRevampAIs.FighterAI(NPC, topSpeed, .04f, 0.2f, true, enragePercent: 0.2f, enrageTopSpeed: 2.1f);
 
             bool canFire = NPC.Distance(Main.player[NPC.target].Center) < 1600 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
             tsorcRevampAIs.SimpleProjectile(NPC, ref spearTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, canFire, true, SoundID.Item17);
 
-            if (NPC.justHit)
+            if (NPC.justHit && spearTimer <= 149 &&Main.rand.NextBool(4))
             {
                 spearTimer = 0f;
             }

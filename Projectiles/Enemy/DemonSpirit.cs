@@ -13,23 +13,23 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.width = 38;
             Projectile.height = 46;
             Projectile.aiStyle = 0;
-            Projectile.timeLeft = 120;
+            Projectile.timeLeft = 320;
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.damage = 20;
             Projectile.friendly = false;
             Projectile.penetrate = 3;
-            Projectile.light = .5f;
+            Projectile.light = .7f;
         }
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Purple Crush");
+            DisplayName.SetDefault("Demon Spirit");
         }
 
         public override bool PreKill(int timeLeft)
         {
-            Projectile.type = 44; //killpretendtype
+            Projectile.type = 468; //killpretendtype shadowbeem
             return true;
         }
 
@@ -39,38 +39,38 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
 
             Color color = new Color();
-            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 100, color, 1.0f);
+            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 160, color, 3.0f);
             Main.dust[dust].noGravity = true;
 
             if (this.Projectile.timeLeft <= 120)
             {
-                this.Projectile.scale = 0.7f;
+                this.Projectile.scale = 0.4f;
                 this.Projectile.damage = 15;
             }
             if (this.Projectile.timeLeft <= 110)
             {
-                this.Projectile.scale = 0.8f;
+                this.Projectile.scale = 0.5f;
                 this.Projectile.damage = 20;
             }
             if (this.Projectile.timeLeft <= 90)
             {
-                this.Projectile.scale = 0.9f;
+                this.Projectile.scale = 0.6f;
                 this.Projectile.damage = 22;
             }
             if (this.Projectile.timeLeft <= 70)
             {
-                this.Projectile.scale = 1f;
+                this.Projectile.scale = 0.7f;
                 this.Projectile.damage = 25;
             }
             if (this.Projectile.timeLeft <= 50)
             {
-                this.Projectile.scale = 1.2f;
+                this.Projectile.scale = 0.8f;
                 this.Projectile.damage = 30;
             }
             if (this.Projectile.timeLeft <= 30)
             {
-                this.Projectile.scale = 1.4f;
-                this.Projectile.damage = 40;
+                this.Projectile.scale = 0.8f;
+                this.Projectile.damage = 42;
             }
 
             this.Projectile.ai[0] += 1f;

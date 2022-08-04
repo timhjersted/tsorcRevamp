@@ -99,7 +99,7 @@ namespace tsorcRevamp.NPCs.Enemies
             bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
 
             tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStrikeTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 7, 8, clearLineofSight, true, SoundID.Item20, 0);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 300, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, true, true, SoundID.Item100);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 700, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, true, true, SoundID.Item100);
 
             if (poisonStrikeTimer >= 60)//GREEN DUST
             {
@@ -116,14 +116,21 @@ namespace tsorcRevamp.NPCs.Enemies
                     Main.dust[pink].noGravity = true;
                 }
             }
-            if (poisonStormTimer >= 120)//SHRINKING CIRCLE DUST
+
+            if (Main.rand.NextBool(150))
             {
-                UsefulFunctions.DustRing(NPC.Center, 300 - poisonStormTimer, DustID.CursedTorch, 12, 4);
+                poisonStrikeTimer = 120;
+            }
+
+            if (poisonStormTimer >= 520 )//SHRINKING CIRCLE DUST
+            {
+                UsefulFunctions.DustRing(NPC.Center, 700 - poisonStormTimer, DustID.CursedTorch, 12, 4);
                 Lighting.AddLight(NPC.Center, Color.Orange.ToVector3() * 5);
                 if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
                 {
                     NPC.velocity = Vector2.Zero;
                 }
+                
             }
 
             //IF HIT BEFORE PINK DUST TELEGRAPH, RESET TIMER, BUT CHANCE TO BREAK STUN LOCK

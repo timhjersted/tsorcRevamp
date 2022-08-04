@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items
         public override string Texture => "tsorcRevamp/Items/Weapons/Magic/DeathStrikeScroll";
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Congratulations! You have unlocked the true ending of the game!" +
+            Tooltip.SetDefault("[c/ffbf00:Congratulations! You have unlocked the true ending of the game!]" +
                                "\nHaving defeated Gwyn, the portal that Attraidies opened at the moment of his death has closed." +
                                "\nAt last, you can finally feel the energies of the corruption losing their hold on the world," +
                                "\nthe darkness receding back into the earth, growing in harmony with the light once again." +

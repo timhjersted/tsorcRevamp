@@ -27,6 +27,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             BannerItem = ModContent.ItemType<Banners.AbysswalkerBanner>();
         }
 
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Dworc Abysswalker");
+        }
 
         int poisonBallDamage = 27;
         int stormBallDamage = 30;

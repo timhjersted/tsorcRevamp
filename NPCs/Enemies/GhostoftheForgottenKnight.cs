@@ -31,9 +31,11 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
             NPC.value = 450;
-            NPC.knockBackResist = 0.1f;
+            NPC.knockBackResist = 0.0f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.GhostOfTheForgottenKnightBanner>();
+
+            
 
             if (Main.hardMode)
             {
@@ -42,7 +44,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 650;
                 NPC.damage = 80;
                 spearDamage = 50;
-                topSpeed = 3f;
+                topSpeed = 1.5f;
             }
 
             if (tsorcRevampWorld.SuperHardMode)
@@ -52,7 +54,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.damage = 100;
                 NPC.value = 1000;
                 spearDamage = 90;
-                topSpeed = 4f;
+                topSpeed = 2f;
             }
         }
 
@@ -93,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         float spearTimer = 0;
-        float topSpeed = 1.8f;
+        float topSpeed = 1.2f;
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, topSpeed, .05f, 0.2f, true, enragePercent: 0.2f, enrageTopSpeed: 2.4f);
@@ -101,7 +103,7 @@ namespace tsorcRevamp.NPCs.Enemies
             bool canFire = NPC.Distance(Main.player[NPC.target].Center) < 1600 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
             tsorcRevampAIs.SimpleProjectile(NPC, ref spearTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, canFire, true, SoundID.Item17);
 
-            if (NPC.justHit)
+            if (NPC.justHit && spearTimer <= 149 && Main.rand.NextBool(4))
             {
                 spearTimer = 0f;
             }

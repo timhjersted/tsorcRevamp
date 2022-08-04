@@ -27,7 +27,10 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.Skeleton;
             Main.npcFrameCount[NPC.type] = 15;
         }
-
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Dworc Shaman");
+        }
         //yes i tweaked the drop rates. Fight Me
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RegenerationPotion, 1, 1, 4));
@@ -71,20 +74,65 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.04f, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 3);
 
             bool clearLineofSight = Collision.CanHit(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 18, 8, clearLineofSight, true, SoundID.Item20, 0);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 25, 0, true, true, SoundID.Item100);//2,100 cursed firewall
+            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStrikeTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 18, 8, clearLineofSight, true, SoundID.Item20, 0);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 480, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 25, 0, true, true, SoundID.Item100);//2,100 cursed firewall
+            //tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>(), 25, 0, true, true, SoundID.Item100);//2,100 cursed firewall
+            //GREEN DUST  
             if (poisonStrikeTimer >= 60)
             {
                 Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CursedTorch, NPC.velocity.X, NPC.velocity.Y);
             }
-            if (poisonStormTimer >= 90)
+            //PINK DUST
+            if (poisonStrikeTimer >= 110)
             {
-                UsefulFunctions.DustRing(NPC.Center, 180 - poisonStormTimer, DustID.CursedTorch, 12, 4);
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                if (Main.rand.NextBool(2))
+                {
+                    int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
+
+                    Main.dust[pink].noGravity = true;
+                }
+            }
+            //IF HIT BEFORE PINK DUST TELEGRAPH, RESET TIMER, BUT CHANCE TO BREAK STUN LOCK
+            //(WORKS WITH 2 TELEGRAPH DUSTS, AT 60 AND 110)
+            if (NPC.justHit && poisonStrikeTimer <= 109)
+            {
+                if (Main.rand.NextBool(3))
+                {
+                    poisonStrikeTimer = 110;
+                }
+                else
+                {
+                    poisonStrikeTimer = 0;
+                }
+            }
+            if (NPC.justHit && Main.rand.NextBool(18))
+            {
+                tsorcRevampAIs.Teleport(NPC, 25, true);
+                poisonStrikeTimer = 60f;
+            }
+
+
+            if (poisonStormTimer >= 390)
+            {
+                UsefulFunctions.DustRing(NPC.Center, 480 - poisonStormTimer, DustID.CursedTorch, 12, 4);
                 Lighting.AddLight(NPC.Center, Color.Orange.ToVector3() * 5);
                 if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
                 {
                     NPC.velocity = Vector2.Zero;
                 }
+            }
+
+
+            if (Main.rand.NextBool(100))
+            {
+                poisonStrikeTimer = 110;
+            }
+
+            if (Main.rand.NextBool(435))
+            {
+                int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-500, 500), NPC.Center.Y + Main.rand.Next(-600, 600), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 44, 0f, Main.myPlayer);
+                
             }
 
             //Higher alpha = more invisible

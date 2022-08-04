@@ -20,13 +20,13 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             NPC.height = 40;
             NPC.width = 20;
-            NPC.damage = 45;
+            NPC.damage = 55;
             NPC.defense = 65;
             NPC.lifeMax = 3000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 12500;
-            NPC.knockBackResist = 0.1f;
+            NPC.knockBackResist = 0.0f;
             AnimationType = 28;
             Main.npcFrameCount[NPC.type] = 16;
             Banner = NPC.type;
@@ -72,7 +72,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             target.AddBuff(BuffID.Slow, 300);
 
-            if (Main.rand.NextBool(4))
+            if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.Poisoned, 600);
                 target.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800);
@@ -111,12 +111,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 2, 0.175f, 0.2f, true, enragePercent: 0.1f, enrageTopSpeed: 5);
+            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.175f, 0.2f, true, enragePercent: 0.1f, enrageTopSpeed: 3);
 
             bool canFire = NPC.Distance(Main.player[NPC.target].Center) < 500 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
             tsorcRevampAIs.SimpleProjectile(NPC, ref shadowShotTimer, 170, ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(), 20, 9, canFire, true, SoundID.Item17, 0);
 
-            if (NPC.justHit && shadowShotTimer < 120f && Main.rand.NextBool(3))
+            if (NPC.justHit && shadowShotTimer <= 149f && Main.rand.NextBool(4))
             {
                 shadowShotTimer = 90f;
             }
@@ -131,10 +131,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (charging == true)
                 {
-                    NPC.damage = 120;
+                    NPC.damage = 0;
                     chargeDamage++;
+                    Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Ichor, 0, 0).noGravity = true;
                 }
-                if (chargeDamage >= 50)
+                if (chargeDamage >= 90)
                 {
                     charging = false;
                     NPC.damage = 70;
@@ -187,7 +188,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (shadowShotTimer >= 150)
             {
-                Lighting.AddLight(NPC.Center, Color.MediumPurple.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                Lighting.AddLight(NPC.Center, Color.MediumPurple.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                 if (Main.rand.NextBool(3))
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemDiamond, NPC.velocity.X, NPC.velocity.Y);
