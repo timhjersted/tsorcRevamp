@@ -129,10 +129,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 poisonStrikeTimer = 110;
             }
 
+            //DEMON SPIRIT ATTACK
             if (Main.rand.NextBool(435))
             {
-                int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-500, 500), NPC.Center.Y + Main.rand.Next(-600, 600), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 44, 0f, Main.myPlayer);
-                
+                int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-500, 500), NPC.Center.Y + Main.rand.Next(-600, 600), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 60, 0f, Main.myPlayer);      
             }
 
             //Higher alpha = more invisible

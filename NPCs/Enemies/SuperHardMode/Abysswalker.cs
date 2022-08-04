@@ -105,7 +105,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     NPC.velocity = Vector2.Zero;
                 }
             }
-            
+
+            //DEMON SPIRIT ATTACK
+            if (Main.rand.NextBool(375))
+            {
+                int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-600, 600), NPC.Center.Y + Main.rand.Next(-600, 600), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 90, 0f, Main.myPlayer);
+            }
 
             //Transparency. Higher alpha = more invisible
             if (NPC.justHit)

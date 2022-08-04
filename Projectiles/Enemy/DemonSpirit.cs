@@ -19,6 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.damage = 20;
             Projectile.friendly = false;
             Projectile.penetrate = 3;
+            Projectile.alpha = 200;
             Projectile.light = .7f;
         }
 
@@ -60,17 +61,17 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (this.Projectile.timeLeft <= 70)
             {
                 this.Projectile.scale = 0.7f;
-                this.Projectile.damage = 25;
+                this.Projectile.damage = 35;
             }
             if (this.Projectile.timeLeft <= 50)
             {
                 this.Projectile.scale = 0.8f;
-                this.Projectile.damage = 30;
+                this.Projectile.damage = 40;
             }
-            if (this.Projectile.timeLeft <= 30)
+            if (this.Projectile.timeLeft <= 50)
             {
                 this.Projectile.scale = 0.8f;
-                this.Projectile.damage = 42;
+                this.Projectile.damage = 62;
             }
 
             this.Projectile.ai[0] += 1f;
