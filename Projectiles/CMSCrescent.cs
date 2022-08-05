@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
@@ -24,6 +25,25 @@ namespace tsorcRevamp.Projectiles
             Projectile.DamageType = DamageClass.Melee;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 60;
+        }
+       
+
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            target.AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
+            if (Main.netMode != NetmodeID.SinglePlayer)
+            {
+                NetMessage.SendData(MessageID.AddNPCBuff, number: target.whoAmI, number2: ModContent.BuffType<Buffs.DispelShadow>(), number3: 36000);
+                ModPacket shadowPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                shadowPacket.Write((byte)tsorcPacketID.DispelShadow);
+                shadowPacket.Write(target.whoAmI);
+                shadowPacket.Send();
+            }
+            if (Main.rand.NextBool(10))
+            {
+              target.AddBuff(BuffID.Ichor, 1200);
+            }
+            
         }
 
         public override bool PreDraw(ref Color lightColor)

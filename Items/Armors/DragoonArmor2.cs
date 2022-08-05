@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Armors
                 player.manaRegenBuff = true;
                 player.GetCritChance(DamageClass.Magic) += 3;
                 player.GetDamage(DamageClass.Magic) += .05f;
-                int dust = Dust.NewDust(new Vector2(player.position.X, player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 150, Color.White, 1f);
+                int dust = Dust.NewDust(new Vector2(player.position.X, player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 150, Color.White, 0.5f);
                 Main.dust[dust].noGravity = true;
             }
         }

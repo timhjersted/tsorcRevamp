@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         public override void SetDefaults()
         {
             NPC.npcSlots = 10;
-            NPC.damage = 70;
+            NPC.damage = 75;
             NPC.defense = 25;
             NPC.height = 44;
             NPC.width = 28;
@@ -726,7 +726,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
                 UsefulFunctions.BroadcastText("A portal from The Abyss has been opened!", new Color(255, 255, 60));
                 UsefulFunctions.BroadcastText("Artorias, the Ancient Knight of the Abyss has entered this world!...", new Color(255, 255, 60));
-                UsefulFunctions.BroadcastText("You must seek out the Shaman Elder...", new Color(255, 255, 60));
+                UsefulFunctions.BroadcastText("You must seek out the Shaman Elder, beyond the Western Sea...", new Color(249, 202, 12));
 
                 Main.hardMode = true;
                 tsorcRevampWorld.SuperHardMode = true;
@@ -737,7 +737,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             {
 
                 UsefulFunctions.BroadcastText("The portal from The Abyss remains open...", new Color(255, 255, 60));
-                UsefulFunctions.BroadcastText("You must seek out the Shaman Elder...", new Color(255, 255, 60));
+                UsefulFunctions.BroadcastText("You must seek out the Shaman Elder, beyond the Western Sea...", new Color(249, 202, 12));
 
                 tsorcRevampWorld.SuperHardMode = true;
                 Main.hardMode = true;

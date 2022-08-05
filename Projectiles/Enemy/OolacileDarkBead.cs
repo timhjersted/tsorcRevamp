@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (Projectile.velocity.X <= 4 && Projectile.velocity.Y <= 4 && Projectile.velocity.X >= -4 && Projectile.velocity.Y >= -4)
             {
-                float accel = 2f + (Main.rand.Next(10, 30) * 0.5f);
+                float accel = 0.1f + (Main.rand.Next(1, 2) * 0.5f); //was 10, 30
                 Projectile.velocity.X *= accel;
                 Projectile.velocity.Y *= accel;
             }

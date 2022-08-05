@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
@@ -53,6 +54,22 @@ namespace tsorcRevamp.Projectiles
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
             target.AddBuff(ModContent.BuffType<Buffs.CrescentMoonlight>(), 180);
+
+           
+            target.AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
+            if (Main.netMode != NetmodeID.SinglePlayer)
+            {
+                NetMessage.SendData(MessageID.AddNPCBuff, number: target.whoAmI, number2: ModContent.BuffType<Buffs.DispelShadow>(), number3: 36000);
+                ModPacket shadowPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                shadowPacket.Write((byte)tsorcPacketID.DispelShadow);
+                shadowPacket.Write(target.whoAmI);
+                shadowPacket.Send();
+            }
+            if (Main.rand.NextBool(5))
+            {
+                target.AddBuff(BuffID.Ichor, 1800);
+            }
+
         }
 
         public bool spawned = false;
