@@ -103,15 +103,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //}
             
             
-            if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(7))//
+            if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(8))//
             {
 
-                    NPC.velocity.Y = Main.rand.NextFloat(-9f, -6f); //was 6 and 3
-                    float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-15f, -12f);
+                    NPC.velocity.Y = Main.rand.NextFloat(-5f, -1f); //was 6 and 3
+                    float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-13f, -11f);
                     NPC.velocity.X = v;
                     //poisonTimer = 340f;
                     DarkBeadShotCounter = 0;
-                
+                    DarkBeadShotTimer = 61;
                 NPC.netUpdate = true;
             }
             
@@ -119,14 +119,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
-            if (Main.rand.NextBool(12))
+            if (Main.rand.NextBool(11))
             {
                     
-                    NPC.velocity.Y = Main.rand.NextFloat(-12f, -6f);
-                    NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-10f, -3f);
+                    NPC.velocity.Y = Main.rand.NextFloat(-5f, -1f);
+                    NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-6f, 4f);
                     poisonTimer = 340f;
-                    //DarkBeadShotCounter = 0;
-                
+                    DarkBeadShotCounter = 0;
+                    DarkBeadShotTimer = 61;
                 NPC.netUpdate = true;
 
             }
@@ -183,7 +183,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 3);
+            tsorcRevampAIs.FighterAI(NPC, 1, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2);
             //tsorcRevampAIs.LeapAtPlayer(NPC, 7, 4, 1.5f, 128);
 
 
@@ -231,16 +231,58 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //tsorcRevampAIs.SimpleProjectile(NPC, ref poisonTimer2, 100, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), poisonStrikeDamage, 9, Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0));
 
                 //DARK BEAD ATTACK
-                DarkBeadShotTimer++; //Counts up each tick. Used to space out shots
+                //if(DarkBeadShotCounter >= 0 && DarkBeadShotCounter < 3)
+                //{
+                    DarkBeadShotTimer++;
+                //}
+                 //Counts up each tick. Used to space out shots
+                if (DarkBeadShotTimer <= 71)
+                { 
+                    Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                    if (Main.rand.NextBool(2))
+                    {
+                        int pink2 = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
 
-                if (NPC.Distance(player.Center) > 250 && DarkBeadShotTimer >= 12 && DarkBeadShotCounter < 2)
+                        Main.dust[pink2].noGravity = true;
+                    }
+                  
+                }
+                if (DarkBeadShotTimer == 60)
                 {
-                    Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 7);
+                    if (NPC.Distance(player.Center) >= 201 && NPC.velocity.Y == 0)
+                    {
+                        NPC.velocity.Y = Main.rand.NextFloat(-12f, -3f); //was 6 and 3 && NPC.velocity.Y == 0
+                        float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-9f, 9f);
+                        NPC.velocity.X = v;
+
+                    }
+                    if (NPC.Distance(player.Center) <= 200 && NPC.velocity.Y == 0)
+                    {
+                        NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f); //was 6 and 3 && NPC.velocity.Y == 0
+                        float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-16f, -11f);
+                        NPC.velocity.X = v;
+                    }
+                }
+
+                if (DarkBeadShotTimer >= 72 && DarkBeadShotCounter < 2)
+                {
+                    poisonTimer = 1f;
+                    Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 7f);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center); //acid flame
-                    DarkBeadShotTimer = 0;
+
+                    if (DarkBeadShotCounter <= 1)
+                    {
+                        DarkBeadShotTimer = 62;
+                    }
+
+                    //if (DarkBeadShotCounter >= 2)
+                    //{
+                    //    DarkBeadShotTimer = 0;
+                    //}
+                    
                     DarkBeadShotCounter++;
-                    //poisonTimer = 1f;
+                    
                 }
 
 
@@ -271,21 +313,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Lighting.AddLight(NPC.Center, Color.YellowGreen.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                     if (Main.rand.NextBool(2))
                     {
-                        int pinkDust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y);
+                        int pinkDust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.VilePowder, NPC.velocity.X, NPC.velocity.Y);//DustID.Firework_Red is nice
 
                         Main.dust[pinkDust].noGravity = true;
                     }
                 }
 
 
-                //FIRE ATTACK
+                //POISON FROM ABOVE ATTACK
                 if (poisonTimer <= 100 && NPC.Distance(player.Center) > 250)
                 {
 
-                    if (Main.rand.NextBool(140)) //30 was cool for great red knight
+                    if (Main.rand.NextBool(130)) //30 was cool for great red knight
                     {
-                        //FIRE
-                        for (int pcy = 0; pcy < 6; pcy++)
+                        //POISON
+                        for (int pcy = 0; pcy < 5; pcy++)
                         {
                             //Player nT = Main.player[npc.target];
 
@@ -308,7 +350,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (poisonTimer <= 100)
                 {
                     Player nT = Main.player[NPC.target];
-                    if (Main.rand.NextBool(310)) //30 was cool for great red knight
+                    if (Main.rand.NextBool(330)) //30 was cool for great red knight
                     {
                         //FIRE
                         for (int pcy = 0; pcy < 2; pcy++)
@@ -433,7 +475,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         }
                         NPC.velocity.Y = -10f; //9             
                         NPC.TargetClosest(true);
-                        //DarkBeadShotCounter = 0;
+                        DarkBeadShotCounter = 0;
+                        DarkBeadShotTimer = 20;
                         NPC.netUpdate = true;
 
                     }
@@ -516,12 +559,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                             if (poisonTimer >= 255)
                             {
-                                poisonTimer = 1f;
+                                
                                 if(Main.rand.NextBool(3))
                                 {
                                     DarkBeadShotCounter = 0;
+                                    DarkBeadShotTimer = 0;
                                 }
-                                
+                                poisonTimer = 1f;
                             }
                             //}
                         }
