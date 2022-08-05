@@ -16,9 +16,11 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         {
             DisplayName.SetDefault("Steel Tempest");
             Tooltip.SetDefault("Doubled crit chance" +
-                "\nStabs on right click, with a 4 second cooldown, scaling down with attack speed" +
+                "\nStabs on right click dealing 125% damage, with a 4 second cooldown, scaling down with attack speed" +
                 "\nGain a stack of Steel Tempest upon stabbing an enemy" +
-                "\nUpon reaching 2 stacks, the next right click will release a tornado");
+                "\nUpon reaching 2 stacks, the next right click will release a tornado dealing 150% damage" +
+                "\n(Tier 2: Hover your mouse over an enemy and press Q hotkey on a cd to dash through the enemy)" +
+                "\n(Tier 3: Press Q hotkey to create a stationary windwall which blocks all enemy projectiles for 5 seconds on a long cooldown)");
         }
         public override void SetDefaults()
         {
@@ -60,6 +62,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
+                Item.damage = 30;
                 Item.shoot = ModContent.ProjectileType<STNado1>();
                 cooldown = ((3 / attackspeedscaling) + 1);
                 STStab1.steeltempest = 0;
@@ -70,6 +73,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
                 Item.useStyle = ItemUseStyleID.Rapier;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
+                Item.damage = 25;
                 cooldown = ((3 / attackspeedscaling) + 1);
                 Item.shoot = ModContent.ProjectileType<STStab1>();
             }
@@ -79,6 +83,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noUseGraphic = false;
                 Item.noMelee = false;
+                Item.damage = 20;
                 Item.useTurn = false;
             }
 

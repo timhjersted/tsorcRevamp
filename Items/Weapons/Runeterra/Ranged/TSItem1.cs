@@ -12,8 +12,10 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Toxic Shot");
-            Tooltip.SetDefault("Converts seeds into Toxic Shots" +
-                "\nAlso uses all darts as ammo");
+            Tooltip.SetDefault("Converts seeds into Toxic Shots, these scale with magic damage too" +
+                "\nAlso uses all darts as ammo" +
+                "\n(Tier 2: Right click on a cd to shoot a homing blind dart which inflicts confusion, also scales a bit with magic damage)" +
+                "\n(Tier 3: Press Q hotkey on a cd to drop a mushroom mine, scales a bit with magic damage too)");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 

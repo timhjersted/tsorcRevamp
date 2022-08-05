@@ -13,12 +13,13 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             DisplayName.SetDefault("Orb of Deception");
             Tooltip.SetDefault("Throws a magic orb which will return to you after a certain distance" +
                 "\nYou cannot throw more than one orb at a time" +
-                "\nCan be channeled with mana for higher damage and speed" +
                 "\nYou can recast with mana to force it to return early" +
                 "\nA third recast returns the Orb instantly" +
                 "\nThe orb deals more damage on the way back" +
                 "\nEach hit gathers a stack of Essence Thief" +
-                "\nUpon reaching 9 stacks, the next cast will have 10% lifesteal");
+                "\nUpon reaching 9 stacks, the next cast will have 10% lifesteal" +
+                "\n(Tier 2: Spawn a blue homing flame on critical hits and on the empowered attacks hits)" +
+                "\n(Tier 3: Right click to dash in mouse direction and spawn blue flames while dashing)");
 
         }
 
