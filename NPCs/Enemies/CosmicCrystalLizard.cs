@@ -116,7 +116,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-
+            if (peaceouttimer < 0)
+                peaceouttimer = 0;
             NPC.netUpdate = false;
             immuneframe++;
 
@@ -151,7 +152,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 peaceouttimer++;
                 if (AI_Timer == 1)
                 {
-                    NPC.velocity = new Vector2(NPC.direction * -2.7f, -3.6f);
+                    NPC.velocity = new Vector2((NPC.direction * -1.7f) + NPC.velocity.X / 1.5f, -3.6f);
                 }
                 else if (AI_Timer == 10)
                 {
@@ -163,40 +164,49 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 peaceouttimer++;
                 NPC.TargetClosest(true);
+
+                float reverseThreshold = 2.7f;
+                float breakingPower = 0.1f;
+                float topSpeed = 4.5f;
+                float accel = 0.2f;
+                float knockbackSlowdown = 0.02f;
                 if (NPC.direction == 1) //FACING LEFT - vel to move left
                 {
-                    if (NPC.velocity.X > -2.7f)
+                    if (NPC.velocity.X > -reverseThreshold)
                     {
-                        NPC.velocity += new Vector2(-.1f, 0); //breaking power after turn
+                        NPC.velocity.X -= breakingPower;
                     }
-                    else if (NPC.velocity.X < -4f) //max vel
+                    else if (NPC.velocity.X < -topSpeed) //max vel
                     {
-                        NPC.velocity += new Vector2(.04f, 0); //slowdown after knockback
+                        NPC.velocity.X += knockbackSlowdown; //slowdown after knockback
                     }
-                    else if ((NPC.velocity.X <= -2.7f) && (NPC.velocity.X > -4f))
+                    else if ((NPC.velocity.X <= -reverseThreshold) && (NPC.velocity.X > -topSpeed))
                     {
-                        NPC.velocity += new Vector2(-.03f, 0); //running accel.
+                        NPC.velocity.X -= accel; //running accel.
                     }
                 }
 
                 if (NPC.direction == -1) //FACING RIGHT + vel to move right
                 {
-                    if (NPC.velocity.X < 2.7f)
+                    if (NPC.velocity.X < reverseThreshold)
                     {
-                        NPC.velocity += new Vector2(.1f, 0); //breaking power
+                        NPC.velocity.X += breakingPower; //breaking power
                     }
-                    else if (NPC.velocity.X > 4f) //max vel
+                    else if (NPC.velocity.X > topSpeed) //max vel
                     {
-                        NPC.velocity += new Vector2(-.04f, 0); //slowdown after knockback
+                        NPC.velocity.X -= knockbackSlowdown; //slowdown after knockback
                     }
-                    else if ((NPC.velocity.X >= 2.7f) && (NPC.velocity.X < 4f))
+                    else if ((NPC.velocity.X >= reverseThreshold) && (NPC.velocity.X < topSpeed))
                     {
-                        NPC.velocity += new Vector2(.03f, 0); //running accel.
+                        NPC.velocity.X += accel; //running accel.
                     }
                 }
-                if (NPC.collideX && NPC.collideY)
-                {
-                    // NPC has stopped upon hitting a block
+
+                int tilePosX = (int)(NPC.position.X + NPC.width / 2) / 16;
+                int tilePosY = (int)(NPC.position.Y + NPC.height / 2) / 16;
+                tilePosX -= NPC.direction;
+                tilePosX += (int)NPC.velocity.X;
+                if (WorldGen.SolidTile(tilePosX, tilePosY) && NPC.collideY) {
                     AI_State = State_Jump;
                     peaceouttimer += 1;
                     AI_Timer = 0;
@@ -222,7 +232,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.life = 0;
                 }
             }
-            if ((peaceouttimer > 150 && Main.rand.NextBool(100)) || peaceouttimer > 420 && (NPC.collideY))
+            if (peaceouttimer > 180 && NPC.collideY)
             {
                 AI_State = State_PeaceOut;
                 AI_Timer = 0;
@@ -978,6 +988,8 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
+            //intentionally lower
+            peaceouttimer -= (int)(20 + (damage * 0.2f));
             if (Main.rand.NextBool(2) && immuneframe >= 1 && !crit)
             {
                 NPC.immortal = true;
@@ -996,6 +1008,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
         {
+            peaceouttimer -= (int)(25 + (damage * 0.2f));
             if (crit && immuneframe >= 1)
             {
                 damage = 2;
