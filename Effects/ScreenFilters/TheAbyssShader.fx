@@ -31,9 +31,6 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     // the screen's color information
     float4 color = tex2D(uImage0, coords);
 
-    // calculate the luminosity of each pixel. sampleColor is the original color space, and is included to clamp the luminosity
-    float luminosity = (color.r + color.g + color.b) * sampleColor;
-
     // coords normally has a range from 0 to 1. let's just completely fuck it up and see what happens
     coords.x = (uTime / 4);
 
@@ -41,14 +38,11 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     // feed it the modified coordinates to create distortion
     float4 noise = tex2D(uImage1, coords);
 
-    // grayscale the noise, and reduce the intensity
-    noise.rgb = (noise.r + noise.g + noise.b) / 6;
+    //invert the noise color, and reduce intensity
+    noise.rgb = noise.rgb * -0.1f;
 
-    // desaturate the original screen colors by adding them to a gray
-    color.rgb = (float4(0.8, 0.8, 0.8, 1) + (color.rgb));
-
-    // then apply the stored luminosity to recover the screen detail, and noise to add the distortion
-    color.rgb = (color.rgb + noise) * luminosity;
+    //apply
+    color.rgb = (color.rgb + noise);
 
     return color;
 }
