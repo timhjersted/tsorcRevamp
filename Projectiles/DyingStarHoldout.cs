@@ -116,7 +116,7 @@ namespace tsorcRevamp.Projectiles
 
                     player.statMana -= (int)(50 * player.manaCost);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision, Vector2.Zero, ModContent.ProjectileType<Projectiles.FireballInferno2>(), Projectile.damage, 0, default);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision, Vector2.Zero, ModContent.ProjectileType<Projectiles.FireballInferno2>(), Projectile.damage, 0, Projectile.owner);
 
                     //Drain BotC players stamina
                     if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
@@ -149,7 +149,7 @@ namespace tsorcRevamp.Projectiles
                 velocity.Normalize();
                 velocity *= 30;
                 player.statMana -= (int)(10 * player.manaCost);
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), player.Center, velocity, ModContent.ProjectileType<Projectiles.Fireball3>(), Projectile.damage / 30, 0, default).rotation = velocity.ToRotation() + MathHelper.PiOver2;
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), player.Center, velocity, ModContent.ProjectileType<Projectiles.Fireball3>(), Projectile.damage / 30, 0, Projectile.owner).rotation = velocity.ToRotation() + MathHelper.PiOver2;
             }
             
 
