@@ -4,14 +4,12 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
-    class EnemyCursedBreath : ModProjectile
+    class EnemyCursedBreathCollides : ModProjectile
     {
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Cursed Breath");
         }
-
         public override void SetDefaults()
         {
             Projectile.width = 16;
@@ -22,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.friendly = false;
             Projectile.light = 0.8f;
             Projectile.penetrate = 3; //was 4, was causing curse buildup way too fast
-            Projectile.tileCollide = false; 
+            Projectile.tileCollide = true; //this is the main change, debuffs are also a bit more common
             AIType = 96;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.hostile = true;
@@ -52,17 +50,19 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
 
+            target.AddBuff(39, 180, false); //cursed flames
 
-            if (Main.rand.NextBool(3)) //was 12
+            if (Main.rand.NextBool(2)) //was 12
             {
                 //Vanilla Debuffs cut in half to counter expert mode doubling them
                 target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false);
                 //target.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel += 10;
+                
             }
 
-            if (Main.rand.NextBool(2))
+            if (Main.rand.NextBool(3))
             {
-                target.AddBuff(39, 150, false); //cursed flames
+                
                 target.AddBuff(30, 1800, false); //bleeding
                 target.AddBuff(33, 1800, false); //weak
             }
