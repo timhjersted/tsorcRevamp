@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             NPC.knockBackResist = 0;
             NPC.damage = 110;
-            NPC.defense = 0;
+            NPC.defense = 50;
             NPC.height = 40;
             NPC.width = 30;
             NPC.lifeMax = 150000;
@@ -96,22 +96,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //PROJECTILE HIT LOGIC
         public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
         {
-            //if (NPC.justHit && NPC.Distance(player.Center) < 100)
-            //{
-            //    poisonTimer = 1f;
+            if (NPC.justHit && Main.rand.NextBool(12))
+            {
+                tsorcRevampAIs.Teleport(NPC, 20, true);
+                poisonTimer = 1f;
+                DarkBeadShotCounter = 0;
+                DarkBeadShotTimer = 0;
+            }
 
-            //}
-            
-            
-            if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(8))//
+
+            if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(7))//
             {
 
-                    NPC.velocity.Y = Main.rand.NextFloat(-5f, -1f); //was 6 and 3
-                    float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-13f, -11f);
+                    NPC.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
+                    float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-9f, -6f);
                     NPC.velocity.X = v;
                     //poisonTimer = 340f;
                     DarkBeadShotCounter = 0;
-                    DarkBeadShotTimer = 61;
+                    DarkBeadShotTimer = 0;
                 NPC.netUpdate = true;
             }
             
@@ -119,16 +121,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
-            if (Main.rand.NextBool(11))
+            if (Main.rand.NextBool(8))
             {
                     
-                    NPC.velocity.Y = Main.rand.NextFloat(-5f, -1f);
-                    NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-6f, 4f);
-                    poisonTimer = 340f;
+                    NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f);
+                    NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 4f);
+                    poisonTimer = 1f;
                     DarkBeadShotCounter = 0;
-                    DarkBeadShotTimer = 61;
+                    DarkBeadShotTimer = 0;
                 NPC.netUpdate = true;
 
+            }
+
+            if (NPC.justHit && Main.rand.NextBool(15))
+            {
+                tsorcRevampAIs.Teleport(NPC, 20, true);
+                poisonTimer = 50f;
             }
         }
         public static Texture2D spearTexture;
@@ -236,7 +244,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     DarkBeadShotTimer++;
                 //}
                  //Counts up each tick. Used to space out shots
-                if (DarkBeadShotTimer <= 71)
+                if (DarkBeadShotTimer <= 81)
                 { 
                     Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                     if (Main.rand.NextBool(2))
@@ -247,16 +255,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                   
                 }
-                if (DarkBeadShotTimer == 60)
+                if (DarkBeadShotTimer == 55)
                 {
-                    if (NPC.Distance(player.Center) >= 201 && NPC.velocity.Y == 0)
+                    if (NPC.Distance(player.Center) >= 201 )
                     {
                         NPC.velocity.Y = Main.rand.NextFloat(-12f, -3f); //was 6 and 3 && NPC.velocity.Y == 0
                         float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-9f, 9f);
                         NPC.velocity.X = v;
 
                     }
-                    if (NPC.Distance(player.Center) <= 200 && NPC.velocity.Y == 0)
+                    if (NPC.Distance(player.Center) <= 200 )
                     {
                         NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f); //was 6 and 3 && NPC.velocity.Y == 0
                         float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-16f, -11f);
@@ -264,7 +272,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
 
-                if (DarkBeadShotTimer >= 72 && DarkBeadShotCounter < 2)
+                if (DarkBeadShotTimer >= 82 && DarkBeadShotCounter < 2)
                 {
                     poisonTimer = 1f;
                     Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 7f);
@@ -273,7 +281,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if (DarkBeadShotCounter <= 1)
                     {
-                        DarkBeadShotTimer = 62;
+                        DarkBeadShotTimer = 72;
                     }
 
                     //if (DarkBeadShotCounter >= 2)
@@ -313,9 +321,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Lighting.AddLight(NPC.Center, Color.YellowGreen.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                     if (Main.rand.NextBool(2))
                     {
-                        int pinkDust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.VilePowder, NPC.velocity.X, NPC.velocity.Y);//DustID.Firework_Red is nice
-
-                        Main.dust[pinkDust].noGravity = true;
+                        int dust3 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 0.5f);
+                        Main.dust[dust3].noGravity = true;
                     }
                 }
 
