@@ -75,6 +75,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before            
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Defensive.BandOfCosmicPower>(), 1);
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.PermanentPotions.PermanentShinePotion>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ItemID.CloudinaBottle, 1);
         }
     }
