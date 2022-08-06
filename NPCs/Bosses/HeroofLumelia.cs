@@ -1047,5 +1047,9 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
         #endregion
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.LumeliaBag>()));
+        }
     }
 }
