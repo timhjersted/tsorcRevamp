@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
         public override void SetStaticDefaults()
         { //TODO "Double cast all spells"? maybe some day
             Tooltip.SetDefault("All spells have doubled speed" +
-                               "\nReduces magic damage by a flat 35%");
+                               "\nReduces magic damage by 40% multiplicatively");
         }
 
         public override void SetDefaults()
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetDamage(DamageClass.Magic) *= .65f;
+            player.GetDamage(DamageClass.Magic) *= .6f;
             Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().GemBox = true;
         }
     }
