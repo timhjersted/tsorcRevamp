@@ -53,9 +53,12 @@ namespace tsorcRevamp.Tiles
             return false;
         }
 
+        public override bool IsTileSpelunkable(int i, int j) => true;
+
         public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
         {
-            if (Main.tile[i, j].TileFrameY >= 74)
+            bool lit = Main.tile[i, j].TileFrameY >= 74;
+            if (lit)
             {
                 r = 0.7f;
                 g = 0.4f;
@@ -66,6 +69,29 @@ namespace tsorcRevamp.Tiles
                 r = 0.28f;
                 g = 0.16f;
                 b = 0.04f;
+            }
+            bool noFirefly = true;
+            for (int q = 0; q < Main.maxNPCs; q++) {
+                NPC npc = Main.npc[q];
+                if (!npc.active || npc.friendly)
+                    continue;
+                if (npc.type == ModContent.NPCType<NPCs.Special.Bonfirefly>() && npc.Distance(new Vector2(i * 16, j * 16)) < (6 * 16)) {
+                    noFirefly = false;
+                    break;
+                }
+            }
+            bool nearPlayer = false;
+            for (int w = 0; w < Main.maxPlayers; w++) {
+                Player player = Main.player[w];
+                if (!player.active)
+                    continue;
+                if (player.Distance(new Vector2(i * 16, j * 16)) < (60 * 16)) {
+                    nearPlayer = true;
+                    break;
+                }
+            }
+            if (noFirefly && nearPlayer && !lit) {
+                NPC.NewNPC(NPC.GetSource_NaturalSpawn(), i * 16, j * 16, ModContent.NPCType<NPCs.Special.Bonfirefly>(), 0, i, j);
             }
         }
 
