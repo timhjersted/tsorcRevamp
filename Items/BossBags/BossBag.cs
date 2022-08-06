@@ -367,7 +367,7 @@ namespace tsorcRevamp.Items.BossBags
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before           
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.HealingElixir>(), 10);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.DarkSoul>(), 5000);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.DuskCrownRing>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Magic.DuskCrownRing>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Humanity>());
             if (Main.rand.NextBool(1)) player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.PurgingStone>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.RedTitanite>(), 5);
