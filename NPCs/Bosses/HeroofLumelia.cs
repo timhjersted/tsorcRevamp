@@ -4,6 +4,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -32,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.lifeMax = 10000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 107430;
+            NPC.value = 137430;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0f;
             NPC.rarity = 4;
@@ -46,7 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
+            //NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);
             herosArrowDamage = (int)(herosArrowDamage / 2);
             throwingKnifeDamage = (int)(throwingKnifeDamage / 2);
@@ -537,7 +538,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
 
                 //ARROWS FROM ARCHERS NEARBY ATTACK
-                if (NPC.Distance(player.Center) < 500 && Main.rand.NextBool(350))
+                if (NPC.Distance(player.Center) > 130 && Main.rand.NextBool(350))
                 {
                     Player nT = Main.player[NPC.target];
 
@@ -1008,18 +1009,28 @@ namespace tsorcRevamp.NPCs.Bosses
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hero of Lumelia Gore 2").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hero of Lumelia Gore 3").Type, 1f);
             }
-            if (!Main.expertMode)
+
+            
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<HeroofLumelia>()))
             {
-                if (Main.rand.Next(99) < 90) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>(), 1);
-                if (Main.rand.Next(99) < 6) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.AncientWarhammer>(), 1, false, -1);
-                if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
-                if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ArcheryPotion, 3);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 5091); 
                 if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1);
                 if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ObsidianSkinPotion, 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 3);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ArcheryPotion, 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion, 1 + Main.rand.Next(3));
             }
+
+                /*
+                //not sure why this is used or maybe it's outdated
+                if (!Main.expertMode)
+                {
+                    if (Main.rand.Next(99) < 90) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>(), 1);
+                    if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
+                    if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1); 
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 3);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion, 1 + Main.rand.Next(3));
+                }
+                */
+
         }
         #endregion
 

@@ -167,29 +167,15 @@ namespace tsorcRevamp.Items.BossBags
         }
     }
 
-    public class HeroofLumeliaBag : BossBag
+    public class HeroOfLumeliaBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<HeroofLumelia>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {          
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             
-            //if not killed before
-            if (!modPlayer.bagsOpened.Contains(BossBagNPC))
-            {
-                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), 13769); //Then drop the souls
-                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.CovetousSilverSerpentRing>());
-                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(10, 20));
-            }
-            //if the boss has been killed once
-            else
-            {
-                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), 5091); //Then drop the souls
-                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(5, 10));
-            }
-
-            //This has to go last, because it marks the bag as opened
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.CovetousSilverSerpentRing>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(10, 20));
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before
         }
     }
@@ -312,9 +298,14 @@ namespace tsorcRevamp.Items.BossBags
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.DraxEX>());
+            
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Epilogue>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.EssenceOfTerraria>());
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.DraxEX>());
+            }
         }
     }
     public class BlightBag : BossBag

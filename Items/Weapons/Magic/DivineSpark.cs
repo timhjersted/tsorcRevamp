@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Freaking huge magical laser");
+            Tooltip.SetDefault("This mysterious device shoots a huge, uncontrollable wave beam");
         }
         public override void SetDefaults()
         {
