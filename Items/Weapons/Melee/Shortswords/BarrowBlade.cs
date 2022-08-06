@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             Item.useStyle = ItemUseStyleID.Rapier;
             Item.noUseGraphic = true;
             Item.noMelee = true;
-            Item.alpha = 240;
+            //Item.alpha = 240;
             Item.value = PriceByRarity.Blue_1;
             Item.width = 32;
             Item.shoot = ModContent.ProjectileType<Projectiles.CMSCrescent>();

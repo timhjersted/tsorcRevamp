@@ -16,14 +16,14 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetDefaults()
         {
-            Item.damage = 35;
+            Item.damage = 33;
             Item.height = 30;
             Item.knockBack = 4;
             Item.rare = ItemRarityID.Orange;
             Item.shootSpeed = 11;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
-            Item.mana = 15;
+            Item.mana = 18;
             Item.autoReuse = true;
             Item.useAnimation = 26;
             Item.UseSound = SoundID.Item21;
@@ -40,7 +40,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe(); ;
-            recipe.AddIngredient(Mod.Find<ModItem>("WoodenWand").Type, 1);
+            //recipe.AddIngredient(Mod.Find<ModItem>("WoodenWand").Type, 1);
+            recipe.AddIngredient(ItemID.AquaScepter, 1);
             recipe.AddIngredient(ItemID.CrystalShard, 100);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);

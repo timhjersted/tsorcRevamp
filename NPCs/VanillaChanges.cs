@@ -218,7 +218,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.LavaSlime):
                     {
                         npc.knockBackResist = 0.4f;
-                        npc.scale = 2.5f;
+                        npc.scale = 1.5f;
                         npc.value = 650;
                         break;
                     }
@@ -240,7 +240,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.IceBat):
                     {
-                        npc.value = 170;
+                        npc.value = 370;
                         break;
                     }
 
@@ -863,8 +863,8 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.IlluminantSlime):
                     {
-                        npc.scale = 3f;
-                        npc.value = 900;
+                        npc.scale = 1.5f;
+                        npc.value = 600;
                         break;
                     }
 
@@ -880,7 +880,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.RainbowSlime):
                     {
                         npc.damage = 200;
-                        npc.scale = 2f;
+                        npc.scale = 1.5f;
                         npc.knockBackResist = 0.2f;
                         npc.lifeMax = 800;
                         npc.value = 10000;
@@ -1627,7 +1627,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.Tim):
                     {
                         npc.GivenName = "Tim Hjersted";
-                        npc.damage = 100;
+                        npc.damage = 200;
                         npc.lifeMax = 2000;
                         npc.defense = 30;
                         npc.scale = 1.5f;

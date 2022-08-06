@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     class FireTrails : ModProjectile
     {
 
-        public override string Texture => "tsorcRevamp/Projectiles/FireBall";
+        public override string Texture => "tsorcRevamp/Projectiles/FireBallDarkCore";
 
         public override void SetDefaults()
         {
@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.MaxUpdates = 2;
             Projectile.penetrate = 1;
             Projectile.hostile = true;
-            Projectile.alpha -= 50;
+            //Projectile.alpha -= 5;
             Projectile.netUpdate = true;
         }
 
@@ -48,6 +48,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
+            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.AncientLight, Projectile.velocity.X, Projectile.velocity.Y, 150, Color.White, 0.5f);
+            Main.dust[dust].noGravity = true;
 
             //These take almost no data, so we can afford to do it every tick
             if (Main.netMode == NetmodeID.Server)
@@ -92,7 +94,9 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), new Vector2(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2)), new Vector2(0, 0), ModContent.ProjectileType<FireTrail>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                 for (int j = -1; j < 2; j++)
                 {
-                    Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6, Projectile.velocity.X * 2f * j, 0, 170, default, 0.7f); //emit dust sideways when trail fireballs are spawned
+                    Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6, Projectile.velocity.X * 2f * j, 0, 170, default, 0.9f); //emit dust sideways when trail fireballs are spawned
+
+                    
                 }
             }
         }

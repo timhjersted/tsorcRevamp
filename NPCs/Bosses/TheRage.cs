@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = 23100;
-            NPC.damage = 100; //unchanged, but I buffed the sorrow and hunter, who were both at 95 before
+            NPC.damage = 110; 
             NPC.defense = 22;
             NPC.knockBackResist = 0f;
             NPC.scale = 1.4f;
@@ -30,6 +30,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.lavaImmune = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
+            NPC.behindTiles = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.timeLeft = 22500;
@@ -46,13 +47,14 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public float flapWings;
         int hitTime = 0;
-        int fireTrailsDamage = 50; //45 was a bit too easy for folks based on some feedback and watching a LP
+        int fireTrailsDamage = 55; //45 was a bit too easy for folks based on some feedback and watching a LP
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = NPC.damage / 2;
             NPC.defense = NPC.defense += 10;
             NPC.lifeMax = 20000;
-            fireTrailsDamage = (int)(fireTrailsDamage * 1.3 / 2);
+            //fireTrailsDamage = (int)(fireTrailsDamage * 1.3 / 2);
+            fireTrailsDamage = (int)(fireTrailsDamage / 2);
         }
 
 
@@ -162,7 +164,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 NPC.ai[3]++;
                 NPC.alpha = 200;
-                NPC.defense = 82;
+                NPC.defense = 50;
                 //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].position.X < vector8.X)
                 {

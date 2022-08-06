@@ -29,6 +29,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             NPC.lifeMax = 91000000;
             NPC.boss = true;
             NPC.noGravity = true;
+            NPC.behindTiles = true;
             NPC.noTileCollide = true;
             NPC.value = 70000;
             NPC.buffImmune[BuffID.Poisoned] = true;

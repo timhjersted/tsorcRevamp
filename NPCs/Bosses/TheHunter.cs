@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = 30800;
-            NPC.damage = 120;
+            NPC.damage = 130;
             NPC.defense = 26;
             NPC.knockBackResist = 0f;
             NPC.scale = 1.4f;
@@ -30,6 +30,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.lavaImmune = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
+            NPC.behindTiles = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
 
@@ -44,14 +45,15 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         int hitTime = 0;
-        int sproutDamage = 60;
+        int sproutDamage = 65;
         public float flapWings;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = NPC.damage / 2;
             NPC.defense = NPC.defense += 10;
             NPC.lifeMax = 35000;
-            sproutDamage = (int)(sproutDamage * 1.3 / 2);
+            //sproutDamage = (int)(sproutDamage * 1.3 / 2);
+            sproutDamage = (int)(sproutDamage / 2);
         }
 
         NPCDespawnHandler despawnHandler;
@@ -154,7 +156,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 NPC.ai[3]++;
                 NPC.alpha = 200;
-                NPC.defense = 100;
+                NPC.defense = 70;
                 //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].position.X < vector8.X)
                 {

@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = 26600;
-            NPC.damage = 110;
+            NPC.damage = 120;
             NPC.defense = 24;
             NPC.knockBackResist = 0f;
             NPC.scale = 1.4f;
@@ -30,6 +30,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.lavaImmune = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
+            NPC.behindTiles = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
 
@@ -48,13 +49,14 @@ namespace tsorcRevamp.NPCs.Bosses
         //npc.ai[3] = state counter
         public float flapWings;
         int hitTime = 0; //How long since it's last been hit (used for reducing damage counter)
-        int waterTrailsDamage = 55;
+        int waterTrailsDamage = 60;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = NPC.damage / 2;
             NPC.defense = NPC.defense += 10;
             NPC.lifeMax = 28000;
-            waterTrailsDamage = (int)(waterTrailsDamage * 1.3 / 2);
+            //waterTrailsDamage = (int)(waterTrailsDamage * 1.3 / 2);
+            waterTrailsDamage = (int)(waterTrailsDamage / 2);
         }
         NPCDespawnHandler despawnHandler;
         public override void AI()
@@ -183,7 +185,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 NPC.ai[3]++;
                 NPC.alpha = 200;
-                NPC.defense = 90;
+                NPC.defense = 60;
                 //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].position.X < vector8.X)
                 {

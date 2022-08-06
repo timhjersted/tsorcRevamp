@@ -38,6 +38,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
+            NPC.behindTiles = true;
             NPC.boss = true;
             NPC.value = 103490;
             NPC.buffImmune[BuffID.Poisoned] = true;

@@ -7,7 +7,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     class FireTrail : ModProjectile
     {
 
-        public override string Texture => "tsorcRevamp/Projectiles/FireBall";
+        public override string Texture => "tsorcRevamp/Projectiles/FireBallDarkCore";
         public override void SetDefaults()
         {
             Projectile.width = 15;
@@ -27,9 +27,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6, Projectile.velocity.X * 0.025f, Projectile.velocity.Y * 0.025f, 170, default, 1.2f);
+                    Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6, Projectile.velocity.X * 0.025f, Projectile.velocity.Y * 0.025f, 190, default, 1f);//190 was 170
                 }
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 14, 0f, 0f, 170, default, 1.1f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 14, 0f, 0f, 170, default, 1f);
             }
             Projectile.alpha += 5;
             if (Projectile.alpha > 210)

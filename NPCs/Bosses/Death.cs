@@ -26,6 +26,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.friendly = false;
             NPC.boss = true;
             NPC.noTileCollide = true;
+            NPC.behindTiles = true;
             NPC.noGravity = true;
             NPC.knockBackResist = 0;
             NPC.value = 150000;
