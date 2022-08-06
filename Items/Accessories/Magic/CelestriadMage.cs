@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Magic
 {
-    public class Celestriad : ModItem
+    public class CelestriadMage : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
             Item.value = PriceByRarity.Purple_11;
             Item.rare = ItemRarityID.Purple;
         }
-
+/*
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
 
             recipe.Register();
         }
-
+*/
         public override void UpdateEquip(Player player)
         {
             player.manaCost -= 0.1f;
