@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Accessories.Ranged
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.RangerEmblem, 1);
             recipe.AddIngredient(ItemID.MagicQuiver, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 5);

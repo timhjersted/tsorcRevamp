@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BundleofBalloons, 1);
             recipe.AddIngredient(ItemID.AdamantiteBar, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
             recipe.Register();
 
-            Terraria.Recipe recipe2 = CreateRecipe();
+            Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(Mod.Find<ModItem>("ImprovedBlueBalloon").Type, 1);
             recipe2.AddIngredient(Mod.Find<ModItem>("ImprovedWhiteBalloon").Type, 1);
             recipe2.AddIngredient(Mod.Find<ModItem>("ImprovedYellowBalloon").Type, 1);

@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ObsidianShield);
             recipe.AddIngredient(ModContent.ItemType<SpikedIronShield>());
             recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 5000);

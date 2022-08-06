@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.TerraBlade, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 20);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);

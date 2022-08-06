@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -21,10 +22,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.shootSpeed = 6;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
-            Item.useAnimation = 45;
+            Item.useAnimation = 40;
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 45;
+            Item.useTime = 40;
             Item.value = PriceByRarity.LightRed_4;
             Item.width = 20;
             Item.mana = 20;
@@ -33,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);

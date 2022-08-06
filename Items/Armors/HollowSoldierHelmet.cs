@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Armors
 
         /*public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.IronHelmet);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100);
             recipe.AddTile(TileID.DemonAltar);

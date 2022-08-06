@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CobaltSword, 1); 
             recipe.AddIngredient(ItemID.MythrilSword, 1); 
             recipe.AddIngredient(ItemID.AdamantiteSword, 1);

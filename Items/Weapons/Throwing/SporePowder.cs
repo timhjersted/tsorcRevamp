@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Throwing
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe(5);
+            Recipe recipe = CreateRecipe(5);
             recipe.AddIngredient(ItemID.JungleSpores, 1);
             recipe.AddTile(TileID.Bottles);
             recipe.Register();

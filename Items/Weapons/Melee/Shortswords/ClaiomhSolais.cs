@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CobaltBar, 5);
             recipe.AddIngredient(ItemID.MythrilBar, 5);
             recipe.AddIngredient(ItemID.AdamantiteBar, 5);

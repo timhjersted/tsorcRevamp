@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void AddRecipes()
 		{
 			
-			Terraria.Recipe recipe = CreateRecipe();
+			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<EnchantedWhip>(), 1);
 			recipe.AddIngredient(ItemID.CoolWhip, 1);
 			recipe.AddIngredient(ItemID.HallowedBar, 5);

@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void SetDefaults()
         {
             Item.autoReuse = true; //why was it the only one without autoreuse?
-            Item.damage = 32;
+            Item.damage = 24;
             Item.height = 10;
             Item.knockBack = 0.1f;
             Item.maxStack = 1;
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("Ice2Tome").Type, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 15);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);

@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpiderMask, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4400);
             recipe.AddTile(TileID.DemonAltar);

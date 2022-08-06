@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.FallenStar, 100);
             recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 10);

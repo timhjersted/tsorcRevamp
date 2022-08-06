@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ModContent.ItemType<CalciumBlade>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);

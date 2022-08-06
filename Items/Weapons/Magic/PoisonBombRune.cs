@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -11,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void SetDefaults()
         {
-            Item.damage = 16;
+            Item.damage = 15;
             Item.height = 28;
             Item.knockBack = 3;
             Item.rare = ItemRarityID.Orange;
@@ -30,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Stinger, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("PoisonFieldRune").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);

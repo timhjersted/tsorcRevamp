@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void AddRecipes()
 		{
 			
-			Terraria.Recipe recipe = CreateRecipe();
+			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.DemoniteBar, 10);
 			recipe.AddIngredient(ItemID.CrimtaneBar, 10);
 			recipe.AddIngredient(ItemID.ShadowScale, 5);

@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.height = 30;
             Item.useTime = Item.useAnimation = 15;
             Item.UseSound = SoundID.Item11;
-            Item.useTurn = true;
+            Item.useTurn = false;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Magic;
             Item.autoReuse = true;
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void AddRecipes() {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.LeafBlower);
             recipe.AddIngredient(ItemID.ShroomiteBar, 8);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 85000);

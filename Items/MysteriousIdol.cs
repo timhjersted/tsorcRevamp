@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GoldBar, 3);
             recipe.AddIngredient(ItemID.Ruby, 5);
             recipe.AddIngredient(ItemID.Diamond, 5);

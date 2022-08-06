@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HerosPants, 1);
             recipe.AddIngredient(ItemID.MythrilBar, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);

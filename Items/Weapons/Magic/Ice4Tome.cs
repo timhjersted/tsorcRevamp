@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         int storeManaCost4;
         public override void SetDefaults()
         {
-            Item.damage = 120;
+            Item.damage = 140;
             Item.height = 10;
             Item.knockBack = 0.1f;
             Item.maxStack = 1;
@@ -29,12 +29,12 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.shootSpeed = 45;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
-            Item.mana = 45;
+            Item.mana = 50;
             storeManaCost4 = Item.mana;
-            Item.useAnimation = 30;
+            Item.useAnimation = 25;
+            Item.useTime = 25;
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 30;
             Item.value = PriceByRarity.Lime_7;
             Item.width = 34;
             Item.shoot = ModContent.ProjectileType<Projectiles.Ice4Ball>();
@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("Ice3Tome").Type, 1);
             recipe.AddIngredient(ItemID.SoulofMight, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);

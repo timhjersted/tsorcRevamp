@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SharkronBalloon, 1);
             recipe.AddIngredient(ItemID.LuckyHorseshoe, 1);
             recipe.AddIngredient(ItemID.CrimtaneBar, 5);

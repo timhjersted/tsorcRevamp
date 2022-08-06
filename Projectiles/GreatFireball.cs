@@ -21,6 +21,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.ignoreWater = true;
             Projectile.penetrate = 50;
             Projectile.timeLeft = 360;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 37;
         }
 
         public override void AI()

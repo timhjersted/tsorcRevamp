@@ -1,4 +1,5 @@
 ﻿using Terraria.ID;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic
@@ -31,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("DivineSpark").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("Epilogue").Type, 1);
             recipe.AddTile(TileID.DemonAltar);

@@ -1,4 +1,5 @@
 ﻿using Terraria.ID;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Potions
@@ -29,7 +30,7 @@ namespace tsorcRevamp.Items.Potions
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe(4);
+            Recipe recipe = CreateRecipe(4);
             recipe.AddIngredient(ItemID.SwiftnessPotion, 4);
             recipe.AddIngredient(ItemID.Deathweed, 4);
             recipe.AddIngredient(ItemID.Gel, 4);

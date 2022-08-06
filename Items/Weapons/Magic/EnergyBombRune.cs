@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -11,17 +12,17 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void SetDefaults()
         {
-            Item.damage = 36;
+            Item.damage = 30;
             Item.height = 28;
             Item.knockBack = 4;
             Item.rare = ItemRarityID.LightPurple;
             Item.shootSpeed = 6;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
-            Item.useAnimation = 21;
+            Item.useAnimation = 50;
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 21;
+            Item.useTime = 50;
             Item.value = PriceByRarity.LightPurple_6;
             Item.width = 20;
             Item.mana = 50;
@@ -29,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofLight, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("EnergyFieldRune").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);

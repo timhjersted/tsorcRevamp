@@ -125,7 +125,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddIngredient(ItemID.MoonCharm, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);

@@ -16,9 +16,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.width = 42;
             Item.height = 42;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 15;
-            Item.useTime = 15;
-            Item.damage = 60;
+            Item.useAnimation = 30;
+            Item.useTime = 30;
+            Item.damage = 120;
             Item.knockBack = 6;
             Item.autoReuse = true;
             Item.alpha = 100;
@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Starfury, 1);
             recipe.AddIngredient(ItemID.FallenStar, 100);
             recipe.AddIngredient(ItemID.SoulofLight, 20);

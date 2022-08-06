@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ObsidianShirt, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3300);
             recipe.AddTile(TileID.DemonAltar);

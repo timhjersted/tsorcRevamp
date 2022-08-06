@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void SetDefaults()
         {
-            Item.damage = 40;
+            Item.damage = 30;
             Item.height = 10;
             Item.knockBack = 1;
             Item.maxStack = 1;
@@ -22,8 +22,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.mana = 10;
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 10;
-            Item.useAnimation = 10;
+            Item.useTime = 20;
+            Item.useAnimation = 20;
             Item.value = PriceByRarity.LightRed_4;
             Item.width = 34;
             Item.noMelee = true;

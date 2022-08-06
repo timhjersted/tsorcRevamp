@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HellstoneBar, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 6);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);

@@ -28,6 +28,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.penetrate = 12;
             DrawOffsetX = -4;
             DrawOriginOffsetY = -10;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 100;
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {

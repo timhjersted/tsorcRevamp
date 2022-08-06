@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ShadowGreaves, 1);
             recipe.AddIngredient(ItemID.SoulofMight, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);

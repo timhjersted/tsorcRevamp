@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("Longinus").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 20);
             recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 30);

@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SandstorminaBalloon, 1);
             recipe.AddIngredient(ItemID.CobaltBar, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1500);

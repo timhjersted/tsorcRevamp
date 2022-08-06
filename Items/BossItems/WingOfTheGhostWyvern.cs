@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.BossItems
         {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                Terraria.Recipe recipe = CreateRecipe();
+                Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(Mod.Find<ModItem>("WingOfTheFallen").Type, 1);
                 recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 20);
                 recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);

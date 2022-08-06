@@ -69,7 +69,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("DragoonArmor").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DragoonCloak").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 10);

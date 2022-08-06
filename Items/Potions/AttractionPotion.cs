@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Potions
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe(5);
+            Recipe recipe = CreateRecipe(5);
             recipe.AddIngredient(ItemID.BottledWater, 5);
             recipe.AddIngredient(ItemID.Deathweed, 5);
             recipe.AddIngredient(ItemID.Vertebrae, 10);
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Potions
             recipe.AddTile(TileID.Bottles);
             recipe.Register();
 
-            Terraria.Recipe recipe2 = CreateRecipe(5);
+            Recipe recipe2 = CreateRecipe(5);
             recipe2.AddIngredient(ItemID.BottledWater, 5);
             recipe2.AddIngredient(ItemID.Deathweed, 5);
             recipe2.AddIngredient(ItemID.RottenChunk, 10);

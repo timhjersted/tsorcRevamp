@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.useAnimation = 6;
             Item.useTime = 6;
-            Item.damage = 40;
+            Item.damage = 35;
             Item.knockBack = 6;
             Item.autoReuse = true;
             Item.noMelee = true;
@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.CrystalShard, 100);
             recipe.AddIngredient(ItemID.AdamantiteBar, 1);

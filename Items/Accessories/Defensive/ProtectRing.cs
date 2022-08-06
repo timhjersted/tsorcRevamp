@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.AdamantiteBar, 3);
             recipe.AddIngredient(ItemID.Emerald, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 20);

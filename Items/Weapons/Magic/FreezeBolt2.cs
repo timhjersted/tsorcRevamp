@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -19,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useAnimation = 17;
             Item.useTime = 17;
             Item.maxStack = 1;
-            Item.damage = 73;
+            Item.damage = 47;
             Item.knockBack = 5;
             Item.autoReuse = true;
             Item.scale = 1;
@@ -33,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("FreezeBolt").Type, 1);
             recipe.AddIngredient(ItemID.FallenStar, 30);
             recipe.AddIngredient(ItemID.SoulofMight, 1);

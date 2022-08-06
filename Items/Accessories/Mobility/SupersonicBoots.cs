@@ -28,14 +28,14 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpectreBoots, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
 
-            Terraria.Recipe recipe2 = CreateRecipe();
+            Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.LightningBoots, 1);
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
             recipe2.AddTile(TileID.DemonAltar);

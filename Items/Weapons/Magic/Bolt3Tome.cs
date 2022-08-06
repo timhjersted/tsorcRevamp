@@ -49,7 +49,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofLight, 15);
             recipe.AddIngredient(Mod.Find<ModItem>("Bolt2Tome").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);

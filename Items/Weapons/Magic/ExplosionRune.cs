@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -13,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void SetDefaults()
         {
             Item.consumable = false;
-            Item.damage = 40;
+            Item.damage = 30;
             Item.height = 28;
             Item.knockBack = 4;
             Item.rare = ItemRarityID.LightRed;
@@ -21,10 +22,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.autoReuse = true;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
-            Item.useAnimation = 21;
+            Item.useAnimation = 25;
+            Item.useTime = 25;
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 21;
             Item.value = PriceByRarity.LightRed_4;
             Item.width = 20;
             Item.mana = 16;
@@ -33,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.AdamantiteBar, 1);
             recipe.AddIngredient(ItemID.Fireblossom, 30);

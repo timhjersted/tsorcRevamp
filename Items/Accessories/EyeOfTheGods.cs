@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ShinePotion, 30);
             recipe.AddIngredient(ItemID.SpelunkerPotion, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);

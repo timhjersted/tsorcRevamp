@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("FireSpiritTome2").Type, 1);
             recipe.AddIngredient(ItemID.InfernoFork, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 5);
@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
             recipe.Register();
 
-            Terraria.Recipe recipe2 = CreateRecipe();
+            Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(Mod.Find<ModItem>("FireSpiritTome2").Type, 1);
             recipe2.AddIngredient(ItemID.FragmentSolar, 10);
             recipe2.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 5);
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
             recipe2.Register(); 
             
-            Terraria.Recipe recipe3 = CreateRecipe();
+            Recipe recipe3 = CreateRecipe();
             recipe3.AddIngredient(Mod.Find<ModItem>("FireSpiritTome2").Type, 1);
             recipe3.AddIngredient(ItemID.InfernoFork, 1);
             recipe3.AddIngredient(ItemID.FragmentSolar, 10);

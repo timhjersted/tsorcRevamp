@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("BlueHerosPants").Type, 1);
             recipe.AddIngredient(ItemID.SoulofSight, 2);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);

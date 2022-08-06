@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             //todo add ingredients
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("ForgottenIceBowScroll").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("Ice4Tome").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);

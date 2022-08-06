@@ -1,4 +1,5 @@
 ﻿using Terraria.ID;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic
@@ -28,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Flamelash, 1);
             recipe.AddIngredient(ItemID.CursedFlame, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);

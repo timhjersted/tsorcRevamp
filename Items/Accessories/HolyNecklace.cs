@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("FrozenStarlight").Type, 1);
             recipe.AddIngredient(ItemID.StarCloak, 1);
             recipe.AddIngredient(ItemID.CrossNecklace, 1);
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories
 
             recipe.Register();
 
-            Terraria.Recipe recipe2 = CreateRecipe();
+            Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(Mod.Find<ModItem>("FrozenStarlight").Type, 1);
             recipe2.AddIngredient(ItemID.StarVeil, 1);
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
