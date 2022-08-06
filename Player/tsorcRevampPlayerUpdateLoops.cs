@@ -34,6 +34,7 @@ namespace tsorcRevamp
         public bool Crippled = false;
 
         public bool DuskCrownRing = false;
+        public bool Celestriad = false;
         public bool UndeadTalisman = false;
 
         public bool DragoonBoots = false;
@@ -216,6 +217,7 @@ namespace tsorcRevamp
             Player.armorEffectDrawShadowEOCShield = false;
             UndeadTalisman = false;
             DuskCrownRing = false;
+            Celestriad = false;
             DragoonBoots = false;
             GemBox = false;
             OldWeapon = false;

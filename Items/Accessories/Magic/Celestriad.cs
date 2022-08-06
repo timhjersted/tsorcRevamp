@@ -8,7 +8,11 @@ namespace tsorcRevamp.Items.Accessories.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("All spells are free to cast");
+            Tooltip.SetDefault("Automatically use mana potions when needed" +
+                "\nIncreases pickup range for mana stars" +
+                "\nMana Sickness now increases damage taken" +
+                "\ninstead of decreasing magic damage dealt" +
+                "\n10% reduced mana usage");
         }
 
         public override void SetDefaults()
@@ -22,12 +26,12 @@ namespace tsorcRevamp.Items.Accessories.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("GoldenHairpin").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("GemBox").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 30);
-            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfBlight").Type, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 400000);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<GoldenHairpin>(), 1);
+            recipe.AddIngredient(ItemID.MagnetFlower, 1);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -35,10 +39,10 @@ namespace tsorcRevamp.Items.Accessories.Magic
 
         public override void UpdateEquip(Player player)
         {
-            if (player.inventory[player.selectedItem].DamageType == DamageClass.Magic)
-            {
-                player.manaCost = 1f / player.inventory[player.selectedItem].mana;
-            }
+            player.manaCost -= 0.1f;
+            player.manaFlower = true;
+            player.manaMagnet = true;
+            player.GetModPlayer<tsorcRevampPlayer>().Celestriad = true;
         }
     }
 }
