@@ -167,7 +167,7 @@ namespace tsorcRevamp.Items.BossBags
         }
     }
 
-    public class HeroOfLumeliaBag : BossBag
+    public class LumeliaBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<HeroofLumelia>();
         [System.Obsolete]
