@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Ammo
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe(30);
+            Recipe recipe = CreateRecipe(30);
             recipe.AddIngredient(ItemID.WoodenArrow, 30);
             recipe.AddIngredient(ItemID.IronOre, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15); //480 DS per 1000, I think that's fair. 

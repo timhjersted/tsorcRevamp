@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             //recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddIngredient(Mod.Find<ModItem>("Murassame").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);

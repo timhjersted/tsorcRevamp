@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Potions
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BottledWater);
             recipe.AddIngredient(ItemID.Bone, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 20);

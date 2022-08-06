@@ -1,5 +1,6 @@
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -37,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("ThrowingSpear").Type, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 30);

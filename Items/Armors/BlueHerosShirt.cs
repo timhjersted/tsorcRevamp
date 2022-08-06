@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HerosShirt, 1);
             recipe.AddIngredient(ItemID.Flipper, 1);
             recipe.AddIngredient(ItemID.DivingHelmet, 1);
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Armors
 
             recipe.Register();
 
-            Terraria.Recipe recipe2 = CreateRecipe();
+            Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.HerosShirt, 1);
             recipe2.AddIngredient(ItemID.DivingGear, 1);
             recipe2.AddIngredient(ItemID.MythrilBar, 3);

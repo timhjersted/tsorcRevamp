@@ -17,6 +17,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.width = 18;
             Projectile.timeLeft = 30;
             Projectile.alpha = 255;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = -1;
         }
 
         public override void AI()

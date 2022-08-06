@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("SupersonicBoots").Type, 1);
             recipe.AddIngredient(ItemID.AngelWings, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);

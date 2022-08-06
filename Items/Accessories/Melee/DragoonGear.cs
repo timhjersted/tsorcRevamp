@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(Mod.Find<ModItem>("DragoonBoots").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DragoonHorn").Type, 1);

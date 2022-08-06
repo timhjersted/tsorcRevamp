@@ -91,7 +91,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("DragoonHelmet").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 10);
             recipe.AddIngredient(Mod.Find<ModItem>("DyingWindShard").Type, 10);

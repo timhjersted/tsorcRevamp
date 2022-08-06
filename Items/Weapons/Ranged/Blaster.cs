@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
 
 
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             //recipe.AddIngredient(null, "oddscrapmetal", 10);
             recipe.AddIngredient(ItemID.IronBar, 5);
             recipe.AddIngredient(ItemID.Diamond, 2);
@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
             recipe.Register();
 
-            Terraria.Recipe recipe2 = CreateRecipe();
+            Recipe recipe2 = CreateRecipe();
             //recipe.AddIngredient(null, "oddscrapmetal", 10);
             recipe2.AddIngredient(ItemID.LeadBar, 5);
             recipe2.AddIngredient(ItemID.Diamond, 2);

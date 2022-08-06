@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -34,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedRepeater, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);

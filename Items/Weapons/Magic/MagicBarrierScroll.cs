@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.SoulofSight, 10);
             recipe.AddIngredient(ItemID.SoulofLight, 20);

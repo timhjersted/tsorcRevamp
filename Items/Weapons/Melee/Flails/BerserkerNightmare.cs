@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Flails
 {
@@ -29,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.DaoofPow, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);

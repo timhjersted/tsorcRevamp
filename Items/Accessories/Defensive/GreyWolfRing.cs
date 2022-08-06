@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("WolfRing").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("BandOfSupremeCosmicPower").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("PoisonbloodRing").Type, 1);

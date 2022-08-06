@@ -1,5 +1,6 @@
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -37,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.BladeofGrass, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);

@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SorcererEmblem, 1);
             recipe.AddIngredient(ItemID.WizardHat, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 5);

@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items.Potions
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Wood, 1);
             recipe.AddIngredient(ItemID.Mushroom, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DeadChicken").Type, 1);

@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.Potions
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe(4);
+            Recipe recipe = CreateRecipe(4);
             recipe.AddIngredient(ItemID.EndurancePotion, 4);
             recipe.AddIngredient(ItemID.IronskinPotion, 4);
             recipe.AddIngredient(ItemID.Sapphire, 4);

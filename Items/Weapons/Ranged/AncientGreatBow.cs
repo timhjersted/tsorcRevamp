@@ -1,5 +1,6 @@
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -36,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.DemonBow, 1);
             recipe.AddIngredient(ItemID.ShadowScale, 10);
@@ -46,7 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.Register();
 
 
-            Terraria.Recipe recipe2 = CreateRecipe();
+            Recipe recipe2 = CreateRecipe();
 
             recipe2.AddIngredient(ItemID.DemonBow, 1);
             recipe2.AddIngredient(ItemID.TissueSample, 10);

@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -20,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 12;
             Item.useTime = 12;
-            Item.damage = 150;
+            Item.damage = 106;
             Item.knockBack = 8;
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item21;
@@ -34,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("FreezeBolt2").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 10);

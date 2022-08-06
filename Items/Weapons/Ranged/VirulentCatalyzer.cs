@@ -112,7 +112,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("ToxicCatalyzer").Type);
             recipe.AddIngredient(ItemID.SpiderFang, 20);
             recipe.AddIngredient(ItemID.HallowedBar, 8);

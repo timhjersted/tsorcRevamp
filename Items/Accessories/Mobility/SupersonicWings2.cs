@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe4 = CreateRecipe();
+            Recipe recipe4 = CreateRecipe();
             recipe4.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
             recipe4.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
             recipe4.AddIngredient(ItemID.EmpressFlightBooster, 1);
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             recipe4.AddTile(TileID.DemonAltar);
             recipe4.Register();
 
-            Terraria.Recipe recipe3 = CreateRecipe();
+            Recipe recipe3 = CreateRecipe();
             recipe3.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
             recipe3.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
             recipe3.AddIngredient(Mod.Find<ModItem>("ImprovedBundleofBalloons").Type, 1);
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             recipe3.AddTile(TileID.DemonAltar);
             recipe3.Register();
 
-            Terraria.Recipe recipe2 = CreateRecipe();
+            Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
             recipe2.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
             recipe2.AddIngredient(ItemID.EmpressFlightBooster, 1);
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.Register();
 
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);

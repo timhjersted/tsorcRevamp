@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.RangerEmblem, 1);
             recipe.AddIngredient(ItemID.SorcererEmblem, 1);
             recipe.AddIngredient(ItemID.WarriorEmblem, 1);

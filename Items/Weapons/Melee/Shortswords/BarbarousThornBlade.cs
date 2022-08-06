@@ -117,7 +117,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<YellowTail>());
             recipe.AddIngredient(ItemID.HellstoneBar, 10);
             recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 6000);

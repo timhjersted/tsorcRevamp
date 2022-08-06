@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("LightCloak").Type);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkCloak").Type);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkmoonCloak").Type);

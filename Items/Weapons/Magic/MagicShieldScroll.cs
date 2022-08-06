@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("HealingElixir").Type);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);

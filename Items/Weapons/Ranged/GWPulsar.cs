@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("Pulsar").Type);
             recipe.AddIngredient(ItemID.HallowedBar, 8);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);

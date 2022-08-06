@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ChlorophytePartisan, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 5);

@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Ammo
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe(10);
+            Recipe recipe = CreateRecipe(10);
 
             recipe.AddIngredient(ItemID.Wood, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2);

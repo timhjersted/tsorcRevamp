@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.SniperRifle, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DestructionElement").Type, 1);

@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverBar, 1);
             recipe.AddIngredient(ItemID.SoulofNight, 6);
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 30);

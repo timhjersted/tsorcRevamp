@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverBar, 2);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 400);
             recipe.AddTile(TileID.DemonAltar);

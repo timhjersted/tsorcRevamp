@@ -24,10 +24,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.autoReuse = true;
             Item.mana = 15;
             Item.noMelee = true;
-            Item.useAnimation = 45;
+            Item.useAnimation = 60;
+            Item.useTime = 60;
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 45;
             Item.value = PriceByRarity.Green_2;
             Item.width = 20;
             Item.shoot = ModContent.ProjectileType<Projectiles.PoisonFieldBall>();
@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.Stinger, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);

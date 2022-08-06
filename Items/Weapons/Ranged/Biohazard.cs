@@ -113,7 +113,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("VirulentCatalyzer").Type);
             recipe.AddIngredient(ItemID.ShroomiteBar, 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);

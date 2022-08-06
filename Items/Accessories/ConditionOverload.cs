@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HellstoneBar, 3);
             recipe.AddIngredient(ItemID.CursedFlame, 3);
             recipe.AddIngredient(ItemID.Stinger, 3);

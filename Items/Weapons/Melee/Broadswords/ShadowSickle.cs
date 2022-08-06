@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -24,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.DemoniteBar, 10);
             recipe.AddIngredient(ItemID.ShadowScale, 6);
             recipe.AddTile(TileID.Anvils);

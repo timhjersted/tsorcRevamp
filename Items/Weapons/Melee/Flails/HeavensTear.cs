@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.FlowerPow, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);

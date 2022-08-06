@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
             recipe.AddIngredient(ItemID.CobaltBar, 12);
             recipe.AddTile(TileID.DemonAltar);

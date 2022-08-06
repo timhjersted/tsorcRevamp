@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Throwing
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe(2);
+            Recipe recipe = CreateRecipe(2);
             recipe.AddIngredient(Mod.Find<ModItem>("Firebomb").Type, 2);
             recipe.AddIngredient(Mod.Find<ModItem>("CharcoalPineResin").Type);
             recipe.AddIngredient(ItemID.SoulofNight);

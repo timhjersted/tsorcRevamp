@@ -62,7 +62,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CopperAxe, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);

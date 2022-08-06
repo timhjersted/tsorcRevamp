@@ -24,6 +24,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.tileCollide = true;
             Projectile.width = 16;
             Projectile.timeLeft = 300;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 25;
 
             //Iterate through the projectile array
             for (int i = 0; i < Main.projectile.Length; i++)

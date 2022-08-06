@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.AdamantiteHelmet, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
             recipe.AddTile(TileID.DemonAltar);

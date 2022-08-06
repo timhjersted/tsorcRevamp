@@ -15,8 +15,10 @@ namespace tsorcRevamp.Projectiles
             Projectile.timeLeft = 130;
             Projectile.friendly = true;
             Projectile.penetrate = 5;
-            Projectile.tileCollide = false;
+            Projectile.tileCollide = true;
             Projectile.DamageType = DamageClass.Magic;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 30;
         }
         public override void AI()
         {

@@ -1,5 +1,6 @@
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Melee
 {
@@ -39,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("GaeBolg").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
 

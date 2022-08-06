@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Silversix");
             recipe.AddIngredient(ItemID.HallowedBar, 10);
             recipe.AddIngredient(ItemID.PixieDust, 35);

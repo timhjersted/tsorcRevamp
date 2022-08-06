@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("CovetousSilverSerpentRing").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulReaper2").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);

@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -28,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe(100);
+            Recipe recipe = CreateRecipe(100);
             recipe.AddIngredient(ItemID.Wood, 20);
             recipe.AddIngredient(ItemID.StoneBlock, 20);
             recipe.AddIngredient(ItemID.SilverCoin, 50);

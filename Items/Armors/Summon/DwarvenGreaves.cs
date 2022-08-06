@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedGreaves, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7200);
             recipe.AddTile(TileID.DemonAltar);

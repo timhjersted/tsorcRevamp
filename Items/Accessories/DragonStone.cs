@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Accessories
         }
 
         /*public override void AddRecipes() {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofFlight, 70);
             recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);

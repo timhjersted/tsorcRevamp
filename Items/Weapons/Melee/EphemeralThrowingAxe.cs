@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Melee
 {
@@ -31,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("ThrowingAxe").Type);
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 40);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);

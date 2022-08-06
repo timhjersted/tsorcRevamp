@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.AdamantiteBar, 25);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);

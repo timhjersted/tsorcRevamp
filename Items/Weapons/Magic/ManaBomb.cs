@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ManaCrystal, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200);
             recipe.AddTile(TileID.DemonAltar);

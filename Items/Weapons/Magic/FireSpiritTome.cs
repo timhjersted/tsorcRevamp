@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -35,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.Fireblossom, 5);
             recipe.AddIngredient(ItemID.AdamantiteBar, 1);

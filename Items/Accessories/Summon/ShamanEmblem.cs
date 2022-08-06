@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SummonerEmblem, 1);
             recipe.AddIngredient(ItemID.PygmyNecklace, 1);
             recipe.AddIngredient(ItemID.HallowedBar, 5);

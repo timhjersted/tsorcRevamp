@@ -59,7 +59,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("RedHerosHat").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);

@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BlizzardinaBalloon, 1);
             recipe.AddIngredient(ItemID.Bone, 20);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 900);

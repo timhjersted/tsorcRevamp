@@ -24,6 +24,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.ignoreWater = true;
             DrawOffsetX = -10;
             DrawOriginOffsetY = -10;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 30;
         }
 
         public override void AI()

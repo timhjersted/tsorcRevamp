@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome);
             recipe.AddIngredient(ItemID.LifeCrystal, 5);
             recipe.AddIngredient(ItemID.CrystalShard, 30);

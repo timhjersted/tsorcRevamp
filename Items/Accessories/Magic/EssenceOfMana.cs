@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ManaCrystal, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);

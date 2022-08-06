@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.MeteoriteBar, 25);
             recipe.AddIngredient(ItemID.SandBlock, 150);

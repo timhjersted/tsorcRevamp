@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         }
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("IronShield").Type);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
             recipe.AddTile(TileID.DemonAltar);

@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ClockworkAssaultRifle);
             recipe.AddIngredient(ItemID.MeteoriteBar, 30);
             recipe.AddIngredient(ItemID.MythrilBar, 5);

@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.WarriorEmblem, 1);
             recipe.AddIngredient(ItemID.FeralClaws, 1);
             recipe.AddIngredient(ItemID.HallowedBar, 5);

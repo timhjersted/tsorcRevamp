@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverBroadsword);
             recipe.AddIngredient(ItemID.RottenChunk, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 800);

@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BandofRegeneration, 1);
             recipe.AddIngredient(ItemID.BandofStarpower, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -38,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);
             recipe.AddIngredient(Mod.Find<ModItem>("CompactFrame").Type);

@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 2);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);

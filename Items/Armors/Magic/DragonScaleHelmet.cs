@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Armors.Magic
 
         public override void UpdateArmorSet(Player player)
         {
-            player.manaCost -= 0.9f;
+            player.manaCost -= 0.09f;
             player.statManaMax2 += 60;
             if (player.statLife <= 100)
             {
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items.Armors.Magic
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MythrilHood, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3500);
             recipe.AddTile(TileID.DemonAltar);
