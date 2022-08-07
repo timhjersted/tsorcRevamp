@@ -35,31 +35,31 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             if (Main.rand.NextBool(3))
             {
-                npc.AddBuff(BuffID.OnFire3, 900, false);
+                npc.AddBuff(BuffID.OnFire3, 180, false);
             }
             if (Main.rand.NextBool(3))
             {
-                npc.AddBuff(BuffID.ShadowFlame, 900, false);
+                npc.AddBuff(BuffID.ShadowFlame, 180, false);
             }
             if (Main.rand.NextBool(3))
             {
-                npc.AddBuff(BuffID.CursedInferno, 900, false);
+                npc.AddBuff(BuffID.CursedInferno, 180, false);
             }
             if (Main.rand.NextBool(3))
             {
-                npc.AddBuff(BuffID.BetsysCurse, 900, false);
+                npc.AddBuff(BuffID.BetsysCurse, 180, false);
             }
             if (Main.rand.NextBool(3))
             {
-                npc.AddBuff(BuffID.Ichor, 900, false);
+                npc.AddBuff(BuffID.Ichor, 180, false);
             }
             if (Main.rand.NextBool(3))
             {
-                npc.AddBuff(Mod.Find<ModBuff>("CrimsonBurn").Type, 900, false);
+                npc.AddBuff(Mod.Find<ModBuff>("CrimsonBurn").Type, 180, false);
             }
             if (Main.rand.NextBool(3))
             {
-                npc.AddBuff(Mod.Find<ModBuff>("DarkInferno").Type, 900, false);
+                npc.AddBuff(Mod.Find<ModBuff>("DarkInferno").Type, 180, false);
             }
         }
         public override void MeleeEffects(Player player, Rectangle rectangle)
