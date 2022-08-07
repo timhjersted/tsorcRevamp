@@ -103,16 +103,6 @@ namespace tsorcRevamp.Projectiles
                 }
             }
 
-            if (projectile.type == ProjectileID.IceBolt || projectile.type == ProjectileID.EnchantedBeam || projectile.type == ProjectileID.SwordBeam || projectile.type == ProjectileID.FrostBoltSword
-                || projectile.type == ProjectileID.LightBeam || projectile.type == ProjectileID.NightBeam || projectile.type == ProjectileID.TerraBeam)
-            {
-                projectile.ai[1]++;
-                if (projectile.ai[1] > 15)
-                {
-                    projectile.timeLeft = 0;
-                }
-            }
-
 
             //Destroyer shoots true lasers instead of normal projectile lasers
             //Probe lasers are replaced with true lasers. This is actually an enormous nerf because they were not telegraphed and were hard to see before.
