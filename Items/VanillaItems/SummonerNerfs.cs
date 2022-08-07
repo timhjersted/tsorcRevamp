@@ -27,10 +27,6 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.damage = 24;
             }
-            if (item.type == ItemID.StardustDragonStaff)
-            {
-                item.damage = 35;
-            }
         }
 
         public override void UpdateInventory(Item item, Player player)
