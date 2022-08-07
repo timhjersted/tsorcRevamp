@@ -1979,7 +1979,7 @@ namespace tsorcRevamp.NPCs
                     }                    
                     else
                     {
-                        npc.TargetClosest(true);
+                        npc.TargetClosest(false);
                     }
                 }
                 //s.Stop();
