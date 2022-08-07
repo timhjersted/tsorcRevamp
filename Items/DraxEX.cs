@@ -12,14 +12,20 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Drax EX");
-            Tooltip.SetDefault("Congratulations on beating the final secret boss of the game!" +
-                                "\nYou are truly a hero of the ages!;" +
-                                "\nThis game was over 10 months in development." +
-                                "\nIf you really enjoyed the game and want to say thanks" +
-                                "\nyou can donate to the non-profit I work for:" +
-                                "\nwww.filmsforaction.org/donate" +
-                                "\nAs always, I'd love to hear your comments and feedback, too." +
-                                "\ntimhjersted@gmail.com");
+            Tooltip.SetDefault("[c/ffbf00:Congratulations on beating the game as the Bearer of the Curse!]" +
+                                "\n[c/00ffd4:You are truly a hero of the ages!]" +
+                                //"\nPlease enjoy this symbolic reward, as a small token to remember this accomplishment." +
+                                //"\nThis game has been in active development for over 4 years" +
+                                //"\nand we still have a ways to go before we finish the revamp. " +
+                                //"\n " +
+                                //"\nIf you enjoyed the game and want to say thanks" +
+                                //"\nyou can donate to the film library the map-maker created:" +
+                                //"\nwww.filmsforaction.org/donate" +
+                                "\n..." +
+                                "\n..." +
+                                "\nWe hope you enjoyed the experience." +
+                                "\nAs always, we'd love to hear your comments, suggestions and feedback on our Steam page or Discord." +
+                                "\n- Tim Hjersted, aka Vibrent, and the rest of the Revamp Team");
         }
         public override void SetDefaults()
         {

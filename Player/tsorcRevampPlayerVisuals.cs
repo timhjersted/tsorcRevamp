@@ -365,9 +365,13 @@ namespace tsorcRevamp
                         modPlayer.shieldUp = false;
                     }
                     //If the player doesn't have enough mana to tank a hit, then draw particle effects to indicate their mana is too low for it to function.
-                    int dust = Dust.NewDust(modPlayer.Player.Center, 1, 1, 221, modPlayer.Player.velocity.X + Main.rand.Next(-3, 3), modPlayer.Player.velocity.Y + Main.rand.Next(-3, 3), 180, Color.Cyan, 1f);
+                    //int dust = Dust.NewDust(modPlayer.Player.Center, 1, 1, 221, modPlayer.Player.velocity.X + Main.rand.Next(-3, 3), modPlayer.Player.velocity.Y, 180, Color.Cyan, 1f);
+                    int dust = Dust.NewDust(new Vector2((float)modPlayer.Player.position.X, (float)modPlayer.Player.position.Y), modPlayer.Player.width, modPlayer.Player.height, DustID.AncientLight, modPlayer.Player.velocity.X, modPlayer.Player.velocity.Y, 150, Color.Teal, 1f);
                     Main.dust[dust].noGravity = true;
                     modPlayer.shieldUp = false;
+
+
+                    
                 }
             }
             else {

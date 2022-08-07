@@ -8,9 +8,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
+            DisplayName.SetDefault("Ring of Artorias");
             Tooltip.SetDefault("The great Ring of Artorias." +
                                 "\nOnce held strength too great for this world to bear." +
-                                "\n[c/888888:It now grants immunity to Powerful Curse Buildup and Freezing.]");
+                                "\n[c/ffbf00:It now grants immunity to Powerful Curse Buildup, Slow and Freezing.]");
         }
 
         public override void SetDefaults()
@@ -27,6 +28,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.buffImmune[ModContent.BuffType<Buffs.PowerfulCurseBuildup>()] = true;
             //player.statDefense += 10;
             player.buffImmune[BuffID.Frozen] = true;
+            player.buffImmune[BuffID.Slow] = true;
             //player.GetDamage(DamageClass.Generic) *= 2;
         }
 

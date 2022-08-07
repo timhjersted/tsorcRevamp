@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
     public class ManaShield : ModItem
     {
 
-        public static int manaCost = 80;
+        public static int manaCost = 75;
         public static int regenDelay = 900;
         public static float damageResistance = 0.40f;
         public override void SetStaticDefaults()
@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
             Tooltip.SetDefault("Focuses the user's mana into a protective shield" +
                                 $"\nReduces incoming damage by {damageResistance * 100}%, but drains {manaCost} mana per hit" +
                                 "\nInhibits both natural and artificial mana regen" +
-                                $"\n[c/C80032:For melee warriors only], reduces other damage dramatically");
+                                $"\n[c/ffbf00:Useful for those who do not specialize in magic]");
         }
 
         public override void SetDefaults()
@@ -52,9 +52,9 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
             base.UpdateEquip(player);
             player.GetModPlayer<tsorcRevampPlayer>().manaShield = 1;
-            player.GetDamage(DamageClass.Ranged) *= 0.01f;
-            player.GetDamage(DamageClass.Magic) *= 0.01f;
-            player.GetDamage(DamageClass.Summon) *= 0.01f;
+            //player.GetDamage(DamageClass.Ranged) *= 0.02f;
+            //player.GetDamage(DamageClass.Magic) *= 0.08f;
+            //player.GetDamage(DamageClass.Summon) *= 0.02f;
             if (player.statMana >= manaCost)
             {
                 player.endurance += damageResistance;

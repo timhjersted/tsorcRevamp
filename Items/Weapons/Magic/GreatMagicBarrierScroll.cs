@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             DisplayName.SetDefault("Great Magic Barrier");
             Tooltip.SetDefault("A lost legendary scroll\n" +
-                                "Casts Great Magic Barrier on the player, raising defense by 60 for 30 seconds\n" +
+                                "[c/ffbf00:Casts Great Magic Barrier on the player, raising defense by 60 for 30 seconds]\n" +
                                 "Does not stack with other barrier or shield spells");
         }
         public override void SetDefaults()
@@ -37,8 +37,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 6);
             recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type);
-            recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 30);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
+            recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 12);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -47,6 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override bool? UseItem(Player player)
         {
             player.AddBuff(ModContent.BuffType<Buffs.GreatMagicBarrier>(), 1800, false);
+            player.AddBuff(ModContent.BuffType<Buffs.ShieldCooldown>(), 19800); //5 minutes and 30 seconds (5 min downtime)
             return true;
         }
         public override bool CanUseItem(Player player)

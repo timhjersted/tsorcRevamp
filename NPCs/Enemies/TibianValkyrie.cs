@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -74,23 +75,102 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
+        float boredTeleport = 0;
         float spearTimer = 0;
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.65f, 0.11f, enragePercent: 0.5f, enrageTopSpeed: 2.4f);
+            tsorcRevampAIs.FighterAI(NPC, 1.65f, 0.05f, enragePercent: 0.5f, enrageTopSpeed: 2.4f); //0.7 was .11
             tsorcRevampAIs.SimpleProjectile(NPC, ref spearTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 10, 8, Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0), shootSound: SoundID.Item17);
+
+            bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
+
+            
+            //If the enemy doesn't have line of sight for a good while, teleport far away from the player and try again. Then much later, they get one more chance to teleport.
+            //Since this is an early enemy, the distance and time is not very aggressive.
+            if (!clearLineofSight)
+            {
+                boredTeleport++;
+
+                if (boredTeleport >= 2600)
+                {
+                    tsorcRevampAIs.Teleport(NPC, 80, false);
+
+                }
+
+                if (boredTeleport >= 5600)
+                {
+                    tsorcRevampAIs.Teleport(NPC, 90, false);
+                    boredTeleport = 0;
+                }
+
+                /* 
+                //my attempt at creating a simple bored system from scratch - lol, didn't get far
+                
+                if (boredTeleport <= 100)
+                {
+
+
+                    if (Main.player[NPC.target].Center.X <= NPC.Center.X)
+                    {
+                        //NPC.direction = -1;
+                        NPC.TargetClosest(false);
+                    }
+                    else
+                    {
+                        //NPC.direction = 1;
+                        NPC.TargetClosest(false);
+                    }
+
+                }
+
+
+                if (boredTeleport >= 101)
+                {
+
+                    if (Main.player[NPC.target].Center.X <= NPC.Center.X)
+                    {
+                        NPC.direction = 1;
+                        NPC.TargetClosest(true);
+                    }
+                    else
+                    {
+                        NPC.direction = -1;
+                        NPC.TargetClosest(true);
+                    }
+
+
+                    //&& NPC.Distance(player.Center) < 130 && NPC.velocity.X <= 1.5f && NPC.velocity.Y <= -0.5f
+
+
+                }
+                */
+
+
+            }
         }
 
         public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
         {
-            spearTimer = 0;
+
+            tsorcRevampAIs.RedKnightOnHit(NPC, true);
+            if (Main.rand.NextBool(3))
+            {
+                spearTimer = 0;
+            }
+            
         }
 
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
-            if(projectile.DamageType == DamageClass.Melee)
+
+            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+
+            if (projectile.DamageType == DamageClass.Melee)
             {
-                spearTimer = 0;
+                if (Main.rand.NextBool(3))
+                {
+                    spearTimer = 0;
+                }
             }
         }
 

@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items
                                "\ntake you to the village. Additionally, instant-heal items won't heal you" +
                                "\nSeek out the Emerald Herald, perhaps she has a gift for you..." +
                                "\n[c/ca1e00:This mode is intended for players experienced with the mod, and is not recommended]" +
-                               "\n[c/ca1e00:on first playthroughs. There are no special rewards for enabling this, only pain]");
+                               "\n[c/ca1e00:on first playthroughs. There is now one symbolic reward for beating the game as the Bearer of the Curse.]");
 
             ItemID.Sets.ItemNoGravity[Item.type] = true; // Makes item float in world.
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(20, 6));

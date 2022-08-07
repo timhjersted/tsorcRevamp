@@ -50,13 +50,15 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HolyArrow, 1, 100, 150));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.UnicornHorn, 1, 1, 2));
         }
+
         
             
-        
+
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0f;
+            
 
             if (Main.hardMode && !Main.dayTime && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneOverworldHeight && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(140))
             {
@@ -133,6 +135,29 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         #endregion
+
+        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        {
+
+            tsorcRevampAIs.RedKnightOnHit(NPC, true);
+           
+            if (Main.rand.NextBool(15))
+            {
+                tsorcRevampAIs.Teleport(NPC, 30, false);
+            }
+
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        {
+            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+
+            if (Main.rand.NextBool(15))
+            {
+                tsorcRevampAIs.Teleport(NPC, 40, false);
+            }
+
+        }
 
         public override void AI()
         {
