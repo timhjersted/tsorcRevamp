@@ -16,9 +16,9 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
                 "\nYou can recast with mana to force it to return early" +
                 "\nA third recast returns the Orb instantly" +
                 "\nThe orb deals more damage on the way back" +
-                "\nEach hit gathers a stack of Essence Thief" +
+                "\nEach hit gathers a stack of Essence Thief, crits gather 2" +
                 "\nUpon reaching 9 stacks, the next cast will have 10% lifesteal" +
-                "\n(Tier 2: Spawn a blue homing flame on critical hits and on the empowered attacks hits)" +
+                "\n(Tier 2: Spawn 3 blue homing flames upon reaching 9 stacks)" +
                 "\n(Tier 3: Right click to dash in mouse direction and spawn blue flames while dashing)");
 
         }
@@ -32,9 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Item.noMelee = true;
             Item.channel = true;
             Item.useTurn = false;
-            Item.useStyle = ItemUseStyleID.Shoot;
-            Item.shoot = ModContent.ProjectileType<OoDOrb1>();
-            Item.shootSpeed = 4f;
+            Item.useStyle = ItemUseStyleID.HoldUp;
             Item.holdStyle = ItemHoldStyleID.HoldFront;
             Item.useAnimation = 30;
             Item.useTime = 30;
@@ -42,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Item.autoReuse = false;
             Item.rare = ItemRarityID.Green;
             Item.value = Item.buyPrice(0, 10, 0, 0);
-            Item.mana = 100;
+            Item.mana = 50;
             Item.DamageType = DamageClass.Magic;
         }
         public override void UpdateInventory(Player player)
