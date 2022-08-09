@@ -23,11 +23,26 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Projectile.localNPCHitCooldown = 10;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 240;
+            Projectile.timeLeft = 99999999;
         }
         public override void AI()
         {
             Player owner = Main.player[Projectile.owner];
+
+            if (!owner.active || owner.dead || owner.noItems || owner.CCed || Vector2.Distance(Projectile.Center, owner.Center) > 900f)
+            {
+                Projectile.Kill();
+                return;
+            }
+
+            if (owner.direction == 1)
+            {
+                Projectile.position = owner.Center + new Vector2(7, -14);//7
+            }
+            else
+            {
+                Projectile.position = owner.Center + new Vector2(-29, -14);
+            }
 
             if (returntimer1 <= 0)
             {
@@ -35,13 +50,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 
             Visuals();
         }
-        public override void Kill(int timeLeft)
-        {
-            if (timeLeft <= 1)
-            {
-                OoDIAnim1.OoDOrb1Exists = false;
-            }
-        }
+
         private void Visuals()
         {
             int frameSpeed = 5;

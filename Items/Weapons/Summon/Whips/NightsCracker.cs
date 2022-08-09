@@ -59,5 +59,4 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.Register();
 		}
 	}
-}
-*/
+}*/
