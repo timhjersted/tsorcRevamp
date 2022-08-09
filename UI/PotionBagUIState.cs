@@ -33,7 +33,16 @@ namespace tsorcRevamp.UI
             PotionBagUI.Width.Set(400, 0f);
             PotionBagUI.Height.Set(255, 0f);
             PotionBagUI.BackgroundColor = new Color(30, 29, 43);
-
+            
+            PotionBagUI.OnUpdate += (UIElement affectedElement) => 
+            {
+                //Don't use the player's held item if the mouse is hovering over this.
+                if (affectedElement.ContainsPoint(Main.MouseScreen))
+                {
+                    Main.LocalPlayer.mouseInterface = true;
+                }
+            };
+            
             int slotIndex = 0;
             for (int i = 0; i < 5; i++)
             {
