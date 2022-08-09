@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿/*
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -23,7 +24,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
             Item.value = PriceByRarity.Purple_11;
             Item.rare = ItemRarityID.Purple;
         }
-/*
+
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
@@ -36,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
 
             recipe.Register();
         }
-*/
+
         public override void UpdateEquip(Player player)
         {
             player.manaCost -= 0.1f;
@@ -46,3 +47,4 @@ namespace tsorcRevamp.Items.Accessories.Magic
         }
     }
 }
+*/
