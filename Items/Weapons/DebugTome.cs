@@ -37,16 +37,9 @@ namespace tsorcRevamp.Items.Weapons
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
-            if (Main.GameMode == 1)
-            {
-                Main.GameMode = 2;
-            }
-            else
-            {
-                Main.GameMode = 1;
-            }
+            
             Main.NewText(player.position / 16);            
-            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyLightningStrike>(), damage, knockBack, Main.myPlayer);
+            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Marilith.CataclysmicFirestorm>(), damage, knockBack, Main.myPlayer);
             //Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
             //speed.Normalize();
             //Main.NewText(Projectiles.Enemy.EnemyGenericLaser.Intersections(screenRect, position, speed));

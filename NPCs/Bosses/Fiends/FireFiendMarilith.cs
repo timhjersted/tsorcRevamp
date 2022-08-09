@@ -1,8 +1,13 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Enemy.Marilith;
 
 namespace tsorcRevamp.NPCs.Bosses.Fiends
 {
@@ -13,12 +18,12 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         {
             NPC.scale = 1;
             NPC.npcSlots = 10;
+            NPC.aiStyle = -1;
             Main.npcFrameCount[NPC.type] = 8;
             NPC.width = 120;
             NPC.height = 160;
-            NPC.damage = 260;
-            NPC.defense = 40;
-            NPC.aiStyle = 22;
+            NPC.damage = 60;
+            NPC.defense = 38;
             AnimationType = -1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
@@ -42,16 +47,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             DisplayName.SetDefault("Fire Fiend Marilith");
         }
 
-        int lightningDamage = 86;
-        int antiMatterBlastDamage = 96;
-        int crazedPurpleCrushDamage = 76;
-
-        //oolicile sorcerer
-        public float FlameShotTimer;
-        public float FlameShotCounter;
-
-        //chaos
-        int holdTimer = 0;
+        int holdBallDamage = 50;
+        int fireBallDamage = 55;
+        int lightningDamage = 85;
+        int fireStormDamage = 50;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -59,313 +58,490 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.defense = NPC.defense += 12;
         }
 
-        #region AI
+
+        //If this is set to anything but -1, the boss will *only* use that attack ID
+        int testAttack = -1;
+        MarilithMove CurrentMove
+        {
+            get => MoveList[MoveIndex];
+        }
+
+        List<MarilithMove> MoveList;
+
+        //Controls what move is currently being performed
+        public int MoveIndex
+        {
+            get => (int)NPC.ai[0];
+            set => NPC.ai[0] = value;
+        }
+
+        //Used by moves to keep track of how long they've been going for
+        public int MoveCounter
+        {
+            get => (int)NPC.ai[1];
+            set => NPC.ai[1] = value;
+        }
+
+        public Player Target
+        {
+            get => Main.player[NPC.target];
+        }
+
+        public int MoveTimer = 0;
         NPCDespawnHandler despawnHandler;
+        float introTimer = 0;
         public override void AI()
         {
+            if(introTimer < 120)
+            {
+                introTimer++;
+            }
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            bool flag25 = false;
-
-            //Flame attack starts at 2/3 health
-            if (NPC.life <= 200000)
-            { 
-                FlameShotTimer++;
-            }
-
-            Player player = Main.player[NPC.target];
-            //chaos code: announce proximity debuffs once
-            if (holdTimer > 1)
+            Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0.8f, 0f, 0.2f);
+            MoveTimer++;
+            
+            if (MoveList == null)
             {
-                holdTimer--;
+                InitializeMoves();
+                InitializeFirewalls();                
             }
-            //Proximity Debuffs
-            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1200)
+            
+            if (testAttack != -1)
             {
-                player.AddBuff(BuffID.Oiled, 600, false);
-                player.AddBuff(BuffID.Poisoned, 60, false);
-
-                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
-                {
-                    Main.NewText("Marilith has poisoned the air with an incendiary fog!", 199, 21, 133);//medium violet red
-                    holdTimer = 3000;
-                }
-                
+                MoveIndex = testAttack;
             }
-            //getting close to marilith triggers on fire!
-            if (NPC.Distance(player.Center) < 350)
+            if (MoveIndex >= MoveList.Count)
             {
-                player.AddBuff(BuffID.OnFire, 120, false);
-                
+                MoveIndex = 0;
             }
 
-            //FIRE FROM ABOVE ATTACK
-            //Counts up each tick. Used to space out shots
-            if (FlameShotTimer >= 25 && FlameShotCounter < 11)
-            {
+            //Main.NewText(Main.dust);
+            CurrentMove.Move();
 
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 500 + Main.rand.Next(600), (float)player.position.Y - 600f, (float)(-40 + Main.rand.Next(80)) / 10, 4.5f, ProjectileID.CultistBossFireBall, crazedPurpleCrushDamage, 2f, Main.myPlayer); //ProjectileID.NebulaBlaze2 would be cool to use at the end of attraidies or gwyn fight with the text, "The spirit of your father summons cosmic light to aid you!"
-
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                NPC.netUpdate = true; //new
-
-                FlameShotTimer = 0;
-                FlameShotCounter++;
-
-            }
-            //Chance to trigger fire from above
-            if (Main.rand.NextBool(900))
+            for(int i = 0; i < Main.maxPlayers; i++)
             {
-                FlameShotCounter = 0;
-            }
-
-            if (NPC.ai[1] >= 10f && Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                NPC.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
-                if (Main.rand.NextBool(90))
+                if (Main.player[i].active && !Main.player[i].dead && NPC.Distance(Main.player[i].Center) < (270f * introTimer / 120f))
                 {
-                    Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 15);
-                    projVector += Main.rand.NextVector2Circular(5, 5);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>(), lightningDamage, 0f, Main.myPlayer, Main.rand.Next(30, 180));
-                    //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.1f, Pitch = -0.1f }, NPC.Center);//magic ice
-                    NPC.ai[1] = 1f;
-                }
-                if (Main.rand.NextBool(220))
-                {
-                    Vector2 startVector = new Vector2((NPC.position.X + ((((NPC.width + 50) * 5f) * (NPC.direction * 2)) / 20f) + 130), NPC.position.Y + (NPC.height - 75));
-                    Vector2 projVector = UsefulFunctions.GenerateTargetingVector(startVector, Main.player[NPC.target].Center, 8);
-                    projVector += Main.rand.NextVector2Circular(7, 7);
-                    projVector += Main.player[NPC.target].velocity / 2;
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.Okiku.PhasedMatterBlast>(), antiMatterBlastDamage, 0f, Main.myPlayer);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.8f, Pitch = 0.0f }, player.Center); //wobble
-                    NPC.ai[1] = 1f;
-                }
-                if (Main.rand.NextBool(20))
-                {
-                    Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 11);
-                    projVector += Main.rand.NextVector2Circular(3, 3);
-                    projVector += Main.player[NPC.target].velocity / 2;
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>(), crazedPurpleCrushDamage, 0f, Main.myPlayer);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.3f, Pitch = 0.5f }, NPC.Center); //acid flame
-                    NPC.ai[1] = 1f;
+                    Main.player[i].AddBuff(BuffID.Burning, 180);
                 }
             }
-
-            if (NPC.justHit)
-            {
-                NPC.ai[2] = 0f;
-            }
-            if (NPC.ai[2] >= 0f)
-            {
-                int num258 = 16;
-                bool flag26 = false;
-                bool flag27 = false;
-                if (NPC.position.X > NPC.ai[0] - (float)num258 && NPC.position.X < NPC.ai[0] + (float)num258)
-                {
-                    flag26 = true;
-                }
-                else
-                {
-                    if ((NPC.velocity.X < 0f && NPC.direction > 0) || (NPC.velocity.X > 0f && NPC.direction < 0))
-                    {
-                        flag26 = true;
-                    }
-                }
-                num258 += 24;
-                if (NPC.position.Y > NPC.ai[1] - (float)num258 && NPC.position.Y < NPC.ai[1] + (float)num258)
-                {
-                    flag27 = true;
-                }
-                if (flag26 && flag27)
-                {
-                    NPC.ai[2] += 1f;
-                    if (NPC.ai[2] >= 30f && num258 == 16)
-                    {
-                        flag25 = true;
-                    }
-                    if (NPC.ai[2] >= 60f)
-                    {
-                        NPC.ai[2] = -200f;
-                        NPC.direction *= -1;
-                        NPC.velocity.X = NPC.velocity.X * -1f;
-                        NPC.collideX = false;
-                    }
-                }
-                else
-                {
-                    NPC.ai[0] = NPC.position.X;
-                    NPC.ai[1] = NPC.position.Y;
-                    NPC.ai[2] = 0f;
-                }
-            }
-            else
-            {
-                NPC.ai[2] += 1f;
-                if (Main.player[NPC.target].position.X + (float)(Main.player[NPC.target].width / 2) > NPC.position.X + (float)(NPC.width / 2))
-                {
-                    NPC.direction = -1;
-                }
-                else
-                {
-                    NPC.direction = 1;
-                }
-            }
-            int num259 = (int)((NPC.position.X + (float)(NPC.width / 2)) / 16f) + NPC.direction * 2;
-            int num260 = (int)((NPC.position.Y + (float)NPC.height) / 16f);
-            bool flag28 = true;
-            //bool flag29; //What is this? It doesn't seem to do anything, so i'm commenting it out for now.
-            int num261 = 3;
-            for (int num269 = num260; num269 < num260 + num261; num269++)
-            {
-                if (Main.tile[num259, num269] == null)
-                {
-                    Main.tile[num259, num269].ClearTile();
-                }
-                if ((Main.tile[num259, num269].HasTile && Main.tileSolid[(int)Main.tile[num259, num269].TileType]) || Main.tile[num259, num269].LiquidAmount > 0)
-                {
-                    //	if (num269 <= num260 + 1)
-                    //{
-                    //		flag29 = true;
-                    //	}
-                    flag28 = false;
-                    break;
-                }
-            }
-            if (flag25)
-            {
-                //	flag29 = false;
-                flag28 = true;
-            }
-            if (flag28)
-            {
-                NPC.velocity.Y = NPC.velocity.Y + 0.1f;
-                if (NPC.velocity.Y > 3f)
-                {
-                    NPC.velocity.Y = 3f;
-                }
-            }
-            else
-            {
-                if (NPC.directionY < 0 && NPC.velocity.Y > 0f)
-                {
-                    NPC.velocity.Y = NPC.velocity.Y - 0.1f;
-                }
-                if (NPC.velocity.Y < -4f)
-                {
-                    NPC.velocity.Y = -4f;
-                }
-            }
-            if (NPC.collideX)
-            {
-                NPC.velocity.X = NPC.oldVelocity.X * -0.4f;
-                if (NPC.direction == -1 && NPC.velocity.X > 0f && NPC.velocity.X < 1f)
-                {
-                    NPC.velocity.X = 1f;
-                }
-                if (NPC.direction == 1 && NPC.velocity.X < 0f && NPC.velocity.X > -1f)
-                {
-                    NPC.velocity.X = -1f;
-                }
-            }
-            if (NPC.collideY)
-            {
-                NPC.velocity.Y = NPC.oldVelocity.Y * -0.25f;
-                if (NPC.velocity.Y > 0f && NPC.velocity.Y < 1f)
-                {
-                    NPC.velocity.Y = 1f;
-                }
-                if (NPC.velocity.Y < 0f && NPC.velocity.Y > -1f)
-                {
-                    NPC.velocity.Y = -1f;
-                }
-            }
-            float num270 = 2f;
-            if (NPC.direction == -1 && NPC.velocity.X > -num270)
-            {
-                NPC.velocity.X = NPC.velocity.X - 0.1f;
-                if (NPC.velocity.X > num270)
-                {
-                    NPC.velocity.X = NPC.velocity.X - 0.1f;
-                }
-                else
-                {
-                    if (NPC.velocity.X > 0f)
-                    {
-                        NPC.velocity.X = NPC.velocity.X + 0.05f;
-                    }
-                }
-                if (NPC.velocity.X < -num270)
-                {
-                    NPC.velocity.X = -num270;
-                }
-            }
-            else
-            {
-                if (NPC.direction == 1 && NPC.velocity.X < num270)
-                {
-                    NPC.velocity.X = NPC.velocity.X + 0.1f;
-                    if (NPC.velocity.X < -num270)
-                    {
-                        NPC.velocity.X = NPC.velocity.X + 0.1f;
-                    }
-                    else
-                    {
-                        if (NPC.velocity.X < 0f)
-                        {
-                            NPC.velocity.X = NPC.velocity.X - 0.05f;
-                        }
-                    }
-                    if (NPC.velocity.X > num270)
-                    {
-                        NPC.velocity.X = num270;
-                    }
-                }
-            }
-            if (NPC.directionY == -1 && (double)NPC.velocity.Y > -1.5)
-            {
-                NPC.velocity.Y = NPC.velocity.Y - 0.04f;
-                if ((double)NPC.velocity.Y > 1.5)
-                {
-                    NPC.velocity.Y = NPC.velocity.Y - 0.05f;
-                }
-                else
-                {
-                    if (NPC.velocity.Y > 0f)
-                    {
-                        NPC.velocity.Y = NPC.velocity.Y + 0.03f;
-                    }
-                }
-                if ((double)NPC.velocity.Y < -1.5)
-                {
-                    NPC.velocity.Y = -1.5f;
-                }
-            }
-            else
-            {
-                if (NPC.directionY == 1 && (double)NPC.velocity.Y < 1.5)
-                {
-                    NPC.velocity.Y = NPC.velocity.Y + 0.04f;
-                    if ((double)NPC.velocity.Y < -1.5)
-                    {
-                        NPC.velocity.Y = NPC.velocity.Y + 0.05f;
-                    }
-                    else
-                    {
-                        if (NPC.velocity.Y < 0f)
-                        {
-                            NPC.velocity.Y = NPC.velocity.Y - 0.03f;
-                        }
-                    }
-                    if ((double)NPC.velocity.Y > 1.5)
-                    {
-                        NPC.velocity.Y = 1.5f;
-                    }
-                }
-            }
-            Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.4f, 0f, 0.25f);
         }
-        #endregion
 
-        #region Frames
+        //Marilith fires a barrage of fireballs which home in on the player
+        //A dust ring around them shrinks, and when it hits radius 0 the bombs explode like Voodoo Shaman poison storms (except fire)
+        private void ExpandingFireBombs()
+        {
+            MarilithFloat();
+            if (MoveTimer % 240 == 0 && Main.netMode != NetmodeID.MultiplayerClient && MoveTimer <= 1250)
+            {
+                float speed = 8;
+                float dist = Vector2.Distance(NPC.Center, Target.Center);
+
+                Vector2 predictiveVector = new Vector2(0, speed).RotatedByRandom(MathHelper.Pi);
+
+                
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, predictiveVector, ModContent.ProjectileType<MarilithCataclysm>(), fireBallDamage, 0, Main.myPlayer, 0, Target.whoAmI);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, predictiveVector.RotatedBy(2 * MathHelper.Pi / 3), ModContent.ProjectileType<MarilithCataclysm>(), fireBallDamage, 0, Main.myPlayer, 0, Target.whoAmI);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, predictiveVector.RotatedBy(-2 * MathHelper.Pi / 3), ModContent.ProjectileType<MarilithCataclysm>(), fireBallDamage, 0, Main.myPlayer, 0, Target.whoAmI);
+                
+            }
+
+            if (MoveTimer >= 1300)
+            {
+                NextAttack();
+            }
+        }
+
+        //Marilith summons a plume of ash that rises to the top of the arena and spreads out, creating storm clouds across the top that rain and extinguish the fire
+        //Lightning and fireballs rain down on the player while Marilith fires homing fireballs right at the player
+        //When the attack ends and the fire around the arena border re-ignites
+        private void VolcanicStorm()
+        {
+            MarilithFloat();            
+            if(MoveTimer < 300)
+            {
+                Vector2 smokeOrigin = NPC.Center;
+                smokeOrigin.Y -= 100;
+
+                int i = (int)smokeOrigin.X / 16;
+                int j = (int)smokeOrigin.Y / 16;
+                int heightToTop = 0;
+                for (int index = 1; index < 800; index++)
+                {
+                    if (!Main.tile[i, j - index].HasTile || (!Main.tileSolid[Main.tile[i, j - index].TileType]))
+                    {
+                        heightToTop++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                for (int l = 0; l < 5; l++)
+                {
+                    float height;
+
+                    if(heightToTop * 16 <= 100)
+                    {
+                        height = 0;
+                    }
+                    else
+                    {
+                        height = Main.rand.Next((-heightToTop * 16), -100);
+                    }
+
+                    float percent = (MoveTimer / 180f);
+                    if(percent > 1)
+                    {
+                        percent = 1;
+                    }
+                    height *= percent;
+
+                    smokeOrigin.Y = NPC.Center.Y + height;
+                    Dust d = Dust.NewDustPerfect(smokeOrigin + new Vector2(0, 48), 174, Vector2.Zero, 0, default, 2);
+                    d.noGravity = true;
+                    d.velocity.X = Main.rand.NextFloat(-height / 20, height / 20);
+                    d.velocity.Y = -8;
+                    int goreIndex = Gore.NewGore(NPC.GetSource_FromThis(), smokeOrigin + new Vector2(-15, 0), default(Vector2), Main.rand.Next(61, 64), Main.rand.NextFloat(1, 3));
+                    Main.gore[goreIndex].velocity.X = Main.rand.NextFloat(-height / 50, height / 50);
+                    Main.gore[goreIndex].velocity.Y = 5 / (height / 100);
+                }
+            }
+            else
+            {
+                if (MoveTimer % 20 == 0 && MoveTimer <= 1700)
+                {
+                    float dist = Vector2.Distance(NPC.Center, Target.Center);                    
+                    float time = dist / 16;
+
+                    Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + (Target.velocity * time / 2), 20);
+                    //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithFireball>(), fireBallDamage, 0, Main.myPlayer, 0, Target.whoAmI);
+                    
+                    Vector2 lightningCenter = new Vector2(Main.rand.Next(3107, 3350), 1682) * 16;
+                    float distance = Vector2.Distance(lightningCenter, Target.Center);
+                    Vector2 lightningVector = UsefulFunctions.GenerateTargetingVector(lightningCenter, Target.Center, distance / 30);
+                    lightningVector += Target.velocity;
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), lightningCenter, lightningVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+
+                    Vector2 fireballCenter = new Vector2(Main.rand.Next(3107, 3350), 1687) * 16;
+                    Vector2 fireballVector = UsefulFunctions.GenerateTargetingVector(fireballCenter, Target.Center, 10);
+                    fireballVector += Target.velocity * Main.rand.NextFloat(0, 1);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), fireballCenter, fireballVector, ModContent.ProjectileType<MarilithFireball>(), fireBallDamage, 0, Main.myPlayer, 0, Target.whoAmI);
+
+                }
+            }
+
+            if (MoveTimer >= 1800)
+            {
+                /*
+                for(int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<MarilithFireball>())
+                    {
+                        Main.projectile[i].Kill();
+                    }
+                }*/
+                NextAttack();
+            }
+        }
+
+        //Marilith aimes a set of either 5 red or one blue targeting laser near the player, aimed at their predicted future position
+        //One second later she fires either a barrage of inferno blasts from the incineration tome if it's red, or a bolt of lightning if it's blue
+        private void Barrage()
+        {
+            MarilithFloat();
+            if(MoveTimer % 40 == 0)
+            {
+                float distance = NPC.Distance(Target.Center);
+                Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, distance / 30);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+                targetVector += Target.velocity;
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+                targetVector += Target.velocity * 2;
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+            }
+            if(MoveTimer >= 600)
+            {
+                NextAttack();
+            }
+        }
+
+        //Gusts of wind emerge from Marilith pushing the player toward the walls
+        //She fires barrages of Hold Balls at the player, rendering them unable to escape being pushed into the fire
+        private void HoldBallStorm()
+        {
+            NPC.Center = new Vector2(3228, 1731)* 16;
+            NPC.velocity *= 0.98f;
+
+            float intensity = MoveTimer / 30f;            
+            if(MoveTimer > 60)
+            {
+                intensity = 1;
+
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    if (Main.player[i].active && !Main.player[i].dead)
+                    {
+                        Main.player[i].AddBuff(ModContent.BuffType<Buffs.MarilithWind>(), 5);
+
+                        if (MoveTimer % 45 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            holdBallDamage = 50;
+                            int pattern = Main.rand.Next(4);
+                            if (pattern == 0)
+                            {
+                                Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[i].Center, 17);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(128, 0).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-128, 0).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                            }
+
+                            if (pattern == 1)
+                            {
+                                Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[i].Center, 17) + Main.player[i].velocity / 5;
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 80).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -80).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 160).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -160).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 240).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -240).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                            }
+
+                            if (pattern == 2)
+                            {
+                                Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[i].Center, 17) + Main.player[i].velocity / 2;
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(128, 128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-128, 128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(128, -128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-128, -128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                            }
+
+                            if (pattern == 3)
+                            {
+                                for (int j = 0; j < 12; j++)
+                                {
+                                    Vector2 offset = Main.rand.NextVector2CircularEdge(120, 120);
+                                    Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center + offset, Main.player[i].Center + Main.rand.NextVector2CircularEdge(500, 500), 14);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, targetVector + Main.player[i].velocity / 2, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                }
+                            }
+                        }
+                    }
+                }
+            }     
+
+
+            for(int i = 0; i < 30 * intensity; i++)
+            {
+                Vector2 dustVec = Main.rand.NextVector2CircularEdge(300, 300);
+                Vector2 dustVel = new Vector2(Main.rand.NextFloat(0, 17), 0);
+                if(dustVec.X < 0)
+                {
+                    dustVel.X *= -1;
+                }
+                Dust.NewDustPerfect(NPC.Center + dustVec, DustID.InfernoFork, dustVel, 0, default, 2).noGravity = true;
+            }
+
+            for (int i = 0; i < 5 * intensity; i++)
+            {
+                Vector2 dustVec = NPC.Center;
+                dustVec.X += Main.rand.NextFloat(-2000, 2000);
+                dustVec.Y += Main.rand.NextFloat(-1000, 1000);
+                Vector2 dustVel = new Vector2(16, Main.rand.NextFloat(-2, 2));
+                if(dustVec.X < NPC.Center.X)
+                {
+                    dustVel.X *= -1;
+                }
+
+                if (Main.rand.NextBool())
+                {
+                    Gore.NewGore(NPC.GetSource_FromThis(), dustVec, dustVel, Main.rand.Next(61, 64), Main.rand.NextFloat(0.5f, 2));
+                }
+                else
+                {
+                    Dust.NewDustPerfect(NPC.Center + dustVec, DustID.TintableDust, dustVel, 0, Color.White * 0.8f, Main.rand.NextFloat(0.5f, 3));
+                }
+            }
+
+
+            if (MoveTimer > 900)
+            {
+                NextAttack();
+            }
+        }
+
+        private void MarilithFloat()
+        {
+            Vector2 marilithMaxSpeed = new Vector2(6, 4);
+            float marilithAccelerationX = 0.1f;
+            float marilithAccelerationY = 0.1f;
+
+            if (NPC.Center.X < Target.Center.X)
+            {
+                NPC.velocity.X += marilithAccelerationX;
+            }
+            else
+            {
+                NPC.velocity.X -= marilithAccelerationX;
+            }
+
+            //This is the part that makes it bob up and down as it moves
+            //If it's moving up
+            if (NPC.velocity.Y < 0)
+            {
+                //And it's not more than 120 units above the player
+                if (Target.Center.Y - NPC.Center.Y <= 120)
+                {
+                    //Keep moving up
+                    NPC.velocity.Y -= marilithAccelerationY;
+                }
+                //If we are more than 120 units above the player, start accelerating down
+                else
+                {
+                    NPC.velocity.Y += marilithAccelerationY;
+                }
+            }
+            else
+            {
+                //Do the same thing, but reversed if it's moving down. Could probably simplify this, but this format makes it clear what it's doing.
+                if (Target.Center.Y - NPC.Center.Y <= -120)
+                {
+                    NPC.velocity.Y -= marilithAccelerationY;
+                }
+                else
+                {
+                    NPC.velocity.Y += marilithAccelerationY;
+                }
+            }
+
+            NPC.velocity = Vector2.Clamp(NPC.velocity, -marilithMaxSpeed, marilithMaxSpeed);
+
+
+        }
+
+        private void NextAttack()
+        {
+            MoveIndex++;
+            if (MoveIndex > MoveList.Count)
+            {
+                MoveIndex = 0;
+            }
+
+            MoveTimer = 0;
+            MoveCounter = 0;
+        }
+
+        private void InitializeMoves(List<int> validMoves = null)
+        {
+            MoveList = new List<MarilithMove> {
+                new MarilithMove(ExpandingFireBombs, MarilithAttackID.Firebombs, "ExpandingFireBombs"),
+                new MarilithMove(VolcanicStorm, MarilithAttackID.Stormclouds, "VolcanicStorm"),
+                new MarilithMove(Barrage, MarilithAttackID.Barrage, "Barrage"),
+                new MarilithMove(HoldBallStorm, MarilithAttackID.Flamewalls, "HoldBallStorm"),
+                };
+        }
+
+        private void InitializeFirewalls()
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                //3111, 1682 Top left
+                //3346, 1682 Top right
+                //3346, 1781 Bottom right
+                //3111, 1781 Bottom left
+
+                //Left firewall
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(3111, 1731) * 16, Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 0, 100);
+                //Right firewall
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(3346, 1731) * 16, Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 1, 100);
+                //Top firewall
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(3228, 1682) * 16, Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 2, 237);
+                //Bottom firewall
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(3228, 1784) * 16, Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 3, 237);
+            }
+            else
+            {
+                //TODO: Actually configure these correctly lol
+                //Left firewall
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-1000, 0), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 0, 100);
+                //Right firewall
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(1000, 0), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 1, 100);
+                //Top firewall
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 800), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 2, 237);
+                //Bottom firewall
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 800), Vector2.Zero, ModContent.ProjectileType<MarilithFirewall>(), 15, 0, Main.myPlayer, 3, 237);
+            }
+        }
+
+        private class MarilithAttackID
+        {
+            public const short Firebombs = 0;
+            public const short Barrage = 1;
+            public const short Stormclouds = 2;
+            public const short Flamewalls = 3;
+        }
+        private class MarilithMove
+        {
+            public Action Move;
+            public int ID;
+            public Action<SpriteBatch, Color> Draw;
+            public string Name;
+
+            public MarilithMove(Action MoveAction, int MoveID, string AttackName, Action<SpriteBatch, Color> DrawAction = null)
+            {
+                Move = MoveAction;
+                ID = MoveID;
+                Draw = DrawAction;
+                Name = AttackName;
+            }
+        }
+        public static Texture2D texture;
+        public static ArmorShaderData data;
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)        
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+
+            //Apply the shader, caching it as well
+            if (data == null)
+            {
+                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/MarilithFireAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "MarilithFireAuraPass");
+            }
+
+
+            if (texture == null || texture.IsDisposed)
+            {
+                texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Marilith/CataclysmicFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            }
+
+
+            //data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer);
+
+            //Pass the fire flow direction parameter in through the "color" variable, because there isn't a "direction" one
+            data.UseColor(NPC.Center.X, NPC.Center.Y, 0);
+            data.UseSaturation(introTimer / 120f);
+            //Apply the shader
+            data.Apply(null);
+
+            Rectangle recsize = new Rectangle(0, 0, texture.Width, texture.Height);
+
+            //Draw the rendertarget with the shader
+            Main.spriteBatch.Draw(texture, NPC.Center - Main.screenPosition - new Vector2(recsize.Width, recsize.Height) / 2 * 2.5f, recsize, Color.White, 0, Vector2.Zero, 2.5f, SpriteEffects.None, 0);
+
+            //Restart the spritebatch so the shader doesn't get applied to the rest of the game
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+
+
+            return true;
+        }
+
         public override void FindFrame(int currentFrame)
         {
             int num = 1;
@@ -401,7 +577,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 NPC.alpha = 200;
             }
         }
-        #endregion
         public override bool CheckActive()
         {
             return false;
@@ -410,7 +585,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         {
             potionType = ItemID.SuperHealingPotion;
         }
-
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.MarilithBag>()));
         }

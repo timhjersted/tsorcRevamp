@@ -25,14 +25,17 @@ namespace tsorcRevamp.Buffs
 
             dustPos = player.Center + Main.rand.NextVector2Circular(80, 80);
             Dust.NewDustDirect(dustPos, 0, 0, 259, 0, -5, Scale: 1).noGravity = true;
+            player.wingTime = player.wingTimeMax;
+            player.rocketTime = player.rocketTimeMax;
+            player.buffTime[buffIndex] = 500;
 
             if (player.wingTime < player.wingTimeMax)
             {
-                player.wingTime += 5;
+                //player.wingTime += 5;
             }
             if (player.rocketTime < player.rocketTimeMax)
             {
-                player.rocketTime += 5;
+                //player.rocketTime += 5;
             }
         }
     }

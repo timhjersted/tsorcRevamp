@@ -387,7 +387,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
 
         //20% Faster than converting drawStart into a Point and then running screenRect.Contains(point);
-        bool FastContainsPoint(Rectangle screenrect, Vector2 point)
+        public static bool FastContainsPoint(Rectangle screenrect, Vector2 point)
         {
             if (point.X < screenrect.X)
             {
@@ -587,10 +587,25 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
             }
 
-            if (FiringTimeLeft > 0)
+            
+
+            
+
+            if(TargetingMode == 0)
             {
-                FiringTimeLeft--;
-                if (FiringTimeLeft == 0)
+                if (FiringTimeLeft > 0)
+                {
+                    FiringTimeLeft--; 
+                    if (FiringTimeLeft == 0)
+                    {
+                        Projectile.Kill();
+                    }
+                }                
+            }
+            else
+            {
+                TelegraphTime--;
+                if(TelegraphTime <= 0)
                 {
                     Projectile.Kill();
                 }

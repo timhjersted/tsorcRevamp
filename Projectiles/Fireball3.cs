@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -7,7 +8,12 @@ namespace tsorcRevamp.Projectiles
 {
     class Fireball3 : ModProjectile
     {
-
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Firestorm Detonator");
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
+        }
         public override void SetDefaults()
         {
             Projectile.width = 20;
@@ -29,9 +35,15 @@ namespace tsorcRevamp.Projectiles
         }
 
         public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.DD2BetsyFireball;
+        float[] trailRotations = new float[6] { 0, 0, 0, 0, 0, 0 };
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            for (int i = 5; i > 0; i--)
+            {
+                trailRotations[i] = trailRotations[i - 1];
+            }
+            trailRotations[0] = Projectile.rotation;
             for (int i = 0; i < 3; i++)
             {
                 Vector2 dustSpeed = Main.rand.NextVector2Circular(4, 4);
@@ -66,6 +78,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + Main.rand.NextVector2CircularEdge(24, 24), Vector2.Zero, ModContent.ProjectileType<FireballInferno1>(), Projectile.damage / 2, 0, default, 9);
         }
 
+        public static Texture2D texture;
         public override bool PreDraw(ref Color lightColor)
         {
             if(Projectile.timeLeft > 115)
@@ -74,7 +87,26 @@ namespace tsorcRevamp.Projectiles
             }
             else
             {
-                return true;
+                if (texture == null || texture.IsDisposed)
+                {
+                    texture = (Texture2D)ModContent.Request<Texture2D>(Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
+                }
+
+                Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+                Vector2 origin = sourceRectangle.Size() / 2f;
+
+                Vector2 offset = new Vector2(0, 0);
+
+                //Draw shadow trails
+                for (float i = ProjectileID.Sets.TrailCacheLength[Projectile.type] - 1; i >= 0; i--)
+                {
+                    Main.spriteBatch.Draw(texture, Projectile.oldPos[(int)i] - Main.screenPosition - offset, sourceRectangle, Color.OrangeRed * ((6 - i) / 6), trailRotations[(int)i], origin, Projectile.scale, SpriteEffects.None, 0);
+                }
+
+                //Draw actual npc
+                Main.spriteBatch.Draw(texture, Projectile.position - Main.screenPosition - offset, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
+
+                return false;
             }
         }
 

@@ -1210,6 +1210,48 @@ namespace tsorcRevamp
                     FastFallTimer--;
                 }
             }
+
+            if (Player.HasBuff<MarilithHold>() || Player.HasBuff<MarilithWind>())
+            {
+                int? marilithIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>());
+                if(marilithIndex != null)
+                {
+                    NPC marilith = Main.npc[marilithIndex.Value];
+                    if (Player.Center.X < marilith.Center.X)
+                    {
+                        if (Player.velocity.X > 0)
+                        {
+                            Player.velocity.X = 0;
+                        }
+                        else
+                        {
+                            Player.velocity.X -= 0.25f;
+                            
+                        }
+
+                        if (Player.HasBuff<MarilithHold>())
+                        {
+                            Player.velocity.X = -5;
+                        }
+                    }
+                    else
+                    {
+                        if (Player.velocity.X < 0)
+                        {
+                            Player.velocity.X = 0;
+                        }
+                        else
+                        {
+                            Player.velocity.X += 0.25f;
+                        }
+
+                        if (Player.HasBuff<MarilithHold>())
+                        {
+                            Player.velocity.X = 5;
+                        }
+                    }
+                }
+            }
         }
 
         public override void UpdateBadLifeRegen()

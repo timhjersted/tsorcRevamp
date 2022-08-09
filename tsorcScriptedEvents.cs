@@ -258,7 +258,7 @@ namespace tsorcRevamp
             ScriptedEvent SerrisEvent = new ScriptedEvent(new Vector2(1136, 956), 30, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>(), DustID.FireworkFountain_Blue, false, true, "The Twin Serris Worms have been enraged!", Color.Blue, false, SerrisCustomCondition, SerrisCustomAction);
 
             //MARILITH 
-            ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(3235, 1764), 30, ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>(), DustID.RedTorch, true, true, "The Fire Fiend has emerged from the heart of the Abyss!", Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(3235, 1770), 300, ModContent.NPCType<NPCs.Bosses.Fiends.MarilithIntro>(), DustID.RedTorch, false, false, "default", Color.Red, false, MarilithCustomCondition);
 
             //KRAKEN
             ScriptedEvent KrakenEvent = new ScriptedEvent(new Vector2(1821, 1702), 30, ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>(), DustID.MagicMirror, true, true, "The Water Fiend rises!", Color.Blue, false, SuperHardModeCustomCondition);
@@ -535,6 +535,18 @@ namespace tsorcRevamp
         public static bool SuperHardModeCustomCondition()
         {
             return tsorcRevampWorld.SuperHardMode;
+        }
+        public static bool MarilithCustomCondition()
+        {
+
+            if (/*tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()) ||*/ NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.MarilithIntro>()))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         public static bool GolemDownedCustomCondition()

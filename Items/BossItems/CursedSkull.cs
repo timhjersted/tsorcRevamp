@@ -29,15 +29,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-
-            if (Main.netMode == NetmodeID.SinglePlayer)
-            {
-                UsefulFunctions.BroadcastText("Skeletron has awoken!", 175, 75, 255);
-            }
-            else if (Main.netMode == NetmodeID.Server)
-            {
-                ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("Skeletron has awoken!"), new Color(175, 75, 255));
-            }
+            UsefulFunctions.BroadcastText("Skeletron has awoken!", 175, 75, 255);
             NPC.NewNPC(player.GetSource_ItemUse(Item), (int)player.position.X - 1070, (int)player.position.Y - 150, NPCID.SkeletronHead, 0);
 
             return true;

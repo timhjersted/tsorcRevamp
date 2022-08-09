@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Enums;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -103,11 +104,12 @@ namespace tsorcRevamp.Projectiles.Enemy
 
                                 for (int k = 0; k < dustCount; k++)
                                 {
+                                    /*
                                     Dust thisDust = Dust.NewDustPerfect(branches[i][j] + diff * k, DustID.AncientLight, Scale: scale);
                                     thisDust.noGravity = true;
                                     thisDust.velocity = Vector2.Zero;
                                     thisDust.rotation = Main.rand.NextFloatDirection();
-                                    thisDust.color = Color.Lerp(Color.White, Color.DarkBlue, lerpPercent);
+                                    thisDust.color = Color.Lerp(Color.White, Color.DarkBlue, lerpPercent);*/
                                 }
                             }
                         }
@@ -324,8 +326,11 @@ namespace tsorcRevamp.Projectiles.Enemy
                     float scaleFactor = (float)FiringTimeLeft / (float)FiringDuration;
 
                     Main.spriteBatch.End();
-                    Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);
 
+                    Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+                    ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer);
+                    
+                    data.Apply(null);
                     if (branches.Count > 0)
                     {
                         for (int i = 0; i < branches.Count; i++)
@@ -614,14 +619,20 @@ namespace tsorcRevamp.Projectiles.Enemy
                     currentFrame = 0;
                 }
             }
+            Main.spriteBatch.End();
 
-
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer);
+            
 
             float i = 0;
             Vector2 diff = unit - start;
             diff.Normalize();
 
             Vector2 startPos = start - diff * 3;
+            data.UseTargetPosition(startPos);
+            data.UseSaturation((float)(((float)FiringTimeLeft) / ((float)FiringDuration)));
+            data.Apply();
             for (; i <= distance; i += (bodyFrame.Height) * scale)
             {
                 Vector2 drawStart = startPos + i * diff;
