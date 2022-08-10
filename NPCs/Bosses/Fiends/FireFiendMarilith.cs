@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             AnimationType = -1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 300000;
+            NPC.lifeMax = 400000;
             NPC.timeLeft = 22500;
             NPC.alpha = 100;
             NPC.friendly = false;
@@ -49,7 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
         int holdBallDamage = 50;
         int fireBallDamage = 55;
-        int lightningDamage = 85;
+        int lightningDamage = 55;
         int fireStormDamage = 50;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -215,14 +215,16 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                     float dist = Vector2.Distance(NPC.Center, Target.Center);                    
                     float time = dist / 16;
 
-                    Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + (Target.velocity * time / 2), 20);
                     //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithFireball>(), fireBallDamage, 0, Main.myPlayer, 0, Target.whoAmI);
-                    
-                    Vector2 lightningCenter = new Vector2(Main.rand.Next(3107, 3350), 1682) * 16;
-                    float distance = Vector2.Distance(lightningCenter, Target.Center);
-                    Vector2 lightningVector = UsefulFunctions.GenerateTargetingVector(lightningCenter, Target.Center, distance / 30);
-                    lightningVector += Target.velocity;
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), lightningCenter, lightningVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+
+                    if (Main.rand.NextBool())
+                    {
+                        Vector2 lightningCenter = new Vector2(Main.rand.Next(3107, 3350), 1682) * 16;
+                        float distance = Vector2.Distance(lightningCenter, Target.Center);
+                        Vector2 lightningVector = UsefulFunctions.GenerateTargetingVector(lightningCenter, Target.Center, distance / 30);
+                        lightningVector += Target.velocity;
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), lightningCenter, lightningVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+                    }
 
                     Vector2 fireballCenter = new Vector2(Main.rand.Next(3107, 3350), 1687) * 16;
                     Vector2 fireballVector = UsefulFunctions.GenerateTargetingVector(fireballCenter, Target.Center, 10);
@@ -251,7 +253,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         private void Barrage()
         {
             MarilithFloat();
-            if(MoveTimer % 40 == 0)
+            if(MoveTimer % 60 == 0)
             {
                 float distance = NPC.Distance(Target.Center);
                 Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, distance / 30);

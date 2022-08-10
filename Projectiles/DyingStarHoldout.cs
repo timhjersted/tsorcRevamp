@@ -247,9 +247,12 @@ namespace tsorcRevamp.Projectiles
 
             player.ChangeDir(Projectile.direction);
             //player.heldProj = projectile.whoAmI;
-            player.itemTime = 2;
-            player.itemAnimation = 2;
 
+            if (player.altFunctionUse == 2)
+            {
+                player.itemTime = 2;
+                player.itemAnimation = 2;
+            }
             player.itemRotation = (Projectile.velocity * Projectile.direction).ToRotation();
         }
 

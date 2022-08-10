@@ -59,6 +59,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
             LaserDebuffs = new List<int>(BuffID.Electrified);
             DebuffTimers = new List<int>(300);
+            LaserName = "Fractoemissive Discharge";
 
             CastLight = true;
         }

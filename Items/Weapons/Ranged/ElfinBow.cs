@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void SetDefaults()
         {
             Item.autoReuse = true;
-            Item.damage = 350;
+            Item.damage = 450;
             Item.height = 58;
             Item.knockBack = 5;
             Item.noMelee = true;

@@ -26,7 +26,6 @@ namespace tsorcRevamp.Items.Accessories.Magic
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetDamage(DamageClass.Magic) *= .7f;
-            player.manaCost *= 2f;
             Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().GemBox = true;
         }
     }
