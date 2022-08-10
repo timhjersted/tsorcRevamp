@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.shoot = ProjectileID.PurificationPowder;
             Item.shootSpeed = 9;
             Item.useAmmo = AmmoID.Arrow;
-            Item.useAnimation = 40;
+            Item.useAnimation = 9;
             Item.useTime = 9;
             Item.UseSound = SoundID.Item5;
             Item.useStyle = ItemUseStyleID.Shoot;
