@@ -47,9 +47,9 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             DisplayName.SetDefault("Fire Fiend Marilith");
         }
 
-        int holdBallDamage = 50;
-        int fireBallDamage = 55;
-        int lightningDamage = 55;
+        int holdBallDamage = 40;
+        int fireBallDamage = 45;
+        int lightningDamage = 45;
         int fireStormDamage = 50;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -135,14 +135,13 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             if (MoveTimer % 240 == 0 && Main.netMode != NetmodeID.MultiplayerClient && MoveTimer <= 1250)
             {
                 float speed = 8;
-                float dist = Vector2.Distance(NPC.Center, Target.Center);
 
                 Vector2 predictiveVector = new Vector2(0, speed).RotatedByRandom(MathHelper.Pi);
 
                 
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, predictiveVector, ModContent.ProjectileType<MarilithCataclysm>(), fireBallDamage, 0, Main.myPlayer, 0, Target.whoAmI);
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, predictiveVector.RotatedBy(2 * MathHelper.Pi / 3), ModContent.ProjectileType<MarilithCataclysm>(), fireBallDamage, 0, Main.myPlayer, 0, Target.whoAmI);
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, predictiveVector.RotatedBy(-2 * MathHelper.Pi / 3), ModContent.ProjectileType<MarilithCataclysm>(), fireBallDamage, 0, Main.myPlayer, 0, Target.whoAmI);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, predictiveVector, ModContent.ProjectileType<MarilithCataclysm>(), fireStormDamage, 0, Main.myPlayer, 0, Target.whoAmI);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, predictiveVector.RotatedBy(2 * MathHelper.Pi / 3), ModContent.ProjectileType<MarilithCataclysm>(), fireStormDamage, 0, Main.myPlayer, 0, Target.whoAmI);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, predictiveVector.RotatedBy(-2 * MathHelper.Pi / 3), ModContent.ProjectileType<MarilithCataclysm>(), fireStormDamage, 0, Main.myPlayer, 0, Target.whoAmI);
                 
             }
 
@@ -210,14 +209,14 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             }
             else
             {
-                if (MoveTimer % 20 == 0 && MoveTimer <= 1700)
+                if (MoveTimer % 30 == 0 && MoveTimer <= 1700)
                 {
                     float dist = Vector2.Distance(NPC.Center, Target.Center);                    
                     float time = dist / 16;
 
                     //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithFireball>(), fireBallDamage, 0, Main.myPlayer, 0, Target.whoAmI);
 
-                    if (Main.rand.NextBool())
+                    if (MoveTimer % 60 == 0)
                     {
                         Vector2 lightningCenter = new Vector2(Main.rand.Next(3107, 3350), 1682) * 16;
                         float distance = Vector2.Distance(lightningCenter, Target.Center);

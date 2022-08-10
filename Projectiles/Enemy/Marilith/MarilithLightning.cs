@@ -552,7 +552,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         public void CustomCollision(Player target)
         {
             Rectangle targetHitbox = target.Hitbox;
-            if (branches == null || branches.Count == 0 || branches[0].Count == 0)
+            if (branches == null || branches.Count == 0 || branches[0].Count == 0 || FiringTimeLeft != 28)
             {
                 return;
             }
