@@ -39,12 +39,12 @@ namespace tsorcRevamp.Buffs.Summon
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
 			if (markedByTerraFall && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
-				//Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), Main.player[projectile.owner].Center, (npc.Center - Main.player[projectile.owner].Center), ProjectileID.Bullet, 200, 1f, Main.myPlayer);
+				//Projectile.NewProjectile(Projectile.GetSource_None(), Main.player[projectile.owner].Center, (Main.player[projectile.owner].Center - npc.Center), ModContent.ProjectileType<Projectiles.Summon.Whips.MasterWhipProjectile>(), 200, 1f, Main.myPlayer);
 				damage += 20;
-				//if (Main.rand.NextBool(10))
-				//{
+				if (Main.rand.NextBool(10))
+				{
 					crit = true;
-				//}
+				}
 			}
 		}
 	}

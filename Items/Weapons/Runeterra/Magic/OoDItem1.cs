@@ -43,29 +43,21 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Item.mana = 50;
             Item.DamageType = DamageClass.Magic;
         }
-        public override void UpdateInventory(Player player)
-        {
-            if (Main.GameUpdateCount % 1 == 0)
-            {
-                OoDIAnim1.holditemtimer1 -= 0.3f;
-            }
-        }
 
         public override void HoldItem(Player player)
         {
-            bool OoDIAnim1Exists = false;
-            OoDIAnim1.holditemtimer1 = 0.2f;
+            bool OoDOrb1Exists = false;
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<OoDIAnim1>() && Main.projectile[i].owner == player.whoAmI)
+                if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<OoDOrb1>() && Main.projectile[i].owner == player.whoAmI)
                 {
-                    OoDIAnim1Exists = true;
+                    OoDOrb1Exists = true;
                     break;
                 }
             }
-            if (!OoDIAnim1Exists)
+            if (!OoDOrb1Exists)
             {
-                Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OoDIAnim1>(), 0, 0, Main.myPlayer);
+                Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OoDOrb1>(), 0, 0, Main.myPlayer);
             }
         }
     }
