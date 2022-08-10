@@ -8,13 +8,13 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 {
     public class OoDItem1 : ModItem
     {
+        public static int useOoDItem1 = 0;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Orb of Deception");
             Tooltip.SetDefault("Throws a magic orb which will return to you after a certain distance" +
                 "\nYou cannot throw more than one orb at a time" +
                 "\nYou can recast with mana to force it to return early" +
-                "\nA third recast returns the Orb instantly" +
                 "\nThe orb deals more damage on the way back" +
                 "\nEach hit gathers a stack of Essence Thief, crits gather 2" +
                 "\nUpon reaching 9 stacks, the next cast will have 10% lifesteal" +
@@ -42,8 +42,14 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Item.value = Item.buyPrice(0, 10, 0, 0);
             Item.mana = 50;
             Item.DamageType = DamageClass.Magic;
+            Item.knockBack = 1f;
         }
 
+        public override bool? UseItem(Player player)
+        {
+            useOoDItem1 += 1;
+            return true;
+        }
         public override void HoldItem(Player player)
         {
             bool OoDOrb1Exists = false;
@@ -57,7 +63,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             }
             if (!OoDOrb1Exists)
             {
-                Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OoDOrb1>(), 0, 0, Main.myPlayer);
+                var projectile = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OoDOrb1>(), Item.damage, Item.knockBack, Main.myPlayer);
+                projectile.originalDamage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage);
             }
         }
     }
