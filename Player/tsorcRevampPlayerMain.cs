@@ -233,7 +233,7 @@ namespace tsorcRevamp
         }
         public override void OnHitAnything(float x, float y, Entity victim)
         {
-            if (Main.rand.NextBool(40))
+            if (Main.rand.NextBool(30))
             {
                 Items.Accessories.Magic.CelestialCloak.hitchances += 1;
             }

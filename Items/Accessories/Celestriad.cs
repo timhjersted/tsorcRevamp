@@ -34,7 +34,6 @@ namespace tsorcRevamp.Items.Accessories
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            //recipe.AddIngredient(ModContent.ItemType<GoldenHairpin>(), 1);
             recipe.AddIngredient(ModContent.ItemType<Melee.ManaShield>(), 1);
             recipe.AddIngredient(ModContent.ItemType<Magic.EssenceOfMana>(), 1);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);

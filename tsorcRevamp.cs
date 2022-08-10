@@ -911,7 +911,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>())), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.FieryEgg>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.TheRageBag>(), ModContent.ItemType<Items.CrestOfFire>(), ItemID.CobaltDrill }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.TheRageBag>(), ModContent.ItemType<Items.Weapons.Summon.PhoenixEgg>(), ModContent.ItemType<CrestOfFire>(), ItemID.CobaltDrill }, // List containing all the loot to show in the bestiary
                     $"Found in the depths of the Hallowed Caverns.", // Guide to fight the boss
                     "");
 
@@ -925,7 +925,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>())), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.WateryEgg>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.TheSorrowBag>(), ModContent.ItemType<Items.CrestOfWater>(), ItemID.AdamantiteDrill }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.TheSorrowBag>(), ModContent.ItemType<Items.Accessories.Expert.GoldenHairpin>(), ModContent.ItemType<CrestOfWater>(), ItemID.AdamantiteDrill }, // List containing all the loot to show in the bestiary
                     $"Found in the depths of the Frozen Ocean.", // Guide to fight the boss
                     "");
 
@@ -939,7 +939,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheHunter>())), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.GrassyEgg>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.TheHunterBag>(), ModContent.ItemType<Items.CrestOfEarth>(), ItemID.Drax, ItemID.WaterWalkingBoots }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.TheHunterBag>(), ModContent.ItemType<CrestOfEarth>(), ItemID.Drax, ItemID.WaterWalkingBoots }, // List containing all the loot to show in the bestiary
                     $"Found deep below the Desert Ruins.", // Guide to fight the boss
                     "");
 
@@ -1080,7 +1080,7 @@ namespace tsorcRevamp
                     0,
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.WitchkingBag>(), ModContent.ItemType<BrokenStrangeMagicRing>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.WitchkingsSword>(), ModContent.ItemType<Items.Armors.Summon.WitchkingHelmet>(), ModContent.ItemType<Items.Armors.Summon.WitchkingTop>(), ModContent.ItemType<Items.Armors.Summon.WitchkingBottoms>(), ModContent.ItemType<Items.Accessories.RingOfPower>(),
-                    ModContent.ItemType<Items.Accessories.GoldenHairpin>(), ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<Items.BossItems.DarkMirror>(), ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>() }, // List containing all the loot to show in the bestiary
+                    ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<Items.BossItems.DarkMirror>(), ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>() }, // List containing all the loot to show in the bestiary
                     $"Found in his lair deep underground, shrouded in extreme darkness.", // Guide to fight the boss
                     "");
 
