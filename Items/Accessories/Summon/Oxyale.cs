@@ -9,8 +9,9 @@ namespace tsorcRevamp.Items.Accessories.Summon
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Gear worn by Dragoons" +
-                               "\nIncreases your max minions by 1" +
-                               "\nIncreases your minion damage by 2% for each minion slot you have" +
+                               "\nIncreases your max minions by 2" +
+                               "\nIncreases your minion damage by 1% multiplicatively for each minion slot you have" +
+                               "\nDecreases whip range by 40%" +
                                "\nAllows you to breathe underwater and negates water physics");
 
         }
@@ -27,9 +28,10 @@ namespace tsorcRevamp.Items.Accessories.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.maxMinions += 1;
-            float oxyale = (float)(0.02 * player.maxMinions);
-            player.GetDamage(DamageClass.Summon) += oxyale;
+            player.maxMinions += 2;
+            float oxyale = (float)(0.01 * player.maxMinions);
+            player.GetDamage(DamageClass.Summon) *= oxyale;
+            player.whipRangeMultiplier -= 0.4f;
             if (player.wet)
             {
                 player.gills = true;

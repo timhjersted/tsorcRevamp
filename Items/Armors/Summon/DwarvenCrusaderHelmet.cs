@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void SetDefaults()
         {
             Item.height = Item.width = 18;
-            Item.defense = 13;
+            Item.defense = 9;
             Item.rare = ItemRarityID.Yellow;
             Item.value = PriceByRarity.fromItem(Item);
         }

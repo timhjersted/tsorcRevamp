@@ -24,6 +24,16 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 40;
             }
         }
+        public override void GrabRange(Item item, Player player, ref int grabRange)
+        {
+            if (item.type == ItemID.ManaCloakStar)
+            {
+                if (player.manaMagnet)
+                {
+                    grabRange += 100;
+                }
+            }
+        }
 
         public override bool CanUseItem(Item item, Player player)
         {

@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+13% minion damage, +1 minion slot");
+            Tooltip.SetDefault("+12% minion damage, +1 minion and turret slot");
         }
 
         public override void SetDefaults()
@@ -35,8 +35,9 @@ namespace tsorcRevamp.Items.Accessories.Summon
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.13f;
+            player.GetDamage(DamageClass.Summon) += 0.12f;
             player.maxMinions += 1;
+            player.maxTurrets += 1;
         }
     }
 }

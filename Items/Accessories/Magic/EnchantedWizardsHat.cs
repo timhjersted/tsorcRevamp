@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Accessories.Magic
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Enchanted Wizard's Hat");
-            Tooltip.SetDefault("Multiplies magic damage and boosts by 15%" +
-                "\n+60 Mana");
+            Tooltip.SetDefault("Increases magic damage by 13% multiplicatively" +
+                "\n+80 max Mana");
         }
 
         public override void SetDefaults()
@@ -39,8 +39,8 @@ namespace tsorcRevamp.Items.Accessories.Magic
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Magic) *= 1.15f;
-            player.statManaMax2 += 60;
+            player.GetDamage(DamageClass.Magic) *= 1.13f;
+            player.statManaMax2 += 80;
         }
 
     }

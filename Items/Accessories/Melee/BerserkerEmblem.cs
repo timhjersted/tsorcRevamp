@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("12% increased melee damage and speed");
+            Tooltip.SetDefault("11% increased melee damage and crit");
         }
 
         public override void SetDefaults()
@@ -35,8 +35,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.10f;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.10f;
+            player.GetDamage(DamageClass.Melee) += 0.11f;
+            player.GetCritChance(DamageClass.Melee) += 11;
         }
     }
 }

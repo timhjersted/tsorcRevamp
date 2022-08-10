@@ -231,21 +231,12 @@ namespace tsorcRevamp
             Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s  
             return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource, ref cooldownCounter);
         }
-
         public override void OnHitAnything(float x, float y, Entity victim)
         {
-            if (Player.HasBuff(ModContent.BuffType<MagicPlatingHard>()))
+            if (Main.rand.NextBool(40))
             {
-                Player.ClearBuff(ModContent.BuffType<MagicPlatingHard>());
-                Player.AddBuff(ModContent.BuffType<MagicPlatingMedium>(), 1);
-            } else
-            if (Player.HasBuff(ModContent.BuffType<MagicPlatingMedium>()))
-            {
-                Player.ClearBuff(ModContent.BuffType<MagicPlatingMedium>());
-                Player.AddBuff(ModContent.BuffType<MagicPlatingLight>(), 1);
-            } else
-            Player.ClearBuff(ModContent.BuffType<MagicPlatingLight>());
-            Player.AddBuff(ModContent.BuffType<InCombat>(), 300); //5s, was 10s 
+                Items.Accessories.Magic.CelestialCloak.hitchances += 1;
+            }
         }
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
