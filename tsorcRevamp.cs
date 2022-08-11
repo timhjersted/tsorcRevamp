@@ -194,7 +194,7 @@ namespace tsorcRevamp
                 51, //cobweb
                 52, //vines
                 53, //sand
-                55, //Sign 
+                //55, //Sign (Removed - signs shouldn't be breakable.) 
                 //56, //obsidian (removed at tim's request)
                 60, //jungle grass
                 61, //small jungle plants
