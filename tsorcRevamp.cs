@@ -1135,7 +1135,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>())), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.DarkMirror>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.DarkCloudBag>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.MoonlightGreatsword>(), ModContent.ItemType<Items.Accessories.Mobility.ReflectionShift>() },// List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.DarkCloudBag>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.MoonlightGreatsword>(), ModContent.ItemType<Items.Accessories.Expert.ReflectionShift>() },// List containing all the loot to show in the bestiary
                     $"The ancient pyramid grows dark once more.", // Guide to fight the boss
                     "");
 
@@ -1962,7 +1962,7 @@ namespace tsorcRevamp
                 {TransparentTextureType.UltimaWeaponGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/UltimaWeaponGlowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.DarkUltimaWeapon, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeapon", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.DarkUltimaWeaponGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeaponGlowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.ReflectionShift, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Accessories/Mobility/ReflectionShift", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ReflectionShift, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Accessories/Expert/ReflectionShift", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.PhazonRound, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/PhazonRound", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.MoonlightGreatsword, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/MoonlightGreatsword", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.MoonlightGreatswordGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/MoonlightGreatsword_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},

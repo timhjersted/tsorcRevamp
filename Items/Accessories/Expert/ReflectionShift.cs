@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 
-namespace tsorcRevamp.Items.Accessories.Mobility
+namespace tsorcRevamp.Items.Accessories.Expert
 {
     [AutoloadEquip(EquipType.Shoes)]
     public class ReflectionShift : ModItem
@@ -24,7 +24,8 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             Item.height = 40;
             Item.accessory = true;
             Item.value = PriceByRarity.Purple_11;
-            Item.rare = ItemRarityID.Purple;
+            Item.expert = true;
+            Item.rare = ItemRarityID.Expert;
         }
 
         public override void UpdateVanity(Player player)
