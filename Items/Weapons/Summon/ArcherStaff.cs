@@ -1,4 +1,4 @@
-﻿/*
+﻿
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -36,4 +36,3 @@ namespace tsorcRevamp.Items.Weapons.Summon {
         }
     }
 }
-*/
