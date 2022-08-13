@@ -14,11 +14,11 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
         public static bool ToxicShotHeld = false;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Toxic Shot");
+            DisplayName.SetDefault("Omega Squad Rifle");
             Tooltip.SetDefault("Converts seeds into Toxic Shots, these scale with magic damage too" +
                 "\nAlso uses all darts as ammo" +
                 "\nRight click on a cd to shoot a homing blind dart which inflicts confusion, also scales with magic damage" +
-                "\nPress Q hotkey on a cd to drop a mushroom mine, scales a bit with magic damage too");
+                "\nPress Q hotkey on a cd to drop a miniature nuclear bomb, scaling with magic damage too");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 
@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
             {
                 type = ModContent.ProjectileType<TSToxicShot>();
             }
-            if (type == ProjectileID.Seed & player.altFunctionUse == 2)
+            if (player.altFunctionUse == 2)
             {
                 type = ModContent.ProjectileType<TSBlindDart>();
             }

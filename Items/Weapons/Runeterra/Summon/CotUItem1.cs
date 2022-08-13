@@ -1,4 +1,4 @@
-/*
+
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -12,8 +12,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Center of the Galaxy");
-			Tooltip.SetDefault("Summons stars to rotate around you and damage enemies in their way" +
+			DisplayName.SetDefault("Center of the Heat");
+			Tooltip.SetDefault("Summons fireballs to rotate around you and damage enemies in their way" +
 				"\nIncrease their radius by right-clicking" +
                 "\nReset their range by clearing the buff");
 
@@ -121,4 +121,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			recipe.Register();
 		}
 	}
-}*/
+}

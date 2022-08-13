@@ -796,7 +796,8 @@ namespace tsorcRevamp
 
         public override void ProcessTriggers(TriggersSet triggersSet)
         {
-            var owner = Main.player[Main.myPlayer];
+            Player owner = Main.player[Main.myPlayer];
+            Vector2 unitVectorTowardsMouse = owner.Center.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * owner.direction);
             if (tsorcRevamp.toggleDragoonBoots.JustPressed)
             {
                 DragoonBootsEnable = !DragoonBootsEnable;
@@ -823,15 +824,31 @@ namespace tsorcRevamp
                     }
                 }
             }
-            if (tsorcRevamp.specialAbility.JustPressed)
+            if (tsorcRevamp.specialAbility.JustReleased)
             {
-                /*if (Items.Weapons.Runeterra.Melee.STItem2.doublecritchance)
+                for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (mousehoveringoverenemy....)
+                    NPC other = Main.npc[i];
+
+                    if (other.active & !other.friendly & other.Distance(Main.MouseWorld) <= 25 & other.Distance(owner.Center) <= 10000 & (Items.Weapons.Runeterra.Melee.STItem3.doublecritchance | Items.Weapons.Runeterra.Melee.STItem2.doublecritchance)& (Items.Weapons.Runeterra.Melee.STItem3.dashCD <= 0 | Items.Weapons.Runeterra.Melee.STItem2.dashCD <= 0))
                     {
-                        dash a past enemy with iframes
+                        Items.Weapons.Runeterra.Melee.STItem2.dashTimer = 0.1f;
+                        Items.Weapons.Runeterra.Melee.STItem3.dashTimer = 0.1f;
+                        if (Main.GameUpdateCount % 1 == 0)
+                        {
+                            Items.Weapons.Runeterra.Melee.STItem3.dashCD = 30f;
+                            Items.Weapons.Runeterra.Melee.STItem2.dashCD = 30f;
+                        }
+                    } else
+                    if (other.active & !other.friendly & other.Distance(Main.MouseWorld) > 25 & Items.Weapons.Runeterra.Melee.STItem3.doublecritchance & (Items.Weapons.Runeterra.Melee.STItem3.dashTimer <= 0) & Items.Weapons.Runeterra.Melee.STItem3.wallCD <= 0)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Center, unitVectorTowardsMouse * 10f, ModContent.ProjectileType<Items.Weapons.Runeterra.Melee.STWindWall>(), 0, 0, Main.myPlayer);
+                        if (Main.GameUpdateCount % 1 == 0)
+                        {
+                            Items.Weapons.Runeterra.Melee.STItem3.wallCD = 90f;
+                        }
                     }
-                }*/
+                }
                 if (Items.Weapons.Runeterra.Ranged.TSItem3.ToxicShotHeld & Items.Weapons.Runeterra.Ranged.TSItem3.shroomCD <= 0)
                 {
                     Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Items.Weapons.Runeterra.Ranged.TSShroomMine>(), owner.GetWeaponDamage(Player.HeldItem), owner.GetWeaponKnockback(Player.HeldItem), Main.myPlayer);

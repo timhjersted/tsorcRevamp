@@ -1,4 +1,4 @@
-/*
+
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -9,17 +9,21 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
     public class STItem2: ModItem
     {
         public float cooldown = 0;
+        public static float dashCD = 0f;
+        public static float dashTimer = 0f;
         public float attackspeedscaling;
         public float doublecritchancetimer = 0;
         public static bool doublecritchance = false;
+        public float invincibility = 0f;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Iron Tempest");
+            DisplayName.SetDefault("Plasma Tempest");
             Tooltip.SetDefault("Doubled crit chance" +
                 "\nStabs on right click dealing 125% damage, with a 4 second cooldown, scaling down with attack speed" +
-                "\nGain a stack of Steel Tempest upon stabbing an enemy" +
-                "\nUpon reaching 2 stacks, the next right click will release a tornado dealing 150% damage" +
-                "\nHover your mouse over an enemy and press Q hotkey on a cd to dash through the enemy");
+                "\nGain a stack of Steel Tempest upon stabbing any enemy" +
+                "\nUpon reaching 2 stacks, the next right click will release a plasma whirlwind dealing 175% damage" +
+                "\nHover your mouse over an enemy and press Q hotkey on a cd to dash through the enemy" +
+                "\nStabbing an enemy refunds some of this cooldown, the tornado refunds more");
         }
         public override void SetDefaults()
         {
@@ -60,7 +64,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
-                Item.damage = 30;
                 Item.shoot = ModContent.ProjectileType<STNado2>();
                 cooldown = ((3 / attackspeedscaling) + 1);
                 STStab2.steeltempest = 0;
@@ -71,7 +74,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
                 Item.useStyle = ItemUseStyleID.Rapier;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
-                Item.damage = 25;
                 cooldown = ((3 / attackspeedscaling) + 1);
                 Item.shoot = ModContent.ProjectileType<STStab2>();
             }
@@ -81,7 +83,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noUseGraphic = false;
                 Item.noMelee = false;
-                Item.damage = 20;
                 Item.useTurn = false;
             }
 
@@ -90,17 +91,34 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         {
             doublecritchancetimer = 0.1f;
             doublecritchance = true;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC other = Main.npc[i];
 
+                if (other.active & !other.friendly & other.Distance(Main.MouseWorld) <= 15 & other.Distance(player.Center) <= 10000 & doublecritchance/*& dashCD <= 0*/)
+                {
+                    if (dashTimer > 0)
+                    {
+                        player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, other.Center, 15f);
+                        invincibility = 1f;
+                    }
+                    break;
+                }
+            }
         }
         public override void UpdateInventory(Player player)
         {   
-            if (Main.GameUpdateCount % 1 == 0)
+            if (invincibility > 0f)
             {
-                cooldown -= 0.0167f;
+                player.immune = true;
             }
             if (Main.GameUpdateCount % 1 == 0)
             {
+                cooldown -= 0.0167f;
                 doublecritchancetimer -= 0.0167f;
+                dashCD -= 0.0167f;
+                dashTimer -= 0.0167f;
+                invincibility -= 0.0167f;
             }
             if (doublecritchancetimer <= 0)
             {
@@ -146,4 +164,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
             recipe.Register();
         }
     }
-}*/
+}

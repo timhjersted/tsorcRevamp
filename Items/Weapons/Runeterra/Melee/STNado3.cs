@@ -33,8 +33,15 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
             SoundEngine.FindActiveSound(SoundID.DD2_BookStaffTwisterLoop);
             SoundEngine.StopTrackedSounds();
         }
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            STItem3.dashCD -= 5f;
+            STItem3.wallCD -= 5f;
+        }
         public override void AI()
         {
+            Player owner = Main.player[Projectile.owner];
+            Projectile.damage = (int)(owner.GetWeaponDamage(owner.HeldItem) * 1.75f);
             Visuals();
         }
         private void Visuals()

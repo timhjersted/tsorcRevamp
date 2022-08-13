@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
 		public override void AI()
 		{
 			Player player = Main.player[Projectile.owner];
-
+			Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 1.25f);
 
 			Timer += 1;
 			if (Timer >= TotalDuration)
@@ -138,6 +138,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         {
 			if (steeltempesthittimer == 0)
             {
+				STItem3.dashCD -= 2f;
+				STItem3.wallCD -= 2f;
 				steeltempest += 1;
 				steeltempesthittimer = 1;
             }

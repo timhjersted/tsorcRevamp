@@ -35,7 +35,13 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         }
         public override void AI()
         {
+            Player owner = Main.player[Projectile.owner];
+            Projectile.damage = (int)(owner.GetWeaponDamage(owner.HeldItem) * 1.75f);
             Visuals();
+        }
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            STItem2.dashCD -= 5f;
         }
         private void Visuals()
         {

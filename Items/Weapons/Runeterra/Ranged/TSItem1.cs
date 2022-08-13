@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Poisonous Shot");
+            DisplayName.SetDefault("Toxic Shot");
             Tooltip.SetDefault("Converts seeds into Toxic Shots, these scale with magic damage too" +
                 "\nAlso uses all darts as ammo");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;

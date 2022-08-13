@@ -12,10 +12,10 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
         public float cooldown = 0f;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Blinding Shot");
-            Tooltip.SetDefault("Converts seeds into Toxic Shots, these scale with magic damage too" +
+            DisplayName.SetDefault("Alien Rifle");
+            Tooltip.SetDefault("Converts seeds into Plasma Shots, these scale with magic damage too" +
                 "\nAlso uses all darts as ammo" +
-                "\nRight click on a cd to shoot a homing blind dart which inflicts confusion, also scales a bit with magic damage");
+                "\nRight click on a cd to shoot a homing blinding shot which inflicts confusion, also scales with magic damage");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
             {
                 type = ModContent.ProjectileType<TSToxicShot>();
             }
-            if (type == ProjectileID.Seed & player.altFunctionUse == 2)
+            if (player.altFunctionUse == 2)
             {
                 type = ModContent.ProjectileType<TSBlindDart>();
             }

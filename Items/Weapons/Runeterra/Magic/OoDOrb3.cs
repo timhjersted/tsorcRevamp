@@ -1,4 +1,4 @@
-/*
+
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -152,8 +152,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 						}
 						if (OoDItem3.useOoDItem3 == 2 | Projectile.Distance(owner.Center) >= 1000f) // If the player clicks, transition to the ForcedRetract state
 						{
+							OoDItem1.useOoDItem1 = 2;
 							CurrentAIState = AIState.ForcedRetracting;
-							OoDItem3.useOoDItem3 = 2;
 							StateTimer = 0f;
 							Projectile.netUpdate = true;
 						}
@@ -244,4 +244,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
         }
     }
-}*/
+}

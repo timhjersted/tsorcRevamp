@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
         public override void AI()
         {
 			var owner = Main.player[Projectile.owner];
-			Projectile.damage = (int)(10 + (owner.GetWeaponDamage(owner.HeldItem) + (0.2f * (owner.GetDamage(DamageClass.Magic).ApplyTo(owner.GetWeaponDamage(owner.HeldItem))))));
+			Projectile.damage = (int)((owner.GetWeaponDamage(owner.HeldItem) * 0.8 + (0.2f * (owner.GetDamage(DamageClass.Magic).ApplyTo(owner.GetWeaponDamage(owner.HeldItem))))));
 			Dust.NewDust(Projectile.Center, 10, 10, DustID.VenomStaff, 0, 0, 0, Color.LightPink, 0.75f);
 		}
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)

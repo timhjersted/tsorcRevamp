@@ -1,4 +1,4 @@
-/*
+
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -14,11 +14,11 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         public static bool doublecritchance = false;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Copper Tempest");
+            DisplayName.SetDefault("Steel Tempest");
             Tooltip.SetDefault("Doubled crit chance" +
                 "\nStabs on right click dealing 125% damage, with a 4 second cooldown, scaling down with attack speed" +
-                "\nGain a stack of Steel Tempest upon stabbing an enemy" +
-                "\nUpon reaching 2 stacks, the next right click will release a tornado dealing 150% damage");
+                "\nGain a stack of Steel Tempest upon stabbing any enemy" +
+                "\nUpon reaching 2 stacks, the next right click will release a tornado dealing 175% damage");
         }
         public override void SetDefaults()
         {
@@ -59,7 +59,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
-                Item.damage = 30;
                 Item.shoot = ModContent.ProjectileType<STNado1>();
                 cooldown = ((3 / attackspeedscaling) + 1);
                 STStab1.steeltempest = 0;
@@ -70,7 +69,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
                 Item.useStyle = ItemUseStyleID.Rapier;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
-                Item.damage = 25;
                 cooldown = ((3 / attackspeedscaling) + 1);
                 Item.shoot = ModContent.ProjectileType<STStab1>();
             }
@@ -80,7 +78,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noUseGraphic = false;
                 Item.noMelee = false;
-                Item.damage = 20;
                 Item.useTurn = false;
             }
 
@@ -96,9 +93,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
             if (Main.GameUpdateCount % 1 == 0)
             {
                 cooldown -= 0.0167f;
-            }
-            if (Main.GameUpdateCount % 1 == 0)
-            {
                 doublecritchancetimer -= 0.0167f;
             }
             if (doublecritchancetimer <= 0)
@@ -144,4 +138,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
             recipe.Register();
         }
     }
-}*/
+}

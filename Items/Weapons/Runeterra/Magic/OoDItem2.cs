@@ -1,4 +1,4 @@
-/*
+
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
         public static int useOoDItem2 = 0;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Orb of Deception");
-            Tooltip.SetDefault("Throws a magic orb which will return to you after a certain distance" +
+            DisplayName.SetDefault("Orb of Flame");
+            Tooltip.SetDefault("Throws a flaming orb which will return to you after a certain distance" +
                 "\nYou cannot throw more than one orb at a time" +
                 "\nYou can recast with mana to force it to return early" +
                 "\nThe orb deals more damage on the way back" +
@@ -84,4 +84,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             recipe.Register();
         }
     }
-}*/
+}

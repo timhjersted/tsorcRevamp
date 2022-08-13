@@ -7,8 +7,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Center of the Galaxy");
-			Description.SetDefault("You are the Center of the Galaxy");
+			DisplayName.SetDefault("Center of the Heat");
+			Description.SetDefault("You're in a hot center");
 
 			Main.buffNoSave[Type] = true;
 			Main.buffNoTimeDisplay[Type] = true;

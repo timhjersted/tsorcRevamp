@@ -1,4 +1,4 @@
-/*
+
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -12,11 +12,11 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Center of the Milky Way");
-			Tooltip.SetDefault("Summons stars to rotate around you and damage enemies in their way" +
+			DisplayName.SetDefault("Center of the Mechanism");
+			Tooltip.SetDefault("Summons electrical charges to rotate around you and damage enemies in their way" +
 				"\nIncrease their radius by right-clicking" +
                 "\nReset their range by clearing the buff" +
-				"\nStars will gain a movement speed and damage boost on crit for 3 seconds");
+				"\nCharges will gain a movement speed and damage boost on crit for 3 seconds");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
@@ -123,4 +123,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			recipe.Register();
 		}
 	}
-}*/
+}

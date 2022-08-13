@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		public static bool hascrit2 = false;
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Center of the Milky Way");
-			Description.SetDefault("You are the Center of the Milky Way");
+			DisplayName.SetDefault("Center of the Mechanism");
+			Description.SetDefault("A mechanism is centered around you");
 
 			Main.buffNoSave[Type] = true;
 			Main.buffNoTimeDisplay[Type] = true;

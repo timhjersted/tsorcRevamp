@@ -1,4 +1,4 @@
-/*
+
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,9 +10,12 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
     {
         public static int useOoDItem3 = 0;
         public static bool OoDOrb3Exists = false;
+        public float dashCD = 0f;
+        public float dashTimer = 0f;
+        public float invincibility = 0f;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Orb of Deception");
+            DisplayName.SetDefault("Orb of Spirituality");
             Tooltip.SetDefault("Throws a magic orb which will return to you after a certain distance" +
                 "\nYou cannot throw more than one orb at a time" +
                 "\nYou can recast with mana to force it to return early" +
@@ -21,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
                 "\nUpon reaching 9 stacks, the next cast will have 10% lifesteal" +
                 "\nand spawn a homing flame on-hit(2 on-crit)" +
                 "\nRight click to dash in mouse direction and spawn homing flames while dashing" +
-                "\nThis has a 90 second cooldown");
+                "\nThis has a 60 second cooldown and consumes double the mana");
 
         }
         public override void SetDefaults()
@@ -44,22 +47,54 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Item.DamageType = DamageClass.Magic;
             Item.knockBack = 1f;
         }
-
+        public override void UseStyle(Player player, Rectangle heldItemFrame)
+        {
+            if (Main.mouseRight & !Main.mouseLeft)
+            {
+                player.altFunctionUse = 2;
+                Item.mana = 120;
+            }
+            if (Main.mouseLeft)
+            {
+                player.altFunctionUse = 1;
+                Item.mana = 60;
+            }
+        }
         public override bool? UseItem(Player player)
         {
-            if(useOoDItem3 == 0)
+            if (player.altFunctionUse == 1)
             {
-                useOoDItem3 = 1;
+                if (useOoDItem3 == 0)
+                {
+                    useOoDItem3 = 1;
+                }
+                else
+                if (useOoDItem3 == 1)
+                {
+                    useOoDItem3 = 2;
+                }
             } else
-            if (useOoDItem3 == 1)
+            if (player.altFunctionUse == 2)
             {
-                useOoDItem3 = 2;
+                dashTimer = 0.2f;
+                if (Main.GameUpdateCount % 1 == 0)
+                {
+                    dashCD = 60f;
+                }
             }
             return true;
         }
         public override void HoldItem(Player player)
         {
-
+            if (dashTimer > 0)
+            {
+                player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.MouseWorld, 35f);
+                invincibility = 0.5f;
+                if (Main.GameUpdateCount % 1 == 0)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), player.Top, Vector2.One, ModContent.ProjectileType<OoDFlame1>(), player.GetWeaponDamage(player.HeldItem), player.GetWeaponKnockback(player.HeldItem), Main.myPlayer);
+                }
+            }
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<OoDOrb3>() && Main.projectile[i].owner == player.whoAmI)
@@ -74,6 +109,34 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
                 projectile.originalDamage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage);
             }
         }
+        public override void UpdateInventory(Player player)
+        {
+            if (invincibility > 0f)
+            {
+                player.immune = true;
+            }
+            if (Main.GameUpdateCount % 1 == 0)
+            {
+                dashCD -= 0.0167f;
+                dashTimer -= 0.0167f;
+                invincibility -= 0.0167f;
+            }
+        }
+        public override bool CanUseItem(Player player)
+        {
+            if (player.altFunctionUse != 2 || dashCD <= 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public override bool AltFunctionUse(Player player)
+        {
+            return true;
+        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
@@ -87,4 +150,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             recipe.Register();
         }
     }
-}*/
+}
