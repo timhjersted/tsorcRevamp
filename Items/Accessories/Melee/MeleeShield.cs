@@ -24,6 +24,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         }
         public override void UpdateEquip(Player player)
         {
+            player.buffImmune[BuffID.Burning] = true;
             player.moveSpeed *= 0.8f;
             player.noKnockback = true;
             player.fireWalk = true;
