@@ -6,10 +6,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 {
-    public class OoDOrb1 : ModProjectile
+    public class OoDOrb2 : ModProjectile
     {
-		public static int EssenceThief1 = 0;
-		public static bool EssenceFilled1 = false;
+		public static int EssenceThief2 = 0;
+		public static bool EssenceFilled2 = false;
         private enum AIState
         {
             InHand,
@@ -53,12 +53,12 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 			Projectile.CritChance = owner.GetWeaponCrit(owner.HeldItem);
 
             int launchTimeLimit = 50;  // How much time the projectile can go before retracting (speed and shootTimer will set the flail's range)
-            float launchSpeed = 10f; // How fast the projectile can move
+            float launchSpeed = 13f; // How fast the projectile can move
             float maxLaunchLength = 1000f; // How far the projectile's chain can stretch before being forced to retract when in launched state
-            float retractAcceleration = 5f; // How quickly the projectile will accelerate back towards the player while retracting
-            float maxRetractSpeed = 10f; // The max speed the projectile will have while retracting
-            float forcedRetractAcceleration = 10f; // How quickly the projectile will accelerate back towards the player while being forced to retract
-            float maxForcedRetractSpeed = 20f; // The max speed the projectile will have while being forced to retract
+            float retractAcceleration = 7.5f; // How quickly the projectile will accelerate back towards the player while retracting
+            float maxRetractSpeed = 13f; // The max speed the projectile will have while retracting
+            float forcedRetractAcceleration = 13f; // How quickly the projectile will accelerate back towards the player while being forced to retract
+            float maxForcedRetractSpeed = 26f; // The max speed the projectile will have while being forced to retract
 
             if (!owner.active || owner.dead || owner.noItems || owner.CCed || Vector2.Distance(Projectile.Center, owner.Center) > 1500f)
             {
@@ -82,14 +82,14 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 
 							Vector2 unitVectorTowardsMouse = owner.Center.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * owner.direction);
 							owner.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
-							if (OoDItem1.useOoDItem1 == 1) // If the player releases then change to moving forward mode
+							if (OoDItem2.useOoDItem2 == 1) // If the player releases then change to moving forward mode
 							{
-								if (EssenceThief1 >= 9)
+								if (EssenceThief2 >= 9)
 								{
-									EssenceFilled1 = true;
+									EssenceFilled2 = true;
 								} else
                                 {
-									EssenceFilled1 = false;
+									EssenceFilled2 = false;
                                 }
 								CurrentAIState = AIState.ThrownForward;
 								StateTimer = 0f;
@@ -99,7 +99,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 								break;
 							}
 						}
-						OoDItem1.useOoDItem1 = 0;
+						OoDItem2.useOoDItem2 = 0;
 						Projectile.damage = 0;
 						break;
 					}
@@ -109,7 +109,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 						bool shouldSwitchToRetracting = StateTimer++ >= launchTimeLimit;
 						shouldSwitchToRetracting |= Projectile.Distance(owner.Center) >= maxLaunchLength;
 
-						if (OoDItem1.useOoDItem1 == 2) // If the player clicks, transition to the ForcedRetract state
+						if (OoDItem2.useOoDItem2 == 2) // If the player clicks, transition to the ForcedRetract state
 						{
 							CurrentAIState = AIState.ForcedRetracting;
 							Projectile.ResetLocalNPCHitImmunity();
@@ -134,11 +134,11 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 						Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(owner.Center).SafeNormalize(Vector2.Zero);
 						if (Projectile.Distance(owner.Center) <= 15f)
 						{
-							OoDItem1.useOoDItem1 = 0;
+							OoDItem2.useOoDItem2 = 0;
 							CurrentAIState = AIState.InHand;
-							if(EssenceFilled1 == true)
+							if(EssenceFilled2 == true)
                             {
-								EssenceThief1 -= 9;
+								EssenceThief2 -= 9;
                             }
 							if (owner.direction == 1)
 							{
@@ -150,10 +150,10 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 							}
 							return;
 						}
-						if (OoDItem1.useOoDItem1 == 2 | Projectile.Distance(owner.Center) >= 1000f) // If the player clicks, transition to the ForcedRetract state
+						if (OoDItem2.useOoDItem2 == 2 | Projectile.Distance(owner.Center) >= 1000f) // If the player clicks, transition to the ForcedRetract state
 						{
 							CurrentAIState = AIState.ForcedRetracting;
-							OoDItem1.useOoDItem1 = 2;
+							OoDItem2.useOoDItem2 = 2;
 							StateTimer = 0f;
 							Projectile.netUpdate = true;
 						}
@@ -169,11 +169,11 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 						Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(owner.Center).SafeNormalize(Vector2.Zero);
 						if (Projectile.Distance(owner.Center) <= 15f)
 						{
-							OoDItem1.useOoDItem1 = 0;
+							OoDItem2.useOoDItem2 = 0;
 							CurrentAIState = AIState.InHand;
-							if (EssenceFilled1 == true)
+							if (EssenceFilled2 == true)
 							{
-								EssenceThief1 -= 9;
+								EssenceThief2 -= 9;
 							}
 							return;
 						}
@@ -200,19 +200,25 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 			Player owner = Main.player[Projectile.owner];
 			if (crit)
 			{
-				EssenceThief1 += 2;
+				EssenceThief2 += 2;
 			}
 			else
 			{
-				EssenceThief1 += 1;
+				EssenceThief2 += 1;
 			}
-			if (EssenceFilled1)
+			if (EssenceFilled2)
 			{
-				if(crit)
-                {
+				if (crit)
+				{
+					Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Top, Vector2.One, ModContent.ProjectileType<OoDFlame1>(), owner.GetWeaponDamage(owner.HeldItem), owner.GetWeaponKnockback(owner.HeldItem), Main.myPlayer);
+					Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Bottom, Vector2.One, ModContent.ProjectileType<OoDFlame1>(), owner.GetWeaponDamage(owner.HeldItem), owner.GetWeaponKnockback(owner.HeldItem), Main.myPlayer);
+
 					owner.Heal(damage / 5);
-                } else
-				owner.Heal(damage / 10);
+				} else
+				{
+					Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Center, Vector2.One, ModContent.ProjectileType<OoDFlame1>(), owner.GetWeaponDamage(owner.HeldItem), owner.GetWeaponKnockback(owner.HeldItem), Main.myPlayer);
+					owner.Heal(damage / 10);
+				}
 			}
 
 		}

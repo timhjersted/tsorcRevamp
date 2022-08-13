@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
 {
-    public class STItem1: ModItem
+    public class STItem2: ModItem
     {
         public float cooldown = 0;
         public float attackspeedscaling;
@@ -14,17 +14,18 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         public static bool doublecritchance = false;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Copper Tempest");
+            DisplayName.SetDefault("Iron Tempest");
             Tooltip.SetDefault("Doubled crit chance" +
                 "\nStabs on right click dealing 125% damage, with a 4 second cooldown, scaling down with attack speed" +
                 "\nGain a stack of Steel Tempest upon stabbing an enemy" +
-                "\nUpon reaching 2 stacks, the next right click will release a tornado dealing 150% damage");
+                "\nUpon reaching 2 stacks, the next right click will release a tornado dealing 150% damage" +
+                "\nHover your mouse over an enemy and press Q hotkey on a cd to dash through the enemy");
         }
         public override void SetDefaults()
         {
-            Item.rare = ItemRarityID.Green;
-            Item.value = Item.buyPrice(0, 10, 0, 0);
-            Item.damage = 20;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.value = Item.buyPrice(0, 30, 0, 0);
+            Item.damage = 40;
             Item.crit = 4;
             Item.width = 52;
             Item.height = 54;
@@ -53,16 +54,16 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
             doublecritchancetimer = 0.5f;
-            if (Main.mouseRight & !Main.mouseLeft & STStab1.steeltempest == 2 & cooldown <= 0)
+            if (Main.mouseRight & !Main.mouseLeft & STStab2.steeltempest == 2 & cooldown <= 0)
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
                 Item.damage = 30;
-                Item.shoot = ModContent.ProjectileType<STNado1>();
+                Item.shoot = ModContent.ProjectileType<STNado2>();
                 cooldown = ((3 / attackspeedscaling) + 1);
-                STStab1.steeltempest = 0;
+                STStab2.steeltempest = 0;
             } else
             if (Main.mouseRight & !Main.mouseLeft)
             {
@@ -72,7 +73,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
                 Item.noMelee = true;
                 Item.damage = 25;
                 cooldown = ((3 / attackspeedscaling) + 1);
-                Item.shoot = ModContent.ProjectileType<STStab1>();
+                Item.shoot = ModContent.ProjectileType<STStab2>();
             }
             if (Main.mouseLeft)
             {
@@ -136,8 +137,9 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ItemID.Katana, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
+            recipe.AddIngredient(ModContent.ItemType<STItem1>());
+            recipe.AddIngredient(ItemID.HallowedBar, 12);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
 
             recipe.AddTile(TileID.DemonAltar);
 

@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			Item.noUseGraphic = true;
 			Item.useTurn = false;
 			Item.value = Item.buyPrice(1, 0, 0, 0);
-			Item.rare = ItemRarityID.Red;
+			Item.rare = ItemRarityID.Cyan;
 			Item.UseSound = SoundID.Item117;
 
 			Item.noMelee = true;
@@ -117,7 +117,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 
 			recipe.AddIngredient(ModContent.ItemType<CotUItem2>());
 			recipe.AddIngredient(ItemID.LunarBar, 12);
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 63000);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
 
 			recipe.AddTile(TileID.DemonAltar);
 

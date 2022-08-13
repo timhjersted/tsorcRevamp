@@ -116,7 +116,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 
 			recipe.AddIngredient(ModContent.ItemType<CotUItem1>());
 			recipe.AddIngredient(ItemID.HallowedBar, 12);
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 21000);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
 
 			recipe.AddTile(TileID.DemonAltar);
 

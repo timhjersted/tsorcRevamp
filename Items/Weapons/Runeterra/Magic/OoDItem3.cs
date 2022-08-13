@@ -6,9 +6,9 @@ using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 {
-    public class OoDItem1 : ModItem
+    public class OoDItem3 : ModItem
     {
-        public static int useOoDItem1 = 0;
+        public static int useOoDItem3 = 0;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Orb of Deception");
@@ -17,7 +17,10 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
                 "\nYou can recast with mana to force it to return early" +
                 "\nThe orb deals more damage on the way back" +
                 "\nEach hit gathers a stack of Essence Thief, crits gather 2" +
-                "\nUpon reaching 9 stacks, the next cast will have 10% lifesteal");
+                "\nUpon reaching 9 stacks, the next cast will have 10% lifesteal" +
+                "\nand spawn a homing flame on-hit(2 on-crit)" +
+                "\nRight click to dash in mouse direction and spawn homing flames while dashing" +
+                "\nThis has a 90 second cooldown");
 
         }
         public override void SetDefaults()
@@ -32,41 +35,41 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Item.holdStyle = ItemHoldStyleID.HoldFront;
             Item.useAnimation = 10;
             Item.useTime = 10;
-            Item.damage = 20;
+            Item.damage = 100;
             Item.autoReuse = false;
-            Item.rare = ItemRarityID.Green;
-            Item.value = Item.buyPrice(0, 10, 0, 0);
-            Item.mana = 25;
+            Item.rare = ItemRarityID.Cyan;
+            Item.value = Item.buyPrice(1, 0, 0, 0);
+            Item.mana = 60;
             Item.DamageType = DamageClass.Magic;
             Item.knockBack = 1f;
         }
 
         public override bool? UseItem(Player player)
         {
-            if(useOoDItem1 == 0)
+            if(useOoDItem3 == 0)
             {
-                useOoDItem1 = 1;
+                useOoDItem3 = 1;
             } else
-            if (useOoDItem1 == 1)
+            if (useOoDItem3 == 1)
             {
-                useOoDItem1 = 2;
+                useOoDItem3 = 2;
             }
             return true;
         }
         public override void HoldItem(Player player)
         {
-            bool OoDOrb1Exists = false;
+            bool OoDOrb3Exists = false;
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<OoDOrb1>() && Main.projectile[i].owner == player.whoAmI)
+                if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<OoDOrb3>() && Main.projectile[i].owner == player.whoAmI)
                 {
-                    OoDOrb1Exists = true;
+                    OoDOrb3Exists = true;
                     break;
                 }
             }
-            if (!OoDOrb1Exists)
+            if (!OoDOrb3Exists)
             {
-                var projectile = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OoDOrb1>(), Item.damage, Item.knockBack, Main.myPlayer);
+                var projectile = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OoDOrb3>(), Item.damage, Item.knockBack, Main.myPlayer);
                 projectile.originalDamage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage);
             }
         }
@@ -74,8 +77,9 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ItemID.ShadowOrb, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
+            recipe.AddIngredient(ModContent.ItemType<OoDItem2>());
+            recipe.AddIngredient(ItemID.LunarBar, 12);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
 
             recipe.AddTile(TileID.DemonAltar);
 
