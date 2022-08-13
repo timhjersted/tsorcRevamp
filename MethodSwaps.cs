@@ -82,7 +82,17 @@ namespace tsorcRevamp
 			//On.Terraria.GameContent.ItemDropRules.ItemDropResolver.ResolveRule += ItemDropResolver_ResolveRule;
 
 			On.Terraria.Player.DashMovement += Player_DashMovement;
+
+			On.Terraria.Player.DropTombstone += Player_DropTombstone;
         }
+
+		private static void Player_DropTombstone(On.Terraria.Player.orig_DropTombstone orig, Player self, int coinsOwned, Terraria.Localization.NetworkText deathText, int hitDirection)
+		{
+			//thank you DarkLight66's NoMoreTombs
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+                orig(self, coinsOwned, deathText, hitDirection);
+            
+		}
 
 		private static void Player_DashMovement(On.Terraria.Player.orig_DashMovement orig, Player self)
 		{
