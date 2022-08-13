@@ -79,12 +79,53 @@ namespace tsorcRevamp
             On.Terraria.Main.DrawInterface_35_YouDied += Main_DrawInterface_35_YouDied;
 
             On.Terraria.Player.InZonePurity += Player_InZonePurity;
-            //On.Terraria.GameContent.ItemDropRules.ItemDropResolver.ResolveRule += ItemDropResolver_ResolveRule;
+			//On.Terraria.GameContent.ItemDropRules.ItemDropResolver.ResolveRule += ItemDropResolver_ResolveRule;
+
+			On.Terraria.Player.DashMovement += Player_DashMovement;
         }
 
-        //The reason the dungeon code is getting inserted here isn't because it has anything to do with ZonePurity
-        //It's just because this is a function that has the player as a parameter, and is called in UpdateBiomes *after* ZoneDungeon is set but before it is used.
-        private static bool Player_InZonePurity(On.Terraria.Player.orig_InZonePurity orig, Player self)
+		private static void Player_DashMovement(On.Terraria.Player.orig_DashMovement orig, Player self)
+		{
+            float originalVelocity = self.velocity.X;
+            bool wasInDash = false;
+
+            if (self.dashDelay < 0) //we are mid-dash.
+                wasInDash = true;
+            
+            orig(self);
+
+            //fix for auto-acceleration post-dash with a high max speed
+            if (wasInDash && self.dashDelay > 0)
+            {
+				//we are no longer mid-dash; it must've just ended this frame.
+				//(we have just passed below 12 / above -12 velocity, and our speed now equals our max speed)
+
+				if ((double)self.velocity.X < 0.0) //not completely sure why the cast, but thats wha
+				{
+					//moving left
+                    if (!self.controlLeft)
+    					self.velocity.X = originalVelocity;
+				}
+    			else
+				{
+					//moving right
+                    if (!self.controlRight)
+    					self.velocity.X = originalVelocity;
+				}
+			}
+
+			//fix for not being able to dash until stopping with a high max speed
+			if (wasInDash && Math.Abs(self.velocity.X) > 17)
+			{
+				//our speed has gone above 16.9. the dash is not doing this - in fact the dash continuously slows you down even without friction. we should end it.
+				self.dashDelay = 20; //different dashes have different cooldowns (i think Tabi & SoC have 30), but this is the most conservative one. It will never be *worse* than the regular dash.
+			}
+
+		}
+
+		//The reason the dungeon code is getting inserted here isn't because it has anything to do with ZonePurity
+		//It's just because this is a function that has the player as a parameter, and is called in UpdateBiomes *after* ZoneDungeon is set but before it is used.
+		private static bool Player_InZonePurity(On.Terraria.Player.orig_InZonePurity orig, Player self)
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && NPC.downedBoss3)
             {
