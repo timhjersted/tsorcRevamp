@@ -159,7 +159,6 @@ namespace tsorcRevamp
         {
             #region KillAllowed list
             KillAllowed = new List<int>() {
-                2, //grass
                 3, //small plants
                 4, // torch
                 5, //tree trunk
@@ -178,7 +177,6 @@ namespace tsorcRevamp
                 18, //workbench
                 20, //sapling
                 21, //chests
-                23, //corruption grass
                 24, //small corruption plants
                 27, //sunflower
                 28, //pot
@@ -198,7 +196,6 @@ namespace tsorcRevamp
                 53, //sand
                 //55, //Sign (Removed - signs shouldn't be breakable.) 
                 //56, //obsidian (removed at tim's request)
-                60, //jungle grass
                 61, //small jungle plants
                 62, //jungle vines
                 67, //Amethyst 
@@ -238,7 +235,6 @@ namespace tsorcRevamp
                 106, //sawmill
                 107, //cobalt
                 108, //mythril
-                109, //Hallowed Grass
                 110, //Hallowed Plants 
                 111, //adamantite
                 112, //ebonsand
