@@ -1,4 +1,4 @@
-/*
+
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.Creative;
@@ -10,6 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
     public class TSItem3 : ModItem
     {
         public float cooldown = 0f;
+        public static float shroomCD = 0f;
+        public static bool ToxicShotHeld = false;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Toxic Shot");
@@ -24,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
         {
             Item.width = 38;
             Item.height = 8;
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarityID.Cyan;
             Item.value = Item.buyPrice(1, 0, 0, 0);
             Item.useTime = 20;
             Item.useAnimation = 20;
@@ -41,9 +43,13 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            if (type == ProjectileID.Seed)
+            if (type == ProjectileID.Seed & player.altFunctionUse == 1)
             {
                 type = ModContent.ProjectileType<TSToxicShot>();
+            }
+            if (type == ProjectileID.Seed & player.altFunctionUse == 2)
+            {
+                type = ModContent.ProjectileType<TSBlindDart>();
             }
         }
         public override void UseStyle(Player player, Rectangle heldItemFrame)
@@ -52,14 +58,15 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
             {
                 player.altFunctionUse = 2;
                 cooldown = 10;
-                Item.shoot = ModContent.ProjectileType<TSToxicShot>();
             }
             if (Main.mouseLeft)
             {
                 player.altFunctionUse = 1;
-                Item.shoot = ProjectileID.Seed;
-                Item.damage = 20;
             }
+        }
+        public override void HoldItem(Player player)
+        {
+            ToxicShotHeld = true;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -81,6 +88,11 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
             if (Main.GameUpdateCount % 1 == 0)
             {
                 cooldown -= 0.0167f;
+                shroomCD -= 0.0167f;
+            }
+            if (Main.GameUpdateCount % 10 == 0)
+            {
+                ToxicShotHeld = false;
             }
         }
         public override void AddRecipes()
@@ -95,4 +107,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
             recipe.Register();
         }
     }
-}*/
+}

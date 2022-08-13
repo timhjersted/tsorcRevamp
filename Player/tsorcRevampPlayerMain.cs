@@ -796,6 +796,7 @@ namespace tsorcRevamp
 
         public override void ProcessTriggers(TriggersSet triggersSet)
         {
+            var owner = Main.player[Main.myPlayer];
             if (tsorcRevamp.toggleDragoonBoots.JustPressed)
             {
                 DragoonBootsEnable = !DragoonBootsEnable;
@@ -822,6 +823,25 @@ namespace tsorcRevamp
                     }
                 }
             }
+            if (tsorcRevamp.specialAbility.JustPressed)
+            {
+                /*if (Items.Weapons.Runeterra.Melee.STItem2.doublecritchance)
+                {
+                    if (mousehoveringoverenemy....)
+                    {
+                        dash a past enemy with iframes
+                    }
+                }*/
+                if (Items.Weapons.Runeterra.Ranged.TSItem3.ToxicShotHeld & Items.Weapons.Runeterra.Ranged.TSItem3.shroomCD <= 0)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Items.Weapons.Runeterra.Ranged.TSShroomMine>(), owner.GetWeaponDamage(Player.HeldItem), owner.GetWeaponKnockback(Player.HeldItem), Main.myPlayer);
+                    if(Main.GameUpdateCount % 1 == 0)
+                    {
+                        Items.Weapons.Runeterra.Ranged.TSItem3.shroomCD = 15;
+                    }
+                }
+            }
+            
         }
 
         //On hit, subtract the mana cost and disable natural mana regen for a short period

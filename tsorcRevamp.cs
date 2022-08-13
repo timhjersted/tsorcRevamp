@@ -33,6 +33,7 @@ namespace tsorcRevamp
 
         public static ModKeybind toggleDragoonBoots;
         public static ModKeybind reflectionShiftKey;
+        public static ModKeybind specialAbility;
         public static bool isAdventureMap = false;
         public static int DarkSoulCustomCurrencyId;
         internal bool UICooldown = false;
@@ -83,6 +84,7 @@ namespace tsorcRevamp
             toggleDragoonBoots = KeybindLoader.RegisterKeybind(this, "Dragoon Boots", Microsoft.Xna.Framework.Input.Keys.Z);
             reflectionShiftKey = KeybindLoader.RegisterKeybind(this, "Reflection Shift", Microsoft.Xna.Framework.Input.Keys.O);
             DodgerollKey = KeybindLoader.RegisterKeybind(this, "Dodge Roll", Microsoft.Xna.Framework.Input.Keys.LeftAlt);
+            specialAbility = KeybindLoader.RegisterKeybind(this, "Special Ability", Microsoft.Xna.Framework.Input.Keys.Q);
             //SwordflipKey = KeybindLoader.RegisterKeybind(this, "Sword Flip", Microsoft.Xna.Framework.Input.Keys.P);
 
             DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulShekel>(), 99999L));
@@ -606,6 +608,7 @@ namespace tsorcRevamp
         {
             toggleDragoonBoots = null;
             reflectionShiftKey = null;
+            specialAbility = null;
             KillAllowed = null;
             BannedItems = null;
             PlaceAllowed = null;

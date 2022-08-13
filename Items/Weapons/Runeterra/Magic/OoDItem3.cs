@@ -9,6 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
     public class OoDItem3 : ModItem
     {
         public static int useOoDItem3 = 0;
+        public static bool OoDOrb3Exists = false;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Orb of Deception");
@@ -58,7 +59,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
         }
         public override void HoldItem(Player player)
         {
-            bool OoDOrb3Exists = false;
+
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<OoDOrb3>() && Main.projectile[i].owner == player.whoAmI)

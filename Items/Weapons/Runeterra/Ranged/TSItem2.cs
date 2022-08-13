@@ -1,4 +1,4 @@
-/*
+
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.Creative;
@@ -40,9 +40,13 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            if (type == ProjectileID.Seed)
+            if (type == ProjectileID.Seed & player.altFunctionUse == 1)
             {
                 type = ModContent.ProjectileType<TSToxicShot>();
+            }
+            if (type == ProjectileID.Seed & player.altFunctionUse == 2)
+            {
+                type = ModContent.ProjectileType<TSBlindDart>();
             }
         }
         public override void UseStyle(Player player, Rectangle heldItemFrame)
@@ -51,13 +55,10 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
             {
                 player.altFunctionUse = 2;
                 cooldown = 10;
-                Item.shoot = ModContent.ProjectileType<TSToxicShot>();
             }
             if (Main.mouseLeft)
             {
                 player.altFunctionUse = 1;
-                Item.shoot = ProjectileID.Seed;
-                Item.damage = 20;
             }
         }
         public override bool AltFunctionUse(Player player)
@@ -94,4 +95,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
             recipe.Register();
         }
     }
-}*/
+}
