@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
     {
         public override void SetStaticDefaults()
         { //TODO "Double cast all spells"? maybe some day
-            Tooltip.SetDefault("All spells have doubled speed and mana cost" +
+            Tooltip.SetDefault("All spells can be castes twice as fast" +
                                "\nReduces magic damage by 30% multiplicatively" +
                                "\nSome spells cannot benefit from this.");
         }
@@ -39,6 +39,16 @@ namespace tsorcRevamp.Items.Accessories.Magic
             {
                 float roundup = (float)Math.Ceiling(selected.useTime * 0.5f);
                 return (roundup / (float)selected.useTime);
+            }
+            else return 1f;
+        }
+        public override float UseAnimationMultiplier(Item item, Player player)
+        {
+            Item selected = player.inventory[player.selectedItem];
+            if ((selected.DamageType == DamageClass.Magic) && (player.GetModPlayer<tsorcRevampPlayer>().GemBox))
+            {
+                float roundup = (float)Math.Ceiling(selected.useAnimation * 0.5f);
+                return (roundup / (float)selected.useAnimation);
             }
             else return 1f;
         }
