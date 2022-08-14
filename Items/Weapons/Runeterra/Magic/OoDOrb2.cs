@@ -52,7 +52,12 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Player owner = Main.player[Projectile.owner];
 			Projectile.CritChance = owner.GetWeaponCrit(owner.HeldItem);
 
-            int launchTimeLimit = 50;  // How much time the projectile can go before retracting (speed and shootTimer will set the flail's range)
+			if (CurrentAIState == AIState.InHand & OoDItem2.useOoDItem2 == 2)
+			{
+				OoDItem2.useOoDItem2 = 0;
+			}
+
+			int launchTimeLimit = 50;  // How much time the projectile can go before retracting (speed and shootTimer will set the flail's range)
             float launchSpeed = 13f; // How fast the projectile can move
             float maxLaunchLength = 1000f; // How far the projectile's chain can stretch before being forced to retract when in launched state
             float retractAcceleration = 7.5f; // How quickly the projectile will accelerate back towards the player while retracting

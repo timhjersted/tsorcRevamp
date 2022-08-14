@@ -60,6 +60,11 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             float forcedRetractAcceleration = 16f; // How quickly the projectile will accelerate back towards the player while being forced to retract
             float maxForcedRetractSpeed = 32f; // The max speed the projectile will have while being forced to retract
 
+			if (CurrentAIState == AIState.InHand & OoDItem3.useOoDItem3 == 2)
+            {
+				OoDItem3.useOoDItem3 = 0;
+            }
+
             if (!owner.active || owner.dead || owner.noItems || owner.CCed || Vector2.Distance(Projectile.Center, owner.Center) > 1500f)
             {
                 Projectile.Kill();
