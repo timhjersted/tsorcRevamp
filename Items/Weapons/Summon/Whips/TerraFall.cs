@@ -13,10 +13,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 			Tooltip.SetDefault("\n15 summon tag damage" +
                 "\n7% summon tag crit" +
-                "\nStrike enemies to inflict the Wrath of Terraria upon them" +
-                "\nThis will summon whips to strike your foes every time a minion hits the struck enemy" +
                 "\nGain 25% whip attack speed upon striking an enemy" +
                 "\nThis whip performs better against multiple targets than most whips" +
+                "\nThis whip can be charged up for extra range and damage" +
 				"\nYour summons will focus struck enemies");
 		}
 

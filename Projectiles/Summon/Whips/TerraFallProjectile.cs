@@ -98,7 +98,14 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			ChargeTime++;
 
 			if (ChargeTime % 12 == 0) // 1 segment per 12 ticks of charge.
+			{
 				Projectile.WhipSettings.Segments++;
+				Projectile.WhipSettings.RangeMultiplier += 0.05f;
+			}
+			if (ChargeTime % 60 == 0) // Double damage every 60 ticks of charge.
+			{
+				Projectile.damage *= 2;
+			}
 
 			// Increase range up to 2x for full charge.
 			Projectile.WhipSettings.RangeMultiplier += 1 / 120f;

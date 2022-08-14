@@ -85,6 +85,8 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", "11 summon tag damage"));
+                    tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "TagNerfed2", "Reduces minion damage by 5%"));
                 }
             }
             if (item.type == ItemID.EmpressBlade && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))
