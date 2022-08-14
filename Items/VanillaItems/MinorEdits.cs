@@ -17,12 +17,7 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.accessory = true;
             }
-            if (item.type == ItemID.FieryGreatsword)
-            {
-                item.useAnimation = 30;
-                item.useTime = 30;
-                item.damage = 40;
-            }
+
         }
         public override void GrabRange(Item item, Player player, ref int grabRange)
         {

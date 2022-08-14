@@ -21,6 +21,12 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.damage = 130;
             }
+            if (item.type == ItemID.FieryGreatsword)
+            {
+                item.useAnimation = 30;
+                item.useTime = 30;
+                item.damage = 40;
+            }
         }
         public override void UpdateInventory(Item item, Player player)
         {

@@ -12,6 +12,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     //memory management is scary
     public abstract class PermanentPotion : ModItem
     {
+        public float ConsumedAmountDivisor = 10;
+
         public static readonly List<PermanentPotion> ExclusiveSetCombat = new() {
             new PermanentArmorDrug(),
             new PermanentDemonDrug(),
@@ -1170,19 +1172,19 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetWellFed;
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Tea time all the time. \nNot compatible with other food items");
+            Tooltip.SetDefault("Tea time all the time. \nNot compatible with other food items\nAmount consumed: " + VanillaItems.VanillaPotions.WellFed1Consumed); //dang tooltip won't update
         }
 
         public override void PotionEffect(Player player) {
             player.wellFed = true;
-            player.statDefense += 2;
-            player.GetCritChance(DamageClass.Generic) += 2;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.05f;
-            player.GetDamage(DamageClass.Generic) += 0.05f;
-            player.GetKnockback(DamageClass.Summon) += 0.5f;
-            player.moveSpeed += 0.20f;
-            player.pickSpeed -= 0.05f;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f;
+            player.statDefense += (int)(2 + (2 * (VanillaItems.VanillaPotions.WellFed1Consumed / ConsumedAmountDivisor)));
+            player.GetCritChance(DamageClass.Generic) += 2 + (2 * (VanillaItems.VanillaPotions.WellFed1Consumed / ConsumedAmountDivisor));
+            player.GetAttackSpeed(DamageClass.Melee) += 0.05f + (0.05f * (VanillaItems.VanillaPotions.WellFed1Consumed / ConsumedAmountDivisor));
+            player.GetDamage(DamageClass.Generic) += 0.05f + (0.05f * (VanillaItems.VanillaPotions.WellFed1Consumed / ConsumedAmountDivisor));
+            player.GetKnockback(DamageClass.Summon) += 0.5f + (0.05f * (VanillaItems.VanillaPotions.WellFed1Consumed / ConsumedAmountDivisor));
+            player.moveSpeed += 0.20f + (0.2f * (VanillaItems.VanillaPotions.WellFed1Consumed / ConsumedAmountDivisor));
+            player.pickSpeed -= 0.05f + (0.05f * (VanillaItems.VanillaPotions.WellFed1Consumed / ConsumedAmountDivisor));
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f + (0.1f * (VanillaItems.VanillaPotions.WellFed1Consumed / ConsumedAmountDivisor));
         }
     }
 
