@@ -132,7 +132,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 					{
 						Projectile.damage = Projectile.originalDamage * 2;
 						Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(owner.Center).SafeNormalize(Vector2.Zero);
-						if (Projectile.Distance(owner.Center) <= 15f)
+						if (Projectile.Distance(owner.Center) <= 25f)
 						{
 							OoDItem2.useOoDItem2 = 0;
 							CurrentAIState = AIState.InHand;
@@ -167,7 +167,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 					{
 						Projectile.damage = Projectile.originalDamage * 2;
 						Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(owner.Center).SafeNormalize(Vector2.Zero);
-						if (Projectile.Distance(owner.Center) <= 15f)
+						if (Projectile.Distance(owner.Center) <= 25f)
 						{
 							OoDItem2.useOoDItem2 = 0;
 							CurrentAIState = AIState.InHand;
