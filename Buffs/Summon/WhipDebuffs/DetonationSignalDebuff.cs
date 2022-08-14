@@ -1,6 +1,8 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 {
@@ -34,9 +36,24 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 		// TODO: Inconsistent with vanilla, increasing damage AFTER it is randomised, not before. Change to a different hook in the future.
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
+			int buffIndex = 0;
 			if (markedByDetonationSignal && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
 				damage *= 3;
+				if (markedByDetonationSignal && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
+                {
+					Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), npc.Top, Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, 0, 0, Main.myPlayer);
+					SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 0.6f, PitchVariance = 0.3f });
+					foreach (int buffType in npc.buffType)
+					{
+
+						if (buffType == ModContent.BuffType<DetonationSignalDebuff>())
+						{
+							npc.DelBuff(buffIndex);
+						}
+						buffIndex++;
+					}
+				}
 			}
 		}
     }

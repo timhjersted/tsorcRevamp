@@ -11,10 +11,12 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-			Tooltip.SetDefault("\n20 summon tag damage" +
-                "\n10% summon tag critical strike chance" +
-                "\nStriking Enemies with this whip increases your whip attack speed" +
-                "\nPerforms better against multiple targets than most whips" +
+			Tooltip.SetDefault("\n15 summon tag damage" +
+                "\n7% summon tag crit" +
+                "\nStrike enemies to inflict the Wrath of Terraria upon them" +
+                "\nThis will summon whips to strike your foes every time a minion hits the struck enemy" +
+                "\nGain 25% whip attack speed upon striking an enemy" +
+                "\nThis whip performs better against multiple targets than most whips" +
 				"\nYour summons will focus struck enemies");
 		}
 
@@ -28,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.damage = 115;
 			Item.knockBack = 2;
 			Item.rare = ItemRarityID.Red;
-			Item.value = Item.buyPrice(1, 50, 0, 0);
+			Item.value = Item.buyPrice(3, 33, 33, 33);
 
 			Item.channel = true;
 
