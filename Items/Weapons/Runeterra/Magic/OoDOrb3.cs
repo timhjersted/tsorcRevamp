@@ -37,8 +37,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
         public override void SetDefaults()
         {
             Projectile.netImportant = true;
-			Projectile.width = 24;
-            Projectile.height = 24;
+			Projectile.width = 48;
+            Projectile.height = 48;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = -1;
             Projectile.extraUpdates = 1;

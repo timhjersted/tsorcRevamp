@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		}
         public override void SetDefaults()
 		{
-			Item.damage = 30;
+			Item.damage = 31;
 			Item.knockBack = 3f;
 			Item.mana = 10;
 			Item.width = 1;

@@ -33,11 +33,11 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Item.holdStyle = ItemHoldStyleID.HoldFront;
             Item.useAnimation = 10;
             Item.useTime = 10;
-            Item.damage = 50;
+            Item.damage = 115;
             Item.autoReuse = false;
             Item.rare = ItemRarityID.LightPurple;
             Item.value = Item.buyPrice(0, 30, 0, 0);
-            Item.mana = 40;
+            Item.mana = 50;
             Item.DamageType = DamageClass.Magic;
             Item.knockBack = 1f;
         }
