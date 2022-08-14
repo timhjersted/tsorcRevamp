@@ -1,9 +1,8 @@
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Summon
+namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 {
 	public class SearingLashDebuff : ModBuff
 	{
@@ -76,6 +75,10 @@ namespace tsorcRevamp.Buffs.Summon
 				{
 					tagbonusdamage += 8;
 				}
+				if (npc.HasBuff(ModContent.BuffType<DragoonLashDebuff>()))
+                {
+					tagbonusdamage += 12;
+                }
 				if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
 				{
 					tagbonusdamage = 20;

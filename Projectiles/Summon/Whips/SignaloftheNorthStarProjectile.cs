@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
-	public class NightsCrackerProjectile : ModProjectile
+	public class SignaloftheNorthStarProjectile : ModProjectile
 	{
 
 		public override void SetStaticDefaults()
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = -1;
 			Projectile.WhipSettings.Segments = 20;
-			Projectile.WhipSettings.RangeMultiplier = 1.59f; //only thing affecting the actual whip range
+			Projectile.WhipSettings.RangeMultiplier = 1.6f; //only thing affecting the actual whip range
 		}
 
 		private float Timer
@@ -76,8 +76,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			// Plays a whipcrack sound at the tip of the whip.
 			List<Vector2> points = Projectile.WhipPointsForCollision;
 			Projectile.FillWhipControlPoints(Projectile, points);
-			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.CorruptGibs, 0f, 0f, 150, default(Color), 1f);
-			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.PurpleTorch, 0f, 0f, 150, default(Color), 1f);
+			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.WhiteTorch, 0f, 0f, 150, default(Color), 1f);
+			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.Ice, 0f, 0f, 150, default(Color), 1f);
 			if (Timer == swingTime / 2)
 			{
 				SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Item/SummonerWhipcrack") with { Volume = 0.6f, PitchVariance = 0.3f }, points[points.Count - 1]);
@@ -114,13 +114,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerBuff>(), 180);
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.NightsCrackerDebuff>(), 240);
-			target.AddBuff(BuffID.ShadowFlame, 240);
-			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
-			Projectile.damage = (int)(damage * 0.85f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
+			target.AddBuff(BuffID.Frostburn2, 240);
+			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.SignaloftheNorthStarBuff>(), 600);
+			Projectile.damage = (int)(damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
 		}
-
 		// This method draws a line between all points of the whip, in case there's empty space between the sprites.
 		private void DrawLine(List<Vector2> list)
 		{
@@ -135,7 +132,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 				Vector2 diff = list[i + 1] - element;
 
 				float rotation = diff.ToRotation() - MathHelper.PiOver2;
-				Color color = Lighting.GetColor(element.ToTileCoordinates(), Color.MediumVioletRed);
+				Color color = Lighting.GetColor(element.ToTileCoordinates(), Color.White);
 				Vector2 scale = new Vector2(1, (diff.Length() + 2) / frame.Height);
 
 				Main.EntitySpriteDraw(texture, pos - Main.screenPosition, frame, color, rotation, origin, scale, SpriteEffects.None, 0);
@@ -167,37 +164,138 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			{
 				// These two values are set to suit this projectile's sprite, but won't necessarily work for your own.
 				// You can change them if they don't!
-				Rectangle frame = new Rectangle(0, 0, 10, 26);
-				Vector2 origin = new Vector2(5, 12);
+				Rectangle frame = new Rectangle(0, 0, 22, 24);
+				Vector2 origin = new Vector2(10, 10);
 				float scale = 1;
 
 				// These statements determine what part of the spritesheet to draw for the current segment.
 				// They can also be changed to suit your sprite.
 				if (i == list.Count - 2)
 				{
-					frame.Y = 74;
-					frame.Height = 18;
-
+					/*
+					frame.Y = 72;
+					frame.Height = 36;
+					*/
+					frame.Y = 66;
+					frame.Height = 36;
 					// For a more impactful look, this scales the tip of the whip up when fully extended, and down when curled up.
 					Projectile.GetWhipSettings(Projectile, out float timeToFlyOut, out int _, out float _);
 					float t = Timer / timeToFlyOut;
 					scale = MathHelper.Lerp(0.5f, 1.5f, Utils.GetLerpValue(0.1f, 0.7f, t, true) * Utils.GetLerpValue(0.9f, 0.7f, t, true));
 				}
-				else if (i > 20)
-				{
-					frame.Y = 58;
-					frame.Height = 16;
-				}
-				else if (i > 10)
-				{
-					frame.Y = 42;
-					frame.Height = 16;
-				}
+				/*
 				else if (i > 0)
 				{
-					frame.Y = 26;
-					frame.Height = 16;
+					frame.Y = 24;
+					frame.Height = 48;
 				}
+				*/
+				else if (i == 20)
+				{
+					frame.Y = 46;
+					frame.Height = 20;
+				}
+				else if (i == 19)
+				{
+					frame.Y = 24;
+					frame.Height = 22;
+				}
+				else if (i == 18)
+				{
+					frame.Y = 46;
+					frame.Height = 20;
+				}
+				else if (i == 17)
+				{
+					frame.Y = 24;
+					frame.Height = 22;
+				}
+				else if (i == 16)
+				{
+					frame.Y = 46;
+					frame.Height = 20;
+				}
+				else if (i == 15)
+				{
+					frame.Y = 24;
+					frame.Height = 22;
+				}
+				else if (i == 14)
+				{
+					frame.Y = 46;
+					frame.Height = 20;
+				}
+				else if (i == 13)
+				{
+					frame.Y = 24;
+					frame.Height = 22;
+				}
+				else if (i == 12)
+				{
+					frame.Y = 46;
+					frame.Height = 20;
+				}
+				else if (i == 11)
+				{
+					frame.Y = 24;
+					frame.Height = 22;
+				}
+				else if (i == 10)
+				{
+					frame.Y = 46;
+					frame.Height = 20;
+				}
+				else if (i == 9)
+				{
+					frame.Y = 24;
+					frame.Height = 22;
+				}
+				else if (i == 8)
+				{
+					frame.Y = 46;
+					frame.Height = 20;
+				}
+				else if (i == 7)
+				{
+					frame.Y = 24;
+					frame.Height = 22;
+				}
+				else if (i == 6)
+				{
+					frame.Y = 46;
+					frame.Height = 20;
+				}
+				else if (i == 5)
+				{
+					frame.Y = 24;
+					frame.Height = 22;
+				}
+				else if (i == 4)
+				{
+					frame.Y = 46;
+					frame.Height = 20;
+				}
+				else if (i == 3)
+				{
+					frame.Y = 24;
+					frame.Height = 22;
+				}
+				else if (i == 2)
+				{
+					frame.Y = 46;
+					frame.Height = 20;
+				}
+				else if (i == 1)
+				{
+					frame.Y = 24;
+					frame.Height = 22;
+				}
+				else if (i == 0)
+				{
+					frame.Y = 46;
+					frame.Height = 20;
+				}
+
 
 				Vector2 element = list[i];
 				Vector2 diff = list[i + 1] - element;

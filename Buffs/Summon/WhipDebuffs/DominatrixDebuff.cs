@@ -1,11 +1,10 @@
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Summon
+namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 {
-	public class PyrosulfateDebuff : ModBuff
+	public class DominatrixDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
@@ -16,30 +15,29 @@ namespace tsorcRevamp.Buffs.Summon
 
 		public override void Update(NPC npc, ref int buffIndex)
 		{
-			npc.GetGlobalNPC<PyrosulfateDebuffNPC>().markedByPyrosulfate = true;
+			npc.GetGlobalNPC<DominatrixDebuffNPC>().markedByDominatrix = true;
 		}
 	}
 
-	public class PyrosulfateDebuffNPC : GlobalNPC
+	public class DominatrixDebuffNPC : GlobalNPC
 	{
 		// This is required to store information on entities that isn't shared between them.
 		public override bool InstancePerEntity => true;
 
-		public bool markedByPyrosulfate;
+		public bool markedByDominatrix;
 
 		public override void ResetEffects(NPC npc)
 		{
-			markedByPyrosulfate = false;
+			markedByDominatrix = false;
 		}
 
 		// TODO: Inconsistent with vanilla, increasing damage AFTER it is randomised, not before. Change to a different hook in the future.
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
-			if (markedByPyrosulfate && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
+			if (markedByDominatrix && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
-				damage += 8;
-				if (Main.rand.NextBool(33))
+				if (Main.rand.NextBool(20))
 				{
 					crit = true;
 				}

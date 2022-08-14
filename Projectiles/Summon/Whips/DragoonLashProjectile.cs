@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
-	public class NightsCrackerProjectile : ModProjectile
+	public class DragoonLashProjectile : ModProjectile
 	{
 
 		public override void SetStaticDefaults()
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = -1;
 			Projectile.WhipSettings.Segments = 20;
-			Projectile.WhipSettings.RangeMultiplier = 1.59f; //only thing affecting the actual whip range
+			Projectile.WhipSettings.RangeMultiplier = 2.5f; //only thing affecting the actual whip range
 		}
 
 		private float Timer
@@ -114,8 +114,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerBuff>(), 180);
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.NightsCrackerDebuff>(), 240);
+			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.DragoonLashBuff>(), 180);
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.DragoonLashDebuff>(), 240);
 			target.AddBuff(BuffID.ShadowFlame, 240);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.85f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f

@@ -6,15 +6,15 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-	public class TerraFall : ModItem
+	public class DragoonLash : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-			Tooltip.SetDefault("\n20 summon tag damage" +
-                "\n10% summon tag critical strike chance" +
+			DisplayName.SetDefault("Dragoon Lash");
+			Tooltip.SetDefault("\n12 Summon tag damage" +
+                "\n4% summon tag critical strike chance" +
                 "\nStriking Enemies with this whip increases your whip attack speed" +
-                "\nPerforms better against multiple targets than most whips" +
 				"\nYour summons will focus struck enemies");
 		}
 
@@ -25,19 +25,17 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 60;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 115;
-			Item.knockBack = 2;
-			Item.rare = ItemRarityID.Red;
-			Item.value = Item.buyPrice(1, 50, 0, 0);
+			Item.damage = 146;
+			Item.knockBack = 10;
+			Item.rare = ItemRarityID.Cyan;
+			Item.value = Item.buyPrice(0, 90, 0, 0);
 
-			Item.channel = true;
-
-			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.TerraFallProjectile>();
+			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.DragoonLashProjectile>();
 			Item.shootSpeed = 4;
 
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.useTime = 30; // for some reason a lower use speed gives it increased range....
-			Item.useAnimation = 30;
+			Item.useTime = 15; // for some reason a lower use speed gives it increased range....
+			Item.useAnimation = 15;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
 
@@ -46,10 +44,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<NightsCracker>());
-			recipe.AddIngredient(ItemID.SwordWhip);
-			recipe.AddIngredient(ItemID.RainbowWhip);
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
+			recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 20);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 76000);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();

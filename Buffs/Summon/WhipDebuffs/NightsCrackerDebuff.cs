@@ -1,9 +1,8 @@
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Summon
+namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 {
 	public class NightsCrackerDebuff : ModBuff
 	{
@@ -76,13 +75,17 @@ namespace tsorcRevamp.Buffs.Summon
 				{
 					tagbonusdamage += 8;
 				}
+				if (npc.HasBuff(ModContent.BuffType<DragoonLashDebuff>()))
+				{
+					tagbonusdamage += 12;
+				}
 				if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
                 {
 					tagbonusdamage = 20;
                 }
 				damage += (int)((projectile.damage + tagbonusdamage) * 0.33f * whipDamage * 0.01);
-				damage += 5;
-				if (Main.rand.NextBool(33))
+				damage += 4;
+				if (Main.rand.NextBool(50))
 				{
 					crit = true;
 				}

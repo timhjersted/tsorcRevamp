@@ -127,7 +127,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.SearingLashDebuff>(), 240);
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.SearingLashDebuff>(), 240);
 			target.AddBuff(BuffID.OnFire3, 240);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.

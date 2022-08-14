@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
 
-	public class PolarisLeashPolaris : ModProjectile
+	public class SignaloftheNorthStarNorthStar : ModProjectile
 	{
 
 		public override void SetDefaults()
@@ -28,9 +28,9 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Player player = Main.player[Projectile.owner];
 			if (player.dead || !player.active)
 			{
-				player.ClearBuff(ModContent.BuffType<Buffs.Summon.PolarisLeashBuff>());
+				player.ClearBuff(ModContent.BuffType<Buffs.Summon.SignaloftheNorthStarBuff>());
 			}
-			if (player.HasBuff(ModContent.BuffType<Buffs.Summon.PolarisLeashBuff>()))
+			if (player.HasBuff(ModContent.BuffType<Buffs.Summon.SignaloftheNorthStarBuff>()))
 			{
 				Projectile.timeLeft = 2;
 			}
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 		}
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.PolarisLeashDebuff>(), 240);
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.SignaloftheNorthStarDebuff>(), 240);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 		}
 	}

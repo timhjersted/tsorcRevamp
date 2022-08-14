@@ -120,7 +120,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
 			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.TerraFallBuff>(), 180);
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.TerraFallDebuff>(), 240);
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.TerraFallDebuff>(), 240);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.85f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
 		}

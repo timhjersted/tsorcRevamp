@@ -1,4 +1,4 @@
-/*
+
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -12,8 +12,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 			DisplayName.SetDefault("Night's Cracker");
-			Tooltip.SetDefault("\n5 summon tag damage" +
-                "\n3% summon tag critical strike chance" +
+			Tooltip.SetDefault("\n4 summon tag damage" +
+                "\n2% summon tag critical strike chance" +
                 "\nStriking Enemies with this whip increases your whip attack speed" +
                 "\nand inflicts Shadowflame" +
                 "\nPerforms better against multiple targets than most whips" +
@@ -59,4 +59,4 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.Register();
 		}
 	}
-}*/
+}

@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = -1;
 			Projectile.WhipSettings.Segments = 16;
-			Projectile.WhipSettings.RangeMultiplier = 1.1f; //only thing affecting the actual whip range
+			Projectile.WhipSettings.RangeMultiplier = 1.4f; //only thing affecting the actual whip range
 		}
 
 		private float Timer
@@ -113,7 +113,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.EnchantedWhipDebuff>(), 240);
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.EnchantedWhipDebuff>(), 240);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
 		}
