@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.aiStyle = 0;
             NPC.width = 80;
             NPC.height = 100;
-            NPC.damage = 250;
+            NPC.damage = 99999;
             NPC.defense = 45;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
@@ -38,7 +38,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
 
-        int shadowShotDamage = 75;
+        int shadowShotDamage = 150;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = (int)(NPC.damage * 1.3 / 2);
