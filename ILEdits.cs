@@ -18,6 +18,10 @@ namespace tsorcRevamp
             //IL.Terraria.Player.Update += Chest_Patch;
             IL.Terraria.Recipe.FindRecipes += SoulSlotRecipesPatch;
 
+            //Disable drawing of wires when in adventure mode
+            //editing a get accessor of a property and built in hooks don't have any of those
+            HookEndpointManager.Modify(typeof(Terraria.GameContent.UI.WiresUI.Settings).GetProperty("DrawWires").GetGetMethod(), new ILContext.Manipulator(DrawWires_Patch));
+
             /*
             if (ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
             {
@@ -50,7 +54,25 @@ namespace tsorcRevamp
         {
 
         }
-        internal static void Player_Update(ILContext il)
+           
+        internal static void DrawWires_Patch(ILContext il)
+		{
+            var c = new ILCursor(il);
+            var label = il.DefineLabel();
+
+            //get if we're in adventure mode and push it onto the stack
+            c.EmitDelegate<Func<bool>>(() => ModContent.GetInstance<tsorcRevampConfig>().AdventureMode);
+            //if that's false, maybe it should be true, so jump to label (the original function)
+            c.Emit(OpCodes.Brfalse, label);
+            //else, push 0 (false) and return
+            c.Emit(OpCodes.Ldc_I4_0);
+            c.Emit(OpCodes.Ret);
+
+            c.MarkLabel(label);
+
+		}
+
+		internal static void Player_Update(ILContext il)
         {
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
 
