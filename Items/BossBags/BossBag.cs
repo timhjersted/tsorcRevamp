@@ -326,9 +326,9 @@ namespace tsorcRevamp.Items.BossBags
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before              
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.Melee.PowerArmorNUHelmet>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.Melee.PowerArmorNUTorso>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.Melee.PowerArmorNUGreaves>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.PowerArmorNUHelmet>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.PowerArmorNUTorso>());
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.PowerArmorNUGreaves>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.FlareTome>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Ranged.ElfinBow>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.HolyWarElixir>());
