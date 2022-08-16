@@ -10,7 +10,8 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Shadow Cloak Skill activates +9 Life Regen when health falls below 100, otherwise grants +2 life regen\nSet bonus: +10% Melee Damage, +27% Melee Speed");
+            Tooltip.SetDefault("Shadow Cloak Skill activates +9 Life Regen when health falls below 100, otherwise grants +2 life regen" +
+                "\nSet bonus: +10% Melee Damage, +27% Melee Speed");
         }
 
         public override void SetDefaults()
@@ -41,6 +42,15 @@ namespace tsorcRevamp.Items.Armors.Melee
 
                 Main.dust[dust2].noGravity = true;
             }
+        }
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            return head.type == ModContent.ItemType<ShadowCloakPlateHelm>() && legs.type == ModContent.ItemType<ShadowCloakGreaves>();
+        }
+        public override void UpdateArmorSet(Player player)
+        {
+            player.GetDamage(DamageClass.Melee) += 0.10f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.27f;
         }
 
         public override void AddRecipes()

@@ -11,8 +11,10 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases minion damage by 12%\nIncreases your max number of minions by 1\nSet Bonus: Increases your max number of minions and turrets by 1" +
-                "\nIncreases minion damage by 12%\nWhen health is above 333, gain 7% minion damage + 6 flat and 6 life regen");
+            Tooltip.SetDefault("Increases minion damage by 12%" +
+                "\nIncreases your max number of minions by 1" +
+                "\nSet Bonus: Increases your max number of minions and turrets by 1" +
+                "\nWhen health is above 333, gain 7% minion damage + 6 flat and 6 life regen");
         }
 
         public override void SetDefaults()
@@ -37,7 +39,6 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             player.maxMinions += 1;
             player.maxTurrets += 1;
-            player.GetDamage(DamageClass.Summon) += 0.12f;
 
             if (player.statLife > 333)
             {

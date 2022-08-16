@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases ranged damage by 1 flat\nSet bonus: +5% Ranged Damage, 20% less chance to consume ammo");
+            Tooltip.SetDefault("Increases ranged damage by 1 flat" +
+                "\nSet bonus: +5% Ranged Damage, 20% less chance to consume ammo");
         }
-
         public override void SetDefaults()
         {
             Item.width = 18;
@@ -26,7 +26,15 @@ namespace tsorcRevamp.Items.Armors.Ranged
         {
             player.GetDamage(DamageClass.Ranged).Flat += 1;
         }
-
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            return head.type == ModContent.ItemType<LeatherHelmet>() && legs.type == ModContent.ItemType<LeatherGreaves>();
+        }
+        public override void UpdateArmorSet(Player player)
+        {
+            player.GetDamage(DamageClass.Ranged) += 0.05f;
+            player.ammoCost80 = true;
+        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

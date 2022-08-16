@@ -21,21 +21,10 @@ namespace tsorcRevamp.Items.Armors.Ranged
             Item.rare = ItemRarityID.Green;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<LeatherArmor>() && legs.type == ModContent.ItemType<LeatherGreaves>();
-        }
         public override void UpdateEquip(Player player)
         {
             player.GetCritChance(DamageClass.Ranged) += 0.08f;
         }
-        public override void UpdateArmorSet(Player player)
-        {
-            player.GetDamage(DamageClass.Ranged) += 0.05f;
-            player.ammoCost80 = true;
-        }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Adept at close combat");
+            Tooltip.SetDefault("Adept at close combat" +
+                "\n+17% melee crit");
         }
         public override void SetDefaults()
         {
@@ -19,15 +20,8 @@ namespace tsorcRevamp.Items.Armors.Melee
             Item.rare = ItemRarityID.Lime;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
-        public override bool IsArmorSet(Item head, Item body, Item legs)
+        public override void UpdateEquip(Player player)
         {
-            return body.type == ModContent.ItemType<FighterBreastplate>() && legs.type == ModContent.ItemType<FighterGreaves>();
-        }
-
-        public override void UpdateArmorSet(Player player)
-        {
-            player.GetDamage(DamageClass.Melee) += 0.25f;
             player.GetCritChance(DamageClass.Melee) += 17;
         }
 

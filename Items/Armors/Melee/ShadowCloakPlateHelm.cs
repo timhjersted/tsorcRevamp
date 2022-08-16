@@ -20,23 +20,10 @@ namespace tsorcRevamp.Items.Armors.Melee
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<ShadowCloakPlateMail>() && legs.type == ModContent.ItemType<ShadowCloakGreaves>();
-        }
-
         public override void UpdateEquip(Player player)
         {
             player.GetCritChance(DamageClass.Melee) += 6;
         }
-
-        public override void UpdateArmorSet(Player player)
-        {
-            player.GetDamage(DamageClass.Melee) += 0.10f;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.27f;
-        }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

@@ -19,12 +19,10 @@ namespace tsorcRevamp.Items.Armors.Magic
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
         public override void UpdateEquip(Player player)
         {
             player.GetDamage(DamageClass.Magic) += 0.05f;
         }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

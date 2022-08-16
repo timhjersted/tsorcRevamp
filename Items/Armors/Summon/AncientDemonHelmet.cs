@@ -27,25 +27,6 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.GetDamage(DamageClass.Summon) += 0.09f; 
         }
 
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<AncientDemonArmor>() && legs.type == ModContent.ItemType<AncientDemonGreaves>();
-        }
-
-        public override void UpdateArmorSet(Player player)
-        {
-            player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
-            player.whipRangeMultiplier += 0.2f;
-            if (player.statLife <= 166)
-            {
-                player.GetAttackSpeed(DamageClass.Summon) += 0.15f;
-
-                int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Green, 1.0f);
-                Main.dust[dust].noGravity = true;
-
-            }
-            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.15f;
-        }
 
         public override void AddRecipes()
         {

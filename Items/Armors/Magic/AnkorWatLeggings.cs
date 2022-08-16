@@ -9,9 +9,8 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+20% Movespeed. +30% Magic Damage.");
+            Tooltip.SetDefault("+25% Movespeed. +25% Magic Damage.");
         }
-
         public override void SetDefaults()
         {
             Item.width = 18;
@@ -21,13 +20,11 @@ namespace tsorcRevamp.Items.Armors.Magic
             Item.rare = ItemRarityID.Yellow;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.20f;
-            player.GetDamage(DamageClass.Magic) += 0.30f;
+            player.moveSpeed += 0.25f;
+            player.GetDamage(DamageClass.Magic) += 0.25f;
         }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

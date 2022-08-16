@@ -26,34 +26,6 @@ namespace tsorcRevamp.Items.Armors
         {
             player.GetCritChance(DamageClass.Generic) += 13;
         }
-
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<AncientMagicPlateArmor>() && legs.type == ModContent.ItemType<AncientMagicPlateGreaves>();
-        }
-
-        public override void UpdateArmorSet(Player player)
-        {
-
-
-            if (player.dpsDamage > 400 && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingHard>()))
-            {
-                {
-                    player.AddBuff(ModContent.BuffType<Buffs.MagicPlatingHard>(), 1);
-                }
-            } else
-            if (player.dpsDamage > 200 && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingMedium>()) && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingHard>()))
-                {
-                    {
-                    player.AddBuff(ModContent.BuffType<Buffs.MagicPlatingMedium>(), 1);
-                    }
-                } else
-            if (player.dpsDamage > 100 && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingLight>()) && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingMedium>()) && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingHard>()))
-            {
-                player.AddBuff(ModContent.BuffType<Buffs.MagicPlatingLight>(), 1);
-            }
-        }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

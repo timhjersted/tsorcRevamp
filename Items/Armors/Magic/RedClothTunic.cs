@@ -25,7 +25,15 @@ namespace tsorcRevamp.Items.Armors.Magic
         {
             player.GetDamage(DamageClass.Magic).Flat += 1;
         }
-
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            return head.type == ModContent.ItemType<RedClothHat>() && legs.type == ModContent.ItemType<RedClothPants>();
+        }
+        public override void UpdateArmorSet(Player player)
+        {
+            player.statManaMax2 += 50;
+            player.manaCost -= 0.06f;
+        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

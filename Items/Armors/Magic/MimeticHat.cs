@@ -19,25 +19,11 @@ namespace tsorcRevamp.Items.Armors.Magic
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<MimeticSuit>() && legs.type == ModContent.ItemType<MimeticPants>();
-        }
-
         public override void UpdateEquip(Player player)
         {
             player.GetCritChance(DamageClass.Magic) += 9;
             player.statManaMax2 += 20;
         }
-
-        public override void UpdateArmorSet(Player player)
-        {
-            player.manaCost -= 0.13f;
-            player.GetDamage(DamageClass.Magic) += 0.15f;
-            player.GetCritChance(DamageClass.Magic) += 6;
-        }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

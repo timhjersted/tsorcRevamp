@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Amor from the East\n+25% magic damage");
+            Tooltip.SetDefault("Amor from the East" +
+                "\n+25% magic damage");
         }
         public override void SetDefaults()
         {
@@ -19,24 +20,10 @@ namespace tsorcRevamp.Items.Armors.Magic
             Item.rare = ItemRarityID.Lime;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<GenjiArmor>() && legs.type == ModContent.ItemType<GenjiGreaves>();
-        }
-
-        public override void UpdateArmorSet(Player player)
-        {
-            player.GetCritChance(DamageClass.Magic) += 20;
-            player.statManaMax2 += 100;
-            player.manaRegen += 3;
-        }
-
         public override void UpdateEquip(Player player)
         {
             player.GetDamage(DamageClass.Magic) += 0.25f;
         }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

@@ -9,7 +9,9 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Gifted with ranged combat and healing. High defense not necessary.\n25% chance not to consume ammo\nSet enchantment adds 20% Ranged Crit, +20 Ranged Dmg, +9 Life Regen\nAn even more powerful set when combined with the right accessories");
+            Tooltip.SetDefault("Gifted with healing. High defense not necessary." +
+                "\n25% chance not to consume ammo" +
+                "\nSet Bonus: 20% Ranged Crit, +20 Ranged Dmg, +9 Life Regen");
         }
 
         public override void SetDefaults()
@@ -21,6 +23,16 @@ namespace tsorcRevamp.Items.Armors.Ranged
             Item.value = PriceByRarity.fromItem(Item);
         }
 
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            return head.type == ModContent.ItemType<MirkwoodElvenBlondeHairStyle>() && legs.type == ModContent.ItemType<MirkwoodElvenLeggings>();
+        }
+        public override void UpdateArmorSet(Player player)
+        {
+            player.GetDamage(DamageClass.Ranged) += 0.2f;
+            player.GetCritChance(DamageClass.Ranged) += 20;
+            player.lifeRegen += 9;
+        }
         public override void UpdateEquip(Player player)
         {
             player.ammoCost75 = true;

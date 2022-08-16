@@ -24,5 +24,16 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             player.GetDamage(DamageClass.Summon) += 0.1f;
         }
+
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            return head.type == ModContent.ItemType<OldChainCoif>() && legs.type == ModContent.ItemType<OldChainGreaves>();
+        }
+
+        public override void UpdateArmorSet(Player player)
+        {
+            player.maxMinions += 1;
+            player.GetAttackSpeed(DamageClass.Summon) += 0.1f;
+        }
     }
 }

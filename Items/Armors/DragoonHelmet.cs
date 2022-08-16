@@ -9,9 +9,8 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Harmonized with Sky and Fire\n+120 Mana");
+            Tooltip.SetDefault("+120 Mana, reduces mana costs by 14%");
         }
-
         public override void SetDefaults()
         {
             Item.width = 18;
@@ -20,43 +19,11 @@ namespace tsorcRevamp.Items.Armors
             Item.rare = ItemRarityID.Cyan;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
         public override void UpdateEquip(Player player)
         {
             player.statManaMax2 += 120;
-        }
-
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<DragoonArmor>() && legs.type == ModContent.ItemType<DragoonGreaves>();
-        }
-
-        public override void UpdateArmorSet(Player player)
-        {
-            player.setBonus = "Harmonized with the four elements: fire, water, earth and air, including +2 life regen and flight" +
-                "\nBoosts damage, crit chance, melee and movement speed by 30% and reduces mana costs by 14%";
-            player.lavaImmune = true;
-            player.fireWalk = true;
-            player.breath = 9999999;
-            player.waterWalk = true;
-            player.noKnockback = true;
-            player.GetDamage(DamageClass.Generic) += 0.30f;
-            player.GetCritChance(DamageClass.Generic) += 30;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.30f;
-            player.moveSpeed += 0.30f;
             player.manaCost -= 0.14f;
-            player.lifeRegen += 2;
-            //player.wings = 34; // looks like Jim's Wings
-            //player.wingsLogic = 34;
-            player.wingTimeMax = 180;
-
         }
-
-        public override void ArmorSetShadows(Player player)
-        {
-            player.armorEffectDrawShadow = true;
-        }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

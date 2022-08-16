@@ -12,7 +12,6 @@ namespace tsorcRevamp.Items.Armors.Magic
         {
             Tooltip.SetDefault("Known to be treasured by assassins.\n+25% movement.");
         }
-
         public override void SetDefaults()
         {
             Item.width = 18;
@@ -21,12 +20,10 @@ namespace tsorcRevamp.Items.Armors.Magic
             Item.rare = ItemRarityID.LightPurple;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += 0.25f;
         }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

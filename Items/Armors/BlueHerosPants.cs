@@ -12,7 +12,6 @@ namespace tsorcRevamp.Items.Armors
             DisplayName.SetDefault("Blue Hero's Pants");
             Tooltip.SetDefault("Worn by the hero himself!");
         }
-
         public override void SetDefaults()
         {
             Item.width = 18;
@@ -21,7 +20,6 @@ namespace tsorcRevamp.Items.Armors
             Item.rare = ItemRarityID.LightPurple;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

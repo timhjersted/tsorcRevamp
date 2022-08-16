@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Gifted with ranged combat. High defense not necessary\nWith eyes of a hunter you can spot enemies in the dark");
+            Tooltip.SetDefault("Gifted with ranged combat. High defense not necessary" +
+                "\nWith eyes of a hunter you can spot enemies in the dark");
         }
         public override void SetDefaults()
         {
@@ -19,24 +20,10 @@ namespace tsorcRevamp.Items.Armors.Ranged
             Item.rare = ItemRarityID.LightPurple;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<MirkwoodElvenLeatherArmor>() && legs.type == ModContent.ItemType<MirkwoodElvenLeggings>();
-        }
-
         public override void UpdateEquip(Player player)
         {
             player.detectCreature = true;
         }
-
-        public override void UpdateArmorSet(Player player)
-        {
-            player.GetDamage(DamageClass.Ranged) += 0.2f;
-            player.GetCritChance(DamageClass.Ranged) += 20;
-            player.lifeRegen += 9;
-        }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

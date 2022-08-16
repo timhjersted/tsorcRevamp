@@ -2,14 +2,15 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Armors.Melee
+namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Legs)]
     public class PowerArmorNUGreaves : ModItem
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+20% Melee Speed, +15% move speed\nSkills: Water Walk, Fire Walk, No knockback, Double Jump, Jump Boost, Longer Breath");
+            Tooltip.SetDefault("+20% Melee Speed, +40% move speed" +
+                "\nSkills: Water Walk, Fire Walk, No knockback, Double Jump, Jump Boost");
             DisplayName.SetDefault("Power Armor NU Greaves");
         }
         public override void SetDefaults()
@@ -23,10 +24,9 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.15f;
+            player.moveSpeed += 0.4f;
             player.GetAttackSpeed(DamageClass.Melee) += 0.2f;
             player.waterWalk = true;
-            player.breath = 10800;
             player.noKnockback = true;
             player.hasJumpOption_Santank = true;
             player.jumpBoost = true;

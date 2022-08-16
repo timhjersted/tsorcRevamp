@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.hasJumpOption_Cloud = true;
+            player.hasJumpOption_Santank = true;
             player.moveSpeed += 0.12f;
             player.jumpBoost = true;
         }

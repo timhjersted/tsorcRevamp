@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.30f;
+            player.moveSpeed += 0.3f;
         }
 
         public override void AddRecipes()

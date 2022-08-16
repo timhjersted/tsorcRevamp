@@ -21,19 +21,6 @@ namespace tsorcRevamp.Items.Armors.Ranged
             Item.rare = ItemRarityID.Lime;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<ArcherOfLumeliaShirt>() && legs.type == ModContent.ItemType<ArcherOfLumeliaPants>();
-        }
-
-        public override void UpdateArmorSet(Player player)
-        {
-            player.GetCritChance(DamageClass.Ranged) += 23;
-            player.GetDamage(DamageClass.Ranged) += 0.15f;
-            player.archery = true;
-        }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

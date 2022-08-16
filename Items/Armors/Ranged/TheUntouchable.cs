@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("5% increases ranged damage and critical strike chance\n5% increased move speed");
+            Tooltip.SetDefault("4% increases ranged damage and critical strike chance\n4% increased move speed");
         }
         public override void SetDefaults()
         {
@@ -22,9 +22,9 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Ranged) += 0.05f;
-            player.GetCritChance(DamageClass.Ranged) += 5;
-            player.moveSpeed += 0.05f;
+            player.GetDamage(DamageClass.Ranged) += 0.04f;
+            player.GetCritChance(DamageClass.Ranged) += 4;
+            player.moveSpeed += 0.04f;
         }
 
         public override void AddRecipes()

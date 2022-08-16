@@ -19,18 +19,9 @@ namespace tsorcRevamp.Items.Armors
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<StuddedLeatherArmor>() && legs.type == ModContent.ItemType<StuddedLeatherGreaves>();
-        }
         public override void UpdateEquip(Player player)
         {
             player.GetCritChance(DamageClass.Generic) += 5;
-        }
-        public override void UpdateArmorSet(Player player)
-        {
-            player.GetAttackSpeed(DamageClass.Generic) += 0.15f;
         }
     }
 }

@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Artorias' Greaves");
-            Tooltip.SetDefault("Enchanted armor of Artorias.\n+100 Max Mana");
+            Tooltip.SetDefault("Enchanted armor of Artorias." +
+                "\n+100 Max Mana");
         }
-
         public override void SetDefaults()
         {
             Item.width = 18;
@@ -22,12 +22,10 @@ namespace tsorcRevamp.Items.Armors
             Item.rare = ItemRarityID.Purple;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
         public override void UpdateEquip(Player player)
         {
             player.statManaMax2 += 100;
         }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

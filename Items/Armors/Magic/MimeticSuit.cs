@@ -12,7 +12,6 @@ namespace tsorcRevamp.Items.Armors.Magic
         {
             Tooltip.SetDefault("Burning Mana Skill activates +5 Mana Regen when life falls below 120\nSet bonus: 13% Reduced Mana Cost, +6% Magic Crit, +15% Magic Damage");
         }
-
         public override void SetDefaults()
         {
             Item.width = 18;
@@ -21,7 +20,6 @@ namespace tsorcRevamp.Items.Armors.Magic
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
         public override void UpdateEquip(Player player)
         {
             if (player.statLife <= 120)
@@ -31,7 +29,16 @@ namespace tsorcRevamp.Items.Armors.Magic
                 Main.dust[dust].noGravity = true;
             }
         }
-
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            return head.type == ModContent.ItemType<MimeticHat>() && legs.type == ModContent.ItemType<MimeticPants>();
+        }
+        public override void UpdateArmorSet(Player player)
+        {
+            player.manaCost -= 0.13f;
+            player.GetDamage(DamageClass.Magic) += 0.15f;
+            player.GetCritChance(DamageClass.Magic) += 6;
+        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

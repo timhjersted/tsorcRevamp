@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Armor from the East\n+15% movement.");
+            Tooltip.SetDefault("Armor from the East" +
+                "\n+15% movement.");
         }
         public override void SetDefaults()
         {
@@ -19,12 +20,10 @@ namespace tsorcRevamp.Items.Armors.Magic
             Item.rare = ItemRarityID.Lime;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += 0.15f;
         }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

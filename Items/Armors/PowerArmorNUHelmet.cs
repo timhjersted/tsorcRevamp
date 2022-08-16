@@ -4,31 +4,35 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
 {
-    [AutoloadEquip(EquipType.Legs)]
-    public class DragoonGreaves : ModItem
+    [AutoloadEquip(EquipType.Head)]
+    public class PowerArmorNUHelmet : ModItem
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Grants an extra double jump and Shiny Red Balloon effect");
+            Tooltip.SetDefault("20% Increased Melee Damage" +
+                "\n+17% crit chance for all classes" +
+                "\nLonger Breath");
+            DisplayName.SetDefault("Power Armor NU Helmet");
         }
         public override void SetDefaults()
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 15;
-            Item.rare = ItemRarityID.Cyan;
+            Item.defense = 9;
+            Item.rare = ItemRarityID.Lime;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
-            player.hasJumpOption_Unicorn = true;
-            player.jumpBoost = true;
+            player.GetDamage(DamageClass.Melee) += 0.2f;
+            player.GetCritChance(DamageClass.Generic) += 17;
+            player.breath = 10800;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("RedHerosPants").Type, 1);
-            recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 1);
+            recipe.AddIngredient(ItemID.ShadowHelmet, 1);
+            recipe.AddIngredient(ItemID.SoulofMight, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -36,4 +40,3 @@ namespace tsorcRevamp.Items.Armors
         }
     }
 }
-

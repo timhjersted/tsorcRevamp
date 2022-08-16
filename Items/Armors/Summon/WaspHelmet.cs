@@ -28,18 +28,6 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.maxMinions += 1;
         }
 
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<WaspArmor>() && legs.type == ModContent.ItemType<WaspGreaves>();
-        }
-
-        public override void UpdateArmorSet(Player player)
-        {
-            player.GetDamage(DamageClass.Summon) += 0.09f;
-            player.maxMinions += 1;
-            player.maxTurrets += 1;
-        }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

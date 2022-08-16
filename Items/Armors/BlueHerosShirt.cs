@@ -10,9 +10,10 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Blue Hero's Shirt");
-            Tooltip.SetDefault("Set bonus grants extended breath & swimming skills plus 6% all stats boost\nAlso, +3 life regen speed, faster movement & hunter vision while in water");
+            Tooltip.SetDefault("Set Bonus: Grants extended breath & swimming skills" +
+                "\n+9% damage, crit, melee and movement speed, -8% mana costs, 20% less chance to consume ammo" +
+                "\n+3 life regen speed, faster movement & hunter vision while in water");
         }
-
         public override void SetDefaults()
         {
             Item.width = 18;
@@ -21,7 +22,28 @@ namespace tsorcRevamp.Items.Armors
             Item.rare = ItemRarityID.LightPurple;
             Item.value = PriceByRarity.fromItem(Item);
         }
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            return head.type == ModContent.ItemType<BlueHerosHat>() && legs.type == ModContent.ItemType<BlueHerosPants>();
+        }
+        public override void UpdateArmorSet(Player player)
+        {
+            player.accFlipper = true;
+            player.accDivingHelm = true;
+            player.GetDamage(DamageClass.Generic) += 0.09f;
+            player.GetCritChance(DamageClass.Generic) += 9;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.09f;
+            player.moveSpeed += 0.09f;
+            player.manaCost -= 0.08f;
+            player.ammoCost80 = true;
 
+            if (player.wet)
+            {
+                player.lifeRegen += 3;
+                player.detectCreature = true;
+                player.moveSpeed *= 5f;
+            }
+        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

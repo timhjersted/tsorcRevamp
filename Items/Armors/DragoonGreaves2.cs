@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Supreme Dragoon Greaves");
-            Tooltip.SetDefault("Harmonized with Earth and Water");
+            Tooltip.SetDefault("Grants an extra double jump and Shiny Red Balloon effect");
         }
 
         public override void SetDefaults()
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Armors
         {
             player.hasJumpOption_Unicorn = true;
             player.jumpBoost = true;
-            player.spawnMax = true;
+            player.spawnMax = true; //?????
         }
 
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)

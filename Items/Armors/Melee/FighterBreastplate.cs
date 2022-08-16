@@ -9,7 +9,9 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Adept at close combat\nSet Bonus: +25% Melee damage, +17% Melee Crit\n+20% Melee Speed");
+            Tooltip.SetDefault("Adept at close combat" +
+                "\n+20% melee speed" +
+                "\nSet Bonus: +25% Melee damage");
         }
 
         public override void SetDefaults()
@@ -24,6 +26,15 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void UpdateEquip(Player player)
         {
             player.GetAttackSpeed(DamageClass.Melee) += 0.2f;
+        }
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            return head.type == ModContent.ItemType<FighterHairStyle>() && legs.type == ModContent.ItemType<FighterGreaves>();
+        }
+
+        public override void UpdateArmorSet(Player player)
+        {
+            player.GetDamage(DamageClass.Melee) += 0.25f;
         }
 
         public override void AddRecipes()

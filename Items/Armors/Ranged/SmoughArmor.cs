@@ -20,11 +20,20 @@ namespace tsorcRevamp.Items.Armors.Ranged
             Item.rare = ItemRarityID.Blue;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
-
         public override void UpdateEquip(Player player)
         {
             player.GetDamage(DamageClass.Ranged).Flat += 2;
+        }
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            return head.type == ModContent.ItemType<SmoughHelmet>() && legs.type == ModContent.ItemType<SmoughGreaves>();
+        }
+
+        public override void UpdateArmorSet(Player player)
+        {
+            player.hasJumpOption_Sandstorm = true;
+            player.GetDamage(DamageClass.Ranged) += 0.1f;
+            player.ammoCost75 = true;
         }
         public override void AddRecipes()
         {

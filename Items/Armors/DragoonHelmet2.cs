@@ -13,7 +13,9 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Supreme Dragoon Helmet");
-            Tooltip.SetDefault("Harmonized with Sky and Fire\n+200 Mana\nPotion use has a 15 second shorter cooldown.");
+            Tooltip.SetDefault("+200 Mana and Philosopher's stone effect" +
+                "\nSet Bonus: Harmonized with the four elements: fire, water, earth and air, including +6 life regen and flight" +
+                "\nBoosts damage, crit chance, melee and movement speed by 38% and reduces mana costs by 17%");
         }
 
         public override void SetDefaults()
@@ -38,8 +40,6 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.setBonus = "Harmonized with the four elements: fire, water, earth and air, including +6 life regen and flight" +
-                "\nBoosts damage, crit chance, melee and movement speed by 38% and reduces mana costs by 17%";
             player.lavaImmune = true;
             player.fireWalk = true;
             player.breath = 9999999;

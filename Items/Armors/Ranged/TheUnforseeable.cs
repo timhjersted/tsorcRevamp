@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+2 life regen / +13 life regen when health is below 100");
+            Tooltip.SetDefault("+2 life regen / +11 life regen when health is below 100");
         }
 
         public override void SetDefaults()
@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
             player.ammoCost75 = true;
             if (player.statLife <= 100)
             {
-                player.lifeRegen += 13;
+                player.lifeRegen += 11;
             }
             else
             {

@@ -24,18 +24,6 @@ namespace tsorcRevamp.Items.Armors.Ranged
         {
             player.GetCritChance(DamageClass.Ranged) += 12;
         }
-
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<SmoughArmor>() && legs.type == ModContent.ItemType<SmoughGreaves>();
-        }
-
-        public override void UpdateArmorSet(Player player)
-        {
-            player.hasJumpOption_Sandstorm = true;
-            player.GetDamage(DamageClass.Ranged) += 0.1f;
-            player.ammoCost75 = true;
-        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

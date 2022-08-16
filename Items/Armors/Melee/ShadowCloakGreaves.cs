@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("17% increased movement speed\n+ Double Jump Skill");
+            Tooltip.SetDefault("17% increased movement speed" +
+                "\n+ Double Jump Skill");
         }
         public override void SetDefaults()
         {

@@ -10,9 +10,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A lost prince's armor.\nIncreases melee damage by 3 flat\nSet bonus: +10% melee speed and damage");
+            Tooltip.SetDefault("A lost prince's armor." +
+                "\nIncreases melee damage by 3 flat" +
+                "\nSet bonus: +10% melee speed and damage");
         }
-
         public override void SetDefaults()
         {
             Item.width = 18;
@@ -25,7 +26,15 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             player.GetDamage(DamageClass.Melee).Flat += 3;
         }
-
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            return head.type == ModContent.ItemType<AncientGoldenHelmet>() && legs.type == ModContent.ItemType<AncientGoldenGreaves>();
+        }
+        public override void UpdateArmorSet(Player player)
+        {
+            player.GetAttackSpeed(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.Melee) += 0.1f;
+        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

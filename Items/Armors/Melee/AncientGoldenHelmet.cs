@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("It is the famous Helmet of the Stars. \nIncreases melee crit chance by 6%");
+            Tooltip.SetDefault("It is the famous Helmet of the Stars." +
+                "\nIncreases melee crit chance by 6%");
         }
-
         public override void SetDefaults()
         {
             Item.width = 18;
@@ -22,23 +22,10 @@ namespace tsorcRevamp.Items.Armors.Melee
             Item.rare = ItemRarityID.Green;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
         public override void UpdateEquip(Player player)
         {
             player.GetCritChance(DamageClass.Melee) += 6;
         }
-
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<AncientGoldenArmor>() && legs.type == ModContent.ItemType<AncientGoldenGreaves>();
-        }
-
-        public override void UpdateArmorSet(Player player)
-        {
-            player.GetAttackSpeed(DamageClass.Melee) += 0.1f;
-            player.GetDamage(DamageClass.Melee) += 0.1f;
-        }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

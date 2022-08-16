@@ -1,4 +1,5 @@
 ﻿using Terraria;
+using Microsoft.Xna.Framework;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -9,9 +10,9 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("10% increased melee damage\nSet bonus: +17% Melee Crit, +14% Melee Speed, Firewalk skill");
+            Tooltip.SetDefault("15% increased melee damage" +
+                "\nSet bonus: +17% melee damage, Firewalk skill");
         }
-
         public override void SetDefaults()
         {
             Item.width = 18;
@@ -20,10 +21,25 @@ namespace tsorcRevamp.Items.Armors.Melee
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.Melee) += 0.15f;
+        }
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            return head.type == ModContent.ItemType<MagmaHelmet>() && legs.type == ModContent.ItemType<MagmaGreaves>();
+        }
+        public override void UpdateArmorSet(Player player)
+        {
+            player.GetDamage(DamageClass.Melee) += 0.17f;
+            player.fireWalk = true;
+            if (Main.rand.NextBool(3))
+            {
+                Color color = new Color();
+                int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 200, color, 1.0f);
+                Main.dust[dust].noGravity = true;
+                Main.dust[dust].noLight = false;
+            }
         }
 
         public override void AddRecipes()

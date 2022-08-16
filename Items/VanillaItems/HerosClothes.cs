@@ -37,10 +37,7 @@ namespace tsorcRevamp.Items.Armors
             {
                 player.setBonus = "Boosts all critical strike chance by 5%";
 
-                player.GetCritChance(DamageClass.Ranged) += 5;
-                player.GetCritChance(DamageClass.Melee) += 5;
-                player.GetCritChance(DamageClass.Magic) += 5;
-                player.GetCritChance(DamageClass.Throwing) += 5;
+                player.GetCritChance(DamageClass.Generic) += 5;
             }
         }
 
