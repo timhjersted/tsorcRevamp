@@ -25,7 +25,6 @@ namespace tsorcRevamp.Items.Accessories.Expert
             Item.accessory = true;
             Item.value = PriceByRarity.Purple_11;
             Item.expert = true;
-            Item.rare = ItemRarityID.Expert;
         }
 
         public override void UpdateVanity(Player player)

@@ -2,7 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories.Mobility
+namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class DragoonBoots : ModItem
     {
@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             Item.width = 32;
             Item.height = 26;
             Item.maxStack = 1;
-            Item.rare = ItemRarityID.Red;
+            Item.expert = true;
             Item.value = PriceByRarity.Red_10;
         }
         public override void UpdateEquip(Player player)

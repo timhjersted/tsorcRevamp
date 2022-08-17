@@ -2,7 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories.Melee
+namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class DragoonGear : ModItem
     {
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
             Item.height = 26;
             Item.accessory = true;
             Item.maxStack = 1;
-            Item.rare = ItemRarityID.Purple;
+            Item.expert = true;
             Item.value = PriceByRarity.Purple_11;
         }
 
@@ -31,8 +31,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(Mod.Find<ModItem>("DragoonBoots").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DragoonHorn").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<DragoonBoots>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<DragoonHorn>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
 
             recipe.AddTile(TileID.DemonAltar);

@@ -2,7 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories
+namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class RingOfPower : ModItem
     {
@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories
         {
             Tooltip.SetDefault("A great ring of power gifted to men." +
                                 "\nCasts darkness and battle potion effects on wearer." +
-                                "\n+25% critical chance. ");
+                                "\n+25% crit chance. ");
         }
 
         public override void SetDefaults()
@@ -19,17 +19,15 @@ namespace tsorcRevamp.Items.Accessories
             Item.height = 38;
             Item.accessory = true;
             Item.value = PriceByRarity.Red_10;
-            Item.rare = ItemRarityID.Red;
+            Item.expert = true;
         }
 
         public override void UpdateEquip(Player player)
         {
             player.noKnockback = true;
-            player.AddBuff(22, 500, false); //Darkness
-            player.AddBuff(13, 500, false); //Battle Potion
-            player.GetCritChance(DamageClass.Ranged) += 25;
-            player.GetCritChance(DamageClass.Melee) += 25;
-            player.GetCritChance(DamageClass.Magic) += 25;
+            player.AddBuff(BuffID.Darkness, 500, false);
+            player.AddBuff(BuffID.Battle, 500, false);
+            player.GetCritChance(DamageClass.Generic) += 25;
         }
 
     }

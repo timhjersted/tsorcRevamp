@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories.Melee
+namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class DragoonHorn : ModItem
     {
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
             Item.height = 24;
             Item.accessory = true;
             Item.value = PriceByRarity.Red_10;
-            Item.rare = ItemRarityID.Red; //water fiend (shm) drop
+            Item.expert = true;
         }
 
         public override void UpdateEquip(Player player)

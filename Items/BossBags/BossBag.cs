@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Pets;
 using tsorcRevamp.NPCs.Bosses;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.Items.BossBags
 {
@@ -69,380 +70,479 @@ namespace tsorcRevamp.Items.BossBags
 
     public class OolacileDemonBag : BossBag
     {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            //no expert item
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.BandOfCosmicPower>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.PermanentPotions.PermanentShinePotion>()));
+            itemLoot.Add(ItemDropRule.Common(ItemID.CloudinaBottle));
+        }
+        
         public override int BossBagNPC => ModContent.NPCType<AncientOolacileDemon>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
-            VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before            
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Defensive.BandOfCosmicPower>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.PermanentPotions.PermanentShinePotion>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.CloudinaBottle, 1);
+            VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before
         }
     }
     public class SlograBag : BossBag
     {
-        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Slogra>();
+
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.BurningStone>()));
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.PoisonbiteRing>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.BloodbiteRing>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.DarkTrident>()));
+        }
+        public override int BossBagNPC => ModContent.NPCType<Slogra>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
-            tsorcRevampWorld.Slain[ModContent.NPCType<NPCs.Bosses.Gaibon>()] = 1;
+            tsorcRevampWorld.Slain[ModContent.NPCType<Gaibon>()] = 1;
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Defensive.PoisonbiteRing>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Defensive.BloodbiteRing>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Ranged.DarkTrident>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Expert.BurningStone>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), (int)((700 + Main.rand.Next(300)) * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
         }
     }
     public class GaibonBag : BossBag
     {
-        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Gaibon>();
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.BurningAura>()));
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.PoisonbiteRing>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.BloodbiteRing>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.DarkTrident>()));
+        }
+        public override int BossBagNPC => ModContent.NPCType<Gaibon>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
-            tsorcRevampWorld.Slain[ModContent.NPCType<NPCs.Bosses.Slogra>()] = 1;
+            tsorcRevampWorld.Slain[ModContent.NPCType<Slogra>()] = 1;
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Defensive.PoisonbiteRing>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Defensive.BloodbiteRing>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Ranged.DarkTrident>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Expert.BurningAura>(), 1);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), (int)((700 + Main.rand.Next(300)) * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
         }
     }
     public class JungleWyvernBag : BossBag
     {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.ChloranthyRing>()));
+
+            itemLoot.Add(ItemDropRule.Common(ItemID.Amethyst, 1, 2, 10));
+            itemLoot.Add(ItemDropRule.Common(ItemID.Topaz, 1, 2, 10));
+            itemLoot.Add(ItemDropRule.Common(ItemID.Sapphire, 1, 2, 10));
+            itemLoot.Add(ItemDropRule.Common(ItemID.Emerald, 1, 2, 10));
+            itemLoot.Add(ItemDropRule.Common(ItemID.Ruby, 1, 2, 10));
+            itemLoot.Add(ItemDropRule.Common(ItemID.Amber, 1, 2, 10));
+            itemLoot.Add(ItemDropRule.Common(ItemID.Diamond, 1, 2, 10));
+        }
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.NecroHelmet);
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.NecroBreastplate);
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.NecroGreaves);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Accessories.Expert.ChloranthyRing>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Sapphire, Main.rand.Next(2, 10));
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Ruby, Main.rand.Next(2, 10));
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Topaz, Main.rand.Next(2, 10));
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Diamond, Main.rand.Next(2, 10));
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Emerald, Main.rand.Next(2, 10));
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Amethyst, Main.rand.Next(2, 10));
         }
     }
     #endregion
 
     #region Hardmode
-    public class TheHunterBag : BossBag
+    public class LumeliaBag : BossBag
     {
-        public override int BossBagNPC => ModContent.NPCType<TheHunter>();
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.CovetousSilverSerpentRing>()));
+
+            itemLoot.Add(ItemDropRule.Common(ItemID.WaterWalkingBoots));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Ammo.ArrowOfBard>(), 1, 10, 20));
+        }
+        public override int BossBagNPC => ModContent.NPCType<HeroofLumelia>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
-            VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.WaterWalkingBoots, 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CrestOfEarth>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Drax);
+            VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before
         }
     }
     public class TheRageBag : BossBag
     {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Summon.PhoenixEgg>()));
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfFire>()));
+            itemLoot.Add(ItemDropRule.Common(ItemID.CobaltDrill));
+        }
         public override int BossBagNPC => ModContent.NPCType<TheRage>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CrestOfFire>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.CobaltDrill);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Summon.PhoenixEgg>(), 1);
         }
     }
     public class TheSorrowBag : BossBag
     {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.GoldenHairpin>()));
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfWater>()));
+            itemLoot.Add(ItemDropRule.Common(ItemID.AdamantiteDrill));
+        }
         public override int BossBagNPC => ModContent.NPCType<TheSorrow>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CrestOfWater>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Expert.GoldenHairpin>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.AdamantiteDrill);
         }
     }
+    public class TheHunterBag : BossBag
+    {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            //no expert item
 
-    public class LumeliaBag : BossBag
-    {
-        public override int BossBagNPC => ModContent.NPCType<HeroofLumelia>();
-        [System.Obsolete]
-        public override void OpenBossBag(Player player)
-        {          
-            
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.CovetousSilverSerpentRing>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(10, 20));
-            VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfEarth>()));
+            itemLoot.Add(ItemDropRule.Common(ItemID.Drax));
+            itemLoot.Add(ItemDropRule.Common(ItemID.WaterWalkingBoots));
         }
-    }
-
-    public class MindflayerIllusionBag : BossBag
-    {
-        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>();
+        public override int BossBagNPC => ModContent.NPCType<TheHunter>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
-            VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before            
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>());
-        }
-    }
-
-    public class AttraidiesBag : BossBag
-    {
-        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>();
-        [System.Obsolete]
-        public override void OpenBossBag(Player player)
-        {
-            VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before            
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.BloomShards>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.TheEnd>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.HeavenPiercer>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.SoulOfAttraidies>(), Main.rand.Next(15, 23));
-        }
-    }
-    public class KrakenBag : BossBag
-    {
-        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>();
-        [System.Obsolete]
-        public override void OpenBossBag(Player player)
-        {
-            VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Melee.DragoonHorn>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>());
-        }
-    }
-    public class MarilithBag : BossBag
-    {
-        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>();
-        [System.Obsolete]
-        public override void OpenBossBag(Player player)
-        {
-            VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.FairyInABottle>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>()); //Because the Shaman Elder says she drops them
-
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-            {
-                player.QuickSpawnItem(player.GetSource_Loot(), ItemID.LargeSapphire);
-            }
-        }
-    }
-    public class LichBag : BossBag
-    {
-        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>();
-        [System.Obsolete]
-        public override void OpenBossBag(Player player)
-        {
-            VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Mobility.DragoonBoots>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenGaiaSword>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
-        }
-    }
-
-    public class SerrisBag : BossBag
-    {
-        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>();
-        [System.Obsolete]
-        public override void OpenBossBag(Player player)
-        {
-            VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before     
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), 3 + Main.rand.Next(4));
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), 3 + Main.rand.Next(4));
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>(), 1);
-        }
-    }
-    public class DeathBag : BossBag
-    {
-        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Death>();
-        [System.Obsolete]
-        public override void OpenBossBag(Player player)
-        {
-            VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before            
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>(), 4);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.LivingRainbowDye, 5);
-            player.QuickSpawnItem(player.GetSource_Loot(), ItemID.MidnightRainbowDye, 5);
+            VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
         }
     }
     public class WyvernMageBag : BossBag
     {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.LionheartGunblade>()));
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Magic.GemBox>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.LampTome>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 2, 2));
+        }
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before          
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 2);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.LionheartGunblade>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.LampTome>(), 1);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Magic.GemBox>(), 1);
+        }
+    }
+    public class SerrisBag : BossBag
+    {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            //no expert item
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.DemonDrugPotion>(), 1, 3, 7));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.ArmorDrugPotion>(), 1, 3, 7));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.MagicBarrierScroll>()));
+        }
+        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>();
+        [System.Obsolete]
+        public override void OpenBossBag(Player player)
+        {
+            VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before     
+        }
+    }
+    public class DeathBag : BossBag
+    {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            //no expert item
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.GreatMagicShieldScroll>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.MagicBarrierScroll>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 4, 4));
+            itemLoot.Add(ItemDropRule.Common(ItemID.LivingRainbowDye, 1, 5, 5));
+            itemLoot.Add(ItemDropRule.Common(ItemID.MidnightRainbowDye, 1, 5, 5));
+        }
+        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Death>();
+        [System.Obsolete]
+        public override void OpenBossBag(Player player)
+        {
+            VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before            
+        }
+    }
+    public class MindflayerIllusionBag : BossBag
+    {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            //won't get an expert item, just a part of Attraidies
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BossItems.MindflayerIllusionRelic>()));
+        }
+        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>();
+        [System.Obsolete]
+        public override void OpenBossBag(Player player)
+        {
+            VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
+        }
+    }
+    public class AttraidiesBag : BossBag
+    {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.BloomShards>()));
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HeavenPiercer>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheEnd>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfAttraidies>(), 1, 15, 23));
+        }
+        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>();
+        [System.Obsolete]
+        public override void OpenBossBag(Player player)
+        {
+            VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before            
         }
     }
     #endregion
 
     #region SuperHardMode
-    public class GwynBag : BossBag
+    public class KrakenBag : BossBag
     {
-        public override int BossBagNPC => ModContent.NPCType<Gwyn>();
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.DragoonHorn>()));
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Shortswords.BarrowBlade>()));
+        }
+        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
-            VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
-            
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Epilogue>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.EssenceOfTerraria>());
+            VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before
+        }
+    }
+    public class MarilithBag : BossBag
+    {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            //no expert item
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Shortswords.BarrowBlade>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.ForgottenRisingSun>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.Ice3Tome>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<FairyInABottle>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>()));
+
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.DraxEX>());
+                itemLoot.Add(ItemDropRule.Common(ItemID.LargeSapphire));
             }
+        }
+        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>();
+        [System.Obsolete]
+        public override void OpenBossBag(Player player)
+        {
+            VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before
+        }
+    }
+    public class LichBag : BossBag
+    {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.DragoonBoots>()));
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.Bolt3Tome>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.ForgottenGaiaSword>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>()));
+        }
+        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>();
+        [System.Obsolete]
+        public override void OpenBossBag(Player player)
+        {
+            VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true, true); //gives the player souls if they haven't opened the bag before
         }
     }
     public class BlightBag : BossBag
     {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            //no expert item
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.DivineSpark>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfBlight>(), 1, 3, 6));
+        }
         public override int BossBagNPC => ModContent.NPCType<Blight>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before           
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.DivineSpark>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.SoulOfBlight>(), Main.rand.Next(3, 6));
         }
     }
     public class ChaosBag : BossBag
     {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            //no expert item
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.FlareTome>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.ElfinBow>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfChaos>(), 1, 3, 3));
+        }
         public override int BossBagNPC => ModContent.NPCType<Chaos>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before              
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.PowerArmorNUHelmet>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.PowerArmorNUTorso>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.PowerArmorNUGreaves>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Magic.FlareTome>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Ranged.ElfinBow>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.HolyWarElixir>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.DarkSoul>(), 3000);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.SoulOfChaos>(), 3);
         }
     }
     public class MageShadowBag : BossBag
     {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.RingOfPower>()));
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 4, 4));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GhostWyvernSoul>(), 1, 8, 8));
+        }
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before             
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.GhostWyvernSoul>(), 8);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.RingOfPower>());
         }
     }
 
     public class OolacileSorcererBag : BossBag
     {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.DuskCrownRing>()));
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HealingElixir>(), 1, 10, 10));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 5, 5));
+        }
         public override int BossBagNPC => ModContent.NPCType<AbysmalOolacileSorcerer>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before           
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Potions.HealingElixir>(), 10);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.DarkSoul>(), 5000);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Magic.DuskCrownRing>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Humanity>());
-            if (Main.rand.NextBool(1)) player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.PurgingStone>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.RedTitanite>(), 5);
         }
     }
     public class ArtoriasBag : BossBag
     {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.RingofArtorias>()));
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.WolfRing>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfArtorias>(), 1, 6, 6));
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                itemLoot.Add(ItemDropRule.Common(ItemID.LargeAmethyst));
+            }
+        }
         public override int BossBagNPC => ModContent.NPCType<Artorias>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before
-            
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.DarkSoul>(), 5000);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Defensive.WolfRing>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Defensive.TheRingOfArtorias>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.SoulOfArtorias>(), 6);
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-            {
-                player.QuickSpawnItem(player.GetSource_Loot(), ItemID.LargeAmethyst);
-            }
         }
     }
-    public class DarkCloudBag : BossBag
-    {
-        public override int BossBagNPC => ModContent.NPCType<DarkCloud>();
-        [System.Obsolete]
-        public override void OpenBossBag(Player player)
-        {
-            VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<GuardianSoul>(), 3);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Humanity>(), 3);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Expert.ReflectionShift>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.MoonlightGreatsword>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Summon.NullSpriteStaff>());
-        }
-    }
+
     public class HellkiteBag : BossBag
     {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.DragonStone>()));
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BossItems.HellkiteStone>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.HiRyuuSpear>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 22, 28));
+        }
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before            
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.DragonEssence>(), 22 + Main.rand.Next(6));
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.DarkSoul>(), 4000);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.HiRyuuSpear>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.DragonStone>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.BossItems.HellkiteStone>(), 1);
-
         }
     }
     public class SeathBag : BossBag
     {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.DragonWings>()));
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.BlueTearstoneRing>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 35, 40));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BequeathedSoul>(), 1, 3, 3));
+        }
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.DragonEssence>(), 35 + Main.rand.Next(5));
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.DarkSoul>(), 7000);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.BequeathedSoul>(), 3);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Defensive.BlueTearstoneRing>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.PurgingStone>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Mobility.DragonWings>());
         }
     }
     public class WitchkingBag : BossBag
     {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.WitchkingsSword>()));
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.Summon.WitchkingHelmet>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.Summon.WitchkingTop>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.Summon.WitchkingBottoms>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.CovenantOfArtorias>()));
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BrokenStrangeMagicRing>()));
+            }
+        }
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>();
         [System.Obsolete]
         public override void OpenBossBag(Player player)
         {
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, true); //gives the player souls if they haven't opened the bag before
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.RingOfPower>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.Summon.WitchkingHelmet>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.Summon.WitchkingTop>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Armors.Summon.WitchkingBottoms>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.WitchkingsSword > ());
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), 5000);
-            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+        }
+    }
+    public class DarkCloudBag : BossBag
+    {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.ReflectionShift>()));
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.MoonlightGreatsword>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Summon.NullSpriteStaff>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GuardianSoul>(), 1, 5, 5));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 3, 3));
+        }
+        public override int BossBagNPC => ModContent.NPCType<DarkCloud>();
+        [System.Obsolete]
+        public override void OpenBossBag(Player player)
+        {
+            VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
+
+        }
+    }
+    public class GwynBag : BossBag
+    {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            //no expert item
+
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Epilogue>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EssenceOfTerraria>()));
+
+
+        }
+        public override int BossBagNPC => ModContent.NPCType<Gwyn>();
+        [System.Obsolete]
+        public override void OpenBossBag(Player player)
+        {
+            VanillaBossBag.AddBossBagSouls(BossBagNPC, player); //gives the player souls if they haven't opened the bag before
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) //threw an error when loading the mod as I tried to put it into modifyitemloot, wouldn't accept Main.player[Main.myplayer].GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse for the bool
             {
-                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<BrokenStrangeMagicRing>());
+                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DraxEX>(), 1);
             }
         }
     }

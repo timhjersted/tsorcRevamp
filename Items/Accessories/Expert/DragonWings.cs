@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories.Mobility
+namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class DragonWings : ModItem
     {
@@ -19,12 +19,13 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             Item.height = 42;
             Item.accessory = true;
             Item.value = PriceByRarity.Red_10;
-            Item.rare = ItemRarityID.Red;
+            Item.expert = true;
         }
 
 
         public override void UpdateEquip(Player player)
         {
+            //todo: make these wings alternative to supersonic that can hover
             player.lavaImmune = true;
             player.fireWalk = true;
             player.noKnockback = true;

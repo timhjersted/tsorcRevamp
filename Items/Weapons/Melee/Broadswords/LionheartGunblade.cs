@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.width = 66;
             Item.height = 26;
             Item.knockBack = 7;
-            Item.rare = ItemRarityID.LightRed;
+            Item.expert = true;
             Item.scale = 1.1f;
             Item.shoot = ProjectileID.PurificationPowder;
             Item.shootSpeed = 10;

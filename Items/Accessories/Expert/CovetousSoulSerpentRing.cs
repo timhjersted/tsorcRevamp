@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories
+namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class CovetousSoulSerpentRing : ModItem
     {
@@ -21,14 +21,14 @@ namespace tsorcRevamp.Items.Accessories
             Item.accessory = true;
             Item.defense = -40;
             Item.value = PriceByRarity.Pink_5;
-            Item.rare = ItemRarityID.Pink;
+            Item.expert = true;
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("CovetousSilverSerpentRing").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("SoulReaper2").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<CovetousSoulSerpentRing>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<SoulReaper2>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 

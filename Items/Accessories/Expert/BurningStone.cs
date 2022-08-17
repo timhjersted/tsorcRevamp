@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -25,7 +23,6 @@ namespace tsorcRevamp.Items.Accessories.Expert
             Item.height = 28;
             Item.accessory = true;
             Item.value = PriceByRarity.LightRed_4;
-            Item.rare = ItemRarityID.Expert;
             Item.expert = true;
         }
 

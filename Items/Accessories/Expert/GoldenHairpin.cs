@@ -21,7 +21,6 @@ namespace tsorcRevamp.Items.Accessories.Expert
             Item.width = 32;
             Item.height = 26;
             Item.accessory = true;
-            Item.rare = ItemRarityID.Expert;
             Item.expert = true;
             Item.value = PriceByRarity.Cyan_9;
         }

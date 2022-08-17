@@ -56,8 +56,7 @@ namespace tsorcRevamp.Items.Armors
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.ShadowScalemail, 1);
-            recipe.AddIngredient(ItemID.SoulofMight, 3);
+            recipe.AddIngredient(ItemID.SoulofMight, 11);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 

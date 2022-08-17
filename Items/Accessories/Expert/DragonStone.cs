@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories
+namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class DragonStone : ModItem
     {
@@ -18,19 +18,8 @@ namespace tsorcRevamp.Items.Accessories
             Item.height = 26;
             Item.accessory = true;
             Item.value = PriceByRarity.LightRed_4;
-            Item.rare = ItemRarityID.LightRed;
+            Item.expert = true;
         }
-
-        /*public override void AddRecipes() {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SoulofFlight, 70);
-            recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
-            recipe.AddTile(TileID.DemonAltar);
-            
-            recipe.Register();
-        }
-        */
 
         public override void UpdateEquip(Player player)
         {

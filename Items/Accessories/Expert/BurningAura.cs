@@ -22,7 +22,6 @@ namespace tsorcRevamp.Items.Accessories.Expert
             Item.height = 28;
             Item.accessory = true;
             Item.value = PriceByRarity.LightRed_4;
-            Item.rare = ItemRarityID.Expert;
             Item.expert = true;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)

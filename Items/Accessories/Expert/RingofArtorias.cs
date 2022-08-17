@@ -2,9 +2,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories.Defensive
+namespace tsorcRevamp.Items.Accessories.Expert
 {
-    public class TheRingOfArtorias : ModItem
+    public class RingofArtorias : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Item.height = 38;
             Item.accessory = true;
             Item.value = PriceByRarity.Red_10;
-            Item.rare = ItemRarityID.Red;
+            Item.expert = true;
         }
 
         public override void UpdateEquip(Player player)

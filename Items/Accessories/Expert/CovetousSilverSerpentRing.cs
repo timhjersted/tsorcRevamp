@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories
+namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class CovetousSilverSerpentRing : ModItem
     {
@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Accessories
             Item.accessory = true;
             Item.defense = -15;
             Item.value = PriceByRarity.LightRed_4; //prohibitively expensive soul cost
-            Item.rare = ItemRarityID.LightRed;
+            Item.expert = true;
         }
 
         /*
