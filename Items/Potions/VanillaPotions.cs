@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.VanillaItems
 {
     class VanillaPotions : GlobalItem
     {
-        public static float WellFed1Consumed = 0; 
+
         public static float WellFed2Consumed = 0; 
         public static float WellFed3Consumed = 0;
         public static float IronskinConsumed = 0;
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if(item.type == ItemID.Teacup)
             {
-                WellFed1Consumed += 1;
+                player.GetModPlayer<tsorcRevampPlayer>().WellFed1Consumed += 1;
             }
             if (item.type == ItemID.BowlofSoup)
             {

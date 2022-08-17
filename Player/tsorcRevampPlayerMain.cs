@@ -104,6 +104,7 @@ namespace tsorcRevamp
             tag.Add("BearerOfTheCurse", BearerOfTheCurse);
             tag.Add("soulSlot", ItemIO.Save(SoulSlot.Item));
             tag.Add("MaxAcquiredHP", MaxAcquiredHP);
+            tag.Add("WellFed1Consumed", WellFed1Consumed);
 
             if (bagsOpened == null)
             {
@@ -155,6 +156,7 @@ namespace tsorcRevamp
             Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
             SoulSlot.Item = soulSlotSouls.Clone();
             MaxAcquiredHP = tag.GetInt("MaxAcquiredHP");
+            WellFed1Consumed = tag.GetFloat("WellFed1Consumed");
 
             if (bagsOpened == null)
             {
