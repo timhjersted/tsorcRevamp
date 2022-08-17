@@ -457,6 +457,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BossItems.HellkiteStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.HiRyuuSpear>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 22, 28));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>()));
         }
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>();
         [System.Obsolete]

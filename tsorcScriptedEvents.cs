@@ -117,6 +117,9 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            AlienAmbush,
+            EoC,
+            EoW1,
             AncientDemon,
             LitchKing,
             TheHunter,
@@ -149,6 +152,7 @@ namespace tsorcRevamp
             BlackKnightCity,
             //ExampleHarpySwarm,
             //ExampleNoNPCScriptEvent,
+            SpawnUndeadMerchant,
             SpawnGoblin,
             AttraidiesTheSorrowEvent,
             TwinEoWFight,
@@ -181,6 +185,13 @@ namespace tsorcRevamp
             Player player = Main.LocalPlayer;
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
+
+            
+            //EoC
+            ScriptedEvent EoCEvent = new ScriptedEvent(new Vector2(3900, 1138), 20, NPCID.EyeofCthulhu, DustID.MagicMirror, true, true, "The Eye sees you!", Color.Blue, false, peaceCandleEffect: true);
+
+            //EoW1
+            ScriptedEvent EoW1Event = new ScriptedEvent(new Vector2(3633, 996), 26, NPCID.EaterofWorldsHead, DustID.PurpleTorch, true, true, "The Eater of Worlds is ready to feed!", Color.Purple, false, peaceCandleEffect: true);
 
             //EMPRESS OF LIGHT
             ScriptedEvent EoL = new ScriptedEvent(new Vector2(4484, 355), 100, NPCID.HallowBoss, DustID.RainbowTorch, false, true, "The Empress of Light awakens!", Main.DiscoColor, false, EoLDownedCondition, peaceCandleEffect: true);
@@ -297,7 +308,7 @@ namespace tsorcRevamp
             ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, true, "[c/D3D3D3:Attraidies:] \"See if you can handle this.\"", Color.OrangeRed, false, AttraidiesTheSorrowCondition, peaceCandleEffect: true);
 
             //TWIN EATER OF WORLDS FIGHT
-            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1210), 20, default, DustID.ShadowbeamStaff, true, false, "Twin Eaters surface from the depths!", Color.Purple, false, default, TwinEoWAction, peaceCandleEffect: true);
+            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1210), 20, default, DustID.ShadowbeamStaff, true, true, "Twin Eaters surface from the depths!", Color.Purple, false, default, TwinEoWAction, peaceCandleEffect: true);
 
             //DUNLEDING AMBUSH
             List<int> DunledingAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>() };
@@ -308,6 +319,14 @@ namespace tsorcRevamp
                 DunledingAmbush.SetCustomStats((int?)(player.statLifeMax2 * .5f), null, (int?)(player.statLifeMax2 * 0.10f) + 25); //damage doesn't double for Expert
             }
             DunledingAmbush.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DodgerollMemo>() }, new List<int>() { 1 }, true);
+
+
+            //ALIEN AMBUSH
+            List<int> AlienAmbushEnemyTypeList = new List<int>() { NPCID.VortexHornet, NPCID.VortexHornet, NPCID.VortexHornet, NPCID.VortexHornet, NPCID.VortexHornet, NPCID.VortexHornet };
+            List<Vector2> AlienAmbushEnemyLocations = new List<Vector2>() { new Vector2(6069, 69), new Vector2(6010, 79), new Vector2(6010, 79), new Vector2(6079, 79), new Vector2(6041, 69), new Vector2(6079, 79) };
+            ScriptedEvent AlienAmbush = new ScriptedEvent(new Vector2(6041, 79), 60, AlienAmbushEnemyTypeList, AlienAmbushEnemyLocations, default, true, false, "Alien life form detected", Color.Red, false, PreMechCustomCondition, AlienAmbushAction);
+
+
 
             //HARPY SWARM
             //List<int> HarpySwarmEnemyTypeList = new List<int>() { NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy };
@@ -322,6 +341,9 @@ namespace tsorcRevamp
             //ScriptedEvent ExampleNoNPCScriptEvent = new ScriptedEvent(new Vector2(456, 867), 60, default, DustID.GreenFairy, default, true, "The example scripted event has begun...", Color.Green, false, ExampleCondition, ExampleCustomAction);
 
             //ScriptedEvent FrogpocalypseEvent = new ScriptedEvent(SuperHardModeCustomCondition, new Vector2(5728, 1460), 120, ModContent.NPCType<NPCs.Enemies.MutantGigatoad>(), DustID.GreenTorch, default, true, "The Abyssal Toad rises to assist in debugging...", Color.Green);
+
+            //UNDEAD MERCHANT SPAWN EVENT 
+            ScriptedEvent SpawnUndeadMerchant = new ScriptedEvent(new Vector2(1686, 963), 50, default, 31, false, false, "", default, false, UndeadMerchantCondition, UndeadMerchantAction);
 
             //GOBLIN TINKERER  SPAWN EVENT
             ScriptedEvent SpawnGoblin = new ScriptedEvent(new Vector2(4456, 1744), 100, default, 31, true, true, "", default, false, TinkererCondition, TinkererAction);
@@ -392,6 +414,10 @@ namespace tsorcRevamp
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
+                
+                {ScriptedEventType.AlienAmbush, AlienAmbush},
+                {ScriptedEventType.EoC, EoCEvent},
+                {ScriptedEventType.EoW1, EoW1Event},
                 {ScriptedEventType.AncientDemon, AncientDemon},
                 {ScriptedEventType.LitchKing, LitchKing},
                 {ScriptedEventType.TheHunter, TheHunter},
@@ -425,6 +451,7 @@ namespace tsorcRevamp
                 //{ScriptedEventType.ExampleHarpySwarm, ExampleHarpySwarm},
                 //{ScriptedEventType.ExampleNoNPCScriptEvent, ExampleNoNPCScriptEvent},
                 //{ScriptedEventType.Frogpocalypse2_TheFroggening, FrogpocalypseEvent}
+                {ScriptedEventType.SpawnUndeadMerchant, SpawnUndeadMerchant },
                 {ScriptedEventType.SpawnGoblin, SpawnGoblin },
                 {ScriptedEventType.AttraidiesTheSorrowEvent, AttraidiesTheSorrowEvent},
                 {ScriptedEventType.TwinEoWFight, TwinEoWFight},
@@ -569,6 +596,11 @@ namespace tsorcRevamp
             {
                 return false;
             }
+        }
+
+        public static bool UndeadMerchantCondition()
+        {
+            return !NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.UndeadMerchant>());
         }
 
         public static bool TinkererCondition()
@@ -744,6 +776,13 @@ namespace tsorcRevamp
             return true;
         }
 
+        public static bool UndeadMerchantAction(Player player, ScriptedEvent thisEvent)
+        {
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 1686 * 16, 963 * 16, ModContent.NPCType<NPCs.Friendly.UndeadMerchant>());
+            thisEvent.endEvent = true;
+            return true;
+        }
+
         //i dont want this event to last forever, so just spawn the tinkerer and immediately end the event
         //... is what it SHOULD do?
         public static bool TinkererAction(Player player, ScriptedEvent thisEvent)
@@ -777,6 +816,35 @@ namespace tsorcRevamp
             thisEvent.endEvent = true;
             return true;
         }
+
+        //ALIEN AMBUSH SPAWN DUSTS 
+        public static bool AlienAmbushAction(Player player, ScriptedEvent thisEvent)
+        {
+            if (thisEvent.eventTimer == 1)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass, player.Center);
+            }
+            if (thisEvent.eventTimer < 20)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    int dust1 = Dust.NewDust(new Vector2(6069 * 16, 69 * 16), 40, 52, DustID.Cloud, -5, 0, 0, default, 2f);
+                    Main.dust[dust1].noGravity = true;
+                    int dust2 = Dust.NewDust(new Vector2(6010 * 16, 79 * 16), 40, 52, 7, 5, 0, 0, default, 1.5f);
+                    Main.dust[dust2].noGravity = true;
+                    int dust3 = Dust.NewDust(new Vector2(6010 * 16, 79 * 16), 40, 52, DustID.Cloud, 5, 0, 150, default, 2f);
+                    Main.dust[dust3].noGravity = true;
+                    int dust4 = Dust.NewDust(new Vector2(6079 * 16, 79 * 16), 40, 52, DustID.Cloud, 5, 0, 150, default, 2f);
+                    Main.dust[dust4].noGravity = true;
+                    int dust5 = Dust.NewDust(new Vector2(6041 * 16, 69 * 16), 40, 52, DustID.Cloud, 5, 0, 150, default, 2f);
+                    Main.dust[dust5].noGravity = true;
+                    int dust6 = Dust.NewDust(new Vector2(6079 * 16, 79 * 16), 40, 52, DustID.Cloud, 5, 0, 150, default, 2f);
+                    Main.dust[dust6].noGravity = true;
+                }
+            }
+            return false;
+        }
+
 
         //DUNDLEDING AMBUSH SPAWN DUSTS
         public static bool DundledingAmbushAction(Player player, ScriptedEvent thisEvent)
