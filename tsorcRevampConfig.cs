@@ -97,7 +97,7 @@ namespace tsorcRevamp
         [SliderColor(224, 165, 56, 128)]
         [ReloadRequired]
         [DefaultValue(true)]
-        [Tooltip("CURRENTLY DISABLED! Needs to be redone completely for 1.4" +
+        [Tooltip("IN BETA! (Mostly working, but there will be some minor bugs)" +
             "\nFlipping gravity will only flip your character instead of the whole screen.")]
         public bool GravityFix { get; set; }
         
