@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.damage = 20;
             NPC.lifeMax = 212;
             NPC.defense = 7;
-            NPC.value = 4200;
+            NPC.value = 3300;
             NPC.width = 18;
             NPC.aiStyle = -1;
             NPC.height = 40;
@@ -26,6 +26,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
             AnimationType = NPCID.Skeleton;
             Main.npcFrameCount[NPC.type] = 15;
+
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 312;
+                NPC.defense = 14;
+                NPC.value = 1650;
+                NPC.damage = 42;
+                NPC.knockBackResist = 0.1f;
+            }
         }
         public override void SetStaticDefaults()
         {
@@ -45,19 +54,19 @@ namespace tsorcRevamp.NPCs.Enemies
         //goodbye dworc voodoomaster, hello dworc alchemist
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SpellTome, 10));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.BattlePotion, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.WaterWalkingPotion, 15));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.BattlePotion, 20));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.WaterWalkingPotion, 35));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SwiftnessPotion, 10));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SpelunkerPotion, 10));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ShinePotion, 10));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RegenerationPotion, 12));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.MagicPowerPotion, 4, 1, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HunterPotion, 25));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HunterPotion, 15));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GillsPotion, 25));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.MagicPowerPotion, 2, 1, 2));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HealingPotion, 5, 3, 5));
             npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.ManaRegenerationPotion, 3, 1, 1, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 3));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 5));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.AttractionPotion>(), 12));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 25));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 12));
@@ -66,6 +75,11 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 25));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.BossItems.CursedSkull>(), 50));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.BandOfCosmicPower>(), 50));
+
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.SoulShekel>(), 1, 3, 5));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 4));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.CharcoalPineResin>(), 2));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.Lifegem>()));
         }
 
         float poisonStrikeTimer = 0;
@@ -76,14 +90,30 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
+            //Ensuring it can't spawn if one already exists.
+            int count = 0;
+            for (int i = 0; i < Main.npc.Length; i++)
+            {
+                if (Main.npc[i].type == NPC.type)
+                {
+                    count++;
+                    if (count > 0)
+                    {
+                        return 0;
+                    }
+                }
+            }
+
             float chance = 0f;
+
+            if (spawnInfo.Water) return 0f;
 
             if ((spawnInfo.Player.ZoneMeteor || spawnInfo.Player.ZoneJungle) && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson)
             {
-                if (spawnInfo.Player.ZoneOverworldHeight) return 0.005f;
-                if (spawnInfo.Player.ZoneDirtLayerHeight) return 0.01f;
-                if (spawnInfo.Player.ZoneRockLayerHeight && Main.dayTime) return 0.0143f;
-                if (spawnInfo.Player.ZoneRockLayerHeight && !Main.dayTime) return 0.033f;
+                if (spawnInfo.Player.ZoneOverworldHeight) return 0.004f;
+                if (spawnInfo.Player.ZoneDirtLayerHeight) return 0.008f;
+                if (spawnInfo.Player.ZoneRockLayerHeight && Main.dayTime) return 0.095f;
+                if (spawnInfo.Player.ZoneRockLayerHeight && !Main.dayTime) return 0.035f;
             }
             if (Main.hardMode && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneBeach && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson) return 0.0005f;
 
@@ -94,7 +124,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1f, 0.02f, 0.2f, true, enragePercent: 0.3f, enrageTopSpeed: 2);
+            tsorcRevampAIs.FighterAI(NPC, 0.8f, 0.02f, 0.2f, true, enragePercent: 0.5f, enrageTopSpeed: 1.6f);
 
             bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
 
@@ -146,7 +176,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     poisonStrikeTimer = 0;
                 }
             }
-            if (NPC.justHit && Main.rand.NextBool(18))
+            if (NPC.justHit && Main.rand.NextBool(24))
             {
                 tsorcRevampAIs.Teleport(NPC, 20, true);
                 poisonStrikeTimer = 70f;
@@ -163,7 +193,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (Main.rand.NextBool(50))
             {
-                NPC.alpha = 210;
+                NPC.alpha = 220;
             }
             if (Main.rand.NextBool(250))
             {

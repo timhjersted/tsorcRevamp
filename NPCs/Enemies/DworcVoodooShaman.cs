@@ -44,6 +44,11 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 16));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 4));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.BandOfCosmicPower>(), 20));
+
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.SoulShekel>(), 1, 3, 5)); 
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 5));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.CharcoalPineResin>(), 2));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.Lifegem>(), 2));
         }
 
         //Spawns in the Jungle and in the Cavern in HM.
@@ -52,15 +57,30 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             var player = spawnInfo.Player;
             bool TropicalOcean = player.position.X < 3600;
-
             float chance = 0f;
+
+            //Ensuring it can't spawn if one already exists.
+            int count = 0;
+            for (int i = 0; i < Main.npc.Length; i++)
+            {
+                if (Main.npc[i].type == NPC.type)
+                {
+                    count++;
+                    if (count > 0)
+                    {
+                        return 0;
+                    }
+                }
+            }
+
+            if (spawnInfo.Water) return 0f;
 
             if (Main.hardMode && (spawnInfo.Player.ZoneMeteor || spawnInfo.Player.ZoneJungle) && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson)
             {
-                if (spawnInfo.Player.ZoneOverworldHeight && Main.dayTime) return 0.02f;
-                if (spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime) return 0.045f;
-                if (spawnInfo.Player.ZoneDirtLayerHeight) return 0.035f;
-                if (spawnInfo.Player.ZoneRockLayerHeight) return 0.035f;
+                if (spawnInfo.Player.ZoneOverworldHeight && Main.dayTime) return 0.01f;
+                if (spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime) return 0.035f;
+                if (spawnInfo.Player.ZoneDirtLayerHeight) return 0.025f;
+                if (spawnInfo.Player.ZoneRockLayerHeight) return 0.03f;
             }
             if (Main.hardMode && TropicalOcean && spawnInfo.Player.ZoneJungle) return 0.045f;
 
@@ -71,7 +91,7 @@ namespace tsorcRevamp.NPCs.Enemies
         float poisonStormTimer = 0;
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.04f, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 3);
+            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.04f, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 3f);
 
             bool clearLineofSight = Collision.CanHit(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1);
             tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStrikeTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 18, 8, clearLineofSight, true, SoundID.Item20, 0);
@@ -106,10 +126,10 @@ namespace tsorcRevamp.NPCs.Enemies
                     poisonStrikeTimer = 0;
                 }
             }
-            if (NPC.justHit && Main.rand.NextBool(18))
+            if (NPC.justHit && Main.rand.NextBool(22))
             {
-                tsorcRevampAIs.Teleport(NPC, 25, true);
-                poisonStrikeTimer = 60f;
+                tsorcRevampAIs.Teleport(NPC, 20, true);
+                poisonStrikeTimer = 10f;
             }
 
 
@@ -130,7 +150,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //DEMON SPIRIT ATTACK
-            if (Main.rand.NextBool(435))
+            if (Main.rand.NextBool(425))
             {
                 int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-500, 500), NPC.Center.Y + Main.rand.Next(-600, 600), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 60, 0f, Main.myPlayer);      
             }

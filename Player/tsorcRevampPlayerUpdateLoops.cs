@@ -274,6 +274,9 @@ namespace tsorcRevamp
         
         public override void PreUpdate()
         {
+            //No more Distorted debuff
+            Player.buffImmune[BuffID.VortexDebuff] = true;
+
             bool bossAlive = false;
 
             for (int i = 0; i < Main.maxNPCs; i++)

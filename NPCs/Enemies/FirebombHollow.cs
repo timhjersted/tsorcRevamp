@@ -29,6 +29,26 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 6;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.FirebombHollowBanner>();
+
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 500;
+                NPC.defense = 25;
+                NPC.value = 1550;
+                NPC.damage = 42;
+                NPC.knockBackResist = 0.2f;
+            }
+
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 1520;
+                NPC.defense = 80;
+                NPC.value = 2250;
+                NPC.damage = 64;
+                NPC.knockBackResist = 0.05f;
+
+            }
+
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -48,6 +68,9 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spawnInfo.Player.ZoneGlowshroom) return 0f;
 
             //Hollow enemies
+           
+            if (!Main.hardMode && spawnInfo.Player.ZoneDungeon) return 0.1f;
+            if (Main.hardMode && spawnInfo.Player.ZoneDungeon) return 0.05f;
             if (Main.hardMode && spawnInfo.Lihzahrd) return 0.2f;
 
             if (tsorcRevampWorld.SuperHardMode && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneUnderworldHeight)) return 0.08f;
@@ -80,7 +103,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.SoulShekel>(), 1, 2, 4));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Throwing.Firebomb>(), 1, 1, 3));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Throwing.Firebomb>(), 1, 2, 6));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 15));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.CharcoalPineResin>(), 5));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.Lifegem>(), 15));

@@ -15,21 +15,18 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.npcSlots = 2;
             Main.npcFrameCount[NPC.type] = 12;
             AnimationType = 28;
-
-
             NPC.aiStyle = 3;
             NPC.damage = 60;
             NPC.defense = 65;
             NPC.height = 54;
             NPC.width = 54;
-            NPC.lifeMax = 570; 
+            NPC.lifeMax = 670; 
             NPC.HitSound = SoundID.NPCHit20;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.value = 2000;
+            NPC.value = 2330;
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BasiliskShifterBanner>();
-
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[24] = true;
         }
@@ -141,13 +138,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     //CHANCE TO JUMP BEFORE ATTACK
                     //FOR MAIN
-                    if (shotTimer == 105 && Main.rand.NextBool(3) && NPC.life >= 221)
+                    if (shotTimer == 105 && Main.rand.NextBool(3) && NPC.life >= 321)
                     {
                         
                         NPC.velocity.Y = Main.rand.NextFloat(-10f, -4f);
                     }
                     //FOR FINAL
-                    if (shotTimer >= 185 && Main.rand.NextBool(2) && NPC.life <= 220)
+                    if (shotTimer >= 185 && Main.rand.NextBool(2) && NPC.life <= 320)
                     {
                         NPC.velocity.Y = Main.rand.NextFloat(-10f, 3f);
                     }
@@ -160,7 +157,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // NEW BREATH ATTACK 
             breathTimer++;
-            if (breathTimer > 480 && Main.rand.NextBool(2) && shotTimer <= 99f && NPC.life >= 221)
+            if (breathTimer > 480 && Main.rand.NextBool(2) && shotTimer <= 99f && NPC.life >= 321)
             {
                 breathTimer = -60;
                 shotTimer = -60f;
@@ -178,7 +175,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
-            if (breathTimer > 360 && NPC.life >= 221)
+            if (breathTimer > 360 && NPC.life >= 321)
             {
                 shotTimer = -60f;
                 UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((480 - breathTimer) / 120)), DustID.CursedTorch, 48, 4);
@@ -193,7 +190,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             int choice = Main.rand.Next(4);
             //PURPLE MAGIC LOB ATTACK; && Main.rand.NextBool(2)
-            if (shotTimer >= 110f && NPC.life >= 221 && choice <= 1)
+            if (shotTimer >= 110f && NPC.life >= 321 && choice <= 1)
             {
                 bool clearSpace = true;
                 for (int i = 0; i < 15; i++)
@@ -234,7 +231,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //NORMAL SPIT ATTACK
-            if (shotTimer >= 115f && NPC.life >= 221 && choice >= 2)
+            if (shotTimer >= 115f && NPC.life >= 321 && choice >= 2)
             {
                 if (Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
                 {
@@ -251,7 +248,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //FINAL DESPERATE ATTACK
-            if (shotTimer >= 175f && Main.rand.NextBool(2) && NPC.life <= 220)
+            if (shotTimer >= 175f && Main.rand.NextBool(2) && NPC.life <= 320)
             {
                 int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Blue, 1f);
                 Main.dust[dust2].noGravity = true;
@@ -274,7 +271,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
             //Knockback conditional
-            if (NPC.life >= 221)
+            if (NPC.life >= 321)
             {
                 NPC.knockBackResist = 0.04f;
             }
@@ -301,12 +298,12 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //reset attack timer when hit in melee range
-            if (NPC.justHit && NPC.Distance(player.Center) < 100 && NPC.life >= 221)
+            if (NPC.justHit && NPC.Distance(player.Center) < 100 && NPC.life >= 321)
             {
                 shotTimer = 10f;
             }
 
-            //jump back when hit at close range; 
+            //jump back when hit at close range
             if (NPC.justHit && NPC.Distance(player.Center) < 150 && Main.rand.NextBool(2))
             {
 
@@ -316,7 +313,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.netUpdate = true;
             }
 
-            //jump forward when hit at range; && npc.life >= 221
+            //jump forward when hit at range
             if (NPC.justHit && NPC.Distance(player.Center) > 150 && Main.rand.NextBool(2))
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f);
@@ -407,16 +404,16 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Debuffs
         public override void OnHitPlayer(Player player, int damage, bool crit)
         {
+            player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 100
+            player.AddBuff(BuffID.Poisoned, 600, false); //poisoned
+
             if (Main.rand.NextBool(2))
             {
-                player.AddBuff(BuffID.Poisoned, 600, false); //poisoned
-
+                player.AddBuff(BuffID.BrokenArmor, 600, false); //broken armor 
             }
-            if (Main.rand.NextBool(8))
+            if (Main.rand.NextBool(4))
             {
-                player.AddBuff(BuffID.BrokenArmor, 600, false); //broken armor
-                player.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800, false);
-                player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 100
+                player.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800, false);   
             }
         }
         #endregion

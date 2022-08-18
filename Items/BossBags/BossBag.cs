@@ -154,7 +154,7 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.CovetousSilverSerpentRing>()));
-
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulShekel>(), 1, 10, 20));
             itemLoot.Add(ItemDropRule.Common(ItemID.WaterWalkingBoots));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Ammo.ArrowOfBard>(), 1, 10, 20));
         }
@@ -458,6 +458,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.HiRyuuSpear>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 22, 28));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulShekel>(), 1, 5, 10));
         }
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>();
         [System.Obsolete]

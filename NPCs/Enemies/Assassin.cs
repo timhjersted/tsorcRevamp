@@ -36,19 +36,21 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.damage = (int)(NPC.damage / 2);
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Ammo.ArrowOfBard>(), 1, 3, 5));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Ammo.ArrowOfBard>(), 2, 3, 5));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 2));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GreaterHealingPotion));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ArcheryPotion));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.FlaskofFire, 5));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 5));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 5));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 5));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 5));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 10));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 6));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 8));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 15));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.AttractionPotion>(), 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 3));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 6));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HolyArrow, 1, 100, 150));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.UnicornHorn, 1, 1, 2));
+
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.SoulShekel>(), 1, 3, 6));
         }
 
         
@@ -62,7 +64,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode && !Main.dayTime && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneOverworldHeight && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(140))
             {
-                if (Main.rand.NextBool(2))
+                if (Main.rand.NextBool(3))
                 {
                     UsefulFunctions.BroadcastText("An assassin is tracking your position...", 175, 75, 255);
                 }
@@ -72,7 +74,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode && !Main.dayTime && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(200))
             {
-                if (Main.rand.NextBool(2))
+                if (Main.rand.NextBool(3))
                 {
                     UsefulFunctions.BroadcastText("You hear a bow draw...", 175, 75, 255);
                 }
@@ -81,7 +83,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode && Main.dayTime && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(300))
             {
-                if (Main.rand.NextBool(2))
+                if (Main.rand.NextBool(3))
                 {
                     UsefulFunctions.BroadcastText("You hear foot steps...", 175, 75, 255);
                 }
@@ -90,7 +92,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode && (spawnInfo.Player.ZoneDungeon || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneUndergroundDesert || spawnInfo.Player.ZoneDesert) && Main.rand.NextBool(200))
             {
-                if (Main.rand.NextBool(2))
+                if (Main.rand.NextBool(3))
                 {
                     UsefulFunctions.BroadcastText("An assassin is tracking your position...", 175, 75, 255);
                 }
@@ -101,7 +103,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode && !Main.dayTime && spawnInfo.Player.ZoneOverworldHeight && Main.rand.NextBool(300))
             {
-                if (Main.rand.NextBool(2))
+                if (Main.rand.NextBool(3))
                 {
                     UsefulFunctions.BroadcastText("You are being hunted...", 175, 75, 255);
                 }

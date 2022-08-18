@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Melee.IronShield>(), 10));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.OldHalberd>(), 10));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.Diamond, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.DeadChicken>(), 20));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.DeadChicken>(), 12));
         }
 
         #region Spawn
@@ -91,16 +91,16 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 boredTeleport++;
 
-                if (boredTeleport >= 2600)
+                if (boredTeleport == 2600)
                 {
-                    tsorcRevampAIs.Teleport(NPC, 80, false);
+                    tsorcRevampAIs.Teleport(NPC, 20, false);
 
                 }
 
-                if (boredTeleport >= 5600)
+                if (boredTeleport == 5600)
                 {
-                    tsorcRevampAIs.Teleport(NPC, 90, false);
-                    boredTeleport = 0;
+                    tsorcRevampAIs.Teleport(NPC, 30, false);
+                    boredTeleport = 5601;
                 }
 
                 /* 
