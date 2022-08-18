@@ -30,10 +30,10 @@ namespace tsorcRevamp
                 IL.Terraria.Main.DoDraw += GravPatch_Rasterizer;
 
                 //text & health bars
-                //TODO: minion tag indicator
                 IL.Terraria.CombatText.NewText_Rectangle_Color_string_bool_bool += GravPatch_ReplaceOne;
                 IL.Terraria.Main.DrawHealthBar += GravPatch_ReplaceOne;
                 IL.Terraria.Main.DrawItemTextPopups += GravPatch_ReplaceOne;
+                IL.Terraria.Main.DrawInterface_1_2_DrawEntityMarkersInWorld += GravPatch_ReplaceOne;
 
                 //Emote bubbles, chat bubbles that appear when hovering over NPCs,
                 //NPC house indicators, mouse over text
