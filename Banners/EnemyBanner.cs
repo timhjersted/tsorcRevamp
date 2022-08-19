@@ -77,7 +77,7 @@ namespace tsorcRevamp.Banners
                     item = "ArmoredWraithBanner";
                     break;
                 case 3:
-                    item = "CorruptedJellyfishBanner";
+                    item = "ObsidianJellyfishBanner";
                     break;
                 case 4:
                     item = "StoneGolemBanner";
@@ -354,7 +354,7 @@ namespace tsorcRevamp.Banners
                         type = "ArmoredWraith";
                         break;
                     case 3:
-                        type = "CorruptedJellyfish";
+                        type = "ObsidianJellyfish";
                         break;
                     case 4:
                         type = "StoneGolem";
@@ -663,12 +663,12 @@ namespace tsorcRevamp.Banners
         }
     }
 
-    public class CorruptedJellyfishBanner : EnemyBanner
+    public class ObsidianJellyfishBanner : EnemyBanner
     {
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Nearby players get a bonus against: Corrupted Jellyfish");
+            Tooltip.SetDefault("Nearby players get a bonus against: Obsidian Jellyfish");
         }
         public override void SetDefaults()
         {

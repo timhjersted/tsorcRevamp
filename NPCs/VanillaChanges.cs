@@ -1877,7 +1877,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.EaterofWorldsHead):
                     {
                         npc.lifeMax = 180;
-                        npc.damage = 40; //was 30 for a long time, then 38 briefly
+                        npc.damage = 42; //was 30 for a long time, then 38 briefly
                         npc.defense = 22;
                         npc.value = 43230; //this makes it drop a lot of money(4g62s per head) if you keep killing the head segments hueh, but this value is used by the bags first soul drop value so whatever, see it as a minigame
                         npc.buffImmune[BuffID.Poisoned] = true;
@@ -1890,7 +1890,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.EaterofWorldsBody):
                     {
                         npc.lifeMax = 180;
-                        npc.damage = 22; //legacy: 22, was 18 for a long time, then 22 briefly
+                        npc.damage = 24; //legacy: 22, was 18 for a long time, then 22 briefly
                         npc.defense = 5;
                         npc.value = 0; //ignored
                         npc.buffImmune[BuffID.Poisoned] = true;
@@ -2200,7 +2200,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.Golem): //35k souls total
                     {
                         npc.lifeMax = 30000;
-                        npc.damage = 140;
+                        npc.damage = 150;
                         npc.value = 293650;
                         break;
                     }
@@ -2208,7 +2208,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.GolemHead):
                     {
                         npc.lifeMax = 16000;    
-                        npc.damage = 65;
+                        npc.damage = 75;
                         npc.value = 24500;
                         break;
                     }
@@ -2216,7 +2216,7 @@ namespace tsorcRevamp.NPCs
                 case int golemfists when (golemfists == NPCID.GolemFistLeft || golemfists == NPCID.GolemFistRight):
                     {
                         npc.lifeMax = 12500;
-                        npc.damage = 110;
+                        npc.damage = 115;
                         npc.value = 16980;
                         break;
                     }

@@ -86,13 +86,13 @@ namespace tsorcRevamp.Items.BossBags
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before
         }
     }
+
     public class SlograBag : BossBag
     {
 
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.BurningStone>()));
-
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.PoisonbiteRing>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.BloodbiteRing>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.DarkTrident>()));
@@ -149,6 +149,25 @@ namespace tsorcRevamp.Items.BossBags
     #endregion
 
     #region Hardmode
+
+    public class AncientDemonBag : BossBag
+    {
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.EyeOfTheGods>(), 1));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.BarrierRing>(), 1));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Expert.CrackedDragonStone>(), 1));
+        }
+
+        public override int BossBagNPC => ModContent.NPCType<AncientDemon>();
+        [System.Obsolete]
+        public override void OpenBossBag(Player player)
+        {
+            VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before
+        }
+    }
+
+
     public class LumeliaBag : BossBag
     {
         public override void ModifyItemLoot(ItemLoot itemLoot)
@@ -734,7 +753,7 @@ namespace tsorcRevamp.Items.BossBags
                 }
                 if (arg == ItemID.EaterOfWorldsBossBag)
                 {
-                    SoulsOnFirstBag(NPCID.EaterofWorldsHead, player);
+                     SoulsOnFirstBag(NPCID.EaterofWorldsHead, player);
                 }
                 if (arg == ItemID.BrainOfCthulhuBossBag)
                 {
@@ -754,6 +773,7 @@ namespace tsorcRevamp.Items.BossBags
                 }
                 if (arg == ItemID.WallOfFleshBossBag)
                 {
+                    player.QuickSpawnItem(player.GetSource_Loot(), ItemID.MoltenPickaxe);
                     EstusFlaskShardOnFirstBag(NPCID.WallofFlesh, player);
                     SoulsOnFirstBag(NPCID.WallofFlesh, player);
                 }

@@ -296,7 +296,7 @@ namespace tsorcRevamp.NPCs.Enemies
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnFailedConditions(new CommonDrop(ItemID.HealingPotion, 10, 1, 1, 3));
             npcLoot.Add(hmCondition);
-
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BloodredMossClump>(), 3));
             npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 10, 1, 1, 3));
         }
     }

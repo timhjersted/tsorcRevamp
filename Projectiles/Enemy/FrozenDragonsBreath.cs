@@ -108,20 +108,21 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (Main.rand.NextBool(5))
+        { 
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
             {
-                target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 18000, false); //may lose -100 max HP after taking enough hits. It had 100% trigger before. I think that was the problem.
+                if (Main.rand.NextBool(5))
+                {
+                    target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 18000, false); //may lose -100 max HP after taking enough hits. It had 100% trigger before. I think that was the problem.
+                }
+
+                
+
             }
-            if (Main.expertMode)
-            {
-                target.AddBuff(BuffID.Frozen, 10, false);
-                target.AddBuff(ModContent.BuffType<Buffs.Chilled>(), 180, false);
-            }
-            else
-            {
-                target.AddBuff(BuffID.Frozen, 20, false);
-            }
+
+            target.AddBuff(ModContent.BuffType<Buffs.Chilled>(), 180, false);
+            target.AddBuff(BuffID.Frostburn, 90, false);
+            target.AddBuff(BuffID.Frozen, 10, false);
         }
 
         

@@ -10,7 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Tooltip.SetDefault("A green ooze dribbles from the tooth, which deals" +
                                 "\nquadruple damage to enemies of a similar nature." +
-                                "\nHas a chance to heal the player on hit.");
+                                "\nHas a chance to heal the player on hit." +
+                                "\nHeal chance is doubled on non-corrupted enemies.");
         }
         public override void SetDefaults()
         {
@@ -38,6 +39,19 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 )
             {
                 damage *= 4;
+                if (Main.rand.NextBool(20))
+                {
+                    player.statLife += damage;
+                    player.HealEffect(damage);
+                }
+            }
+            else
+            {
+                if (Main.rand.NextBool(10))
+                {
+                    player.statLife += damage;
+                    player.HealEffect(damage);
+                }
             }
             if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.GuardianCorruptor>())
             {
@@ -45,18 +59,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 crit = false;
                 damage = 100074;//reduced to 99999 after defense
             }
-            if (Main.rand.NextBool(10))
-            {
-                player.statLife += damage;
-                player.HealEffect(damage);
-            }
+            
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverBroadsword);
-            recipe.AddIngredient(ItemID.RottenChunk, 5);
+            recipe.AddIngredient(ItemID.RottenChunk, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 800);
             recipe.AddTile(TileID.DemonAltar);
 

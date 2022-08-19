@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
-            Lighting.AddLight(Projectile.position, 0.1f, .35f, .25f);
+            Lighting.AddLight(Projectile.position, 0.1f, .35f, 1f); //1f was .25f
             Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.X, (double)Projectile.velocity.Y);
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 75, 0, 0, 100, default, 2.0f);
             Main.dust[dust].noGravity = true;

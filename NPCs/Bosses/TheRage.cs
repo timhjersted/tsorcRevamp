@@ -48,6 +48,14 @@ namespace tsorcRevamp.NPCs.Bosses
         public float flapWings;
         int hitTime = 0;
         int fireTrailsDamage = 55; //45 was a bit too easy for folks based on some feedback and watching a LP
+
+        //oolicile sorcerer
+        public float FlameShotTimer;
+        public float FlameShotCounter;
+
+        //chaos
+        int holdTimer = 0;
+
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = NPC.damage / 2;
@@ -69,7 +77,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (NPC.ai[0] > 0) NPC.ai[0] -= hitTime / 10;
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
             //Fun fact: Dusts apparently have a max Scale of 16. For an incredibly good reason, i'm sure.
-            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 0.5f + (15.5f * (NPC.ai[0] / (NPC.lifeMax / 10))));
+            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 0.3f + (10.5f * (NPC.ai[0] / (NPC.lifeMax / 10))));
             Main.dust[dust].noGravity = true;
 
 
@@ -77,7 +85,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             flapWings++;
 
-            //Flap Wings
+            //Flap Wings Sound
             if (flapWings == 30 || flapWings == 60)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 1f, Pitch = 0.0f }, NPC.position); //wing flap sound
@@ -89,6 +97,72 @@ namespace tsorcRevamp.NPCs.Bosses
                 flapWings = 0; 
             }
 
+
+            //Flame attack starts at half health
+            if (NPC.life < NPC.lifeMax / 2)
+            {
+                FlameShotTimer++;
+            }
+
+            Player player = Main.player[NPC.target];
+            //chaos code: announce proximity debuffs once
+            if (holdTimer > 1)
+            {
+                holdTimer--;
+            }
+
+            //Proximity Debuffs
+            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) <= 700 && NPC.life < NPC.lifeMax / 2)
+            {
+                //if (player.immune[BuffID.firewalk]))
+                //{
+                    player.AddBuff(BuffID.OnFire, 60, false);
+
+                //}
+
+               
+
+                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                {
+                    Main.NewText("The Rage emits a scorching heat wave from its body! Your lungs are on fire!", 235, 199, 23);//deep yellow
+                    holdTimer = 3000;
+                }
+
+            }
+            //getting close to the rage triggers on fire!
+            if (NPC.Distance(player.Center) < 80)
+            {
+                player.AddBuff(BuffID.OnFire, 180, false);
+            }
+
+            //chance to trigger fire from above
+            if (Main.rand.NextBool(500) && NPC.life < NPC.lifeMax / 2)
+            {
+                FlameShotCounter = 0;
+                NPC.netUpdate = true;
+            }
+
+            //FIRE FROM ABOVE ATTACK
+            //counts up each tick. used to space out shots
+            if (FlameShotTimer >= 25 && FlameShotCounter < 11)
+            {
+                //more fire trails
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 500 + Main.rand.Next(500), (float)player.position.Y - 400f, (float)(-40 + Main.rand.Next(80)) / 10, 5f, ModContent.ProjectileType<FireTrails>(), fireTrailsDamage, 2f, Main.myPlayer);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, PitchVariance = 2 }, NPC.Center);
+                NPC.netUpdate = true; //new
+
+                FlameShotTimer = 0;
+                FlameShotCounter++;
+
+                
+            }
+            //homing fireballs
+            if (FlameShotTimer >= 25 && FlameShotCounter > 10 && FlameShotCounter < 20)
+            {
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 500 + Main.rand.Next(500), (float)player.position.Y - 400f, (float)(-40 + Main.rand.Next(80)) / 10, 4.5f, ProjectileID.CultistBossFireBall, fireTrailsDamage, 2f, Main.myPlayer); //ProjectileID.NebulaBlaze2 would be cool to use at the end of attraidies or gwyn fight with the text, "The spirit of your father summons cosmic light to aid you!"
+                FlameShotTimer = 0;
+                FlameShotCounter++;
+            }
 
             if (NPC.ai[3] == 0)
             {
@@ -162,8 +236,10 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
+                //invisibility phase
+                FlameShotCounter = 0;
                 NPC.ai[3]++;
-                NPC.alpha = 200;
+                NPC.alpha = 220;
                 NPC.defense = 50;
                 //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].position.X < vector8.X)
@@ -186,7 +262,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                 {
-                    float num48 = 13f;//25 was 40
+                    float num48 = 14f;//25 was 40
                     float invulnDamageMult = 1.24f;
                     int type = ModContent.ProjectileType<FireTrails>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);

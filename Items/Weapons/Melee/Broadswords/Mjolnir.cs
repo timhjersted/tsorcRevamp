@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Tooltip.SetDefault("Shatter the earth" +
                                 "\nBreaks walls and trees with amazing speed" +
-                                "\nAlso retains the pickaxe strength of the Pwnhammer" +
+                                "\nAlso retains the pickaxe strength of the Molten Pickaxe" +
                                 "\nHold the cursor away from you to wield only as a weapon");
         }
 
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Pwnhammer, 1);
+            recipe.AddIngredient(ItemID.MoltenPickaxe, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
             recipe.AddTile(TileID.DemonAltar);
 

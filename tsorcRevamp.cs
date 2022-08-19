@@ -583,6 +583,8 @@ namespace tsorcRevamp
                 ItemID.MechanicalSkull,
                 ItemID.MechanicalWorm,
                 ItemID.FireWhip,
+                ItemID.WormFood,
+                ItemID.Pwnhammer
         };
             #endregion
             //--------

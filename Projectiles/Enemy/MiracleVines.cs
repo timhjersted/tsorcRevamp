@@ -45,7 +45,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
-            Lighting.AddLight(Projectile.position, 0.1f, .35f, .25f);
+
+            Lighting.AddLight(Projectile.position, 0.1f, .35f, 1f); //1f was .25f
 
             if (Main.netMode == NetmodeID.Server)
             {

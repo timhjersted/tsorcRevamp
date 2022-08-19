@@ -1011,25 +1011,29 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<HeroofLumelia>()))
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ArcheryPotion, 3);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 5091); 
-                if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1);
-                if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ObsidianSkinPotion, 1);
-            }
+           
 
-                /*
-                //not sure why this is used or maybe it's outdated
+                
+               
                 if (!Main.expertMode)
                 {
+
+                    if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<HeroofLumelia>()))
+                    {
+                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ArcheryPotion, 3);
+                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 5091);
+                        if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1);
+                        if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ObsidianSkinPotion, 1);
+                       
+                    }
+
                     if (Main.rand.Next(99) < 90) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>(), 1);
                     if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
                     if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1); 
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 3);
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion, 1 + Main.rand.Next(3));
                 }
-                */
+                
 
         }
         #endregion

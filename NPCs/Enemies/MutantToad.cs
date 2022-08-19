@@ -28,15 +28,17 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode)
             {
-                NPC.defense = 24;
-                NPC.value = 500;
-                NPC.damage = 120;
-                NPC.lifeMax = 200;
+                NPC.defense = 44;
+                NPC.value = 550;
+                NPC.damage = 110;
+                NPC.lifeMax = 270;
                 NPC.knockBackResist = 0.1f;
 
             }
 
         }
+
+        public float swimTime;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -102,8 +104,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode)
             {
-                //player.AddBuff(20, 1800, false); //poisoned!
-
+                player.AddBuff(BuffID.Venom, 60, false); //venom
             }
 
         }
@@ -111,6 +112,62 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
+            if (Main.rand.NextBool(1000))
+            { 
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie13 with { Volume = 0.5f, PitchVariance = 1f }, NPC.Center); 
+            }
+            //I made decent swim code yay
+            Player Player = Main.player[NPC.target];
+
+            if (NPC.wet && Player.position.Y > NPC.position.Y)
+            {
+                //NPC.frameCounter = 1;
+                //couldn't figure out how to do the resting frame when falling 
+            }
+
+            if ( NPC.wet && Player.position.Y < NPC.position.Y)
+            { 
+                swimTime++;
+                
+
+                //Swim at intervals
+                if (swimTime >= 55 && swimTime <= 65 || swimTime >= 95 && swimTime <= 105)
+                {
+                    if (Player.position.X < NPC.position.X)
+                    {
+                        NPC.direction = 1;
+                    }
+                    if (Player.position.X > NPC.position.X)
+                    {
+                        NPC.direction = -1;
+                    }
+
+                    NPC.velocity.Y -= 1.2f;
+                    NPC.netUpdate = true;
+                    //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 1f, Pitch = 0.0f }, NPC.position); //wing flap sound
+
+                }
+                if (swimTime >= 125 && swimTime <= 140)
+                {
+                    if (Player.position.X < NPC.position.X)
+                    {
+                        NPC.direction = 1;
+                        
+                    }
+                    if (Player.position.X > NPC.position.X)
+                    {
+                        NPC.direction = -1;
+                       
+                    }
+                    NPC.velocity.Y -= 1.4f;
+                    NPC.netUpdate = true;
+                    //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 1f, Pitch = 0.1f }, NPC.position);
+                    swimTime = 20;
+                }
+
+
+            }
+
             //int num3 = 60;
             bool flag2 = false;
             int num5 = 60;

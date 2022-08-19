@@ -8,8 +8,8 @@ using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
-    [AutoloadBossHead]
-    class TheHunter : ModNPC
+    //[AutoloadBossHead]
+    class TheHunterChild : ModNPC
     {
         public override void SetStaticDefaults()
         {
@@ -19,14 +19,13 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 32000;
-            NPC.damage = 130;
-            NPC.defense = 26;
+            NPC.lifeMax = 9000;
+            NPC.damage = 100;
+            NPC.defense = 36;
             NPC.knockBackResist = 0f;
-            NPC.scale = 1.4f;
-            NPC.value = 220000;
-            NPC.npcSlots = 6;
-            NPC.boss = true;
+            NPC.scale = 0.5f;
+            NPC.value = 7500;
+            NPC.npcSlots = 1;
             NPC.lavaImmune = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -41,36 +40,34 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
-            despawnHandler = new NPCDespawnHandler("The Hunter seeks its next prey...", Color.Green, 89);
+            despawnHandler = new NPCDespawnHandler("The Hunter's child has experienced the thrill of their first kill...", Color.Green, 89);
         }
 
         int hitTime = 0;
         int sproutDamage = 65;
-        int cursedBreathDamage = 25;
         public float flapWings;
-
-        //oolicile sorcerer
-        public float FrogSpawnTimer;
-        public float FrogSpawnCounter;
-
-        //chaos
-        int holdTimer = 0;
-
-    
-        bool ChildrenSpawned = false;
-
-        float breathTimer = 60;
-        float breathTimer2 = 600;
-
-
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = NPC.damage / 2;
             NPC.defense = NPC.defense += 10;
-            NPC.lifeMax = 32000;
+            NPC.lifeMax = 9000;
             //sproutDamage = (int)(sproutDamage * 1.3 / 2);
             sproutDamage = (int)(sproutDamage / 2);
         }
+
+        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            //if (Main.player[NPC.target].HasBuff(BuffID.Hunter))
+            //{ 
+            //    return true; 
+            //}
+            //else 
+            //{
+                return false;
+            //}
+                
+        }
+
 
         NPCDespawnHandler despawnHandler;
         public override void AI()
@@ -81,153 +78,40 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.ai[1]++;
             hitTime++;
             if (NPC.ai[0] > 0) NPC.ai[0] -= hitTime / 10;
+            //dusts get bigger as damage taken increases
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 89, NPC.velocity.X, NPC.velocity.Y, 200, default, 0.5f + (10.5f * (NPC.ai[0] / (NPC.lifeMax / 10))));
+            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 89, NPC.velocity.X, NPC.velocity.Y, 200, default, 0.01f + (5.5f * (NPC.ai[0] / (NPC.lifeMax / 10)))); //.1 was 0.5f
             Main.dust[dust].noGravity = true;
 
 
             flapWings++;
-            breathTimer++;
-            
-
-
 
             //Flap Wings
+            
             if (flapWings == 30 || flapWings == 60)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 1f, Pitch = 0.0f }, NPC.position); //wing flap sound
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 0.4f, Pitch = 0.7f }, NPC.position); //wing flap sound
             }
             if (flapWings == 95)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 1f, Pitch = -0.1f }, NPC.position);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 0.4f, Pitch = 0.8f }, NPC.position);
                 flapWings = 0;
             }
 
-
-            //Frogs spawn above half health
-            if (NPC.life >= NPC.lifeMax / 2)
-            {
-                FrogSpawnTimer++;
-            }
-
             Player player = Main.player[NPC.target];
-            //chaos code: announce child spawn once
-            if (holdTimer > 1)
+            //getting close triggers hunter vision
+            if (NPC.Distance(player.Center) < 100)
             {
-                holdTimer--;
+                player.AddBuff(BuffID.Hunter, 60, false);
             }
-
-            //Proximity Debuffs
-            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1000 && NPC.life <= NPC.lifeMax / 2)
-            {
-                player.AddBuff(BuffID.Starving, 120, false);
-
-
-                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
-                {
-                    Main.NewText("The Hunter has decided to feed you to its child. It's fully camouflaged!", 235, 199, 23);//deep yellow
-                    holdTimer = 3000;
-
-
-                }
-
-            }
-
-            if (!ChildrenSpawned && NPC.life <= NPC.lifeMax / 2)
-            {
-                NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Bosses.TheHunterChild>(), 0);
-                //NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Bosses.TheHunterChild>(), 0);
-
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit6 with { Volume = 0.3f, Pitch = -0.01f }, NPC.Center);
-                ChildrenSpawned = true;
-
-            }
-            //getting close to the hunter triggers bleeding
-            if (NPC.Distance(player.Center) < 80)
-            {
-                player.AddBuff(BuffID.Bleeding, 180, false);
-            }
-
-            //MUTANT TOAD SPAWN
-            //counts up each tick. used to space out spawns
-            if (FrogSpawnTimer >= 120 && FrogSpawnCounter < 3)
-            {
-
-                NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.MutantToad>(), 0);
-
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PoisonStaff, NPC.velocity.X, NPC.velocity.Y);
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PoisonStaff, NPC.velocity.X, NPC.velocity.Y);
-
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie13 with { Volume = 0.5f}, NPC.Center);
-                NPC.netUpdate = true; //new
-
-                FrogSpawnTimer = 0;
-                FrogSpawnCounter++;
-
-            }
-            //chance to trigger frogs spawning
-            if (Main.rand.NextBool(900) && NPC.life >= NPC.lifeMax / 2 && NPC.life <= 20000)
-            {
-                FrogSpawnCounter = 0;
-                NPC.netUpdate = true;
-            }
-
-            //FINAL BREATH
-
-
-            Player Player = Main.player[NPC.target];
 
             if (NPC.ai[3] == 0)
             {
-                NPC.alpha = 0;
+                //NPC.alpha = 200;
                 //NPC.dontTakeDamage = false;
-                NPC.defense = 26;
+                NPC.defense = 36;
                 if (NPC.ai[2] < 600)
                 {
-                    // FIRE BREATH ATTACK 
-                    if (NPC.life <= NPC.lifeMax / 4)
-                    {
-                        breathTimer2++;
-                        if (breathTimer2 > 600)
-                        {
-                            breathTimer2 = 355;
-                        }
-                        //dust animation
-                        if (breathTimer2 > 360)
-                        {
-                            NPC.ai[2] = 300;
-                            NPC.velocity.X = 0f;
-                            UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((480 - breathTimer2) / 120)), DustID.MagicMirror, 48, 4);
-                            Lighting.AddLight(NPC.Center, Color.PaleVioletRed.ToVector3() * 5);
-                        }
-
-                        if (breathTimer2 > 480 && breathTimer2 < 600)
-                        {
-                            breathTimer2 = -220;
-                            NPC.ai[2] = 300;
-                        }
-
-
-                        //projectile
-                        if (breathTimer2 < 0)
-                        {
-
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 9);
-                                breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<CursedDragonsBreath>(), sproutDamage, 0f, Main.myPlayer);
-
-                            }
-                        }
-
-
-
-                    }
-                    //END FINAL BREATH ATTACK
-
                     if (Main.player[NPC.target].position.X < vector8.X)
                     {
                         if (NPC.velocity.X > -8) { NPC.velocity.X -= 0.22f; }
@@ -250,89 +134,33 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                     {
-                        float num48 = 11f;//was 14
+                        float num48 = 3f; //was 14f
 
                         int type = ModContent.ProjectileType<MiracleSprouter>();
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass with { Volume = 0.8f, PitchVariance = 2f}, vector8);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass, vector8);
                         float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int projIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
-                            Main.projectile[projIndex].timeLeft = 60;
+                            Main.projectile[projIndex].timeLeft = 250;
                             projIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
-                            Main.projectile[projIndex].timeLeft = 60;
+                            Main.projectile[projIndex].timeLeft = 250;
                             projIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
-                            Main.projectile[projIndex].timeLeft = 60;
+                            Main.projectile[projIndex].timeLeft = 250;
                         }
                         NPC.ai[1] = -90;
                     }
                     NPC.netUpdate = true; //new
                 }
-                else if (NPC.ai[2] >= 600 && NPC.ai[2] < 850) //was 750
+                else if (NPC.ai[2] >= 600 && NPC.ai[2] < 950)
                 {
-                    
-                    
                     //Then chill for a few seconds.
                     //This exists to delay switching to the 'charging' pattern for 150 frames, because otherwise the way the sprouters linger can often make the first charge impossible to dodge
-                    
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 131, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 200, default, 1.5f);
-
-                    // NEW BREATH ATTACK 
-                  
-                    if (breathTimer > 501)
-                    {
-                        breathTimer = 359;
-                    }
-                        if (breathTimer > 360)
-                    {
-                        NPC.velocity.X *= 0.95f;
-                        NPC.velocity.Y *= 0.95f;
-                        UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((480 - breathTimer) / 100)), DustID.CursedTorch, 48, 4);
-                        Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 5);
-                    }
-
-                    if (breathTimer > 480 && breathTimer < 500 && NPC.life >= NPC.lifeMax / 2)
-                    {
-                        breathTimer = -140;
-                        
-                    }
-
-                    if (breathTimer > 480 && breathTimer < 500 && NPC.life < NPC.lifeMax / 2)
-                    {
-                        breathTimer = -190;
-
-                    }
-
-                    if (breathTimer < 0)
-                    {
-                        
-                        if (Player.position.X < NPC.position.X)
-                        {
-                            NPC.velocity.X -= 0.1f;
-                        }
-                        if (Player.position.X > NPC.position.X)
-                        {
-                            NPC.velocity.X += 0.1f;
-                        }
-
-
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 9);
-                            breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
-                            
-                        }
-                        
-
-                    }
-
-                    
-
-
-
+                    NPC.velocity.X *= 0.95f;
+                    NPC.velocity.Y *= 0.95f;
+                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 131, Main.rand.Next(-1, 1), Main.rand.Next(-1, 1), 200, default, 0.5f);
                 }
-                else if (NPC.ai[2] >= 850 && NPC.ai[2] < 1350)
+                else if (NPC.ai[2] >= 950 && NPC.ai[2] < 1350)
                 {
                     NPC.velocity.X *= 0.98f;
                     NPC.velocity.Y *= 0.98f;
@@ -348,8 +176,8 @@ namespace tsorcRevamp.NPCs.Bosses
             else
             {
                 NPC.ai[3]++;
-                NPC.alpha = 225;
-                NPC.defense = 70;
+                NPC.alpha = 210;
+                NPC.defense = 100;
                 //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].position.X < vector8.X)
                 {
@@ -371,7 +199,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                 {
-                    float num48 = 11f;//22
+                    float num48 = 15f;//was 22
                     float invulnDamageMult = 1.3f;
                     int type = ModContent.ProjectileType<MiracleSprouter>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);
@@ -379,11 +207,11 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 60;
+                        Main.projectile[num54].timeLeft = 150;
                         num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 55;
+                        Main.projectile[num54].timeLeft = 150;
                         num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 60;
+                        Main.projectile[num54].timeLeft = 150;
                     }
                     NPC.ai[1] = -90;
                 }
@@ -391,9 +219,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (NPC.ai[3] == 100)
                 
-                    //FrogSpawnCounter = 0;
+                    
                     NPC.ai[3] = 1;
-                    NPC.life += 1200;
+                    NPC.life += 500;
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }
                 if (NPC.ai[1] >= 0)
@@ -401,7 +229,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.ai[3] = 0;
                     for (int num36 = 0; num36 < 40; num36++)
                     {
-                        Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, 0, 0, 0, default, 1f); //was 3f
+                        Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, 0, 0, 0, default, 0.3f);//was 3f
                     }
                 }
             }
@@ -436,34 +264,19 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             if (NPC.ai[3] == 0)
             {
-                NPC.alpha = 0;
                 
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 0.5f); 
+                if (player.HasBuff(BuffID.Hunter))
+                { NPC.alpha = 50; }
+                else { NPC.alpha = 255; }
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
             }
             else
             {
                 if (player.HasBuff(BuffID.Hunter))
-                { 
-                    NPC.alpha = 0; 
-                }
-                else 
-                { 
-                    NPC.alpha = 255; 
-                }
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                { NPC.alpha = 150; }
+                else { NPC.alpha = 255; }
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
             }
-            /*
-            if (NPC.ai[3] == 0)
-            {
-                //visible
-                NPC.alpha = 0;
-            }
-            else
-            {
-                //partially invsible
-                NPC.alpha = 235;//was 200
-            }
-            */
         }
         public override bool CheckActive()
         {
@@ -480,11 +293,11 @@ namespace tsorcRevamp.NPCs.Bosses
                 Color color = new Color();
                 for (int num36 = 0; num36 < 50; num36++)
                 {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, color, 3f);
+                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, color, 0.5f);
                 }
                 for (int num36 = 0; num36 < 20; num36++)
                 {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, 0, 0, 100, color, 3f);
+                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, 0, 0, 100, color, 0.5f);
                 }
                 NPC.ai[1] = -200;
                 NPC.ai[0] = 0;
@@ -497,9 +310,7 @@ namespace tsorcRevamp.NPCs.Bosses
             potionType = ItemID.GreaterHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TheHunterBag>()));
-        }
+        
 
         public override void OnKill()
         {
@@ -510,14 +321,9 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             for (int num36 = 0; num36 < 100; num36++)
             {
-                Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 131, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, Color.Orange, 3f);
+                Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 131, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, Color.DarkGreen, 3f);
             }
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CrestOfEarth>(), 2);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.WaterWalkingBoots, 1, false, -1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Drax, 1, false, -1);
-            }
+            
         }
     }
 }

@@ -50,6 +50,16 @@ namespace tsorcRevamp.NPCs.Bosses
         public float flapWings;
         int hitTime = 0; //How long since it's last been hit (used for reducing damage counter)
         int waterTrailsDamage = 60;
+
+        //magic from above attack
+        public float FlameShotTimer;
+        public float FlameShotCounter;
+
+        float breathTimer = 60;
+
+        //chaos
+        int holdTimer = 0;
+
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = NPC.damage / 2;
@@ -68,10 +78,11 @@ namespace tsorcRevamp.NPCs.Bosses
             hitTime++;
             if (NPC.ai[0] > 0) NPC.ai[0] -= hitTime / 10;
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 29, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 0.5f + (15.5f * (NPC.ai[0] / (NPC.lifeMax / 10))));
+            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 29, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 0.1f + (10.5f * (NPC.ai[0] / (NPC.lifeMax / 10)))); //10.5 was 15.5
             Main.dust[dust].noGravity = true;
 
             flapWings++;
+            breathTimer++;
 
             //Flap Wings
             if (flapWings == 30 || flapWings == 60)
@@ -85,8 +96,126 @@ namespace tsorcRevamp.NPCs.Bosses
                 flapWings = 0;
             }
 
+            //Ice Spirit attack starts at half health
+            if (NPC.life <= NPC.lifeMax / 2)
+            {
+                FlameShotTimer++;
+            }
+
+            Player player = Main.player[NPC.target];
+            //announce proximity debuffs once
+            if (holdTimer > 1)
+            {
+                holdTimer--;
+            }
+
+            //Proximity Debuffs
+            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 900 && NPC.life <= NPC.lifeMax / 2)
+            {
+                player.AddBuff(BuffID.Chilled, 120, false);
+
+
+                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                {
+                    Main.NewText("The Sorrow emits a chilling cold from its body. The loss of your family lashes your heart with grief!", 235, 199, 23);//deep yellow
+                    holdTimer = 3000;
+                }
+
+            }
+            //CLOSE-RANGE TRIGGERS FROSTBURN 
+            if (NPC.Distance(player.Center) < 90)
+            {
+                player.AddBuff(BuffID.Frostburn, 60, false);
+            }
+
+            //ICE SPIRIT ATTACK
+            if (FlameShotTimer >= 25 && FlameShotCounter < 5)
+            {
+
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 800 + Main.rand.Next(800), (float)player.position.Y - 300f, (float)(-40 + Main.rand.Next(80)) / 10, 2.5f, ModContent.ProjectileType<IceSpirit>(), waterTrailsDamage, 2f, Main.myPlayer); //ProjectileID.CultistBossFireBallClone
+
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit5 with {Volume = 0.3f, PitchVariance = 2f}, NPC.Center);
+                NPC.netUpdate = true; //new
+
+                FlameShotTimer = 0;
+                FlameShotCounter++;
+
+            }
+            //TRIGGER ICE SPIRITS
+            if (Main.rand.NextBool(900) && NPC.life <= NPC.lifeMax / 2)
+            {
+                FlameShotCounter = 0;
+                NPC.netUpdate = true;
+            }
+
+            if (Main.rand.NextBool(900) && NPC.life <= NPC.lifeMax / 4)
+            {
+                FlameShotCounter = 0;
+                NPC.netUpdate = true;
+            }
+
+            if (Main.rand.NextBool(500) && NPC.life <= NPC.lifeMax / 6)
+            {
+                FlameShotCounter = 0;
+                NPC.netUpdate = true;
+            }
+
+            //TRIGGER FROST BREATH
+            if (Main.rand.NextBool(300) && breathTimer < 331 && NPC.life > NPC.lifeMax / 2)
+            {
+                breathTimer = 10;
+                NPC.netUpdate = true;
+            }
+
+            //higher bool means more often in this case, as it's interrupting the breathtimer
+            if (Main.rand.NextBool(500) && breathTimer < 331 && NPC.life <= NPC.lifeMax / 2)
+            {
+                breathTimer = 10;
+                NPC.netUpdate = true;
+            }
+
+            // FROST BREATH ATTACK 
+            if (breathTimer > 501)
+            {
+                breathTimer = 330;
+            }
+            //dust animation
+            if (breathTimer > 380)
+            {
+
+                UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((480 - breathTimer) / 100)), DustID.IceTorch, 48, 4);
+                Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 5);
+            }
+            //longer breath at half health
+            if (breathTimer > 480 && breathTimer < 500 && NPC.life >= NPC.lifeMax / 2)
+            {
+                breathTimer = -50;
+            }
+
+            if (breathTimer > 480 && breathTimer < 500 && NPC.life < NPC.lifeMax / 2)
+            {
+                breathTimer = -100;
+
+            }
+            //projectile
+            if (breathTimer < 0)
+            {
+                NPC.velocity.X = 0f;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 9);
+                    breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<FrozenDragonsBreath>(), waterTrailsDamage, 0f, Main.myPlayer);
+                    //NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
+                }
+            }
+            //END BREATH ATTACK
+
+
+            //BIRD AI
             if (NPC.ai[3] == 0)
             {
+                //normal
                 NPC.alpha = 0;
                 NPC.defense = 24;
                 //NPC.dontTakeDamage = false;
@@ -169,6 +298,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 else if (NPC.ai[2] >= 690 && NPC.ai[2] < 1290)
                 {
+                    
+
                     int dashSpeed = 18;
                     NPC.velocity.X *= 0.98f;
                     NPC.velocity.Y *= 0.98f;
@@ -183,9 +314,11 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
+                //invisibility mode
                 NPC.ai[3]++;
-                NPC.alpha = 200;
+                NPC.alpha = 230;
                 NPC.defense = 60;
+                FlameShotCounter = 0;
                 //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].position.X < vector8.X)
                 {
@@ -229,8 +362,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 if (NPC.ai[3] == 100)
                 {
+                    FlameShotCounter = 0;
                     NPC.ai[3] = 1;
-                    NPC.life += 200; //amount boss heals when going invisible
+                    NPC.life += 1200; //amount boss heals when going invisible
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }
                 if (NPC.ai[1] >= 0)
@@ -285,9 +419,9 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.ai[0] += (float)damage;
             if (NPC.ai[0] > (NPC.lifeMax / 10))
             {
-                NPC.ai[3] = 1; //begin invulnerability state
+                NPC.ai[3] = 1; //begin inisibility/high defense state
                 for (int i = 0; i < 50; i++)
-                { //dustsplosion on invulnerability
+                { //dustsplosion on invisibility
                     Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
                 }
                 for (int i = 0; i < 20; i++)

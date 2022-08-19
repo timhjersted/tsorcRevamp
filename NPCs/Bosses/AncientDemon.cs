@@ -527,11 +527,12 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void OnKill()
         {
 
-            if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientDemon>()))
+            if (!Main.expertMode && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientDemon>()))
             { 
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.EyeOfTheGods>(), 1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.BarrierRing>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Expert.CrackedDragonStone>(), 1);
             }
 
             if (Main.rand.Next(99) < 40) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>(), 1);

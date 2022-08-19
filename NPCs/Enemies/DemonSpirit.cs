@@ -32,7 +32,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lavaImmune = true;
             NPC.noGravity = true;
             NPC.knockBackResist = 0;
-            NPC.alpha = 100;
+            NPC.alpha = 150;
             NPC.value = 2200;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DemonSpiritBanner>();

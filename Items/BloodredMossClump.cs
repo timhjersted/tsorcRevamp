@@ -9,10 +9,9 @@ namespace tsorcRevamp.Items
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Heals 20 HP, with only 5 seconds of potion sickness." +
+            Tooltip.SetDefault("Heals 30 HP, with only 5 seconds of potion sickness." +
                                 "\nRemoves bleeding and poisoned." +
                                 "\nA supply of these may be essential for exploring some areas." +
-                                //"\nIf you find yourself losing life quickly, check your buffs to see if you've been poisoned." + //Not really necessary to point this out
                                 "\nThis plant will save your life." +
                                 "\nCan still be used to remove poison and bleeding while under the" +
                                 "\neffect of potion sickness. However, it will not heal any HP.");
@@ -47,12 +46,12 @@ namespace tsorcRevamp.Items
 
             if (!player.HasBuff(BuffID.PotionSickness) && !player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                player.statLife += 20;
+                player.statLife += 30;
                 if (player.statLife > player.statLifeMax2)
                 {
                     player.statLife = player.statLifeMax2;
                 }
-                player.HealEffect(20, true);
+                player.HealEffect(30, true);
                 player.AddBuff(BuffID.PotionSickness, 300);
             }
             return true;
