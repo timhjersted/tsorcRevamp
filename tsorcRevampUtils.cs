@@ -511,7 +511,7 @@ namespace tsorcRevamp
             float distance = float.MaxValue;
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].active && !Main.npc[i].friendly && !Main.npc[i].dontTakeDamage && !NPCID.Sets.CountsAsCritter[Main.npc[i].type])
+                if (Main.npc[i].active && !Main.npc[i].friendly && !Main.npc[i].dontTakeDamage && !NPCID.Sets.CountsAsCritter[Main.npc[i].type] && Main.npc[i].lifeMax > 1)
                 {
                     float newDistance = Vector2.DistanceSquared(point, Main.npc[i].Center);
                     if (newDistance < distance)

@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles
         {
             if (IsAtMaxCharge)
             {
-                DrawLaser(Main.spriteBatch, (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type], Main.player[Projectile.owner].Center,
+                DrawLaser(Main.spriteBatch, (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type], Projectile.Center,
                     Projectile.velocity, 10, Projectile.damage, -1.57f, 1f, 1000f, Color.White, (int)MOVE_DISTANCE);
             }
 
@@ -79,22 +79,25 @@ namespace tsorcRevamp.Projectiles
         {
             if (!IsAtMaxCharge) return false;
 
-            Player player = Main.player[Projectile.owner];
             Vector2 unit = Projectile.velocity;
             float point = 0f;
             // Run an AABB versus Line check to look for collisions, look up AABB collision first to see how it works
             // It will look for collisions on the given line using AABB
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), player.Center,
-                player.Center + unit * Distance, 22, ref point);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center,
+                Projectile.Center + unit * Distance, 22, ref point);
         }
 
 
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.position = player.Center + Projectile.velocity * MOVE_DISTANCE;
+            Projectile.velocity.Normalize();
 
-            UpdatePlayer(player);
+            if (Projectile.ai[1] == 0)
+            {
+                Projectile.position = player.Center;
+                UpdatePlayer(player);
+            }
             ChargeLaser(player);
             if (Charge < MAX_CHARGE) return;
 
@@ -106,7 +109,7 @@ namespace tsorcRevamp.Projectiles
         private void SpawnDusts(Player player)
         {
             Vector2 unit = Projectile.velocity * -1;
-            Vector2 dustPos = player.Center + Projectile.velocity * Distance;
+            Vector2 dustPos = Projectile.Center + Projectile.velocity * Distance;
 
             for (int i = 0; i < 2; ++i)
             {
@@ -117,7 +120,7 @@ namespace tsorcRevamp.Projectiles
                 dust.noGravity = true;
                 dust.scale = 1.2f;
                 dust.shader = GameShaders.Armor.GetSecondaryShader(1, Main.LocalPlayer);
-                dust = Dust.NewDustDirect(Main.player[Projectile.owner].Center, 0, 0, 31,
+                dust = Dust.NewDustDirect(Projectile.Center, 0, 0, 31,
                     -unit.X * Distance, -unit.Y * Distance);
                 dust.fadeIn = 0f;
                 dust.noGravity = true;
@@ -130,9 +133,9 @@ namespace tsorcRevamp.Projectiles
                 Dust dust = Main.dust[Dust.NewDust(dustPos + offset - Vector2.One * 4f, 8, 8, 31, 0.0f, 0.0f, 100, default, 1.5f)];
                 dust.velocity *= 0.5f;
                 dust.velocity.Y = -Math.Abs(dust.velocity.Y);
-                unit = dustPos - Main.player[Projectile.owner].Center;
+                unit = dustPos - Projectile.Center;
                 unit.Normalize();
-                dust = Main.dust[Dust.NewDust(Main.player[Projectile.owner].Center + 55 * unit, 8, 8, 31, 0.0f, 0.0f, 100, default, 1.5f)];
+                dust = Main.dust[Dust.NewDust(Projectile.Center + 55 * unit, 8, 8, 31, 0.0f, 0.0f, 100, default, 1.5f)];
                 dust.velocity *= 0.5f;
                 dust.velocity.Y = -Math.Abs(dust.velocity.Y);
             }
@@ -145,8 +148,8 @@ namespace tsorcRevamp.Projectiles
         {
             for (Distance = MOVE_DISTANCE; Distance <= 2000f; Distance += 5f)
             {
-                var start = player.Center + Projectile.velocity * Distance;
-                if (!Collision.CanHitLine(player.Center, 1, 1, start, 1, 1))
+                var start = Projectile.Center + Projectile.velocity * Distance;
+                if (!Collision.CanHitLine(Projectile.Center, 1, 1, start, 1, 1))
                 {
                     Distance -= 5f;
                     break;
@@ -159,7 +162,7 @@ namespace tsorcRevamp.Projectiles
         {
             Vector2 offset = Projectile.velocity;
             offset *= 2;
-            Vector2 pos = player.Center + offset - new Vector2(10, 10);
+            Vector2 pos = Projectile.Center + offset - new Vector2(10, 10);
             if (Charge < MAX_CHARGE)
             {
                 Charge++;

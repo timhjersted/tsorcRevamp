@@ -90,6 +90,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         public int MoveTimer = 0;
         NPCDespawnHandler despawnHandler;
         float introTimer = 0;
+        bool displayedWarning = false;
         public override void AI()
         {
             if(introTimer < 120)
@@ -120,9 +121,38 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
             for(int i = 0; i < Main.maxPlayers; i++)
             {
-                if (Main.player[i].active && !Main.player[i].dead && NPC.Distance(Main.player[i].Center) < (270f * introTimer / 120f))
+                if (Main.player[i].active && !Main.player[i].dead)
                 {
-                    Main.player[i].AddBuff(BuffID.Burning, 180);
+                    float distance = NPC.Distance(Main.player[i].Center);
+
+
+                    if (!Main.player[i].fireWalk && distance < (270f * introTimer / 120f))
+                    {
+                        Main.player[i].AddBuff(BuffID.OnFire, 180);
+                        Main.player[i].AddBuff(BuffID.Burning, 180);
+                    }
+
+                    if(distance <  2000)
+                    {
+                        Main.player[i].AddBuff(BuffID.Oiled, 180);
+                        Main.player[i].AddBuff(BuffID.OnFire, 180);
+
+                        bool hasCovenant = false;
+                        for (int j = 3; j < 8 + Main.player[i].GetAmountOfExtraAccessorySlotsToShow(); j++)
+                        {
+                            if (Main.player[i].armor[j].type == ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>())
+                            {
+                                hasCovenant = true;
+                                break;
+                            }
+                        }
+
+                        if (!hasCovenant && !displayedWarning)
+                        {
+                            UsefulFunctions.BroadcastText("The abyss permiates the arena, without protection you will not survive...", Color.Purple);
+                            displayedWarning = true;
+                        }
+                    }
                 }
             }
         }
