@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void SetDefaults()
         {
             NPC.knockBackResist = 0;
-            NPC.damage = 110;
+            NPC.damage = 105;
             NPC.defense = 50;
             NPC.height = 40;
             NPC.width = 30;
@@ -31,6 +31,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.value = 700000;
             NPC.boss = true;
             NPC.lavaImmune = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
             despawnHandler = new NPCDespawnHandler("Artorias, the Abysswalker stands victorious...", Color.Gold, DustID.GoldFlame);
         }
 
@@ -39,17 +42,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public int redMagicDamage = 80;
         public int burningSphereDamage = 289;
 
-        int darkBeadDamage = 101;
-        public int holdBallDamage = 20;
-        public int energyBallDamage = 130;
-        public int lightPillarDamage = 175;
+        int darkBeadDamage = 90;
+
+        
         public int blackBreathDamage = 135;
-        public int lightning3Damage = 125;
-        public int ice3Damage = 125;
         public int phantomSeekerDamage = 140;
-        public int lightning4Damage = 150;
-        //public int shardsDamage = 40;
-        //public int iceStormDamage = 30;
+
         //This attack does damage equal to 25% of your max health no matter what, so its damage stat is irrelevant and only listed for readability.
         public int gravityBallDamage = 0;
 
@@ -103,18 +101,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 DarkBeadShotCounter = 0;
                 DarkBeadShotTimer = 0;
             }
-
-
             if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(7))//
             {
-
                     NPC.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
                     float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-9f, -6f);
                     NPC.velocity.X = v;
-                    //poisonTimer = 340f;
                     DarkBeadShotCounter = 0;
                     DarkBeadShotTimer = 0;
-                NPC.netUpdate = true;
+                    NPC.netUpdate = true;
             }
             
         }
@@ -129,14 +123,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     poisonTimer = 1f;
                     DarkBeadShotCounter = 0;
                     DarkBeadShotTimer = 0;
-                NPC.netUpdate = true;
+                    NPC.netUpdate = true;
 
             }
 
-            if (NPC.justHit && Main.rand.NextBool(15))
+            if (NPC.justHit && Main.rand.NextBool(25))
             {
                 tsorcRevampAIs.Teleport(NPC, 20, true);
-                poisonTimer = 50f;
+                poisonTimer = 30f;
             }
         }
         public static Texture2D spearTexture;
@@ -161,50 +155,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 spriteBatch.End();
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
 
-
             }
-            /*
-            if (spearTexture == null || texture.IsDisposed)
-            {
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/ArtoriasGreatsword");
-            }
-            if (poisonTimer >= 120 && poisonTimer <= 180f)
-            {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
-                Main.dust[dust].noGravity = true;
-
-                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                if (NPC.spriteDirection == -1)
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing left (8, 38 work)
-                }
-                else
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing right, first value is height, higher number is higher
-                }
-            }
-            */
         }
-
-
-
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2);
-            //tsorcRevampAIs.LeapAtPlayer(NPC, 7, 4, 1.5f, 128);
-
-
+            tsorcRevampAIs.FighterAI(NPC, 1.1f, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 1.6f);
+   
             Player player = Main.player[NPC.target];
 
-
-          
-            //chaos code: announce proximity debuffs once
+            //announce magical barrier warning once
             if (holdTimer > 1)
             {
                 holdTimer--;
             }
-            //Proximity Debuffs
+            //proximity debuff and warning
             if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1200)
             {
                 
@@ -218,15 +183,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             }
 
-
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             if (NPC.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
             {
                 defenseBroken = true;
             }
-
-            int num58;
-            int num59;
 
 
             int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 32, NPC.velocity.X - 3f, NPC.velocity.Y, 150, Color.Yellow, 1f);
@@ -235,14 +196,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
 
-
-                //tsorcRevampAIs.SimpleProjectile(NPC, ref poisonTimer2, 100, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), poisonStrikeDamage, 9, Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0));
-
                 //DARK BEAD ATTACK
-                //if(DarkBeadShotCounter >= 0 && DarkBeadShotCounter < 3)
-                //{
-                    DarkBeadShotTimer++;
-                //}
+                DarkBeadShotTimer++;
+                
                  //Counts up each tick. Used to space out shots
                 if (DarkBeadShotTimer <= 81)
                 { 
@@ -257,14 +213,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 if (DarkBeadShotTimer == 55)
                 {
-                    if (NPC.Distance(player.Center) >= 201 )
+                    if (NPC.Distance(player.Center) >= 221 )
                     {
                         NPC.velocity.Y = Main.rand.NextFloat(-12f, -3f); //was 6 and 3 && NPC.velocity.Y == 0
                         float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-9f, 9f);
                         NPC.velocity.X = v;
 
                     }
-                    if (NPC.Distance(player.Center) <= 200 )
+                    if (NPC.Distance(player.Center) <= 220 )
                     {
                         NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f); //was 6 and 3 && NPC.velocity.Y == 0
                         float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-16f, -11f);
@@ -276,7 +232,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     poisonTimer = 1f;
                     Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 7f);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.ArtoriasDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center); //acid flame
 
                     if (DarkBeadShotCounter <= 1)
@@ -284,37 +240,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         DarkBeadShotTimer = 72;
                     }
 
-                    //if (DarkBeadShotCounter >= 2)
-                    //{
-                    //    DarkBeadShotTimer = 0;
-                    //}
-                    
                     DarkBeadShotCounter++;
                     
                 }
 
 
-
                 //DEBUFFS
                 if (NPC.Distance(player.Center) < 600)
                 {
-
                     player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
                     player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 60, false);
-
                 }
 
 
                 poisonTimer++; ;
 
                 
-
-                
-
-
-                  
-
-
                 //TELEGRAPH DUSTS
                 if (poisonTimer >= 150 && poisonTimer <= 179)
                 {
@@ -639,28 +580,51 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-            /*
-            if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
+        /*
+        if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
+        {
+            NPC.noTileCollide = false;
+            NPC.noGravity = false;
+        }
+        if ((!Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
+        {
+            NPC.noTileCollide = true;
+            NPC.noGravity = true;
+            NPC.velocity.Y = 0f;
+            if (NPC.position.Y > Main.player[NPC.target].position.Y)
             {
-                NPC.noTileCollide = false;
-                NPC.noGravity = false;
+                NPC.velocity.Y -= 3f;
             }
-            if ((!Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
+            if (NPC.position.Y < Main.player[NPC.target].position.Y)
             {
-                NPC.noTileCollide = true;
-                NPC.noGravity = true;
-                NPC.velocity.Y = 0f;
-                if (NPC.position.Y > Main.player[NPC.target].position.Y)
-                {
-                    NPC.velocity.Y -= 3f;
-                }
-                if (NPC.position.Y < Main.player[NPC.target].position.Y)
-                {
-                    NPC.velocity.Y += 8f;
-                }
-                }
+                NPC.velocity.Y += 8f;
             }
-            */
+         }
+        
+        */
+
+
+        /*
+         if (spearTexture == null || texture.IsDisposed)
+         {
+             spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/ArtoriasGreatsword");
+         }
+         if (poisonTimer >= 120 && poisonTimer <= 180f)
+         {
+             int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
+             Main.dust[dust].noGravity = true;
+
+             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+             if (NPC.spriteDirection == -1)
+             {
+                 spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing left (8, 38 work)
+             }
+             else
+             {
+                 spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing right, first value is height, higher number is higher
+             }
+         }
+         */
         public override void SendExtraAI(BinaryWriter writer)
         {
             if (NPC.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
