@@ -104,7 +104,7 @@ namespace tsorcRevamp.Items
             }
 
             
-            if ((item.type == ItemID.SlimeHook || item.type == ItemID.SquirrelHook) && !NPC.downedBoss3 && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if ((item.type == ItemID.SlimeHook || item.type == ItemID.SquirrelHook || item.type == ItemID.BatHook) && !NPC.downedBoss3 && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] and can't be used yet"));
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "You can see a strange [c/878787:skull] symbol glowing on its surface..."));
