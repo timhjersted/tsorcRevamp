@@ -106,7 +106,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
+            //NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);
             meteorDamage = (int)(meteorDamage / 2);
             cultistFireDamage = (int)(cultistFireDamage / 2);

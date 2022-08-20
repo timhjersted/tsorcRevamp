@@ -188,10 +188,10 @@ namespace tsorcRevamp
 
             
             //EoC
-            ScriptedEvent EoCEvent = new ScriptedEvent(new Vector2(3900, 1138), 20, NPCID.EyeofCthulhu, DustID.MagicMirror, true, true, "The Eye sees you!", Color.Blue, false, peaceCandleEffect: true);
+            ScriptedEvent EoCEvent = new ScriptedEvent(new Vector2(3900, 1138), 20, NPCID.EyeofCthulhu, DustID.MagicMirror, true, true, "The Eye sees you!", Color.Blue, false, null, SetNightCustomAction, peaceCandleEffect: true);
 
             //EoW1
-            ScriptedEvent EoW1Event = new ScriptedEvent(new Vector2(3633, 996), 26, NPCID.EaterofWorldsHead, DustID.PurpleTorch, true, true, "The Eater of Worlds is ready to feed!", Color.Purple, false, peaceCandleEffect: true);
+            ScriptedEvent EoW1Event = new ScriptedEvent(new Vector2(3633, 996), 46, NPCID.EaterofWorldsHead, DustID.Shadowflame, true, true, "The Eater of Worlds is ready to feed!", Color.Purple, false, peaceCandleEffect: true);
 
             //EMPRESS OF LIGHT
             ScriptedEvent EoL = new ScriptedEvent(new Vector2(4484, 355), 100, NPCID.HallowBoss, DustID.RainbowTorch, false, true, "The Empress of Light awakens!", Main.DiscoColor, false, EoLDownedCondition, peaceCandleEffect: true);
@@ -239,7 +239,7 @@ namespace tsorcRevamp
 
             //FIRE LURKER PATH OF PAIN
             ScriptedEvent FireLurkerPain = new ScriptedEvent(new Vector2(3245, 1252), 9, ModContent.NPCType<NPCs.Enemies.FireLurker>(), DustID.CursedTorch, true, true, "A cursed Fire Lurker appears...", Color.Purple, false, default, FireLurkerPainCustomAction, peaceCandleEffect: true);
-            FireLurkerPain.SetCustomStats(1600, 12, 85, 1655);
+            FireLurkerPain.SetCustomStats(1900, 12, 85, 1755);
             FireLurkerPain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion }, new List<int>() { 2, 2 });
 
             //RED KNIGHT IN PATH OF PAIN
@@ -301,14 +301,14 @@ namespace tsorcRevamp
             //ArtoriasEvent.SetCustomDrops(new List<int>() { ItemID.RodofDiscord, ModContent.ItemType<Items.DestructionElement>() }, new List<int>() { 1, 4 });
 
             //BLACK KNIGHT IN FORGOTTEN CITY
-            ScriptedEvent BlackKnightCity = new ScriptedEvent(new Vector2(4508, 1745), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, false, "A Black Knight is hunting you...", Color.Purple, true, default, BlackKnightCustomAction);
-            BlackKnightCity.SetCustomStats(1500, 10, 50, 555);
+            ScriptedEvent BlackKnightCity = new ScriptedEvent(new Vector2(4508, 1745), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, true, "A Black Knight appears from the shadows...", Color.Purple, true, default, BlackKnightCustomAction);
+            BlackKnightCity.SetCustomStats(1750, 10, 60, 1555);
 
             //ATTRAIDIES THE SORROW EVENT
             ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, true, "[c/D3D3D3:Attraidies:] \"See if you can handle this.\"", Color.OrangeRed, false, AttraidiesTheSorrowCondition, peaceCandleEffect: true);
 
             //TWIN EATER OF WORLDS FIGHT
-            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1210), 20, default, DustID.ShadowbeamStaff, true, true, "Twin Eaters surface from the depths!", Color.Purple, false, default, TwinEoWAction, peaceCandleEffect: true);
+            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1220), 30, default, DustID.ShadowbeamStaff, true, true, "Twin Eaters surface from the depths!", Color.Purple, false, default, TwinEoWAction, peaceCandleEffect: true);
 
             //DUNLEDING AMBUSH
             List<int> DunledingAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>() };
@@ -553,7 +553,8 @@ namespace tsorcRevamp
         {
             return !Main.dayTime;
         }
-
+        
+        
         public static bool HardModeCustomCondition()
         {
             return Main.hardMode;

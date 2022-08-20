@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.boss = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.behindTiles = false;
+            NPC.behindTiles = true;
             NPC.value = 250000;
             NPC.lavaImmune = true;
             NPC.buffImmune[BuffID.Poisoned] = true;
@@ -60,6 +60,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
         public float MeteorShotTimer;
         public float MeteorShotCounter;
+
+        public float CollisionTimer;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -92,6 +94,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             MeteorShotTimer++;
 
             flapWings++;
+            
 
             //Flap Wings
             if (flapWings == 30 || flapWings == 60)
@@ -105,8 +108,37 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 flapWings = 0;
             }
 
+            //Can phase through walls if can't reach the player - would be so cool if this worked but it doesn't just yet, gets stuck very easily on small obstructions
+            /*
+            if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
+            {
+                CollisionTimer++;
+                if(CollisionTimer > 120)
+                {
+                    NPC.noTileCollide = false;
+                    NPC.noGravity = false;
+                    CollisionTimer = 0;
+                }
+                
+            }
+            if ((!Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
+            {
+                NPC.noTileCollide = true;
+                NPC.noGravity = true;
+                NPC.velocity.Y = 0f;
+                if (NPC.position.Y > Main.player[NPC.target].position.Y)
+                {
+                    NPC.velocity.Y -= 3f;
+                }
+                if (NPC.position.Y < Main.player[NPC.target].position.Y)
+                {
+                    NPC.velocity.Y += 3f;
+                }
+            }
+            */ 
 
-            Player nT = Main.player[NPC.target];
+
+        Player nT = Main.player[NPC.target];
             if (Main.rand.NextBool(175))
             {
                 breath = true;

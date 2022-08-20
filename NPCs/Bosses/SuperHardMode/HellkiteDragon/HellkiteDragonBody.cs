@@ -25,14 +25,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.lifeMax = 20000;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.behindTiles = false;
+            NPC.behindTiles = true;
             NPC.value = 0;
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
         }
-
+        public float CollisionTimer;
         int fireDamage = 100;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -65,6 +65,35 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         {
             int[] bodyTypes = new int[] { ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody2>(), ModContent.NPCType<HellkiteDragonBody3>() };
             tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, HellkiteDragonHead.hellkitePieceSeperation, 22, 0.25f, true, false);
+
+            /*
+            //Can phase through walls if can't reach the player, doesn't work yet
+            if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
+            {
+                CollisionTimer++;
+                if (CollisionTimer > 60)
+                {
+                    NPC.noTileCollide = false;
+                    //NPC.noGravity = false;
+                    CollisionTimer = 0;
+                }
+
+            }
+            if ((!Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
+            {
+                NPC.noTileCollide = true;
+                NPC.noGravity = true;
+                NPC.velocity.Y = 0f;
+                if (NPC.position.Y > Main.player[NPC.target].position.Y)
+                {
+                    NPC.velocity.Y -= 3f;
+                }
+                if (NPC.position.Y < Main.player[NPC.target].position.Y)
+                {
+                    NPC.velocity.Y += 3f;
+                }
+            }
+            */
 
             if (!Main.npc[(int)NPC.ai[1]].active)
             {
