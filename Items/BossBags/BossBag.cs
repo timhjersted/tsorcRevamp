@@ -585,7 +585,7 @@ namespace tsorcRevamp.Items.BossBags
 
             NPC npc = new NPC();
             npc.SetDefaults(EnemyID);
-            float enemyValue = (int)npc.value / 25;
+            float enemyValue = (int)npc.value / 25f;
             float multiplier = tsorcRevampPlayer.CheckSoulsMultiplier(player);
             tsorcRevampWorld.Slain[EnemyID] = 1; //set the value to 1
 
