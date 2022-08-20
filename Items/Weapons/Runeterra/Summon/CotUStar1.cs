@@ -8,21 +8,21 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 {
 	public class CotUStar1 : ModProjectile
 	{
-		public float angularSpeed = 1f;
+		public float angularSpeed = 0.2f;
 		public static float circleRad1 = 50f;
 
 		public float currentAngle;
 		public override void SetStaticDefaults()
 		{
 
-			Main.projFrames[Projectile.type] = 5;
+			Main.projFrames[Projectile.type] = 8;
 			Main.projPet[Projectile.type] = true; // Denotes that this projectile is a pet or minion
 			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; // This is needed so your minion can properly spawn when summoned and replaced when other minions are summoned
 		}
 		public sealed override void SetDefaults()
 		{
-			Projectile.width = 54;
-			Projectile.height = 54;
+			Projectile.width = 66;
+			Projectile.height = 28;
 			Projectile.tileCollide = false; // Makes the minion go through tiles freely
 
 			// These below are needed for a minion weapon
@@ -89,7 +89,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 
 			Projectile.rotation = currentAngle * -1f;
 
-			int frameSpeed = 5;
+			float frameSpeed = 4f;
 
 			Projectile.frameCounter++;
 
@@ -106,7 +106,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 
 			// Some visuals here
 			Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
-			Dust.NewDust(Projectile.Center, 20, 20, DustID.MagicMirror);
+			Dust.NewDust(Projectile.Center, 28, 28, DustID.GoldFlame, 10, 10);
 		}
 	}
 }

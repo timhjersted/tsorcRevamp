@@ -25,8 +25,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			Item.damage = 31;
 			Item.knockBack = 3f;
 			Item.mana = 10;
-			Item.width = 1;
-			Item.height = 1;
+			Item.width = 32;
+			Item.height = 34;
 			Item.useTime = 20;
 			Item.useAnimation = 20;
 			Item.useStyle = ItemUseStyleID.Shoot;
@@ -58,27 +58,9 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		}
 		public override void UpdateInventory(Player player)
 		{
-			if (Main.GameUpdateCount % 1 == 0)
-			{
-				CotUIAnim1.holditemtimer1 -= 0.3f;
-			}
 		}
 		public override void HoldItem(Player player)
         {
-			bool CotUItemAnim1Exists = false;
-			CotUIAnim1.holditemtimer1 = 0.2f;
-			for (int i = 0; i < Main.maxProjectiles; i++)
-			{
-				if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<CotUIAnim1>() && Main.projectile[i].owner == player.whoAmI)
-				{
-					CotUItemAnim1Exists = true;
-					break;
-				}
-			}
-			if (!CotUItemAnim1Exists)
-			{
-				Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<CotUIAnim1>(), 0, 0, Main.myPlayer);
-			}
 		}
         public override bool CanShoot(Player player)
 		{
@@ -113,7 +95,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		{
 			Recipe recipe = CreateRecipe();
 
-			recipe.AddIngredient(ItemID.FeralClaws, 1);
+			recipe.AddIngredient(ItemID.IronBar, 10);
 			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
 
 			recipe.AddTile(TileID.DemonAltar);
