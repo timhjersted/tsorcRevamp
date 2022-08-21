@@ -31,14 +31,14 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheHunter>()))
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheHunter>()) && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()))
             {
                 target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000);
             }
         
                 target.AddBuff(BuffID.OnFire, 300);
-                target.AddBuff(BuffID.Bleeding, 3600);
-                target.AddBuff(BuffID.Weak, 3600);
+                target.AddBuff(BuffID.Poisoned, 3600);
+                target.AddBuff(BuffID.Weak, 300);
         }
 
     }

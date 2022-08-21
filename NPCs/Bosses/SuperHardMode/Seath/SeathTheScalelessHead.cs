@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.defense = 120;
             NPC.HitSound = SoundID.NPCHit6;//6 is werewolf, 7 is the worst, generic hit sound evvarrr, 13, 21 worth trying
             NPC.DeathSound = SoundID.Item119;//good dragon death sound
-            NPC.lifeMax = 125000;
+            NPC.lifeMax = 275000;
             Music = 12;
             NPC.boss = true;
             NPC.noGravity = true;
@@ -50,6 +50,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         public float FrostShotCounter;
         public float FrostShot2Timer;
         public float FrostShot2Counter;
+
+
+        public static int seathPieceSeperation = -5;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -77,7 +80,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
             int expertScale = 1;
             if (Main.expertMode) expertScale = 2;
-            target.AddBuff(ModContent.BuffType<Buffs.Chilled>(), 600, false);
+            target.AddBuff(ModContent.BuffType<Buffs.Chilled>(), 60, false);
             target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
             target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
             
@@ -121,19 +124,48 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         public override void AI()
         {
 
-            /*//experiment didn't work
-            if (NPC.velocity.Y < 0f && NPC.velocity.X < 0f)
+            //Can phase through walls if can't reach the player, + 100 / + 200 works great! but it goes into walls too easily (+10 and +100 is better, but could be tweaked further)
+            if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height + 10)))
+            {
+               
+                    NPC.noTileCollide = false;
+                    NPC.noGravity = true;
+                
+            }
+            if ((!Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height + 100)))
             {
                 NPC.noTileCollide = true;
-
+                NPC.noGravity = true;
+                //NPC.velocity.Y = 0f;
             }
-            if (NPC.velocity.Y > 1f && NPC.velocity.X > 1f)
+
+
+            /*
+            / Can phase through walls if can't reach the player, this version works great but seath is always hovering high above the player and doesn't target him with his head
+
+
+            if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height + 200)))
             {
 
                 NPC.noTileCollide = false;
+                NPC.noGravity = true;
+
+            }
+            if ((!Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height + 200)))
+            {
+                NPC.noTileCollide = true;
+                NPC.noGravity = true;
+                NPC.velocity.Y = 0f;
+                if (NPC.position.Y > Main.player[NPC.target].position.Y)
+                {
+                    //NPC.velocity.Y -= 6f;
+                }
+                if (NPC.position.Y < Main.player[NPC.target].position.Y)
+                {
+                    //NPC.velocity.Y += 8f;
+                }
             }
             */
-
 
 
             flapWings++;
@@ -153,7 +185,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
 
             int[] bodyTypes = new int[] { ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody2>(), ModContent.NPCType<SeathTheScalelessBody3>(), ModContent.NPCType<SeathTheScalelessBody3>() };
-            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<SeathTheScalelessHead>(), bodyTypes, ModContent.NPCType<SeathTheScalelessTail>(), 13, 6f, 10f, 0.17f, true, false, true, false, false);
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<SeathTheScalelessHead>(), bodyTypes, ModContent.NPCType<SeathTheScalelessTail>(), 13, SeathTheScalelessHead.seathPieceSeperation, 10f, 0.17f, true, false, true, false, false); //6f was replaced by seath separation
+
+            //speed of dragon is hiding here, 22
+            //tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, HellkiteDragonHead.hellkitePieceSeperation, 22, 0.25f, true, false, true, false, false); //30f was 10f
 
             if (despawnHandler.TargetAndDespawn(NPC.whoAmI))
             {

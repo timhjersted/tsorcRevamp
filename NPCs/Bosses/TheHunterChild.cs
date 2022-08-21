@@ -19,12 +19,12 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 9000;
+            NPC.lifeMax = 7300;
             NPC.damage = 100;
             NPC.defense = 36;
             NPC.knockBackResist = 0f;
             NPC.scale = 0.5f;
-            NPC.value = 7500;
+            NPC.value = 31500;
             NPC.npcSlots = 1;
             NPC.lavaImmune = true;
             NPC.noGravity = true;
@@ -50,7 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.damage = NPC.damage / 2;
             NPC.defense = NPC.defense += 10;
-            NPC.lifeMax = 9000;
+            //NPC.lifeMax = 9000;
             //sproutDamage = (int)(sproutDamage * 1.3 / 2);
             sproutDamage = (int)(sproutDamage / 2);
         }

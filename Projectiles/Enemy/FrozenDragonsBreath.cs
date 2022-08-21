@@ -113,14 +113,15 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 if (Main.rand.NextBool(5))
                 {
+                    //target.AddBuff(ModContent.BuffType<Buffs.Chilled>(), 180, false);
                     target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 18000, false); //may lose -100 max HP after taking enough hits. It had 100% trigger before. I think that was the problem.
                 }
 
                 
 
             }
-
-            target.AddBuff(ModContent.BuffType<Buffs.Chilled>(), 180, false);
+            target.AddBuff(BuffID.Chilled, 90, false);
+            target.AddBuff(BuffID.Slow, 60, false);
             target.AddBuff(BuffID.Frostburn, 90, false);
             target.AddBuff(BuffID.Frozen, 10, false);
         }

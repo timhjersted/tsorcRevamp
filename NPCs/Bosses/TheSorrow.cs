@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 26600;
+            NPC.lifeMax = 18200;
             NPC.damage = 120;
             NPC.defense = 24;
             NPC.knockBackResist = 0f;
@@ -59,12 +59,44 @@ namespace tsorcRevamp.NPCs.Bosses
 
         //chaos
         int holdTimer = 0;
+        float customspawn1;
+
+        //gaibon 
+        public int Timer
+        {
+            get => (int)NPC.ai[0];
+            set => NPC.ai[0] = value;
+        }
+        public Player Target
+        {
+            get => Main.player[NPC.target];
+        }
+        Vector2 acceleration = Vector2.Zero;
+        float accelerationMagnitude = 5f / 60f; //Jerk is change in acceleration
+        float topSpeed = 10;
+        float flyingTime = 0;
+
+        Vector2 targetPointValue;
+        Vector2 targetPoint
+        {
+            get
+            {
+                return targetPointValue;
+            }
+            set
+            {
+                flyingTime = 0;
+                targetPointValue = value;
+            }
+        }
+
+
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = NPC.damage / 2;
             NPC.defense = NPC.defense += 10;
-            NPC.lifeMax = 28000;
+            //NPC.lifeMax = 28000; //with this and NPC.lifeMax = 26600; life was set to 18,200 - whaaaa?
             //waterTrailsDamage = (int)(waterTrailsDamage * 1.3 / 2);
             waterTrailsDamage = (int)(waterTrailsDamage / 2);
         }
@@ -109,16 +141,22 @@ namespace tsorcRevamp.NPCs.Bosses
                 holdTimer--;
             }
 
-            //Proximity Debuffs
-            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 900 && NPC.life <= NPC.lifeMax / 2)
+            //2nd Phase Debuffs -- Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 2500 &&
+            if (NPC.Distance(player.Center) < 1550 && NPC.life <= NPC.lifeMax / 2)
             {
-                player.AddBuff(BuffID.Chilled, 120, false);
+                player.AddBuff(BuffID.Chilled, 30, false);
+
+                if (NPC.Distance(player.Center) < 200)
+                { 
+                    player.AddBuff(BuffID.Slow, 30, false); 
+                }
+                
 
 
                 if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
                 {
                     Main.NewText("The Sorrow emits a chilling cold from its body. The loss of your family lashes your heart with grief!", 235, 199, 23);//deep yellow
-                    holdTimer = 3000;
+                    holdTimer = 9000;
                 }
 
             }
@@ -161,14 +199,14 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             //TRIGGER FROST BREATH
-            if (Main.rand.NextBool(300) && breathTimer < 331 && NPC.life > NPC.lifeMax / 2)
+            if (Main.rand.NextBool(500) && breathTimer < 331 && NPC.life > NPC.lifeMax / 2)
             {
                 breathTimer = 10;
                 NPC.netUpdate = true;
             }
 
             //higher bool means more often in this case, as it's interrupting the breathtimer
-            if (Main.rand.NextBool(500) && breathTimer < 331 && NPC.life <= NPC.lifeMax / 2)
+            if (Main.rand.NextBool(700) && breathTimer < 331 && NPC.life <= NPC.lifeMax / 2)
             {
                 breathTimer = 10;
                 NPC.netUpdate = true;
@@ -189,12 +227,12 @@ namespace tsorcRevamp.NPCs.Bosses
             //longer breath at half health
             if (breathTimer > 480 && breathTimer < 500 && NPC.life >= NPC.lifeMax / 2)
             {
-                breathTimer = -50;
+                breathTimer = -120;
             }
 
             if (breathTimer > 480 && breathTimer < 500 && NPC.life < NPC.lifeMax / 2)
             {
-                breathTimer = -100;
+                breathTimer = -180;
 
             }
             //projectile
@@ -211,6 +249,58 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             //END BREATH ATTACK
 
+
+
+            //SPAWN TURTLES!
+            if (Main.rand.NextBool(2000) && (player.position.Y + 20 >= NPC.position.Y) && breathTimer > 0 && NPC.life >= NPC.lifeMax / 2)
+            {
+                int Turtle = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.IceTortoise, 0); //ModContent.NPCType<NPCs.Enemies.MutantToad>()
+
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PoisonStaff, NPC.velocity.X, NPC.velocity.Y);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PoisonStaff, NPC.velocity.X, NPC.velocity.Y);
+                
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit24 with { Volume = 0.5f }, NPC.Center);
+
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Turtle, 0f, 0f, 0f, 0);
+                }
+            }
+
+            //DARK ELF MAGE SPAWN
+            /*
+            if ((customspawn1 < 3) && Main.rand.NextBool(2000))
+            {
+                int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.DarkElfMage>(), 0);
+                Main.npc[Spawned].velocity.Y = -8;
+                Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
+
+                customspawn1 += 1f;
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
+                }
+            }
+            */
+
+
+
+
+            //GAIBON SHOOT!
+            Timer++;
+            topSpeed = Vector2.Distance(NPC.Center, Target.Center) / 50f;
+            targetPoint = Target.Center;
+
+            if (Main.rand.NextBool(160) && breathTimer > 0 && NPC.life >= NPC.lifeMax / 2)
+            {
+                Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8, .1f, true, true);
+                velocity += Target.velocity / 1.5f;
+                if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), waterTrailsDamage / 4, 0.5f, Main.myPlayer); //EnemySpellIcestormBall
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), waterTrailsDamage / 4, 0.5f, Main.myPlayer);
+                }
+            }
 
             //BIRD AI
             if (NPC.ai[3] == 0)

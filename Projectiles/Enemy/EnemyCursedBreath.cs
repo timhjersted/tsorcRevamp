@@ -64,7 +64,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 target.AddBuff(39, 150, false); //cursed flames
                 target.AddBuff(30, 1800, false); //bleeding
-                target.AddBuff(33, 1800, false); //weak
+                target.AddBuff(33, 150, false); //weak
             }
         }
     }

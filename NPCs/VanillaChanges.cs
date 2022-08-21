@@ -720,11 +720,19 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.MeteorHead):
                     {
-                        npc.defense = 10;
-                        npc.value = 300;
+                        
+                            npc.defense = 10;
+                            npc.value = 300;
+
+                        if (Main.hardMode)
+                        {
+                            npc.defense = 20;
+                            npc.damage = 60;
+                            npc.timeLeft = 720; 
+
+                        }
                         break;
                     }
-
 
                 case (NPCID.CursedSkull):
                     {

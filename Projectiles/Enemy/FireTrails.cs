@@ -22,6 +22,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.hostile = true;
             //Projectile.alpha -= 5;
             Projectile.netUpdate = true;
+            Projectile.light = .9f;
         }
 
         private const int AI_Split_Counter_Slot = 0;

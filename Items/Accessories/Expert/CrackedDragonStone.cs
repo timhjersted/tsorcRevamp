@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Accessories.Expert
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("[c/ffbf00:Provides immunity to catching on fire, burning, knockback, and fire blocks]" +
-                                "\nRaises damage dealt by 3%");
+            Tooltip.SetDefault("[c/ffbf00:Provides immunity to some elements of fire and ice, including catching on fire, burning, slow and becoming chilled]" +
+                                "\nAlso raises damage dealt by 3% and prevents knockback");
         }
 
         public override void SetDefaults()
@@ -28,6 +28,8 @@ namespace tsorcRevamp.Items.Accessories.Expert
             player.fireWalk = true;
             player.buffImmune[BuffID.OnFire] = true;
             player.buffImmune[BuffID.Burning] = true;
+            player.buffImmune[BuffID.Chilled] = true;
+            player.buffImmune[BuffID.Slow] = true;
 
         }
 
@@ -35,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CobaltBar, 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6300);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8300);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

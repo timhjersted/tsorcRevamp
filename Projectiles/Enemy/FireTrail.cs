@@ -17,6 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.MaxUpdates = 2;
             Projectile.penetrate = 3;
             Projectile.hostile = true;
+            Projectile.light = .9f;
         }
 
         public override void AI()

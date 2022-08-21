@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 32000;
+            NPC.lifeMax = 20800;
             NPC.damage = 130;
             NPC.defense = 26;
             NPC.knockBackResist = 0f;
@@ -67,7 +67,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.damage = NPC.damage / 2;
             NPC.defense = NPC.defense += 10;
-            NPC.lifeMax = 32000;
+            //NPC.lifeMax = 32000; //this plus NPC.lifeMax = 32000; made the health 20,800
             //sproutDamage = (int)(sproutDamage * 1.3 / 2);
             sproutDamage = (int)(sproutDamage / 2);
         }
@@ -117,8 +117,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 holdTimer--;
             }
 
-            //Proximity Debuffs
-            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1000 && NPC.life <= NPC.lifeMax / 2)
+            //2nd phase debuffs
+            if (NPC.Distance(player.Center) < 1550 && NPC.life < NPC.lifeMax / 2)
             {
                 player.AddBuff(BuffID.Starving, 120, false);
 
@@ -126,18 +126,18 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
                 {
                     Main.NewText("The Hunter has decided to feed you to its child. It's fully camouflaged!", 235, 199, 23);//deep yellow
-                    holdTimer = 3000;
+                    holdTimer = 9000;
 
 
                 }
 
             }
 
+            //spawn the child!
             if (!ChildrenSpawned && NPC.life <= NPC.lifeMax / 2)
             {
                 NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Bosses.TheHunterChild>(), 0);
-                //NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Bosses.TheHunterChild>(), 0);
-
+                
                 Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
                 Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit6 with { Volume = 0.3f, Pitch = -0.01f }, NPC.Center);
@@ -174,9 +174,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.netUpdate = true;
             }
 
-            //FINAL BREATH
-
-
+            
             Player Player = Main.player[NPC.target];
 
             if (NPC.ai[3] == 0)
@@ -186,6 +184,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.defense = 26;
                 if (NPC.ai[2] < 600)
                 {
+                    //FINAL BREATH
                     // FIRE BREATH ATTACK 
                     if (NPC.life <= NPC.lifeMax / 4)
                     {
@@ -208,7 +207,6 @@ namespace tsorcRevamp.NPCs.Bosses
                             breathTimer2 = -220;
                             NPC.ai[2] = 300;
                         }
-
 
                         //projectile
                         if (breathTimer2 < 0)

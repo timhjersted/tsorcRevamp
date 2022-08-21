@@ -108,37 +108,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 flapWings = 0;
             }
 
-            //Can phase through walls if can't reach the player - would be so cool if this worked but it doesn't just yet, gets stuck very easily on small obstructions
-            /*
-            if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
+            //Hellkite now makes contact with earth but can phase through walls if it can't reach the player, + 100 / + 200 works great! but it goes into walls too easily (+10 and +100 is better, but could be tweaked further)
+            if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height + 10)))
             {
-                CollisionTimer++;
-                if(CollisionTimer > 120)
-                {
-                    NPC.noTileCollide = false;
-                    NPC.noGravity = false;
-                    CollisionTimer = 0;
-                }
-                
+
+                NPC.noTileCollide = false;
+                NPC.noGravity = true;
+
             }
-            if ((!Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
+            if ((!Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height + 100)))
             {
                 NPC.noTileCollide = true;
                 NPC.noGravity = true;
-                NPC.velocity.Y = 0f;
-                if (NPC.position.Y > Main.player[NPC.target].position.Y)
-                {
-                    NPC.velocity.Y -= 3f;
-                }
-                if (NPC.position.Y < Main.player[NPC.target].position.Y)
-                {
-                    NPC.velocity.Y += 3f;
-                }
+                //NPC.velocity.Y = 0f;
             }
-            */ 
 
 
-        Player nT = Main.player[NPC.target];
+            Player nT = Main.player[NPC.target];
             if (Main.rand.NextBool(175))
             {
                 breath = true;
@@ -231,6 +217,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             }
 
             int[] bodyTypes = new int[] { ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody2>(), ModContent.NPCType<HellkiteDragonBody3>() };
+            //speed of dragon is hiding here, 22
             tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, HellkiteDragonHead.hellkitePieceSeperation, 22, 0.25f, true, false, true, false, false); //30f was 10f
 
         }
