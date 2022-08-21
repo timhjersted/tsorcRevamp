@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 {
 	public class CotUStar1 : ModProjectile
 	{
-		public float angularSpeed = 0.2f;
+		public float angularSpeed = 1f;
 		public static float circleRad1 = 50f;
 
 		public float currentAngle;
@@ -106,7 +106,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 
 			// Some visuals here
 			Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
-			Dust.NewDust(Projectile.Center, 28, 28, DustID.GoldFlame, 10, 10);
 		}
 	}
 }

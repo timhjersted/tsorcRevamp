@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Center of the Heat");
+			DisplayName.SetDefault("Scorching Point");
 			Tooltip.SetDefault("Summons fireballs to rotate around you and damage enemies in their way" +
 				"\nIncrease their radius by right-clicking" +
                 "\nReset their range by clearing the buff");
