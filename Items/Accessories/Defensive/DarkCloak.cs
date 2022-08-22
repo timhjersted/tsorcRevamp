@@ -41,6 +41,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             {
                 player.statDefense += 5;
             }
+
+            
         }
 
     }

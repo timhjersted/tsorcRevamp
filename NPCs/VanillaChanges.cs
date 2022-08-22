@@ -3172,6 +3172,9 @@ namespace tsorcRevamp.NPCs
                         || npc.type == NPCID.AngryBonesBigMuscle
                         || npc.type == NPCID.BlazingWheel 
                         || npc.type == NPCID.DesertDjinn //Literally make the lava/spike section near the entrance to the Hunter's dungeon in the underground desert impossible
+                        || npc.type == NPCID.Zombie
+                        || npc.type == NPCID.BigZombie
+                        || npc.type == NPCID.SmallZombie
                         )
                     {
                         npc.active = false;
@@ -3179,6 +3182,10 @@ namespace tsorcRevamp.NPCs
                 }
                 
                 if (npc.type == NPCID.BigRainZombie
+                        
+                        || npc.type == NPCID.FemaleZombie
+                        || npc.type == NPCID.BigFemaleZombie
+                        || npc.type == NPCID.SmallFemaleZombie
                         || npc.type == NPCID.SmallRainZombie
                         || npc.type == NPCID.ZombieRaincoat
                         || npc.type == NPCID.UmbrellaSlime

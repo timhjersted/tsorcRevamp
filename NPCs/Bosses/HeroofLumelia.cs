@@ -63,6 +63,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         float customAi1;
         float customSpawn1;
+        float boredTeleport = 0;
 
         NPCDespawnHandler despawnHandler;
 
@@ -509,8 +510,55 @@ namespace tsorcRevamp.NPCs.Bosses
                 customAi1++; ;
                 NPC.TargetClosest(true);
 
-                //JUSTHIT CODE
 
+
+                
+       
+
+                bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
+
+
+                //If the enemy doesn't have line of sight for a good while, teleport far away from the player and try again. Then much later, they get one more chance to teleport.
+                //Since this is an HM boss, the distance and time is fairly aggressive.
+                if (clearLineofSight)
+                {
+                    boredTeleport = 0;
+                }
+
+                if (!clearLineofSight)
+                {
+                    boredTeleport++;
+
+                    if (boredTeleport == 300)
+                    {
+ 
+                        int Hammer = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.CursedHammer, 0); 
+                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
+                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
+
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Hammer, 0f, 0f, 0f, 0);
+                        }
+
+                    }
+                    
+                    if (boredTeleport == 600)
+                    {
+                        customAi1 = 1f;
+                        tsorcRevampAIs.Teleport(NPC, 20, false);
+
+                    }
+
+                    if (boredTeleport == 900)
+                    {
+                        customAi1 = 1f;
+                        tsorcRevampAIs.Teleport(NPC, 10, false);
+                        boredTeleport = 0;
+                    }
+                }
+
+                //JUSTHIT CODE
                 if (NPC.justHit && NPC.Distance(player.Center) < 100)
                 {
                     customAi1 = 1f;

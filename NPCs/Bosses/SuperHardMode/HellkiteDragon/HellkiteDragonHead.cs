@@ -132,9 +132,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             }
             if (breath)
             {
-                //float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
-                //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (2.5f * NPC.direction), NPC.Center.Y, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 3.2f, Main.myPlayer); //1f was 1.2f
-
                 Vector2 spawnOffset = NPC.velocity; //Create a vector pointing in whatever direction the NPC is moving. We can transform this into an offset we can use.
                 spawnOffset.Normalize(); //Shorten the vector to make it have a length of 1
                 spawnOffset *= 64; //Multiply it so it has a length of 16. The length determines how far offset the projectile will be, 16 units = 1 tile
@@ -182,8 +179,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
 
             //METEOR SPACED OUT ATTACK
-
-            //Counts up each tick. Used to space out shots
             if (MeteorShotTimer >= 58 && MeteorShotCounter < 9)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 200 + Main.rand.Next(500), (float)nT.position.Y - 600f, (float)(-50 + Main.rand.Next(100)) / Main.rand.Next(3, 10), 5.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //8.9f is speed, 4.9 too slow, (float)nT.position.Y - 400f starts projectile closer above the player vs 500?
@@ -197,8 +192,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                     DarkBeadShotCounter = 0;
                 }
             }
-            /*
-            if (Main.rand.NextBool(400))//1460, 200 was pretty awesome but a bit crazy
+            
+            if (Main.rand.NextBool(200) && NPC.life < NPC.lifeMax / 10) //200 was pretty awesome but a bit crazy, and now we're doing it for last 10% of life
             {
                 for (int pcy = 0; pcy < 8; pcy++)
                 {
@@ -209,7 +204,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                     DarkBeadShotCounter = 0;
                 }
             }
-            */
+            
             if (Main.rand.NextBool(2))
             {
                 int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, 6, NPC.velocity.X / 4f, NPC.velocity.Y / 4f, 100, default(Color), 1f);
@@ -218,7 +213,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
             int[] bodyTypes = new int[] { ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody2>(), ModContent.NPCType<HellkiteDragonBody3>() };
             //speed of dragon is hiding here, 22
-            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, HellkiteDragonHead.hellkitePieceSeperation, 22, 0.25f, true, false, true, false, false); //30f was 10f
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, HellkiteDragonHead.hellkitePieceSeperation, 18, 0.25f, true, false, true, false, false); //18 was 22, sooooo fast before
 
         }
         public static void SetImmune(Projectile projectile, NPC hitNPC)

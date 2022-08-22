@@ -295,7 +295,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (DarkBeadShotTimer >= 12 && DarkBeadShotCounter < 5)
                     {
                         Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 7);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.ArtoriasDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center); //acid flame
                         DarkBeadShotTimer = 0;
                         DarkBeadShotCounter++;
@@ -307,7 +307,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 customAi3++; ;
                 
                 //JUSTHIT CODE
-
                 if (NPC.justHit && NPC.Distance(player.Center) < 150)
                 {
                     customAi1 = 1f;
@@ -501,8 +500,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         {
                             UsefulFunctions.BroadcastText("Face me!", 125, 85, 255);
                         }
-                    for (int pcy = 0; pcy < 12; pcy++) 
-                            {
+                        for (int pcy = 0; pcy < 12; pcy++) 
+                         {
                                 Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y);
                                 Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 400 + Main.rand.Next(400), (float)nT.position.Y - 700f, (float)(-50 + Main.rand.Next(100)) / 10, 3f, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), herosArrowDamage, 2f, Main.myPlayer); //EnemySpellSuddenDeathBall
                                 Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 1f);
@@ -511,7 +510,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                                 NPC.netUpdate = true;
 
-                            }
+                        }
                     }
 
                 //CURSED FLAMES FAR AWAY FINAL RAIN
@@ -615,7 +614,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         }
 
                         //SMOKE BOMB ATTACK
-                        if (customAi1 >= 280 && NPC.life >= 50001) //&& npc.Distance(player.Center) > 10
+                        if (customAi1 >= 280 && NPC.life >= 50001) 
                         {
                             NPC.TargetClosest(true);
 

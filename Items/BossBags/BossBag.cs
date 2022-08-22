@@ -72,8 +72,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            //no expert item
-
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.DragonCrestShield>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.BandOfCosmicPower>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.PermanentPotions.PermanentShinePotion>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.CloudinaBottle));

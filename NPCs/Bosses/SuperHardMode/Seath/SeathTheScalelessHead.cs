@@ -25,13 +25,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.defense = 120;
             NPC.HitSound = SoundID.NPCHit6;//6 is werewolf, 7 is the worst, generic hit sound evvarrr, 13, 21 worth trying
             NPC.DeathSound = SoundID.Item119;//good dragon death sound
-            NPC.lifeMax = 275000;
+            NPC.lifeMax = 325000;
             Music = 12;
             NPC.boss = true;
             NPC.noGravity = true;
             NPC.noTileCollide = false;
             NPC.behindTiles = true;
-            NPC.value = 500000;
+            NPC.value = 670000;
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = false;

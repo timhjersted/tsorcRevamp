@@ -35,8 +35,6 @@ namespace tsorcRevamp.NPCs.Bosses
             despawnHandler = new NPCDespawnHandler("An ancient demon decides to show you mercy ...", Color.Gold, DustID.GoldFlame);
 
             Main.npcFrameCount[NPC.type] = 16;
-
-
         }
 
         
@@ -106,7 +104,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            //NPC.lifeMax = (int)(NPC.lifeMax / 2);
+        
             NPC.damage = (int)(NPC.damage / 2);
             meteorDamage = (int)(meteorDamage / 2);
             cultistFireDamage = (int)(cultistFireDamage / 2);

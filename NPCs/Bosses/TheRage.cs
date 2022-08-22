@@ -183,7 +183,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             //DEMON SICKLE - 1ST PHASE
             //counts up each tick. used to space out shots
-            if (FlameShotTimer2 >= 30 && FlameShotCounter2 < 16)
+            if (FlameShotTimer2 >= 30 && FlameShotCounter2 < 16 && NPC.Distance(player.Center) > 250)
             {
                 for (int num36 = 0; num36 < 20; num36++)
                 {
@@ -263,7 +263,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (breathTimer > 180)
             {
                 UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((280f - breathTimer) / 100f)), DustID.Torch, 48, 4);
-                //Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1);
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1);
             }
 
 
@@ -298,10 +298,10 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             //FIRE LURKER SHOOT
-            if (NPC.Distance(player.Center) > 250)
+            if (NPC.Distance(player.Center) > 300)
             { 
                 bool lineOfSight = Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
-                tsorcRevampAIs.SimpleProjectile(NPC, ref lostSoulTimer, 370, ProjectileID.LostSoulHostile, fireTrailsDamage, 1, lineOfSight, true, SoundID.Item79 with { Volume = 0.5f, PitchVariance = 2f }, 0);
+                tsorcRevampAIs.SimpleProjectile(NPC, ref lostSoulTimer, 400, ProjectileID.LostSoulHostile, fireTrailsDamage, 1, lineOfSight, true, SoundID.Item79 with { Volume = 0.5f, PitchVariance = 2f }, 0);
                 
             }
 

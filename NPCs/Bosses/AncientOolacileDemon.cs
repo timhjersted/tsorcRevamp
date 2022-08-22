@@ -35,9 +35,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler("The ancient Oolacile Demon decides to show mercy ...", Color.Gold, DustID.GoldFlame);
-
-            
-
         }
 
         NPCDespawnHandler despawnHandler;
@@ -51,12 +48,8 @@ namespace tsorcRevamp.NPCs.Bosses
         int blackFireDamage = 50;
         int greatAttackDamage = 65;
 
-
-
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-
-
             if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EyeofCthulhu))
             {
                 target.AddBuff(20, 150, false); //poisoned
@@ -108,7 +101,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 greatAttackDamage = 72;
             }
 
-            
             //difficulty should be on par with jungle wyvern
             if (NPC.downedBoss3)   
             {
@@ -125,7 +117,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 greatAttackDamage = 82;
             }
            
-
         }
 
         public Player Player
@@ -172,7 +163,6 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
 
-            
             //TELEPORT RANGED
             if (Main.rand.NextBool(24))
             {

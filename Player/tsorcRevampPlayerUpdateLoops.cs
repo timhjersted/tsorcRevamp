@@ -85,12 +85,19 @@ namespace tsorcRevamp
 
         //An int because it'll probably be necessary to split it into multiple levels
         public int manaShield = 0;
+
+        public int staminaShield = 0;
+
         //How many more frames the Mana Shield is disabled after using a mana potion
         public int manaShieldCooldown = 0;
         //What frame of the shield's animation it's on
         public int shieldFrame = 0;
+
+        public int staminaShieldFrame = 0;
         //Did they have the shield up last frame?
         public bool shieldUp = false;
+
+        public bool staminaShieldUp = false;
 
         public bool chestBankOpen;
         public int chestBank = -1;
@@ -244,6 +251,7 @@ namespace tsorcRevamp
             CrystalMagicWeapon = false;
             DarkmoonCloak = false;
             manaShield = 0;
+            staminaShield = 0;
             ConditionOverload = false;
             supersonicLevel = 0;
             ConsSoulChanceMult = 0;

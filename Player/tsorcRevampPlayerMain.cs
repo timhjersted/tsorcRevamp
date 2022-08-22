@@ -878,6 +878,18 @@ namespace tsorcRevamp
                     Player.manaRegenDelay = Items.Accessories.Melee.ManaShield.regenDelay;
                 }
             }
+            // statmina shield code
+            if (staminaShield == 1)
+            {
+
+                if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 75)
+                {
+                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= Items.Accessories.Expert.DragonCrestShield.staminaCost;
+                    //return;
+                }
+
+                
+            }
         }
 
         //Reduces the mana restored from potions and such to zero
@@ -905,7 +917,7 @@ namespace tsorcRevamp
         {
             tsorcScriptedEvents.RefreshEvents();
             player.statLife = player.statLifeMax2;
-            player.AddBuff(ModContent.BuffType<Invincible>(), 600);
+            player.AddBuff(ModContent.BuffType<Invincible>(), 360);
             DeathText = PickDeathText();
         }
 

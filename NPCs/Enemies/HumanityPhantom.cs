@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.width = 20;
             NPC.height = 46;
             NPC.aiStyle = -1; //Unique AI
-            NPC.damage = 50;
+            NPC.damage = 60;
             NPC.knockBackResist = 0;
             NPC.defense = 8;
             NPC.scale = Main.rand.NextFloat(0.5f, 1f);
