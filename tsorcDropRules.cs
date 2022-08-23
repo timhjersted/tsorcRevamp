@@ -32,7 +32,7 @@ namespace tsorcRevamp {
         public ItemDropAttemptResult TryDroppingItem(DropAttemptInfo info) {
             ItemDropAttemptResult result = default;
             if (info.player.RollLuck(_chanceDenominator) < _chanceNumerator) {
-                for (int i = 0; i < _drops.Length; i++) {
+                for (int i = 0; i < _drops.Length; ++i) {
                     CommonCode.DropItem(info, _drops[i], 1);
                 }
                 result.State = ItemDropAttemptResultState.Success;
@@ -45,7 +45,7 @@ namespace tsorcRevamp {
         public void ReportDroprates(List<DropRateInfo> drops, DropRateInfoChainFeed ratesInfo) {
             float origRate = (float)_chanceNumerator / (float)_chanceDenominator;
             float totalRate = origRate * ratesInfo.parentDroprateChance;
-            for (int i = 0; i < _drops.Length; i++) {
+            for (int i = 0; i < _drops.Length; ++i) {
                 drops.Add(new DropRateInfo(_drops[i], 1, 1, totalRate, ratesInfo.conditions));
             }
             Chains.ReportDroprates(ChainedRules, origRate, drops, ratesInfo);
@@ -61,10 +61,7 @@ namespace tsorcRevamp {
     public class FirstBagRule : IItemDropRuleCondition, IProvideItemConditionDescription {
         public virtual bool CanDrop(DropAttemptInfo info) {
             tsorcRevampPlayer modPlayer = info.player.GetModPlayer<tsorcRevampPlayer>();
-            if (modPlayer.bagsOpened.Contains(info.item)) {
-                return false;
-            }
-            return true;
+            return !modPlayer.bagsOpened.Contains(info.item);
         }
 
         public bool CanShowItemDropInUI() => true;
@@ -72,13 +69,21 @@ namespace tsorcRevamp {
         public virtual string GetConditionDescription() => "[c/ff9999: Only drops from the first opened specific Bag";
     }
 
+    public class CursedRule : IItemDropRuleCondition, IProvideItemConditionDescription {
+        public virtual bool CanDrop(DropAttemptInfo info) {
+            tsorcRevampPlayer modPlayer = info.player.GetModPlayer<tsorcRevampPlayer>();
+            return modPlayer.BearerOfTheCurse;
+        }
+
+        public bool CanShowItemDropInUI() => true;
+
+        public virtual string GetConditionDescription() => "[c/ff9999: Only drops when the player is a Bearer of the Curse";
+    }
+
     public class FirstBagCursedRule : FirstBagRule {
         public override bool CanDrop(DropAttemptInfo info) {
             tsorcRevampPlayer modPlayer = info.player.GetModPlayer<tsorcRevampPlayer>();
-            if (modPlayer.BearerOfTheCurse & base.CanDrop(info)) {
-                return true;
-            }
-            return false;
+            return modPlayer.BearerOfTheCurse & base.CanDrop(info);
         }
 
         public override string GetConditionDescription() => "[c/ff9999: Only drops from the first opened specific Bag while the player is a Bearer of the Curse";
