@@ -3,10 +3,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp;
 using tsorcRevamp.Items.Pets;
 using tsorcRevamp.NPCs.Bosses;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using Terraria.GameContent.ItemDropRules;
+using System.Collections.Generic;
 
 namespace tsorcRevamp.Items.BossBags
 {
@@ -165,8 +167,6 @@ namespace tsorcRevamp.Items.BossBags
             VanillaBossBag.AddBossBagSouls(BossBagNPC, player, false, true); //gives the player souls if they haven't opened the bag before
         }
     }
-
-
     public class LumeliaBag : BossBag
     {
         public override void ModifyItemLoot(ItemLoot itemLoot)
@@ -607,6 +607,80 @@ namespace tsorcRevamp.Items.BossBags
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
         }
 
+        public static void GiveDarkSouls(int bossBagID, Player player) {
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (modPlayer.bagsOpened.Contains(bossBagID)) {
+                return;
+            }
+            NPC boss = new NPC();
+            boss.SetDefaults(tsorcRevamp.BossBagIDtoNPCID[bossBagID]);
+            float bossValue = boss.value / 25f;
+            float multiplier = tsorcRevampPlayer.CheckSoulsMultiplier(player);
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), (int)(multiplier * bossValue));
+            modPlayer.bagsOpened.Add(bossBagID);
+        }
+
+        public override void RightClick(Item item, Player player) 
+        {
+            // check if an item is a Treasure Bag
+            if (!tsorcRevamp.BossBagIDtoNPCID.ContainsKey(item.type)) {
+                return;
+            }
+
+            GiveDarkSouls(item.type, player);
+        }
+
+        public override void ModifyItemLoot(Item item, ItemLoot loot) 
+        {
+            // check if an item is a Treasure Bag
+            if (!tsorcRevamp.BossBagIDtoNPCID.ContainsKey(item.type)) {
+                return;
+            }
+
+			int itemID = item.type;
+
+            // take into account blocked items
+            List<IItemDropRule> dropRules = loot.Get();
+            foreach (var rule in dropRules) {
+                List<int> ruleItems = new List<int>(){};
+                if (rule is CommonDrop) {
+                    ruleItems.Add(((CommonDrop)rule).itemId);
+                } else if (rule is DropOneByOne) {
+                    ruleItems.Add(((DropOneByOne)rule).itemId);
+                } else if (rule is OneFromOptionsDropRule) {
+                    foreach (var dropId in ((OneFromOptionsDropRule)rule).dropIds) {
+                        ruleItems.Add(dropId);
+                    }
+                } else if (rule is OneFromOptionsNotScaledWithLuckDropRule) {
+                    foreach (var dropId in ((OneFromOptionsNotScaledWithLuckDropRule)rule).dropIds) {
+                        ruleItems.Add(dropId);
+                    }
+                } else {
+                    continue;
+                }
+
+                foreach (var itemToRemove in tsorcRevamp.RemovedBossBagLoot[itemID]) {
+                    if (ruleItems.Contains(itemToRemove)) {
+                        loot.Remove(rule);
+                        continue;
+                    }
+                }
+            }
+
+            // add needed extras to Treasure Bags
+            tsorcRevamp.BossExtras assignedExtras = tsorcRevamp.AssignedBossExtras[itemID];
+            foreach (var it in tsorcRevamp.BossExtrasDescription) {
+                if ((assignedExtras & it.Key) != 0) {
+                    loot.Add(ItemDropRule.ByCondition(it.Value.Condition, it.Value.ID));
+                }
+            }
+
+            // add other extra items to Treasure Bags
+            foreach (var dropRule in tsorcRevamp.AddedBossBagLoot[itemID]) {
+                loot.Add(dropRule);
+            }
+		}
+
         public static void SoulsOnFirstBag(int EnemyID, Player player)
         {
             var Slain = tsorcRevampWorld.Slain;
@@ -658,244 +732,244 @@ namespace tsorcRevamp.Items.BossBags
                 }
             }
         }
-        [System.Obsolete]
-        public override bool PreOpenVanillaBag(string context, Player player, int arg)
-        {
+        // [System.Obsolete]
+        // public override bool PreOpenVanillaBag(string context, Player player, int arg)
+        // {
 
-            if (context == "bossBag" && arg == ItemID.KingSlimeBossBag)
-            { //re-implement king slime bag to stop blacklisted items from dropping in adventure mode
-                player.QuickSpawnItem(player.GetSource_Loot(), ItemID.RoyalGel);
-                player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Solidifier);
-                player.QuickSpawnItem(player.GetSource_Loot(), ItemID.GoldCoin, 11);
-                player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Katana);
-                if (Main.rand.Next(99) < 66) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.NinjaHood); }
-                if (Main.rand.Next(99) < 66) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.NinjaShirt); }
-                if (Main.rand.Next(99) < 66) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.NinjaPants); }
-                if (Main.rand.NextBool(7)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.KingSlimeMask); }
-                if (Main.rand.NextBool(10)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.KingSlimeTrophy); }
-                if (Main.rand.NextBool(2)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimeGun); }
-                //player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimySaddle); //didn't want such a powerful mobility tool obtainable from such a relatively easy, early-game mini-boss; also wanted sequence breaking to be done via the map if they found it rather than vanilla terraria knowledge
-                if (Main.rand.NextBool(2)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimeHook); }
+        //     if (context == "bossBag" && arg == ItemID.KingSlimeBossBag)
+        //     { //re-implement king slime bag to stop blacklisted items from dropping in adventure mode
+        //         player.QuickSpawnItem(player.GetSource_Loot(), ItemID.RoyalGel);
+        //         player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Solidifier);
+        //         player.QuickSpawnItem(player.GetSource_Loot(), ItemID.GoldCoin, 11);
+        //         player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Katana);
+        //         if (Main.rand.Next(99) < 66) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.NinjaHood); }
+        //         if (Main.rand.Next(99) < 66) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.NinjaShirt); }
+        //         if (Main.rand.Next(99) < 66) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.NinjaPants); }
+        //         if (Main.rand.NextBool(7)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.KingSlimeMask); }
+        //         if (Main.rand.NextBool(10)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.KingSlimeTrophy); }
+        //         if (Main.rand.NextBool(2)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimeGun); }
+        //         //player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimySaddle); //didn't want such a powerful mobility tool obtainable from such a relatively easy, early-game mini-boss; also wanted sequence breaking to be done via the map if they found it rather than vanilla terraria knowledge
+        //         if (Main.rand.NextBool(2)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimeHook); }
 
-                StaminaVesselOnFirstBag(NPCID.KingSlime, player);
-                SoulsOnFirstBag(NPCID.KingSlime, player);
-                return false;
-            }
-            if (context == "bossBag" && arg == ItemID.GolemBossBag)
-            {
-                //Picksaw drops from Attraidies who is Post-Golem now, and gates SuperHardMode content. We've gotta stop Golem from dropping it.
-                if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-                {
-                    if (Main.rand.NextBool(3)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Picksaw); }
-                }
-                else
-                {
-                    player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.BrokenPicksaw>());
-                }
+        //         StaminaVesselOnFirstBag(NPCID.KingSlime, player);
+        //         SoulsOnFirstBag(NPCID.KingSlime, player);
+        //         return false;
+        //     }
+        //     if (context == "bossBag" && arg == ItemID.GolemBossBag)
+        //     {
+        //         //Picksaw drops from Attraidies who is Post-Golem now, and gates SuperHardMode content. We've gotta stop Golem from dropping it.
+        //         if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+        //         {
+        //             if (Main.rand.NextBool(3)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Picksaw); }
+        //         }
+        //         else
+        //         {
+        //             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.BrokenPicksaw>());
+        //         }
 
-                //Drops that work in the traditional way. Also, adds the Crest of Stone to its drops.
-                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CrestOfStone>());
-                player.QuickSpawnItem(player.GetSource_Loot(), ItemID.ShinyStone);
-                if (Main.rand.NextBool(6)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.GolemMask); }
-                if (Main.rand.NextBool(9)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.GolemTrophy); }
-                player.QuickSpawnItem(player.GetSource_Loot(), ItemID.GreaterHealingPotion, 5 + Main.rand.Next(10));
+        //         //Drops that work in the traditional way. Also, adds the Crest of Stone to its drops.
+        //         player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CrestOfStone>());
+        //         player.QuickSpawnItem(player.GetSource_Loot(), ItemID.ShinyStone);
+        //         if (Main.rand.NextBool(6)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.GolemMask); }
+        //         if (Main.rand.NextBool(9)) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.GolemTrophy); }
+        //         player.QuickSpawnItem(player.GetSource_Loot(), ItemID.GreaterHealingPotion, 5 + Main.rand.Next(10));
 
-                //Always drops one of these things, picked at random
-                int drop = Main.rand.Next(6);
-                switch (drop)
-                {
-                    case 0:
-                        player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Stynger);
-                        player.QuickSpawnItem(player.GetSource_Loot(), ItemID.StyngerBolt, 60 + Main.rand.Next(39));
-                        break;
-                    case 1:
-                        player.QuickSpawnItem(player.GetSource_Loot(), ItemID.PossessedHatchet);
-                        break;
-                    case 2:
-                        player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SunStone);
-                        break;
-                    case 3:
-                        player.QuickSpawnItem(player.GetSource_Loot(), ItemID.EyeoftheGolem);
-                        break;
-                    case 4:
-                        player.QuickSpawnItem(player.GetSource_Loot(), ItemID.HeatRay);
-                        break;
-                    case 5:
-                        player.QuickSpawnItem(player.GetSource_Loot(), ItemID.StaffofEarth);
-                        break;
-                    case 6:
-                        player.QuickSpawnItem(player.GetSource_Loot(), ItemID.GolemFist);
-                        break;
-                }
+        //         //Always drops one of these things, picked at random
+        //         int drop = Main.rand.Next(6);
+        //         switch (drop)
+        //         {
+        //             case 0:
+        //                 player.QuickSpawnItem(player.GetSource_Loot(), ItemID.Stynger);
+        //                 player.QuickSpawnItem(player.GetSource_Loot(), ItemID.StyngerBolt, 60 + Main.rand.Next(39));
+        //                 break;
+        //             case 1:
+        //                 player.QuickSpawnItem(player.GetSource_Loot(), ItemID.PossessedHatchet);
+        //                 break;
+        //             case 2:
+        //                 player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SunStone);
+        //                 break;
+        //             case 3:
+        //                 player.QuickSpawnItem(player.GetSource_Loot(), ItemID.EyeoftheGolem);
+        //                 break;
+        //             case 4:
+        //                 player.QuickSpawnItem(player.GetSource_Loot(), ItemID.HeatRay);
+        //                 break;
+        //             case 5:
+        //                 player.QuickSpawnItem(player.GetSource_Loot(), ItemID.StaffofEarth);
+        //                 break;
+        //             case 6:
+        //                 player.QuickSpawnItem(player.GetSource_Loot(), ItemID.GolemFist);
+        //                 break;
+        //         }
 
-                SoulsOnFirstBag(NPCID.Golem, player);
-                return false;
-            }
+        //         SoulsOnFirstBag(NPCID.Golem, player);
+        //         return false;
+        //     }
 
 
 
-            return base.PreOpenVanillaBag(context, player, arg);
-        }
-        public override void OpenVanillaBag(string context, Player player, int arg)
-        {
-            var Slain = tsorcRevampWorld.Slain;
-            if (context == "bossBag")
-            {
-                if (arg == ItemID.EyeOfCthulhuBossBag)
-                {
-                    player.QuickSpawnItem(player.GetSource_Loot(), ItemID.HermesBoots);
-                    player.QuickSpawnItem(player.GetSource_Loot(), ItemID.HerosHat);
-                    player.QuickSpawnItem(player.GetSource_Loot(), ItemID.HerosPants);
-                    player.QuickSpawnItem(player.GetSource_Loot(), ItemID.HerosShirt);
-                    SublimeBoneDustOnFirstBag(NPCID.EyeofCthulhu, player);
-                    SoulsOnFirstBag(NPCID.EyeofCthulhu, player);
-                }
-                if (arg == ItemID.EaterOfWorldsBossBag)
-                {
-                     SoulsOnFirstBag(NPCID.EaterofWorldsHead, player);
-                }
-                if (arg == ItemID.BrainOfCthulhuBossBag)
-                {
-                    StaminaVesselOnFirstBag(NPCID.BrainofCthulhu, player);
-                    SoulsOnFirstBag(NPCID.BrainofCthulhu, player);
-                }
-                if (arg == ItemID.QueenBeeBossBag)
-                {
-                    if (Slain.ContainsKey(NPCID.QueenBee))
-                    {
-                        if (Slain[NPCID.QueenBee] == 0)
-                        {
-                            VanillaBossBag.AddBossBagSouls(NPCID.QueenBee, player, false, true);
-                            Slain[NPCID.QueenBee] = 1;
-                        }
-                    };
-                }
-                if (arg == ItemID.WallOfFleshBossBag)
-                {
-                    player.QuickSpawnItem(player.GetSource_Loot(), ItemID.MoltenPickaxe);
-                    EstusFlaskShardOnFirstBag(NPCID.WallofFlesh, player);
-                    SoulsOnFirstBag(NPCID.WallofFlesh, player);
-                }
-                if (arg == ItemID.SkeletronBossBag)
-                {
-                    SublimeBoneDustOnFirstBag(NPCID.SkeletronHead, player);
-                    SoulsOnFirstBag(NPCID.SkeletronHead, player);
-                    player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<MiakodaFull>());
-                }
-                if (arg == ItemID.DestroyerBossBag)
-                {
-                    SoulsOnFirstBag(NPCID.TheDestroyer, player);
-                    player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<RTQ2>());
-                    player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CrestOfCorruption>(), 1);
-                }
-                if (arg == ItemID.TwinsBossBag)
-                {
-                    /* 
-                    * picture the following:
-                    * Twins are killed. Spazmatism is added to Slain, and the player opens a bag and receives souls
-                    * then, Twins are killed again. Retinazer is added to slain this time, and the player opens a bag and gets souls again
-                    * to prevent this, we need to make sure we haven't opened a bag from Spazmatism when we open a bag in Retinazer's context
-                    */
-                    if (Slain.ContainsKey(NPCID.Retinazer))
-                    {
-                        if (Slain[NPCID.Retinazer] == 0)
-                        {
-                            bool SpazmatismDowned = Slain.TryGetValue(NPCID.Spazmatism, out int value);
-                            //if SpazmatismDowned evaluates to true, int value is set to the value pair of Spazmatism's key, which stores if a bag has been opened
-                            if (!SpazmatismDowned || value == 0)
-                            { //if Spazmatism is not in Slain, or no twins bag has been opened in Spazmatism's context
-                                AddBossBagSouls(NPCID.Retinazer, player);
-                                Slain[NPCID.Retinazer] = 1;
-                            }
-                        }
-                    }
-                    else if (Slain.ContainsKey(NPCID.Spazmatism))
-                    { //dont need to check if Retinazer is downed, since this is only run if Retinazer is not in Slain
-                        if (Slain[NPCID.Spazmatism] == 0)
-                        {
-                            AddBossBagSouls(NPCID.Spazmatism, player);
-                            Slain[NPCID.Spazmatism] = 1;
-                        }
-                    }
-                    player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CrestOfSky>(), 1);
-                }
-                if (arg == ItemID.SkeletronPrimeBossBag)
-                {
-                    SublimeBoneDustOnFirstBag(NPCID.SkeletronPrime, player);
-                    SoulsOnFirstBag(NPCID.SkeletronPrime, player);
-                    player.QuickSpawnItem(player.GetSource_Loot(), ItemID.AngelWings);
-                    player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CrestOfSteel>(), 1);
-                }
-                if (arg == ItemID.PlanteraBossBag)
-                {
-                    player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CrestOfLife>());
-                    player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<SoulOfLife>(), 3);
-                    SoulsOnFirstBag(NPCID.Plantera, player);
-                }
-                if (arg == ItemID.FishronBossBag)
-                {
-                    StaminaVesselOnFirstBag(NPCID.DukeFishron, player);
-                    SoulsOnFirstBag(NPCID.DukeFishron, player);
-                }
-                if (arg == ItemID.BossBagBetsy)
-                {
-                    SoulsOnFirstBag(NPCID.DD2Betsy, player);
-                }
-                if (arg == ItemID.MoonLordBossBag)
-                {
-                    if (Slain.ContainsKey(NPCID.MoonLordCore))
-                    {
-                        if (Slain[NPCID.MoonLordCore] == 0)
-                        {
-                            SoulsOnFirstBag(NPCID.MoonLordCore, player); //idk why but there was a lot of seemingly unnecessary code here, Moon Lord will just drop his souls according to his Cores value like this once
-                        }
-                    }
-                }
-                if (arg == ItemID.QueenSlimeBossBag)
-                {
-                    if (Slain.ContainsKey(NPCID.QueenSlimeBoss))
-                    {
-                        if (Slain[NPCID.QueenSlimeBoss] == 0)
-                        {
-                            VanillaBossBag.AddBossBagSouls(NPCID.QueenSlimeBoss, player, false, true);
-                            Slain[NPCID.QueenSlimeBoss] = 1;
-                        }
-                    };
-                }
-                if (arg == ItemID.FairyQueenBossBag)
-                {
-                    if (Slain.ContainsKey(NPCID.HallowBoss))
-                    {
-                        if (Slain[NPCID.HallowBoss] == 0)
-                        {
-                            VanillaBossBag.AddBossBagSouls(NPCID.HallowBoss, player, false, true);
-                            Slain[NPCID.HallowBoss] = 1;
-                        }
-                    };
-                }
-                if (arg == ItemID.BossBagBetsy)
-                {
-                    if (Slain.ContainsKey(NPCID.DD2Betsy))
-                    {
-                        if (Slain[NPCID.DD2Betsy] == 0)
-                        {
-                            VanillaBossBag.AddBossBagSouls(NPCID.DD2Betsy, player, false, true);
-                            Slain[NPCID.DD2Betsy] = 1;
-                        }
-                    };
-                }
-                if (arg == ItemID.DeerclopsBossBag)
-                {
-                    if (Slain.ContainsKey(NPCID.Deerclops))
-                    {
-                        if (Slain[NPCID.Deerclops] == 0)
-                        {
-                            VanillaBossBag.AddBossBagSouls(NPCID.Deerclops, player, false, true);
-                            Slain[NPCID.Deerclops] = 1;
-                        }
-                    };
-                }
-            }
-        }
+        //     return base.PreOpenVanillaBag(context, player, arg);
+        // }
+        // public override void OpenVanillaBag(string context, Player player, int arg)
+        // {
+        //     var Slain = tsorcRevampWorld.Slain;
+        //     if (context == "bossBag")
+        //     {
+        //         if (arg == ItemID.EyeOfCthulhuBossBag)
+        //         {
+        //             UsefulFunctions.BroadcastText("Open", Color.Cyan);
+        //             player.QuickSpawnItem(player.GetSource_Loot(), ItemID.HermesBoots);
+        //             player.QuickSpawnItem(player.GetSource_Loot(), ItemID.HerosHat);
+        //             player.QuickSpawnItem(player.GetSource_Loot(), ItemID.HerosPants);
+        //             player.QuickSpawnItem(player.GetSource_Loot(), ItemID.HerosShirt);
+        //             SublimeBoneDustOnFirstBag(NPCID.EyeofCthulhu, player);
+        //             SoulsOnFirstBag(NPCID.EyeofCthulhu, player);
+        //         }
+        //         if (arg == ItemID.EaterOfWorldsBossBag)
+        //         {
+        //             SoulsOnFirstBag(NPCID.EaterofWorldsHead, player);
+        //         }
+        //         if (arg == ItemID.BrainOfCthulhuBossBag)
+        //         {
+        //             StaminaVesselOnFirstBag(NPCID.BrainofCthulhu, player);
+        //             SoulsOnFirstBag(NPCID.BrainofCthulhu, player);
+        //         }
+        //         if (arg == ItemID.QueenBeeBossBag)
+        //         {
+        //             if (Slain.ContainsKey(NPCID.QueenBee))
+        //             {
+        //                 if (Slain[NPCID.QueenBee] == 0)
+        //                 {
+        //                     VanillaBossBag.AddBossBagSouls(NPCID.QueenBee, player, false, true);
+        //                     Slain[NPCID.QueenBee] = 1;
+        //                 }
+        //             };
+        //         }
+        //         if (arg == ItemID.WallOfFleshBossBag)
+        //         {
+        //             EstusFlaskShardOnFirstBag(NPCID.WallofFlesh, player);
+        //             SoulsOnFirstBag(NPCID.WallofFlesh, player);
+        //         }
+        //         if (arg == ItemID.SkeletronBossBag)
+        //         {
+        //             SublimeBoneDustOnFirstBag(NPCID.SkeletronHead, player);
+        //             SoulsOnFirstBag(NPCID.SkeletronHead, player);
+        //             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<MiakodaFull>());
+        //         }
+        //         if (arg == ItemID.DestroyerBossBag)
+        //         {
+        //             SoulsOnFirstBag(NPCID.TheDestroyer, player);
+        //             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<RTQ2>());
+        //             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CrestOfCorruption>(), 1);
+        //         }
+        //         if (arg == ItemID.TwinsBossBag)
+        //         {
+        //             /* 
+        //             * picture the following:
+        //             * Twins are killed. Spazmatism is added to Slain, and the player opens a bag and receives souls
+        //             * then, Twins are killed again. Retinazer is added to slain this time, and the player opens a bag and gets souls again
+        //             * to prevent this, we need to make sure we haven't opened a bag from Spazmatism when we open a bag in Retinazer's context
+        //             */
+        //             if (Slain.ContainsKey(NPCID.Retinazer))
+        //             {
+        //                 if (Slain[NPCID.Retinazer] == 0)
+        //                 {
+        //                     bool SpazmatismDowned = Slain.TryGetValue(NPCID.Spazmatism, out int value);
+        //                     //if SpazmatismDowned evaluates to true, int value is set to the value pair of Spazmatism's key, which stores if a bag has been opened
+        //                     if (!SpazmatismDowned || value == 0)
+        //                     { //if Spazmatism is not in Slain, or no twins bag has been opened in Spazmatism's context
+        //                         AddBossBagSouls(NPCID.Retinazer, player);
+        //                         Slain[NPCID.Retinazer] = 1;
+        //                     }
+        //                 }
+        //             }
+        //             else if (Slain.ContainsKey(NPCID.Spazmatism))
+        //             { //dont need to check if Retinazer is downed, since this is only run if Retinazer is not in Slain
+        //                 if (Slain[NPCID.Spazmatism] == 0)
+        //                 {
+        //                     AddBossBagSouls(NPCID.Spazmatism, player);
+        //                     Slain[NPCID.Spazmatism] = 1;
+        //                 }
+        //             }
+        //             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CrestOfSky>(), 1);
+        //         }
+        //         if (arg == ItemID.SkeletronPrimeBossBag)
+        //         {
+        //             SublimeBoneDustOnFirstBag(NPCID.SkeletronPrime, player);
+        //             SoulsOnFirstBag(NPCID.SkeletronPrime, player);
+        //             player.QuickSpawnItem(player.GetSource_Loot(), ItemID.AngelWings);
+        //             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CrestOfSteel>(), 1);
+        //         }
+        //         if (arg == ItemID.PlanteraBossBag)
+        //         {
+        //             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CrestOfLife>());
+        //             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<SoulOfLife>(), 3);
+        //             SoulsOnFirstBag(NPCID.Plantera, player);
+        //         }
+        //         if (arg == ItemID.FishronBossBag)
+        //         {
+        //             StaminaVesselOnFirstBag(NPCID.DukeFishron, player);
+        //             SoulsOnFirstBag(NPCID.DukeFishron, player);
+        //         }
+        //         if (arg == ItemID.BossBagBetsy)
+        //         {
+        //             SoulsOnFirstBag(NPCID.DD2Betsy, player);
+        //         }
+        //         if (arg == ItemID.MoonLordBossBag)
+        //         {
+        //             if (Slain.ContainsKey(NPCID.MoonLordCore))
+        //             {
+        //                 if (Slain[NPCID.MoonLordCore] == 0)
+        //                 {
+        //                     SoulsOnFirstBag(NPCID.MoonLordCore, player); //idk why but there was a lot of seemingly unnecessary code here, Moon Lord will just drop his souls according to his Cores value like this once
+        //                 }
+        //             }
+        //         }
+        //         if (arg == ItemID.QueenSlimeBossBag)
+        //         {
+        //             if (Slain.ContainsKey(NPCID.QueenSlimeBoss))
+        //             {
+        //                 if (Slain[NPCID.QueenSlimeBoss] == 0)
+        //                 {
+        //                     VanillaBossBag.AddBossBagSouls(NPCID.QueenSlimeBoss, player, false, true);
+        //                     Slain[NPCID.QueenSlimeBoss] = 1;
+        //                 }
+        //             };
+        //         }
+        //         if (arg == ItemID.FairyQueenBossBag)
+        //         {
+        //             if (Slain.ContainsKey(NPCID.HallowBoss))
+        //             {
+        //                 if (Slain[NPCID.HallowBoss] == 0)
+        //                 {
+        //                     VanillaBossBag.AddBossBagSouls(NPCID.HallowBoss, player, false, true);
+        //                     Slain[NPCID.HallowBoss] = 1;
+        //                 }
+        //             };
+        //         }
+        //         if (arg == ItemID.BossBagBetsy)
+        //         {
+        //             if (Slain.ContainsKey(NPCID.DD2Betsy))
+        //             {
+        //                 if (Slain[NPCID.DD2Betsy] == 0)
+        //                 {
+        //                     VanillaBossBag.AddBossBagSouls(NPCID.DD2Betsy, player, false, true);
+        //                     Slain[NPCID.DD2Betsy] = 1;
+        //                 }
+        //             };
+        //         }
+        //         if (arg == ItemID.DeerclopsBossBag)
+        //         {
+        //             if (Slain.ContainsKey(NPCID.Deerclops))
+        //             {
+        //                 if (Slain[NPCID.Deerclops] == 0)
+        //                 {
+        //                     VanillaBossBag.AddBossBagSouls(NPCID.Deerclops, player, false, true);
+        //                     Slain[NPCID.Deerclops] = 1;
+        //                 }
+        //             };
+        //         }
+        //     }
+        // }
     }
 }

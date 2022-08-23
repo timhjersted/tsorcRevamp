@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp {
@@ -55,5 +56,43 @@ namespace tsorcRevamp {
         public bool CanDrop(DropAttemptInfo info) => tsorcRevampWorld.SuperHardMode;
         public bool CanShowItemDropInUI() => true;
         public string GetConditionDescription() => "[c/ff9999:Only drops in Super Hardmode]";
+    }
+
+    public class FirstBagRule : IItemDropRuleCondition, IProvideItemConditionDescription {
+        public virtual bool CanDrop(DropAttemptInfo info) {
+            tsorcRevampPlayer modPlayer = info.player.GetModPlayer<tsorcRevampPlayer>();
+            if (modPlayer.bagsOpened.Contains(info.item)) {
+                return false;
+            }
+            return true;
+        }
+
+        public bool CanShowItemDropInUI() => true;
+
+        public virtual string GetConditionDescription() => "[c/ff9999: Only drops from the first opened specific Bag";
+    }
+
+    public class FirstBagCursedRule : FirstBagRule {
+        public override bool CanDrop(DropAttemptInfo info) {
+            tsorcRevampPlayer modPlayer = info.player.GetModPlayer<tsorcRevampPlayer>();
+            if (modPlayer.BearerOfTheCurse & base.CanDrop(info)) {
+                return true;
+            }
+            return false;
+        }
+
+        public override string GetConditionDescription() => "[c/ff9999: Only drops from the first opened specific Bag while the player is a Bearer of the Curse";
+    }
+
+    public class AdventureModeRule : IItemDropRuleCondition, IProvideItemConditionDescription {
+        public bool CanDrop(DropAttemptInfo info) => ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems;
+        public bool CanShowItemDropInUI() => true;
+        public string GetConditionDescription() => "[c/ff9999:Only drops in Adventure Mode]";
+    }
+
+    public class NonAdventureModeRule : IItemDropRuleCondition, IProvideItemConditionDescription {
+        public bool CanDrop(DropAttemptInfo info) => !ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems;
+        public bool CanShowItemDropInUI() => true;
+        public string GetConditionDescription() => "[c/ff9999:Only drops in Non-Adventure Mode]";
     }
 }
