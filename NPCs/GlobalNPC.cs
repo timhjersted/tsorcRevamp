@@ -419,7 +419,7 @@ namespace tsorcRevamp.NPCs
                             }
                         }
 
-                        tsorcRevampWorld.Slain.Add(npc.type, 0);
+                        tsorcRevampWorld.Slain.Add(npc.type, 1);
 
                         if (Main.netMode == NetmodeID.Server)
                         {
@@ -605,44 +605,44 @@ namespace tsorcRevamp.NPCs
 
             return base.PreKill(npc);
         }
-        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
-        {           
+        // public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        // {           
 
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-            {
+        //     if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+        //     {
 
-                List<IItemDropRule> ruleList = npcLoot.Get();
+        //         List<IItemDropRule> ruleList = npcLoot.Get();
 
-                for (int i = 0; i < ruleList.Count; i++)
-                {
-                    if (ruleList[i] is CommonDrop rodRule && rodRule.itemId == ItemID.RodofDiscord)
-                    {
-                        //Hacky
-                        rodRule.chanceNumerator = 0;
-                    }
+        //         for (int i = 0; i < ruleList.Count; i++)
+        //         {
+        //             if (ruleList[i] is CommonDrop rodRule && rodRule.itemId == ItemID.RodofDiscord)
+        //             {
+        //                 //Hacky
+        //                 rodRule.chanceNumerator = 0;
+        //             }
 
 
-                    /* 
-                    if (ruleList[i] is OneFromOptionsDropRule bossRule)
-                    {
-                        for(int j = 0; j < bossRule.dropIds.Length; j++)
-                        {
-                            if (bossRule.dropIds[j] == ItemID.Picksaw)
-                            {
-                                //You have to recreate the rule from scratch. I'm just gonna disable the picksaw in CanUseItem instead.
-                                OneFromOptionsDropRule newRule = new OneFromOptionsDropRule(1, 1, ItemID.Stynger, ItemID.GolemFist, ItemID.GolemMask);
+        //             /* 
+        //             if (ruleList[i] is OneFromOptionsDropRule bossRule)
+        //             {
+        //                 for(int j = 0; j < bossRule.dropIds.Length; j++)
+        //                 {
+        //                     if (bossRule.dropIds[j] == ItemID.Picksaw)
+        //                     {
+        //                         //You have to recreate the rule from scratch. I'm just gonna disable the picksaw in CanUseItem instead.
+        //                         OneFromOptionsDropRule newRule = new OneFromOptionsDropRule(1, 1, ItemID.Stynger, ItemID.GolemFist, ItemID.GolemMask);
 
-                            }
-                            if (bossRule.dropIds[j] == ItemID.SlimeHook)
-                            {
-                                bossRule.RemoveDrop(ItemID.SlimeHook); //No equivalent to this exists. How do you remove an item from a drop list?
-                            }
-                        }
-                        sawRule.chanceNumerator = 0;
-                    }*/
-                }
-            }
-        }
+        //                     }
+        //                     if (bossRule.dropIds[j] == ItemID.SlimeHook)
+        //                     {
+        //                         bossRule.RemoveDrop(ItemID.SlimeHook); //No equivalent to this exists. How do you remove an item from a drop list?
+        //                     }
+        //                 }
+        //                 sawRule.chanceNumerator = 0;
+        //             }*/
+        //         }
+        //     }
+        // }
 
         //TODO
         /*

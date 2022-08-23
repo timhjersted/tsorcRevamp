@@ -176,6 +176,8 @@ namespace tsorcRevamp
             RecipeRemover(ItemID.MechanicalSkull);
             RecipeRemover(ItemID.MechanicalWorm);
 
+            RecipeRemover(ItemID.WormFood);
+
             RecipeIngredientAdder(ItemID.IvyWhip, ItemID.BeeWax, 1);
             RecipeIngredientAdder(ItemID.GrapplingHook, ItemID.BeeWax, 1);
             RecipeIngredientAdder(ItemID.AmethystHook, ItemID.BeeWax, 1);

@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.UI;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
@@ -22,6 +23,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.UI;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Pets;
 using tsorcRevamp.UI;
 using static tsorcRevamp.ILEdits;
 using static tsorcRevamp.MethodSwaps;
@@ -30,6 +32,23 @@ namespace tsorcRevamp
 {
     public class tsorcRevamp : Mod
     {
+        public class tsorcItemDropRuleConditions 
+        {
+            public static IItemDropRuleCondition FirstBagRule;
+            public static IItemDropRuleCondition SuperHardmodeRule;
+            public static IItemDropRuleCondition FirstBagCursedRule;
+            public static IItemDropRuleCondition AdventureModeRule;
+            public static IItemDropRuleCondition NonAdventureModeRule;
+        }
+
+        public enum BossExtras
+        {
+            EstusFlaskShard = 0b1000,
+            GuardianSoul    = 0b0100,
+            StaminaVessel   = 0b0010,
+            SublimeBoneDust = 0b0001,
+            DarkSoulsOnly   = 0b0000
+        };
 
         public static ModKeybind toggleDragoonBoots;
         public static ModKeybind reflectionShiftKey;
@@ -45,6 +64,11 @@ namespace tsorcRevamp
         public static List<int> CrossModTiles;
         public static List<int> PlaceAllowedModTiles;
         public static List<int> BannedItems;
+        public static Dictionary<BossExtras, (IItemDropRuleCondition Condition, int ID)> BossExtrasDescription;
+        public static Dictionary<int, BossExtras> AssignedBossExtras;
+        public static Dictionary<int, int> BossBagIDtoNPCID;
+        public static Dictionary<int, List<int>> RemovedBossBagLoot;
+        public static Dictionary<int, List<IItemDropRule>> AddedBossBagLoot;
 
         internal BonfireUIState BonfireUIState;
         internal UserInterface _bonfireUIState; //"but zeo!", you say
@@ -157,6 +181,14 @@ namespace tsorcRevamp
 
         private void PopulateArrays()
         {
+            #region tsorcItemDropRuleConditions class
+            tsorcItemDropRuleConditions.FirstBagRule = new FirstBagRule();
+            tsorcItemDropRuleConditions.SuperHardmodeRule = new SuperHardmodeRule();
+            tsorcItemDropRuleConditions.FirstBagCursedRule = new FirstBagCursedRule();
+            tsorcItemDropRuleConditions.AdventureModeRule = new AdventureModeRule();
+            tsorcItemDropRuleConditions.NonAdventureModeRule = new NonAdventureModeRule();
+            #endregion
+            //--------
             #region KillAllowed list
             KillAllowed = new List<int>() {
                 3, //small plants
@@ -338,7 +370,6 @@ namespace tsorcRevamp
                 TileID.BreakableIce
 
             };
-
             #endregion
             //--------
             #region PlaceAllowed list
@@ -567,7 +598,6 @@ namespace tsorcRevamp
                 Find<ModTile>("EnemyBannerTile").Type,
 
             };
-
             #endregion
             //--------
             #region BannedItems list
@@ -581,11 +611,165 @@ namespace tsorcRevamp
                 ItemID.FrozenKey,
                 ItemID.MechanicalEye,
                 ItemID.MechanicalSkull,
-                ItemID.MechanicalWorm,
-                ItemID.FireWhip,
-                ItemID.WormFood,
-                ItemID.Pwnhammer
-        };
+                ItemID.MechanicalWorm
+            };
+            #endregion
+            //--------
+            #region AssignedBossExtras dictionary
+            AssignedBossExtras = new Dictionary<int, BossExtras>() 
+            {   
+                {   ItemID.KingSlimeBossBag         , BossExtras.StaminaVessel      },
+                {   ItemID.EyeOfCthulhuBossBag      , BossExtras.StaminaVessel  
+                                                    | BossExtras.SublimeBoneDust    },
+                {   ItemID.EaterOfWorldsBossBag     , BossExtras.DarkSoulsOnly      },
+                {   ItemID.BrainOfCthulhuBossBag    , BossExtras.StaminaVessel      },
+                {   ItemID.QueenBeeBossBag          , BossExtras.DarkSoulsOnly      },
+                {   ItemID.SkeletronBossBag         , BossExtras.SublimeBoneDust    },
+                {   ItemID.WallOfFleshBossBag       , BossExtras.EstusFlaskShard    },
+                {   ItemID.DestroyerBossBag         , BossExtras.DarkSoulsOnly      },
+                {   ItemID.TwinsBossBag             , BossExtras.DarkSoulsOnly      },
+                {   ItemID.SkeletronPrimeBossBag    , BossExtras.SublimeBoneDust    },
+                {   ItemID.PlanteraBossBag          , BossExtras.DarkSoulsOnly      },
+                {   ItemID.GolemBossBag             , BossExtras.DarkSoulsOnly      },
+                {   ItemID.FishronBossBag           , BossExtras.StaminaVessel      },
+                {   ItemID.CultistBossBag           , BossExtras.DarkSoulsOnly      },
+                {   ItemID.MoonLordBossBag          , BossExtras.DarkSoulsOnly      },
+                {   ItemID.QueenSlimeBossBag        , BossExtras.DarkSoulsOnly      },
+                {   ItemID.FairyQueenBossBag        , BossExtras.DarkSoulsOnly      },
+                {   ItemID.BossBagBetsy             , BossExtras.DarkSoulsOnly      },
+                {   ItemID.DeerclopsBossBag         , BossExtras.DarkSoulsOnly      }
+            };
+            #endregion
+            //--------
+            #region BossExtrasDescription dictionary
+            BossExtrasDescription = new Dictionary<BossExtras, (IItemDropRuleCondition Condition, int ID)>() 
+            {
+                {   BossExtras.EstusFlaskShard  , ( tsorcItemDropRuleConditions.FirstBagCursedRule , ModContent.ItemType<EstusFlaskShard>() )   },
+                {   BossExtras.GuardianSoul     , ( tsorcItemDropRuleConditions.FirstBagRule       , ModContent.ItemType<GuardianSoul>()    )   },
+                {   BossExtras.StaminaVessel    , ( tsorcItemDropRuleConditions.FirstBagRule       , ModContent.ItemType<StaminaVessel>()   )   },
+                {   BossExtras.SublimeBoneDust  , ( tsorcItemDropRuleConditions.FirstBagCursedRule , ModContent.ItemType<SublimeBoneDust>() )   }
+            };
+            #endregion
+            //--------
+            #region BossBagIDtoNPCID dictionary
+            BossBagIDtoNPCID = new Dictionary<int, int>() 
+            {
+                {   ItemID.KingSlimeBossBag         , NPCID.KingSlime           },
+                {   ItemID.EyeOfCthulhuBossBag      , NPCID.EyeofCthulhu        },
+                {   ItemID.EaterOfWorldsBossBag     , NPCID.EaterofWorldsHead   },
+                {   ItemID.BrainOfCthulhuBossBag    , NPCID.BrainofCthulhu      },
+                {   ItemID.QueenBeeBossBag          , NPCID.QueenBee            },
+                {   ItemID.SkeletronBossBag         , NPCID.SkeletronHead       },
+                {   ItemID.WallOfFleshBossBag       , NPCID.WallofFlesh         },
+                {   ItemID.DestroyerBossBag         , NPCID.TheDestroyer        },
+                {   ItemID.TwinsBossBag             , NPCID.Retinazer           },      // and also NPCID.Spazmatism 
+                {   ItemID.SkeletronPrimeBossBag    , NPCID.SkeletronPrime      },      // but it doesn't really matter
+                {   ItemID.PlanteraBossBag          , NPCID.Plantera            },      // while their values are the same
+                {   ItemID.GolemBossBag             , NPCID.Golem               },
+                {   ItemID.FishronBossBag           , NPCID.DukeFishron         },
+                {   ItemID.CultistBossBag           , NPCID.CultistBoss         },
+                {   ItemID.MoonLordBossBag          , NPCID.MoonLordCore        },
+                {   ItemID.QueenSlimeBossBag        , NPCID.QueenSlimeBoss      },
+                {   ItemID.FairyQueenBossBag        , NPCID.HallowBoss          },
+                {   ItemID.BossBagBetsy             , NPCID.DD2Betsy            },
+                {   ItemID.DeerclopsBossBag         , NPCID.Deerclops           }
+            };
+            #endregion
+            //--------
+            #region RemovedBossBagLoot dictionary
+            RemovedBossBagLoot = new Dictionary<int, List<int>>()
+            {
+                {   ItemID.KingSlimeBossBag         ,   new List<int>()
+                                                        {
+                                                            ItemID.SlimySaddle
+                                                        }                                   },
+                {   ItemID.EyeOfCthulhuBossBag      ,   new List<int>()                     },
+                {   ItemID.EaterOfWorldsBossBag     ,   new List<int>()                     },
+                {   ItemID.BrainOfCthulhuBossBag    ,   new List<int>()                     },
+                {   ItemID.QueenBeeBossBag          ,   new List<int>()                     },
+                {   ItemID.SkeletronBossBag         ,   new List<int>()                     },
+                {   ItemID.WallOfFleshBossBag       ,   new List<int>()
+                                                        {
+                                                            ItemID.FireWhip,
+                                                            ItemID.Pwnhammer
+                                                        }                                   },
+                {   ItemID.DestroyerBossBag         ,   new List<int>()                     },
+                {   ItemID.TwinsBossBag             ,   new List<int>()                     },
+                {   ItemID.SkeletronPrimeBossBag    ,   new List<int>()                     },
+                {   ItemID.PlanteraBossBag          ,   new List<int>()                     },
+                {   ItemID.GolemBossBag             ,   new List<int>()
+                                                        {
+                                                            ItemID.Picksaw
+                                                        }                                   },
+                {   ItemID.FishronBossBag           ,   new List<int>()                     },
+                {   ItemID.CultistBossBag           ,   new List<int>()                     },
+                {   ItemID.MoonLordBossBag          ,   new List<int>()                     },
+                {   ItemID.QueenSlimeBossBag        ,   new List<int>()
+                                                        {
+                                                            ItemID.QueenSlimeMountSaddle
+                                                        }                                   },
+                {   ItemID.FairyQueenBossBag        ,   new List<int>()                     },
+                {   ItemID.BossBagBetsy             ,   new List<int>()                     },
+                {   ItemID.DeerclopsBossBag         ,   new List<int>()                     }
+            };
+            #endregion
+            //--------
+            #region AddedBossBagLoot dictionary
+            AddedBossBagLoot = new Dictionary<int, List<IItemDropRule>>() 
+            {
+                {   ItemID.KingSlimeBossBag         ,   new List<IItemDropRule>()                                                        },
+                {   ItemID.EyeOfCthulhuBossBag      ,   new List<IItemDropRule>()                           
+                                                        {
+                                                            ItemDropRule.Common(ItemID.HermesBoots),
+                                                            ItemDropRule.Common(ItemID.HerosHat),
+                                                            ItemDropRule.Common(ItemID.HerosPants),
+                                                            ItemDropRule.Common(ItemID.HerosShirt)
+                                                        }                                                                                },
+                {   ItemID.EaterOfWorldsBossBag     ,   new List<IItemDropRule>()                                                        },
+                {   ItemID.BrainOfCthulhuBossBag    ,   new List<IItemDropRule>()                                                        },
+                {   ItemID.QueenBeeBossBag          ,   new List<IItemDropRule>()                                                        },
+                {   ItemID.SkeletronBossBag         ,   new List<IItemDropRule>()                           
+                                                        {
+                                                            ItemDropRule.Common(ModContent.ItemType<MiakodaFull>())
+                                                        }                                                                                },
+                {   ItemID.WallOfFleshBossBag       ,   new List<IItemDropRule>()                           
+                                                        {
+                                                            ItemDropRule.Common(ItemID.MoltenPickaxe)
+                                                        }                                                                                },
+                {   ItemID.DestroyerBossBag         ,   new List<IItemDropRule>()                           
+                                                        {
+                                                            ItemDropRule.Common(ModContent.ItemType<CrestOfCorruption>()),
+                                                            ItemDropRule.Common(ModContent.ItemType<RTQ2>())
+                                                        }                                                                                },
+                {   ItemID.TwinsBossBag             ,   new List<IItemDropRule>()                           
+                                                        {
+                                                            ItemDropRule.Common(ModContent.ItemType<CrestOfSky>())
+                                                        }                                                                                },
+                {   ItemID.SkeletronPrimeBossBag    ,   new List<IItemDropRule>()                           
+                                                        {
+                                                            ItemDropRule.Common(ModContent.ItemType<CrestOfSteel>())
+                                                        }                                                                                },
+                {   ItemID.PlanteraBossBag          ,   new List<IItemDropRule>()                           
+                                                        {
+                                                            ItemDropRule.Common(ModContent.ItemType<CrestOfLife>()),
+                                                            ItemDropRule.Common(ModContent.ItemType<SoulOfLife>(), 1, 3, 3)
+                                                        }                                                                                },
+                {   ItemID.GolemBossBag             ,   new List<IItemDropRule>()                           
+                                                        {
+                                                            ItemDropRule.Common(ModContent.ItemType<CrestOfStone>()),
+                                                            ItemDropRule.ByCondition(tsorcItemDropRuleConditions.AdventureModeRule,
+                                                                                     ModContent.ItemType<Items.BrokenPicksaw>()),
+                                                            ItemDropRule.ByCondition(tsorcItemDropRuleConditions.NonAdventureModeRule,
+                                                                                     ItemID.Picksaw, 3)
+                                                        }                                                                                },
+                {   ItemID.FishronBossBag           ,   new List<IItemDropRule>()                                                        },
+                {   ItemID.CultistBossBag           ,   new List<IItemDropRule>()                                                        },
+                {   ItemID.MoonLordBossBag          ,   new List<IItemDropRule>()                                                        },
+                {   ItemID.QueenSlimeBossBag        ,   new List<IItemDropRule>()                                                        },
+                {   ItemID.FairyQueenBossBag        ,   new List<IItemDropRule>()                                                        },
+                {   ItemID.BossBagBetsy             ,   new List<IItemDropRule>()                                                        },
+                {   ItemID.DeerclopsBossBag         ,   new List<IItemDropRule>()                                                        }
+            };
             #endregion
             //--------
             #region CustomDungeonTiles list
@@ -604,15 +788,24 @@ namespace tsorcRevamp
 
         public override void Unload()
         {
-            toggleDragoonBoots = null;
-            reflectionShiftKey = null;
-            specialAbility = null;
-            KillAllowed = null;
-            BannedItems = null;
-            PlaceAllowed = null;
-            Unbreakable = null;
-            IgnoredTiles = null;
-            tsorcRevampWorld.Slain = null;
+            tsorcItemDropRuleConditions.FirstBagRule            = null;
+            tsorcItemDropRuleConditions.SuperHardmodeRule       = null;
+            tsorcItemDropRuleConditions.FirstBagCursedRule      = null;
+            tsorcItemDropRuleConditions.AdventureModeRule       = null;
+            tsorcItemDropRuleConditions.NonAdventureModeRule    = null;
+            toggleDragoonBoots                                  = null;
+            reflectionShiftKey                                  = null;
+            specialAbility                                      = null;
+            KillAllowed                                         = null;
+            BannedItems                                         = null;
+            BossExtrasDescription                               = null;
+            AssignedBossExtras                                  = null;
+            BossBagIDtoNPCID                                    = null;
+            PlaceAllowed                                        = null;
+            Unbreakable                                         = null;
+            IgnoredTiles                                        = null;
+            tsorcRevampWorld.Slain                              = null;
+            RemovedBossBagLoot                                  = null;
             //the following sun and moon texture changes are failsafes. they should be set back to default in PreSaveAndQuit 
             TextureAssets.Sun = ModContent.Request<Texture2D>("Terraria/Images/Sun", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             TextureAssets.Sun2 = ModContent.Request<Texture2D>("Terraria/Images/Sun2");

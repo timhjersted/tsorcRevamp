@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -720,9 +721,8 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.MeteorHead):
                     {
-                        
-                            npc.defense = 10;
-                            npc.value = 300;
+                        npc.defense = 10;
+                        npc.value = 300;
 
                         if (Main.hardMode)
                         {
@@ -3181,58 +3181,57 @@ namespace tsorcRevamp.NPCs
                     }
                 }
                 
-                if (npc.type == NPCID.BigRainZombie
-                        
-                        || npc.type == NPCID.FemaleZombie
-                        || npc.type == NPCID.BigFemaleZombie
-                        || npc.type == NPCID.SmallFemaleZombie
-                        || npc.type == NPCID.SmallRainZombie
-                        || npc.type == NPCID.ZombieRaincoat
-                        || npc.type == NPCID.UmbrellaSlime
-                        || npc.type == NPCID.BigHeadacheSkeleton
-                        || npc.type == NPCID.SmallHeadacheSkeleton
-                        || npc.type == NPCID.BigSlimedZombie
-                        || npc.type == NPCID.RedSlime
-                        || npc.type == NPCID.BlueSlime
-                        || npc.type == NPCID.GreenSlime
-                        || npc.type == NPCID.TheGroom
-                        || npc.type == NPCID.SantaClaus
-                        || npc.type == NPCID.Unicorn
-                        || npc.type == NPCID.ZombieEskimo
-                        || npc.type == NPCID.PigronCorruption
-                        || npc.type == NPCID.PigronHallow
-                        || npc.type == NPCID.PigronCrimson
-                        || npc.type == NPCID.FaceMonster
-                        || npc.type == NPCID.SlimedZombie
-                        || npc.type == NPCID.HeadacheSkeleton
-                        || npc.type == NPCID.AngryNimbus
-                        || npc.type == NPCID.FloatyGross
-                        || npc.type == NPCID.SkeletonSniper
-                        || npc.type == NPCID.TacticalSkeleton
-                        || npc.type == NPCID.HoppinJack
-                        || npc.type == NPCID.SkeletonTopHat
-                        || npc.type == NPCID.SkeletonAstonaut
-                        || npc.type == NPCID.ZombieSuperman
-                        || npc.type == NPCID.ZombieXmas
-                        || npc.type == NPCID.ZombieSweater
-                        || npc.type == NPCID.SlimeRibbonWhite
-                        || npc.type == NPCID.SlimeRibbonYellow
-                        || npc.type == NPCID.SlimeRibbonGreen
-                        || npc.type == NPCID.SlimeRibbonRed
-                        || npc.type == NPCID.BunnyXmas
-                        || npc.type == NPCID.ArmedZombieEskimo
-                        || npc.type == NPCID.ArmedZombieSlimed
-                        || npc.type == NPCID.BoneThrowingSkeleton2
-                        || npc.type == NPCID.BoneThrowingSkeleton3
-                        || npc.type == NPCID.Butcher
-                        || npc.type == NPCID.TheBride
-                        || npc.type == NPCID.MartianProbe
-                        || npc.type == NPCID.WindyBalloon
-                        || npc.type == NPCID.ToxicSludge
-                        || npc.type == NPCID.BloodCrawlerWall
-                        || npc.type == NPCID.BoundGoblin
-                        || npc.type == NPCID.BoundMechanic
-                        || npc.type == NPCID.BoundWizard)
+                if (   npc.type == NPCID.BigRainZombie
+                    || npc.type == NPCID.FemaleZombie
+                    || npc.type == NPCID.BigFemaleZombie
+                    || npc.type == NPCID.SmallFemaleZombie
+                    || npc.type == NPCID.SmallRainZombie
+                    || npc.type == NPCID.ZombieRaincoat
+                    || npc.type == NPCID.UmbrellaSlime
+                    || npc.type == NPCID.BigHeadacheSkeleton
+                    || npc.type == NPCID.SmallHeadacheSkeleton
+                    || npc.type == NPCID.BigSlimedZombie
+                    || npc.type == NPCID.RedSlime
+                    || npc.type == NPCID.BlueSlime
+                    || npc.type == NPCID.GreenSlime
+                    || npc.type == NPCID.TheGroom
+                    || npc.type == NPCID.SantaClaus
+                    || npc.type == NPCID.Unicorn
+                    || npc.type == NPCID.ZombieEskimo
+                    || npc.type == NPCID.PigronCorruption
+                    || npc.type == NPCID.PigronHallow
+                    || npc.type == NPCID.PigronCrimson
+                    || npc.type == NPCID.FaceMonster
+                    || npc.type == NPCID.SlimedZombie
+                    || npc.type == NPCID.HeadacheSkeleton
+                    || npc.type == NPCID.AngryNimbus
+                    || npc.type == NPCID.FloatyGross
+                    || npc.type == NPCID.SkeletonSniper
+                    || npc.type == NPCID.TacticalSkeleton
+                    || npc.type == NPCID.HoppinJack
+                    || npc.type == NPCID.SkeletonTopHat
+                    || npc.type == NPCID.SkeletonAstonaut
+                    || npc.type == NPCID.ZombieSuperman
+                    || npc.type == NPCID.ZombieXmas
+                    || npc.type == NPCID.ZombieSweater
+                    || npc.type == NPCID.SlimeRibbonWhite
+                    || npc.type == NPCID.SlimeRibbonYellow
+                    || npc.type == NPCID.SlimeRibbonGreen
+                    || npc.type == NPCID.SlimeRibbonRed
+                    || npc.type == NPCID.BunnyXmas
+                    || npc.type == NPCID.ArmedZombieEskimo
+                    || npc.type == NPCID.ArmedZombieSlimed
+                    || npc.type == NPCID.BoneThrowingSkeleton2
+                    || npc.type == NPCID.BoneThrowingSkeleton3
+                    || npc.type == NPCID.Butcher
+                    || npc.type == NPCID.TheBride
+                    || npc.type == NPCID.MartianProbe
+                    || npc.type == NPCID.WindyBalloon
+                    || npc.type == NPCID.ToxicSludge
+                    || npc.type == NPCID.BloodCrawlerWall
+                    || npc.type == NPCID.BoundGoblin
+                    || npc.type == NPCID.BoundMechanic
+                    || npc.type == NPCID.BoundWizard)
                 {
                     npc.active = false;
                 }
@@ -5880,6 +5879,13 @@ namespace tsorcRevamp.NPCs
             if (npc.type == NPCID.LunarTowerStardust) tsorcRevampWorld.DownedStardust = true;
             if (npc.type == NPCID.LunarTowerSolar) tsorcRevampWorld.DownedSolar = true;
             #endregion
+        }
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot) 
+        {
+            if (npc.type == NPCID.CultistBoss) {
+                npcLoot.Add(ItemDropRule.BossBag(ItemID.CultistBossBag));
+            }
         }
 
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref int damage, ref float knockback, ref bool crit)
