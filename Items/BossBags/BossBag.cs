@@ -511,11 +511,6 @@ namespace tsorcRevamp.Items.BossBags
             if (!tsorcRevamp.BossBagIDtoNPCID.ContainsKey(item.type)) {
                 return;
             }
-
-            NPC npc = new NPC();
-            npc.SetDefaults(tsorcRevamp.BossBagIDtoNPCID[item.type]);
-            UsefulFunctions.BroadcastText("FullName: " + npc.FullName, Color.Cyan);
-
             GiveDarkSouls(item.type, player);
         }
 
