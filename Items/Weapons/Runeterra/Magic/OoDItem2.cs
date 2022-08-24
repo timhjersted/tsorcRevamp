@@ -1,4 +1,4 @@
-
+/*
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -84,4 +84,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             recipe.Register();
         }
     }
-}
+}*/

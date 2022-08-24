@@ -1,4 +1,4 @@
-
+/*
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -249,4 +249,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
         }
     }
-}
+}*/

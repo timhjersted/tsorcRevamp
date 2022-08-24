@@ -1,4 +1,4 @@
-
+/*
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -95,7 +95,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
             {
                 NPC other = Main.npc[i];
 
-                if (other.active & !other.friendly & other.Distance(Main.MouseWorld) <= 15 & other.Distance(player.Center) <= 10000 & doublecritchance/*& dashCD <= 0*/)
+                if (other.active & !other.friendly & other.Distance(Main.MouseWorld) <= 15 & other.Distance(player.Center) <= 10000 & doublecritchance & dashCD <= 0)
                 {
                     if (dashTimer > 0)
                     {
@@ -164,4 +164,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
             recipe.Register();
         }
     }
-}
+}*/

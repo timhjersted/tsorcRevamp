@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            STItem2.dashCD -= 5f;
+            //STItem2.dashCD -= 5f;
         }
         private void Visuals()
         {

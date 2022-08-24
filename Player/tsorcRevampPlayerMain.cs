@@ -826,7 +826,7 @@ namespace tsorcRevamp
                     }
                 }
             }
-            if (tsorcRevamp.specialAbility.JustReleased)
+           /* if (tsorcRevamp.specialAbility.JustReleased)
             {
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
@@ -860,7 +860,7 @@ namespace tsorcRevamp
                     }
                 }
             }
-            
+            */
         }
 
         //On hit, subtract the mana cost and disable natural mana regen for a short period

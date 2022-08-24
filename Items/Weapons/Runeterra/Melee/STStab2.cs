@@ -139,7 +139,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
 
 			if (steeltempesthittimer == 0)
             {
-				STItem2.dashCD -= 2f;
+				//STItem2.dashCD -= 2f;
 				steeltempest += 1;
 				steeltempesthittimer = 1;
             }
