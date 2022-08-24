@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.MarilithHold>(), 60, false);
+            target.AddBuff(ModContent.BuffType<Buffs.MarilithHold>(), 30, false);
         }
 
         public override void Kill(int timeLeft)

@@ -106,7 +106,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 InitializeMoves();
                 InitializeFirewalls();                
             }
-            
+
+            testAttack = 2;
             if (testAttack != -1)
             {
                 MoveIndex = testAttack;
@@ -302,102 +303,115 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         //She fires barrages of Hold Balls at the player, rendering them unable to escape being pushed into the fire
         private void HoldBallStorm()
         {
-            NPC.Center = new Vector2(3228, 1731)* 16;
-            NPC.velocity *= 0.98f;
-
-            float intensity = MoveTimer / 30f;            
-            if(MoveTimer > 60)
+            if(NPC.Distance(new Vector2(3228, 1731) * 16) > 90 && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                intensity = 1;
-
-                for (int i = 0; i < Main.maxPlayers; i++)
+                MoveTimer = 0;
+                MoveCounter++;
+                if(MoveCounter > 15)
                 {
-                    if (Main.player[i].active && !Main.player[i].dead)
+                    MoveCounter = 15;
+                }
+                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, new Vector2(3228, 1731) * 16, MoveCounter / 2);
+            }
+            else
+            {
+                NPC.velocity *= 0.95f;
+
+                float intensity = MoveTimer / 30f;
+                if (MoveTimer > 60)
+                {
+                    intensity = 1;
+
+                    for (int i = 0; i < Main.maxPlayers; i++)
                     {
-                        Main.player[i].AddBuff(ModContent.BuffType<Buffs.MarilithWind>(), 5);
-
-                        if (MoveTimer % 45 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (Main.player[i].active && !Main.player[i].dead)
                         {
-                            holdBallDamage = 50;
-                            int pattern = Main.rand.Next(4);
-                            if (pattern == 0)
-                            {
-                                Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[i].Center, 17);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(128, 0).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-128, 0).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                            }
+                            Main.player[i].AddBuff(ModContent.BuffType<Buffs.MarilithWind>(), 5);
 
-                            if (pattern == 1)
+                            if (MoveTimer % 45 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[i].Center, 17) + Main.player[i].velocity / 5;
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 80).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -80).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 160).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -160).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 240).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -240).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                            }
-
-                            if (pattern == 2)
-                            {
-                                Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[i].Center, 17) + Main.player[i].velocity / 2;
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(128, 128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-128, 128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(128, -128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-128, -128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                            }
-
-                            if (pattern == 3)
-                            {
-                                for (int j = 0; j < 12; j++)
+                                holdBallDamage = 50;
+                                int pattern = Main.rand.Next(4);
+                                if (pattern == 0)
                                 {
-                                    Vector2 offset = Main.rand.NextVector2CircularEdge(120, 120);
-                                    Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center + offset, Main.player[i].Center + Main.rand.NextVector2CircularEdge(500, 500), 14);
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, targetVector + Main.player[i].velocity / 2, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[i].Center, 17);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(128, 0).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-128, 0).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                }
+
+                                if (pattern == 1)
+                                {
+                                    Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[i].Center, 17) + Main.player[i].velocity / 5;
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 80).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -80).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 160).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -160).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 240).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -240).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                }
+
+                                if (pattern == 2)
+                                {
+                                    Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[i].Center, 17) + Main.player[i].velocity / 2;
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(128, 128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-128, 128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(128, -128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-128, -128).RotatedBy(targetVector.ToRotation()), targetVector, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                }
+
+                                if (pattern == 3)
+                                {
+                                    for (int j = 0; j < 12; j++)
+                                    {
+                                        Vector2 offset = Main.rand.NextVector2CircularEdge(120, 120);
+                                        Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center + offset, Main.player[i].Center + Main.rand.NextVector2CircularEdge(500, 500), 14);
+                                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, targetVector + Main.player[i].velocity / 2, ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }     
 
 
-            for(int i = 0; i < 30 * intensity; i++)
-            {
-                Vector2 dustVec = Main.rand.NextVector2CircularEdge(300, 300);
-                Vector2 dustVel = new Vector2(Main.rand.NextFloat(0, 17), 0);
-                if(dustVec.X < 0)
+                for (int i = 0; i < 30 * intensity; i++)
                 {
-                    dustVel.X *= -1;
+                    Vector2 dustVec = Main.rand.NextVector2CircularEdge(300, 300);
+                    Vector2 dustVel = new Vector2(Main.rand.NextFloat(0, 17), 0);
+                    if (dustVec.X < 0)
+                    {
+                        dustVel.X *= -1;
+                    }
+                    Dust.NewDustPerfect(NPC.Center + dustVec, DustID.InfernoFork, dustVel, 0, default, 2).noGravity = true;
                 }
-                Dust.NewDustPerfect(NPC.Center + dustVec, DustID.InfernoFork, dustVel, 0, default, 2).noGravity = true;
+
+                for (int i = 0; i < 5 * intensity; i++)
+                {
+                    Vector2 dustVec = NPC.Center;
+                    dustVec.X += Main.rand.NextFloat(-2000, 2000);
+                    dustVec.Y += Main.rand.NextFloat(-1000, 1000);
+                    Vector2 dustVel = new Vector2(16, Main.rand.NextFloat(-2, 2));
+                    if (dustVec.X < NPC.Center.X)
+                    {
+                        dustVel.X *= -1;
+                    }
+
+                    if (Main.rand.NextBool())
+                    {
+                        Gore.NewGore(NPC.GetSource_FromThis(), dustVec, dustVel, Main.rand.Next(61, 64), Main.rand.NextFloat(0.5f, 2));
+                    }
+                    else
+                    {
+                        Dust.NewDustPerfect(NPC.Center + dustVec, DustID.TintableDust, dustVel, 0, Color.White * 0.8f, Main.rand.NextFloat(0.5f, 3));
+                    }
+                }
             }
-
-            for (int i = 0; i < 5 * intensity; i++)
-            {
-                Vector2 dustVec = NPC.Center;
-                dustVec.X += Main.rand.NextFloat(-2000, 2000);
-                dustVec.Y += Main.rand.NextFloat(-1000, 1000);
-                Vector2 dustVel = new Vector2(16, Main.rand.NextFloat(-2, 2));
-                if(dustVec.X < NPC.Center.X)
-                {
-                    dustVel.X *= -1;
-                }
-
-                if (Main.rand.NextBool())
-                {
-                    Gore.NewGore(NPC.GetSource_FromThis(), dustVec, dustVel, Main.rand.Next(61, 64), Main.rand.NextFloat(0.5f, 2));
-                }
-                else
-                {
-                    Dust.NewDustPerfect(NPC.Center + dustVec, DustID.TintableDust, dustVel, 0, Color.White * 0.8f, Main.rand.NextFloat(0.5f, 3));
-                }
-            }
+            
 
 
             if (MoveTimer > 900)
@@ -472,8 +486,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             MoveList = new List<MarilithMove> {
                 new MarilithMove(ExpandingFireBombs, MarilithAttackID.Firebombs, "ExpandingFireBombs"),
                 new MarilithMove(VolcanicStorm, MarilithAttackID.Stormclouds, "VolcanicStorm"),
-                new MarilithMove(Barrage, MarilithAttackID.Barrage, "Barrage"),
                 new MarilithMove(HoldBallStorm, MarilithAttackID.Flamewalls, "HoldBallStorm"),
+                new MarilithMove(Barrage, MarilithAttackID.Barrage, "Barrage"),
                 };
         }
 

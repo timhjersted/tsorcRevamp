@@ -49,18 +49,23 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
 
             distanceFactor = 1 - (coords.y * textureSize / projectileWidth);
 
+            samplePos.y = -1;
+
             if (uSecondaryColor.y > 0) {
                 cloudProgress = uSecondaryColor.y / 300;
                 distanceFactor = lerp(distanceFactor, 14 * pow((distanceFactor * (coords.y * textureSize / projectileWidth)), 2), cloudProgress);
+                //timeFactor = lerp(uTime / 7, uTime / 37, cloudProgress);
+                //samplePos.y = lerp(0, -1, cloudProgress);
+                //samplePos.x = lerp(-1, 0, cloudProgress);
             }
 
-            samplePos.y = -1;
 
             //distanceFactor += cloudProgress;
             if (distanceFactor > 1) {
                 distanceFactor = 1;
             }
         }
+
         //Bottom
         if (uSaturation == 3) {
             samplePos.y = 1;
@@ -80,9 +85,9 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
         //distanceFactor = distanceFactor * 2.5f;
         //return float4(distanceFactor, intensity, 1, 0.5);
 
-        float r = pow(intensity, 1) * 1.5f * pow(distanceFactor, 1.5);
-        float g = pow(intensity, 2.0) * .5f * distanceFactor * distanceFactor;
-        float b = pow(intensity, 3.0) * 0.15f * distanceFactor * distanceFactor;
+        float r = 2 * pow(intensity, 1) * 1.5f * pow(distanceFactor, 1.5);
+        float g = 2 * pow(intensity, 2.0) * distanceFactor * distanceFactor;
+        float b = 2 * pow(intensity, 3.0) * 0.15f * distanceFactor * distanceFactor;
 
         float3 final = lerp(float3(r, g, b), float3(1, 1, 1) * pow(intensity, 1.5) * distanceFactor, cloudProgress);
 

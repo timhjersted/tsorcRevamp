@@ -104,10 +104,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             int frameHeight = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
             int segmentCount = Projectile.height / frameHeight;
 
+
             DelegateMethods.v3_1 = Color.OrangeRed.ToVector3() * 2f;
             Vector2 startPoint = Projectile.Center;
             Vector2 endpoint = Projectile.Center;
-            if(Projectile.ai[0] == 0)
+            if (Projectile.ai[0] == 0)
             {
                 startPoint.Y -= Projectile.height / 2;
                 endpoint.Y += Projectile.height;
@@ -119,7 +120,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             }
             Utils.PlotTileLine(startPoint, endpoint, 16, DelegateMethods.CastLight);
 
-            
+
 
 
             Projectile.frameCounter++;
@@ -173,12 +174,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         float modifiedTime;
         public override bool PreDraw(ref Color lightColor)
         {
+            
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             //data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer);
 
             //Apply the shader, caching it as well
-            if (data == null)
+            //if (data == null)
             {
                 data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/FireWallShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "FireWallShaderPass");
             }
