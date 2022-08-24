@@ -11,21 +11,25 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void SetDefaults()
 		{
-
-			Projectile.CloneDefaults(ProjectileID.CoolWhipProj);
-
-			AIType = ProjectileID.CoolWhipProj;
 			Projectile.width = 22;
 			Projectile.height = 18;
 			Projectile.tileCollide = false;
 			Projectile.DamageType = DamageClass.SummonMeleeSpeed;
 			Projectile.friendly = true;
+			Projectile.penetrate = -1;
+			Projectile.extraUpdates = 1;
+			Projectile.usesLocalNPCImmunity = true;
+			Projectile.localNPCHitCooldown = 40;
 		}
 
 		public override void AI()
 		{
-			Projectile.position = Main.MouseWorld;
-			Player player = Main.player[Projectile.owner];
+            if (Main.myPlayer == Projectile.owner && Main.MouseWorld != Projectile.Center)
+            {
+                Projectile.Center = Main.MouseWorld;
+                Projectile.netUpdate = true;
+            }
+            Player player = Main.player[Projectile.owner];
 			if (player.dead || !player.active)
 			{
 				player.ClearBuff(ModContent.BuffType<Buffs.Summon.PolarisLeashBuff>());
