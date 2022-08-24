@@ -57,38 +57,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 				Item.useStyle = ItemUseStyleID.Shoot;
 			}
 		}
-		public override void UpdateInventory(Player player)
-		{
-			if (Main.GameUpdateCount % 1 == 0)
-			{
-				CotUIAnim2.holditemtimer2 -= 0.3f;
-			}
-		}
-		public override void HoldItem(Player player)
-		{
-			bool CotUItemAnim2Exists = false;
-			CotUIAnim2.holditemtimer2 = 0.2f;
-			for (int i = 0; i < Main.maxProjectiles; i++)
-			{
-				if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<CotUIAnim2>() && Main.projectile[i].owner == player.whoAmI)
-				{
-					CotUItemAnim2Exists = true;
-					break;
-				}
-			}
-			if (!CotUItemAnim2Exists)
-			{
-				Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<CotUIAnim2>(), 0, 0, Main.myPlayer);
-			}
-		}
-		public override bool CanShoot(Player player)
-		{
-			if (player.altFunctionUse == 2)
-			{
-				return false;
-			}
-			return true;
-		}
 		public override bool AltFunctionUse(Player player)
 		{
 			return true;

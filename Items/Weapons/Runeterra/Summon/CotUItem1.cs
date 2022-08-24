@@ -1,4 +1,4 @@
-/*
+
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -56,20 +56,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 				Item.useStyle = ItemUseStyleID.Shoot;
 			}
 		}
-		public override void UpdateInventory(Player player)
-		{
-		}
-		public override void HoldItem(Player player)
-        {
-		}
-        public override bool CanShoot(Player player)
-		{
-			if (player.altFunctionUse == 2)
-			{
-				return false;
-			}
-			return true;
-		}
 		public override bool AltFunctionUse(Player player)
 		{
 			return true;
@@ -103,4 +89,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			recipe.Register();
 		}
 	}
-}*/
+}
