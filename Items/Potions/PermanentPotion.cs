@@ -1174,24 +1174,25 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Tea time all the time. \nNot compatible with other food items");
         }
+        /*
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             Player player = Main.LocalPlayer;
 
             tooltips.Insert(3, new TooltipLine(Mod, "", $"Currently consumed: {(player.GetModPlayer<tsorcRevampPlayer>().WellFed1Consumed)}"));
 
-        }
+        }*/
 
         public override void PotionEffect(Player player) {
             player.wellFed = true;
-            player.statDefense += (int)(2 + (2 * (player.GetModPlayer<tsorcRevampPlayer>().WellFed1Consumed / ConsumedAmountDivisor)));
-            player.GetCritChance(DamageClass.Generic) += 2 + (2 * (player.GetModPlayer<tsorcRevampPlayer>().WellFed1Consumed / ConsumedAmountDivisor));
-            player.GetAttackSpeed(DamageClass.Melee) += 0.05f + (0.05f * (player.GetModPlayer<tsorcRevampPlayer>().WellFed1Consumed / ConsumedAmountDivisor));
-            player.GetDamage(DamageClass.Generic) += 0.05f + (0.05f * (player.GetModPlayer<tsorcRevampPlayer>().WellFed1Consumed / ConsumedAmountDivisor));
-            player.GetKnockback(DamageClass.Summon) += 0.5f + (0.05f * (player.GetModPlayer<tsorcRevampPlayer>().WellFed1Consumed / ConsumedAmountDivisor));
-            player.moveSpeed += 0.20f + (0.2f * (player.GetModPlayer<tsorcRevampPlayer>().WellFed1Consumed / ConsumedAmountDivisor));
-            player.pickSpeed -= 0.05f + (0.05f * (player.GetModPlayer<tsorcRevampPlayer>().WellFed1Consumed / ConsumedAmountDivisor));
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f + (0.1f * (player.GetModPlayer<tsorcRevampPlayer>().WellFed1Consumed / ConsumedAmountDivisor));
+            player.statDefense += 2;
+            player.GetCritChance(DamageClass.Generic) += 2;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.05f;
+            player.GetDamage(DamageClass.Generic) += 0.05f;
+            player.GetKnockback(DamageClass.Summon) += 0.5f;
+            player.moveSpeed += 0.20f;
+            player.pickSpeed -= 0.05f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f;
         }
     }
 
