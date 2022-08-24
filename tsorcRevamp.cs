@@ -23,7 +23,10 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.UI;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.BossBags;
 using tsorcRevamp.Items.Pets;
+using tsorcRevamp.NPCs.Bosses;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.UI;
 using static tsorcRevamp.ILEdits;
 using static tsorcRevamp.MethodSwaps;
@@ -34,8 +37,9 @@ namespace tsorcRevamp
     {
         public class tsorcItemDropRuleConditions 
         {
-            public static IItemDropRuleCondition FirstBagRule;
             public static IItemDropRuleCondition SuperHardmodeRule;
+            public static IItemDropRuleCondition FirstBagRule;
+            public static IItemDropRuleCondition CursedRule;
             public static IItemDropRuleCondition FirstBagCursedRule;
             public static IItemDropRuleCondition AdventureModeRule;
             public static IItemDropRuleCondition NonAdventureModeRule;
@@ -182,8 +186,9 @@ namespace tsorcRevamp
         private void PopulateArrays()
         {
             #region tsorcItemDropRuleConditions class
-            tsorcItemDropRuleConditions.FirstBagRule = new FirstBagRule();
             tsorcItemDropRuleConditions.SuperHardmodeRule = new SuperHardmodeRule();
+            tsorcItemDropRuleConditions.FirstBagRule = new FirstBagRule();
+            tsorcItemDropRuleConditions.CursedRule = new CursedRule();
             tsorcItemDropRuleConditions.FirstBagCursedRule = new FirstBagCursedRule();
             tsorcItemDropRuleConditions.AdventureModeRule = new AdventureModeRule();
             tsorcItemDropRuleConditions.NonAdventureModeRule = new NonAdventureModeRule();
@@ -618,6 +623,7 @@ namespace tsorcRevamp
             #region AssignedBossExtras dictionary
             AssignedBossExtras = new Dictionary<int, BossExtras>() 
             {   
+                #region Vanilla
                 {   ItemID.KingSlimeBossBag         , BossExtras.StaminaVessel      },
                 {   ItemID.EyeOfCthulhuBossBag      , BossExtras.StaminaVessel  
                                                     | BossExtras.SublimeBoneDust    },
@@ -637,7 +643,42 @@ namespace tsorcRevamp
                 {   ItemID.QueenSlimeBossBag        , BossExtras.DarkSoulsOnly      },
                 {   ItemID.FairyQueenBossBag        , BossExtras.DarkSoulsOnly      },
                 {   ItemID.BossBagBetsy             , BossExtras.DarkSoulsOnly      },
-                {   ItemID.DeerclopsBossBag         , BossExtras.DarkSoulsOnly      }
+                {   ItemID.DeerclopsBossBag         , BossExtras.DarkSoulsOnly      },
+                #endregion
+                //--------
+                #region tsorc
+                {   ModContent.ItemType<OolacileDemonBag>()         , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<SlograBag>()                , BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<GaibonBag>()                , BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<JungleWyvernBag>()          , BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<AncientDemonBag>()          , BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<LumeliaBag>()               , BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<TheRageBag>()               , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<TheSorrowBag>()             , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<TheHunterBag>()             , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<WyvernMageBag>()            , BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<SerrisBag>()                , BossExtras.GuardianSoul
+                                                                    | BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<DeathBag>()                 , BossExtras.GuardianSoul       },
+                {   ModContent.ItemType<MindflayerIllusionBag>()    , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<AttraidiesBag>()            , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<KrakenBag>()                , BossExtras.GuardianSoul
+                                                                    | BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<MarilithBag>()              , BossExtras.GuardianSoul
+                                                                    | BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<LichBag>()                  , BossExtras.GuardianSoul
+                                                                    | BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<BlightBag>()                , BossExtras.GuardianSoul       },
+                {   ModContent.ItemType<ChaosBag>()                 , BossExtras.GuardianSoul       },
+                {   ModContent.ItemType<MageShadowBag>()            , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<OolacileSorcererBag>()      , BossExtras.GuardianSoul       },
+                {   ModContent.ItemType<ArtoriasBag>()              , BossExtras.GuardianSoul       },
+                {   ModContent.ItemType<HellkiteBag>()              , BossExtras.GuardianSoul       },
+                {   ModContent.ItemType<SeathBag>()                 , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<WitchkingBag>()             , BossExtras.GuardianSoul       },
+                {   ModContent.ItemType<DarkCloudBag>()             , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<GwynBag>()                  , BossExtras.DarkSoulsOnly      }
+                #endregion
             };
             #endregion
             //--------
@@ -654,6 +695,7 @@ namespace tsorcRevamp
             #region BossBagIDtoNPCID dictionary
             BossBagIDtoNPCID = new Dictionary<int, int>() 
             {
+                #region Vanilla
                 {   ItemID.KingSlimeBossBag         , NPCID.KingSlime           },
                 {   ItemID.EyeOfCthulhuBossBag      , NPCID.EyeofCthulhu        },
                 {   ItemID.EaterOfWorldsBossBag     , NPCID.EaterofWorldsHead   },
@@ -672,13 +714,45 @@ namespace tsorcRevamp
                 {   ItemID.QueenSlimeBossBag        , NPCID.QueenSlimeBoss      },
                 {   ItemID.FairyQueenBossBag        , NPCID.HallowBoss          },
                 {   ItemID.BossBagBetsy             , NPCID.DD2Betsy            },
-                {   ItemID.DeerclopsBossBag         , NPCID.Deerclops           }
+                {   ItemID.DeerclopsBossBag         , NPCID.Deerclops           },
+                #endregion
+                //--------
+                #region tsorc
+                {   ModContent.ItemType<OolacileDemonBag>()         , ModContent.NPCType<AncientOolacileDemon>()                                        },
+                {   ModContent.ItemType<SlograBag>()                , ModContent.NPCType<Slogra>()                                                      },
+                {   ModContent.ItemType<GaibonBag>()                , ModContent.NPCType<Gaibon>()                                                      },
+                {   ModContent.ItemType<JungleWyvernBag>()          , ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>()                   },
+                {   ModContent.ItemType<AncientDemonBag>()          , ModContent.NPCType<AncientDemon>()                                                },
+                {   ModContent.ItemType<LumeliaBag>()               , ModContent.NPCType<HeroofLumelia>()                                               },
+                {   ModContent.ItemType<TheRageBag>()               , ModContent.NPCType<TheRage>()                                                     },
+                {   ModContent.ItemType<TheSorrowBag>()             , ModContent.NPCType<TheSorrow>()                                                   },
+                {   ModContent.ItemType<TheHunterBag>()             , ModContent.NPCType<TheHunter>()                                                   },      
+                {   ModContent.ItemType<WyvernMageBag>()            , ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()                           },     
+                {   ModContent.ItemType<SerrisBag>()                , ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()                                  },     
+                {   ModContent.ItemType<DeathBag>()                 , ModContent.NPCType<NPCs.Bosses.Death>()                                           },
+                {   ModContent.ItemType<MindflayerIllusionBag>()    , ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>()                     },
+                {   ModContent.ItemType<AttraidiesBag>()            , ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()                      },
+                {   ModContent.ItemType<KrakenBag>()                , ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>()                         },
+                {   ModContent.ItemType<MarilithBag>()              , ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()                        },
+                {   ModContent.ItemType<LichBag>()                  , ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>()                           },
+                {   ModContent.ItemType<BlightBag>()                , ModContent.NPCType<Blight>()                                                      },
+                {   ModContent.ItemType<ChaosBag>()                 , ModContent.NPCType<Chaos>()                                                       },
+                {   ModContent.ItemType<MageShadowBag>()            , ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()  },
+                {   ModContent.ItemType<OolacileSorcererBag>()      , ModContent.NPCType<AbysmalOolacileSorcerer>()                                     },
+                {   ModContent.ItemType<ArtoriasBag>()              , ModContent.NPCType<Artorias>()                                                    },
+                {   ModContent.ItemType<HellkiteBag>()              , ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>() },
+                {   ModContent.ItemType<SeathBag>()                 , ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()       },
+                {   ModContent.ItemType<WitchkingBag>()             , ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()                         },
+                {   ModContent.ItemType<DarkCloudBag>()             , ModContent.NPCType<DarkCloud>()                                                   },
+                {   ModContent.ItemType<GwynBag>()                  , ModContent.NPCType<Gwyn>()                                                        }
+                #endregion
             };
             #endregion
             //--------
             #region RemovedBossBagLoot dictionary
             RemovedBossBagLoot = new Dictionary<int, List<int>>()
             {
+                #region Vanilla
                 {   ItemID.KingSlimeBossBag         ,   new List<int>()
                                                         {
                                                             ItemID.SlimySaddle
@@ -711,12 +785,14 @@ namespace tsorcRevamp
                 {   ItemID.FairyQueenBossBag        ,   new List<int>()                     },
                 {   ItemID.BossBagBetsy             ,   new List<int>()                     },
                 {   ItemID.DeerclopsBossBag         ,   new List<int>()                     }
+                #endregion
             };
             #endregion
             //--------
             #region AddedBossBagLoot dictionary
             AddedBossBagLoot = new Dictionary<int, List<IItemDropRule>>() 
             {
+                #region Vanilla
                 {   ItemID.KingSlimeBossBag         ,   new List<IItemDropRule>()                                                        },
                 {   ItemID.EyeOfCthulhuBossBag      ,   new List<IItemDropRule>()                           
                                                         {
@@ -769,8 +845,11 @@ namespace tsorcRevamp
                 {   ItemID.FairyQueenBossBag        ,   new List<IItemDropRule>()                                                        },
                 {   ItemID.BossBagBetsy             ,   new List<IItemDropRule>()                                                        },
                 {   ItemID.DeerclopsBossBag         ,   new List<IItemDropRule>()                                                        }
+                #endregion
             };
             #endregion
+            //--------
+
             //--------
             #region CustomDungeonTiles list
             CustomDungeonWalls = new bool[231];
@@ -788,8 +867,9 @@ namespace tsorcRevamp
 
         public override void Unload()
         {
-            tsorcItemDropRuleConditions.FirstBagRule            = null;
             tsorcItemDropRuleConditions.SuperHardmodeRule       = null;
+            tsorcItemDropRuleConditions.FirstBagRule            = null;
+            tsorcItemDropRuleConditions.CursedRule              = null;
             tsorcItemDropRuleConditions.FirstBagCursedRule      = null;
             tsorcItemDropRuleConditions.AdventureModeRule       = null;
             tsorcItemDropRuleConditions.NonAdventureModeRule    = null;
