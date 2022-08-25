@@ -923,33 +923,33 @@ namespace tsorcRevamp.NPCs
             }
             if (type == NPCID.Mechanic)
             {
-                shop.item[0].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[1].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[2].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[3].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[4].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[5].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[6].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[7].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[8].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[9].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[10].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[11].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[12].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[13].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[14].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[15].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[16].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[17].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[18].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[19].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[20].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[22].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[23].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[24].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[25].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[26].SetDefaults(ModContent.ItemType<DisabledSale>());
-                shop.item[27].SetDefaults(ModContent.ItemType<DisabledSale>());
+                shop.item[0].SetDefaults(ModContent.ItemType<DisabledSale>());       // Red Wrench
+                shop.item[1].SetDefaults(ModContent.ItemType<DisabledSale>());       // Blue Wrench
+                shop.item[2].SetDefaults(ModContent.ItemType<DisabledSale>());       // Green Wrench
+                shop.item[3].SetDefaults(ModContent.ItemType<DisabledSale>());       // Yellow Wrench
+                shop.item[4].SetDefaults(ModContent.ItemType<DisabledSale>());       // Wire Cutter
+                shop.item[5].SetDefaults(ModContent.ItemType<DisabledSale>());       // Wire
+                shop.item[6].SetDefaults(ModContent.ItemType<DisabledSale>());       // Leaver
+                shop.item[7].SetDefaults(ModContent.ItemType<DisabledSale>());       // Switch
+                shop.item[8].SetDefaults(ModContent.ItemType<DisabledSale>());       // Red Pressure Plate
+                shop.item[9].SetDefaults(ModContent.ItemType<DisabledSale>());       // Green Pressure Plate
+                shop.item[10].SetDefaults(ModContent.ItemType<DisabledSale>());      // Gray Pressure Plate
+                shop.item[11].SetDefaults(ModContent.ItemType<DisabledSale>());      // Brown Pressure Plate
+                shop.item[12].SetDefaults(ModContent.ItemType<DisabledSale>());      // Blue Pressure Plate
+                shop.item[13].SetDefaults(ModContent.ItemType<DisabledSale>());      // Yellow Pressure Plate
+                shop.item[14].SetDefaults(ModContent.ItemType<DisabledSale>());      // Orange Pressure Plate
+                shop.item[15].SetDefaults(ModContent.ItemType<DisabledSale>());      // Teal Pressure Plate
+                shop.item[16].SetDefaults(ModContent.ItemType<DisabledSale>());      // Booster Track
+                shop.item[17].SetDefaults(ModContent.ItemType<DisabledSale>());      // Actuator
+                shop.item[18].SetDefaults(ModContent.ItemType<DisabledSale>());      // Junction Box
+                shop.item[19].SetDefaults(ModContent.ItemType<DisabledSale>());      // Mechanical Ruler
+                shop.item[20].SetDefaults(ModContent.ItemType<DisabledSale>());      // Mechanical Lens
+                shop.item[22].SetDefaults(ModContent.ItemType<DisabledSale>());      // Wire Bulb
+                shop.item[23].SetDefaults(ModContent.ItemType<DisabledSale>());      // 5 Second Timer
+                shop.item[24].SetDefaults(ModContent.ItemType<DisabledSale>());      // 3 Second Timer
+                shop.item[25].SetDefaults(ModContent.ItemType<DisabledSale>());      // 1 Second Timer
+                shop.item[26].SetDefaults(ModContent.ItemType<DisabledSale>());      // 1/2 Second Timer
+                shop.item[27].SetDefaults(ModContent.ItemType<DisabledSale>());      // 1/4 Second Timer
             }
         }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit)
