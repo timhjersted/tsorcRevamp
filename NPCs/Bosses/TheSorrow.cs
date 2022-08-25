@@ -244,7 +244,11 @@ namespace tsorcRevamp.NPCs.Bosses
                     Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 9);
                     breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<FrozenDragonsBreath>(), waterTrailsDamage, 0f, Main.myPlayer);
-                    //NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
+                    //play breath sound
+                    if (Main.rand.NextBool(3))
+                    {
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.9f, PitchVariance = 1f }, NPC.Center); //flame thrower
+                    }
                 }
             }
             //END BREATH ATTACK

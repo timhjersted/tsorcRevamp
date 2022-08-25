@@ -26,9 +26,9 @@ namespace tsorcRevamp.NPCs.Special
         {
             NPC.npcSlots = 200;
             NPC.knockBackResist = 0.3f;
-            NPC.boss = true;
+            //NPC.boss = true;
             NPC.aiStyle = -1;
-            NPC.height = 56;
+            NPC.height = 55;
             NPC.width = 40;
             if (NPC.downedBoss1 || NPC.downedBoss2) { NPC.damage = 18; }
             else { NPC.damage = 12; } //Low contact damage, the slashes will be doing the damage
