@@ -68,6 +68,7 @@ namespace tsorcRevamp
         public static List<int> CrossModTiles;
         public static List<int> PlaceAllowedModTiles;
         public static List<int> BannedItems;
+        public static List<int> RestrictedHooks;
         public static Dictionary<BossExtras, (IItemDropRuleCondition Condition, int ID)> BossExtrasDescription;
         public static Dictionary<int, BossExtras> AssignedBossExtras;
         public static Dictionary<int, int> BossBagIDtoNPCID;
@@ -620,6 +621,17 @@ namespace tsorcRevamp
             };
             #endregion
             //--------
+            #region RestrictedHooks list
+            RestrictedHooks = new List<int>() 
+            {
+                ItemID.SlimeHook,
+                ItemID.SquirrelHook,
+                ItemID.BatHook,
+                ItemID.CandyCaneHook,
+                ItemID.FishHook
+            };
+            #endregion
+            //--------
             #region AssignedBossExtras dictionary
             AssignedBossExtras = new Dictionary<int, BossExtras>() 
             {   
@@ -878,6 +890,7 @@ namespace tsorcRevamp
             specialAbility                                      = null;
             KillAllowed                                         = null;
             BannedItems                                         = null;
+            RestrictedHooks                                     = null;
             BossExtrasDescription                               = null;
             AssignedBossExtras                                  = null;
             BossBagIDtoNPCID                                    = null;

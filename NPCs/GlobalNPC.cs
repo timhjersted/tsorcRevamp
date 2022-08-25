@@ -384,39 +384,26 @@ namespace tsorcRevamp.NPCs
                     }
                     else
                     {
-                        bool SHMBoss = false;
+                        // check whether the SHM boss was killed
                         if (npc.type == ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>() || npc.type == ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>() || npc.type == ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()) /*|| npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()) gwyn CLOSES the abyss portal!*/
                         {
-                            SHMBoss = true;
-                        }
-
-                        if (Main.netMode == NetmodeID.SinglePlayer)
-                        {
-                            Main.NewText("The souls of " + npc.GivenOrTypeName + " have been released!", 175, 255, 75);
-                            if (SHMBoss)
+                            if (Main.netMode == NetmodeID.SinglePlayer) 
                             {
                                 Main.NewText("The portal to The Abyss widens, and its denizens grow stronger...", Color.Orange);
-                            }
-                            if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)
-                            {
-                                Main.StartInvasion();
-                            }
-                        }
-                        else if (Main.netMode == NetmodeID.Server)
-                        {
-                            ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("The souls of " + npc.GivenOrTypeName + " have been released!"), new Color(175, 255, 75));
-                            if (SHMBoss)
+                            } 
+                            else if (Main.netMode == NetmodeID.Server) 
                             {
                                 ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("The portal to The Abyss widens, and its denizens grow stronger..."), Color.Orange);
                             }
-                            if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)
-                            {
-                                Main.StartInvasion();
-                            }
+                        }
+
+                        if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)
+                        {
+                            Main.StartInvasion();
                         }
 
                         tsorcRevampWorld.Slain.Add(npc.type, 1);

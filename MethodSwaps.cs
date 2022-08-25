@@ -257,7 +257,7 @@ namespace tsorcRevamp
             Item item = null;
 
             bool restrictedHook = false;
-            if (self.miscEquips[4].type == ItemID.SlimeHook || self.miscEquips[4].type == ItemID.SquirrelHook)
+            if (tsorcRevamp.RestrictedHooks.Contains(self.miscEquips[4].type))
             {
                 restrictedHook = true;
             }
