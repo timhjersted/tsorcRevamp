@@ -16,10 +16,11 @@ namespace tsorcRevamp.NPCs.Bosses
             Main.npcFrameCount[NPC.type] = 6;
             NPC.npcSlots = 10;
             NPC.aiStyle = 0;
-            NPC.width = 80;
-            NPC.height = 100;
+            NPC.width = 68;
+            NPC.height = 70;
             NPC.damage = 99999;
             NPC.defense = 45;
+            NPC.scale = 1.1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.lifeMax = 35000;
@@ -88,16 +89,21 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.ai[1]++; // Timer Teleport
                          // npc.ai[2] Shots
 
+            Lighting.AddLight(NPC.Center, Color.MediumPurple.ToVector3() * 2);
+            //great dust for bright effect that can be color matched
+            int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.AncientLight, NPC.velocity.X, NPC.velocity.Y, 150, Color.Purple, 0.9f);
+            Main.dust[dust2].noGravity = true;
+
             if (NPC.life > 5000)
             {
                 Color color = new Color();
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 200, color, 4f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 180, color, 4f);
                 Main.dust[dust].noGravity = true;
             }
             else if (NPC.life <= 5000)
             {
                 Color color = new Color();
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 140, color, 6f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 150, color, 6f);
                 Main.dust[dust].noGravity = true;
             }
 
@@ -145,12 +151,12 @@ namespace tsorcRevamp.NPCs.Bosses
                 nextWarpAngle = (float)(Main.rand.Next(360) * (Math.PI / 180));
                 NPC.netUpdate = true;
             }
-
-            if (NPC.velocity.X > 0)
-            {
-                NPC.spriteDirection = 1;
-            }
-            else NPC.spriteDirection = -1;
+            //this made death always look in one direction
+            //if (NPC.velocity.X > 0)
+           //{
+           //     NPC.spriteDirection = 1;
+           // }
+           // else NPC.spriteDirection = -1;
         }
         public override void SendExtraAI(BinaryWriter writer)
         {
