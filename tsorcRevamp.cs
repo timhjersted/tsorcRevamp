@@ -30,6 +30,8 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.UI;
 using static tsorcRevamp.ILEdits;
 using static tsorcRevamp.MethodSwaps;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Potions.PermanentPotions;
 
 namespace tsorcRevamp
 {
@@ -69,11 +71,13 @@ namespace tsorcRevamp
         public static List<int> PlaceAllowedModTiles;
         public static List<int> BannedItems;
         public static List<int> RestrictedHooks;
+        public static List<int> DisabledRecipes;
         public static Dictionary<BossExtras, (IItemDropRuleCondition Condition, int ID)> BossExtrasDescription;
         public static Dictionary<int, BossExtras> AssignedBossExtras;
         public static Dictionary<int, int> BossBagIDtoNPCID;
         public static Dictionary<int, List<int>> RemovedBossBagLoot;
         public static Dictionary<int, List<IItemDropRule>> AddedBossBagLoot;
+        public static Dictionary<int, List<(int ID, int Count)>> ModifiedRecipes;
 
         internal BonfireUIState BonfireUIState;
         internal UserInterface _bonfireUIState; //"but zeo!", you say
@@ -632,6 +636,192 @@ namespace tsorcRevamp
             };
             #endregion
             //--------
+            #region DisabledRecipes list
+            DisabledRecipes = new List<int>() 
+            {
+                #region Accessories IDs
+                ItemID.BalloonHorseshoeSharkron,
+                ItemID.BlueHorseshoeBalloon,
+                ItemID.WhiteHorseshoeBalloon,
+                ItemID.YellowHorseshoeBalloon,
+                ItemID.BalloonHorseshoeHoney
+                #endregion
+                ,
+                #region Armor IDs
+                    #region Multiclass
+                    ItemID.HallowedPlateMail,
+                    ItemID.HallowedGreaves
+                    #endregion
+                    ,
+                    #region Mage
+                    ItemID.JungleHat,
+                    ItemID.JungleShirt,
+                    ItemID.JunglePants
+                    ,
+                    ItemID.MeteorHelmet,
+                    ItemID.MeteorSuit,
+                    ItemID.MeteorLeggings
+                    ,
+                    ItemID.HallowedHeadgear
+                    ,
+                    ItemID.SpectreHood,
+                    ItemID.SpectreMask,
+                    ItemID.SpectreRobe,
+                    ItemID.SpectrePants
+                    #endregion
+                    ,
+                    #region Melee
+                    ItemID.MoltenHelmet,
+                    ItemID.MoltenBreastplate,
+                    ItemID.MoltenGreaves
+                    ,
+                    ItemID.HallowedMask
+                    ,
+                    ItemID.TurtleHelmet,
+                    ItemID.TurtleScaleMail,
+                    ItemID.TurtleLeggings
+                    ,
+                    ItemID.BeetleHelmet,
+                    ItemID.BeetleShell,
+                    ItemID.BeetleScaleMail,
+                    ItemID.BeetleLeggings
+                    #endregion
+                    ,
+                    #region Ranged
+                    ItemID.NecroHelmet,
+                    ItemID.NecroBreastplate,
+                    ItemID.NecroGreaves
+                    ,
+                    ItemID.HallowedHelmet
+                    ,
+                    ItemID.ShroomiteHeadgear,
+                    ItemID.ShroomiteHelmet,
+                    ItemID.ShroomiteMask,
+                    ItemID.ShroomiteBreastplate,
+                    ItemID.ShroomiteLeggings
+                    #endregion
+                    ,
+                    #region Summoner
+                    ItemID.ObsidianHelm,
+                    ItemID.ObsidianShirt,
+                    ItemID.ObsidianPants
+                    ,
+                    ItemID.SpiderMask,
+                    ItemID.SpiderBreastplate,
+                    ItemID.SpiderGreaves
+                    ,
+                    ItemID.HallowedHood
+                    ,
+                    ItemID.SpookyHelmet,
+                    ItemID.SpookyBreastplate,
+                    ItemID.SpookyLeggings
+                    #endregion
+                #endregion
+                ,
+                #region BossSummoners IDs
+                ItemID.WormFood,
+                ItemID.MechanicalEye,
+                ItemID.MechanicalSkull,
+                ItemID.MechanicalWorm
+                #endregion
+                ,
+                #region Large Gems IDs
+                ItemID.LargeAmber,
+                ItemID.LargeAmethyst,
+                ItemID.LargeDiamond,
+                ItemID.LargeEmerald,
+                ItemID.LargeRuby,
+                ItemID.LargeSapphire,
+                ItemID.LargeTopaz
+                #endregion
+                ,
+                #region Pickaxes IDs
+                ItemID.MoltenPickaxe,
+                ItemID.CobaltDrill,
+                ItemID.CobaltPickaxe,
+                ItemID.PalladiumDrill,
+                ItemID.PalladiumPickaxe,
+                ItemID.MythrilDrill,
+                ItemID.MythrilPickaxe,
+                ItemID.OrichalcumDrill,
+                ItemID.OrichalcumPickaxe,
+                ItemID.AdamantiteDrill,
+                ItemID.AdamantitePickaxe,
+                ItemID.TitaniumDrill,
+                ItemID.TitaniumPickaxe,
+                ItemID.Drax,
+                ItemID.PickaxeAxe
+                #endregion
+                ,
+                #region Potions
+                ItemID.FlaskofFire,         // default recipe which contains Hellstone Ore
+                ModContent.ItemType<ArmorDrugPotion>(),
+                ItemID.ObsidianSkinPotion
+                #endregion
+                ,
+                #region Ropes IDs
+                ItemID.RopeCoil,
+                ItemID.VineRopeCoil,
+                ItemID.WebRope,
+                ItemID.WebRopeCoil,
+                ItemID.SilkRopeCoil
+                #endregion
+                ,
+                #region Weapon IDs
+                    #region Mage
+                    // nothing here yet
+                    #endregion
+                    // ,
+                    #region Melee
+                    ItemID.BladeofGrass,
+                    ItemID.Excalibur
+                    #endregion
+                    ,
+                    #region Ranged
+                    ItemID.Sandgun
+                    #endregion
+                    ,
+                    #region Summoner
+                        #region Whips
+                        ItemID.ThornWhip,
+                        ItemID.BoneWhip,
+                        ItemID.CoolWhip,
+                        ItemID.SwordWhip
+                        #endregion
+                        ,
+                        #region Minions
+                        ItemID.SpiderStaff
+                        #endregion
+                        ,
+                        #region Sentries
+                        ItemID.QueenSpiderStaff
+                        #endregion
+                    #endregion
+                #endregion
+                ,
+                #region Wings IDs
+                ItemID.AngelWings,
+                ItemID.DemonWings,
+                ItemID.FairyWings,
+                ItemID.HarpyWings,
+                ItemID.ButterflyWings,
+                ItemID.BoneWings,
+                ItemID.FlameWings,
+                ItemID.FrozenWings,
+                ItemID.BatWings,
+                ItemID.BeeWings,
+                ItemID.TatteredFairyWings,
+                ItemID.SpookyWings,
+                ItemID.GhostWings,
+                ItemID.BeetleWings,
+                ItemID.WingsSolar,
+                ItemID.WingsNebula,
+                ItemID.WingsStardust,
+                ItemID.WingsVortex
+                #endregion
+            };
+            #endregion
+            //--------
             #region AssignedBossExtras dictionary
             AssignedBossExtras = new Dictionary<int, BossExtras>() 
             {   
@@ -861,6 +1051,72 @@ namespace tsorcRevamp
             };
             #endregion
             //--------
+            #region ModifiedRecipes List
+            ModifiedRecipes = new Dictionary<int, List<(int ID, int Count)>>()
+            {
+                #region Hooks
+                { ItemID.IvyWhip,       new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.BeeWax, 1) 
+                                        }                                       },
+                { ItemID.GrapplingHook, new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.BeeWax, 1) 
+                                        }                                       },
+                { ItemID.AmethystHook,  new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.BeeWax, 1) 
+                                        }                                       },
+                { ItemID.TopazHook,     new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.BeeWax, 1) 
+                                        }                                       },
+                { ItemID.SapphireHook,  new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.BeeWax, 1) 
+                                        }                                       },
+                { ItemID.EmeraldHook,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.BeeWax, 1) 
+                                        }                                       },
+                { ItemID.RubyHook,      new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.BeeWax, 1) 
+                                        }                                       },
+                { ItemID.DiamondHook,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.BeeWax, 1) 
+                                        }                                       }
+                #endregion
+                ,
+                #region Robes
+                { ItemID.AmethystRobe,  new List<(int ItemID, int Count)>()
+                                        {
+                                            (ModContent.ItemType<Items.DarkSoul>(), 550)
+                                        }                                                   },
+                { ItemID.TopazRobe,     new List<(int ItemID, int Count)>()
+                                        {
+                                            (ModContent.ItemType<Items.DarkSoul>(), 600)
+                                        }                                                   },
+                { ItemID.SapphireRobe,  new List<(int ItemID, int Count)>()
+                                        {
+                                            (ModContent.ItemType<Items.DarkSoul>(), 650)
+                                        }                                                   },
+                { ItemID.EmeraldRobe,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ModContent.ItemType<Items.DarkSoul>(), 700)
+                                        }                                                   },
+                { ItemID.RubyRobe,      new List<(int ItemID, int Count)>()
+                                        {
+                                            (ModContent.ItemType<Items.DarkSoul>(), 750)
+                                        }                                                   },
+                { ItemID.DiamondRobe,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ModContent.ItemType<Items.DarkSoul>(), 800)
+                                        }                                                   }
+                #endregion
+            };
+            #endregion
 
             //--------
             #region CustomDungeonTiles list
@@ -891,6 +1147,7 @@ namespace tsorcRevamp
             KillAllowed                                         = null;
             BannedItems                                         = null;
             RestrictedHooks                                     = null;
+            DisabledRecipes                                     = null;
             BossExtrasDescription                               = null;
             AssignedBossExtras                                  = null;
             BossBagIDtoNPCID                                    = null;
@@ -899,6 +1156,7 @@ namespace tsorcRevamp
             IgnoredTiles                                        = null;
             tsorcRevampWorld.Slain                              = null;
             RemovedBossBagLoot                                  = null;
+            ModifiedRecipes                                     = null;
             //the following sun and moon texture changes are failsafes. they should be set back to default in PreSaveAndQuit 
             TextureAssets.Sun = ModContent.Request<Texture2D>("Terraria/Images/Sun", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             TextureAssets.Sun2 = ModContent.Request<Texture2D>("Terraria/Images/Sun2");
@@ -943,12 +1201,24 @@ namespace tsorcRevamp
         }
         public override void AddRecipes()
         {
-            ModRecipeHelper.AddRecipes();
-
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                RecipeHelper.EditRecipes();
+                foreach (var recipe in Main.recipe) {
+                    int itemID = recipe.createItem.type;
+                    // disable recipes
+                    if (DisabledRecipes.Contains(itemID)) {
+                        recipe.AddIngredient(ModContent.ItemType<Items.DisabledRecipe>());
+                    }
+                    // extend existing recipes
+                    else if (ModifiedRecipes.ContainsKey(itemID)){
+                        foreach (var ingredient in ModifiedRecipes[itemID]) {
+                            recipe.AddIngredient(ingredient.ID, ingredient.Count);
+                        }
+                    }
+                }
             }
+            // add new recipes
+            ModRecipeHelper.AddRecipes();
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI)
