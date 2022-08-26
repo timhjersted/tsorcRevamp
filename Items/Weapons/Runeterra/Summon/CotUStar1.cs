@@ -8,11 +8,11 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 {
 	public class CotUStar1 : ModProjectile
 	{
-		public float angularSpeed = 1f;
-		public static float circleRad1 = 50f;
+		public static float angularSpeed = 0.1f;
+		public static float circleRad = 50f;
 
-		public float currentAngle;
-		public override void SetStaticDefaults()
+		public static float currentAngle1;
+        public override void SetStaticDefaults()
 		{
 
 			Main.projFrames[Projectile.type] = 8;
@@ -31,6 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			Projectile.DamageType = DamageClass.Summon; // Declares the damage type (needed for it to deal damage)
 			Projectile.minionSlots = 1f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
 			Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
+			Projectile.extraUpdates = 1;
 
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = 15;
@@ -48,22 +49,34 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 
 			Player owner = Main.player[Projectile.owner];
 
-			Vector2 visualplayercenter = owner.Center + new Vector2(-27, -27);
+			Vector2 visualplayercenter = owner.Center + new Vector2(-27, -12);
 
 			if (!CheckActive(owner))
 			{
 				return;
 			}
 
-			currentAngle += angularSpeed / (circleRad1 / 15);
+			currentAngle1 += angularSpeed / (circleRad * 0.001f + 1f);
 
-			Vector2 offset = new Vector2(MathF.Sin(currentAngle), MathF.Cos(currentAngle)) * circleRad1;
+			Vector2 offset = new Vector2(MathF.Sin(currentAngle1), MathF.Cos(currentAngle1)) * circleRad;
 
 			Projectile.position = visualplayercenter + offset;
 
-			Visuals();
+            Visuals();
 		}
-		private bool CheckActive(Player owner)
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
+			if (distance < Projectile.height * 1.2f && distance > Projectile.height * 1.2f - 32)
+			{
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private bool CheckActive(Player owner)
 		{
 			if (owner.dead || !owner.active)
 			{
@@ -74,7 +87,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 
 			if (!owner.HasBuff(ModContent.BuffType<CotUBuff1>()))
             {
-				circleRad1 = 50f;
+				circleRad = 50f;
             }
 
 				if (owner.HasBuff(ModContent.BuffType<CotUBuff1>()))
@@ -87,9 +100,9 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		private void Visuals()
 		{
 
-			Projectile.rotation = currentAngle * -1f;
+            Projectile.rotation = currentAngle1 * -1f;
 
-			float frameSpeed = 4f;
+            float frameSpeed = 3f;
 
 			Projectile.frameCounter++;
 
@@ -106,6 +119,10 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 
 			// Some visuals here
 			Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
+		}
+		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+		{
+			target.AddBuff(BuffID.OnFire, 120);
 		}
 	}
 }

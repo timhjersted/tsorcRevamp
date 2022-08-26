@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		{
 			DisplayName.SetDefault("Center of the Mechanism");
 			Tooltip.SetDefault("Summons electrical charges to rotate around you and damage enemies in their way" +
-				"\nIncrease their radius by right-clicking" +
+                "\nIncrease their radius by holding the Special Ability hotkey" +
                 "\nReset their range by clearing the buff" +
 				"\nCharges will gain a movement speed and damage boost on crit for 3 seconds");
 
@@ -42,24 +42,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			Item.DamageType = DamageClass.Summon;
 			Item.buffType = ModContent.BuffType<CotUBuff2>();
 			Item.shoot = ModContent.ProjectileType<CotUStar2>();
-		}
-		public override void UseStyle(Player player, Rectangle heldItemFrame)
-		{
-			if (Main.mouseRight & !Main.mouseLeft)
-			{
-				player.altFunctionUse = 2;
-				Item.useStyle = ItemUseStyleID.HoldUp;
-				CotUStar2.circleRad2 += 1f;
-			}
-			if (Main.mouseLeft)
-			{
-				player.altFunctionUse = 1;
-				Item.useStyle = ItemUseStyleID.Shoot;
-			}
-		}
-		public override bool AltFunctionUse(Player player)
-		{
-			return true;
 		}
 		public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
 		{

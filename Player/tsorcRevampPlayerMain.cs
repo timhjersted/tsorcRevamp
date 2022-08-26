@@ -826,9 +826,10 @@ namespace tsorcRevamp
                     }
                 }
             }
-           /* if (tsorcRevamp.specialAbility.JustReleased)
+           if (tsorcRevamp.specialAbility.JustReleased)
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
+                //Items.Weapons.Runeterra.Summon.CotUStar1.circleRad += 1f;
+                /*for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC other = Main.npc[i];
 
@@ -858,9 +859,12 @@ namespace tsorcRevamp
                     {
                         Items.Weapons.Runeterra.Ranged.TSItem3.shroomCD = 15;
                     }
-                }
+                }*/
             }
-            */
+            if (tsorcRevamp.specialAbility.Current)
+            {
+                Items.Weapons.Runeterra.Summon.CotUStar1.circleRad += 1f;
+            }
         }
 
         //On hit, subtract the mana cost and disable natural mana regen for a short period

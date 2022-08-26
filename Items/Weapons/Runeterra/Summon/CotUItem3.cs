@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		{
 			DisplayName.SetDefault("Center of the Universe");
 			Tooltip.SetDefault("Summons stars to rotate around you and damage enemies in their way" +
-				"\nIncrease their radius by right-clicking" +
+                "\nIncrease their radius by holding the Special Ability hotkey" +
                 "\nReset their range by clearing the buff" +
                 "\nStars will gain a movement speed and damage boost on crit for 3 seconds" +
                 "\nEvery third crit spawns an Arcanum projectile");
@@ -44,24 +44,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			Item.buffType = ModContent.BuffType<CotUBuff3>();
 			Item.shoot = ModContent.ProjectileType<CotUStar3>();
 		}
-		public override void UseStyle(Player player, Rectangle heldItemFrame)
-		{
-			if (Main.mouseRight & !Main.mouseLeft)
-			{
-				player.altFunctionUse = 2;
-				Item.useStyle = ItemUseStyleID.HoldUp;
-				CotUStar3.circleRad3 += 1f;
-			}
-			if (Main.mouseLeft)
-			{
-				player.altFunctionUse = 1;
-				Item.useStyle = ItemUseStyleID.Shoot;
-			}
-		}
-		public override bool AltFunctionUse(Player player)
-		{
-			return true;
-		}
+
 		public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
 		{
 			// Here you can change where the minion is spawned. Most vanilla minions spawn at the cursor position
