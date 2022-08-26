@@ -17,12 +17,12 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			AIType = ProjectileID.Starfury;
 			Projectile.tileCollide = false;
 			Projectile.DamageType = DamageClass.SummonMeleeSpeed;
-			Projectile.penetrate += 3;
+			Projectile.penetrate += 2;
 		}
         public override void AI()
         {
             base.AI();
-			Dust.NewDust(Projectile.Center, 50, 50, 57, 0f, 0f, 150, Color.AliceBlue, 1f);
+			Dust.NewDust(Projectile.Center, Projectile.height, Projectile.width, 57, 0f, 0f, 10, Color.AliceBlue, 0.5f);
 		}
     }
 }

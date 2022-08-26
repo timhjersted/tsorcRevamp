@@ -19,12 +19,12 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.height = 18;
 			Projectile.tileCollide = false;
 			Projectile.DamageType = DamageClass.SummonMeleeSpeed;
-			Projectile.penetrate += 3;
+			Projectile.penetrate += 4;
 		}
 		public override void AI()
 		{
 			base.AI();
-			Dust.NewDust(Projectile.Center, 50, 50, 15, 0f, 0f, 150, Color.AliceBlue, 1f);
+			Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, 15, 0f, 0f, 100, Color.AliceBlue, 0.75f);
 		}
 	}
 }
