@@ -1,4 +1,6 @@
 using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
@@ -9,6 +11,9 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 {
 	public class CotUItem1 : ModItem
 	{
+		public static List<CotUStar1> projectiles = null;
+		public static int processedProjectilesCount = 0;
+
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Scorching Point");
@@ -22,6 +27,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		}
     public override void SetDefaults()
 		{
+			projectiles = new List<CotUStar1>(){};
+
 			Item.damage = 21;
 			Item.knockBack = 3f;
 			Item.mana = 10;
@@ -59,6 +66,14 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 
 			// Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
 			return false;
+		}
+		public static void ReposeProjectiles(Player player) 
+		{
+			// repose projectiles relatively to the first one so they are evenly spread on the radial circumference
+			processedProjectilesCount = player.ownedProjectileCounts[ModContent.ProjectileType<CotUStar1>()];
+			for (int i = 1; i < processedProjectilesCount; ++i) {
+				projectiles[i].currentAngle = projectiles[i - 1].currentAngle + 2f * (float)Math.PI / processedProjectilesCount;
+			}
 		}
 		public override void AddRecipes()
 		{

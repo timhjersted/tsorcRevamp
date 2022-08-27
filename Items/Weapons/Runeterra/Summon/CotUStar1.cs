@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -10,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 	{
 		public static float angularSpeed = 0.1f;
 		public static float circleRad = 50f;
-		public float currentAngle1 = 0;
+		public float currentAngle = 0;
     
 		public override void SetStaticDefaults()
 		{
@@ -35,6 +36,10 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = 15;
 		}
+		public override void OnSpawn(IEntitySource source) 
+		{
+			CotUItem1.projectiles.Add(this);
+		}
 		public override bool? CanCutTiles()
 		{
 			return false;
@@ -42,6 +47,10 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		public override bool MinionContactDamage()
 		{
 			return true;
+		}
+		public override void Kill(int timeLeft) 
+		{
+			CotUItem1.projectiles.Remove(this);
 		}
 		public override void AI()
 		{
@@ -54,9 +63,9 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 				return;
 			}
 
-      currentAngle1 += (angularSpeed / (circleRad * 0.001f + 1f)); 
+      currentAngle += (angularSpeed / (circleRad * 0.001f + 1f)); 
 
-			Vector2 offset = new Vector2(MathF.Sin(currentAngle1), MathF.Cos(currentAngle1)) * circleRad;
+			Vector2 offset = new Vector2(MathF.Sin(currentAngle), MathF.Cos(currentAngle)) * circleRad;
 
 			Projectile.position = visualplayercenter + offset;
 
@@ -86,7 +95,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			if (!owner.HasBuff(ModContent.BuffType<CotUBuff1>()))
       {
 				circleRad = 50f;
-        currentAngle1 = 0;
+        currentAngle = 0;
+				CotUItem1.projectiles.Clear();
       }
 
 			if (owner.HasBuff(ModContent.BuffType<CotUBuff1>()))
@@ -99,7 +109,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		private void Visuals()
 		{
 
-      Projectile.rotation = currentAngle1 * -1f;
+      Projectile.rotation = currentAngle * -1f;
 
       float frameSpeed = 3f;
 
