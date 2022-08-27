@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 				return;
 			}
 
-			currentAngle1 += angularSpeed / (circleRad * 0.001f + 1f);
+            currentAngle1 += angularSpeed / (circleRad * 0.001f + 1f);
 
 			Vector2 offset = new Vector2(MathF.Sin(currentAngle1), MathF.Cos(currentAngle1)) * circleRad;
 
@@ -88,6 +88,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			if (!owner.HasBuff(ModContent.BuffType<CotUBuff1>()))
             {
 				circleRad = 50f;
+                currentAngle1 = 0;
             }
 
 				if (owner.HasBuff(ModContent.BuffType<CotUBuff1>()))

@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = -1;
 			Projectile.WhipSettings.Segments = 16;
-			Projectile.WhipSettings.RangeMultiplier = 1.4f; //only thing affecting the actual whip range
+			Projectile.WhipSettings.RangeMultiplier = 0.8f; //only thing affecting the actual whip range
 		}
 
 		private float Timer

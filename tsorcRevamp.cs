@@ -1030,7 +1030,7 @@ namespace tsorcRevamp
                 {   ItemID.PlanteraBossBag          ,   new List<IItemDropRule>()                           
                                                         {
                                                             ItemDropRule.Common(ModContent.ItemType<CrestOfLife>()),
-                                                            ItemDropRule.Common(ModContent.ItemType<SoulOfLife>(), 1, 3, 3)
+                                                            ItemDropRule.Common(ModContent.ItemType<SoulOfLife>(), 1, 4, 4)
                                                         }                                                                                },
                 {   ItemID.GolemBossBag             ,   new List<IItemDropRule>()                           
                                                         {

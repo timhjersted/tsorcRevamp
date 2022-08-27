@@ -77,7 +77,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 				}
 				if (npc.HasBuff(ModContent.BuffType<DragoonLashDebuff>()))
                 {
-					tagbonusdamage += 12;
+					tagbonusdamage += 3;
                 }
 				if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
 				{

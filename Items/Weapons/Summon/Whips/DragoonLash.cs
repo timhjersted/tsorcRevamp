@@ -1,4 +1,3 @@
-/*
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -6,22 +5,22 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-	public class DragoonLash : ModItem
+	public class DragoonLash: ModItem
 	{
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 			DisplayName.SetDefault("Dragoon Lash");
-			Tooltip.SetDefault("\n12 Summon tag damage" +
-                "\n4% summon tag critical strike chance" +
-                "\nStriking Enemies with this whip increases your whip attack speed" +
+			Tooltip.SetDefault("\n3 Summon tag damage" +
+                "\n2% summon tag critical strike chance" +
+                "\nStriking Enemies with this whip drastically increases your whip attack speed" +
 				"\nYour summons will focus struck enemies");
 		}
 
 		public override void SetDefaults()
 		{
 
-			Item.height = 66;
+			Item.height = 48;
 			Item.width = 60;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
@@ -34,8 +33,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.shootSpeed = 4;
 
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.useTime = 15; // for some reason a lower use speed gives it increased range....
-			Item.useAnimation = 15;
+			Item.useTime = 25; // for some reason a lower use speed gives it increased range....
+			Item.useAnimation = 25;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
 
@@ -44,11 +43,12 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 20);
+			recipe.AddIngredient(ItemID.ChlorophyteBar, 13);
+			recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 1);
 			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 76000);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();
 		}
 	}
-}*/
+}
