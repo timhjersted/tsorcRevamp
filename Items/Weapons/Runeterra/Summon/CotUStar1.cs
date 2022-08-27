@@ -10,11 +10,10 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 	{
 		public static float angularSpeed = 0.1f;
 		public static float circleRad = 50f;
-
-		public static float currentAngle1;
-        public override void SetStaticDefaults()
+		public float currentAngle1 = 0;
+    
+		public override void SetStaticDefaults()
 		{
-
 			Main.projFrames[Projectile.type] = 8;
 			Main.projPet[Projectile.type] = true; // Denotes that this projectile is a pet or minion
 			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; // This is needed so your minion can properly spawn when summoned and replaced when other minions are summoned
@@ -46,7 +45,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		}
 		public override void AI()
 		{
-
 			Player owner = Main.player[Projectile.owner];
 
 			Vector2 visualplayercenter = owner.Center + new Vector2(-27, -12);
@@ -56,27 +54,27 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 				return;
 			}
 
-            currentAngle1 += (angularSpeed / (circleRad * 0.001f + 1f)); //this currently increases the speed of all fireballs for each new projectile spawned
+      currentAngle1 += (angularSpeed / (circleRad * 0.001f + 1f)); //this currently increases the speed of all fireballs for each new projectile spawned
 
 			Vector2 offset = new Vector2(MathF.Sin(currentAngle1), MathF.Cos(currentAngle1)) * circleRad;
 
 			Projectile.position = visualplayercenter + offset;
 
-            Visuals();
+      Visuals();
 		}
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
+    public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+    {
+      float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
 			if (distance < Projectile.height * 1.2f && distance > Projectile.height * 1.2f - 32)
 			{
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        private bool CheckActive(Player owner)
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+    private bool CheckActive(Player owner)
 		{
 			if (owner.dead || !owner.active)
 			{
@@ -86,12 +84,12 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			}
 
 			if (!owner.HasBuff(ModContent.BuffType<CotUBuff1>()))
-            {
+      {
 				circleRad = 50f;
-                currentAngle1 = 0;
-            }
+        currentAngle1 = 0;
+      }
 
-				if (owner.HasBuff(ModContent.BuffType<CotUBuff1>()))
+			if (owner.HasBuff(ModContent.BuffType<CotUBuff1>()))
 			{
 				Projectile.timeLeft = 2;
 			}
@@ -101,9 +99,9 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		private void Visuals()
 		{
 
-            Projectile.rotation = currentAngle1 * -1f;
+      Projectile.rotation = currentAngle1 * -1f;
 
-            float frameSpeed = 3f;
+      float frameSpeed = 3f;
 
 			Projectile.frameCounter++;
 

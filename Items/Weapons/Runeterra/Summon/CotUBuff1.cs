@@ -16,8 +16,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		public override void Update(Player player, ref int buffIndex)
 		{
 
-            // If the minions exist reset the buff time, otherwise remove the buff from the player
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<CotUStar1>()] > 0)
+      // If the minions exist reset the buff time, otherwise remove the buff from the player
+      if (player.ownedProjectileCounts[ModContent.ProjectileType<CotUStar1>()] > 0)
 			{
 				player.buffTime[buffIndex] = 18000;
 			}
