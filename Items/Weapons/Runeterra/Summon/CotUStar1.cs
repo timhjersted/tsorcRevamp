@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 				return;
 			}
 
-      currentAngle1 += (angularSpeed / (circleRad * 0.001f + 1f)); //this currently increases the speed of all fireballs for each new projectile spawned
+      currentAngle1 += (angularSpeed / (circleRad * 0.001f + 1f)); 
 
 			Vector2 offset = new Vector2(MathF.Sin(currentAngle1), MathF.Cos(currentAngle1)) * circleRad;
 
