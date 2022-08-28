@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-			Tooltip.SetDefault("Enemies struck by this whip will burn horribly" +
+			Tooltip.SetDefault("This whip can be charged up for increased range and damage" +
+                "\nEnemies struck by this whip will burn horribly" +
                 "\nand increase minion damage by 66% of this whips base damage in +%" +
                 "\nThis stacks on top of other whip tag dmg" +
-                "\nThis whip can be charged up for increased range and damage" +
                 "\nYour minions will focus struck enemies");
 		}
 

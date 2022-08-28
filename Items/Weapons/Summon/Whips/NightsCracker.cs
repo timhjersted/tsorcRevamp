@@ -12,11 +12,12 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 			DisplayName.SetDefault("Night's Cracker");
-			Tooltip.SetDefault("\n4 summon tag damage" +
-                "\nInherits Searing Lash's effect at half of its strength" +
-                "\n2% summon tag critical strike chance" +
-                "\nGain 18% whip attack speed upon striking an enemy" +
-                "\nPerforms better against multiple targets than most whips" +
+			Tooltip.SetDefault("Stats of this whip scale with how long you've charged it" +
+                "\n2-7 summon tag damage" +
+                "\nInherits Searing Lash's effect at up to half of its strength" +
+                "\n1-3% summon tag critical strike chance" +
+                "\nGain 7-22% whip attack speed upon striking an enemy" +
+                "\nPerforms better against multiple targets than most whips" + //make this scale slightly too
 				"\nYour summons will focus struck enemies");
 		}
 

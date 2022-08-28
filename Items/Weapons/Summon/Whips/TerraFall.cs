@@ -11,13 +11,13 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-			Tooltip.SetDefault("Stats of this whip scale with how long you've charged it" +
+            Tooltip.SetDefault("Stats of this whip scale with how long you've charged it" +
+                "\nSummons a Terraprisma after striking an enemy" +
                 "\n6-20 summon tag damage" +
-                "\nInherits Searing Lash's effect at an eighth of it's strength" + //8% effectiveness rounded down
+                "\nInherits Searing Lash's effect at up to an eighth of it's strength" + //8% effectiveness rounded down
                 "\n3-10% summon tag crit" +
-				"\nSummons a Terraprisma after striking an enemy" +
-                "\nGain 13-40% whip attack speed upon striking an enemy" +
-                "\nThis whip performs better against multiple targets than most whips" +
+                "\nGain 12-39% whip attack speed upon striking an enemy" +
+                "\nThis whip performs better against multiple targets than most whips" + //make this scale slightly too
 				"\nYour summons will focus struck enemies");
 		}
 
