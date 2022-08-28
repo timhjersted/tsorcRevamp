@@ -1,4 +1,4 @@
-/*
+
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -13,12 +13,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 			DisplayName.SetDefault("Night's Cracker");
 			Tooltip.SetDefault("\n4 summon tag damage" +
+                "\nInherits Searing Lash's effect at half of its strength" +
                 "\n2% summon tag critical strike chance" +
-                "\nStriking Enemies with this whip increases your whip attack speed" +
-                "\nand inflicts Shadowflame" +
+                "\nGain 18% whip attack speed upon striking an enemy" +
                 "\nPerforms better against multiple targets than most whips" +
-				"\nand increases minion damage by 33% of this whips base damage in +%" +
-				"\nThis stacks on top of other whip tag dmg" +
 				"\nYour summons will focus struck enemies");
 		}
 
@@ -59,4 +57,4 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.Register();
 		}
 	}
-}*/
+}

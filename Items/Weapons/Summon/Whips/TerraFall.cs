@@ -1,4 +1,4 @@
-/*
+
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -11,19 +11,21 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-			Tooltip.SetDefault("\n15 summon tag damage" +
-                "\n7% summon tag crit" +
-                "\nGain 25% whip attack speed upon striking an enemy" +
+			Tooltip.SetDefault("Stats of this whip scale with how long you've charged it" +
+                "\n6-20 summon tag damage" +
+                "\nInherits Searing Lash's effect at an eighth of it's strength" + //8% effectiveness rounded down
+                "\n3-10% summon tag crit" +
+				"\nSummons a Terraprisma after striking an enemy" +
+                "\nGain 13-40% whip attack speed upon striking an enemy" +
                 "\nThis whip performs better against multiple targets than most whips" +
-                "\nThis whip can be charged up for extra range and damage" +
 				"\nYour summons will focus struck enemies");
 		}
 
 		public override void SetDefaults()
 		{
 
-			Item.height = 66;
-			Item.width = 60;
+			Item.height = 40;
+			Item.width = 40;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
 			Item.damage = 115;
@@ -56,4 +58,4 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.Register();
 		}
 	}
-}*/
+}

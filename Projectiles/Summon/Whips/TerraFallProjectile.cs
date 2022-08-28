@@ -20,8 +20,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void SetDefaults()
 		{
-			Projectile.width = 18;
-			Projectile.height = 18;
+			Projectile.width = 22;
+			Projectile.height = 28;
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 			Projectile.DamageType = DamageClass.SummonMeleeSpeed;
@@ -146,7 +146,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 				Vector2 diff = list[i + 1] - element;
 
 				float rotation = diff.ToRotation() - MathHelper.PiOver2;
-				Color color = Lighting.GetColor(element.ToTileCoordinates(), Color.MediumVioletRed);
+				Color color = Lighting.GetColor(element.ToTileCoordinates(), Color.LightSeaGreen);
 				Vector2 scale = new Vector2(1, (diff.Length() + 2) / frame.Height);
 
 				Main.EntitySpriteDraw(texture, pos - Main.screenPosition, frame, color, rotation, origin, scale, SpriteEffects.None, 0);
@@ -178,16 +178,16 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			{
 				// These two values are set to suit this projectile's sprite, but won't necessarily work for your own.
 				// You can change them if they don't!
-				Rectangle frame = new Rectangle(0, 0, 10, 26);
-				Vector2 origin = new Vector2(5, 12);
+				Rectangle frame = new Rectangle(0, 0, 22, 28);
+				Vector2 origin = new Vector2(11, 11);
 				float scale = 1;
 
 				// These statements determine what part of the spritesheet to draw for the current segment.
 				// They can also be changed to suit your sprite.
 				if (i == list.Count - 2)
 				{
-					frame.Y = 74;
-					frame.Height = 18;
+					frame.Y = 80;
+					frame.Height = 19;
 
 					// For a more impactful look, this scales the tip of the whip up when fully extended, and down when curled up.
 					Projectile.GetWhipSettings(Projectile, out float timeToFlyOut, out int _, out float _);
@@ -196,17 +196,17 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 				}
 				else if (i > 20)
 				{
-					frame.Y = 58;
-					frame.Height = 16;
+					frame.Y = 62;
+					frame.Height = 18;
 				}
 				else if (i > 10)
 				{
-					frame.Y = 42;
-					frame.Height = 16;
+					frame.Y = 44;
+					frame.Height = 18;
 				}
 				else if (i > 0)
 				{
-					frame.Y = 26;
+					frame.Y = 28;
 					frame.Height = 16;
 				}
 
