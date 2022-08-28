@@ -1145,15 +1145,16 @@ namespace tsorcRevamp
             reflectionShiftKey                                  = null;
             specialAbility                                      = null;
             KillAllowed                                         = null;
+            PlaceAllowed                                        = null;
+            Unbreakable                                         = null;
+            IgnoredTiles                                        = null;
+            CrossModTiles                                       = null;
             BannedItems                                         = null;
             RestrictedHooks                                     = null;
             DisabledRecipes                                     = null;
             BossExtrasDescription                               = null;
             AssignedBossExtras                                  = null;
             BossBagIDtoNPCID                                    = null;
-            PlaceAllowed                                        = null;
-            Unbreakable                                         = null;
-            IgnoredTiles                                        = null;
             tsorcRevampWorld.Slain                              = null;
             RemovedBossBagLoot                                  = null;
             ModifiedRecipes                                     = null;
@@ -1710,6 +1711,28 @@ namespace tsorcRevamp
                     "");
 
 
+            }
+            #endregion
+            //--------
+            #region Magic Storage Compatability
+            List<int> toDisable = new List<int>();
+            Mod magicStorage;
+            bool magicStorageUsed = ModLoader.TryGetMod("MagicStorageExtra", out magicStorage);
+            if (!magicStorageUsed) {
+                magicStorageUsed = ModLoader.TryGetMod("MagicStorage", out magicStorage);
+            }
+            if (magicStorageUsed)
+            {
+                toDisable.Add(magicStorage.Find<ModTile>("CraftingAccess").Type);
+                toDisable.Add(magicStorage.Find<ModTile>("RemoteAccess").Type);
+                toDisable.Add(magicStorage.Find<ModTile>("StorageAccess").Type);
+                toDisable.Add(magicStorage.Find<ModTile>("StorageComponent").Type);
+                toDisable.Add(magicStorage.Find<ModTile>("StorageHeart").Type);
+                toDisable.Add(magicStorage.Find<ModTile>("StorageUnit").Type);
+                toDisable.Add(magicStorage.Find<ModTile>("StorageConnector").Type);
+            }
+            foreach (var tileID in toDisable) {
+                Main.tileSolidTop[tileID] = false;
             }
             #endregion
         }
