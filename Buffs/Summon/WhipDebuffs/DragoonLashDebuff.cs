@@ -47,11 +47,6 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
                     Projectile.NewProjectile(Projectile.GetSource_None(), owner.Center, npc.Center - owner.Center, ProjectileID.ImpFireball, whipDamage, 1f, Main.myPlayer);
 					fireBreathTimer = 0;
                 }
-                damage += 3;
-				if (Main.rand.NextBool(50))
-				{
-					crit = true;
-				}
 			}
 		}
 	}

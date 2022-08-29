@@ -11,12 +11,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 			DisplayName.SetDefault("Dragoon Lash");
-			Tooltip.SetDefault("Breathe fire at enemies struck by this whip and a minion" +
-                "\nCooldown of this attack refreshes upon hit with this whip" +
+			Tooltip.SetDefault("Breathe fire at enemies struck by this whip and a minion on a cooldown" +
+                "\nRefresh the cooldown by whipping an enemy" +
                 "\nFire breath scales with this whips base damage" +
-                "\n3 Summon tag damage" +
-                "\n2% summon tag critical strike chance" +
-                "\nStriking Enemies with this whip drastically increases your whip attack speed" +
+                "\nStriking Enemies with this whip increases your whip attack speed drastically" +
 				"\nYour summons will focus struck enemies");
 		}
 
