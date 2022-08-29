@@ -214,6 +214,7 @@ namespace tsorcRevamp
              "You may be encounter bosses before you can defeat them. If in doubt, come back when you're stronger",
              "Play with the Recipe Browser mod to easily see what your loot can be transformed into",
              "Welcome to the Dark Souls of Terraria",
+             "The Chloranthy Ring massively improves your dodgeroll, allowing even more evasion...",
             };
 
         public override void ResetEffects()
@@ -1358,18 +1359,18 @@ namespace tsorcRevamp
             {
                 if (Main.rand.NextBool())
                 {
-                    DeathText = "Tip: Don't give up! Some bosses might take several tries to defeat";
+                    text = "Don't give up! Some bosses might take several tries to defeat";
                 }
                 else if (Main.rand.NextBool() && (Main.npc[currentBoss].type == NPCID.Retinazer || Main.npc[currentBoss].type == NPCID.Spazmatism
                     || Main.npc[currentBoss].type == NPCID.Plantera || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Death>()
                     || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()))
                 {
-                    DeathText = "Tip: Certain bosses can be fought earlier than necessary. If you're struggling, try waiting until you're more powerful.";
+                    text = "Certain bosses can be fought earlier than necessary. If you're struggling, try waiting until you're more powerful.";
                 }
 
                 if (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>())
                 {
-                    DeathText = "Tip: You can't outrun your shadow";
+                    text = "You can't outrun your shadow";
                 }
 
                 //If you want to add custom text for other bosses, stick it here using the line above as a template
@@ -1377,7 +1378,31 @@ namespace tsorcRevamp
 
             if (projectile != null && projectile.type == ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>() && projectile.damage > 999)
             {
-                DeathText = "Tip: (O_O;)";
+                text = "(O_O;)";
+            }
+
+            if (projectile != null && projectile.type == ModContent.ProjectileType<Projectiles.Enemy.Marilith.CataclysmicFirestorm>())
+            {                
+                if (Main.rand.NextBool())
+                {
+                    text = "Some powerful attacks can only be avoided by dodgerolling!";
+                }
+                else
+                {
+                    bool hasRing = false;
+                    for (int j = 3; j < 8 + Player.GetAmountOfExtraAccessorySlotsToShow(); j++)
+                    {
+                        if (Player.armor[j].type == ModContent.ItemType<Items.Accessories.Expert.ChloranthyRing>() || Player.armor[j].type == ModContent.ItemType<Items.Accessories.Expert.ChloranthyRing2>())
+                        {
+                            hasRing = true;
+                            break;
+                        }
+                    }
+                    if (!hasRing)
+                    {
+                        text = "The Chloranthy Ring massively improves your dodgeroll, allowing even more evasion...";
+                    }
+                }
             }
 
             return "Tip: " + text;
