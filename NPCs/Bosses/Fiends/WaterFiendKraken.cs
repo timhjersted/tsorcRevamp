@@ -433,6 +433,13 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         }
         private void FloodArena()
         {
+
+            //Don't flood anything if outside of adventure mode or far from the arena center
+            if(!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode || NPC.Distance(ArenaCenter) > 500)
+            {
+                return;
+            }
+
             Vector2 centerOver16 = NPC.Center / 16;
             //Initialize some things
             if (radius == 1)

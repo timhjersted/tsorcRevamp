@@ -1235,7 +1235,7 @@ namespace tsorcRevamp
 
                     if (Player.HasBuff<MarilithHold>())
                     {
-                        Player.velocity = -UsefulFunctions.GenerateTargetingVector(Player.Center, marilith.Center, 15f);
+                        Player.velocity = -UsefulFunctions.GenerateTargetingVector(Player.Center, marilith.Center, 12f);
                     }
 
                     /*
