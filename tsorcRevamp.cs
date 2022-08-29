@@ -1766,8 +1766,8 @@ namespace tsorcRevamp
             //If it exists, read from it. If not, put a warning in the log that it failed to download.
             if (File.Exists(changelogPath))
             {
-                string mapString = "";
-                string musicString = "";
+                string mapString = "0000000000";
+                string musicString = "0000000000";
 
                 //Pull the version numbers from the file
 
@@ -1775,40 +1775,36 @@ namespace tsorcRevamp
 
                 while ((currentString = reader.ReadLine()) != null)
                 {
-                    if (currentString.Contains("MAP ") && mapString == "")
+                    currentString = currentString.ToUpper(); //Convert it all to uppercase so we don't have to worry about case
+                    if (currentString.Contains("UNRELEASED")) //Ignore strings with UNRELEASED in their name
+                    {
+                        continue;
+                    }
+
+                    if (currentString.Contains("MAP ") && mapString == "0000000000") //Store the first line with the word MAP in it here
                     {
                         mapString = currentString;
                     }
-                    if (currentString.Contains("MUSIC ") && musicString == "")
+                    if (currentString.Contains("MUSIC ") && musicString == "0000000000") //Store the first line with the word MUSIC in it here
                     {
                         musicString = currentString;
                     }
-                    if (mapString != "" && musicString != "")
+
+                    if (mapString != "0000000000" && musicString != "0000000000") //If both the music and map 
                     {
                         break;
                     }
                 }
 
-                if (mapString == "" || musicString == "")
+                if (mapString == "0000000000" || musicString == "0000000000")
                 {
                     Logger.Warn("WARNING: Failed to read version data from downloaded changelog! This will prevent the mod from downloading the map, music mod, or updates!");
                 }
                 else
                 {
                     //Simplify them
-                    mapString = mapString.TrimStart("MAP ".ToCharArray());
-                    if (musicString.Contains("MUSIC MOD "))
-                    {
-                        musicString = musicString.TrimStart("MUSIC MOD ".ToCharArray());
-                    }
-                    else
-                    {
-                        musicString = musicString.TrimStart("MUSIC ".ToCharArray());
-                    }
-                    mapString = mapString.Replace(".", "");
-                    mapString = mapString.Replace(" ", "");
-                    musicString = musicString.Replace(".", "");
-                    musicString = musicString.Replace(" ", "");
+                    SimplifyVersionString(ref mapString);
+                    SimplifyVersionString(ref musicString);
 
                     //Append 0's to both strings to make them fixed-length, so that different sized version numbers are all read the same
                     int initialLength = mapString.Length;
@@ -1838,7 +1834,7 @@ namespace tsorcRevamp
                     //If the music one is less, then flag it as needing an update so the UI can display that to the user
                     if (File.Exists(curVersionPath))
                     {
-                        string[] curVersionFile = File.ReadAllLines(curVersionPath);
+                        string[] curVersionFile = File.ReadAllLines(curVersionPath);                        
 
                         if (Int32.Parse(curVersionFile[0]) < Int32.Parse(mapString))
                         {
@@ -1871,6 +1867,20 @@ namespace tsorcRevamp
 
 
             //TryCopyMap();
+        }
+
+        public void SimplifyVersionString(ref string s)
+        {
+            string output = "";
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (char.IsDigit(s[i]))
+                {
+                    output += s[i];
+                }
+            }
+
+            s = output;
         }
 
         //Returns true if download successful
