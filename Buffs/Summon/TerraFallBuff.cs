@@ -1,5 +1,7 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -14,8 +16,7 @@ namespace tsorcRevamp.Buffs.Summon
 			Main.buffNoSave[Type] = true;
 			Main.buffNoTimeDisplay[Type] = false;
 		}
-
-        public override void Update(Player player, ref int buffIndex)
+		public override void Update(Player player, ref int buffIndex)
         {
 			player.GetAttackSpeed(DamageClass.SummonMeleeSpeed) += 0.25f;
 		}

@@ -114,10 +114,11 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.DragoonLashBuff>(), 180);
+			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.DragoonLashBuff>(), 240);
 			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.DragoonLashDebuff>(), 240);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.85f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
+			Buffs.Summon.WhipDebuffs.DragoonLashDebuffNPC.fireBreathTimer = 1f;
 		}
 
 		// This method draws a line between all points of the whip, in case there's empty space between the sprites.

@@ -102,9 +102,9 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 				Projectile.WhipSettings.Segments++;
 				Projectile.WhipSettings.RangeMultiplier += 0.05f;
 			}
-			if (ChargeTime % 60 == 0) // Double damage every 60 ticks of charge.
+			if (ChargeTime % 30 == 0) // Add 20% of projectiles damage every 30 ticks of charge
 			{
-				Projectile.damage *= 2;
+				Projectile.damage += (int)(Projectile.damage * 0.2f);
 			}
 
 			// Increase range up to 2x for full charge.
@@ -178,16 +178,16 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			{
 				// These two values are set to suit this projectile's sprite, but won't necessarily work for your own.
 				// You can change them if they don't!
-				Rectangle frame = new Rectangle(0, 0, 22, 28);
-				Vector2 origin = new Vector2(11, 11);
-				float scale = 1;
+				Rectangle frame = new Rectangle(0, 0, 11, 14);//0,0,22,28
+				Vector2 origin = new Vector2(5, 5);//11,11
+				float scale = 2;//1
 
 				// These statements determine what part of the spritesheet to draw for the current segment.
 				// They can also be changed to suit your sprite.
 				if (i == list.Count - 2)
 				{
-					frame.Y = 80;
-					frame.Height = 19;
+					frame.Y = 39;//80
+					frame.Height = 14;//19
 
 					// For a more impactful look, this scales the tip of the whip up when fully extended, and down when curled up.
 					Projectile.GetWhipSettings(Projectile, out float timeToFlyOut, out int _, out float _);
@@ -196,18 +196,18 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 				}
 				else if (i > 20)
 				{
-					frame.Y = 62;
-					frame.Height = 18;
+					frame.Y = 30;//62
+					frame.Height = 9;//18
 				}
 				else if (i > 10)
 				{
-					frame.Y = 44;
-					frame.Height = 18;
+					frame.Y = 21;//44
+					frame.Height = 9;//18
 				}
 				else if (i > 0)
 				{
-					frame.Y = 28;
-					frame.Height = 16;
+					frame.Y = 14;//28
+					frame.Height = 7;//16
 				}
 
 				Vector2 element = list[i];

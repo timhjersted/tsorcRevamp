@@ -38,7 +38,6 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
 			if (markedByTerraFall && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
-				//Projectile.NewProjectile(Projectile.GetSource_None(), Main.player[projectile.owner].Center, npc.Bottom, ModContent.ProjectileType<Projectiles.Summon.Whips.MasterWhipProjectile>(), 200, 1f, Main.myPlayer); idk how to make it whip the enemy upon minion hit
 				damage += 15;
 				if (Main.rand.NextBool(14))
 				{
