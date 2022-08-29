@@ -169,8 +169,8 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     }
 
     float r = pow(intensity, 5) * 1.5f * pow(distanceFactor, 1.5);
-    float g = pow(intensity, 7.0) * .5f * distanceFactor * distanceFactor * distanceFactor;
-    float b = pow(intensity, 2.0) * 0.05f * distanceFactor * distanceFactor * distanceFactor * distanceFactor;
+    float g = pow(intensity, 7.0) * .5f * pow(distanceFactor, 3);
+    float b = pow(intensity, 2.0) * 0.04f * pow(distanceFactor, 4);
     return float4(r , g , b , 1) * sampleColor;
 }
 
