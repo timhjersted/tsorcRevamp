@@ -9,6 +9,7 @@ Vibrent / programmer + sprite editer
 MarfMasterofDesaster / programmer + beta testing
 NephilimDeath / spriter
 RustySlave / programmer
+RAWTHORN / spriter
 W1k / coding help and extensive content contributions
 JayTeff / programmer
 Linklight2 / programmer
