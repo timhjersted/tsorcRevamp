@@ -1,4 +1,4 @@
-
+/*
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -58,4 +58,4 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.Register();
 		}
 	}
-}
+}*/
