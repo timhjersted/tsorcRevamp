@@ -75,7 +75,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 if(Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Thunder_0") with { Volume = 1f }, NPC.Center);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62 with { Volume = 1.3f, Pitch = 0.9f }, NPC.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62 with { Volume = 1.2f, Pitch = 0.9f }, NPC.Center);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<CataclysmicFirestorm>(), 55, 0.5f, Main.myPlayer);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<CataclysmicFirestorm>(), 55, 0.5f, Main.myPlayer);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<CataclysmicFirestorm>(), 55, 0.5f, Main.myPlayer);

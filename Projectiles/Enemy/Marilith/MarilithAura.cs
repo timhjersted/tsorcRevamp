@@ -35,11 +35,16 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         Vector2 offset;
         Vector2 targetVector;
         float intro;
+        int marilithDeadTimer;
         public override void AI()
         {
             if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()))
             {
-                Projectile.Kill();
+                marilithDeadTimer++;
+                if(marilithDeadTimer > 45)
+                {
+                    Projectile.Kill();
+                }
             }
             else
             {
@@ -117,7 +122,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             data.UseOpacity(offset.Y);
             offset -= targetVector;
             //offset += new Vector2(-3f, 1.2f) / 300f;
-            data.UseSaturation(intro / 120f);
+            float saturation = intro / 120f;
+            if(marilithDeadTimer > 0)
+            {
+                saturation = (45f - marilithDeadTimer) / 45f;
+            }
+            data.UseSaturation(saturation);
             //Apply the shader
             data.Apply(null);
 
