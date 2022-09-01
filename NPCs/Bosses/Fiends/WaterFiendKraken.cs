@@ -182,7 +182,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                     {
                         Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 10);
                         projVector = projVector.RotatedBy(offset);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer, 0, NPC.target);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedirectingShark>(), cursedFlamesDamage, 0f, Main.myPlayer, 0, NPC.target);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     }
                     if (projectileType >= 6 && projectileType != 9)
@@ -275,7 +275,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 if (projType < 5)
                 {
                     Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 10);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedirectingShark>(), cursedFlamesDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                 }
                 if (projType >= 5 && projType < 8)
@@ -366,6 +366,11 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         Vector2 ArenaCenter = new Vector2(1820 * 16, 1702 * 16);
         private void DashToArenaMidline()
         {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode || NPC.Center.Y < 1660 * 16 || NPC.Center.Y > 1744 * 16 || NPC.Center.X < 1560 * 16 || NPC.Center.X > 2011 * 16)
+            {
+                NextAttack();
+                return;
+            }
             MoveCounter++;
             int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, 29, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 5);
             Main.dust[dust].velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.dust[dust].position, 5);
@@ -392,12 +397,35 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             MoveCounter++;
             NPC.velocity = Vector2.Zero;
 
+            cursedRadius = 250 + ((1200 - MoveCounter) * 1.5f);
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i] != null && Main.player[i].active && NPC.Distance(Main.player[i].Center) > cursedRadius)
+                {
+                    Main.player[i].AddBuff(BuffID.Blackout, 5);
+                    Main.player[i].AddBuff(BuffID.Venom, 5);
+                }
+            }
+
             for (int j = 0; j < 100; j++)
             {
                 Vector2 dir = Main.rand.NextVector2CircularEdge(cursedRadius, cursedRadius);
                 Vector2 dustPos = NPC.Center + dir;
                 Vector2 dustVel = new Vector2(10, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
-                Dust.NewDustPerfect(dustPos, DustID.CursedTorch, dustVel, 200, default, 1).noGravity = true;
+                Dust thisDust = Dust.NewDustPerfect(dustPos, DustID.Asphalt, dustVel, 0, default, 3);
+                thisDust.noGravity = true;
+                thisDust.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.BlackDye), Main.LocalPlayer);
+            }
+
+            for (int j = 0; j < 10; j++)
+            {
+                Vector2 dir = Main.rand.NextVector2CircularEdge(130, 130);
+                Vector2 dustPos = NPC.Center + dir;
+                Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation());
+                Dust thisDust = Dust.NewDustPerfect(dustPos, DustID.Asphalt, dustVel, 0, default, 2);
+                thisDust.noGravity = true;
+                thisDust.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.BlackDye), Main.LocalPlayer);
             }
 
             int cursedFlameCooldown = 60;
@@ -409,7 +437,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             {
                 Vector2 projCenter = Main.rand.NextVector2CircularEdge(cursedRadius, cursedRadius) + NPC.Center;
                 Vector2 projVector = UsefulFunctions.GenerateTargetingVector(projCenter, Main.player[NPC.target].Center, 10);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), projCenter.X, projCenter.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer, 1, NPC.target);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), projCenter.X, projCenter.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedirectingShark>(), cursedFlamesDamage, 0f, Main.myPlayer, 1, NPC.target);
             }
 
             int waterJetCooldown = 160;
@@ -420,12 +448,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), projCenter.X, projCenter.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.InkGeyser>(), geyserDamage, 0f, Main.myPlayer, Target.whoAmI);
             }
-
-            if (MoveCounter > 800)
-            {
-                int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, 29, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 5);
-                Main.dust[dust].velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.dust[dust].position, 5);
-            }
+                        
             if (MoveCounter > 1200)
             {
                 NextAttack();
@@ -435,7 +458,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         {
 
             //Don't flood anything if outside of adventure mode or far from the arena center
-            if(!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode || NPC.Distance(ArenaCenter) > 500)
+            if(!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode || NPC.Center.Y < 1660 * 16 || NPC.Center.Y > 1744 * 16 || NPC.Center.X < 1560 * 16 || NPC.Center.X > 2011 * 16)
             {
                 return;
             }

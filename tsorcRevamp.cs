@@ -1761,110 +1761,119 @@ namespace tsorcRevamp
             }
 
 
-            using StreamReader reader = await GetChangelogAsync();
 
-            //If it exists, read from it. If not, put a warning in the log that it failed to download.
-            if (File.Exists(changelogPath))
+            try
             {
-                string mapString = "0000000000";
-                string musicString = "0000000000";
 
-                //Pull the version numbers from the file
+                using StreamReader reader = await GetChangelogAsync();
 
-                string currentString = "";
-
-                while ((currentString = reader.ReadLine()) != null)
+                //If it exists, read from it. If not, put a warning in the log that it failed to download.
+                if (File.Exists(changelogPath))
                 {
-                    currentString = currentString.ToUpper(); //Convert it all to uppercase so we don't have to worry about case
-                    if (currentString.Contains("UNRELEASED")) //Ignore strings with UNRELEASED in their name
+                    string mapString = "0000000000";
+                    string musicString = "0000000000";
+
+                    //Pull the version numbers from the file
+
+                    string currentString = "";
+
+                    while ((currentString = reader.ReadLine()) != null)
                     {
-                        continue;
+                        currentString = currentString.ToUpper(); //Convert it all to uppercase so we don't have to worry about case
+                        if (currentString.Contains("UNRELEASED")) //Ignore strings with UNRELEASED in their name
+                        {
+                            continue;
+                        }
+
+                        if (currentString.Contains("MAP ") && mapString == "0000000000") //Store the first line with the word MAP in it here
+                        {
+                            mapString = currentString;
+                        }
+                        if (currentString.Contains("MUSIC ") && musicString == "0000000000") //Store the first line with the word MUSIC in it here
+                        {
+                            musicString = currentString;
+                        }
+
+                        if (mapString != "0000000000" && musicString != "0000000000") //If both the music and map 
+                        {
+                            break;
+                        }
                     }
 
-                    if (currentString.Contains("MAP ") && mapString == "0000000000") //Store the first line with the word MAP in it here
+                    if (mapString == "0000000000" || musicString == "0000000000")
                     {
-                        mapString = currentString;
+                        Logger.Warn("WARNING: Failed to read version data from downloaded changelog! This will prevent the mod from downloading the map, music mod, or updates!");
                     }
-                    if (currentString.Contains("MUSIC ") && musicString == "0000000000") //Store the first line with the word MUSIC in it here
+                    else
                     {
-                        musicString = currentString;
-                    }
+                        //Simplify them
+                        SimplifyVersionString(ref mapString);
+                        SimplifyVersionString(ref musicString);
 
-                    if (mapString != "0000000000" && musicString != "0000000000") //If both the music and map 
-                    {
-                        break;
-                    }
-                }
+                        //Append 0's to both strings to make them fixed-length, so that different sized version numbers are all read the same
+                        int initialLength = mapString.Length;
+                        for (int i = 0; i < 10 - initialLength; i++)
+                        {
+                            mapString += "0";
+                        }
 
-                if (mapString == "0000000000" || musicString == "0000000000")
-                {
-                    Logger.Warn("WARNING: Failed to read version data from downloaded changelog! This will prevent the mod from downloading the map, music mod, or updates!");
+                        initialLength = musicString.Length;
+                        for (int i = 0; i < 10 - initialLength; i++)
+                        {
+                            musicString += "0";
+                        }
+
+                        //If no stored version file exists, create it with version 000000
+                        if (!File.Exists(curVersionPath))
+                        {
+                            using (StreamWriter versionFile = new StreamWriter(curVersionPath))
+                            {
+                                versionFile.WriteLine("000000");
+                                versionFile.WriteLine("000000");
+                            }
+                        }
+
+                        //Ensure that it now does exist and read the first line for the map version.
+                        //If it's less than the current map string, download the new one and update the stored version.
+                        //If the music one is less, then flag it as needing an update so the UI can display that to the user
+                        if (File.Exists(curVersionPath))
+                        {
+                            string[] curVersionFile = File.ReadAllLines(curVersionPath);
+
+                            if (Int32.Parse(curVersionFile[0]) < Int32.Parse(mapString))
+                            {
+                                if (MapDownload())
+                                {
+                                    curVersionFile[0] = mapString;
+                                }
+                            }
+                            if (Int32.Parse(curVersionFile[1]) < Int32.Parse(musicString))
+                            {
+                                if (justUpdatedMusic)
+                                {
+                                    curVersionFile[1] = musicString;
+                                }
+                                else
+                                {
+                                    MusicNeedsUpdate = true; //Not setting music current version just yet, that happens once the file is *actually* downloaded
+                                }
+                            }
+                            File.WriteAllLines(curVersionPath, curVersionFile);
+                        }
+
+
+                    }
                 }
                 else
                 {
-                    //Simplify them
-                    SimplifyVersionString(ref mapString);
-                    SimplifyVersionString(ref musicString);
-
-                    //Append 0's to both strings to make them fixed-length, so that different sized version numbers are all read the same
-                    int initialLength = mapString.Length;
-                    for (int i = 0; i < 10 - initialLength; i++)
-                    {
-                        mapString += "0";
-                    }
-
-                    initialLength = musicString.Length;
-                    for (int i = 0; i < 10 - initialLength; i++)
-                    {
-                        musicString += "0";
-                    }
-
-                    //If no stored version file exists, create it with version 000000
-                    if (!File.Exists(curVersionPath))
-                    {
-                        using (StreamWriter versionFile = new StreamWriter(curVersionPath))
-                        {
-                            versionFile.WriteLine("000000");
-                            versionFile.WriteLine("000000");
-                        }
-                    }
-
-                    //Ensure that it now does exist and read the first line for the map version.
-                    //If it's less than the current map string, download the new one and update the stored version.
-                    //If the music one is less, then flag it as needing an update so the UI can display that to the user
-                    if (File.Exists(curVersionPath))
-                    {
-                        string[] curVersionFile = File.ReadAllLines(curVersionPath);                        
-
-                        if (Int32.Parse(curVersionFile[0]) < Int32.Parse(mapString))
-                        {
-                            if (MapDownload())
-                            {
-                                curVersionFile[0] = mapString;
-                            }
-                        }
-                        if (Int32.Parse(curVersionFile[1]) < Int32.Parse(musicString))
-                        {
-                            if (justUpdatedMusic)
-                            {
-                                curVersionFile[1] = musicString;
-                            }
-                            else
-                            {
-                                MusicNeedsUpdate = true; //Not setting music current version just yet, that happens once the file is *actually* downloaded
-                            }
-                        }
-                        File.WriteAllLines(curVersionPath, curVersionFile);
-                    }
-
-
+                    Logger.Warn("Failed to download or open changelog.");
                 }
             }
-            else
+            catch (Exception e)
             {
-                Logger.Warn("Failed to download or read changelog.");
+                Logger.Error("Failed to download changelog.");
+                Logger.Error(e);
             }
-
 
             //TryCopyMap();
         }
