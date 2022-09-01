@@ -93,7 +93,7 @@ namespace tsorcRevamp
 
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.damage <= 1)
+                if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.damage <= 1 || item.DamageType == DamageClass.Summon)
                     return true;
                 if (item.useAnimation * 0.8f > Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 && Player.itemAnimation == Player.itemAnimationMax - 1)
                 {

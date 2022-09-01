@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("+25% minion damage\nIncreases your max number of minions by 2\nGrants immunity to 'On Fire'" +
-                "\nSet Bonus: +1 Turret Slot\n+20% whip range, +25% whip speed\n+30% movement speed\nKnockback and fall damage immunity");
+                "\nSet Bonus: +1 Turret Slot\n+20% whip range, +25% whip speed\n+44% movement speed\nKnockback and fall damage immunity");
         }
         public override void SetDefaults()
         {
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.maxTurrets += 1;
             player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
             player.whipRangeMultiplier += 0.2f;
-            player.moveSpeed += 0.3f;
+            player.moveSpeed += 0.44f;
             player.noKnockback = true;
             player.noFallDmg = true;
 

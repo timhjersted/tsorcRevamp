@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void SetDefaults()
         {
-            Item.damage = 300;
+            Item.damage = 200;
             Item.knockBack = 10f;
 
             Item.useStyle = ItemUseStyleID.Shoot;

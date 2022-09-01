@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
             Tooltip.SetDefault("Gear worn by Dragoons" +
                                "\nIncreases your max minions by 2" +
                                "\nIncreases your minion damage by 1.5% multiplicatively for each minion slot you have" +
-                               "\nDecreases whip range by 40%" +
+                               "\nDecreases whip range by 33%" +
                                "\nAllows you to breathe underwater and negates water physics");
 
         }
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
             player.maxMinions += 2;
             float oxyale = (float)(0.015 * player.maxMinions);
             player.GetDamage(DamageClass.Summon) *= 1 + oxyale;
-            player.whipRangeMultiplier -= 0.4f;
+            player.whipRangeMultiplier -= 0.33f;
             if (player.wet)
             {
                 player.gills = true;
