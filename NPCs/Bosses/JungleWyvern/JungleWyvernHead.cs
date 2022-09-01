@@ -30,7 +30,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             NPC.width = 45;
             NPC.height = 45;
             NPC.timeLeft = 22000;
-            NPC.damage = 80;
+            NPC.damage = 85;
             NPC.defense = 40;
             NPC.HitSound = SoundID.NPCHit7;
             NPC.DeathSound = SoundID.NPCDeath8;
@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
             NPC.boss = true;
-            NPC.value = 103490;
+            NPC.value = 113490;
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
@@ -49,7 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
 
         }
 
-        public int CursedFlamesDamage = 22;
+        public int CursedFlamesDamage = 23;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
         }

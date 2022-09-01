@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             NPC.height = 45;
             NPC.knockBackResist = 0f;
             NPC.timeLeft = 1750;
-            NPC.damage = 38;
+            NPC.damage = 65;
             NPC.defense = 7;
             NPC.HitSound = SoundID.NPCHit7;
             NPC.DeathSound = SoundID.NPCDeath8;
@@ -49,7 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             return false;
         }
 
-        public int PoisonFlamesDamage = 45;
+        public int PoisonFlamesDamage = 25;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
 

@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             NPC.height = 45;
             NPC.knockBackResist = 0f;
             NPC.timeLeft = 1750;
-            NPC.damage = 15;
+            NPC.damage = 35;
             NPC.defense = 2;
             NPC.HitSound = SoundID.NPCHit7;
             NPC.DeathSound = SoundID.NPCDeath8;
@@ -51,7 +51,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             return false;
         }
 
-        public int PoisonFlamesDamage = 45;
+        public int PoisonFlamesDamage = 25;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
 
@@ -105,7 +105,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
                 rotation += (float)(Main.rand.Next(-50, 50) / 100);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    if (Vector2.Distance(Main.player[NPC.target].Center, NPC.Center) > 500)
+                    if (Vector2.Distance(Main.player[NPC.target].Center, NPC.Center) > 400)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)(Math.Cos(rotation) * (double)num48 * -1.0), (float)(Math.Sin(rotation) * (double)num48 * -1.0), ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), PoisonFlamesDamage, 0f, Main.myPlayer); //enemy cursed flamess
                     }
