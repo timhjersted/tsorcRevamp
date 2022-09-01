@@ -39,7 +39,8 @@ namespace tsorcRevamp.Items.Weapons
         {
             
             Main.NewText(player.position / 16);            
-            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Marilith.CataclysmicFirestorm>(), damage, knockBack, Main.myPlayer);
+            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>(), damage, knockBack, Main.myPlayer); 
+            //Terraria.Audio.SoundEngine.PlaySound(SoundID.Thunder with { Volume = 0.4f, Pitch = 0.0f });
             //Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
             //speed.Normalize();
             //Main.NewText(Projectiles.Enemy.EnemyGenericLaser.Intersections(screenRect, position, speed));

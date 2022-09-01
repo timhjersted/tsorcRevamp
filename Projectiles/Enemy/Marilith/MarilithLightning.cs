@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Enums;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -91,9 +92,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 int dustCount = 4;
                 if (branches != null && branches.Count > 0)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath43 with { Volume = 0.4f, Pitch = 0.0f }, branches[0][0]);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath43 with { Volume = 0.4f, Pitch = 0.0f }, branches[0][branches[0].Count / 2]);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath43 with { Volume = 0.4f, Pitch = 0.0f }, branches[0][branches[0].Count - 1]);
+                    SoundStyle ThunderSound = new SoundStyle("Terraria/Sounds/Thunder_0");
+                    float pitch = Main.rand.NextFloat(-0.2f, 0.2f);
+                    Terraria.Audio.SoundEngine.PlaySound(ThunderSound with { Volume = 0.4f, Pitch = pitch }, branches[0][0]);
+                    Terraria.Audio.SoundEngine.PlaySound(ThunderSound with { Volume = 0.4f, Pitch = pitch }, branches[0][branches[0].Count / 2]);
+                    Terraria.Audio.SoundEngine.PlaySound(ThunderSound with { Volume = 0.4f, Pitch = pitch }, branches[0][branches[0].Count - 1]);
 
                     for (int i = 0; i < branches.Count; i++)
                     {

@@ -1177,12 +1177,8 @@ namespace tsorcRevamp
 
         public override void PostUpdateRunSpeeds()
         {
-            if (supersonicLevel == 0)
-            {
-                return;
-            }
-            else
-            {
+            if (supersonicLevel != 0)
+            {                
                 float moveSpeedPercentBoost = 1;
                 float baseSpeed = 1;
 
@@ -1232,11 +1228,11 @@ namespace tsorcRevamp
                 {
                     NPC marilith = Main.npc[marilithIndex.Value];
 
-                    Player.velocity -= UsefulFunctions.GenerateTargetingVector(Player.Center, marilith.Center, 0.35f);
+                    Player.velocity -= UsefulFunctions.GenerateTargetingVector(Player.Center, marilith.Center, 0.25f);
 
                     if (Player.HasBuff<MarilithHold>())
                     {
-                        Player.velocity = -UsefulFunctions.GenerateTargetingVector(Player.Center, marilith.Center, 12f);
+                        Player.velocity = -UsefulFunctions.GenerateTargetingVector(Player.Center, marilith.Center, 4f);
                     }
 
                     /*

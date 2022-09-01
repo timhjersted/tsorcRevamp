@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -48,6 +49,11 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         bool tripped = false;
         public override void AI()
         {
+            if(Main.GameUpdateCount % 180 == 0)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Thunder with { Volume = 0.1f, Pitch = Main.rand.NextFloat(-0.2f, 0.2f) }, NPC.Center);
+            }
+
             NPC.aiStyle = -1;
             
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0.8f, 0f, 0.2f);
@@ -68,6 +74,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             {
                 if(Main.netMode != NetmodeID.MultiplayerClient)
                 {
+                    Terraria.Audio.SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Thunder_0") with { Volume = 1f }, NPC.Center);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62 with { Volume = 1.3f, Pitch = 0.9f }, NPC.Center);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<CataclysmicFirestorm>(), 55, 0.5f, Main.myPlayer);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<CataclysmicFirestorm>(), 55, 0.5f, Main.myPlayer);

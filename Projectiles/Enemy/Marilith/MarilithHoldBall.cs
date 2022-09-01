@@ -13,15 +13,22 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Projectile.hostile = true;
             Projectile.height = 16;
             Projectile.penetrate = 4;
-            Projectile.tileCollide = false;
+            Projectile.tileCollide = true;
             Projectile.width = 16;
         }
 
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 57, 0, 0, 50, Color.Yellow, 2.0f);
-            Main.dust[dust].noGravity = true;
+            if (Projectile.whoAmI % 2 == Main.GameUpdateCount % 2)
+            {
+                if (new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100).Contains(Projectile.Center.ToPoint()))
+                {
+                    Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.GoldFlame, Vector2.Zero, 0, Color.Yellow, 2.0f);
+                    dust.noGravity = true;
+                    dust.noLight = true;
+                }
+            }
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
@@ -29,25 +36,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             target.AddBuff(ModContent.BuffType<Buffs.MarilithHold>(), 30, false);
         }
 
-        public override void Kill(int timeLeft)
+        public override bool PreDraw(ref Color lightColor)
         {
-            if (!Projectile.active)
-            {
-                return;
-            }
-            Projectile.timeLeft = 0;
-            {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
-                if (Projectile.owner == Main.myPlayer)
-                {
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), new Vector2(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height - 3)), new Vector2(3, 0), ModContent.ProjectileType<EnemySpellEffectBuff>(), 8, 3f, Projectile.owner);
-                }
-                int num41 = Dust.NewDust(new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y), Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 3f);
-                Main.dust[num41].noGravity = true;
-                Main.dust[num41].velocity *= 2f;
-                num41 = Dust.NewDust(new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y), Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 2f);
-            }
-            Projectile.active = false;
+            lightColor = Color.White;
+            return base.PreDraw(ref lightColor);
         }
     }
 }

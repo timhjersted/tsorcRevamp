@@ -49,16 +49,28 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     offsetCoords.x = uColor.x / 12000;
     offsetCoords.y = uColor.y / 12000;
 
+    float2 fogOffset = float2(uColor.z, uOpacity);
+    fogOffset /= 1000;
+
     //Calculate how intense a pixel should be based on the noise
     float intensity = tex2D(uImage0, frac(coords + offsetCoords)).r * sampleColor;
-    intensity = pow(intensity, 0.2);
-
+    float intensity2 = tex2D(uImage0, frac(coords + fogOffset)).r * sampleColor;
+    
     //Calculate and output the final color of the pixel    
     distanceFactor = distanceFactor * 2.5f;
-    float r = pow(intensity, 8) * 1.5f * pow(distanceFactor, 1.5);
-    float g = pow(intensity, 6.0) * .5f * distanceFactor * distanceFactor;
-    float b = pow(intensity, 3.0) * 0.45f * distanceFactor * distanceFactor;
-    return float4(r , g , b , 1) * sampleColor * uSaturation;
+    float r = pow(intensity, 8.0 / 5.0) * 1.5f * pow(distanceFactor, 1.5);
+    float g = pow(intensity, 6.0 / 5.0) * .5f * distanceFactor * distanceFactor;
+    float b = pow(intensity, 3.0 / 5.0) * 0.45f * distanceFactor * distanceFactor;
+
+    if (modTime < dist) {
+
+        r += pow(intensity2, 8) * 1.5f;
+        g += pow(intensity2, 6.0) * .5f;
+        b += pow(intensity2, 3.0) * 0.65f;
+
+
+    }
+    return float4(r, g, b, 1) *  sampleColor * uSaturation;
 }
 
 technique MarilithFireAura
