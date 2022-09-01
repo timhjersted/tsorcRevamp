@@ -78,7 +78,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
             {
                 holdTimer1 -= 0.267f;
             }
-			Main.NewText(holdTimer1);
         }
 		public static void ReposeProjectiles(Player player) 
 		{
