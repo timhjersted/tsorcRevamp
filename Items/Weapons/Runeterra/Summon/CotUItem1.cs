@@ -13,6 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 	{
 		public static List<CotUStar1> projectiles = null;
 		public static int processedProjectilesCount = 0;
+		public static float holdTimer1 = 0f;
 
 		public override void SetStaticDefaults()
 		{
@@ -67,6 +68,18 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			// Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
 			return false;
 		}
+		public override void HoldItem(Player player)
+		{
+			holdTimer1 = 0.5f;
+        }
+		public override void UpdateInventory(Player player)
+		{
+            if (Main.GameUpdateCount % 20 == 0)
+            {
+                holdTimer1 -= 0.267f;
+            }
+			Main.NewText(holdTimer1);
+        }
 		public static void ReposeProjectiles(Player player) 
 		{
 			// repose projectiles relatively to the first one so they are evenly spread on the radial circumference
