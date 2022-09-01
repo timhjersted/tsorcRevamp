@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		{
 			projectiles = new List<CotUStar1>(){};
 
-			Item.damage = 21;
+			Item.damage = 18;
 			Item.knockBack = 3f;
 			Item.mana = 10;
 			Item.width = 32;

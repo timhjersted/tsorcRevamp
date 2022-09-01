@@ -43,10 +43,10 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if (item.type == ItemID.EmpressBlade & !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))
             {
-                item.damage = 55;
+                item.damage = 65;
             } else if (item.type == ItemID.EmpressBlade & !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()))
             {
-                item.damage = 70;
+                item.damage = 80;
             }
         }
         public override string IsArmorSet(Item head, Item body, Item legs)
