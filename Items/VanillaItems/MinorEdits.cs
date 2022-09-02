@@ -39,5 +39,70 @@ namespace tsorcRevamp.Items.VanillaItems
             return true;
         }
 
+        public override void HoldItem(Item item, Player player)
+        {
+            float scaleDelta;
+            if (item.DamageType == DamageClass.SummonMeleeSpeed)
+            {
+                switch (item.prefix)
+                {
+
+                    case PrefixID.Large:
+
+                        scaleDelta = 0.06f;
+                        break;
+
+                    case PrefixID.Massive:
+
+                        scaleDelta = 0.09f;
+                        break;
+
+                    case PrefixID.Dangerous:
+
+                        scaleDelta = 0.03f;
+                        break;
+
+                    case PrefixID.Tiny:
+
+                        scaleDelta = -0.09f;
+                        break;
+
+                    case PrefixID.Terrible:
+
+                        scaleDelta = -0.07f;
+                        break;
+
+                    case PrefixID.Small:
+
+                        scaleDelta = -0.05f;
+                        break;
+
+                    case PrefixID.Unhappy:
+
+                        scaleDelta = -0.05f;
+                        break;
+
+                    case PrefixID.Bulky:
+
+                        scaleDelta = 0.05f;
+                        break;
+
+                    case PrefixID.Shameful:
+
+                        scaleDelta = 0.05f;
+                        break;
+
+                    case PrefixID.Legendary:
+
+                        scaleDelta = 0.05f;
+                        break;
+
+                    default:
+                        scaleDelta = 0;
+                        break;
+                }
+                player.whipRangeMultiplier += scaleDelta;
+            }
+        }
     }
 }
