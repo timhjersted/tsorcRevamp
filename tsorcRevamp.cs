@@ -558,6 +558,7 @@ namespace tsorcRevamp
                 85, //tombstone
                 115, //hallowed vines
                 129, //crystal shard
+                135, //pressure plates
                 165, //ambient objects (stalagmites / stalactites, icicles)
                 184, //moss growth
                 185, //ambient objects (small rocks, small coin stashes, gem stashes)
