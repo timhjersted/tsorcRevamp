@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			DisplayName.SetDefault("Scorching Point");
 			Tooltip.SetDefault("Summons fireballs to rotate around you and damage enemies in their way" +
 								"\nIncrease their radius by holding the Special Ability hotkey" +
-								"\nReset their range by clearing the buff" +
+								"\nHold Shift + Special Ability to shrink their radius" +
                 				"\n'By the Ashen Lord of Runeterra!'");
 
 

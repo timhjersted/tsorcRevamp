@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -861,9 +862,20 @@ namespace tsorcRevamp
                     }
                 }*/
             }
-            if (tsorcRevamp.specialAbility.Current && Items.Weapons.Runeterra.Summon.ScorchingPoint.holdTimer1 >= 0)
+            if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Runeterra.Summon.ScorchingPoint>() && Items.Weapons.Runeterra.Summon.ScorchingPoint.holdTimer1 >= 0)
             {
-                Items.Weapons.Runeterra.Summon.ScorchingPointStar.circleRad += 1.5f;
+                if (Main.keyState.IsKeyDown(Keys.LeftShift))
+                {
+                    Items.Weapons.Runeterra.Summon.ScorchingPointStar.circleRad -= 1.5f;
+                    if(Items.Weapons.Runeterra.Summon.ScorchingPointStar.circleRad < 50)
+                    {
+                        Items.Weapons.Runeterra.Summon.ScorchingPointStar.circleRad = 50;
+                    }
+                }
+                else
+                {
+                    Items.Weapons.Runeterra.Summon.ScorchingPointStar.circleRad += 1.5f;
+                }
                 Dust.NewDustDirect(Player.Center, 10, 10, DustID.FlameBurst, 0.5f, 0.5f, 0, Color.Firebrick, 0.5f);
             }
         }
