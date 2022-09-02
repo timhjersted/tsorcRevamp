@@ -862,7 +862,7 @@ namespace tsorcRevamp
                     }
                 }*/
             }
-            if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Runeterra.Summon.ScorchingPoint>() && Items.Weapons.Runeterra.Summon.ScorchingPoint.holdTimer1 >= 0)
+            if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Runeterra.Summon.ScorchingPoint>())
             {
                 if (Main.keyState.IsKeyDown(Keys.LeftShift))
                 {

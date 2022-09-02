@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 {
 	public class ScorchingPointStar : ModProjectile
 	{
-		public static float angularSpeed = 0.1f;
+		public static float angularSpeed = 0.03f;
 		public static float circleRad = 50f;
 		public float currentAngle = 0;
     
