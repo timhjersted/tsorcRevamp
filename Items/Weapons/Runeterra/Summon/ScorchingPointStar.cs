@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 {
-	public class CotUStar1 : ModProjectile
+	public class ScorchingPointStar : ModProjectile
 	{
 		public static float angularSpeed = 0.1f;
 		public static float circleRad = 50f;
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		}
 		public override void OnSpawn(IEntitySource source) 
 		{
-			CotUItem1.projectiles.Add(this);
+			ScorchingPoint.projectiles.Add(this);
 		}
 		public override bool? CanCutTiles()
 		{
@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		}
 		public override void Kill(int timeLeft) 
 		{
-			CotUItem1.projectiles.Remove(this);
+			ScorchingPoint.projectiles.Remove(this);
 		}
 		public override void AI()
 		{
@@ -87,19 +87,19 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		{
 			if (owner.dead || !owner.active)
 			{
-				owner.ClearBuff(ModContent.BuffType<CotUBuff1>());
+				owner.ClearBuff(ModContent.BuffType<CenterOfTheHeat>());
 
 				return false;
 			}
 
-			if (!owner.HasBuff(ModContent.BuffType<CotUBuff1>()))
+			if (!owner.HasBuff(ModContent.BuffType<CenterOfTheHeat>()))
       {
 				circleRad = 50f;
         currentAngle = 0;
-				CotUItem1.projectiles.Clear();
+				ScorchingPoint.projectiles.Clear();
       }
 
-			if (owner.HasBuff(ModContent.BuffType<CotUBuff1>()))
+			if (owner.HasBuff(ModContent.BuffType<CenterOfTheHeat>()))
 			{
 				Projectile.timeLeft = 2;
 			}

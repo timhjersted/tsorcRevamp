@@ -861,9 +861,9 @@ namespace tsorcRevamp
                     }
                 }*/
             }
-            if (tsorcRevamp.specialAbility.Current && Items.Weapons.Runeterra.Summon.CotUItem1.holdTimer1 >= 0)
+            if (tsorcRevamp.specialAbility.Current && Items.Weapons.Runeterra.Summon.ScorchingPoint.holdTimer1 >= 0)
             {
-                Items.Weapons.Runeterra.Summon.CotUStar1.circleRad += 1.5f;
+                Items.Weapons.Runeterra.Summon.ScorchingPointStar.circleRad += 1.5f;
                 Dust.NewDustDirect(Player.Center, 10, 10, DustID.FlameBurst, 0.5f, 0.5f, 0, Color.Firebrick, 0.5f);
             }
         }

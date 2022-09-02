@@ -9,9 +9,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 {
-	public class CotUItem1 : ModItem
+	[LegacyName("CotUItem1")]
+	public class ScorchingPoint : ModItem
 	{
-		public static List<CotUStar1> projectiles = null;
+		public static List<ScorchingPointStar> projectiles = null;
 		public static int processedProjectilesCount = 0;
 		public static float holdTimer1 = 0f;
 
@@ -28,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		}
     public override void SetDefaults()
 		{
-			projectiles = new List<CotUStar1>(){};
+			projectiles = new List<ScorchingPointStar>(){};
 
 			Item.damage = 18;
 			Item.knockBack = 3f;
@@ -47,8 +48,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 
 			Item.noMelee = true;
 			Item.DamageType = DamageClass.Summon;
-			Item.buffType = ModContent.BuffType<CotUBuff1>();
-			Item.shoot = ModContent.ProjectileType<CotUStar1>();
+			Item.buffType = ModContent.BuffType<CenterOfTheHeat>();
+			Item.shoot = ModContent.ProjectileType<ScorchingPointStar>();
 		}
 
 		public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
@@ -82,7 +83,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 		public static void ReposeProjectiles(Player player) 
 		{
 			// repose projectiles relatively to the first one so they are evenly spread on the radial circumference
-			processedProjectilesCount = player.ownedProjectileCounts[ModContent.ProjectileType<CotUStar1>()];
+			processedProjectilesCount = player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointStar>()];
 			for (int i = 1; i < processedProjectilesCount; ++i) {
 				projectiles[i].currentAngle = projectiles[i - 1].currentAngle + 2f * (float)Math.PI / processedProjectilesCount;
 			}

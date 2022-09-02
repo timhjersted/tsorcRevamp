@@ -78,9 +78,9 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 				angularSpeed = 0.1f;
 			}
 
-			currentAngle2 += angularSpeed / (CotUStar1.circleRad * 0.001f + 1f);
+			currentAngle2 += angularSpeed / (ScorchingPointStar.circleRad * 0.001f + 1f);
 
-			Vector2 offset = new Vector2(MathF.Sin(currentAngle2), MathF.Cos(currentAngle2)) * CotUStar1.circleRad;
+			Vector2 offset = new Vector2(MathF.Sin(currentAngle2), MathF.Cos(currentAngle2)) * ScorchingPointStar.circleRad;
 
 			Projectile.position = visualplayercenter + offset;
 
@@ -110,7 +110,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 
 			if (!owner.HasBuff(ModContent.BuffType<CotUBuff2>()))
             {
-				CotUStar1.circleRad = 50f;
+				ScorchingPointStar.circleRad = 50f;
             }
 
 				if (owner.HasBuff(ModContent.BuffType<CotUBuff2>()))

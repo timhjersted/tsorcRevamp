@@ -309,7 +309,7 @@ namespace tsorcRevamp
     class tsorcRevampPlayerConstantDrawLayers : PlayerDrawLayer {
 
         public override Position GetDefaultPosition() {
-            return new AfterParent(PlayerDrawLayers.HeldItem);
+            return new AfterParent(PlayerDrawLayers.HandOnAcc);
         }
 
         public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
@@ -369,9 +369,6 @@ namespace tsorcRevamp
                     int dust = Dust.NewDust(new Vector2((float)modPlayer.Player.position.X, (float)modPlayer.Player.position.Y), modPlayer.Player.width, modPlayer.Player.height, DustID.AncientLight, modPlayer.Player.velocity.X, modPlayer.Player.velocity.Y, 150, Color.Teal, 1f);
                     Main.dust[dust].noGravity = true;
                     modPlayer.shieldUp = false;
-
-
-                    
                 }
             }
             else {
@@ -448,9 +445,27 @@ namespace tsorcRevamp
                 }
             }
             #endregion
+
+            #region Scorching Point
+            //if (drawPlayer.selectedItem == ModContent.ItemType<Items.Weapons.Runeterra.Summon.ScorchingPoint>())
+            {
+                //1) Get texture
+                Texture2D scorchingPointTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Runeterra/Summon/ScorchingPointGauntletNoLines");
+
+                //2) Get player arm position
+                Vector2 drawPosition = drawPlayer.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, drawPlayer.itemRotation);
+
+                //Shift it down slightly to make it align right. Feel free to tune this until it looks right.
+                drawPosition.Y += 8; 
+
+                //3) Translate that to a position on the sprite sheet
+                Rectangle sourceRectangle = new Rectangle(0, 0, scorchingPointTexture.Width, scorchingPointTexture.Height);
+                Vector2 origin = sourceRectangle.Size() / 2f;
+
+                //4) Call draw function with that info
+                drawInfo.DrawDataCache.Add(new DrawData(scorchingPointTexture, drawPosition - Main.screenPosition, sourceRectangle, drawInfo.itemColor, drawPlayer.itemRotation, origin, 1, SpriteEffects.None, 0));
+            }
+            #endregion
         }
-
-
-
     }
 }
