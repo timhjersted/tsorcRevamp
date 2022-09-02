@@ -127,7 +127,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			}
 
 			// Some visuals here
-			Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
+			Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
 		}
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{

@@ -261,9 +261,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
 
-
-
-
             //Deal with dat crazy spazzin' out;
             spazzlevel += (targetspazzlevel - spazzlevel) / 60f;
 
@@ -395,14 +392,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Main.NewText("Blight encloses itself in impenetrable light -- you're too far away!", 45, 75, 255);
                     holdTimer = 200;
                 }
-                else
-                {
-                    NPC.defense = 90;
-                }
             }
-            
-
-
+            else
+            {
+                NPC.defense = 90;
+            }
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

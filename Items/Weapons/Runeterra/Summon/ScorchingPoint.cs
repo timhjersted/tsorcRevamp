@@ -68,7 +68,13 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
 			// Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
 			return false;
 		}
-		public static void ReposeProjectiles(Player player) 
+
+        public override void HoldItem(Player player)
+        {
+			Lighting.AddLight(player.Center, new Vector3(0.1f, 0.08f, 0.05f));
+		}
+
+        public static void ReposeProjectiles(Player player) 
 		{
 			// repose projectiles relatively to the first one so they are evenly spread on the radial circumference
 			processedProjectilesCount = player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointStar>()];

@@ -36,10 +36,12 @@ namespace tsorcRevamp.Items.Weapons
         }
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
-        {
-            
+        {            
             Main.NewText(player.position / 16);            
-            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>(), damage, knockBack, Main.myPlayer); 
+            int proj = Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, speed, ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>(), damage, knockBack, Main.myPlayer);
+            Main.projectile[proj].friendly = true;
+            Main.projectile[proj].hostile = false;
+
             //Terraria.Audio.SoundEngine.PlaySound(SoundID.Thunder with { Volume = 0.4f, Pitch = 0.0f });
             //Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
             //speed.Normalize();
