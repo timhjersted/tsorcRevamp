@@ -68,8 +68,12 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
 
             
         }
+        public override bool MeleePrefix()
+        {
+            return true;
+        }
 
-      
+
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
         {
             target.AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);

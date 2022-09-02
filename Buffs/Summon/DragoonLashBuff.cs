@@ -1,6 +1,5 @@
 using Terraria;
 using Terraria.ModLoader;
-using static Humanizer.In;
 
 namespace tsorcRevamp.Buffs.Summon
 {

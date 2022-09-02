@@ -40,6 +40,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
         {
             return true;
         }
+        public override bool MeleePrefix()
+        {
+            return true;
+        }
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {

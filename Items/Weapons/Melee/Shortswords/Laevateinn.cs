@@ -33,6 +33,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             Item.value = PriceByRarity.Pink_5;
             Item.DamageType = DamageClass.Melee;
         }
+        public override bool MeleePrefix()
+        {
+            return true;
+        }
 
         public override void AddRecipes()
         {

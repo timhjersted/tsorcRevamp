@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static Humanizer.In;
 
 namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 {
@@ -44,7 +43,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			{
 				if (fireBreathTimer >= 1)
 				{
-                    Projectile.NewProjectile(Projectile.GetSource_None(), owner.Center, npc.Center - owner.Center, ProjectileID.ImpFireball, whipDamage, 1f, Main.myPlayer);
+					Projectile.NewProjectile(Projectile.GetSource_None(), owner.Center, (npc.Center - owner.Center) * 0.1f, ProjectileID.Flamelash, whipDamage, 1f, Main.myPlayer);
 					fireBreathTimer = 0;
                 }
 			}

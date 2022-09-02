@@ -38,7 +38,11 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.noUseGraphic = true;
 
 		}
-		public override void AddRecipes()
+        public override bool MeleePrefix()
+        {
+            return true;
+        }
+        public override void AddRecipes()
 		{
 			
 			Recipe recipe = CreateRecipe();

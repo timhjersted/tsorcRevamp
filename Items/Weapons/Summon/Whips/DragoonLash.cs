@@ -1,4 +1,4 @@
-/*
+
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -41,6 +41,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.noUseGraphic = true;
 
 		}
+		public override bool MeleePrefix()
+		{
+			return true;
+		}
 		public override void AddRecipes()
 		{
 			
@@ -53,4 +57,4 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.Register();
 		}
 	}
-}*/
+}

@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = -1;
 			Projectile.WhipSettings.Segments = 20;
-			Projectile.WhipSettings.RangeMultiplier = 2.3f; //only thing affecting the actual whip range
+			Projectile.WhipSettings.RangeMultiplier = 2.5f; //only thing affecting the actual whip range
 		}
 
 		private float Timer
@@ -119,7 +119,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.DragoonLashDebuff>(), 240);
 			owner.MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.85f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
-            if (DragoonLashHitTimer == 0)
+            if (DragoonLashHitTimer <= 0)
             {
                 Buffs.Summon.WhipDebuffs.DragoonLashDebuffNPC.fireBreathTimer = 1f;
                 DragoonLashHitTimer = 0.07f;//3 ticks, supposed to stop you from spawning fire for every single enemy hit and only spawn one max

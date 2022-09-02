@@ -31,6 +31,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             Item.value = PriceByRarity.Pink_5;
             Item.DamageType = DamageClass.Melee;
         }
+        public override bool MeleePrefix()
+        {
+            return true;
+        }
         public override void MeleeEffects(Player player, Rectangle hitbox)
         {
             //This is the same general effect done with the Fiery Greatsword

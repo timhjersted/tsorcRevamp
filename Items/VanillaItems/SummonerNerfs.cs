@@ -38,17 +38,6 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 35;
             }
         }
-
-        public override void UpdateInventory(Item item, Player player)
-        {
-            if (item.type == ItemID.EmpressBlade & !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))
-            {
-                item.damage = 65;
-            } else if (item.type == ItemID.EmpressBlade & !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()))
-            {
-                item.damage = 80;
-            }
-        }
         public override string IsArmorSet(Item head, Item body, Item legs)
         {
             if (head.type == ItemID.ObsidianHelm && body.type == ItemID.ObsidianShirt && legs.type == ItemID.ObsidianPants)
@@ -85,8 +74,13 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", "11 summon tag damage"));
-                    tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "TagNerfed2", "Reduces minion damage by 5%"));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", "10 summon tag damage"));
+                }
+                int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip1");
+                if (ttindex2 != -1)
+                {
+                    tooltips.RemoveAt(ttindex2);
+                    tooltips.Insert(ttindex2, new TooltipLine(Mod, "TagCritNerfed", "5% summon tag critical strike chance"));
                 }
             }
             if (item.type == ItemID.EmpressBlade && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))
@@ -94,7 +88,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 int ttindex2 = tooltips.FindLastIndex(t => t.Name == "Tooltip0");
                 if (ttindex2 != -1)
                 {
-                    tooltips.Insert(ttindex2 + 1, new TooltipLine(Mod, "Nerfed", "The full power of this blade has been sealed by an ancient knight\nDefeat him to partially unlock its power!(Reload world too)"));
+                    tooltips.Insert(ttindex2 + 1, new TooltipLine(Mod, "Nerfed", "The full power of this blade has been sealed by an ancient knight\nDefeat him to partially unlock its power!"));
                 }
             } else
             if (item.type == ItemID.EmpressBlade && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()))
@@ -102,8 +96,20 @@ namespace tsorcRevamp.Items.VanillaItems
                 int ttindex2 = tooltips.FindLastIndex(t => t.Name == "Tooltip0");
                 if (ttindex2 != -1)
                 {
-                    tooltips.Insert(ttindex2 + 1, new TooltipLine(Mod, "Nerfed2", "The full power of this blade has been sealed by the embodiment of chaos\nDefeat it to fully unlock its power!(Reload world too)"));
+                    tooltips.Insert(ttindex2 + 1, new TooltipLine(Mod, "Nerfed2", "The full power of this blade has been sealed by the embodiment of chaos\nDefeat it to fully unlock its power!"));
                 }
+            }
+        }
+        public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)
+        {
+            base.ModifyWeaponDamage(item, player, ref damage);
+            if (item.type == ItemID.EmpressBlade & !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))
+            {
+                damage *= 0.75f;
+            }
+            else if (item.type == ItemID.EmpressBlade & !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()))
+            {
+                damage *= 0.88f;
             }
         }
 

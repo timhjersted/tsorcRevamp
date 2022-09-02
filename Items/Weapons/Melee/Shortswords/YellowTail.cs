@@ -33,6 +33,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             Item.shoot = ModContent.ProjectileType<Projectiles.Shortswords.YellowTailProjectile>(); // The projectile is what makes a shortsword work
             Item.shootSpeed = 2.1f; // This value bleeds into the behavior of the projectile as velocity, keep that in mind when tweaking values
         }
+        public override bool MeleePrefix()
+        {
+            return true;
+        }
 
         public override void AddRecipes()
         {
