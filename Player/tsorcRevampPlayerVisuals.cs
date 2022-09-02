@@ -447,23 +447,66 @@ namespace tsorcRevamp
             #endregion
 
             #region Scorching Point
-            //if (drawPlayer.selectedItem == ModContent.ItemType<Items.Weapons.Runeterra.Summon.ScorchingPoint>())
+            if (drawPlayer.HeldItem.type == ModContent.ItemType<Items.Weapons.Runeterra.Summon.ScorchingPoint>())
             {
                 //1) Get texture
                 Texture2D scorchingPointTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Runeterra/Summon/ScorchingPointGauntletNoLines");
 
-                //2) Get player arm position
+                //2) Get the players hand position
                 Vector2 drawPosition = drawPlayer.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, drawPlayer.itemRotation);
+                
+                //3) Shift the draw position over a bit so it looks right. Feel free to tune this.
+                Vector2 handOffset = new Vector2(12, 2);
 
-                //Shift it down slightly to make it align right. Feel free to tune this until it looks right.
-                drawPosition.Y += 8; 
+                //Flip it if the player is facing left
+                SpriteEffects effect = SpriteEffects.None;
+                if(drawPlayer.direction == -1)
+                {
+                    effect = SpriteEffects.FlipHorizontally;
+                    handOffset.X *= -1;
+                }
 
-                //3) Translate that to a position on the sprite sheet
+                //If the player is on a pully, offset and rotate the sprite to match
+                float drawRotation = 0;
+                if (drawInfo.drawPlayer.pulley)
+                {
+                    //If their hand is pointed straight up, use these values
+                    if (drawPlayer.pulleyDir == 2)
+                    {
+                        drawRotation = -MathHelper.PiOver2;
+                        handOffset = new Vector2(0, -12);
+
+                        //And flip it if they're looking left
+                        if (drawPlayer.direction == -1)
+                        {
+                            effect = SpriteEffects.FlipVertically;
+                        }
+                    }
+                    else
+                    {
+                        //If their hand is angled, use these ones
+                        drawRotation = -MathHelper.PiOver4;
+                        handOffset = new Vector2(10, -10);
+
+                        //And flip it if they're looking left
+                        if (drawPlayer.direction == -1)
+                        {
+                            effect = SpriteEffects.FlipVertically;
+                            drawRotation -= MathHelper.PiOver2;
+                            handOffset.X *= -1;
+                        }
+                    }
+                }
+
+                //Add the offset to the position
+                drawPosition += handOffset;
+
+                //3) Set up its sprite sheet source and origin variables
                 Rectangle sourceRectangle = new Rectangle(0, 0, scorchingPointTexture.Width, scorchingPointTexture.Height);
                 Vector2 origin = sourceRectangle.Size() / 2f;
 
-                //4) Call draw function with that info
-                drawInfo.DrawDataCache.Add(new DrawData(scorchingPointTexture, drawPosition - Main.screenPosition, sourceRectangle, drawInfo.itemColor, drawPlayer.itemRotation, origin, 1, SpriteEffects.None, 0));
+                //4) Call the draw function with all the info
+                drawInfo.DrawDataCache.Add(new DrawData(scorchingPointTexture, drawPosition - Main.screenPosition, sourceRectangle, Color.White, drawRotation, origin, 1, effect, 0));
             }
             #endregion
         }
