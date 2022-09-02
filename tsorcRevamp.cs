@@ -377,7 +377,8 @@ namespace tsorcRevamp
                 463, //defenders forge
                 TileID.Titanium,
                 TileID.Pumpkins, //the harvestable kind, not the block
-                TileID.BreakableIce
+                TileID.BreakableIce,
+                TileID.LunarCraftingStation
 
             };
             #endregion
@@ -514,7 +515,8 @@ namespace tsorcRevamp
                 413, //red squirrel cage
                 414, //gold squirrel cage
                 463, //defender's forge
-                TileID.Pumpkins //the harvestable kind, not the block
+                TileID.Pumpkins, //the harvestable kind, not the block
+                TileID.LunarCraftingStation
 
             };
             #endregion
