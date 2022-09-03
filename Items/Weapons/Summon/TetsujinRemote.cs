@@ -59,5 +59,18 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			// Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
 			return false;
 		}
-	}
+
+        public override void AddRecipes()
+        {
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient(ModContent.ItemType<Items.DestructionElement>(), 1);
+			recipe.AddIngredient(ModContent.ItemType<Items.CompactFrame>(), 1);
+			recipe.AddIngredient(ModContent.ItemType<Items.Ammo.TeslaBolt>(), 100);
+			recipe.AddIngredient(ModContent.ItemType<Items.BequeathedSoul>(), 1);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 75000);
+			recipe.AddTile(TileID.DemonAltar);
+
+			recipe.Register();
+		}
+    }
 }
