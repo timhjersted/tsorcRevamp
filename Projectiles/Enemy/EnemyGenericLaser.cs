@@ -465,6 +465,13 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Projectile.active = false;
                 }
             }
+            else
+            {
+                if (!Main.projectile[HostIdentifier].active)
+                {
+                    Projectile.active = false;
+                }
+            }
 
 
             Projectile.position = origin + Projectile.velocity * MOVE_DISTANCE;

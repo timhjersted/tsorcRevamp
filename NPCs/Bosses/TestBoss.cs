@@ -21,7 +21,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.lifeMax = Int32.MaxValue;
             NPC.friendly = false;
-            NPC.boss = true;
             NPC.noTileCollide = true;
             NPC.noGravity = true;
             NPC.knockBackResist = 0;
