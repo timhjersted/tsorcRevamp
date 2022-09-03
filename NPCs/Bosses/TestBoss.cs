@@ -44,6 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void AI()
         {
+            NPC.defense = 35;
             //NPC.life = NPC.lifeMax;
         }
 

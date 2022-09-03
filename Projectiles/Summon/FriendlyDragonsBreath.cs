@@ -1,10 +1,15 @@
 ﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon
 {
     class FriendlyDragonsBreath : ModProjectile
     {
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.MinionShot[Projectile.type] = true;
+        }
 
         public override void SetDefaults()
         {

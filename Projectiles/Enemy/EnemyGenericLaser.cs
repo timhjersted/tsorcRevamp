@@ -53,6 +53,9 @@ namespace tsorcRevamp.Projectiles.Enemy
         //Should it create a line of dust along its length?
         public bool LineDust = false;
 
+        //How much dust?
+        public int DustAmount = 100;
+
         //Scales the size of the laser
         public float LaserSize = 0.4f;
 
@@ -650,12 +653,12 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (Charge >= MaxCharge)
             {
-                for (int j = 0; j < 100; j++)
+                for (int j = 0; j < DustAmount; j++)
                 {
                     if (Main.rand.NextBool(5))
                     {
                         Vector2 offset = Projectile.velocity.RotatedByRandom(MathHelper.ToRadians(8));
-                        Dust dust = Main.dust[Dust.NewDust((origin + (Projectile.velocity * (Distance * (float)(j / 100f)))) + offset - Vector2.One * 4f, 8, 8, LaserDust, 0.0f, 0.0f, 125, Color.LightBlue, 4.0f)];
+                        Dust dust = Main.dust[Dust.NewDust((origin + (Projectile.velocity * (Distance * (float)((float)j / (float)DustAmount)))) + offset - Vector2.One * 4f, 8, 8, LaserDust, 0.0f, 0.0f, 125, default, 2.0f)];
                         dust.velocity = Vector2.Zero;
                         dust.noGravity = true;
                         dust.rotation = Projectile.rotation;

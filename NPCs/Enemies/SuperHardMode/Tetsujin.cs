@@ -218,7 +218,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
             int num259 = (int)((NPC.position.X + (float)(NPC.width / 2)) / 16f) + NPC.direction * 2;
             int num260 = (int)(((NPC.position.Y - 30) + (float)NPC.height) / 16f);
-            if (NPC.position.Y > Main.player[NPC.target].position.Y)
+            if (NPC.velocity.Y < 0)
             {
                 //npc.velocity.Y += .1f;
                 //if (npc.velocity.Y > +2)
@@ -388,7 +388,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     NPC.spriteDirection = 1;
                 }
 
-                NPC.frameCounter++;
+                if (NPC.velocity.Y < 0)
+                {
+                    NPC.frameCounter++;
+                }
                 if (NPC.frameCounter >= 12.0)
                 {
                     NPC.frame.Y = NPC.frame.Y + frameSize;

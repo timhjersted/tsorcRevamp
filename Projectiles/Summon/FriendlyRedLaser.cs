@@ -14,6 +14,7 @@ namespace tsorcRevamp.Projectiles.Summon
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Laser");
+            ProjectileID.Sets.MinionShot[Projectile.type] = true;
         }
 
         public override string Texture => base.Texture;
@@ -38,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Summon
             LaserColor = Color.Red;
             TileCollide = false;
             LaserDust = DustID.OrangeTorch;
-            LineDust = false;
+            LineDust = true;
             LaserTexture = TransparentTextureHandler.TransparentTextureType.RedLaserTransparent;
             LaserTextureHead = new Rectangle(0, 0, 30, 24);
             LaserTextureBody = new Rectangle(0, 26, 30, 30);
@@ -48,6 +49,7 @@ namespace tsorcRevamp.Projectiles.Summon
             Projectile.localNPCHitCooldown = 5;
             ProjectileSource = true;
             FollowHost = true;
+            DustAmount = 20;
         }
 
 

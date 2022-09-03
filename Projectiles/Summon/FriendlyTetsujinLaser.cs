@@ -1,11 +1,16 @@
 using System;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon
 {
     public class FriendlyTetsujinLaser : ModProjectile
     {
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.MinionShot[Projectile.type] = true;
+        }
 
         public override void SetDefaults()
         {

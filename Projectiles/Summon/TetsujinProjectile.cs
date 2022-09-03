@@ -1,8 +1,10 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -144,12 +146,12 @@ namespace tsorcRevamp.Projectiles.Summon
 
 				if (Main.GameUpdateCount % 240 >= 180 && Main.GameUpdateCount % 240 <= 220 && Main.GameUpdateCount % 3 == 0)
 				{
-					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, projVel * 10, ModContent.ProjectileType<Projectiles.Summon.FriendlyDragonsBreath>(), Projectile.damage / 4, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);
+					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, target.velocity + projVel * 10, ModContent.ProjectileType<Projectiles.Summon.FriendlyDragonsBreath>(), Projectile.damage / 4, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);
 				}
 
 				if (Main.GameUpdateCount % 60 < 15 && Main.GameUpdateCount % 4 == 0)
                 {
-					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, projVel * 17, ModContent.ProjectileType<Projectiles.Summon.FriendlyTetsujinLaser>(), Projectile.damage, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);					
+					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, target.velocity + projVel * 17, ModContent.ProjectileType<Projectiles.Summon.FriendlyTetsujinLaser>(), Projectile.damage, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);					
 				}
 			}
 		}
@@ -326,9 +328,9 @@ namespace tsorcRevamp.Projectiles.Summon
 					}
                 }
                 else
-                {
+				{
+					Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, targetCenter, 1).RotatedBy(0);
 					Projectile.Center = targetCenter;
-					Projectile.velocity = target.velocity;
                 }
 			}
 			else
@@ -375,30 +377,24 @@ namespace tsorcRevamp.Projectiles.Summon
 			// This is a simple "loop through all frames from top to bottom" animation
 			int frameSpeed = 5;
 
-			Projectile.frameCounter++;
+			
 
-			if (Projectile.frameCounter >= frameSpeed)
+
+			if (Projectile.velocity.Y < 0)
 			{
-				Projectile.frameCounter = 0;
-				Projectile.frame++;
+				Projectile.frameCounter++;
 
-				if (Projectile.frame >= Main.projFrames[Projectile.type])
+				if (Projectile.frameCounter >= frameSpeed)
 				{
-					Projectile.frame = 0;
+					Projectile.frameCounter = 0;
+					Projectile.frame++;
+
+					if (Projectile.frame >= Main.projFrames[Projectile.type])
+					{
+						Projectile.frame = 0;
+					}
 				}
-			}
 
-			if(targetCenter.X < Projectile.Center.X)
-            {
-				Projectile.direction = -1;
-            }
-            else
-            {
-				Projectile.direction = 1;
-            }
-
-			if (Projectile.Center.Y > targetCenter.Y)
-			{
 				if (Projectile.direction == -1)
 				{
 					int dust = Dust.NewDust(Projectile.Center + new Vector2(Projectile.direction == 1 ? Projectile.width * 0.5f : +15, -22), Projectile.width / 8, Projectile.height / 2, 15, Projectile.velocity.X, Projectile.velocity.Y + 6f, 150, Color.Blue, 1f);
@@ -415,10 +411,24 @@ namespace tsorcRevamp.Projectiles.Summon
 			Lighting.AddLight(Projectile.Center, Color.OrangeRed.ToVector3() * 0.78f);
 		}
 
-		/*
         public override bool PreDraw(ref Color lightColor)
         {
-            return base.PreDraw(ref lightColor);
-        }*/
+			SpriteEffects spriteEffects = SpriteEffects.None;
+			if (Projectile.direction == 1)
+			{
+				spriteEffects = SpriteEffects.FlipHorizontally;
+			}
+
+			int frameHeight = ((Texture2D)TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
+			int startY = frameHeight * Projectile.frame;
+			Rectangle sourceRectangle = new Rectangle(0, startY, TextureAssets.Projectile[Projectile.type].Value.Width, frameHeight);
+			Vector2 origin = sourceRectangle.Size() / 2f;
+			Color drawColor = Projectile.GetAlpha(lightColor);			
+			Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value,
+				Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+				sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
+
+			return false;
+		}
     }
 }

@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 		public override void SetStaticDefaults()
 		{
 			Tooltip.SetDefault("Summons a glowing Tetsujin to fight for you" +
-                "\nDeals extra damage after warming up, this scales well with crits" +
+                "\nOrbits an enemy, bombarding them with light and fire" +
                 "\nUses 2 minion slots");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 		}
 		public override void SetDefaults()
 		{
-			Item.damage = 60;
+			Item.damage = 40;
 			Item.knockBack = 3f;
 			Item.mana = 10;
 			Item.width = 32;
