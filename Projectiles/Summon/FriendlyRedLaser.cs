@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Summon
             Projectile.friendly = true;
             Projectile.hostile = false;
             Projectile.penetrate = -1;
-            Projectile.tileCollide = true;
+            Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.hide = true;
 
