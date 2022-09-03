@@ -34,11 +34,11 @@ namespace tsorcRevamp.Projectiles.Summon
             TelegraphTime = 30;
             FiringDuration = 60;
             MaxCharge = 90;
-            LaserLength = 3000;
+            LaserLength = 300;
             LaserColor = Color.Red;
             TileCollide = false;
             LaserDust = DustID.OrangeTorch;
-            LineDust = true;
+            LineDust = false;
             LaserTexture = TransparentTextureHandler.TransparentTextureType.RedLaserTransparent;
             LaserTextureHead = new Rectangle(0, 0, 30, 24);
             LaserTextureBody = new Rectangle(0, 26, 30, 30);
@@ -70,14 +70,7 @@ namespace tsorcRevamp.Projectiles.Summon
                 {
                     if (rotDirection == 0) //Only set this once, so no flipping
                     {
-                        if (target.Center.X > owner.Center.X)
-                        {
-                            rotDirection = -1;
-                        }
-                        else
-                        {
-                            rotDirection = 1;
-                        }
+                        rotDirection = 1;                        
                     }
                     Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target.Center, 1).RotatedBy(rotDirection * MathHelper.Pi / 3);
                 }
