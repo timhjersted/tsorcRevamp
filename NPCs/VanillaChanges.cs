@@ -1887,7 +1887,7 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = 180;
                         npc.damage = 42; //was 30 for a long time, then 38 briefly
                         npc.defense = 22;
-                        npc.value = 43230; //this makes it drop a lot of money(4g62s per head) if you keep killing the head segments hueh, but this value is used by the bags first soul drop value so whatever, see it as a minigame
+                        npc.value = 0;
                         npc.buffImmune[BuffID.Poisoned] = true;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.buffImmune[BuffID.Frostburn] = true;
@@ -2391,23 +2391,20 @@ namespace tsorcRevamp.NPCs
                         if (npc.type == NPCID.GoblinPeon)
                         {
                             npc.damage = 20;
-                            npc.defense = 10;
-                            npc.scale = 0.5f;
                             npc.lifeMax = 75;
                         }
                         if (npc.type == NPCID.GoblinThief)
                         {
-                            npc.damage = 50;
+                            npc.damage = 40;
                             npc.defense = 6;
-                            npc.scale = 0.75f;
                             npc.lifeMax = 125;
                         }
                         if (npc.type == NPCID.GoblinWarrior)
                         {
-                            npc.damage = 40;
-                            npc.defense = 30;
+                            npc.damage = 50;
+                            npc.defense = 15;
                             npc.lifeMax = 300;
-                            npc.scale = 1.5f;
+                            npc.knockBackResist = 0f;
                         }
                         if (npc.type == NPCID.GoblinSorcerer)
                         {

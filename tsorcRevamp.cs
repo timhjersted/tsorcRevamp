@@ -1011,7 +1011,11 @@ namespace tsorcRevamp
                                                             ItemDropRule.Common(ItemID.HerosPants),
                                                             ItemDropRule.Common(ItemID.HerosShirt)
                                                         }                                                                                },
-                {   ItemID.EaterOfWorldsBossBag     ,   new List<IItemDropRule>()                                                        },
+                {   ItemID.EaterOfWorldsBossBag     ,   new List<IItemDropRule>()
+                                                        {
+                                                            ItemDropRule.ByCondition(tsorcItemDropRuleConditions.FirstBagRule, ModContent.ItemType<Items.DarkSoul>(), 1, 5000, 5000),
+                                                            ItemDropRule.Common(ItemID.GoldCoin, 1, 5, 7),
+                                                         }                                                        },
                 {   ItemID.BrainOfCthulhuBossBag    ,   new List<IItemDropRule>()                                                        },
                 {   ItemID.QueenBeeBossBag          ,   new List<IItemDropRule>()                                                        },
                 {   ItemID.SkeletronBossBag         ,   new List<IItemDropRule>()                           
