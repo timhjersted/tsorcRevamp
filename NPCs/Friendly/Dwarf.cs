@@ -152,6 +152,10 @@ namespace tsorcRevamp.NPCs.Friendly
                 chest.item[index].shopCustomPrice = 1;
                 chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 index++;
+                chest.item[index].SetDefaults(ItemID.TungstenBar);
+                chest.item[index].shopCustomPrice = 5;
+                chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                index++;
             }
 
             if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))

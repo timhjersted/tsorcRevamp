@@ -378,7 +378,9 @@ namespace tsorcRevamp
                 TileID.Titanium,
                 TileID.Pumpkins, //the harvestable kind, not the block
                 TileID.BreakableIce,
-                TileID.LunarCraftingStation
+                TileID.LunarCraftingStation,
+                TileID.TeaKettle,
+                TileID.ImbuingStation
 
             };
             #endregion
@@ -516,7 +518,9 @@ namespace tsorcRevamp
                 414, //gold squirrel cage
                 463, //defender's forge
                 TileID.Pumpkins, //the harvestable kind, not the block
-                TileID.LunarCraftingStation
+                TileID.LunarCraftingStation,
+                TileID.TeaKettle,
+                TileID.ImbuingStation
 
             };
             #endregion
@@ -572,7 +576,8 @@ namespace tsorcRevamp
                 233, //ambient objects (background leafy jungle plants)
                 324, //sea shells
                 352, //crimson thorn
-                382 //flower vines
+                382, //flower vines
+                TileID.Torches
             };
             #endregion
             //--------

@@ -196,6 +196,7 @@ namespace tsorcRevamp
 
          = new List<string>() {
              "The dodgeroll makes you immune to attacks. Mastering it is necessary for survival!",
+             "Glowing green skulls often hold important secrets...",
              "The dodgeroll key can be changed in controls / mod config. It is set to Left Alt by default.",
              "You can dodge mid-air to avoid attacks and reverse your momentum instantly...",
              "Crystal shards often light the path to powerful secrets...",
@@ -215,6 +216,7 @@ namespace tsorcRevamp
              "Play with the Recipe Browser mod to easily see what your loot can be transformed into",
              "Welcome to the Dark Souls of Terraria",
              "The Chloranthy Ring massively improves your dodgeroll, allowing even more evasion...",
+             "I am so fucking mad"
             };
 
         public override void ResetEffects()

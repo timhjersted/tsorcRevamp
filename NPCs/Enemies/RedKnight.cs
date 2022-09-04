@@ -106,6 +106,12 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             tsorcRevampAIs.FighterAI(NPC, 2, 0.05f, 0.2f, true, 10, false, null, 1000, 0.5f, 4, true);
 
+            //Reset spear and shot timer after teleporting
+            //This prevents it from insta-hitting players
+            if (NPC.ai[3] < 0)
+            {
+                NPC.localAI[1] = 0;
+            }
 
             if (Main.netMode != 1 && !Main.player[NPC.target].dead)
             {

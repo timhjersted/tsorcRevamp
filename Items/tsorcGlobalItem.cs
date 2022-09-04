@@ -84,6 +84,10 @@ namespace tsorcRevamp.Items
         
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
+            if (item.createTile > 0 && !tsorcRevamp.PlaceAllowed.Contains(item.createTile))
+            {
+                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "[c/fc1c03:Can not be placed in adventure mode!]."));
+            }
             if(item.type == ItemID.DirtRod && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "[c/fc1c03:This item is disabled in adventure mode!]."));
