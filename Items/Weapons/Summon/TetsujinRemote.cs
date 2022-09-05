@@ -24,11 +24,11 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			Item.damage = 40;
 			Item.knockBack = 3f;
 			Item.mana = 10;
-			Item.width = 32;
-			Item.height = 32;
+			Item.width = 42;
+			Item.height = 28;
 			Item.useTime = 30;
 			Item.useAnimation = 30;
-			Item.useStyle = ItemUseStyleID.Swing;
+			Item.useStyle = ItemUseStyleID.Shoot;
 			Item.value = Item.buyPrice(1, 50, 0, 0);
 			Item.rare = ItemRarityID.Expert;
 			Item.expert = true;
@@ -59,7 +59,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			// Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
 			return false;
 		}
-
+		/*
         public override void AddRecipes()
         {
 			Recipe recipe = CreateRecipe();
@@ -72,5 +72,6 @@ namespace tsorcRevamp.Items.Weapons.Summon
 
 			recipe.Register();
 		}
+		*/
     }
 }
