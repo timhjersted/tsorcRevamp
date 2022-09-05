@@ -116,21 +116,25 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 holdTimer--;
             }
-
-            //2nd phase debuffs
-            if (NPC.Distance(player.Center) < 1550 && NPC.life < NPC.lifeMax / 2)
+            //1st phase, hungry debuff triggers when super close
+            if (NPC.Distance(player.Center) < 30 && NPC.life > NPC.lifeMax / 2)
             {
-                player.AddBuff(BuffID.Starving, 120, false);
+                player.AddBuff(BuffID.Hunger, 3600, false);
+            }
 
-
+            //2nd phase, triggers starving once for 10 minutes (eating food is antidote)
+            if (NPC.Distance(player.Center) < 1550 && NPC.life < NPC.lifeMax / 2)
+            {        
                 if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
                 {
                     Main.NewText("The Hunter has decided to feed you to its child. It's fully camouflaged!", 235, 199, 23);//deep yellow
+                    Main.NewText("The Hunter has drained your life force. You're starving to death!", 235, 166, 23);//deep yellow
                     holdTimer = 9000;
-
-
                 }
-
+                if (holdTimer >= 8940 && Main.netMode != NetmodeID.Server)
+                {
+                    player.AddBuff(BuffID.Starving, 36000, false);
+                }
             }
 
             //spawn the child!
