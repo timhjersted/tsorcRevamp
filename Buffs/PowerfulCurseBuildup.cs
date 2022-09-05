@@ -42,10 +42,10 @@ namespace tsorcRevamp.Buffs
                     }
                 }
                 player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel = 0; //Reset to 0
-                player.AddBuff(ModContent.BuffType<Invincible>(), 720); //12 seconds
+                player.AddBuff(ModContent.BuffType<Invincible>(), 300); //5 seconds
                 player.AddBuff(ModContent.BuffType<Strength>(), 7200); //2 minutes
-                player.AddBuff(ModContent.BuffType<CrimsonDrain>(), 600);  //reduced duration, so it adds visually to the moment of curse
-                player.AddBuff(BuffID.Clairvoyance, 36000); //10 minutes
+                player.AddBuff(ModContent.BuffType<CrimsonDrain>(), 300);  //reduced duration, so it adds visually to the moment of curse
+                player.AddBuff(BuffID.Clairvoyance, 7200); //2 minutes
 
                 for (int i = 0; i < 50; i++)
                 {
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Buffs
 
         public override bool ReApply(Player player, int time, int buffIndex)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel += Main.rand.Next(125, 181); //+125-180, aka 3-4 hits for proc
+            player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel += Main.rand.Next(180, 240); //+180-240, aka 3 hits for proc
 
             for (int i = 0; i < 8; i++)
             {

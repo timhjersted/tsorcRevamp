@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000);
             }
         
-                target.AddBuff(BuffID.OnFire, 300);
+         
                 target.AddBuff(BuffID.Poisoned, 3600);
                 target.AddBuff(BuffID.Weak, 300);
         }

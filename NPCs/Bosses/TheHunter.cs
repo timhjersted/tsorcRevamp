@@ -116,30 +116,30 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 holdTimer--;
             }
-            //1st phase, hungry debuff triggers when super close
-            if (NPC.Distance(player.Center) < 30 && NPC.life > NPC.lifeMax / 2)
+
+            //both phases, bleeding debuff triggers when super close
+            if (NPC.Distance(player.Center) < 30)
             {
-                player.AddBuff(BuffID.Hunger, 3600, false);
+                player.AddBuff(BuffID.Bleeding, 300, false);
             }
 
-            //2nd phase, triggers starving once for 10 minutes (eating food is antidote)
+            //2nd phase, spawns the hunter's child
             if (NPC.Distance(player.Center) < 1550 && NPC.life < NPC.lifeMax / 2)
             {        
                 if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
                 {
+                    
                     Main.NewText("The Hunter has decided to feed you to its child. It's fully camouflaged!", 235, 199, 23);//deep yellow
-                    Main.NewText("The Hunter has drained your life force. You're starving to death!", 235, 166, 23);//deep yellow
+                    //Main.NewText("The Hunter has drained your life force. You're starving to death!", 57, 227, 48);//green
                     holdTimer = 9000;
                 }
-                if (holdTimer >= 8940 && Main.netMode != NetmodeID.Server)
-                {
-                    player.AddBuff(BuffID.Starving, 36000, false);
-                }
+                
             }
 
             //spawn the child!
             if (!ChildrenSpawned && NPC.life <= NPC.lifeMax / 2)
             {
+                
                 int Child = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Bosses.TheHunterChild>(), 0);
                 
                 Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
@@ -153,11 +153,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
 
             }
-            //getting close to the hunter triggers bleeding
-            if (NPC.Distance(player.Center) < 80)
-            {
-                player.AddBuff(BuffID.Bleeding, 180, false);
-            }
+            
 
             //MUTANT TOAD SPAWN
             //counts up each tick. used to space out spawns
