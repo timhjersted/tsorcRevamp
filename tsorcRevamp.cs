@@ -1037,6 +1037,7 @@ namespace tsorcRevamp
                                                         }                                                                                },
                 {   ItemID.SkeletronPrimeBossBag    ,   new List<IItemDropRule>()                           
                                                         {
+                                                            ItemDropRule.Common(ItemID.AngelWings),
                                                             ItemDropRule.Common(ModContent.ItemType<CrestOfSteel>())
                                                         }                                                                                },
                 {   ItemID.PlanteraBossBag          ,   new List<IItemDropRule>()                           
