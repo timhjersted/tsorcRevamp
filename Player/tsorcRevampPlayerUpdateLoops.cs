@@ -684,14 +684,14 @@ namespace tsorcRevamp
                                     FieldTimer++;
                                     if (FieldTimer == 1)
                                     {
-                                        Main.NewText("Your grapple strains against the force, but...!", Color.Orange);
+                                        UsefulFunctions.BroadcastText("Your grapple strains against the force, but...!", Color.Orange);
                                         TextCooldown = 350;
                                     }
                                     if (FieldTimer >= 340)
                                     {
                                         Player.velocity += new Vector2(0, -15);
                                         Player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 30);
-                                        Main.NewText("Your grapple suddenly snaps!!", Color.Red);
+                                        UsefulFunctions.BroadcastText("Your grapple suddenly snaps!!", Color.Red);
                                     }
                                 }
                             }
@@ -699,7 +699,7 @@ namespace tsorcRevamp
                             Player.velocity += UsefulFunctions.GenerateTargetingVector(new Vector2(4484, 355) * 16, Player.Center, 20);
                             if (TextCooldown <= 0)
                             {
-                                Main.NewText("A strong forcefield expels you from the ruins!", Color.Purple);
+                                UsefulFunctions.BroadcastText("A strong forcefield expels you from the ruins!", Color.Purple);
                                 TextCooldown = 240;
                             }
                         }

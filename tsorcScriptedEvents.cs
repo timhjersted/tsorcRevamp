@@ -1065,7 +1065,7 @@ namespace tsorcRevamp
                                 }
                             }
                         }
-                        if (savedEvent) //Do not re-add a queued event if it has been disabled (ie because the players beat it)
+                        if (!savedEvent) //Do not re-add a queued event if it has been disabled (ie because the players beat it)
                         {
                             InactiveEvents.Add(e);
                         }

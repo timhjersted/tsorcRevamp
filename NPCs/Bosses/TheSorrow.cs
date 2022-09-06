@@ -104,7 +104,6 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void AI()
         {
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            NPC.netUpdate = true;
             NPC.ai[2]++;
             NPC.ai[1]++;
             hitTime++;
@@ -169,11 +168,11 @@ namespace tsorcRevamp.NPCs.Bosses
             //ICE SPIRIT ATTACK
             if (FlameShotTimer >= 25 && FlameShotCounter < 5)
             {
-
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 800 + Main.rand.Next(800), (float)player.position.Y - 300f, (float)(-40 + Main.rand.Next(80)) / 10, 2.5f, ModContent.ProjectileType<IceSpirit>(), waterTrailsDamage, 2f, Main.myPlayer); //ProjectileID.CultistBossFireBallClone
-
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 800 + Main.rand.Next(800), (float)player.position.Y - 300f, (float)(-40 + Main.rand.Next(80)) / 10, 2.5f, ModContent.ProjectileType<IceSpirit>(), waterTrailsDamage, 2f, Main.myPlayer); //ProjectileID.CultistBossFireBallClone
+                }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit5 with {Volume = 0.3f, PitchVariance = 2f}, NPC.Center);
-                NPC.netUpdate = true; //new
 
                 FlameShotTimer = 0;
                 FlameShotCounter++;
@@ -183,33 +182,28 @@ namespace tsorcRevamp.NPCs.Bosses
             if (Main.rand.NextBool(900) && NPC.life <= NPC.lifeMax / 2)
             {
                 FlameShotCounter = 0;
-                NPC.netUpdate = true;
             }
 
             if (Main.rand.NextBool(900) && NPC.life <= NPC.lifeMax / 4)
             {
                 FlameShotCounter = 0;
-                NPC.netUpdate = true;
             }
 
             if (Main.rand.NextBool(500) && NPC.life <= NPC.lifeMax / 6)
             {
                 FlameShotCounter = 0;
-                NPC.netUpdate = true;
             }
 
             //TRIGGER FROST BREATH
             if (Main.rand.NextBool(500) && breathTimer < 331 && NPC.life > NPC.lifeMax / 2)
             {
                 breathTimer = 10;
-                NPC.netUpdate = true;
             }
 
             //higher bool means more often in this case, as it's interrupting the breathtimer
             if (Main.rand.NextBool(700) && breathTimer < 331 && NPC.life <= NPC.lifeMax / 2)
             {
                 breathTimer = 10;
-                NPC.netUpdate = true;
             }
 
             // FROST BREATH ATTACK 
@@ -239,16 +233,17 @@ namespace tsorcRevamp.NPCs.Bosses
             if (breathTimer < 0)
             {
                 NPC.velocity.X = 0f;
+                NPC.netUpdate = true;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 9);
                     breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<FrozenDragonsBreath>(), waterTrailsDamage, 0f, Main.myPlayer);
-                    //play breath sound
-                    if (Main.rand.NextBool(3))
-                    {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.9f, PitchVariance = 1f }, NPC.Center); //flame thrower
-                    }
+                    //play breath sound                    
+                }
+                if (Main.rand.NextBool(3))
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.9f, PitchVariance = 1f }, NPC.Center); //flame thrower
                 }
             }
             //END BREATH ATTACK
@@ -258,16 +253,19 @@ namespace tsorcRevamp.NPCs.Bosses
             //SPAWN TURTLES!
             if (Main.rand.NextBool(2000) && (player.position.Y + 20 >= NPC.position.Y) && breathTimer > 0 && NPC.life >= NPC.lifeMax / 2)
             {
-                int Turtle = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.IceTortoise, 0); //ModContent.NPCType<NPCs.Enemies.MutantToad>()
-
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PoisonStaff, NPC.velocity.X, NPC.velocity.Y);
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PoisonStaff, NPC.velocity.X, NPC.velocity.Y);
-                
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit24 with { Volume = 0.5f }, NPC.Center);
-
-                if (Main.netMode == NetmodeID.Server)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Turtle, 0f, 0f, 0f, 0);
+                    int Turtle = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.IceTortoise, 0); //ModContent.NPCType<NPCs.Enemies.MutantToad>()
+
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PoisonStaff, NPC.velocity.X, NPC.velocity.Y);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PoisonStaff, NPC.velocity.X, NPC.velocity.Y);
+
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit24 with { Volume = 0.5f }, NPC.Center);
+
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Turtle, 0f, 0f, 0f, 0);
+                    }
                 }
             }
 
@@ -295,7 +293,7 @@ namespace tsorcRevamp.NPCs.Bosses
             topSpeed = Vector2.Distance(NPC.Center, Target.Center) / 50f;
             targetPoint = Target.Center;
 
-            if (Main.rand.NextBool(160) && breathTimer > 0 && NPC.life >= NPC.lifeMax / 2)
+            if (Main.rand.NextBool(160) && breathTimer > 0 && NPC.life >= NPC.lifeMax / 2 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8, .1f, true, true);
                 velocity += Target.velocity / 1.5f;
@@ -460,6 +458,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.ai[3] = 1;
                     NPC.life += 1200; //amount boss heals when going invisible
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
+                    NPC.netUpdate = true;
                 }
                 if (NPC.ai[1] >= 0)
                 {
@@ -479,7 +478,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
             }
-            if (NPC.velocity.X < 0)
+            if (NPC.velocity.X <= 0)
             {
                 NPC.spriteDirection = -1;
             }

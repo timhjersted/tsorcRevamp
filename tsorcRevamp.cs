@@ -1182,8 +1182,11 @@ namespace tsorcRevamp
             }
             DarkSoulCounterUIState.ConfigInstance = null;
 
-            TransparentTextureHandler.TransparentTextures.Clear();
-            TransparentTextureHandler.TransparentTextures = null;
+            if(TransparentTextureHandler.TransparentTextures != null)
+            {
+                TransparentTextureHandler.TransparentTextures.Clear();
+                TransparentTextureHandler.TransparentTextures = null;
+            }
 
             /*
             for (int m = 1; m < Main.maxMusic; m++)
