@@ -103,13 +103,16 @@ namespace tsorcRevamp.Items.VanillaItems
         public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)
         {
             base.ModifyWeaponDamage(item, player, ref damage);
-            if (item.type == ItemID.EmpressBlade & !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))
+            if (tsorcRevampWorld.Slain != null)
             {
-                damage *= 0.75f;
-            }
-            else if (item.type == ItemID.EmpressBlade & !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()))
-            {
-                damage *= 0.88f;
+                if (item.type == ItemID.EmpressBlade & !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))
+                {
+                    damage *= 0.75f;
+                }
+                else if (item.type == ItemID.EmpressBlade & !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()))
+                {
+                    damage *= 0.88f;
+                }
             }
         }
 
