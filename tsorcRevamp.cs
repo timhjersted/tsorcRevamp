@@ -1133,8 +1133,8 @@ namespace tsorcRevamp
 
             //--------
             #region CustomDungeonTiles list
-            CustomDungeonWalls = new bool[231];
-            for (int i = 0; i < 231; i++)
+            CustomDungeonWalls = new bool[500];
+            for (int i = 0; i < 500; i++)
             {
                 CustomDungeonWalls[i] = false;
             }
