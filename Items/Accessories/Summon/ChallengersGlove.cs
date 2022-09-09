@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
             player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.12f;
             player.autoReuseGlove = true;
             player.whipRangeMultiplier += 0.1f;
-            player.aggro += 2;
+            player.aggro += 400;
         }
     }
 }*/
