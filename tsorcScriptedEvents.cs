@@ -191,7 +191,7 @@ namespace tsorcRevamp
             ScriptedEvent EoCEvent = new ScriptedEvent(new Vector2(3900, 1138), 20, NPCID.EyeofCthulhu, DustID.MagicMirror, true, true, "The Eye sees you!", Color.Blue, false, null, SetNightCustomAction, peaceCandleEffect: true);
 
             //EoW1
-            ScriptedEvent EoW1Event = new ScriptedEvent(new Vector2(3633, 996), 46, NPCID.EaterofWorldsHead, DustID.Shadowflame, true, true, "The Eater of Worlds is ready to feed!", Color.Purple, false, peaceCandleEffect: true);
+            ScriptedEvent EoW1Event = new ScriptedEvent(new Vector2(3633, 996), 46, NPCID.EaterofWorldsHead, DustID.Shadowflame, false, true, "The Eater of Worlds is ready to feed!", Color.Purple, false, PreEoWCustomCondition, peaceCandleEffect: true);
 
             //EMPRESS OF LIGHT
             ScriptedEvent EoL = new ScriptedEvent(new Vector2(4484, 355), 100, NPCID.HallowBoss, DustID.RainbowTorch, false, true, "The Empress of Light awakens!", Main.DiscoColor, false, EoLDownedCondition, peaceCandleEffect: true);
@@ -535,7 +535,14 @@ namespace tsorcRevamp
         }
         public static bool PreEoWCustomCondition()
         {
-            return !NPC.downedBoss2;
+            if (NPC.downedBoss2 || NPC.AnyNPCs(NPCID.EaterofWorldsHead) || NPC.AnyNPCs(NPCID.EaterofWorldsBody) || NPC.AnyNPCs(NPCID.EaterofWorldsTail))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
         public static bool PostEoWCustomCondition()
         {
@@ -717,8 +724,13 @@ namespace tsorcRevamp
 
         public static bool SetNightCustomAction(Player player, ScriptedEvent thisEvent)
         {
+            UsefulFunctions.BroadcastText("Time shifts forward...", Color.Purple);
             Main.dayTime = false;
             Main.time = 0;
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.WorldData);
+            }
             return true;
         }
 
@@ -1032,6 +1044,11 @@ namespace tsorcRevamp
         public static int DrawnEvents;
         public static void PlayerScriptedEventCheck(Player player)
         {
+            if (player.dead)
+            {
+                return;
+            }
+
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 bool bossAlive = false;
@@ -1063,6 +1080,7 @@ namespace tsorcRevamp
                                 {
                                     savedEvent = true;
                                 }
+                                break;
                             }
                         }
                         if (!savedEvent) //Do not re-add a queued event if it has been disabled (ie because the players beat it)
@@ -1384,7 +1402,24 @@ namespace tsorcRevamp
                 }
                 else
                 {
-                    InactiveEvents.Add(currentEvent);
+                    //Only re-add event if it has not been defeated
+                    //This is also checked when the queued events are re-enabled back in ScriptedEventCheck
+                    bool savedEvent = false;
+                    foreach (KeyValuePair<tsorcScriptedEvents.ScriptedEventType, ScriptedEvent> pair in tsorcScriptedEvents.ScriptedEventDict)
+                    {
+                        if (pair.Value == currentEvent)
+                        {
+                            if (ScriptedEventValues[pair.Key] == true)
+                            {
+                                savedEvent = true;
+                            }
+                            break;
+                        }
+                    }
+                    if (!savedEvent) //Do not re-add a queued event if it has been disabled (ie because the players beat it)
+                    {
+                        InactiveEvents.Add(currentEvent);
+                    }
                 }
             }
             DisabledEvents = new List<ScriptedEvent>();
@@ -1603,12 +1638,13 @@ namespace tsorcRevamp
                     playerAlive = true;
                     break;
                 }
-                //If we reach the end without hitting one, end the event.
-                if (!playerAlive)
-                {
-                    EndEvent(false);
-                    return;
-                }
+            }
+
+            //If we reach the end without hitting one, end the event.
+            if (!playerAlive)
+            {
+                EndEvent(false);
+                return;
             }
 
             //If the NPC is dead or if the custom action set endEvent to true, remove it from active events
@@ -1618,12 +1654,7 @@ namespace tsorcRevamp
             {
                 if (spawnedNPC != null && !spawnedNPC.active)
                 {
-                    npcDead = true;
-                }
-                    
-                if (npcDead)
-                {
-                    endEvent = true;
+                    EndEvent(npcDead);
                 }
             }
             else
@@ -1737,7 +1768,7 @@ namespace tsorcRevamp
             //Otherwise if it wasn't completed, then despawn the NPC's and re-add it to DisabledEvents to be re-initialized once the player respawns
             else
             {
-                tsorcScriptedEvents.DisabledEvents.Add(this);
+                tsorcScriptedEvents.InactiveEvents.Add(this);
                 if (spawnedNPC != null)
                 {
                     if (spawnedNPC.active && spawnedNPC.boss == false)

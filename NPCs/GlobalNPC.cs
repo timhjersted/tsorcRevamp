@@ -1055,21 +1055,38 @@ namespace tsorcRevamp.NPCs
             }
         }
 
-
+        public override void SetDefaults(NPC npc)
+        {
+            //Only mess with it if it's one of our bosses
+            if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
+            {
+                if (npc.boss && !Main.expertMode)
+                {
+                    //Bosses are 1.3x weaker in normal mode
+                    //Doing it like this means we can simply set npc.lifeMax to exactly value we want their expert mode health to be, saving us a headache.
+                    //Rounded, because casting to an int truncates it which causes slight inaccuracies later on
+                    npc.lifeMax = (int)Math.Round(npc.lifeMax / 1.3f);
+                }
+                else
+                {
+                    if (npc.ModNPC.GetType().Namespace.Contains("SuperHardMode"))
+                    {
+                        base.SetDefaults(npc);
+                        npc.lifeMax = (int)(tsorcRevampWorld.SHMScale * npc.lifeMax);
+                        npc.defense = (int)(tsorcRevampWorld.SubtleSHMScale * npc.defense);
+                        npc.damage = (int)(tsorcRevampWorld.SubtleSHMScale * npc.damage);
+                    }
+                }
+            }
+        }
 
         //This method lets us scale the stats of NPC's in expert mode.
         public override void ScaleExpertStats(NPC npc, int numPlayers, float bossLifeScale)
         {
-            //If it's not one of ours, don't mess with it.
-            if ((npc.ModNPC == null) || (npc.ModNPC.Mod != this.Mod))
-            {
-                base.ScaleExpertStats(npc, numPlayers, bossLifeScale);
-                return;
-            }
-
-            //If it's a boss, do nothing. Bosses will get their own scaling.
-            if (npc.boss)
-            {
+            if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp") && npc.boss)
+            {                
+                //Add our scaling
+                npc.lifeMax = (int)(npc.lifeMax * (1f + ((numPlayers - 1f) * .5f)));
                 return;
             }
         }
@@ -1678,6 +1695,7 @@ namespace tsorcRevamp.NPCs
                     //With this, it will intentionally seek out those it has not yet killed instead.
                     bool viableTarget = false;
                     float closestPlayerDistance = float.MaxValue;
+                    float oldTarget = Main.npc[npcID].target;
                     //Iterate through all tracked players in the array
                     for (int i = 0; i < targetCount; i++)
                     {
@@ -1696,10 +1714,16 @@ namespace tsorcRevamp.NPCs
                             {
                                 closestPlayerDistance = distance;
                                 Main.npc[npcID].target = targetIDs[i];
-
                             }
                         }
                     }
+
+                    //If a npc changes targets, sync it
+                    if(oldTarget != Main.npc[npcID].target)
+                    {
+                        Main.npc[npcID].netUpdate = true;
+                    }
+
                     //If there's no player that has not yet died, then despawn.
                     if (!viableTarget)
                     {

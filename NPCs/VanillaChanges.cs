@@ -19,33 +19,6 @@ namespace tsorcRevamp.NPCs
 
         public override void SetDefaults(NPC npc)
         {
-
-
-
-
-            //Only mess with it if it's one of our bosses
-            if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
-            {
-                if (npc.boss)
-                {
-                    //Bosses are 1.3x weaker in normal mode. This is reverted for expert in ScaleExpertStats
-                    //Doing it like this means we can simply set npc.lifeMax to exactly value we want their expert mode health to be, saving us a headache.
-                    //Rounded, because casting to an int truncates it which causes slight inaccuracies later on
-                    npc.lifeMax = (int)Math.Round(npc.lifeMax / 1.3f);
-                }
-                else
-                {
-                    if (npc.ModNPC.GetType().Namespace.Contains("SuperHardMode"))
-                    {
-                        base.SetDefaults(npc);
-                        npc.lifeMax = (int)(tsorcRevampWorld.SHMScale * npc.lifeMax);
-                        npc.defense = (int)(tsorcRevampWorld.SubtleSHMScale * npc.defense);
-                        npc.damage = (int)(tsorcRevampWorld.SubtleSHMScale * npc.damage);
-                    }
-                }
-            }
-
-
             switch (npc.type)
             {
 

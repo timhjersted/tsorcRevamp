@@ -20,7 +20,7 @@ namespace tsorcRevamp.UI
         int initialTextPosX = 133; //was 60
 
         public static tsorcRevampConfig ConfigInstance = ModContent.GetInstance<tsorcRevampConfig>();
-        public static Vector2 DrawPos = new Vector2(ConfigInstance.SoulCounterPosX, ConfigInstance.SoulCounterPosY);
+        public static Vector2 DrawPos = ConfigInstance == null ? Vector2.Zero : new Vector2(ConfigInstance.SoulCounterPosX, ConfigInstance.SoulCounterPosY);
 
         public override void OnInitialize()
         {

@@ -1394,6 +1394,12 @@ namespace tsorcRevamp
                 Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
             }
         }
+
+        public override object Call(params object[] args)
+        {
+            return base.Call(args);
+        }
+
         public override void PostAddRecipes()
         {
             tsorcGlobalItem.populateSoulRecipes();
