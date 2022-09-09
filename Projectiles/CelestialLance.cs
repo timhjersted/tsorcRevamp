@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-
 using Terraria;
 using Terraria.ModLoader;
 
@@ -9,9 +8,6 @@ namespace tsorcRevamp.Projectiles
 {
     class CelestialLance : ModProjectile
     {
-
-        bool hasHealed = false;
-
         public override void SetDefaults()
         {
             Projectile.width = 45;
@@ -35,25 +31,6 @@ namespace tsorcRevamp.Projectiles
             get => Projectile.ai[0];
             set => Projectile.ai[0] = value;
         }
-
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
-            Player pOwner = Main.player[Projectile.owner];
-
-            if (Main.rand.NextBool(5))
-            {
-                if (!hasHealed)
-                {
-                    int healAmount = 20;
-                    pOwner.statLife += healAmount;
-                    pOwner.HealEffect(healAmount, true);
-                    hasHealed = true;
-                }
-
-            }
-
-        }
-
         public override void AI()
         {
             Player pOwner = Main.player[Projectile.owner];
