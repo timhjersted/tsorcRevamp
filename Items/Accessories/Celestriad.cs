@@ -72,7 +72,7 @@ namespace tsorcRevamp.Items.Accessories
                 }
 
                 base.UpdateEquip(player);
-                player.GetModPlayer<tsorcRevampPlayer>().manaShield = 1;
+                player.GetModPlayer<tsorcRevampPlayer>().manaShield = 2;
                 //player.GetDamage(DamageClass.Ranged) *= 0.01f;
                 //player.GetDamage(DamageClass.Magic) *= 0.01f;
                 //player.GetDamage(DamageClass.Summon) *= 0.01f;
@@ -80,10 +80,7 @@ namespace tsorcRevamp.Items.Accessories
                 {
                     player.endurance += damageResistance;
                 }
-
             }
-            
-
         }
     }
 }
