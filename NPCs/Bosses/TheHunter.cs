@@ -72,6 +72,11 @@ namespace tsorcRevamp.NPCs.Bosses
             sproutDamage = (int)(sproutDamage / 2);
         }
 
+        public override void OnHitPlayer(Player player, int damage, bool crit)
+        {
+            player.AddBuff(BuffID.Bleeding, 1800, false);
+        }
+
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
@@ -89,9 +94,6 @@ namespace tsorcRevamp.NPCs.Bosses
             flapWings++;
             breathTimer++;
             
-
-
-
             //Flap Wings
             if (flapWings == 30 || flapWings == 60)
             {
@@ -117,10 +119,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 holdTimer--;
             }
 
-            //both phases, bleeding debuff triggers when super close
-            if (NPC.Distance(player.Center) < 30)
+            //both phases, ichor debuff triggers when super close
+            if (NPC.Distance(player.Center) < 20)
             {
-                player.AddBuff(BuffID.Bleeding, 300, false);
+                player.AddBuff(BuffID.Ichor, 180, false);
             }
 
             //2nd phase, spawns the hunter's child
@@ -159,24 +161,25 @@ namespace tsorcRevamp.NPCs.Bosses
             //counts up each tick. used to space out spawns
             if (FrogSpawnTimer >= 120 && FrogSpawnCounter < 3)
             {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                { 
+                    NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.MutantToad>(), 0);
 
-                NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.MutantToad>(), 0);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PoisonStaff, NPC.velocity.X, NPC.velocity.Y);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PoisonStaff, NPC.velocity.X, NPC.velocity.Y);
 
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PoisonStaff, NPC.velocity.X, NPC.velocity.Y);
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PoisonStaff, NPC.velocity.X, NPC.velocity.Y);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie13 with { Volume = 0.5f}, NPC.Center);
+                    NPC.netUpdate = true; //new
 
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie13 with { Volume = 0.5f}, NPC.Center);
-                NPC.netUpdate = true; //new
-
-                FrogSpawnTimer = 0;
-                FrogSpawnCounter++;
-
+                    FrogSpawnTimer = 0;
+                    FrogSpawnCounter++;
+                }
             }
             //chance to trigger frogs spawning
-            if (Main.rand.NextBool(900) && NPC.life >= NPC.lifeMax / 2 && NPC.life <= 20000)
+            if (Main.rand.NextBool(300) && NPC.life >= NPC.lifeMax / 2)
             {
                 FrogSpawnCounter = 0;
-                NPC.netUpdate = true;
+                
             }
 
             

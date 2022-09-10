@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.defense = 44;
                 NPC.value = 550;
                 NPC.damage = 110;
-                NPC.lifeMax = 270;
+                NPC.lifeMax = 290;
                 NPC.knockBackResist = 0.1f;
 
             }
@@ -39,7 +39,9 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         public float swimTime;
-
+        int cursedFlamesDamage = 22;
+        bool breath;
+        int breathCD = 20;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2);
@@ -104,7 +106,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode)
             {
-                player.AddBuff(BuffID.Venom, 60, false); //venom
+                player.AddBuff(BuffID.Venom, 120, false); //venom
             }
 
         }
@@ -112,6 +114,62 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
+
+
+
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //flame thrower
+
+
+
+            if (NPC.life <= 50 && breath == false && Main.hardMode)
+            { 
+                breath = true;
+            }
+
+
+            if (breath)
+            {
+
+                NPC.velocity.X *= 0.7f;
+                NPC.velocity.Y *= 0.7f;
+                Lighting.AddLight(NPC.Center, Color.YellowGreen.ToVector3() * 3f);
+
+
+                //play breath sound
+                if (Main.rand.NextBool(3))
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //flame thrower
+                }
+
+                float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y /*+ (5f * npc.direction)*/, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 2), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedFlamesDamage, 0f, Main.myPlayer); //JungleWyvernFire      cursed dragons breath
+                }
+                NPC.netUpdate = true;
+
+
+                breathCD--;
+
+
+            }
+
+            if (breathCD <= 0)
+            {
+                breath = false;
+                //breathCD = 30;
+                NPC.life= 0;
+                if (!Main.dedServ)
+                {
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Mutant Toad Gore 1").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Mutant Toad Gore 2").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Mutant Toad Gore 2").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Mutant Toad Gore 3").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Mutant Toad Gore 3").Type, 1f);
+                }
+            }
+
+
             if (Main.rand.NextBool(1000))
             { 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie13 with { Volume = 0.5f, PitchVariance = 1f }, NPC.Center); 
@@ -393,6 +451,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (NPC.life <= 0)
             {
+
                 if (!Main.dedServ)
                 {
                     Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Mutant Toad Gore 1").Type, 1f);

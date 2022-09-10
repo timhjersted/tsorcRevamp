@@ -20,10 +20,10 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = 7300;
-            NPC.damage = 100;
+            NPC.damage = 105;
             NPC.defense = 36;
             NPC.knockBackResist = 0f;
-            NPC.scale = 0.5f;
+            NPC.scale = 0.7f;
             NPC.value = 31500;
             NPC.npcSlots = 1;
             NPC.lavaImmune = true;
@@ -57,17 +57,13 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
-            //if (Main.player[NPC.target].HasBuff(BuffID.Hunter))
-            //{ 
-            //    return true; 
-            //}
-            //else 
-            //{
-                return false;
-            //}
-                
+                return false;   
         }
 
+        public override void OnHitPlayer(Player player, int damage, bool crit) 
+        {
+            player.AddBuff(BuffID.Bleeding, 1800, false);
+        }
 
         NPCDespawnHandler despawnHandler;
         public override void AI()
@@ -100,11 +96,12 @@ namespace tsorcRevamp.NPCs.Bosses
 
             Player player = Main.player[NPC.target];
             //getting close triggers hunter vision
-            if (NPC.Distance(player.Center) < 100)
+            if (NPC.Distance(player.Center) < 80)
             {
                 player.AddBuff(BuffID.Hunter, 60, false);
             }
 
+          
             if (NPC.ai[3] == 0)
             {
                 //NPC.alpha = 200;
