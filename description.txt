@@ -8,10 +8,9 @@ The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside t
 TOP FEATURES
 *Explore a vast, interconnected and richly illustrated world, developed over the span of 4 years
 *Companion Soundtrack with 59 songs! (Dark Souls, Elden Ring and Zelda fans will love it)
-*39 bosses (17 vanilla plus 22 mod bosses)
+*42 bosses (17 vanilla plus 25 mod bosses)
 *100+ new NPCS including 8 friendly NPCs
 *Over 700 new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
-*Many hours of secret post-game content
 *Dark Souls game mechanics, including bonfire save points and the dodge roll (bound to Left Alt by default)
 *The mod enforces old school adventure map rules, so if you can do it, it's okay to do it!
 
@@ -23,21 +22,24 @@ The game is fairly polished up to the end of the main story (defeating Attraidie
 
 
 DISCORD
-Join our discord here to discuss the mod and give feedback:
+Join our discord to discuss the mod and give feedback:
 https://discord.gg/UGE6Mstrgz
 
-Please share mod related feedback and suggestions under #any-suggestions or #bug-reports.
-Post map related feedback to #map-suggestions-bugs.
+-Please share mod-related feedback and suggestions under #any-suggestions or #bug-reports.
 
-The changelogs can be found under #mod-changelog and #map-changelog.
+-Post map feedback to #map-suggestions-bugs.
 
-TSORC holds many secrets. If you have questions, post them to #map-questions or #mod-questions.
+-The changelogs can be found under #mod-changelog and #map-changelog.
+
+-TSORC holds many secrets. If you have questions, post them to #map-questions or #mod-questions.
+
+-Share Let's Plays or video recordings of your playthrough in #tsorc-media.
 
 
 
 GAME MANUAL:
 ------------------------------------------
-*Create a new character named Red Cloud (for multiplayer, everyone should use a different name).
+*Create a new character named Red Cloud (for multiplayer, everyone should use a different name)
 
 *Read signs in the order you come to them 
 
