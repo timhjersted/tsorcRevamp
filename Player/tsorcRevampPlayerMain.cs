@@ -895,17 +895,22 @@ namespace tsorcRevamp
                     Player.manaRegenDelay = Items.Accessories.Melee.ManaShield.regenDelay;
                 }
             }
+            if (manaShield == 2)
+            {
+                if (Player.statMana >= Items.Accessories.Celestriad.manaCost)
+                {
+                    Player.statMana -= Items.Accessories.Celestriad.manaCost;
+                    Player.manaRegenDelay = Items.Accessories.Celestriad.regenDelay;
+                }
+            }
             // statmina shield code
             if (staminaShield == 1)
             {
-
                 if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 75)
                 {
                     Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= Items.Accessories.Expert.DragonCrestShield.staminaCost;
                     //return;
-                }
-
-                
+                }                
             }
         }
 
