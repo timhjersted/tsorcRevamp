@@ -208,31 +208,31 @@ namespace tsorcRevamp
                 7, //copper                
                 TileID.Gold,
                 9, //silver
-                10, //closed door
-                11, //open door
+                //10, //closed door (No Construction)
+                //11, //open door (No Construction)
                 12, //Heart crystal
                 13, //bottles and jugs
-                14, //table
-                15, //chairs
+                14, //table (Left in for MS Compatability)
+                //15, //chairs (No Construction)
                 16, //anvil
                 17, //furnance
-                18, //workbench
+                18, //workbench (Left in for MS Compatability)
                 20, //sapling
                 21, //chests
                 24, //small corruption plants
                 27, //sunflower
                 28, //pot
-                29, //piggy bank
+                //29, //piggy bank (Accessible at all bonfires, breakage unneeded
                 31, //shadow orb
                 32, //corruption barbs
-                33, //candle
-                34, //bronze chandellier
-                35, //silver c
-                36, //gold c
+                33, //candle (can be used to make water candles)
+                //34, //bronze chandellier (No Construction)
+                //35, //silver c (No Construction)
+                //36, //gold c (No Construction)
                 37, //meteorite
-                42, //chain lantern
+                //42, //chain lantern (No Construction)
                 49, //water candle
-                50, //books
+                //50, //books (No Construction) (you only need 1 for the boss tome)
                 51, //cobweb
                 52, //vines
                 53, //sand
@@ -253,26 +253,26 @@ namespace tsorcRevamp
                 82, //new herbs
                 83, //grown herbs
                 84, //bloomed herbs
-                85, //tombstone
+                //85, //tombstone (No Construction) (player death drops have been fixed)
                 86, //loom
-                87, //piano
-                88, //drawer
-                89, //bench
-                90, //bathtub
+                //87, //piano (No Construction)
+                //88, //drawer (No Construction)
+                //89, //bench (No Construction)
+                //90, //bathtub (No Construction)
                 91, //banner
-                92, //lamp post
-                93, //tiki torch
+                //92, //lamp post (No Construction)
+                //93, //tiki torch (No Construction)
                 94, //keg
-                95, //chinese lantern
+                //95, //chinese lantern (No Construction)
                 96, //cooking pot
-                97, //safe
-                98, //skull candle
-                99, //trash can
-                100, //candlabra
+                //97, //safe (No Construction)
+                //98, //skull candle (No Construction)
+                //99, //trash can (No Construction)
+                //100, //candlabra (No Construction)
                 101, //bookcase
-                102, //throne
-                103, //bowl
-                104, //grandfather clock
+                //102, //throne (No Construction)
+                //103, //bowl (No Construction)
+                //104, //grandfather clock (No Construction)
                 //105, //statue
                 106, //sawmill
                 107, //cobalt
@@ -284,25 +284,25 @@ namespace tsorcRevamp
                 115, //Hallowed Vines 
                 116, //pearlsand
                 125, //crystal ball
-                126, //discoball
+                //126, //discoball (No Construction)
                 128, //mannequin
                 129, //crystal shard
                 133, //adamantite forge
                 134, //mythril anvil
                 138, //boulder
-                141, //explosives
+                //141, //explosives (trap disarming not allowed?
                 165, //ambient objects (stalagmites / stalactites, icicles)                
                 TileID.Platinum,
                 172, //sinks
-                173, //platinum candelabra
-                174, //platinum candle
+                //173, //platinum candelabra (No Construction)
+                174, //platinum candle (can be crafted into water candles)
                 184, //moss growth
                 185, //ambient objects (small rocks, small coin stashes, gem stashes)
                 186, //ambient objects (bone piles, large rocks, large coin stashes)
                 187, //ambient objects (mossy / lava rocks, spider eggs, misc bg furniture (cave tents, etc)) sword shrine
                 201, //tall grass (crimson)
                 205, //crimson vines
-                207, //water fountain
+                //207, //water fountain (No Construction)
                 211, //Chlorophyte Ore
                 218, //meat grinder
                 227, //strange plant
@@ -310,70 +310,70 @@ namespace tsorcRevamp
                 233, ////ambient objects (background leafy jungle plants)
                 238, //Plantera Bulb
                 240, //trophies
-                242, //big paintings
-                245, //tall paintings
-                246, //wide paintings
-                270, //firefly in a bottle
-                271, //lightning bug in a bottle
-                275, //bunny cage
-                276, //squirrel cage
-                277, //mallard cage
-                278, //duck cage
-                279, //bird cage
-                280, //blue jay cage
-                281, //cardinal cage
-                282, //fish bowl
+                //242, //big paintings (No Construction)
+                //245, //tall paintings (No Construction)
+                //246, //wide paintings (No Construction)
+                //270, //firefly in a bottle (No Construction)
+                //271, //lightning bug in a bottle (No Construction)
+                //275, //bunny cage (No Construction)
+                //276, //squirrel cage (No Construction)
+                //277, //mallard cage (No Construction)
+                //278, //duck cage (No Construction)
+                //279, //bird cage (No Construction)
+                //280, //blue jay cage (No Construction)
+                //281, //cardinal cage (No Construction)
+                //282, //fish bowl (No Construction)
                 283, //heavy work bench
-                285, //snail cage
-                286, //glowing snail cage
+                //285, //snail cage (No Construction)
+                //286, //glowing snail cage (No Construction)
                 287, //ammo box
-                288, //monarch jar
-                289, //purple emperor jar
-                290, //red admiral jar
-                291, //ulysses jar
-                292, //sulphur jar
-                293, //tree nymph jar
-                294, //zebra swallowtail jar
-                295, //julia jar
-                296, //scorpion cage
-                297, //black scorpion cage
-                298, //frog cage
-                299, //mouse cage
+                //288, //monarch jar (No Construction)
+                //289, //purple emperor jar (No Construction)
+                //290, //red admiral jar (No Construction)
+                //291, //ulysses jar (No Construction)
+                //292, //sulphur jar (No Construction)
+                //293, //tree nymph jar (No Construction)
+                //294, //zebra swallowtail jar (No Construction)
+                //295, //julia jar (No Construction)
+                //296, //scorpion cage (No Construction)
+                //297, //black scorpion cage (No Construction)
+                //298, //frog cage (No Construction)
+                //299, //mouse cage (No Construction)
                 300, //bone welder
                 301, //flesh cloning vat
                 302, //glass kiln
                 307, //steampunk boiler
-                309, //penguin cage
-                310, //worm cage
-                316, //blue jellyfish jar
-                317, //green jellyfish jar
-                318, //pink jellyfish jar
-                319, //ship in a bottle
+                //309, //penguin cage (No Construction)
+                //310, //worm cage (No Construction)
+                //316, //blue jellyfish jar (No Construction)
+                //317, //green jellyfish jar (No Construction)
+                //318, //pink jellyfish jar (No Construction)
+                //319, //ship in a bottle (No Construction)
                 310, //seaweed planter
                 324, //seashell variants
-                337, //number and letter statues
-                339, //grasshopper cage
+                //337, //number and letter statues (No Construction)
+                //339, //grasshopper cage (No Construction)
                 352, //crimson thorn
                 354, //bewitching table
                 355, //alchemy table
-                358, //gold bird cage
-                359, //gold bunny cage
-                360, //gold butterfly jar
-                361, //gold frog cage
-                362, //gold grasshopper cage
-                363, //gold mouse cage
-                364, //gold worm cage
+                //358, //gold bird cage (No Construction)
+                //359, //gold bunny cage (No Construction)
+                //360, //gold butterfly jar (No Construction)
+                //361, //gold frog cage (No Construction)
+                //362, //gold grasshopper cage (No Construction)
+                //363, //gold mouse cage (No Construction)
+                //364, //gold worm cage (No Construction)
                 372, //peace candle
                 377, //sharpening station
                 378, //target dummy
                 382, //flower vines
-                390, //lava lamp
-                391, //enchanted nightcrawler cage
-                392, //buggy cage
-                393, //grubby cage
-                394, //sluggy cage
-                413, //red squirrel cage
-                414, //gold squirrel cage
+                //390, //lava lamp (No Construction)
+                //391, //enchanted nightcrawler cage (No Construction)
+                //392, //buggy cage (No Construction)
+                //393, //grubby cage (No Construction)
+                //394, //sluggy cage (No Construction)
+                //413, //red squirrel cage (No Construction)
+                //414, //gold squirrel cage (No Construction)
                 463, //defenders forge
                 TileID.Titanium,
                 TileID.Pumpkins, //the harvestable kind, not the block
@@ -388,10 +388,10 @@ namespace tsorcRevamp
             #region PlaceAllowed list
             PlaceAllowed = new List<int>() {
                 4,  //torch
-                10, //Closed Door
-                11, //Open Door  
+                //10, //Closed Door
+                //11, //Open Door
                 13, //bottles
-                15, //chairs
+                //15, //chairs
                 16, //anvil
                 17, //furnace
                 18, //workbench
@@ -401,12 +401,12 @@ namespace tsorcRevamp
                 28, //pot
                 29, //piggy bank
                 33, //candle
-                34, //bronze chandellier
-                35, //silver chandellier
-                36, //gold chandellier
-                42, //chain lantern
+                //34, //bronze chandellier
+                //35, //silver chandellier
+                //36, //gold chandellier
+                //42, //chain lantern
                 49, //water candle
-                50, //books
+                //50, //books
                 73, //plants
                 74, //plants
                 78, //clay pot
@@ -415,107 +415,107 @@ namespace tsorcRevamp
                 82, //new herbs
                 83, //grown herbs
                 84, //bloomed herbs
-                85, //tombstone
+                //85, //tombstone
                 86, //loom
-                87, //piano
-                88, //drawer
-                89, //bench
-                90, //bathtub
+                //87, //piano
+                //88, //drawer
+                //89, //bench
+                //90, //bathtub
                 91, //banner
-                92, //lamp post
-                93, //tiki torch
+                //92, //lamp post
+                //93, //tiki torch
                 94, //keg
-                95, //chinese lantern
+                //95, //chinese lantern
                 96, //cooking pot
-                97, //safe
-                98, //skull candle
-                99, //trash can
-                100, //candlabra
+                //97, //safe
+                //98, //skull candle
+                //99, //trash can
+                //100, //candlabra
                 101, //bookcase
-                102, //throne
-                103, //bowl
-                104, //grandfather clock
-                105, //statue
+                //102, //throne
+                //103, //bowl
+                //104, //grandfather clock
+                //105, //statue
                 106, //sawmill
                 114, //tinkerer's workbench
                 125, //crystal ball
-                126, //discoball
+                //126, //discoball
                 128, //mannequin
                 129, //crystal shard
                 132, //lever
                 133, //adamantite forge
                 134, //mythril anvil
-                149, //festive lights
+                //149, //festive lights
                 172, //sinks
-                173, //platinum candelabra
+                //173, //platinum candelabra
                 174, //platinum candle
-                207, //water fountain
+                //207, //water fountain
                 218, //meat grinder
                 228, //dye vat
                 240, //trophies
-                242, //big paintings
-                245, //tall paintings
-                246, //wide paintings
+                //242, //big paintings
+                //245, //tall paintings
+                //246, //wide paintings
                 254, //pumpkin seeds
-                270, //firefly in a bottle
-                271, //lightning bug in a bottle
-                275, //bunny cage
-                276, //squirrel cage
-                277, //mallard cage
-                278, //duck cage
-                279, //bird cage
-                280, //blue jay cage
-                281, //cardinal cage
-                282, //fish bowl
+                //270, //firefly in a bottle
+                //271, //lightning bug in a bottle
+                //275, //bunny cage
+                //276, //squirrel cage
+                //277, //mallard cage
+                //278, //duck cage
+                //279, //bird cage
+                //280, //blue jay cage
+                //281, //cardinal cage
+                //282, //fish bowl
                 283, //heavy work bench
-                285, //snail cage
-                286, //glowing snail cage
+                //285, //snail cage
+                //286, //glowing snail cage
                 287, //ammo box
-                288, //monarch jar
-                289, //purple emperor jar
-                290, //red admiral jar
-                291, //ulysses jar
-                292, //sulphur jar
-                293, //tree nymph jar
-                294, //zebra swallowtail jar
-                295, //julia jar
-                296, //scorpion cage
-                297, //black scorpion cage
-                298, //frog cage
-                299, //mouse cage
+                //288, //monarch jar
+                //289, //purple emperor jar
+                //290, //red admiral jar
+                //291, //ulysses jar
+                //292, //sulphur jar
+                //293, //tree nymph jar
+                //294, //zebra swallowtail jar
+                //295, //julia jar
+                //296, //scorpion cage
+                //297, //black scorpion cage
+                //298, //frog cage
+                //299, //mouse cage
                 300, //bone welder
                 301, //flesh cloning vat
                 302, //glass kiln
                 307, //steampunk boiler
-                309, //penguin cage
-                310, //worm cage
-                316, //blue jellyfish jar
-                317, //green jellyfish jar
-                318, //pink jellyfish jar
-                319, //ship in a bottle
+                //309, //penguin cage
+                //310, //worm cage
+                //316, //blue jellyfish jar
+                //317, //green jellyfish jar
+                //318, //pink jellyfish jar
+                //319, //ship in a bottle
                 310, //seaweed planter
                 324, //seashell variants
-                337, //number and letter statues
-                339, //grasshopper cage
+                //337, //number and letter statues
+                //339, //grasshopper cage
                 354, //bewitching table
                 355, //alchemy table
-                358, //gold bird cage
-                359, //gold bunny cage
-                360, //gold butterfly jar
-                361, //gold frog cage
-                362, //gold grasshopper cage
-                363, //gold mouse cage
-                364, //gold worm cage
+                //358, //gold bird cage
+                //359, //gold bunny cage
+                //360, //gold butterfly jar
+                //361, //gold frog cage
+                //362, //gold grasshopper cage
+                //363, //gold mouse cage
+                //364, //gold worm cage
                 372, //peace candle
                 377, //sharpening station
                 378, //target dummy
-                390, //lava lamp
-                391, //enchanted nightcrawler cage
-                392, //buggy cage
-                393, //grubby cage
-                394, //sluggy cage
-                413, //red squirrel cage
-                414, //gold squirrel cage
+                //390, //lava lamp
+                //391, //enchanted nightcrawler cage
+                //392, //buggy cage
+                //393, //grubby cage
+                //394, //sluggy cage
+                //413, //red squirrel cage
+                //414, //gold squirrel cage
                 463, //defender's forge
                 TileID.Pumpkins, //the harvestable kind, not the block
                 TileID.LunarCraftingStation,
