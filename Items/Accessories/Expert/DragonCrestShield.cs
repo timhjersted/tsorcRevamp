@@ -12,9 +12,10 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
     public class DragonCrestShield : ModItem
     {
-        public static float damageResistance = 0.70f;
-        public static float damageResistance2 = 0.10f;
-        public static int staminaCost = 90;
+        public static float damageResistance = 0.75f;
+        public static float damageResistance2 = 0.05f;
+        public static float damageResistance3 = 0.25f;
+        public static int staminaCost = 75;
         public static tsorcRevampStaminaPlayer ModPlayer(Player player)
         {
             return player.GetModPlayer<tsorcRevampStaminaPlayer>();
@@ -23,9 +24,9 @@ namespace tsorcRevamp.Items.Accessories.Expert
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Shield of a nameless knight" +
-                         $"\n[c/ffbf00:Reduces incoming damage by {damageResistance * 100}% and protects against fire, but drains {staminaCost} stamina per hit]" +
-                         "\nHolding the shield also prevents knockback but reduces stamina regen by 35%" +
-                         $"\nGetting hit while low on stamina will stagger you and only reduce damage taken by 10%");
+                         $"\n[c/ffbf00:Reduces incoming damage by {damageResistance * 100}% when not attacking or {damageResistance3 * 100}% when attacking, but drains {staminaCost} stamina per hit]" +
+                         "\nHolding the shield also prevents knockback and protects against fire but reduces stamina regen by 15%" +
+                         $"\nGetting hit while low on stamina will stagger you and only reduce damage taken by 5%");
         }
 
         public override void SetDefaults()
@@ -44,21 +45,25 @@ namespace tsorcRevamp.Items.Accessories.Expert
             base.UpdateEquip(player);
             player.GetModPlayer<tsorcRevampPlayer>().staminaShield = 1;
 
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult -= 0.35f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult -= 0.15f;
 
-            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 90)
+            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 75 && player.itemAnimation == 0)
             {
                 player.endurance += damageResistance;
                 player.buffImmune[BuffID.OnFire] = true;
             }
 
-            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 90)
+            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 75 && player.itemAnimation > 1)
+            {
+                player.endurance += damageResistance3;
+                player.buffImmune[BuffID.OnFire] = true;
+            }
+
+            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 75)
             {
                 player.noKnockback = false;
                 player.endurance += damageResistance2;
-                //player.GetDamage(DamageClass.Ranged) -= 0.25f;
-                //player.GetDamage(DamageClass.Magic) -= 0.25f;
-                //player.GetDamage(DamageClass.Summon) -= 0.25f;
+                
             }
             else player.noKnockback = true;
 

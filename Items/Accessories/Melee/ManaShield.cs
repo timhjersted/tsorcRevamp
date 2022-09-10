@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
         public static int manaCost = 75;
         public static int regenDelay = 900;
-        public static float damageResistance = 0.40f;
+        public static float damageResistance = 0.35f;
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Focuses the user's mana into a protective shield" +
