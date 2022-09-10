@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Celestial Lance");
-            Tooltip.SetDefault("Celestial lance fabled to hold sway over the world.\nGains 50% attack damage while falling.");
+            Tooltip.SetDefault("Celestial lance fabled to hold sway over the world.\nGains 50% attack damage while falling and has a small chance to heal 5 HP on hit.");
         }
 
 

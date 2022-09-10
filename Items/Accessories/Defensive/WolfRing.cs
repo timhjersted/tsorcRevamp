@@ -10,16 +10,16 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Tooltip.SetDefault("One of the rings worn by Artorias." +
                                 "\nImmunity to the on-fire and broken-armor debuffs." +
-                                "\n+23 defense within the Abyss, +16 defense otherwise." +
-                                "\nGrants Fire Flask effects");
+                                "\n+18 defense within the Abyss, +6 defense otherwise." +
+                                "\nGrants Fire Flask effect");
         }
 
         public override void SetDefaults()
         {
             Item.width = 24;
             Item.height = 24;
-            Item.defense = 16;
-            Item.lifeRegen = 8;
+            Item.defense = 6;
+            //Item.lifeRegen = 8;
             Item.accessory = true;
             Item.value = PriceByRarity.Red_10;
             Item.rare = ItemRarityID.Red;
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
             if (Main.bloodMoon)
             { // Apparently this is the flag used in the Abyss?
-                player.statDefense += 7;
+                player.statDefense += 12;
             }
         }
 

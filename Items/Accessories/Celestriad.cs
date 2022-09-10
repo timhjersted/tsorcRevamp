@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Accessories
     public class Celestriad : ModItem
     {
 
-        public static int manaCost = 80;
-        public static int regenDelay = 135;
+        public static int manaCost = 95;
+        public static int regenDelay = 150;
         public static float damageResistance = 0.50f;
 
 
@@ -18,8 +18,8 @@ namespace tsorcRevamp.Items.Accessories
             Tooltip.SetDefault("[c/ffbf00:Focuses the user's mana into a protective shield when below 200 HP]" +
                                 $"\nMana Shield reduces incoming damage by {damageResistance * 100}%, but drains {manaCost} mana per hit" +
                                 "\nInhibits both natural and artificial mana regen for a period of time" +
-                                "\n[c/00ffd4:Doubles max mana and decreases stamina usage by 35%]" +
-                                $"\nA dynamic tool for anyone willing to attain it"); 
+                                "\n[c/00ffd4:Doubles max mana and decreases stamina usage by 15%]");
+                                
         }
 
         public override void SetDefaults()
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Accessories
             recipe.AddIngredient(ModContent.ItemType<Magic.EssenceOfMana>(), 1);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void UpdateEquip(Player player)
         {
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.35f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.15f;
             player.statManaMax2 = (int)(player.statManaMax2 * 1.5f);
 
             if (player.statLife <= 200)

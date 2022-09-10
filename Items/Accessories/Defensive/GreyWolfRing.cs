@@ -11,17 +11,17 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Tooltip.SetDefault("One of the rings worn by Artorias." +
                                 "\nImmunity to the on-fire, bleeding, poisoned, and broken-armor debuffs." +
-                                "\n+23 defense within the Abyss, +16 defense otherwise." +
-                                "\nGrants Magma Stone effect" +
-                                "\n+8 HP Regen. +100 Mana.");
+                                "\n+22 defense within the Abyss, +10 defense otherwise." +
+                                "\nGrants Magma Stone and Fire Flask effect" +
+                                "\n+4 HP Regen. +120 Mana.");
         }
 
         public override void SetDefaults()
         {
             Item.width = 24;
             Item.height = 24;
-            Item.defense = 16;
-            Item.lifeRegen = 8;
+            Item.defense = 10;
+            Item.lifeRegen = 4;
             Item.accessory = true;
             Item.value = PriceByRarity.Red_10;
             Item.rare = ItemRarityID.Red;
@@ -42,16 +42,17 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void UpdateEquip(Player player)
         {
             player.magmaStone = true;
-            player.statManaMax2 += 100;
+            player.statManaMax2 += 120;
             player.buffImmune[BuffID.OnFire] = true;
             player.buffImmune[BuffID.BrokenArmor] = true;
             player.buffImmune[BuffID.Bleeding] = true;
             player.buffImmune[BuffID.Poisoned] = true;
+            player.AddBuff(BuffID.WeaponImbueFire, 60, false);
 
 
             if (Main.bloodMoon)
             { // Apparently this is the flag used in the Abyss?
-                player.statDefense += 7;
+                player.statDefense += 12;
             }
         }
 

@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Grants Weapon Imbue: Fire buff when worn, which provides" +
-                                "\n10% increased melee and whip damage, all swords and whips inflict fire damage." +
-                                "\nPlus Thorns Effect and +6 Defense.");
+            Tooltip.SetDefault("Imbues weapons with fire, providing" +
+                                "\n10% increased melee and whip damage, and all swords and whips inflict fire damage." +
+                                "\nPlus Thorns Effect and +4 Defense.");
         }
 
         public override void SetDefaults()
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void UpdateEquip(Player player)
         {
             player.AddBuff(BuffID.WeaponImbueFire, 60, false);
-            player.statDefense += 6;
+            player.statDefense += 4;
             player.thorns = 1f;
         }
 

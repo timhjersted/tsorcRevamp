@@ -20,11 +20,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.defense = 80;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.lifeMax = 400000;
+            NPC.lifeMax = 500000;
             NPC.knockBackResist = 0;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.value = 600000;
+            NPC.value = 670000;
             NPC.boss = true;
             NPC.lavaImmune = true;
 
@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         }
 
-        int fireBreathDamage = 48;
+        int fireBreathDamage = 50;
         int iceStormDamage = 60;
         int greatFireballDamage = 49;
         int blazeBallDamage = 48;
@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int tornadoDamage = 45;
         int obscureSeekerDamage = 50;
         int crystalFireDamage = 60;
-        int fireTrailsDamage = 35;
+        int fireTrailsDamage = 45;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = (int)(NPC.damage / 2);
@@ -54,6 +54,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int chaosHealed = 0;
         bool chargeDamageFlag = false;
         int holdTimer = 0;
+        int holdTimer2 = 0;
 
         int chargeTimer = 0;
 
@@ -64,9 +65,30 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.4f, 0f, 0f);
 
+            Player player = Main.player[NPC.target];
+
             if (holdTimer > 0)
             {
                 holdTimer--;
+            }
+
+            if (holdTimer2 > 1)
+            {
+                holdTimer--;
+            }
+            //Proximity Debuffs
+            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1800)
+            {
+                player.AddBuff(BuffID.BrokenArmor, 120, false); 
+                player.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 60, false); 
+                player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
+
+                if (holdTimer2 <= 0 && Main.netMode != NetmodeID.Server)
+                {
+                    Main.NewText("Chaos rips your wings and fractures your armor!", 255, 255, 0); //yellow
+                    holdTimer2 = 9000;
+                }
+
             }
             if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 1000)
             {

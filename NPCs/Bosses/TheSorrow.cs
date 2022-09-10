@@ -474,7 +474,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     //Use ice spirit attack
                     iceSpiritTimer = 900;
                     NPC.ai[3] = 1;
-                    NPC.life += 1200; //amount boss heals when going invisible
+                    NPC.life += 1000; //amount boss heals when going invisible
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                     NPC.netUpdate = true;
                 }
