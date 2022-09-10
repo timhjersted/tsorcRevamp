@@ -14,19 +14,20 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         public override void SetDefaults()
         {
             NPC.npcSlots = 10;
-            NPC.damage = 75;
+            NPC.damage = 85;
             NPC.defense = 25;
             NPC.height = 44;
             NPC.width = 28;
             NPC.timeLeft = 22500;
             Music = 12;
-            NPC.lifeMax = 80000;
+            NPC.lifeMax = 95000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.noGravity = false;
+            NPC.scale = 1.2f;
             NPC.noTileCollide = false;
             NPC.boss = true;
-            NPC.value = 500000;
+            NPC.value = 600000;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0;
             NPC.buffImmune[BuffID.Poisoned] = true;
@@ -36,15 +37,15 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             despawnHandler = new NPCDespawnHandler("With your death, a dark shadow falls over the world...", Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
 
-        public int ShadowOrbDamage = 80;
-        public int CrystalShardsDamage = 90;
-        public int DeathBallDamage = 120;
-        public int BlackFireDamage = 80;
-        public int StardustLaserDamage = 100;
-        public int AntiMatterBlastDamage = 90;
-        public int SolarDetonationDamage = 110;
-        public int LightningStrikeDamage = 130;
-        public int DarkLaserDamage = 100;
+        public int ShadowOrbDamage = 82;
+        public int CrystalShardsDamage = 92;
+        public int DeathBallDamage = 123;
+        public int BlackFireDamage = 82;
+        public int StardustLaserDamage = 102;
+        public int AntiMatterBlastDamage = 92;
+        public int SolarDetonationDamage = 112;
+        public int LightningStrikeDamage = 132;
+        public int DarkLaserDamage = 102;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
