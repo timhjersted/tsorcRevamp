@@ -1303,7 +1303,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
 
                     //MULTI-FIRE 1 ATTACK 
-                    if (NPC.localAI[3] >= 160f && demonChoice == 1) /
+                    if (NPC.localAI[3] >= 160f && demonChoice == 1)
                     {
                         Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(4), 7);
                         //speed.Y += Main.rand.NextFloat(2f, -2f); //just added
