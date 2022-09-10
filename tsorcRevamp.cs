@@ -199,356 +199,196 @@ namespace tsorcRevamp
             tsorcItemDropRuleConditions.NonAdventureModeRule = new NonAdventureModeRule();
             #endregion
             //--------
+            #region Unbreakable list
+            Unbreakable = new List<int>() {
+                19, //platforms
+                48, //spikes
+                55, //sign
+                105, //statues
+                132, //lever
+                130, 131, //toggled stone blocks
+                135, 136, 137, 138, //pressure plates, switches, traps, boulders
+                139, //music boxes
+                141, //explosives
+                143, 144, //pumps and timers
+                210, //land mines (can still be triggered, 1-shot traps)
+                213, //rope
+                214, //chain
+                216, //party rockets (do 150 damage a pop, abusable. pre-placed ones can still be triggered)
+                232, //jungle spikes
+                235, //teleporters
+                353, 365, 366, //vine, silk, and web ropes
+                379, //bubble (prevent damaging of liquid-based designs)
+                410, //lunar monoliths
+                411, //detonator
+                419, 420, 421, 422, 423, 424, 425, //various wiring components
+                428, 429, 440, //weighted pressure plates, wire bulbs, gem locks
+                442, //teal pressure pad - projectile switch
+                480, //blood moon monolith
+                484, //rolling cactus (somewhat evil, cannot be mined to prematurely trigger)
+                509, //void monolith
+                531, //boulder statue (wireable multi-use boulder)
+                546, 557, //grate open/closed -same reasons as bubble
+                597, // Pylons
+            };
+            #endregion
+            //--------
             #region KillAllowed list
             KillAllowed = new List<int>() {
-                3, //small plants
-                4, // torch
-                5, //tree trunk
-                6, //iron
-                7, //copper                
-                TileID.Gold,
-                9, //silver
-                //10, //closed door (No Construction)
-                //11, //open door (No Construction)
-                12, //Heart crystal
-                13, //bottles and jugs
+                3, 4, 5, //small plants, torchs, trees
+                //6, 7, 8, 9, //iron, copper, gold, silver ores (Pre-HM ores removed from breaklist)
+                12, 13, //Heart crystal, bottles and jugs
                 14, //table (Left in for MS Compatability)
-                //15, //chairs (No Construction)
-                16, //anvil
-                17, //furnance
-                18, //workbench (Left in for MS Compatability)
-                20, //sapling
-                21, //chests
+                16, 17, 18, //anvils, furnace, workbenches (Left in for MS Compatability)
+                20, 21, //sapling, chests
+                //22, // demonite ore (Pre-HM ores removed from breaklist)
                 24, //small corruption plants
-                27, //sunflower
-                28, //pot
-                //29, //piggy bank (Accessible at all bonfires, breakage unneeded
-                31, //shadow orb
-                32, //corruption barbs
-                33, //candle (can be used to make water candles)
-                //34, //bronze chandellier (No Construction)
-                //35, //silver c (No Construction)
-                //36, //gold c (No Construction)
-                37, //meteorite
-                //42, //chain lantern (No Construction)
+                //26, //altars
+                27, 28, 29, 31, 32, //sunflower, pots, piggy bank, orbs/hearts, corruption thorns
+                33, //candle (used for making water candles)
+                //37, //meteorite (Pre-HM ores removed from breaklist)
                 49, //water candle
                 //50, //books (No Construction) (you only need 1 for the boss tome)
-                51, //cobweb
-                52, //vines
-                53, //sand
+                51, 52, 53, //cobweb, vines, sand
                 //55, //Sign (Removed - signs shouldn't be breakable.) 
                 //56, //obsidian (removed at tim's request)
-                61, //small jungle plants
-                62, //jungle vines
-                67, //Amethyst 
-                69, //thorns
-                72, //mushroom stalks
-                71, //small mushrooms
-                73, //plants
-                74, //plants
+                //58, //hellstone
+                61, 62, //small jungle plants, jungle vines
+                //63, 64, 65, 66, 67, 68, //gem ores
+                69, //jungle thorns
+                71, 72, 73, 74, //mushrooms, plants
+                77, //hellforge (MS Compatibility)
                 78, //clay pot
                 //79, //bed
-                80, //cactus
-                81, //corals
-                82, //new herbs
-                83, //grown herbs
-                84, //bloomed herbs
-                //85, //tombstone (No Construction) (player death drops have been fixed)
+                80, 81, 82, 83, 84, //cactus, coral, herbs
+                //85, //tombstone (player death drops have been fixed)
                 86, //loom
-                //87, //piano (No Construction)
-                //88, //drawer (No Construction)
-                //89, //bench (No Construction)
-                //90, //bathtub (No Construction)
-                91, //banner
-                //92, //lamp post (No Construction)
-                //93, //tiki torch (No Construction)
-                94, //keg
-                //95, //chinese lantern (No Construction)
-                96, //cooking pot
-                //97, //safe (No Construction)
-                //98, //skull candle (No Construction)
-                //99, //trash can (No Construction)
-                //100, //candlabra (No Construction)
-                101, //bookcase
-                //102, //throne (No Construction)
-                //103, //bowl (No Construction)
-                //104, //grandfather clock (No Construction)
-                //105, //statue
-                106, //sawmill
-                107, //cobalt
-                108, //mythril
-                110, //Hallowed Plants 
-                111, //adamantite
-                112, //ebonsand
-                114, //tinkerer's workbench
-                115, //Hallowed Vines 
-                116, //pearlsand
-                125, //crystal ball
-                //126, //discoball (No Construction)
-                128, //mannequin
-                129, //crystal shard
-                133, //adamantite forge
-                134, //mythril anvil
-                138, //boulder
-                //141, //explosives (trap disarming not allowed?
-                165, //ambient objects (stalagmites / stalactites, icicles)                
-                TileID.Platinum,
+                91, //banners (still drop)
+                94, 96, 97, 101, //keg, cooking pots, safe, bookcases
+                //105, //statues
+                106, 107, 108, //sawmill, cobalt ore, mythril ore
+                110, 111, 112, 113, //Hallowed Plants, adamatite ore, ebonsand, more hallowed plants
+                114, 115, 116, 125, //tinkerer's workbench, hallowed vines, pearlsand, crystal ball
+                128, 129, 133, 134, //mannequin [L], crystal/gelatin shards, HM forges/anvils
+                162, //thin ice (breakable kind)
+                165, //ambient objects (stalagmites / stalactites, icicles)
+                //166, 167, 168, 169, //alternate pre-hm ores
                 172, //sinks
-                //173, //platinum candelabra (No Construction)
                 174, //platinum candle (can be crafted into water candles)
-                184, //moss growth
+                178, //gem rocks
+                184, //moss growths
                 185, //ambient objects (small rocks, small coin stashes, gem stashes)
                 186, //ambient objects (bone piles, large rocks, large coin stashes)
                 187, //ambient objects (mossy / lava rocks, spider eggs, misc bg furniture (cave tents, etc)) sword shrine
-                201, //tall grass (crimson)
-                205, //crimson vines
-                //207, //water fountain (No Construction)
-                211, //Chlorophyte Ore
-                218, //meat grinder
-                227, //strange plant
-                228, //dye vat
-                233, ////ambient objects (background leafy jungle plants)
-                238, //Plantera Bulb
+                201, 205, //tall grass (crimson), crimson vines
+                209, //Cannons
+                // 211, //Chlorophyte Ore (can only break one-block wide walls, otherwise all mud walls are permeable)
+                215, //campfires
+                217, 218, 220, //blend-o-matic, meat grinder, solidifier
+                221, 222, 223, //HM alt ores
+                227, 228, //dye plants and vat
+                231, 233, //QB larva, ambient objects (background leafy jungle plants)
+                234, 236, 238, //crimsand, life fruit, Plantera Bulb
                 240, //trophies
-                //242, //big paintings (No Construction)
-                //245, //tall paintings (No Construction)
-                //246, //wide paintings (No Construction)
-                //270, //firefly in a bottle (No Construction)
-                //271, //lightning bug in a bottle (No Construction)
-                //275, //bunny cage (No Construction)
-                //276, //squirrel cage (No Construction)
-                //277, //mallard cage (No Construction)
-                //278, //duck cage (No Construction)
-                //279, //bird cage (No Construction)
-                //280, //blue jay cage (No Construction)
-                //281, //cardinal cage (No Construction)
-                //282, //fish bowl (No Construction)
-                283, //heavy work bench
-                //285, //snail cage (No Construction)
-                //286, //glowing snail cage (No Construction)
-                287, //ammo box
-                //288, //monarch jar (No Construction)
-                //289, //purple emperor jar (No Construction)
-                //290, //red admiral jar (No Construction)
-                //291, //ulysses jar (No Construction)
-                //292, //sulphur jar (No Construction)
-                //293, //tree nymph jar (No Construction)
-                //294, //zebra swallowtail jar (No Construction)
-                //295, //julia jar (No Construction)
-                //296, //scorpion cage (No Construction)
-                //297, //black scorpion cage (No Construction)
-                //298, //frog cage (No Construction)
-                //299, //mouse cage (No Construction)
-                300, //bone welder
-                301, //flesh cloning vat
-                302, //glass kiln
-                307, //steampunk boiler
-                //309, //penguin cage (No Construction)
-                //310, //worm cage (No Construction)
-                //316, //blue jellyfish jar (No Construction)
-                //317, //green jellyfish jar (No Construction)
-                //318, //pink jellyfish jar (No Construction)
-                //319, //ship in a bottle (No Construction)
-                310, //seaweed planter
-                324, //seashell variants
-                //337, //number and letter statues (No Construction)
-                //339, //grasshopper cage (No Construction)
-                352, //crimson thorn
-                354, //bewitching table
-                355, //alchemy table
-                //358, //gold bird cage (No Construction)
-                //359, //gold bunny cage (No Construction)
-                //360, //gold butterfly jar (No Construction)
-                //361, //gold frog cage (No Construction)
-                //362, //gold grasshopper cage (No Construction)
-                //363, //gold mouse cage (No Construction)
-                //364, //gold worm cage (No Construction)
-                372, //peace candle
-                377, //sharpening station
-                378, //target dummy
+                243, 247, //imbuing station, autohammer
+                254, //pumpkin seeds and growths
+                269, 283, 287, //womannequin, heavy work bench, ammo box
+                300, 301, 302, 303, 304, 305, 306, 307, 308, //theme furniture crafting stations
+                320, 323, 324, //seaweed planter, palm trees, seashells
+                352, //crimson thorns
+                354, 355, //bewitching table, alchemy table
+                372, 377, 378, //peace candle, sharpening station, target dummy
+                380, //herb planters (allows for moving of herb farms)
                 382, //flower vines
-                //390, //lava lamp (No Construction)
-                //391, //enchanted nightcrawler cage (No Construction)
-                //392, //buggy cage (No Construction)
-                //393, //grubby cage (No Construction)
-                //394, //sluggy cage (No Construction)
-                //413, //red squirrel cage (No Construction)
-                //414, //gold squirrel cage (No Construction)
-                463, //defenders forge
-                TileID.Titanium,
-                TileID.Pumpkins, //the harvestable kind, not the block
-                TileID.BreakableIce,
-                TileID.LunarCraftingStation,
-                TileID.TeaKettle,
-                TileID.ImbuingStation
-
+                412, 463, //ancient manipulator, defenders forge
+                467, 469, //more chests, more tables
+                470, //mannequins
+                499, //decay chamber
+                506, //bast statue
+                518, 519, 528, //lily pads, cattails, mushroom vines
+                529, 530, //sea oats, oasis plants (ocean sand cosmetic growths)
+                549, //seaweeds
+                560, //golf trophies
+                571, //bamboo "trees"
+                583, 584, 585, 586, 587, 588, 589, 590, //gem trees
+                595, 596, //sakura sapling and tree
+                615, 616, //willow sapling and tree
+                621, 622, 624, //slice of cake, tea kettle, abigail's flower (harvestable item)
             };
             #endregion
             //--------
             #region PlaceAllowed list
             PlaceAllowed = new List<int>() {
-                4,  //torch
-                //10, //Closed Door
-                //11, //Open Door
-                13, //bottles
-                //15, //chairs
-                16, //anvil
-                17, //furnace
-                18, //workbench
-                20, //sapling
-                21, //chests
-                27, //sunflower
-                28, //pot
-                29, //piggy bank
-                33, //candle
-                //34, //bronze chandellier
-                //35, //silver chandellier
-                //36, //gold chandellier
-                //42, //chain lantern
+                4, 5, //torchs, trees
+                //6, 7, 8, 9, //iron, copper, gold, silver ores (Pre-HM ores removed from breaklist)
+                12, 13, //Heart crystal, bottles and jugs
+                14, //table (Left in for MS Compatability)
+                16, 17, 18, //anvils, furnace, workbenches (Left in for MS Compatability)
+                20, 21, //sapling, chests
+                //22, // demonite ore (Pre-HM ores removed from breaklist)
+                //26, //altars
+                27, 28, 29, 31, //sunflower, pots, piggy bank, orbs/hearts
+                33, //candle (used for making water candles)
+                //37, //meteorite (Pre-HM ores removed from breaklist)
                 49, //water candle
-                //50, //books
-                73, //plants
-                74, //plants
+                //50, //books (No Construction) (you only need 1 for the boss tome)
+                51, 52, 53, //cobweb, vines, sand
+                //55, //Sign (Removed - signs shouldn't be breakable.) 
+                //56, //obsidian (removed at tim's request)
+                //58, //hellstone
+                //63, 64, 65, 66, 67, 68, //gem ores
+                71, 72, 73, 74, //mushrooms, plants
+                77, //hellforge (MS Compatibility)
                 78, //clay pot
                 //79, //bed
-                81, //corals
-                82, //new herbs
-                83, //grown herbs
-                84, //bloomed herbs
-                //85, //tombstone
+                80, 81, 82, 83, 84, //cactus, coral, herbs
+                //85, //tombstone (player death drops have been fixed)
                 86, //loom
-                //87, //piano
-                //88, //drawer
-                //89, //bench
-                //90, //bathtub
-                91, //banner
-                //92, //lamp post
-                //93, //tiki torch
-                94, //keg
-                //95, //chinese lantern
-                96, //cooking pot
-                //97, //safe
-                //98, //skull candle
-                //99, //trash can
-                //100, //candlabra
-                101, //bookcase
-                //102, //throne
-                //103, //bowl
-                //104, //grandfather clock
-                //105, //statue
-                106, //sawmill
-                114, //tinkerer's workbench
-                125, //crystal ball
-                //126, //discoball
-                128, //mannequin
-                129, //crystal shard
-                132, //lever
-                133, //adamantite forge
-                134, //mythril anvil
-                //149, //festive lights
+                91, //banners (still drop)
+                94, 96, 97, 101, //keg, cooking pots, safe, bookcases
+                //105, //statues
+                106, 107, 108, //sawmill, cobalt ore, mythril ore
+                111, 112, //adamatite ore, ebonsand
+                114, 116, 125, //tinkerer's workbench, pearlsand, crystal ball
+                128, 129, 133, 134, //mannequin [L], crystal/gelatin shards, HM forges/anvils
+                //166, 167, 168, 169, //alternate pre-hm ores
                 172, //sinks
-                //173, //platinum candelabra
-                174, //platinum candle
-                //207, //water fountain
-                218, //meat grinder
-                228, //dye vat
+                174, //platinum candle (can be crafted into water candles)
+                178, //gem rocks
+                209, //Cannons
+                // 211, //Chlorophyte Ore (can only break one-block wide walls, otherwise all mud walls are permeable)
+                215, //campfires
+                217, 218, 220, //blend-o-matic, meat grinder, solidifier
+                221, 222, 223, //HM alt ores
+                227, 228, //dye plants and vat
+                234, 236, //crimsand, life fruit
                 240, //trophies
-                //242, //big paintings
-                //245, //tall paintings
-                //246, //wide paintings
-                254, //pumpkin seeds
-                //270, //firefly in a bottle
-                //271, //lightning bug in a bottle
-                //275, //bunny cage
-                //276, //squirrel cage
-                //277, //mallard cage
-                //278, //duck cage
-                //279, //bird cage
-                //280, //blue jay cage
-                //281, //cardinal cage
-                //282, //fish bowl
-                283, //heavy work bench
-                //285, //snail cage
-                //286, //glowing snail cage
-                287, //ammo box
-                //288, //monarch jar
-                //289, //purple emperor jar
-                //290, //red admiral jar
-                //291, //ulysses jar
-                //292, //sulphur jar
-                //293, //tree nymph jar
-                //294, //zebra swallowtail jar
-                //295, //julia jar
-                //296, //scorpion cage
-                //297, //black scorpion cage
-                //298, //frog cage
-                //299, //mouse cage
-                300, //bone welder
-                301, //flesh cloning vat
-                302, //glass kiln
-                307, //steampunk boiler
-                //309, //penguin cage
-                //310, //worm cage
-                //316, //blue jellyfish jar
-                //317, //green jellyfish jar
-                //318, //pink jellyfish jar
-                //319, //ship in a bottle
-                310, //seaweed planter
-                324, //seashell variants
-                //337, //number and letter statues
-                //339, //grasshopper cage
-                354, //bewitching table
-                355, //alchemy table
-                //358, //gold bird cage
-                //359, //gold bunny cage
-                //360, //gold butterfly jar
-                //361, //gold frog cage
-                //362, //gold grasshopper cage
-                //363, //gold mouse cage
-                //364, //gold worm cage
-                372, //peace candle
-                377, //sharpening station
-                378, //target dummy
-                //390, //lava lamp
-                //391, //enchanted nightcrawler cage
-                //392, //buggy cage
-                //393, //grubby cage
-                //394, //sluggy cage
-                //413, //red squirrel cage
-                //414, //gold squirrel cage
-                463, //defender's forge
-                TileID.Pumpkins, //the harvestable kind, not the block
-                TileID.LunarCraftingStation,
-                TileID.TeaKettle,
-                TileID.ImbuingStation
-
-            };
-            #endregion
-            //--------
-            #region Unbreakable list
-            Unbreakable = new List<int>() {
-                19, //Wood platform
-                55, //sign
-                105, //statues
-                132, //lever
-                130, //active stone block
-                131, //inactive stone block
-                135, //pressure plates
-                136, //switch
-                137, //dart trap
-                TileID.Rope,
-                TileID.Chain,
-                TileID.VineRope,
-                TileID.SilkRope,
-                TileID.WebRope,
-                TileID.LunarMonolith, //410
-                TileID.ProjectilePressurePad
+                243, 247, //imbuing station, autohammer
+                254, //pumpkin seeds and growths
+                269, 283, 287, //womannequin, heavy work bench, ammo box
+                300, 301, 302, 303, 304, 305, 306, 307, 308, //theme furniture crafting stations
+                320, 323, 324, //seaweed planter, palm trees, seashells
+                354, 355, //bewitching table, alchemy table
+                372, 377, 378, //peace candle, sharpening station, target dummy
+                380, //herb planters (allows for moving of herb farms)
+                412, 463, //ancient manipulator, defenders forge
+                467, 469, //more chests, more tables
+                470, //mannequins
+                499, //decay chamber
+                506, //bast statue
+                549, //seaweeds
+                560, //golf trophies
+                583, 584, 585, 586, 587, 588, 589, 590, //gem trees
+                595, 596, //sakura sapling and tree
+                615, 616, //willow sapling and tree
+                621, 622, //slice of cake, tea kettle,
             };
             #endregion
             //--------
             #region IgnoredTiles list
             IgnoredTiles = new List<int>() {
                 3, //tall grass
+                4, //torches
                 24, //tall grass (corruption)
                 32, //corruption thorn
                 51, //cobweb
@@ -577,7 +417,6 @@ namespace tsorcRevamp
                 324, //sea shells
                 352, //crimson thorn
                 382, //flower vines
-                TileID.Torches
             };
             #endregion
             //--------
