@@ -197,7 +197,7 @@ namespace tsorcRevamp
             ScriptedEvent EoL = new ScriptedEvent(new Vector2(4484, 355), 100, NPCID.HallowBoss, DustID.RainbowTorch, false, true, "The Empress of Light awakens!", Main.DiscoColor, false, EoLDownedCondition, peaceCandleEffect: true);
 
             //LITCH KING
-            ScriptedEvent LitchKing = new ScriptedEvent(new Vector2(364, 1897), 40, ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>(), DustID.GoldFlame, true, true, "The Litch King awakens!", Color.Gold, false, peaceCandleEffect: true);
+            ScriptedEvent LitchKing = new ScriptedEvent(new Vector2(364, 1897), 40, ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>(), DustID.GoldFlame, true, true, "The Lich King awakens!", Color.Gold, false, peaceCandleEffect: true);
 
             //THE HUNTER
             ScriptedEvent TheHunter = new ScriptedEvent(new Vector2(296, 1560), 36, ModContent.NPCType<NPCs.Bosses.TheHunter>(), DustID.GoldFlame, true, true, "The hunt begins...", Color.DarkGreen, false, peaceCandleEffect: true);
@@ -308,7 +308,7 @@ namespace tsorcRevamp
             ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, true, "[c/D3D3D3:Attraidies:] \"See if you can handle this.\"", Color.OrangeRed, false, AttraidiesTheSorrowCondition, peaceCandleEffect: true);
 
             //TWIN EATER OF WORLDS FIGHT
-            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1220), 30, default, DustID.ShadowbeamStaff, true, true, "Twin Eaters surface from the depths!", Color.Purple, false, default, TwinEoWAction, peaceCandleEffect: true);
+            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1220), 30, default, DustID.ShadowbeamStaff, true, true, "Twin Eaters surface from the depths!", Color.Purple, false, EoWCustomCondition, TwinEoWAction, peaceCandleEffect: true);
 
             //DUNLEDING AMBUSH
             List<int> DunledingAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>() };
@@ -574,7 +574,7 @@ namespace tsorcRevamp
         public static bool MarilithCustomCondition()
         {
 
-            if (/*tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()) ||*/ NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.MarilithIntro>()))
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.MarilithIntro>()))
             {
                 return false;
             }
@@ -606,6 +606,18 @@ namespace tsorcRevamp
             }
         }
 
+        public static bool EoWCustomCondition()
+        {
+            if(NPC.AnyNPCs(NPCID.EaterofWorldsHead) || NPC.AnyNPCs(NPCID.EaterofWorldsBody) || NPC.AnyNPCs(NPCID.EaterofWorldsTail))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         public static bool UndeadMerchantCondition()
         {
             return !NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.UndeadMerchant>());
@@ -618,7 +630,7 @@ namespace tsorcRevamp
 
         public static bool SlograGaibonCondition()
         {
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Slogra>()) && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Gaibon>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Slogra>()) || (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gaibon>())) || (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Slogra>()) && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Gaibon>())))
             {
                 return false;
             }
@@ -627,7 +639,7 @@ namespace tsorcRevamp
 
         public static bool SerrisCustomCondition()
         {
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()))
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()))
             {
                 return false;
             }
@@ -639,7 +651,7 @@ namespace tsorcRevamp
 
         public static bool AttraidiesTheSorrowCondition()
         {
-            if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
+            if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
             {
                 return true;
             }
@@ -655,7 +667,10 @@ namespace tsorcRevamp
             {
                 return true;
             }
-            else { return false; }
+            else
+            { 
+                return false;
+            }
         }
 
         public static bool MechanicCondition()
