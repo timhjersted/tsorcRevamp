@@ -19,6 +19,7 @@ Mddznyan / spriting
 Articulo / sprites from Dark Souls Vanity
 Maxisi / programmer
 qsab101 / Seath sprite
+Hugekraken / Detonation Signal sprite
 
 ORIGINAL MOD (tConfig Edition)
 Tim Hjersted / Mod Director + Dark Souls concept + New content + Mod Remixing & Compiling
