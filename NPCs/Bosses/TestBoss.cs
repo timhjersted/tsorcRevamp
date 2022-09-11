@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -34,18 +35,44 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.lifeMax = Int32.MaxValue / 10;
         }
 
+        Stopwatch thisWatch;
+        int watchTimer = 0;
+        float damageCounter;
+        float lastTimer = 1;
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
             if (projectile.type == ModContent.ProjectileType<Projectiles.BlackFirelet>())
             {
                 NPC.active = false;
             }
+
+            if(damageCounter == 0)
+            {
+                thisWatch = new Stopwatch();
+                thisWatch.Start();
+            }
+
+            watchTimer = 240;
+            damageCounter += damage;
+            lastTimer = (float)thisWatch.Elapsed.TotalSeconds;
         }
 
         public override void AI()
         {
-            NPC.defense = 35;
-            //NPC.life = NPC.lifeMax;
+            NPC.defense = 12;
+            if (damageCounter > 0)
+            {
+                Main.NewText("DPS: " + damageCounter / thisWatch.Elapsed.TotalSeconds);
+            }
+            if (watchTimer == 1)
+            {
+                Main.NewText("DPS measuring ended. DPS at the final hit: " + damageCounter / lastTimer);
+                damageCounter = 0;
+            }
+            if (watchTimer > 0)
+            {
+                watchTimer--;
+            }           
         }
 
 
@@ -61,6 +88,16 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 NPC.life = 0;
             }
+
+            if (damageCounter == 0)
+            {
+                thisWatch = new Stopwatch();
+                thisWatch.Start();
+            }
+
+            watchTimer = 240;
+            damageCounter += damage;
+            lastTimer = (float)thisWatch.Elapsed.TotalSeconds;
         }
     }
 }
