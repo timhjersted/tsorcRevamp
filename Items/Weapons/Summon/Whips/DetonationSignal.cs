@@ -45,6 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.FireWhip);
+			recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>());
 			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
 
 			recipe.AddTile(TileID.DemonAltar);
