@@ -92,9 +92,9 @@ namespace tsorcRevamp.Items.Armors
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("DragoonHelmet").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<DragoonHelmet>());
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 10);
-            recipe.AddIngredient(Mod.Find<ModItem>("DyingWindShard").Type, 10);
+            recipe.AddIngredient(ModContent.ItemType<DyingWindShard>(), 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
             recipe.AddTile(TileID.DemonAltar);
 

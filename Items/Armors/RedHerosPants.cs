@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Red Hero's Pants");
-            Tooltip.SetDefault("Worn by the hero himself!");
+            Tooltip.SetDefault("Worn by the hero himself!\nIncreases your max number of minions by 2");
         }
         public override void SetDefaults()
         {
@@ -20,10 +20,14 @@ namespace tsorcRevamp.Items.Armors
             Item.rare = ItemRarityID.Yellow;
             Item.value = PriceByRarity.fromItem(Item);
         }
+        public override void UpdateEquip(Player player)
+        {
+            player.maxMinions += 2;
+        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("BlueHerosPants").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<BlueHerosPants>());
             recipe.AddIngredient(ItemID.SoulofSight, 2);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe.AddTile(TileID.DemonAltar);

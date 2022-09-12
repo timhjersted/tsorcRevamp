@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Blue Hero's Pants");
-            Tooltip.SetDefault("Worn by the hero himself!");
+            Tooltip.SetDefault("Worn by the hero himself!\nIncreases max minions by 1");
         }
         public override void SetDefaults()
         {
@@ -19,6 +19,10 @@ namespace tsorcRevamp.Items.Armors
             Item.defense = 10;
             Item.rare = ItemRarityID.LightPurple;
             Item.value = PriceByRarity.fromItem(Item);
+        }
+        public override void UpdateEquip(Player player)
+        {
+            player.maxMinions += 1;
         }
         public override void AddRecipes()
         {

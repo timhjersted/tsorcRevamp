@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Accessories;
 
 namespace tsorcRevamp.Items.Armors
 {
@@ -70,8 +71,8 @@ namespace tsorcRevamp.Items.Armors
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("DragoonArmor").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DragoonCloak").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<DragoonArmor>());
+            recipe.AddIngredient(ModContent.ItemType<DragoonCloak>());
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 10);
             recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);

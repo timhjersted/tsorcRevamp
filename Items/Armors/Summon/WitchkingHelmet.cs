@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+25% minion damage\nIncreases your max number of minions by 2\nGrants night vision");
+            Tooltip.SetDefault("+20% minion damage\nIncreases your max number of minions and turrets by 1");
         }
         public override void SetDefaults()
         {
@@ -21,9 +21,9 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.25f;
-            player.maxMinions += 2;
-            player.nightVision = true;
+            player.GetDamage(DamageClass.Summon) += 0.2f;
+            player.maxMinions += 1;
+            player.maxTurrets += 1;
         }
         public override void ArmorSetShadows(Player player)
         {

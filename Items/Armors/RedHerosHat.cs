@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Armors
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("BlueHerosHat").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<BlueHerosHat>());
             recipe.AddIngredient(ItemID.SoulofSight, 2);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe.AddTile(TileID.DemonAltar);

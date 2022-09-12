@@ -58,7 +58,7 @@ namespace tsorcRevamp.Items.Armors
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("BlueHerosShirt").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<BlueHerosShirt>());
             recipe.AddIngredient(ItemID.SoulofSight, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);

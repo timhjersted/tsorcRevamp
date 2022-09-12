@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Supreme Dragoon Greaves");
-            Tooltip.SetDefault("Grants an extra double jump and Shiny Red Balloon effect");
+            Tooltip.SetDefault("Grants an extra double jump and Shiny Red Balloon effect\nIncreases your max number of minions by 3");
         }
 
         public override void SetDefaults()
@@ -30,6 +30,7 @@ namespace tsorcRevamp.Items.Armors
             player.hasJumpOption_Unicorn = true;
             player.jumpBoost = true;
             player.spawnMax = true; //?????
+            player.maxMinions += 3;
         }
 
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
@@ -57,9 +58,9 @@ namespace tsorcRevamp.Items.Armors
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("DragoonGreaves").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<DragoonGreaves>());
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 10);
-            recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 10);
+            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
             recipe.AddTile(TileID.DemonAltar);
 
