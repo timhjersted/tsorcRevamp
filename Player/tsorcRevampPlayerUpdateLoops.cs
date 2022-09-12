@@ -197,9 +197,9 @@ namespace tsorcRevamp
          = new List<string>() {
              "The dodgeroll makes you immune to attacks. Mastering it is necessary for survival!",
              "Glowing green skulls often hold important secrets...",
-             "The dodgeroll key can be changed in controls / mod config. It is set to Left Alt by default.",
+             "The dodgeroll key can be changed in controls / mod config. Left Alt by default. Try Left Shift, R or whatever works for you.",
              "You can dodge mid-air to avoid attacks and reverse your momentum instantly...",
-             "Crystal shards often light the path to powerful secrets...",
+             "Crystal shards often hint at secrets, chests or hidden paths nearby...",
              "Using potions during normal combat is often necessary to survive",
              "Losing souls on death can be disabled in the config",
              "Enemies in certain dark areas drop Humanity, which can restore HP lost to curses",
@@ -215,7 +215,10 @@ namespace tsorcRevamp
              "You may be encounter bosses before you can defeat them. If in doubt, come back when you're stronger",
              "Play with the Recipe Browser mod to easily see what your loot can be transformed into",
              "Welcome to the Dark Souls of Terraria",
-             "The Chloranthy Ring massively improves your dodgeroll, allowing even more evasion...",
+             "The Chloranthy Ring massively improves your dodgeroll, allowing superior evasion...",
+             "Teal pressure plates must be hit with a ranged weapon to activate",
+             "Use the Recipe Browser mod to see what can be crafted with Dark Souls. Anything that says it's a Dark Souls crafting material should be investigated.",
+             "Remember to dodgeroll",
              "I am so fucking mad"
             };
 
