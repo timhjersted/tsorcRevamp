@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 thisWatch.Start();
             }
 
-            watchTimer = 240;
+            watchTimer = 120;
             damageCounter += damage;
             lastTimer = (float)thisWatch.Elapsed.TotalSeconds;
         }
@@ -95,7 +95,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 thisWatch.Start();
             }
 
-            watchTimer = 240;
+            watchTimer = 120;
             damageCounter += damage;
             lastTimer = (float)thisWatch.Elapsed.TotalSeconds;
         }

@@ -355,13 +355,13 @@ namespace tsorcRevamp
             ScriptedEvent SpawnWizard = new ScriptedEvent(new Vector2(7322, 603), 40, default, 31, true, true, "", default, true, WizardCondition, WizardAction);
 
             //BOULDERFALL EVENT 1 - EARTH TEMPLE ENTRANCE
-            ScriptedEvent BoulderfallEvent1 = new ScriptedEvent(new Vector2(4378, 922), 6, default, default, false, false, "", default, false, default, BoulderfallEvent1Action);
+            ScriptedEvent BoulderfallEvent1 = new ScriptedEvent(new Vector2(4378, 922), 6, default, default, true, false, "", default, false, default, BoulderfallEvent1Action);
 
             //BOULDERFALL EVENT 2 - BLUE DUNGEON BRICK PARKOUR ROOM IN MOUNTAIN
-            ScriptedEvent BoulderfallEvent2 = new ScriptedEvent(new Vector2(3518, 429), 2, default, default, false, false, "", default, false, default, BoulderfallEvent2Action);
+            ScriptedEvent BoulderfallEvent2 = new ScriptedEvent(new Vector2(3518, 429), 2, default, default, true, false, "", default, false, default, BoulderfallEvent2Action);
 
             //BOULDERFALL EVENT 3 - TWIN PEAK RIGHTMOST ENTRANCE
-            ScriptedEvent BoulderfallEvent3 = new ScriptedEvent(new Vector2(3665, 360), 6, default, default, false, false, "", default, false, default, BoulderfallEvent3Action);
+            ScriptedEvent BoulderfallEvent3 = new ScriptedEvent(new Vector2(3665, 360), 6, default, default, true, false, "", default, false, default, BoulderfallEvent3Action);
 
             //FIREBOMB HOLLOW AMBUSH - ON BRIDGE AT TWIN PEAKS - ONLY ONCE
             List<int> FirebombHollowAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.FirebombHollow>(), ModContent.NPCType<NPCs.Enemies.FirebombHollow>() };
@@ -815,8 +815,10 @@ namespace tsorcRevamp
         //... is what it SHOULD do?
         public static bool TinkererAction(Player player, ScriptedEvent thisEvent)
         {
-            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 4456 * 16, 1744 * 16, NPCID.GoblinTinkerer);
             NPC.savedGoblin = true;
+            NPC goblinNPC = NPC.NewNPCDirect(new EntitySource_Misc("Scripted Event"), 4456 * 16, 1744 * 16, NPCID.GoblinTinkerer);
+            goblinNPC.homeTileX = 4449;
+            goblinNPC.homeTileY = 1740;
             thisEvent.endEvent = true;
             return true;
         }
