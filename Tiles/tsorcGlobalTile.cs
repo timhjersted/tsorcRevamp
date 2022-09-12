@@ -22,7 +22,7 @@ namespace tsorcRevamp.Tiles
                 Vector2 pos = new Vector2(i + 0.5f, j); // the + .5f makes the effect reach from equal distance to left and right
                 float distance = Math.Abs(Vector2.Distance(player.Center, (pos * 16)));
 
-                if (!player.dead && distance <= 120f)
+                if (!player.dead && distance <= 120f && Main.invasionType == 0)
                 {
                     player.AddBuff(ModContent.BuffType<Buffs.StoryTime>(), 30);
                 }
