@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
-	public class NightsCrackerProjectile : ModProjectile
+	public class TwistedCrackerProjectile : ModProjectile
 	{
 
 		public override void SetStaticDefaults()
@@ -20,8 +20,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void SetDefaults()
 		{
-			Projectile.width = 18;
-			Projectile.height = 18;
+			Projectile.width = 11;
+			Projectile.height = 14;
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 			Projectile.DamageType = DamageClass.SummonMeleeSpeed;
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = -1;
 			Projectile.WhipSettings.Segments = 20;
-			Projectile.WhipSettings.RangeMultiplier = 1.59f; //only thing affecting the actual whip range
+			Projectile.WhipSettings.RangeMultiplier = 1.8f; //only thing affecting the actual whip range
 		}
 
 		private float Timer
@@ -114,8 +114,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerBuff>(), 180);
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.NightsCrackerDebuff>(), 240);
+			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.TwistedCrackerBuff>(), 180);
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.TwistedCrackerDebuff>(), 240);
 			target.AddBuff(BuffID.ShadowFlame, 240);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.85f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
@@ -167,36 +167,26 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			{
 				// These two values are set to suit this projectile's sprite, but won't necessarily work for your own.
 				// You can change them if they don't!
-				Rectangle frame = new Rectangle(0, 0, 10, 26);
-				Vector2 origin = new Vector2(5, 12);
-				float scale = 1;
+				Rectangle frame = new Rectangle(0, 0, 11, 14);
+				Vector2 origin = new Vector2(5, 5);
+				float scale = 1.5f;
 
 				// These statements determine what part of the spritesheet to draw for the current segment.
 				// They can also be changed to suit your sprite.
 				if (i == list.Count - 2)
 				{
-					frame.Y = 74;
-					frame.Height = 18;
+					frame.Y = 22;
+					frame.Height = 17;
 
 					// For a more impactful look, this scales the tip of the whip up when fully extended, and down when curled up.
 					Projectile.GetWhipSettings(Projectile, out float timeToFlyOut, out int _, out float _);
 					float t = Timer / timeToFlyOut;
 					scale = MathHelper.Lerp(0.5f, 1.5f, Utils.GetLerpValue(0.1f, 0.7f, t, true) * Utils.GetLerpValue(0.9f, 0.7f, t, true));
 				}
-				else if (i > 20)
-				{
-					frame.Y = 58;
-					frame.Height = 16;
-				}
-				else if (i > 10)
-				{
-					frame.Y = 42;
-					frame.Height = 16;
-				}
 				else if (i > 0)
 				{
-					frame.Y = 26;
-					frame.Height = 16;
+					frame.Y = 14;
+					frame.Height = 8;
 				}
 
 				Vector2 element = list[i];

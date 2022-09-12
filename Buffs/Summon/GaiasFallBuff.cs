@@ -7,11 +7,11 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Summon
 {
-	public class TerraFallBuff : ModBuff
+	public class GaiasFallBuff : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Terraria's Fall");
+			DisplayName.SetDefault("Gaia's Fall");
 			Description.SetDefault("+25% whip speed\nTerra Energy fights for you");
 			Main.buffNoSave[Type] = true;
 			Main.buffNoTimeDisplay[Type] = false;
@@ -22,9 +22,9 @@ namespace tsorcRevamp.Buffs.Summon
             if (player.whoAmI == Main.myPlayer)
             {
                 int whipDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(115); //115 is the base dmg of Terra Fall
-                if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Whips.TerraFallTerraprisma>()] == 0)
+                if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Whips.GaiasFallTerraprisma>()] == 0)
                 {
-                    Projectile.NewProjectileDirect(player.GetSource_Buff(buffIndex), player.Center, Vector2.One, ModContent.ProjectileType<Projectiles.Summon.Whips.TerraFallTerraprisma>(), whipDamage, 1f, Main.myPlayer);
+                    Projectile.NewProjectileDirect(player.GetSource_Buff(buffIndex), player.Center, Vector2.One, ModContent.ProjectileType<Projectiles.Summon.Whips.GaiasFallTerraprisma>(), whipDamage, 1f, Main.myPlayer);
                 }
             }
         }

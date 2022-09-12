@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
-	public class TerraFallProjectile : ModProjectile
+	public class GaiasFallProjectile : ModProjectile
 	{
 
 		public override void SetStaticDefaults()
@@ -20,8 +20,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void SetDefaults()
 		{
-			Projectile.width = 22;
-			Projectile.height = 28;
+			Projectile.width = 11;
+			Projectile.height = 14;
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 			Projectile.DamageType = DamageClass.SummonMeleeSpeed;
@@ -126,8 +126,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.TerraFallBuff>(), 180);
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.TerraFallDebuff>(), 240);
+			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.GaiasFallBuff>(), 180);
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.GaiasFallDebuff>(), 240);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.85f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
 		}

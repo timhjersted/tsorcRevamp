@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Summon
 {
-	public class NightsCrackerBuff : ModBuff
+	public class TwistedCrackerBuff : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{

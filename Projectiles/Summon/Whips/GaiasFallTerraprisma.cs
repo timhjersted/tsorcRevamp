@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
-    public class TerraFallTerraprisma : ModProjectile
+    public class GaiasFallTerraprisma : ModProjectile
     {
 
         public override void SetStaticDefaults()

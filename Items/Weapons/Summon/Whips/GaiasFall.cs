@@ -6,17 +6,18 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-	public class TerraFall : ModItem
+	public class GaiasFall : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
+			DisplayName.SetDefault("Gaia's Fall");
             Tooltip.SetDefault("Stats of this whip scale with how long you've charged it" +
                 "\nSummons a Terraprisma after striking an enemy" +
                 "\n6-20 summon tag damage" +
                 "\nInherits Searing Lash's effect at up to an eighth of it's strength" + //8% effectiveness rounded down
                 "\n3-10% summon tag crit" +
-                "\nGain 12-39% whip attack speed upon striking an enemy" +
+                "\nGain 12-39% summon attack speed upon striking an enemy" +
                 "\nThis whip performs better against multiple targets than most whips" + //make this scale slightly too
 				"\nYour summons will focus struck enemies");
 		}
@@ -35,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 
 			Item.channel = true;
 
-			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.TerraFallProjectile>();
+			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.GaiasFallProjectile>();
 			Item.shootSpeed = 4;
 
 			Item.useStyle = ItemUseStyleID.Swing;
@@ -53,7 +54,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<NightsCracker>());
+			recipe.AddIngredient(ModContent.ItemType<TwistedCracker>());
 			recipe.AddIngredient(ItemID.SwordWhip);
 			recipe.AddIngredient(ItemID.RainbowWhip);
 			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
