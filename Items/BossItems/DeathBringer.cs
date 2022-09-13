@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.BossItems
 {
+    [LegacyName("BloodySkull")]
     class DeathBringer : ModItem
     {
 

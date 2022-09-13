@@ -12,8 +12,6 @@ namespace tsorcRevamp.Tiles
 {
     internal class tsorcGlobalTile : GlobalTile
     {
-
-
         public override void NearbyEffects(int i, int j, int type, bool closer)
         {
             if(type == TileID.Signs)
