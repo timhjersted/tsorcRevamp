@@ -16,8 +16,8 @@ namespace tsorcRevamp.Projectiles.Summon {
         }
 
         public override void SetDefaults() {
-            Projectile.width = 20;
-            Projectile.height = 20;
+            Projectile.width = 40;
+            Projectile.height = 40;
             Projectile.tileCollide = false;
             Projectile.minion = true;
             Projectile.minionSlots = 1f;
@@ -120,7 +120,7 @@ namespace tsorcRevamp.Projectiles.Summon {
             }
             switch (AI_State) {
                 case (float)AI_States.Combat: {
-                    float offset = 40 * Projectile.minionPos;
+                    float offset = Projectile.width * Projectile.minionPos;
                     int attackRate = 30;
                     int minCombatTime = 60;
                     AI_InCombatTimer -= 1f;
@@ -270,12 +270,12 @@ namespace tsorcRevamp.Projectiles.Summon {
 
                     if (shouldFaceLeft || shouldFaceRight) {
                         int tilePosX = (int)(Projectile.position.X + Projectile.width / 2) / 16;
-                        int tilePosY = (int)(Projectile.position.Y + Projectile.height / 2) / 16;
+                        int tilePosY = ((int)(Projectile.position.Y + Projectile.height / 2) / 16) - 1;
                         if (shouldFaceLeft) {
-                            tilePosX--;
+                            tilePosX -= 2; //2 because its wider than one tile and thus checks from its right edge because of rounding
                         }
                         if (shouldFaceRight) {
-                            tilePosX++;
+                            tilePosX++; //1 is fine here
                         }
                         tilePosX += (int)Projectile.velocity.X;
                         if (WorldGen.SolidTile(tilePosX, tilePosY)) {
@@ -305,18 +305,16 @@ namespace tsorcRevamp.Projectiles.Summon {
                         if (tryJump) {
                             int tilePosX = (int)(Projectile.position.X + Projectile.width / 2) / 16;
                             int tilePosY = (int)(Projectile.position.Y + Projectile.height) / 16;
-                            if (WorldGen.SolidTileAllowBottomSlope(tilePosX, tilePosY) || Main.tile[tilePosX, tilePosY].IsHalfBlock || Main.tile[tilePosX, tilePosY].Slope > 0 || Projectile.type == 200) {
+                            if (shouldFaceLeft) {
+                                tilePosX -= 2; //see above
+                            }
+                            if (shouldFaceRight) {
+                                tilePosX++;
+                            }
+                            tilePosX += (int)Projectile.velocity.X;
+                            if (WorldGen.SolidTileAllowBottomSlope(tilePosX, tilePosY) || Main.tile[tilePosX, tilePosY].IsHalfBlock || Main.tile[tilePosX, tilePosY].Slope > 0) {
                                 {
                                     try {
-                                        tilePosX = (int)(Projectile.position.X + Projectile.width / 2) / 16;
-                                        tilePosY = (int)(Projectile.position.Y + Projectile.height / 2) / 16;
-                                        if (shouldFaceLeft) {
-                                            tilePosX--;
-                                        }
-                                        if (shouldFaceRight) {
-                                            tilePosX++;
-                                        }
-                                        tilePosX += (int)Projectile.velocity.X;
                                         if (!WorldGen.SolidTile(tilePosX, tilePosY - 1) && !WorldGen.SolidTile(tilePosX, tilePosY - 2)) {
                                             Projectile.velocity.Y = -5.1f;
                                         }
