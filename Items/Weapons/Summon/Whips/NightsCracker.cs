@@ -6,12 +6,12 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-	public class TwistedCracker : ModItem
+	public class NightsCracker : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-			DisplayName.SetDefault("Twisted Cracker");
+			DisplayName.SetDefault("Night's Cracker");
 			Tooltip.SetDefault("Stats of this whip scale with how long you've charged it" +
                 "\n2-7 summon tag damage" +
                 "\nInherits Searing Lash's effect at up to half of its strength" +
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.rare = ItemRarityID.Pink;
 			Item.value = Item.buyPrice(0, 30, 0, 0);
 
-			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.TwistedCrackerProjectile>();
+			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.NightsCrackerProjectile>();
 			Item.shootSpeed = 4;
 
 			Item.useStyle = ItemUseStyleID.Swing;

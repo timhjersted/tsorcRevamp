@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 {
-	public class GaiasFallDebuff : ModBuff
+	public class TerraFallDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
@@ -15,20 +15,20 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 
 		public override void Update(NPC npc, ref int buffIndex)
 		{
-			npc.GetGlobalNPC<GaiasFallDebuffNPC>().markedByGaiasFall = true;
+			npc.GetGlobalNPC<TerraFallDebuffNPC>().markedByTerraFall = true;
 		}
 	}
 
-	public class GaiasFallDebuffNPC : GlobalNPC
+	public class TerraFallDebuffNPC : GlobalNPC
 	{
 		// This is required to store information on entities that isn't shared between them.
 		public override bool InstancePerEntity => true;
 
-		public bool markedByGaiasFall;
+		public bool markedByTerraFall;
 
 		public override void ResetEffects(NPC npc)
 		{
-			markedByGaiasFall = false;
+			markedByTerraFall = false;
 		}
 
 
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
-			if (markedByGaiasFall && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
+			if (markedByTerraFall && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
 				damage += 15;
 				if (Main.rand.NextBool(14))

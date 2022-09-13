@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
-	public class TwistedCrackerProjectile : ModProjectile
+	public class TerraFallProjectile : ModProjectile
 	{
 
 		public override void SetStaticDefaults()
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = -1;
 			Projectile.WhipSettings.Segments = 20;
-			Projectile.WhipSettings.RangeMultiplier = 1.8f; //only thing affecting the actual whip range
+			Projectile.WhipSettings.RangeMultiplier = 2.4f; //only thing affecting the actual whip range
 		}
 
 		private float Timer
@@ -76,8 +76,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			// Plays a whipcrack sound at the tip of the whip.
 			List<Vector2> points = Projectile.WhipPointsForCollision;
 			Projectile.FillWhipControlPoints(Projectile, points);
-			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.CorruptGibs, 0f, 0f, 150, default(Color), 1f);
-			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.PurpleTorch, 0f, 0f, 150, default(Color), 1f);
+			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.TerraBlade, 0f, 0f, 150, default(Color), 1f);
 			if (Timer == swingTime / 2)
 			{
 				SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Item/SummonerWhipcrack") with { Volume = 0.6f, PitchVariance = 0.3f }, points[points.Count - 1]);
@@ -99,10 +98,23 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			ChargeTime++;
 
 			if (ChargeTime % 12 == 0) // 1 segment per 12 ticks of charge.
+			{
 				Projectile.WhipSettings.Segments++;
+				Projectile.WhipSettings.RangeMultiplier += 0.05f;
+			}
+			if (ChargeTime % 30 == 0) // Add 20% of projectiles damage every 30 ticks of charge
+			{
+				Projectile.damage += (int)(Projectile.damage * 0.2f);
+			}
 
 			// Increase range up to 2x for full charge.
 			Projectile.WhipSettings.RangeMultiplier += 1 / 120f;
+
+			owner = Main.player[Projectile.owner];
+			Vector2 mountedCenter = owner.MountedCenter;
+			Vector2 unitVectorTowardsMouse = mountedCenter.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * owner.direction);
+			owner.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
+			Projectile.velocity = unitVectorTowardsMouse * 4;
 
 			// Reset the animation and item timer while charging.
 			owner.itemAnimation = owner.itemAnimationMax;
@@ -114,9 +126,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.TwistedCrackerBuff>(), 180);
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.TwistedCrackerDebuff>(), 240);
-			target.AddBuff(BuffID.ShadowFlame, 240);
+			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.TerraFallBuff>(), 180);
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.TerraFallDebuff>(), 240);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.85f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
 		}
@@ -135,7 +146,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 				Vector2 diff = list[i + 1] - element;
 
 				float rotation = diff.ToRotation() - MathHelper.PiOver2;
-				Color color = Lighting.GetColor(element.ToTileCoordinates(), Color.MediumVioletRed);
+				Color color = Lighting.GetColor(element.ToTileCoordinates(), Color.LightSeaGreen);
 				Vector2 scale = new Vector2(1, (diff.Length() + 2) / frame.Height);
 
 				Main.EntitySpriteDraw(texture, pos - Main.screenPosition, frame, color, rotation, origin, scale, SpriteEffects.None, 0);
@@ -167,26 +178,36 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			{
 				// These two values are set to suit this projectile's sprite, but won't necessarily work for your own.
 				// You can change them if they don't!
-				Rectangle frame = new Rectangle(0, 0, 11, 14);
-				Vector2 origin = new Vector2(5, 5);
-				float scale = 1.5f;
+				Rectangle frame = new Rectangle(0, 0, 11, 14);//0,0,22,28
+				Vector2 origin = new Vector2(5, 5);//11,11
+				float scale = 2;//1
 
 				// These statements determine what part of the spritesheet to draw for the current segment.
 				// They can also be changed to suit your sprite.
 				if (i == list.Count - 2)
 				{
-					frame.Y = 22;
-					frame.Height = 17;
+					frame.Y = 39;//80
+					frame.Height = 14;//19
 
 					// For a more impactful look, this scales the tip of the whip up when fully extended, and down when curled up.
 					Projectile.GetWhipSettings(Projectile, out float timeToFlyOut, out int _, out float _);
 					float t = Timer / timeToFlyOut;
 					scale = MathHelper.Lerp(0.5f, 1.5f, Utils.GetLerpValue(0.1f, 0.7f, t, true) * Utils.GetLerpValue(0.9f, 0.7f, t, true));
 				}
+				else if (i > 20)
+				{
+					frame.Y = 30;//62
+					frame.Height = 9;//18
+				}
+				else if (i > 10)
+				{
+					frame.Y = 21;//44
+					frame.Height = 9;//18
+				}
 				else if (i > 0)
 				{
-					frame.Y = 14;
-					frame.Height = 8;
+					frame.Y = 14;//28
+					frame.Height = 7;//16
 				}
 
 				Vector2 element = list[i];

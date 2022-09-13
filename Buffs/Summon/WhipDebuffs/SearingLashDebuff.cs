@@ -67,7 +67,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 				{
 					tagbonusdamage += 7;
 				}
-				if (npc.HasBuff(ModContent.BuffType<TwistedCrackerDebuff>()))
+				if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()))
 				{
 					tagbonusdamage += 5;
 				}
@@ -79,7 +79,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
                 {
 					tagbonusdamage += 3;
                 }
-				if (npc.HasBuff(ModContent.BuffType<GaiasFallDebuff>()))
+				if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
 				{
 					tagbonusdamage = 20;
 				}

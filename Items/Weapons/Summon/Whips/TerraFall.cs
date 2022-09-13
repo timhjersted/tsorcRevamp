@@ -6,12 +6,12 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-	public class GaiasFall : ModItem
+	public class TerraFall : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-			DisplayName.SetDefault("Gaia's Fall");
+			DisplayName.SetDefault("Terra Fall");
             Tooltip.SetDefault("Stats of this whip scale with how long you've charged it" +
                 "\nSummons a Terraprisma after striking an enemy" +
                 "\n6-20 summon tag damage" +
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 
 			Item.channel = true;
 
-			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.GaiasFallProjectile>();
+			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.TerraFallProjectile>();
 			Item.shootSpeed = 4;
 
 			Item.useStyle = ItemUseStyleID.Swing;
@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<TwistedCracker>());
+			recipe.AddIngredient(ModContent.ItemType<NightsCracker>());
 			recipe.AddIngredient(ItemID.SwordWhip);
 			recipe.AddIngredient(ItemID.RainbowWhip);
 			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
