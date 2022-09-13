@@ -18,6 +18,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.tileCollide = false;
 			Projectile.DamageType = DamageClass.SummonMeleeSpeed;
 			Projectile.penetrate += 2;
+			Projectile.usesLocalNPCImmunity = true;
+			Projectile.localNPCHitCooldown = 30;
 		}
         public override void AI()
         {

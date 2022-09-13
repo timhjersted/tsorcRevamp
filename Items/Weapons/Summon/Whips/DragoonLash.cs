@@ -15,8 +15,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Tooltip.SetDefault("Breathe fire at enemies struck by this whip and a minion on a cooldown" +
                 "\nRefresh the cooldown by whipping an enemy" +
                 "\nFire breath scales with this whips base damage" +
-                "\nStriking Enemies with this whip increases your whip attack speed drastically" +
-				"\nYour summons will focus struck enemies");
+                "\nStriking Enemies with this whip increases your summon attack speed drastically" +
+				"\nYour summons will focus struck enemies" +
+                "\nThis whip swings faster than most whips");
 		}
 
 		public override void SetDefaults()
@@ -51,7 +52,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.ChlorophyteBar, 13);
 			recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 1);
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 76000);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 46000);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();

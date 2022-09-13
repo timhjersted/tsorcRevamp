@@ -49,7 +49,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.BlandWhip, 1);
 			recipe.AddIngredient(ItemID.FallenStar, 20);
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3600);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();

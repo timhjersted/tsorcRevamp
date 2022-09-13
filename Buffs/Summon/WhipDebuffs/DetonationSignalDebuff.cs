@@ -39,7 +39,12 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			int buffIndex = 0;
 			if (markedByDetonationSignal && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
-				damage *= 3;
+				damage *= 2;
+				if(projectile.type == ProjectileID.StardustDragon1 || projectile.type == ProjectileID.StardustDragon2 || projectile.type == ProjectileID.StardustDragon3 || projectile.type == ProjectileID.StardustDragon4)
+				{
+					damage *= 3;
+					damage /= 4;
+				}
 				if (markedByDetonationSignal && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
                 {
 					Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), npc.Top, Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, 0, 0, Main.myPlayer);

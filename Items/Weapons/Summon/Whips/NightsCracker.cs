@@ -1,4 +1,3 @@
-/*
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -13,10 +12,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 			DisplayName.SetDefault("Night's Cracker");
 			Tooltip.SetDefault("Stats of this whip scale with how long you've charged it" +
-                "\n2-7 summon tag damage" +
+                "\n2-8 summon tag damage" +
                 "\nInherits Searing Lash's effect at up to half of its strength" +
-                "\n1-3% summon tag critical strike chance" +
-                "\nGain 7-22% summon attack speed upon striking an enemy" +
+                "\n1-4% summon tag critical strike chance" +
+                "\nGain 6-24% summon attack speed upon striking an enemy" +
                 "\nPerforms better against multiple targets than most whips" + //make this scale slightly too
 				"\nYour summons will focus struck enemies");
 		}
@@ -41,6 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.useAnimation = 30;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
+			Item.channel = true;
 
 		}
 		public override bool MeleePrefix()
@@ -55,11 +55,11 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.AddIngredient(ItemID.ThornWhip);
 			recipe.AddIngredient(ItemID.BoneWhip);
 			recipe.AddIngredient(ModContent.ItemType<SearingLash>());
-			recipe.AddIngredient(ItemID.SoulofNight, 15);
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 16000);
+			recipe.AddIngredient(ItemID.SoulofNight, 25);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 12500);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();
 		}
 	}
-}*/
+}

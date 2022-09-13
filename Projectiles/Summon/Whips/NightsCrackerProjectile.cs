@@ -11,6 +11,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 {
 	public class NightsCrackerProjectile : ModProjectile
 	{
+		public static int Charges = 0;
 
 		public override void SetStaticDefaults()
 		{
@@ -31,7 +32,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = -1;
 			Projectile.WhipSettings.Segments = 20;
-			Projectile.WhipSettings.RangeMultiplier = 1.8f; //only thing affecting the actual whip range
+			Projectile.WhipSettings.RangeMultiplier = 1.42f; //only thing affecting the actual whip range
 		}
 
 		private float Timer
@@ -76,7 +77,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			// Plays a whipcrack sound at the tip of the whip.
 			List<Vector2> points = Projectile.WhipPointsForCollision;
 			Projectile.FillWhipControlPoints(Projectile, points);
-			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.CorruptGibs, 0f, 0f, 150, default(Color), 1f);
+			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, 27, 0f, 0f, 150, default(Color), 1f);
 			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.PurpleTorch, 0f, 0f, 150, default(Color), 1f);
 			if (Timer == swingTime / 2)
 			{
@@ -98,14 +99,24 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 			ChargeTime++;
 
-			if (ChargeTime % 12 == 0) // 1 segment per 12 ticks of charge.
-				Projectile.WhipSettings.Segments++;
+            if (ChargeTime % 12 == 0) // 1 segment and 3% range per 12 tick of charge.
+            {
+                Projectile.WhipSettings.RangeMultiplier += 0.08f;
+                Projectile.WhipSettings.Segments++;
+            }
+            if (ChargeTime % 60 == 0) // Double damage every 60 ticks of charge.
+            {
+                Projectile.damage *= 2;
+            }
 
-			// Increase range up to 2x for full charge.
-			Projectile.WhipSettings.RangeMultiplier += 1 / 120f;
+            owner = Main.player[Projectile.owner];
+            Vector2 mountedCenter = owner.MountedCenter;
+            Vector2 unitVectorTowardsMouse = mountedCenter.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * owner.direction);
+            owner.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
+            Projectile.velocity = unitVectorTowardsMouse * 4;
 
-			// Reset the animation and item timer while charging.
-			owner.itemAnimation = owner.itemAnimationMax;
+            // Reset the animation and item timer while charging.
+            owner.itemAnimation = owner.itemAnimationMax;
 			owner.itemTime = owner.itemTimeMax;
 
 			return false; // still charging
@@ -114,9 +125,9 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerBuff>(), 180);
+			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerBuff>(), 240);
 			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.NightsCrackerDebuff>(), 240);
-			target.AddBuff(BuffID.ShadowFlame, 240);
+			Charges = (int)ChargeTime / 40 + 1;
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.85f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
 		}

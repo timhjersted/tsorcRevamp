@@ -11,8 +11,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 			Tooltip.SetDefault("Enemies struck by this whip will explode once on minion hit" +
-                "\nScales with triple the minion damage" +
-                "\nYour minions will focus struck enemies");
+                "\nScales with double the minion damage" +
+                "\nYour minions will focus struck enemies" +
+                "\nThis whip swings faster than most whips");
 		}
 
 		public override void SetDefaults()
@@ -22,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 88;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 110;
+			Item.damage = 75;
 			Item.knockBack = 2;
 			Item.rare = ItemRarityID.Red;
 			Item.value = Item.buyPrice(2, 40, 0, 0);
@@ -31,8 +32,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.shootSpeed = 4;
 
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.useTime = 20; // for some reason a lower use speed gives it increased range....
-			Item.useAnimation = 20;
+			Item.useTime = 23; // for some reason a lower use speed gives it increased range....
+			Item.useAnimation = 23;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
 
@@ -45,8 +46,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.FireWhip);
-			recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>());
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
+			recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>());
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 105000);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();

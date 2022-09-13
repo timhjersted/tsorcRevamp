@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.AddIngredient(ItemID.CrimtaneBar, 10);
 			recipe.AddIngredient(ItemID.ShadowScale, 5);
 			recipe.AddIngredient(ItemID.TissueSample, 5);
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4200);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4700);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();

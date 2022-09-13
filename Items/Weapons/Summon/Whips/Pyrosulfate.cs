@@ -48,8 +48,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.DemoniteBar, 4);
 			recipe.AddIngredient(ItemID.CursedFlame, 20);
-			recipe.AddIngredient(ItemID.SoulofNight, 5);
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6900);
+			recipe.AddIngredient(ItemID.SoulofNight, 10);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8900);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();

@@ -23,6 +23,7 @@ namespace tsorcRevamp.Projectiles.Summon.SummonProjectiles
             Projectile.timeLeft = 180;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
+            Projectile.DamageType = DamageClass.Summon;
         }
 
         public override void AI()

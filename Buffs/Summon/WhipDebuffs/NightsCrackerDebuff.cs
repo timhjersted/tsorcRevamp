@@ -1,6 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 {
@@ -69,7 +70,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 				}
 				if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()))
 				{
-					tagbonusdamage += 5;
+					tagbonusdamage += Projectiles.Summon.Whips.NightsCrackerProjectile.Charges * 2;
 				}
 				if (npc.HasBuff(ModContent.BuffType<PyrosulfateDebuff>()))
 				{
@@ -83,9 +84,11 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
                 {
 					tagbonusdamage = 20;
                 }
-				damage += (int)((projectile.damage + tagbonusdamage) * 0.33f * whipDamage * 0.01);
-				damage += 4;
-				if (Main.rand.NextBool(50))
+				float damagescale = Projectiles.Summon.Whips.NightsCrackerProjectile.Charges * 8 * 0.01f;
+				int damagescale2 = Projectiles.Summon.Whips.NightsCrackerProjectile.Charges * 2;
+                damage += (int)((projectile.damage + tagbonusdamage) * damagescale * whipDamage * 0.01);
+				damage += damagescale2;
+				if (Main.rand.NextBool(100 / Projectiles.Summon.Whips.NightsCrackerProjectile.Charges))
 				{
 					crit = true;
 				}
