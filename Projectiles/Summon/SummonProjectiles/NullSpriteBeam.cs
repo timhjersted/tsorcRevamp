@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon.SummonProjectiles
@@ -11,6 +12,7 @@ namespace tsorcRevamp.Projectiles.Summon.SummonProjectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Null Beam");
+            ProjectileID.Sets.MinionShot[Projectile.type] = true;
         }
 
         public override void SetDefaults()
