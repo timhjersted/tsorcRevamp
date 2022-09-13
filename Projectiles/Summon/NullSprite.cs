@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Summon
             Projectile.height = 20;
             Projectile.tileCollide = false;
             Projectile.minion = true;
-            Projectile.minionSlots = 1f;
+            Projectile.minionSlots = 0.75f;
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.Summon;
         }

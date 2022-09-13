@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles.Summon
             Projectile.hostile = false;
             Projectile.penetrate = 3;
             Projectile.tileCollide = false;
-            Projectile.DamageType = DamageClass.Magic;
+            Projectile.DamageType = DamageClass.Summon;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 30;
         }

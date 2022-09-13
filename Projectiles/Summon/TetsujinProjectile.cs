@@ -17,10 +17,6 @@ namespace tsorcRevamp.Projectiles.Summon
 	// If it isn't attacking, it will float near the player with minimal movement
 	public class TetsujinProjectile : ModProjectile
 	{
-		public int ragestacksfallofftimer = 0;
-		public int ragestackstimer = 0;
-		public int ragestacks = 0;
-		
 		public override void SetStaticDefaults()
 		{
 
@@ -49,33 +45,6 @@ namespace tsorcRevamp.Projectiles.Summon
 
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = 15;
-		}
-
-		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-		{
-			ragestacksfallofftimer = 0;
-			ragestackstimer = 0;
-			ragestacks += 1;
-			if (ragestacks < 0)
-			{
-				ragestacks = 0;
-			}
-			if (ragestacks > 19)
-			{
-				ragestacks = 20;
-			}
-			if (crit)
-			{
-				Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoomCrit>(), (int)((Projectile.damage * 0.075 * (ragestacks - 5)) * 2), 1f, Main.myPlayer);
-			}
-			if (ragestacks > 5)
-			{
-
-				if (!crit)
-                {
-					Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 0.075 * (ragestacks - 5)), 1f, Main.myPlayer);
-				}
-			}
 		}
 
 		// Here you can decide if your minion breaks things like grass or pots

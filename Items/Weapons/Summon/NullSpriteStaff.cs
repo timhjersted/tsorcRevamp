@@ -9,12 +9,13 @@ namespace tsorcRevamp.Items.Weapons.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Summons a null sprite to fight for you.");
+            Tooltip.SetDefault("Summons a null sprite to fight for you" +
+                "\nTakes 3/4th of a minion slot");
         }
 
         public override void SetDefaults()
         {
-            Item.damage = 150;
+            Item.damage = 115;
             Item.knockBack = 1f;
             Item.width = 44;
             Item.height = 50;

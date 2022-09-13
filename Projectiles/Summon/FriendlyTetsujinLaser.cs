@@ -21,6 +21,7 @@ namespace tsorcRevamp.Projectiles.Summon
             Projectile.penetrate = 1;
             Projectile.scale = 1.5f;
             Projectile.tileCollide = false;
+            Projectile.DamageType = DamageClass.Summon;
             Projectile.width = 2;
             Projectile.usesLocalNPCImmunity = true;
         }
