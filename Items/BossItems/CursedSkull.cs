@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.BossItems
 {
     class CursedSkull : ModItem
     {
-        public override string Texture => "tsorcRevamp/Items/BossItems/BloodySkull";
+        public override string Texture => "tsorcRevamp/Items/BossItems/DeathBringer";
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Summons Skeletron, the First of the Dead." +
