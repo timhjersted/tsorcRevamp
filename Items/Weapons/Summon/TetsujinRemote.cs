@@ -59,7 +59,6 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			// Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
 			return false;
 		}
-		/*
         public override void AddRecipes()
         {
 			Recipe recipe = CreateRecipe();
@@ -72,6 +71,5 @@ namespace tsorcRevamp.Items.Weapons.Summon
 
 			recipe.Register();
 		}
-		*/
     }
 }
