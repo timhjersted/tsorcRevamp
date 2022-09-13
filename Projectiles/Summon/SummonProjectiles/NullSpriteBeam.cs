@@ -18,7 +18,6 @@ namespace tsorcRevamp.Projectiles.Summon.SummonProjectiles
             Projectile.width = 4;
             Projectile.height = 4;
             Projectile.friendly = true;
-            Projectile.minion = true;
             Projectile.extraUpdates = 100;
             Projectile.timeLeft = 180;
             Projectile.usesLocalNPCImmunity = true;
