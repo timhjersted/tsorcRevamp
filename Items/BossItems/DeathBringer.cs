@@ -5,12 +5,12 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.BossItems
 {
-    class BloodySkull : ModItem
+    class DeathBringer : ModItem
     {
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A powerful weapon which destroys all enemies when used.");
+            Tooltip.SetDefault("A powerful weapon which brings death to all.");
         }
         public override void SetDefaults()
         {
@@ -40,9 +40,9 @@ namespace tsorcRevamp.Items.BossItems
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SoulofNight, 7);
-            recipe.AddIngredient(ItemID.Bone, 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
+            recipe.AddIngredient(ItemID.SoulofNight, 3);
+            recipe.AddIngredient(ItemID.Bone, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }
