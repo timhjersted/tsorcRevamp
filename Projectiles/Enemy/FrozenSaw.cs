@@ -71,6 +71,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Main.rand.NextBool(10))
             {
                 target.AddBuff(BuffID.Silenced, 180 / buffLengthMod);
+                target.AddBuff(BuffID.Weak, 180 / buffLengthMod);
                 target.AddBuff(BuffID.Slow, 300 / buffLengthMod);
             }
         }

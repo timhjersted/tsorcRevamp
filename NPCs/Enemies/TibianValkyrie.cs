@@ -103,49 +103,6 @@ namespace tsorcRevamp.NPCs.Enemies
                     boredTeleport = 5601;
                 }
 
-                /* 
-                //my attempt at creating a simple bored system from scratch - lol, didn't get far
-                
-                if (boredTeleport <= 100)
-                {
-
-
-                    if (Main.player[NPC.target].Center.X <= NPC.Center.X)
-                    {
-                        //NPC.direction = -1;
-                        NPC.TargetClosest(false);
-                    }
-                    else
-                    {
-                        //NPC.direction = 1;
-                        NPC.TargetClosest(false);
-                    }
-
-                }
-
-
-                if (boredTeleport >= 101)
-                {
-
-                    if (Main.player[NPC.target].Center.X <= NPC.Center.X)
-                    {
-                        NPC.direction = 1;
-                        NPC.TargetClosest(true);
-                    }
-                    else
-                    {
-                        NPC.direction = -1;
-                        NPC.TargetClosest(true);
-                    }
-
-
-                    //&& NPC.Distance(player.Center) < 130 && NPC.velocity.X <= 1.5f && NPC.velocity.Y <= -0.5f
-
-
-                }
-                */
-
-
             }
         }
 

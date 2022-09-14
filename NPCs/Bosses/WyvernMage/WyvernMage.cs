@@ -17,8 +17,9 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             Main.npcFrameCount[NPC.type] = 3;
             NPC.width = 28;
             NPC.height = 44;
-            NPC.damage = 90;
+            NPC.damage = 110;
             NPC.defense = 20;
+            NPC.scale = 1.3f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.lifeMax = 18200;
@@ -45,6 +46,10 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         bool OptionSpawned = false;
         int frozenSawDamage = 55;
         int lightningDamage = 75;
+        int iceBallDamage = 40;
+        int iceStormDamage = 35;
+        
+        int holdTimer = 0;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             frozenSawDamage = (int)(frozenSawDamage * 1.3 / 2);
@@ -72,10 +77,20 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             set => NPC.ai[2] = value;
         }
 
+        public override void OnHitPlayer(Player player, int damage, bool crit)
+        {
+            player.AddBuff(BuffID.WitheredWeapon, 180, false);
+            player.AddBuff(BuffID.WitheredArmor, 180, false);
+        }
+
         #region AI
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+
+            Lighting.AddLight(NPC.Center, Color.BlueViolet.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+
+
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             if (OptionSpawned == false)
             {
@@ -87,6 +102,36 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 }
                 OptionSpawned = true;
             }
+
+            
+
+            Player player = Main.player[NPC.target];
+            //chaos code: announce proximity debuffs once
+            if (holdTimer > 1)
+            {
+                holdTimer--;
+            }
+
+            //Proximity Debuffs
+            if ( NPC.life < NPC.lifeMax / 2)//NPC.Distance(player.Center) < 3550 &&
+            {
+
+                
+                player.AddBuff(BuffID.Chilled, 30, false);
+                player.AddBuff(BuffID.Ichor, 30, false);
+                //player.AddBuff(ModContent.BuffType<Buffs.Chilled>(), 60, false);
+                
+
+                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                {
+                    Main.NewText("The Wyvern Mage emits a a chilling wave of frost! The cold is unbearable!", 235, 199, 23);//deep yellow
+                    holdTimer = 9000;
+                }
+
+            }
+            
+            
+
 
             //Count up the timers
             OrbTimer++;
@@ -103,7 +148,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, transparency, Color.Black, 1f);
             Main.dust[dust].noGravity = true;
 
-            if (OrbTimer >= 5 && ((ShotCount < 3) || (ShotCount < 9) && !dragonAlive))
+            if (OrbTimer >= 5 && ((ShotCount < 6) || (ShotCount < 9) && !dragonAlive))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -163,7 +208,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        float projectileSpeed = 3f;
+                        float projectileSpeed = 4f;
                         Vector2 startPos = NPC.Center;
                         startPos.Y -= 220;
                         Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(startPos, Main.player[NPC.target].Center, projectileSpeed);
@@ -172,13 +217,13 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
                 }
 
-                if (Main.rand.NextBool(14) || (dragonAlive && Main.rand.NextBool(7))) //1 in 15 chance boss will summon an NPC, 1/7 if the dragon is dead
+                if (Main.rand.NextBool(60) || (dragonAlive && Main.rand.NextBool(30))) //1 in 15 chance boss will summon an NPC, 1/7 if the dragon is dead
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Enemies.BarrowWight>(), 0);
+                        int Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Enemies.Archdeacon>(), 0);
                         Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
-                        Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Enemies.BarrowWight>(), 0);
+                        Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Enemies.Archdeacon>(), 0);
                         Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
                     }
                 }
