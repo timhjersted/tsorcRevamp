@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             NPC.width = 45;
             NPC.height = 45;
             NPC.timeLeft = 22750;
-            NPC.damage = 170;
+            NPC.damage = 210;
             NPC.defense = 10;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath10;
@@ -67,12 +67,27 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
             //Generic Worm Part Code:
             NPC.behindTiles = true;
-            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<MechaDragonHead>(), bodyTypes, ModContent.NPCType<MechaDragonTail>(), 23, -1f, 12f, 0.13f, true, false, true, false, false); //3f was 6f
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<MechaDragonHead>(), bodyTypes, ModContent.NPCType<MechaDragonTail>(), 23, -1f, 19f, 0.13f, true, false, true, false, false); //19 was 12, the speed
 
             //Code unique to this body part:
             Color color = new Color();
             int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 62, 0, 0, 100, color, 1.0f);
             Main.dust[dust].noGravity = true;
+
+            /*
+            //Can phase through walls if can't reach the player, + 100 / + 200 works great! but it goes into walls too easily (+10 and +100 is better, but could be tweaked further)
+            if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height + 100)))
+            {
+                NPC.noTileCollide = false;
+                NPC.noGravity = true;
+            }
+            if ((!Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height + 200)))
+            {
+                NPC.noTileCollide = true;
+                NPC.noGravity = true; 
+            }
+            */
+
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             NPC.height = 45;
             NPC.knockBackResist = 0f;
             NPC.timeLeft = 750;
-            NPC.damage = 160;
+            NPC.damage = 170;
             NPC.defense = 23;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath10;
@@ -63,12 +63,25 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             CrystalFireDamage = CrystalFireDamage / 2;
         }
 
+        public override void OnHitPlayer(Player player, int damage, bool crit)
+        {
+            player.AddBuff(BuffID.WitheredWeapon, 180, false);
+            player.AddBuff(BuffID.WitheredArmor, 180, false);
+        }
+
         public override void AI()
         {
 
 
             //Generic Worm Part Code:
             tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<MechaDragonHead>(), bodyTypes, ModContent.NPCType<MechaDragonTail>(), 23, -1f, 12f, 0.13f, true, false);
+
+            Player player = Main.player[NPC.target];
+            if (NPC.Distance(player.Center) < 160)
+            {
+                player.AddBuff(BuffID.Chilled, 60, false);
+            }
+
 
             //Code unique to this body part:
             Timer++;

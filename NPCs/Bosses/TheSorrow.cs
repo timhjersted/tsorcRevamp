@@ -111,7 +111,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int Turtle = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.IceTortoise, 0); //ModContent.NPCType<NPCs.Enemies.MutantToad>()
+                    int Turtle = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.IceTortoise, 0); 
 
                     if (Main.netMode == NetmodeID.Server)
                     {

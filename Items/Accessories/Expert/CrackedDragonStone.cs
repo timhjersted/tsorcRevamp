@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("[c/ffbf00:Provides immunity to some elements of fire and ice, including catching on fire, burning, slow and becoming chilled]" +
+            Tooltip.SetDefault("[c/ffbf00:Provides immunity to fire and ice, including catching on fire, burning, slow, frostbite and becoming chilled]" +
                                 "\nAlso raises damage dealt by 3% and prevents knockback");
         }
 
@@ -30,6 +30,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             player.buffImmune[BuffID.Burning] = true;
             player.buffImmune[BuffID.Chilled] = true;
             player.buffImmune[BuffID.Slow] = true;
+            player.buffImmune[ModContent.BuffType<Buffs.Chilled>()] = true;
 
         }
 

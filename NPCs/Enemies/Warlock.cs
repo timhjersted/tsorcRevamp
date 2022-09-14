@@ -11,24 +11,25 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Main.npcFrameCount[NPC.type] = 15;
             AnimationType = 21;
-            NPC.knockBackResist = 0.2f;
+            NPC.knockBackResist = 0.1f;
             NPC.aiStyle = 3;
             NPC.damage = 65;
             NPC.npcSlots = 5;
             NPC.defense = 5;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 2600;
+            NPC.lifeMax = 2300;
             NPC.scale = 1f;
             NPC.HitSound = SoundID.NPCHit37;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 6700;
+            NPC.value = 15750;
             NPC.rarity = 3;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.WarlockBanner>();
             if (!Main.hardMode)
             {
-                NPC.lifeMax = 2000;
+                NPC.damage = 40;
+                NPC.lifeMax = 1500;
             }
         }
 
@@ -39,11 +40,6 @@ namespace tsorcRevamp.NPCs.Enemies
             greatEnergyBeamDamage = (int)(greatEnergyBeamDamage / 2);
             energyBallDamage = (int)(energyBallDamage / 2);
 
-            if (!Main.hardMode)
-            {
-                NPC.damage = 40;
-                NPC.lifeMax = 1500;
-            }
         }
 
         int greatEnergyBeamDamage = 35;
@@ -97,7 +93,7 @@ namespace tsorcRevamp.NPCs.Enemies
             return 0;
         }
         #endregion
-
+        float boredTeleport = 0;
         float attackTimer = 0;
         float bigAttackTimer = 0;
         public override void AI()
@@ -105,6 +101,36 @@ namespace tsorcRevamp.NPCs.Enemies
             bigAttackTimer++;
             tsorcRevampAIs.FighterAI(NPC, 1.8f, 0.03f, .2f, canTeleport: true, lavaJumping: true);
 
+            bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
+
+
+            //If the enemy doesn't have line of sight for a good while, teleport far away from the player and try again. Then much later, they get one more chance to teleport.
+            //Since this is an early enemy, the distance and time is not very aggressive.
+            if (!clearLineofSight)
+            {
+                boredTeleport++;
+
+                if (boredTeleport == 1600)
+                {
+                    tsorcRevampAIs.Teleport(NPC, 20, false);
+
+                }
+
+                if (boredTeleport == 3600)
+                {
+                    tsorcRevampAIs.Teleport(NPC, 30, false);
+                    boredTeleport = 0;
+                }
+
+
+            }
+            if (clearLineofSight)
+            {
+                boredTeleport = 0;
+            }
+
+
+            //Attacks
             bool clearShot = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height) && Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) <= 1000;
 
             if (tsorcRevampAIs.SimpleProjectile(NPC, ref attackTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBall>(), energyBallDamage, 8, clearShot && Main.rand.NextBool()))
