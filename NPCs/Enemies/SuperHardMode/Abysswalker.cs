@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit29;
             NPC.DeathSound = SoundID.NPCDeath31;
-            NPC.value = 12500;
+            NPC.value = 15500;
             NPC.width = 18;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AbysswalkerBanner>();
@@ -98,7 +98,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
             if (poisonStormTimer >= poisonStormTimerCap - 90)
             {
-                UsefulFunctions.DustRing(NPC.Center, (poisonStormTimerCap + 5) - poisonStormTimer, DustID.BlueCrystalShard, 12, 4);
+                UsefulFunctions.DustRing(NPC.Center, (poisonStormTimerCap + 5) - poisonStormTimer, DustID.BlueCrystalShard, 12, 4);//the edge of this attack seems very hard to read; tried to make it more defined but no luck
                 Lighting.AddLight(NPC.Center, Color.Orange.ToVector3() * 5);
                 if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
                 {
@@ -109,7 +109,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             //DEMON SPIRIT ATTACK
             if (Main.rand.NextBool(375))
             {
-                int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-600, 600), NPC.Center.Y + Main.rand.Next(-600, 600), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 90, 0f, Main.myPlayer);
+                int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-600, 600), NPC.Center.Y + Main.rand.Next(-600, 600), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 70, 0f, Main.myPlayer);
             }
 
             //Transparency. Higher alpha = more invisible

@@ -12,9 +12,9 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit29;
             NPC.DeathSound = SoundID.NPCDeath29;
             NPC.damage = 20;
-            NPC.lifeMax = 212;
+            NPC.lifeMax = 182;
             NPC.defense = 7;
-            NPC.value = 3300;
+            NPC.value = 3100;
             NPC.width = 18;
             NPC.aiStyle = -1;
             NPC.height = 40;
@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.lifeMax = 312;
                 NPC.defense = 14;
-                NPC.value = 1650;
+                NPC.value = 2650;
                 NPC.damage = 42;
                 NPC.knockBackResist = 0.1f;
             }

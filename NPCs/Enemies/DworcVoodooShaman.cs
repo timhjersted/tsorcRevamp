@@ -12,9 +12,9 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit29;
             NPC.DeathSound = SoundID.NPCDeath31;
             NPC.damage = 33;
-            NPC.lifeMax = 1260;
+            NPC.lifeMax = 756;
             NPC.defense = 28;
-            NPC.value = 6000;
+            NPC.value = 7500;
             NPC.width = 18;
             NPC.aiStyle = -1;
             NPC.height = 40;
@@ -153,7 +153,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //DEMON SPIRIT ATTACK
             if (Main.rand.NextBool(425))
             {
-                int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-500, 500), NPC.Center.Y + Main.rand.Next(-600, 600), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 60, 0f, Main.myPlayer);      
+                int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-500, 500), NPC.Center.Y + Main.rand.Next(-600, 600), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 40, 0f, Main.myPlayer);      
             }
 
             //Higher alpha = more invisible
@@ -163,12 +163,12 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (Main.rand.NextBool(100))
             {
-                NPC.alpha = 225;
+                NPC.alpha = 205;
                 NPC.netUpdate = true;
             }
             if (Main.rand.NextBool(200))
             {
-                NPC.alpha = 0; //0 is fully visible 225 is almost invisible
+                NPC.alpha = 0; //0 is fully visible 205 is almost invisible
                 NPC.netUpdate = true;
             }
             if (Main.rand.NextBool(250))
