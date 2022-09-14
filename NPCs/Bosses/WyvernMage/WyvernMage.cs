@@ -217,7 +217,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
                 }
 
-                if (Main.rand.NextBool(60) || (dragonAlive && Main.rand.NextBool(30))) //1 in 15 chance boss will summon an NPC, 1/7 if the dragon is dead
+                if (Main.rand.NextBool(65) || (dragonAlive && Main.rand.NextBool(45))) //1 in 15 chance boss will summon an NPC, 1/7 if the dragon is dead
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {

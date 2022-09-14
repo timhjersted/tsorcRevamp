@@ -425,7 +425,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //invisibility mode
                 NPC.ai[3]++;
                 NPC.alpha = 230;
-                NPC.defense = 60;
+                NPC.defense = 44;
                 //Use ice spirit attack
                 iceSpiritTimer = 900;
                 //NPC.dontTakeDamage = true;

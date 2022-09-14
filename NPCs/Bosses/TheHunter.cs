@@ -359,7 +359,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 NPC.ai[3]++;
                 NPC.alpha = 225;
-                NPC.defense = 70;
+                NPC.defense = 56;
                 //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].position.X < vector8.X)
                 {

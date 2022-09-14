@@ -448,7 +448,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 
                 NPC.ai[3]++;
                 NPC.alpha = 220;
-                NPC.defense = 50;
+                NPC.defense = 32;
                 //NPC.dontTakeDamage = true;
 
                 //FlameShotCounter2 = 0;
