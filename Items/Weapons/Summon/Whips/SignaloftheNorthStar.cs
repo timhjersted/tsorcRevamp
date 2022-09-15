@@ -12,8 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 			DisplayName.SetDefault("Signal of the North Star");
-			Tooltip.SetDefault("8 summon tag damage" +
-                "\n6% summon tag critical strike chance" +
+			Tooltip.SetDefault("6% summon tag critical strike chance" +
 				"\nStriking enemies will create the North Star, which scales with 66% of this whips damage" +
 				"\nThe North Star stays on your cursor and hits enemies with a frigid enchantment" +
                 "\nEnchanted Enemies will also be showered by polar stars when struck by minions" +

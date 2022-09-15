@@ -37,7 +37,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
 			if (markedByDominatrix && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
-				if (Main.rand.NextBool(20))
+				if (Main.rand.NextBool(14))
 				{
 					crit = true;
 				}

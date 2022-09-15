@@ -10,8 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-			Tooltip.SetDefault("7 summon tag damage" +
-				"\nStriking enemies will create Polaris, which scales with 66% of this whips damage" +
+			Tooltip.SetDefault("Striking enemies will create Polaris, which scales with 66% of this whips damage" +
 				"\nPolaris stays on your cursor and hits enemies with a frigid enchantment" +
                 "\nEnchanted Enemies will also be showered by polar stars when struck by minions" +
                 "\nThese scale with half of this whips damage" +
