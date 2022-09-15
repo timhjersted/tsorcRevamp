@@ -4,8 +4,10 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Runeterra;
+using tsorcRevamp.Buffs.Runeterra;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
+namespace tsorcRevamp.Projectiles.Runeterra
 {
 	public class ScorchingPointStar : ModProjectile
 	{

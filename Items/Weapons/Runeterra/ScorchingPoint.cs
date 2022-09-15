@@ -6,8 +6,10 @@ using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Runeterra;
+using tsorcRevamp.Buffs.Runeterra;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
+namespace tsorcRevamp.Items.Weapons.Runeterra
 {
 	[LegacyName("CotUItem1")]
 	public class ScorchingPoint : ModItem

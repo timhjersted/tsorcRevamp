@@ -447,10 +447,10 @@ namespace tsorcRevamp
             #endregion
 
             #region Scorching Point
-            if (drawPlayer.HeldItem.type == ModContent.ItemType<Items.Weapons.Runeterra.Summon.ScorchingPoint>())
+            if (drawPlayer.HeldItem.type == ModContent.ItemType<Items.Weapons.Runeterra.ScorchingPoint>())
             {
                 //1) Get texture
-                Texture2D scorchingPointTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Runeterra/Summon/ScorchingPointGauntletNoLines");
+                Texture2D scorchingPointTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Runeterra/ScorchingPoint_Hand");
 
                 //2) Get the players hand position
                 Vector2 drawPosition = drawPlayer.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, drawPlayer.itemRotation);

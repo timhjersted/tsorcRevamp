@@ -1,7 +1,9 @@
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Runeterra;
+using tsorcRevamp.Projectiles.Runeterra;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
+namespace tsorcRevamp.Buffs.Runeterra
 {
 	public class CenterOfTheHeat : ModBuff
 	{
