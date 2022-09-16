@@ -2364,34 +2364,35 @@ namespace tsorcRevamp.NPCs
                         if (npc.type == NPCID.GoblinPeon)
                         {
                             npc.damage = 20;
-                            npc.lifeMax = 75;
+                            npc.lifeMax = 70;
+                            npc.knockBackResist = 0.5f;
                         }
                         if (npc.type == NPCID.GoblinThief)
                         {
-                            npc.damage = 40;
+                            npc.damage = 55;
                             npc.defense = 6;
-                            npc.lifeMax = 125;
+                            npc.lifeMax = 110;
+                            npc.knockBackResist = 0.2f;
                         }
                         if (npc.type == NPCID.GoblinWarrior)
                         {
-                            npc.damage = 50;
+                            npc.damage = 40;
                             npc.defense = 15;
-                            npc.lifeMax = 300;
+                            npc.lifeMax = 260;
                             npc.knockBackResist = 0f;
                         }
                         if (npc.type == NPCID.GoblinSorcerer)
                         {
-                            npc.lifeMax = 100;
+                            npc.lifeMax = 80;
                             npc.defense = 0;
                             npc.damage = 0;
                             npc.knockBackResist = 0.1f;
                         }
                         if (npc.type == NPCID.GoblinArcher)
                         {
-                            npc.lifeMax = 150;
-                            npc.defense = 14;
+                            npc.lifeMax = 120;
+                            npc.defense = 10;
                             npc.damage = 0;
-                            npc.knockBackResist = 0.1f;
                         }
                         break;
                     }

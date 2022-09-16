@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+3 flat minion damage");
+            Tooltip.SetDefault("+9% summon attack speed");
         }
         public override void SetDefaults()
         {
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon).Flat += 3;
+            player.GetAttackSpeed(DamageClass.Summon) += 0.09f;
         }
 
     }

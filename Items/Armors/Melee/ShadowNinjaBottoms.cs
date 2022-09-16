@@ -7,6 +7,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Legs)]
     class ShadowNinjaBottoms : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("+33% Move Speed");
+        }
 
         public override void SetDefaults()
         {
@@ -15,6 +19,10 @@ namespace tsorcRevamp.Items.Armors.Melee
             Item.rare = ItemRarityID.Yellow;
             Item.value = PriceByRarity.fromItem(Item);
             Item.defense = 5;
+        }
+        public override void UpdateEquip(Player player)
+        {
+            player.moveSpeed += 0.33f;
         }
 
         public override void AddRecipes()

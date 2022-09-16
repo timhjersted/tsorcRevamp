@@ -10,12 +10,10 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Set bonus grants +30% Melee damage, +30% Melee Speed, +30 Rapid Life Regen, +30% Melee Crit" +
-                "\n+12 special abilities of the Ninja." +
-                "\nThese include: Firewalk, No fall damage, No knockback, rapid pick speed, waterwalk," +
-                "\nreduced potion cooldown, double jump, jump boost, +30 % movement speed," +
-                "\narchery, immunity to fire, and night vision." +
-                "\nDefense is capped at 40\nDamage reduction is converted into movement speed");
+            Tooltip.SetDefault("+30% Melee Crit" +
+                "\nSet bonus: +30% Melee Speed, +30 rapid life regen" +
+                "\nDefense is capped at 40" +
+                "\nDamage reduction is converted into movement speed");
         }
         public override void SetDefaults()
         {
@@ -30,24 +28,14 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             return body.type == ModContent.ItemType<ShadowNinjaTop>() && legs.type == ModContent.ItemType<ShadowNinjaBottoms>();
         }
+        public override void UpdateEquip(Player player)
+        {
+            player.GetCritChance(DamageClass.Melee) += 30;
+        }
 
         public override void UpdateArmorSet(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.3f;
             player.GetAttackSpeed(DamageClass.Melee) += 0.3f;
-            player.GetCritChance(DamageClass.Melee) += 30;
-            player.fireWalk = true;
-            player.noFallDmg = true;
-            player.noKnockback = true;
-            player.pickSpeed += 0.2f;
-            player.waterWalk = true;
-            player.pStone = true;
-            player.hasJumpOption_Basilisk = true;
-            player.jumpBoost = true;
-            player.moveSpeed += 0.3f;
-            player.archery = true;
-            player.fireWalk = true;
-            player.nightVision = true;
             if (player.statDefense >= 40)
             {
                 player.statDefense = 40;

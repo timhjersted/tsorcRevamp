@@ -7,6 +7,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Body)]
     class ShadowNinjaTop : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("+30% Melee damage");
+        }
         public override void SetDefaults()
         {
             Item.width = 18;
@@ -14,6 +18,10 @@ namespace tsorcRevamp.Items.Armors.Melee
             Item.rare = ItemRarityID.Yellow;
             Item.value = PriceByRarity.fromItem(Item);
             Item.defense = 10;
+        }
+        public override void UpdateEquip(Player player)
+        {
+            player.GetDamage(DamageClass.Melee) += 0.3f;
         }
         public override void AddRecipes()
         {

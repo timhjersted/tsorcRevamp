@@ -3,53 +3,24 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs
 {
-    class MagicPlatingLight : ModBuff
+    class MagicPlating : ModBuff
     {
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Light Magic Plating");
-            Description.SetDefault("Damage is reduced by 5%");
-            Main.debuff[Type] = false;
-            Main.buffNoTimeDisplay[Type] = false;
-        }
-
-        public override void Update(Player player, ref int buffIndex)
-        {
-            player.endurance += 0.05f;
-        }
-
-    }
-    class MagicPlatingMedium : ModBuff
-    {
+        public static int MagicPlatingStacks = 0;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Magic Plating");
-            Description.SetDefault("Damage is reduced by 10%");
+            Description.SetDefault("Damage taken is reduced by attacking");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.endurance += 0.1f;
-            player.buffImmune[ModContent.BuffType<MagicPlatingLight>()] = true;
+            player.endurance += MagicPlatingStacks * 0.01f;
         }
-    }
-    class MagicPlatingHard : ModBuff
-    {
-        public override void SetStaticDefaults()
+        public override void ModifyBuffTip(ref string tip, ref int rare)
         {
-            DisplayName.SetDefault("Hard Magic Plating");
-            Description.SetDefault("Damage is reduced by 15%");
-            Main.debuff[Type] = false;
-            Main.buffNoTimeDisplay[Type] = false;
-        }
-
-        public override void Update(Player player, ref int buffIndex)
-        {
-            player.endurance += 0.15f;
-            player.buffImmune[ModContent.BuffType<MagicPlatingLight>()] = true;
-            player.buffImmune[ModContent.BuffType<MagicPlatingMedium>()] = true;
+            tip = $"+{MagicPlatingStacks}% reduced damage against the next attack";
         }
     }
 }

@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Armors.Summon
+namespace tsorcRevamp.Items.Armors
 {
     [LegacyName("AncientBrassHelmet")]
     [AutoloadEquip(EquipType.Head)]
@@ -11,45 +11,32 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void SetStaticDefaults()
         {
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
-            Tooltip.SetDefault("Increases minion damage by 1 flat + 8%\nIncreases your max number of minions by 1");
+            Tooltip.SetDefault("Decreases damage dealt by 15%\nIncreases life regen by 4");
         }
 
         public override void SetDefaults()
         {
             Item.width = 26;
             Item.height = 20;
-            Item.defense = 4;
+            Item.defense = 9;
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.fromItem(Item);
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon).Flat += 1f;
-            player.GetDamage(DamageClass.Summon) += 0.08f;
-            player.maxMinions += 1;
+            player.GetDamage(DamageClass.Generic) -= 0.15f;
+            player.lifeRegen += 4;
         }
-
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<BrassArmor>() && legs.type == ModContent.ItemType<BrassGreaves>();
-        }
-
-        public override void UpdateArmorSet(Player player)
-        {
-            player.GetDamage(DamageClass.Summon) += 0.09f;
-            player.maxMinions += 1;
-            player.maxTurrets += 1;
-        }
-        /*
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.BeeHeadgear, 1);
+            recipe.AddIngredient(ItemID.PlatinumHelmet);
+            recipe.AddIngredient(ItemID.BeeWax, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }*/
+        }
     }
 }

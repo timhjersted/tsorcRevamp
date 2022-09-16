@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases magic damage by 1 flat\nSet bonus: Increases max mana by 50, decreases mana costs by 6%");
+            Tooltip.SetDefault("Increases magic damage by 2 flat\nSet bonus: Increases max mana by 50, decreases mana costs by 5%");
         }
         public override void SetDefaults()
         {
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Magic).Flat += 1;
+            player.GetDamage(DamageClass.Magic).Flat += 2;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         public override void UpdateArmorSet(Player player)
         {
             player.statManaMax2 += 50;
-            player.manaCost -= 0.06f;
+            player.manaCost -= 0.05f;
         }
         public override void AddRecipes()
         {

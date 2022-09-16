@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+10% movement speed");
+            Tooltip.SetDefault("+12% movement speed");
         }
         public override void SetDefaults()
         {
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.1f;
+            player.moveSpeed += 0.12f;
         }
     }
 }

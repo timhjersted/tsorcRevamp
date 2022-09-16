@@ -240,6 +240,10 @@ namespace tsorcRevamp
             {
                 Items.Accessories.Magic.CelestialCloak.hitchances += 1;
             }
+            if (Main.rand.NextBool(9) & MagicPlating.MagicPlatingStacks <= 22 & Player.HasBuff(ModContent.BuffType<MagicPlating>()))
+            {
+                MagicPlating.MagicPlatingStacks += 7;
+            }
         }
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
@@ -728,6 +732,10 @@ namespace tsorcRevamp
             if (damage >= Player.statLife || (crit && damage * 2 >= Player.statLife))
             {
                 DeathText = PickDeathText();
+            }
+            if(Player.HasBuff(ModContent.BuffType<MagicPlating>()))
+            {
+                MagicPlating.MagicPlatingStacks = 0;
             }
         }
 

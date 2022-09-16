@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         public override void SetStaticDefaults()
         {
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
-            Tooltip.SetDefault("Increases magic crit by 7%");
+            Tooltip.SetDefault("Increases magic crit by 5%");
         }
         public override void SetDefaults()
         {
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Magic) += 7;
+            player.GetCritChance(DamageClass.Magic) += 5;
         }
         public override void AddRecipes()
         {

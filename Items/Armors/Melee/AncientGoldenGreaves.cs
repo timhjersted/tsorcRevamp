@@ -11,19 +11,19 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("A lost prince's greaves." +
-                "\nIncreases movement speed by 10%");
+                "\nIncreases movement speed by 11%");
         }
         public override void SetDefaults()
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 6;
+            Item.defense = 5;
             Item.rare = ItemRarityID.Green;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.1f;
+            player.moveSpeed += 0.11f;
         }
         public override void AddRecipes()
         {

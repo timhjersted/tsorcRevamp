@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra
 		{
 			projectiles = new List<ScorchingPointStar>(){};
 
-			Item.damage = 18;
+			Item.damage = 22;
 			Item.knockBack = 3f;
 			Item.mana = 10;
 			Item.width = 32;

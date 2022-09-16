@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+25% movement speed, can walk on heated grounds.\nIncreases your max number of minions by 1");
+            Tooltip.SetDefault("+25% movement speed\nIncreases your max number of minions by 1");
         }
 
         public override void SetDefaults()
@@ -23,8 +23,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.15f;
-            player.fireWalk = true;
+            player.moveSpeed += 0.25f;
             player.maxMinions += 1;
         }
 

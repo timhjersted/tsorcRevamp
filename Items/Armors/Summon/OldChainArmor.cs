@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+10% minion damage\nSet Bonus: Increases your max number of minions by 1\n+10% whip speed");
+            Tooltip.SetDefault("+1 flat minion damage\nSet Bonus: Increases your max number of minions by 1");
         }
         public override void SetDefaults()
         {
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.1f;
+            player.GetDamage(DamageClass.Summon).Flat += 1;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -33,7 +33,6 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void UpdateArmorSet(Player player)
         {
             player.maxMinions += 1;
-            player.GetAttackSpeed(DamageClass.Summon) += 0.1f;
         }
     }
 }

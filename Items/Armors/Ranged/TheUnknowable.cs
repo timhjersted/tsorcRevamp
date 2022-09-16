@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("25% chance to not consume ammo\nInfinite breath, waterwalk, no knockback\nSet Bonus: +25% ranged damage, crit and +21% movement speed + Archery Skill + No Fall DMG");
+            Tooltip.SetDefault("25% chance to not consume ammo\nSet Bonus: +25% ranged damage, crit and +31% movement speed");
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
         }
         public override void SetDefaults()
@@ -29,18 +29,13 @@ namespace tsorcRevamp.Items.Armors.Ranged
         public override void UpdateEquip(Player player)
         {
             player.ammoCost75 = true;
-            player.breath = 999999;
-            player.waterWalk = true;
-            player.noKnockback = true;
         }
 
         public override void UpdateArmorSet(Player player)
         {
             player.GetDamage(DamageClass.Ranged) += 0.25f;
             player.GetCritChance(DamageClass.Ranged) += 25;
-            player.moveSpeed += 0.21f;
-            player.archery = true;
-            player.noFallDmg = true;
+            player.moveSpeed += 0.31f;
         }
 
         public override void AddRecipes()

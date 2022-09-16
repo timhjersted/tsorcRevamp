@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
             DisplayName.SetDefault("Archer of Lumelia Shirt");
             Tooltip.SetDefault("Gifted with lethal archery abilities" +
                 "\n25% chance not to consume ammo." +
-                "\nSet Bonus: +23% Ranged Crit, +15% Ranged Damage, Archery Skill (arrow speed & dmg +20%)");
+                "\nSet Bonus: +23% Ranged Crit, +15% Ranged Damage");
         }
         public override void SetDefaults()
         {
@@ -34,7 +34,6 @@ namespace tsorcRevamp.Items.Armors.Ranged
         {
             player.GetCritChance(DamageClass.Ranged) += 23;
             player.GetDamage(DamageClass.Ranged) += 0.15f;
-            player.archery = true;
         }
         public override void AddRecipes()
         {

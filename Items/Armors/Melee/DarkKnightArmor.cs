@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             Tooltip.SetDefault("\nOne of the fiercest armors for melee warriors" +
                 "\n+25% melee damage" +
-                "\nSet bonus grants waterwalk, no knockback, +25% melee speed" +
+                "\nSet Bonus: +25% melee speed" +
                 "\nSmall chance to regain life from melee strikes");
         }
 
@@ -36,8 +36,6 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.waterWalk = true;
-            player.noKnockback = true;
             player.GetAttackSpeed(DamageClass.Melee) += 0.25f;
 
             Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().MeleeArmorVamp10 = true;

@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Runeterra
 			Projectile.extraUpdates = 1;
 
 			Projectile.usesLocalNPCImmunity = true;
-			Projectile.localNPCHitCooldown = 15;
+			Projectile.localNPCHitCooldown = 20;
 		}
 		public override void OnSpawn(IEntitySource source) 
 		{

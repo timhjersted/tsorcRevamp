@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+30% Move Speed");
+            Tooltip.SetDefault("+28% Move Speed");
         }
 
         public override void SetDefaults()
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.3f;
+            player.moveSpeed += 0.28f;
         }
 
         public override void AddRecipes()

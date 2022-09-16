@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("You are a master of the zen arts, at one with the Tao" +
-                "\nAdds improved vision at night");
+                "\n+7% melee crit");
         }
 
         public override void SetDefaults()
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.nightVision = true;
+            player.GetCritChance(DamageClass.Melee) += 7;
         }
 
         public override void ArmorSetShadows(Player player)

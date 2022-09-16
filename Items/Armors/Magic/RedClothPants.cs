@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases movement speed by 10%");
+            Tooltip.SetDefault("Increases movement speed by 6%");
         }
         public override void SetDefaults()
         {
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.1f;
+            player.moveSpeed += 0.06f;
         }
         public override void AddRecipes()
         {

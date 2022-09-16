@@ -23,7 +23,6 @@ namespace tsorcRevamp.Buffs.Summon
 		}
 		public override void ModifyBuffTip(ref string tip, ref int rare)
 		{
-			base.ModifyBuffTip(ref tip, ref rare);
 			tip = $"+{attackspeed}% summon attack speed";
 		}
 	}

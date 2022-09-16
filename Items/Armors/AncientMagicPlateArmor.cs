@@ -1,30 +1,30 @@
-﻿/*
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs;
 
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Body)]
-    public class AncientMagicPlateArmor : ModItem //To be reworked
+    public class AncientMagicPlateArmor : ModItem
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Fueled by a magical gem in the chest\nIncreases damage by 4 flat" +
-                               "\nSet Bonus: Grants 10% increased attack speed" +
-                               "\nGrants 5-15% damage reduction upon hitting enemies a few times");
+            Tooltip.SetDefault("Fueled by a magical gem in the chest\nIncreases all attack speed by 12%" +
+                               "\nSet Bonus: Chance to gain stacks upon damaging anything" +
+                               "\nCollect stacks to gain up to 28% damage reduction against the next hit");
         }
         public override void SetDefaults()
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 7;
-            Item.rare = ItemRarityID.Pink;
+            Item.defense = 12;
+            Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Generic) += 0.1f;
+            player.GetAttackSpeed(DamageClass.Generic) += 0.12f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -32,36 +32,16 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateArmorSet(Player player)
         {
-
-
-            if (player.dpsDamage > 400 && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingHard>()))
-            {
-                {
-                    player.AddBuff(ModContent.BuffType<Buffs.MagicPlatingHard>(), 1);
-                }
-            }
-            else
-            if (player.dpsDamage > 200 && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingMedium>()) && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingHard>()))
-            {
-                {
-                    player.AddBuff(ModContent.BuffType<Buffs.MagicPlatingMedium>(), 1);
-                }
-            }
-            else
-            if (player.dpsDamage > 100 && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingLight>()) && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingMedium>()) && !player.HasBuff(ModContent.BuffType<Buffs.MagicPlatingHard>()))
-            {
-                player.AddBuff(ModContent.BuffType<Buffs.MagicPlatingLight>(), 1);
-            }
+            player.AddBuff(ModContent.BuffType<MagicPlating>(), 2);
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CobaltBreastplate, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
         }
     }
 }
-*/

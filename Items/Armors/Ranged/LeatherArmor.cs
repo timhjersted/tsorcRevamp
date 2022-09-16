@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Increases ranged damage by 1 flat" +
-                "\nSet bonus: +5% Ranged Damage, 20% less chance to consume ammo");
+                "\nSet bonus: 20% less chance to consume ammo");
         }
         public override void SetDefaults()
         {
@@ -32,7 +32,6 @@ namespace tsorcRevamp.Items.Armors.Ranged
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetDamage(DamageClass.Ranged) += 0.05f;
             player.ammoCost80 = true;
         }
         public override void AddRecipes()

@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("15% increased melee damage" +
-                "\nSet bonus: +17% melee damage, Firewalk skill");
+                "\nSet bonus: +10% melee damage multiplier");
         }
         public override void SetDefaults()
         {
@@ -31,8 +31,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.17f;
-            player.fireWalk = true;
+            player.GetDamage(DamageClass.Melee) *= 1.1f;
             if (Main.rand.NextBool(3))
             {
                 Color color = new Color();

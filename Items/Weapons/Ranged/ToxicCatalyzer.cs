@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetDefaults()
         {
-            Item.damage = 16;
+            Item.damage = 14;
             Item.DamageType = DamageClass.Ranged;
             Item.crit = 0;
             Item.width = 38;
@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.useAnimation = 18;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
-            Item.knockBack = 2.5f;
+            Item.knockBack = 2f;
             Item.value = 20000;
             Item.scale = 0.8f;
             Item.rare = ItemRarityID.Green;

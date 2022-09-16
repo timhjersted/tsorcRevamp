@@ -35,8 +35,6 @@ namespace tsorcRevamp.Items.Armors
         {
             if (set == "Hero's Clothes")
             {
-                player.setBonus = "Boosts all critical strike chance by 5%";
-
                 player.GetCritChance(DamageClass.Generic) += 5;
             }
         }

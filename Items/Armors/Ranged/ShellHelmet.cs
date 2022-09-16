@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Armor made from the shell of a legenadry creature." +
-                "\nSet bonus: Archery skill and +19% ranged crit activates when health falls below 160" +
+                "\nSet bonus: +19% ranged crit activates when health falls below 160" +
                 "\n+5% ranged crit otherwise");
         }
         public override void SetDefaults()
@@ -33,17 +33,12 @@ namespace tsorcRevamp.Items.Armors.Ranged
         {
             if (player.statLife <= 160)
             {
-                player.archery = true;
-                player.GetCritChance(DamageClass.Ranged) += 19;
+                player.GetCritChance(DamageClass.Ranged) += 14;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Black, 1.0f);
                 Main.dust[dust].noGravity = true;
             }
-
-            else
-            {
                 player.GetCritChance(DamageClass.Ranged) += 5;
-            }
         }
 
         public override void AddRecipes()
