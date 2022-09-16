@@ -19,7 +19,8 @@ namespace tsorcRevamp.Buffs
         //Refills wing/rocket boot flight time
         public override void Update(Player player, ref int buffIndex)
         {
-            Vector2 dustPos = player.position;
+            player.WingTime = 60;
+            /*Vector2 dustPos = player.position;
             dustPos.Y += player.Hitbox.Height; //Spawn dust at their feet
             Dust.NewDustDirect(dustPos, player.width, 0, DustID.Torch, 0, 5).velocity.X = 0;
 
@@ -36,7 +37,7 @@ namespace tsorcRevamp.Buffs
             if (player.rocketTime < player.rocketTimeMax)
             {
                 //player.rocketTime += 5;
-            }
+            }*/
         }
     }
 }
