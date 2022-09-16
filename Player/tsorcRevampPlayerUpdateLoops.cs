@@ -172,7 +172,6 @@ namespace tsorcRevamp
 
         public int MaxAcquiredHP; //To prevent purging stones and humanity from raising hp above your max acquired hp from life crystals and life fruit.
 
-        public float WellFed1Consumed;
 
         public bool PowerWithin;
         public int StaminaReaper = 0;
