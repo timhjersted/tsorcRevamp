@@ -177,12 +177,12 @@ namespace tsorcRevamp.NPCs.Bosses
                 player.AddBuff(BuffID.OnFire, 180, false);
             }
 
-            //chance to trigger fire from above / 2nd phase && NPC.life < NPC.lifeMax / 2
+            //chance to trigger fire from above / 2nd phase 
             if (Main.rand.NextBool(500) )
             {
                 
                 FlameShotCounter2 = 0;
-                NPC.netUpdate = true;
+               
             }
 
 
@@ -201,15 +201,16 @@ namespace tsorcRevamp.NPCs.Bosses
                 // Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 600 + Main.rand.Next(600), (float)player.position.Y - 120f, (float)(-10 + Main.rand.Next(10)) / 2, 0.1f, ProjectileID.DemonSickle, fireTrailsDamage, 2f, Main.myPlayer); // ModContent.ProjectileType<FireTrails>()
                 // Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, PitchVariance = 2 }, NPC.Center);
 
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 0.035f); //needs to be slow for demon sickle
+                    speed += Main.player[NPC.target].velocity / 50; //10 works for demon sickle, /2 was way too sensitive to player speed
 
-                Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 0.035f); //needs to be slow for demon sickle
-                speed += Main.player[NPC.target].velocity / 50; //10 works for demon sickle, /2 was way too sensitive to player speed
-               
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DemonSickle, fireTrailsDamage, 0f, Main.myPlayer);
-                //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DemonSickle, fireTrailsDamage, 0f, Main.myPlayer);
+                }
                 
 
-                NPC.netUpdate = true; //new
+               
 
                 FlameShotTimer2 = 0;
                 FlameShotCounter2++;
@@ -310,8 +311,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     
                 }
-                
-                
+               
                 Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 6.5f, .1f, true, true);
                 velocity += Target.velocity / 1.5f;
                 if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge

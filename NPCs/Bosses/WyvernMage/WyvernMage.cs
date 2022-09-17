@@ -221,12 +221,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 if (NPC.life <= 16000 && lifeTimer < 1 || NPC.life <= 12000 && lifeTimer < 2 || NPC.life <= 8000 && lifeTimer < 3 || NPC.life <= 4000 && lifeTimer < 3)
                 {
                     UsefulFunctions.BroadcastText("The Wyvern Mage summons the Archdeacons!", 175, 75, 255);
-                    num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaDamage, 0f, Main.myPlayer);
-                    num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaDamage, 0f, Main.myPlayer);
-                    num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaDamage, 0f, Main.myPlayer);
-                    Main.projectile[num58].timeLeft = 560;
-                    Main.projectile[num58].rotation = Main.rand.Next(700) / 100f;
-                    Main.projectile[num58].ai[0] = this.NPC.target;
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -234,6 +228,13 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                         Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
                         Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Enemies.Archdeacon>(), 0);
                         Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
+
+                        num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaDamage, 0f, Main.myPlayer);
+                        num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaDamage, 0f, Main.myPlayer);
+                        num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaDamage, 0f, Main.myPlayer);
+                        Main.projectile[num58].timeLeft = 560;
+                        Main.projectile[num58].rotation = Main.rand.Next(700) / 100f;
+                        Main.projectile[num58].ai[0] = this.NPC.target;
                     }
 
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);

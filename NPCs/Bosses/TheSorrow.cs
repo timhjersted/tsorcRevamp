@@ -100,7 +100,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 IceSpiritAttack();
             }
-
+            turtleTimer++;
             //SPAWN TURTLES!
             if (turtleTimer > 2000 && (Target.Center.Y + 20 >= NPC.Center.Y) && breathTimer > 0 && !secondPhase)
             {
@@ -426,8 +426,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.ai[3]++;
                 NPC.alpha = 230;
                 NPC.defense = 44;
-                //Use ice spirit attack
-                iceSpiritTimer = 900;
+            
                 //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].Center.X < NPC.Center.X)
                 {
@@ -473,8 +472,13 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     //Use ice spirit attack
                     iceSpiritTimer = 900;
+                    turtleTimer += 2000;
                     NPC.ai[3] = 1;
-                    NPC.life += 1000; //amount boss heals when going invisible
+                    if (NPC.life > (NPC.lifeMax / 2) + 100 || NPC.life < (NPC.lifeMax / 2) - 950)
+                    {
+                        NPC.life += 900; //amount boss heals when going invisible
+                    }
+                        
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                     NPC.netUpdate = true;
                 }

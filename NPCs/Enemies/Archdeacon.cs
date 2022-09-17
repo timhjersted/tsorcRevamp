@@ -75,7 +75,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //Bubble Attack & Hold Attack
-            if (Main.netMode != NetmodeID.Server && NPC.ai[1] >= 60)
+            if (NPC.ai[1] >= 60)
             {
                 int choice = Main.rand.Next(6);
 
@@ -83,14 +83,16 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (NPC.ai[0] >= 12 && NPC.ai[2] < 3 && Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 220) //22 was 12
                     {
-                        float num48 = 3f;
-                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                        int damage = 22;
-                        int type = ModContent.ProjectileType<Projectiles.Enemy.Bubble>();
-                        float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                        int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
-                        Main.projectile[proj].timeLeft = 180;
-
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            float num48 = 3f;
+                            Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                            int damage = 22;
+                            int type = ModContent.ProjectileType<Projectiles.Enemy.Bubble>();
+                            float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                            int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
+                            Main.projectile[proj].timeLeft = 180;
+                        }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, PitchVariance = 2f }, NPC.Center);
                         NPC.ai[0] = 0;
                         NPC.ai[2]++;
@@ -100,14 +102,16 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                         if (NPC.ai[0] >= 12 && NPC.ai[2] < 1 && Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 250) 
                         {
-                            float num48 = 5f;
-                            Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                            int damage = 16;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellHoldBall>(); 
-                            float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                            int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
-                            Main.projectile[proj].timeLeft = 420;
-
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num48 = 5f;
+                                Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                                int damage = 16;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellHoldBall>();
+                                float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                                int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
+                                Main.projectile[proj].timeLeft = 420;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, PitchVariance = 2f }, NPC.Center);
                             NPC.ai[0] = 0;
                             NPC.ai[2]++;
@@ -152,127 +156,42 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
                 else
-                {
-                    //WyvernMageTeleport();
+                {       
                     tsorcRevampAIs.Teleport(NPC, 38, true);
-
-
-
-
-
-
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
-
-
-
-
-
-                    //old teleportation code, couldn't get the enemy to reliably spawn above player, hovering in the air most of the time
-                    /*
-                     * 
-                     * for (int i = 0; i < 10; i++)
-                    {
-                        int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 27, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Purple, 1f);
-                        Main.dust[dust].noGravity = true;
-                    }
-
-
-
-                    //region teleportation - can't believe I got this to work.. yayyyyy :D lol
-
-                    int target_x_blockpos = (int)Main.player[NPC.target].position.X / 16; // corner not center
-                    int target_y_blockpos = (int)Main.player[NPC.target].position.Y / 16; // corner not center
-                    int x_blockpos = (int)NPC.position.X / 16; // corner not center
-                    int y_blockpos = (int)NPC.position.Y / 16; // corner not center
-                    int tp_radius = 40; // radius around target(upper left corner) in blocks to teleport into
-                    int tp_counter = 0;
-                    bool flag7 = false;
-                    if (Math.Abs(NPC.position.X - Main.player[NPC.target].position.X) + Math.Abs(NPC.position.Y - Main.player[NPC.target].position.Y) > 9000000f)
-                    { // far away from target; 4000 pixels = 250 blocks
-                        tp_counter = 100;
-                        flag7 = false; // always teleport, use true for no teleport when far away
-                    }
-                    while (!flag7) // loop always ran full 100 time before I added "flag7 = true" below
-                    {
-                        if (tp_counter >= 100) // run 100 times
-                            break; //return;
-                        tp_counter++;
-
-                        int tp_x_target = Main.rand.Next(target_x_blockpos - tp_radius, target_x_blockpos + tp_radius);  //  pick random tp point (centered on corner)
-                        int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
-                        for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
-                        { // (tp_x_target,m) is block under its feet I think
-                            if ((m < target_y_blockpos - 19  || tp_x_target < target_x_blockpos - 19 || tp_x_target > target_x_blockpos + 19) && (m < y_blockpos - 4 || m > y_blockpos + 4 || tp_x_target < x_blockpos - 4 || tp_x_target > x_blockpos + 4))//&& Main.tile[tp_x_target, m].HasTile //|| m > target_y_blockpos + 0
-                            { // over 13 blocks distant from player & over 4 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
-                                bool safe_to_stand = true;
-                                bool dark_caster = false; // not a fighter type AI...
-                                if (dark_caster && Main.tile[tp_x_target, m - 1].WallType == 0) // Dark Caster & ?outdoors
-                                    safe_to_stand = false;
-                                else if (Main.tile[tp_x_target, m - 1].LiquidType == LiquidID.Lava) // feet submerged in lava
-                                    safe_to_stand = false;
-
-                                if (!Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))//safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].TileType] &&
-                                { // safe enviornment & solid below feet & 3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
-
-                                    NPC.TargetClosest(true);
-                                    NPC.position.X = (float)(tp_x_target * 16 - NPC.width / 2); // center x at target
-                                    NPC.position.Y = (float)(m * 16 - NPC.height); // y so block is under feet
-                                    Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                                    NPC.velocity.X = (float)(Math.Cos(rotation) * 4) * -1;
-                                    NPC.velocity.Y = (float)(Math.Sin(rotation) * 4) * -1;
-
-
-                                    // npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
-                                    // npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet
-                                    NPC.netUpdate = true;
-
-                                    //npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
-                                    flag7 = true; // end the loop (after testing every lower point :/)
-                                    NPC.ai[1] = 0;
-                                }
-                            } // END over 4 blocks distant from player...
-                        } // END traverse y down to edge of radius
-                    } // END try 100 times
-                    */
-
                 }
             }
             //end region teleportation
 
 
-
-
-            //beginning of Omnir's Ultima Weapon projectile code
-
             NPC.ai[3]++;
             Player Player = Main.player[NPC.target];
-            if (Main.netMode != NetmodeID.Server)
-            { 
+            //if (Main.netMode != NetmodeID.Server)
+            //{ 
             if (NPC.ai[3] >= 200) //how often the crystal attack can happen in frames per second
             {
-                if (Main.rand.NextBool(2) && Player.position.Y < NPC.position.Y && NPC.Distance(Player.Center) < 400) //1 in 100 chance boss will use attack when player is above enemy
+                if (Main.rand.NextBool(2) && Player.position.Y < NPC.position.Y && NPC.Distance(Player.Center) < 400) //1 in 2chance boss will use attack when player is above enemy
                 {
-                   
-                        
-                        float num48 = 1f;
-                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                        int damage = 22;
-                        int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyIceBallUp>();
-                        float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                        int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
-                        Main.projectile[proj].timeLeft = 1;
 
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                        int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.AncientLight, NPC.velocity.X, NPC.velocity.Y, 0, Color.Black, 2f);
-                        Main.dust[dust].noGravity = true;
-                        
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            float num48 = 1f;
+                            Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                            int damage = 22;
+                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyIceBallUp>();
+                            float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                            int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
+                            Main.projectile[proj].timeLeft = 1;
+
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.AncientLight, NPC.velocity.X, NPC.velocity.Y, 0, Color.Black, 2f);
+                            Main.dust[dust].noGravity = true;
+                        }
                         NPC.ai[3] = 0;
 
-                    
                 }
             }
-            }
+            //}
             NPC.ai[3] += 1; // my attempt at adding the timer that switches back to the shadow orb
             if (NPC.ai[3] >= 600)
             {
@@ -282,63 +201,6 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
 
-
-
-
-        Vector2 nextWarpPoint;
-
-        public override void SendExtraAI(BinaryWriter writer)
-        {
-            writer.WriteVector2(nextWarpPoint);
-        }
-
-        public override void ReceiveExtraAI(BinaryReader reader)
-        {
-            nextWarpPoint = reader.ReadVector2();
-        }
-
-        public void WyvernMageTeleport()
-        {
-            if (nextWarpPoint != null)
-            {
-                //Check if the player has line of sight to the warp point. If not, rotate it by 90 degrees and try again. After 4 checks, give up.
-                //Lazy way to do this, but it's deterministic and works for 99% of cases so it works.
-                //We can't check collision when we pre-select the warp point, because it moves the npc relative to the player and the player might move in the meantime
-                if (Collision.CanHit(Main.player[NPC.target].Center + nextWarpPoint, 1, 1, Main.player[NPC.target].Center, 1, 1) || Collision.CanHitLine(Main.player[NPC.target].Center + nextWarpPoint, 1, 1, Main.player[NPC.target].Center, 1, 1))
-                {
-                    NPC.Center = Main.player[NPC.target].Center + nextWarpPoint;
-                }
-                else if (Collision.CanHit(Main.player[NPC.target].Center + nextWarpPoint.RotatedBy(MathHelper.ToRadians(90)), 1, 1, Main.player[NPC.target].Center, 1, 1) || Collision.CanHitLine(Main.player[NPC.target].Center + nextWarpPoint.RotatedBy(MathHelper.ToRadians(90)), 1, 1, Main.player[NPC.target].Center, 1, 1))
-                {
-                    NPC.Center = Main.player[NPC.target].Center + (nextWarpPoint.RotatedBy(MathHelper.ToRadians(90)));
-                }
-                else if (Collision.CanHit(Main.player[NPC.target].Center + nextWarpPoint.RotatedBy(MathHelper.ToRadians(270)), 1, 1, Main.player[NPC.target].Center, 1, 1) || Collision.CanHitLine(Main.player[NPC.target].Center + nextWarpPoint.RotatedBy(MathHelper.ToRadians(270)), 1, 1, Main.player[NPC.target].Center, 1, 1))
-                {
-                    NPC.Center = Main.player[NPC.target].Center + (nextWarpPoint.RotatedBy(MathHelper.ToRadians(270)));
-                }
-                else if (Collision.CanHit(Main.player[NPC.target].Center + nextWarpPoint.RotatedBy(MathHelper.ToRadians(180)), 1, 1, Main.player[NPC.target].Center, 1, 1) || Collision.CanHitLine(Main.player[NPC.target].Center + nextWarpPoint.RotatedBy(MathHelper.ToRadians(180)), 1, 1, Main.player[NPC.target].Center, 1, 1))
-                {
-                    NPC.Center = Main.player[NPC.target].Center + (nextWarpPoint.RotatedBy(MathHelper.ToRadians(180)));
-                }
-                else
-                {
-                    NPC.Center = Main.player[NPC.target].Center + nextWarpPoint;
-                }
-            }
-
-            NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 13);
-
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
-            
-            for (int i = 0; i < 10; i++)
-            {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);
-                Main.dust[dust].noGravity = false;
-            }
-
-            nextWarpPoint = Main.rand.NextVector2CircularEdge(640, 640);
-            NPC.netUpdate = true;
-        }
 
 
         public override void FindFrame(int frameHeight)
