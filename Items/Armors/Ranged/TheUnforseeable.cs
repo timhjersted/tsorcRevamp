@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+2 life regen / +11 life regen when health is below 100");
+            Tooltip.SetDefault("Increases ranged damage by 15%" +
+                "\nIncreases life regen by 3");
         }
 
         public override void SetDefaults()
@@ -23,14 +24,13 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.ammoCost75 = true;
-            if (player.statLife <= 100)
+            player.GetDamage(DamageClass.Ranged) += 0.15f;
+            player.lifeRegen += 3;
+
+            if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.lifeRegen += 11;
-            }
-            else
-            {
-                player.lifeRegen += 2;
+                player.GetDamage(DamageClass.Ranged) += 0.15f;
+                player.lifeRegen += 3;
             }
         }
 

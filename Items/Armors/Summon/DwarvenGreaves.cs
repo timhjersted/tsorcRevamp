@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases minion damage by 12%\nIncreases your max number of minions by 1\nIncreases movement speed by 25%");
+            Tooltip.SetDefault("Increases your max number of minions by 1" +
+                "\nIncreases movement speed by 19%");
         }
 
         public override void SetDefaults()
@@ -21,9 +22,14 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.12f;
             player.maxMinions += 1;
-            player.moveSpeed += 0.25f;
+
+            player.moveSpeed += 0.19f;
+
+            if (player.HasBuff(BuffID.ShadowDodge))
+            {
+                player.moveSpeed += 0.19f;
+            }
         }
         public override void AddRecipes()
         {

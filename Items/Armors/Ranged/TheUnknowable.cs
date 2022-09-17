@@ -9,7 +9,10 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("25% chance to not consume ammo\nSet Bonus: +25% ranged damage, crit and +31% movement speed");
+            Tooltip.SetDefault("25% chance to not consume ammo" +
+                "\nIncreases ranged critical strike chance by 17%" +
+                "\nSet Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active" +
+                "\nDefense and ammo consumption chance are not affected by this");
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
         }
         public override void SetDefaults()
@@ -29,13 +32,18 @@ namespace tsorcRevamp.Items.Armors.Ranged
         public override void UpdateEquip(Player player)
         {
             player.ammoCost75 = true;
+
+            player.GetCritChance(DamageClass.Ranged) += 17;
+
+            if (player.HasBuff(BuffID.ShadowDodge))
+            {
+                player.GetCritChance(DamageClass.Ranged) += 17;
+            }
         }
 
         public override void UpdateArmorSet(Player player)
         {
-            player.GetDamage(DamageClass.Ranged) += 0.25f;
-            player.GetCritChance(DamageClass.Ranged) += 25;
-            player.moveSpeed += 0.31f;
+            player.onHitDodge = true;
         }
 
         public override void AddRecipes()

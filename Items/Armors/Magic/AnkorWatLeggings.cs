@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+25% Movespeed. +25% Magic Damage.");
+            Tooltip.SetDefault("Increases magic damage by 15% and movement speed by 10%");
         }
         public override void SetDefaults()
         {
@@ -22,8 +22,14 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.25f;
-            player.GetDamage(DamageClass.Magic) += 0.25f;
+            player.moveSpeed += 0.1f;
+            player.GetDamage(DamageClass.Magic) += 0.15f;
+
+            if(player.HasBuff(BuffID.ShadowDodge))
+            {
+                player.moveSpeed += 0.1f;
+                player.GetDamage(DamageClass.Magic) += 0.15f;
+            }
         }
         public override void AddRecipes()
         {

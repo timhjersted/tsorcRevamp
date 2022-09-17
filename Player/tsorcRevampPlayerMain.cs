@@ -438,7 +438,6 @@ namespace tsorcRevamp
                 {
                     Player.HealEffect(10);
                     Player.statLife += (10);
-
                 }
             }
             if (NUVamp)

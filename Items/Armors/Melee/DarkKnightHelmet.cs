@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+13 defense when health falls below 80");
+            Tooltip.SetDefault("Increases melee critical strike chance by 15%");
         }
         public override void SetDefaults()
         {
@@ -22,10 +22,11 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += 25;
-            if (player.statLife <= 80)
+            player.GetCritChance(DamageClass.Melee) += 15;
+
+            if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.statDefense += 13;
+                player.GetCritChance(DamageClass.Melee) += 15;
             }
         }
 

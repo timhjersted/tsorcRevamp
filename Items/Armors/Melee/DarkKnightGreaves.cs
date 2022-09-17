@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Forsaken by the one who turned Paladin." +
-                "\n+25% movement speed");
+                "\nIncreases movement and melee speed by 17%");
         }
         public override void SetDefaults()
         {
@@ -23,7 +23,14 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.25f;
+            player.moveSpeed += 0.17f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.17f;
+
+            if (player.HasBuff(BuffID.ShadowDodge))
+            {
+                player.moveSpeed += 0.17f;
+                player.GetAttackSpeed(DamageClass.Melee) += 0.17f;
+            }
         }
 
         public override void AddRecipes()

@@ -11,9 +11,10 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("\nOne of the fiercest armors for melee warriors" +
-                "\n+25% melee damage" +
-                "\nSet Bonus: +25% melee speed" +
-                "\nSmall chance to regain life from melee strikes");
+                "\nIncreases melee damage by 15%" +
+                "\nSet Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active" +
+                "\nDefense is not affected by this" +
+                "\nSmall chance to regain life from melee strikes while Holy Dodge is active");
         }
 
         public override void SetDefaults()
@@ -27,7 +28,12 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.25f;
+            player.GetDamage(DamageClass.Melee) += 0.15f;
+
+            if (player.HasBuff(BuffID.ShadowDodge))
+            {
+                player.GetDamage(DamageClass.Melee) += 0.15f;
+            }
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -36,12 +42,15 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Melee) += 0.25f;
+            player.onHitDodge = true;
 
-            Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().MeleeArmorVamp10 = true;
+            if (player.HasBuff(BuffID.ShadowDodge))
+            {
+                Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().MeleeArmorVamp10 = true;
 
-            int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 27, (player.velocity.X) + (player.direction * 3), player.velocity.Y, 100, Color.BlueViolet, 1.0f);
-            Main.dust[dust].noGravity = true;
+                int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 27, (player.velocity.X) + (player.direction * 3), player.velocity.Y, 100, Color.BlueViolet, 1.0f);
+                Main.dust[dust].noGravity = true;
+            }
         }
 
         public override void AddRecipes()

@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases minion damage by 12%\nIncreases your max number of minions by 1");
+            Tooltip.SetDefault("Increases your max number of minions by 1" +
+                "\nIncreases minion damage by 16%");
         }
 
         public override void SetDefaults()
@@ -21,8 +22,14 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.12f;
             player.maxMinions += 1;
+
+            player.GetDamage(DamageClass.Summon) += 0.16f;
+
+            if (player.HasBuff(BuffID.ShadowDodge))
+            {
+                player.GetDamage(DamageClass.Summon) += 0.16f;
+            }
         }
         public override void AddRecipes()
         {

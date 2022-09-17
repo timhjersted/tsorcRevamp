@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("4% increases ranged damage and critical strike chance\n4% increased move speed");
+            Tooltip.SetDefault("Increases movement speed by 13%");
         }
         public override void SetDefaults()
         {
@@ -22,9 +22,12 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Ranged) += 0.04f;
-            player.GetCritChance(DamageClass.Ranged) += 4;
-            player.moveSpeed += 0.04f;
+            player.moveSpeed += 0.13f;
+
+            if (player.HasBuff(BuffID.ShadowDodge))
+            {
+                player.moveSpeed += 0.13f;
+            }
         }
 
         public override void AddRecipes()

@@ -10,7 +10,9 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+25% Magic Critical chance.\nSet bonus: +130 max mana, Rapid Mana Regen");
+            Tooltip.SetDefault("Increases magic critical strike chance by 15%" +
+                "\nSet Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active" +
+                "\nDefense and maximum mana are not affected by this");
         }
         public override void SetDefaults()
         {
@@ -22,7 +24,12 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Magic) += 25;
+            player.GetCritChance(DamageClass.Magic) += 15;
+
+            if (player.HasBuff(BuffID.ShadowDodge))
+            {
+                player.GetCritChance(DamageClass.Magic) += 15;
+            }
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -30,11 +37,13 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.manaRegenBuff = true;
-            player.statManaMax2 += 130;
-            player.manaRegen += 7;
-            int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 60, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Red, 1.0f);
-            Main.dust[dust].noGravity = true;
+            player.onHitDodge = true;
+
+            if (player.HasBuff(BuffID.ShadowDodge))
+            {
+                int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 60, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Red, 1.0f);
+                Main.dust[dust].noGravity = true;
+            }
         }
         public override void ArmorSetShadows(Player player)
         {

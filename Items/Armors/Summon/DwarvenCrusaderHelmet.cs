@@ -11,8 +11,11 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases whip damage by 12%\nSet Bonus: Increases whip range by 20% and speed by 25%" +
-                "\nWhen health is above 333, gain 7% minion damage + 7% whip damage, 17% whip speed and 6 life regen");
+            Tooltip.SetDefault("Increases minion damage by 9% and summon attack speed by 18%" +
+                "\nIncreases life regen by 4" +
+                "\nSet Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active" +
+                "\nDefense, minion slots and whip range are not affected by this" +
+                "\nIncreases whip range by 20%");
         }
 
         public override void SetDefaults()
@@ -29,25 +32,29 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.12f;
+            player.GetDamage(DamageClass.Summon) += 0.09f;
+            player.GetAttackSpeed(DamageClass.Summon) += 0.18f;
+
+            if (player.HasBuff(BuffID.ShadowDodge))
+            {
+                player.GetDamage(DamageClass.Summon) += 0.09f;
+                player.GetAttackSpeed(DamageClass.Summon) += 0.18f;
+            }
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.whipRangeMultiplier += 0.2f;
-            player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
+            player.onHitDodge = true;
 
-            if (player.statLife > 333)
+            player.whipRangeMultiplier += 0.2f;
+
+            player.lifeRegen += 4;
+
+            if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.GetDamage(DamageClass.Summon) += 0.07f;
-                player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.07f;
-                player.GetAttackSpeed(DamageClass.Summon) += 0.17f;
-                player.lifeRegen += 6;
+                player.lifeRegen += 4;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 42, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 105, Color.Gold, 1.0f);
                 Main.dust[dust].noGravity = true;
-            }
-            else
-            {
             }
         }
         public override void AddRecipes()

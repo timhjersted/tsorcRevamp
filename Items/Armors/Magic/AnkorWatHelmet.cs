@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("14% Less Mana Usage.\n+14 Defense when health is less than 120");
+            Tooltip.SetDefault("Increases max mana by 120" +
+                "\nReduces mana costs by 8% and increases mana regen by 4");
         }
         public override void SetDefaults()
         {
@@ -21,11 +22,15 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.manaCost -= 0.14f;
+            player.statManaMax2 += 120;
 
-            if (player.statLife <= 120)
+            player.manaCost -= 0.08f;
+            player.manaRegen += 4;
+
+            if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.statDefense += 14;
+                player.manaCost -= 0.08f;
+                player.manaRegen += 4;
             }
         }
         public override void AddRecipes()
