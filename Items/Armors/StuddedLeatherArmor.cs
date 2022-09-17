@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases damage by 10%" +
+            Tooltip.SetDefault("Increases damage by 2 flat" +
                 "\nSet bonus: Increases all attack speed by 15%");
         }
         public override void SetDefaults()
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Generic) += 0.1f;
+            player.GetDamage(DamageClass.Generic).Flat += 2f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
