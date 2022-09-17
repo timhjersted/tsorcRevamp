@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("An ancient relic forged and lost many centuries ago" +
-                                "\nIncreases the number of Dark Souls dropped by fallen creatures by 50%. Defense reduced by 40." +
+                                "\n[c/ffbf00:Increases the number of Dark Souls dropped by fallen creatures by 50% but reduces defense by 40]" +
                                 "\nAll souls are drawn to the wearer from a large distance" +
                                 "\nThe ring glows with a bright white light");
         }
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<CovetousSoulSerpentRing>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<CovetousSilverSerpentRing>(), 1);
             recipe.AddIngredient(ModContent.ItemType<SoulReaper2>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);

@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Your full potential trancends even space and time" +
-                                "\nGain the ability to dodge even mid-weapon use" +
+                                "\n[c/ffbf00:Gain the ability to dodge even mid-weapon use]" +
                                 "\nDouble tap any direction or press the hotkey to [c/9803fc:shift]" +
                                 "\nWhile shifting you are [c/9803fc:completely intangable] for a brief moment");
         }

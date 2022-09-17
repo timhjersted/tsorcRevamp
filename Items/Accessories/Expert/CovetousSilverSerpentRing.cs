@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
         {
             Tooltip.SetDefault("An ancient relic forged and lost many centuries ago" +
                                 "\nOne of the 4 Kings of Arradius was said to wear this ring" +
-                                "\nIncreases the number of souls dropped from fallen creatures by 20% but reduces defense by 15" +
+                                "\n[c/ffbf00:Increases the number of souls dropped from fallen creatures by 20% but reduces defense by 15]" +
                                 "\nThe ring glows with a bright white light");
         }
 

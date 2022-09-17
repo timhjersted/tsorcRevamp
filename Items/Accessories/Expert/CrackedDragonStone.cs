@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("[c/ffbf00:Provides immunity to fire and ice, including catching on fire, burning, slow, frostbite and becoming chilled]" +
+            Tooltip.SetDefault("[c/ffbf00:Provides immunity to catching on fire, burning, slow, frostbite and becoming chilled]" +
                                 "\nAlso raises damage dealt by 3% and prevents knockback");
         }
 
