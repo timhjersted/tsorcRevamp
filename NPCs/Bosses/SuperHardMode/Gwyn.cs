@@ -396,7 +396,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (NPC.Distance(player.Center) > 350)
                 {
                     //Counts up each tick. Used to space out shots
-                    if (DarkBeadShotTimer >= 12 && DarkBeadShotCounter < 3)
+                    if (DarkBeadShotTimer >= 12 && DarkBeadShotCounter < 2)
                     {
                         Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 7);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.ArtoriasDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
@@ -415,7 +415,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     //ORANGE PHANTOM SEEKER
                     int num59;
-                    if (customAi3 >= 230 && NPC.Distance(player.Center) > 300 && Main.rand.NextBool(900))
+                    if (customAi3 >= 230 && NPC.Distance(player.Center) > 300 && Main.rand.NextBool(1100))
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -731,7 +731,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if (breathTimer > 480 && shotTimer <= 99f && NPC.life >= 800001)//12 was 2
                     {
-                        breathTimer = -60; 
+                        breathTimer = -40; 
                         shotTimer = -120f; //was -90
                     }
 
