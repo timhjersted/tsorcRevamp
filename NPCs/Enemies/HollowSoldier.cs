@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -770,7 +771,8 @@ namespace tsorcRevamp.NPCs.Enemies
             bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
             bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
 
-            if (spawnInfo.Invasion)
+            Player p = spawnInfo.Player;
+            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow)
             {
                 chance = 0;
                 return chance;

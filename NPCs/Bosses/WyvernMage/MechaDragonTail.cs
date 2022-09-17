@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             NPC.height = 45;
             NPC.knockBackResist = 0f;
             NPC.timeLeft = 1750;
-            NPC.damage = 70;
+            NPC.damage = 0;
             NPC.defense = 0;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath10;
@@ -41,6 +41,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
         }
         public static int[] bodyTypes;
+        
 
         public override void SetStaticDefaults()
         {
@@ -70,6 +71,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 NPC.HitEffect(0, 10.0);
                 NPC.active = false;
             }
+
 
             //Color color = new Color();
             //int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y + 10), npc.width, npc.height, 6, 0, 0, 100, color, 1.0f);

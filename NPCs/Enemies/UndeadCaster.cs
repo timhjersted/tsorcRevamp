@@ -33,15 +33,33 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.width = 28;
             NPC.HitSound = SoundID.NPCHit2;
             NPC.DeathSound = SoundID.NPCDeath2;
+
+            if (NPC.downedBoss1)
+            {
+                NPC.lifeMax = 50;
+                NPC.defense = 12;
+                NPC.value = 750;
+                NPC.damage = 25;
+            }
+
+            if (NPC.downedBoss3)
+            {
+                NPC.lifeMax = 110;
+                NPC.defense = 15;
+                NPC.value = 950;
+                NPC.damage = 42;  
+            }
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-
+            
             float chance = 0;
             Player p = spawnInfo.Player;
             if (!Main.hardMode && p.ZoneRockLayerHeight && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneJungle && Main.dayTime) return 0.0285f;
             if (!Main.hardMode && p.ZoneRockLayerHeight && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneJungle && !Main.dayTime) return 0.05f;
-            if (!Main.hardMode && Sky(p) && !Main.dayTime) return 0.05f;
+            if (!Main.hardMode && Sky(p) && !Main.dayTime) return 0.025f;
+            if (!Main.hardMode && Sky(p) && Main.dayTime) return 0.05f;
+            if (!Main.hardMode && spawnInfo.Player.ZoneSnow) return 0.1f;
             if (!Main.hardMode && (spawnInfo.Player.ZoneRockLayerHeight && !(!spawnInfo.Player.ZoneDungeon && spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneJungle)) && !Main.dayTime) return 0.033f;
 
             return chance;

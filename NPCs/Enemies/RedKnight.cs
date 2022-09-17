@@ -27,6 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.width = 20;
             NPC.damage = 149;
             NPC.defense = 41;
+            NPC.scale = 1.1f;
             NPC.lifeMax = 5000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -285,7 +286,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.localAI[1] <= 100 && NPC.Distance(player.Center) > 60)
                 {
 
-                    if (Main.rand.NextBool(500)) //30 was cool for great red knight
+                    if (Main.rand.NextBool(420)) //30 was cool for great red knight
                     {
                         //FIRE
                         for (int pcy = 0; pcy < 2; pcy++)

@@ -4,6 +4,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -56,7 +57,7 @@ namespace tsorcRevamp.NPCs.Enemies
             float chance = 0;
             bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
             bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
-
+            Player p = spawnInfo.Player;
             if (spawnInfo.Invasion)
             {
                 chance = 0;
@@ -64,7 +65,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (spawnInfo.Player.townNPCs > 1f) return 0f;
 
-            if (spawnInfo.Water) return 0f;
+            if (spawnInfo.Water || Sky(p)) return 0f;
             if (spawnInfo.Player.ZoneGlowshroom) return 0f;
 
             //Hollow enemies

@@ -15,17 +15,17 @@ namespace tsorcRevamp.NPCs.Enemies
             //npc.maxSpawns = 2; todo investigate
             NPC.aiStyle = 0;
             NPC.damage = 70;
-            NPC.defense = 8;
+            NPC.defense = 20;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 150;
-            NPC.scale = 1;
+            NPC.lifeMax = 500;
+            NPC.scale = 1.2f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.noGravity = false;
             NPC.noTileCollide = false;
             NPC.lavaImmune = true;
-            NPC.value = 1500;
+            NPC.value = 3750;
             NPC.width = 28;
             NPC.knockBackResist = 0.2f;
             Main.npcFrameCount[NPC.type] = 3;
@@ -89,7 +89,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         int type = ModContent.ProjectileType<Projectiles.Enemy.Bubble>();
                         float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
-                        Main.projectile[proj].timeLeft = 170;
+                        Main.projectile[proj].timeLeft = 180;
 
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, PitchVariance = 2f }, NPC.Center);
                         NPC.ai[0] = 0;
@@ -98,13 +98,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (choice == 0)
                 {
-                        if (NPC.ai[0] >= 12 && NPC.ai[2] < 1 && Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 200) //22 was 12
+                        if (NPC.ai[0] >= 12 && NPC.ai[2] < 1 && Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 250) 
                         {
-                            float num48 = 3f;
+                            float num48 = 5f;
                             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                            int damage = 22;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellHoldBall>(); //EnemyIceBallUp
-                        float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                            int damage = 16;
+                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellHoldBall>(); 
+                            float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                             int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
                             Main.projectile[proj].timeLeft = 420;
 
@@ -246,23 +246,22 @@ namespace tsorcRevamp.NPCs.Enemies
             //beginning of Omnir's Ultima Weapon projectile code
 
             NPC.ai[3]++;
-
+            Player Player = Main.player[NPC.target];
             if (Main.netMode != NetmodeID.Server)
             { 
-            if (NPC.ai[3] >= 300) //how often the crystal attack can happen in frames per second
+            if (NPC.ai[3] >= 200) //how often the crystal attack can happen in frames per second
             {
-                if (Main.rand.NextBool(2)) //1 in 2 chance boss will use attack when it flies down on top of you
+                if (Main.rand.NextBool(2) && Player.position.Y < NPC.position.Y && NPC.Distance(Player.Center) < 400) //1 in 100 chance boss will use attack when player is above enemy
                 {
-                    if (Main.rand.NextBool(140)) //1 in 2 chance boss will use attack when it flies down on top of you
-                    {
+                   
                         
-                        float num48 = 2f;
+                        float num48 = 1f;
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         int damage = 22;
                         int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyIceBallUp>();
                         float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
-                        Main.projectile[proj].timeLeft = 320;
+                        Main.projectile[proj].timeLeft = 1;
 
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                         int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.AncientLight, NPC.velocity.X, NPC.velocity.Y, 0, Color.Black, 2f);
@@ -270,7 +269,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         
                         NPC.ai[3] = 0;
 
-                    }
+                    
                 }
             }
             }

@@ -44,9 +44,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item30 with { Volume = 0.2f, Pitch = 0.3f }, Projectile.Center); //ice materialize - good
                                                                                                                                       //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
             int Icicle = ModContent.ProjectileType<EnemyIceIcicleUp>();
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, -5, Icicle, Projectile.damage, 3f, Projectile.owner);
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height * 2), 0, -5, Icicle, Projectile.damage, 3f, Projectile.owner);
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -2), Projectile.position.Y + (float)(Projectile.height * 2), 0, -5, Icicle, Projectile.damage, 3f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, -6, Icicle, Projectile.damage, 3f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height * 2), 0, -6, Icicle, Projectile.damage, 3f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -2), Projectile.position.Y + (float)(Projectile.height * 2), 0, -6, Icicle, Projectile.damage, 3f, Projectile.owner);
             Vector2 projectilePos = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y * Projectile.velocity.Y);
             if (Main.rand.NextBool(2))
             {

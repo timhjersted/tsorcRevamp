@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -40,7 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.lifeMax = 180;
                 NPC.defense = 16;
-                NPC.value = 320;
+                NPC.value = 620;
                 NPC.damage = 50;
                 throwingKnifeDamage = 20;
             }
@@ -67,8 +68,8 @@ namespace tsorcRevamp.NPCs.Enemies
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0;
-
-            if (spawnInfo.Invasion)
+            Player p = spawnInfo.Player;
+            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow)
             {
                 chance = 0;
                 return chance;

@@ -104,24 +104,16 @@ namespace tsorcRevamp.NPCs.Enemies
             bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
 
 
-            //If the enemy doesn't have line of sight for a good while, teleport far away from the player and try again. Then much later, they get one more chance to teleport.
-            //Since this is an early enemy, the distance and time is not very aggressive.
+            //If the enemy doesn't have line of sight for a good while, teleport near the player 
             if (!clearLineofSight)
             {
                 boredTeleport++;
 
                 if (boredTeleport == 1600)
                 {
-                    tsorcRevampAIs.Teleport(NPC, 20, false);
-
-                }
-
-                if (boredTeleport == 3600)
-                {
-                    tsorcRevampAIs.Teleport(NPC, 30, false);
+                    tsorcRevampAIs.Teleport(NPC, 40, false);
                     boredTeleport = 0;
                 }
-
 
             }
             if (clearLineofSight)

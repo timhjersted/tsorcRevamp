@@ -26,10 +26,10 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             NPC.height = 45;
             NPC.timeLeft = 22750;
             NPC.damage = 210;
-            NPC.defense = 10;
+            NPC.defense = 6;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath10;
-            NPC.lifeMax = 91000;
+            NPC.lifeMax = 61000;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -45,10 +45,17 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             bodyTypes = new int[] { ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
                 ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
                 ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
-                ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
+
+                
+                //ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
+                
                 ModContent.NPCType<MechaDragonBody2>(), ModContent.NPCType<MechaDragonBody3>() };
 
         }
+
+        int breathCD = 150;
+        bool breath = false;
+        int breathDamage = 30;
         public static int[] bodyTypes;
 
         /**public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
@@ -67,7 +74,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
             //Generic Worm Part Code:
             NPC.behindTiles = true;
-            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<MechaDragonHead>(), bodyTypes, ModContent.NPCType<MechaDragonTail>(), 23, -1f, 19f, 0.13f, true, false, true, false, false); //19 was 12, the speed
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<MechaDragonHead>(), bodyTypes, ModContent.NPCType<MechaDragonTail>(), 18, -1f, 11f, 0.13f, true, false, true, false, false); //3 was 12, the speed, 18 was 23
 
             //Code unique to this body part:
             Color color = new Color();
@@ -76,7 +83,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
             /*
             //Can phase through walls if can't reach the player, + 100 / + 200 works great! but it goes into walls too easily (+10 and +100 is better, but could be tweaked further)
-            if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height + 100)))
+            if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height + 20)))
             {
                 NPC.noTileCollide = false;
                 NPC.noGravity = true;
@@ -84,10 +91,61 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             if ((!Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height + 200)))
             {
                 NPC.noTileCollide = true;
-                NPC.noGravity = true; 
+                NPC.noGravity = true;
+                //NPC.velocity.Y *= 0.9f;
+                
             }
             */
 
+
+
+            Player nT = Main.player[NPC.target];
+            if ((Main.rand.NextBool(300) && NPC.life < NPC.lifeMax / 2) || Main.rand.NextBool(900))
+            {
+                if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height + 10)))
+                {
+                    breath = true;
+                }
+
+            }
+            if (breath)
+            {
+
+                if (breathCD == 150)
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/breath1") with { Volume = 0.7f }, NPC.Center);
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && breathCD <= 90)
+                {
+
+
+                    Vector2 spawnOffset = NPC.velocity; //Create a vector pointing in whatever direction the NPC is moving. We can transform this into an offset we can use.
+                    spawnOffset.Normalize(); //Shorten the vector to make it have a length of 1
+                    spawnOffset *= 80; //Multiply it so it has a length of 16. The length determines how far offset the projectile will be, 16 units = 1 tile
+
+                    //float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (int)(NPC.Center.X + spawnOffset.X), (int)(NPC.Center.Y + spawnOffset.Y), NPC.velocity.X * 2f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 2f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
+
+
+
+
+                }
+                //play breath sound
+                if (Main.rand.NextBool(3))
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.9f, Pitch = -0.6f }, NPC.Center); //flame thrower
+                }
+
+                breathCD--;
+
+            }
+            if (breathCD <= 0)
+            {
+                breath = false;
+                breathCD = 150;
+
+            }
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

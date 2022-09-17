@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Potions;
 using static tsorcRevamp.oSpawnHelper;
+using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -71,7 +72,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             float chance = 0;
 
-            if (spawnInfo.Invasion)
+            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow)
             {
                 chance = 0;
                 return chance;

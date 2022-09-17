@@ -16,8 +16,8 @@ namespace tsorcRevamp.NPCs.Bosses
 
         }
 
-        public int throwingKnifeDamage = 90;
-        public int smokebombDamage = 145;
+        public int throwingKnifeDamage = 80;
+        public int smokebombDamage = 121;
 
         public override void SetDefaults()
         {

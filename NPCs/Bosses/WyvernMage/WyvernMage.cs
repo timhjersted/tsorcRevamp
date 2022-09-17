@@ -46,9 +46,10 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         bool OptionSpawned = false;
         int frozenSawDamage = 55;
         int lightningDamage = 75;
-        int iceBallDamage = 40;
-        int iceStormDamage = 35;
-        
+       
+        int plasmaDamage = 35;
+        int lifeTimer = 0;
+
         int holdTimer = 0;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -201,7 +202,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             //end of W1k's Death code
 
             #region revamped
-
+            int num58;
             if (TeleportTimer == 10) //If the boss just teleported
             {
                 if (Main.rand.NextBool(2) || !dragonAlive) //1 in 2 chance boss will use attack when it flies down on top of you if the dragon is alive
@@ -217,13 +218,37 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
                 }
 
-                if (Main.rand.NextBool(65) || (dragonAlive && Main.rand.NextBool(45))) //1 in 15 chance boss will summon an NPC, 1/7 if the dragon is dead
+                if (NPC.life <= 16000 && lifeTimer < 1 || NPC.life <= 12000 && lifeTimer < 2 || NPC.life <= 8000 && lifeTimer < 3 || NPC.life <= 4000 && lifeTimer < 3)
                 {
+                    UsefulFunctions.BroadcastText("The Wyvern Mage summons the Archdeacons!", 175, 75, 255);
+                    num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaDamage, 0f, Main.myPlayer);
+                    num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaDamage, 0f, Main.myPlayer);
+                    num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaDamage, 0f, Main.myPlayer);
+                    Main.projectile[num58].timeLeft = 560;
+                    Main.projectile[num58].rotation = Main.rand.Next(700) / 100f;
+                    Main.projectile[num58].ai[0] = this.NPC.target;
+
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Enemies.Archdeacon>(), 0);
                         Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
                         Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Enemies.Archdeacon>(), 0);
+                        Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
+                    }
+
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                    lifeTimer++;
+                }
+
+
+
+                if (Main.rand.NextBool(60) || (dragonAlive && Main.rand.NextBool(40))) //1 in 15 chance boss will summon an NPC, 1/7 if the dragon is dead
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient && NPC.life > NPC.lifeMax / 2)
+                    {
+                        int Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Enemies.BarrowWight>(), 0);
+                        Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
+                        Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Enemies.BarrowWight>(), 0);
                         Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
                     }
                 }

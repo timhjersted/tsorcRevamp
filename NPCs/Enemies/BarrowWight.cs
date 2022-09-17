@@ -20,10 +20,10 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 48;
             NPC.aiStyle = 22;
             NPC.damage = 30;
-            NPC.defense = 15;
+            NPC.defense = 0;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 235;
+            NPC.lifeMax = 189;
             NPC.knockBackResist = 0;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -43,13 +43,16 @@ namespace tsorcRevamp.NPCs.Enemies
             if (p.townNPCs > 0f || p.ZoneMeteor) return 0;
             if (tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && (oSurface(p) || oUnderSurface(p) || oUnderground(p) || oCavern(p)) && (playerXTile > Main.maxTilesX * 0.2f && playerXTile < Main.maxTilesX * 0.35f || playerXTile > Main.maxTilesX * 0.65f && playerXTile < Main.maxTilesX * 0.8f)) return 0.005f;
             if (!Main.hardMode && p.ZoneDungeon) return .00833f;
-            if (!tsorcRevampWorld.SuperHardMode && Main.hardMode && oSky(p)) return 0.0667f;
+            if (!tsorcRevampWorld.SuperHardMode && Main.hardMode && oSky(p)) return 0.0567f;
             if (!tsorcRevampWorld.SuperHardMode && Main.hardMode && p.ZoneDungeon) return 0.033f;
             if (tsorcRevampWorld.SuperHardMode && oSky(p)) return 0.025f;
             if (tsorcRevampWorld.SuperHardMode && p.ZoneDungeon) return 0.008f;
 
             return 0;
         }
+
+
+        int chargeTelegraphTimer = 0;
 
         public override void AI()
         {
@@ -65,27 +68,47 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
                 // charge forward code 
-                if (Main.rand.NextBool(2050))
+                if (Main.rand.NextBool(400) && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     chargeDamageFlag = true;
-                    Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                    NPC.velocity.X = (float)(Math.Cos(rotation) * 11) * -1;
-                    NPC.velocity.Y = (float)(Math.Sin(rotation) * 11) * -1;
-                    NPC.ai[1] = 1f;
-                    NPC.netUpdate = true;
+                    
                 }
                 if (chargeDamageFlag == true)
                 {
-                    NPC.damage = 55;
-                    chargeDamage++;
+                    chargeTelegraphTimer++;
+                    Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                    if (Main.rand.NextBool(2))
+                    {
+                        int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
+
+                        Main.dust[pink].noGravity = true;
+                    }
+
+                    if (chargeTelegraphTimer >= 120 && chargeTelegraphTimer <= 130)
+                    {
+
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                        NPC.velocity.X = (float)(Math.Cos(rotation) * 7) * -1; //7 was 11
+                        NPC.velocity.Y = (float)(Math.Sin(rotation) * 7) * -1;
+                        NPC.ai[1] = 1f;
+
+                        NPC.damage = 60;
+                        //chargeDamage++;
+
+                    }
+
+                    //if (chargeDamage >= 115)
+                    if (chargeTelegraphTimer > 130)
+                    {
+                        chargeDamageFlag = false;
+                        NPC.damage = 75;
+                        chargeTelegraphTimer = 0;
+                        //chargeDamage = 0;
+                    }
+
                 }
-                if (chargeDamage >= 115)
-                {
-                    chargeDamageFlag = false;
-                    NPC.damage = 55;
-                    chargeDamage = 0;
-                }
+                
 
 
 
