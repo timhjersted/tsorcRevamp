@@ -201,11 +201,11 @@ namespace tsorcRevamp
             //--------
             #region Unbreakable list
             Unbreakable = new List<int>() {
-                19, 55, 235, 597, //platforms, signs, teleporters, pylons
+                19, 22, 55, 235, 597, //platforms, altars, signs, teleporters, pylons
                 139, 410, 480, 509, //music boxes, all monoliths
                 213, 214, 353, 365, 366, //all ropes and chain
                 48, 232, 210, 484, //spikes, jungle spikes, land mines, rolling cactus
-                105, 531, 137, 138, 141, 216, 411, //statues, boulder statue, traps, boulders, explosives, party rockets, detonator
+                105, 337, 531, 137, 138, 141, 216, 411, 441, 468, //all statues, traps, boulders, explosives, party rockets, detonator, trapped chests
                 130, 131, 379, 546, 557, //toggled stone blocks, bubbles, grates open and closed
                 132, 135, 136, 143, 144, 419, 420, 421, 422, 423, 424, 425, 428, 429, 440, 442, // ALL (other) WIRING
             };
@@ -213,191 +213,52 @@ namespace tsorcRevamp
             //--------
             #region KillAllowed list
             KillAllowed = new List<int>() {
-                3, 4, 5, //small plants, torchs, trees
-                
-                
-                //6, 7, 8, 9, //iron, copper, gold, silver ores (All ores removed from breaklist)
-                
-                
-                12, 13, //Heart crystal, bottles and jugs
-                14, //table (Left in for MS Compatability)
-                16, 17, 18, //anvils, furnace, workbenches (Left in for MS Compatability)
-                20, 21, //sapling, chests
-                //22, // demonite ore
-                24, //small corruption plants
-                //26, //altars
-                27, 28, 29, 31, 32, //sunflower, pots, piggy bank, orbs/hearts, corruption thorns
-                33, //candle (used for making water candles)
-                //37, //meteorite (Pre-HM ores removed from breaklist)
-                49, //water candle
-                //50, //books (No Construction) (you only need 1 for the boss tome)
-                51, 52, 53, //cobweb, vines, sand
-                //56, //obsidian (removed at tim's request)
-                //58, //hellstone
-                61, 62, //small jungle plants, jungle vines
-                //63, 64, 65, 66, 67, 68, //gem ores
-                69, //jungle thorns
-                71, 72, 73, 74, //mushrooms, plants
-                77, //hellforge (MS Compatibility)
-                78, //clay pot
-                //79, //bed
-                80, 81, 82, 83, 84, //cactus, coral, herbs
-                //85, //tombstone (player death drops have been fixed)
-                86, //loom
-                91, //banners (still drop)
-                94, 96, 97, 101, //keg, cooking pots, safe, bookcases
-                //105, //statues
-                106, 107, 108, //sawmill, cobalt ore, mythril ore
-                110, 111, 112, 113, //Hallowed Plants, adamatite ore, ebonsand, more hallowed plants
-                114, 115, 116, 125, //tinkerer's workbench, hallowed vines, pearlsand, crystal ball
-                128, 129, 133, 134, //mannequin [L], crystal/gelatin shards, HM forges/anvils
-                162, //thin ice (breakable kind)
-                165, //ambient objects (stalagmites / stalactites, icicles)
-                //166, 167, 168, 169, //alternate pre-hm ores
-                172, //sinks
-                174, //platinum candle (can be crafted into water candles)
-                178, //gem rocks
-                184, //moss growths
-                185, //ambient objects (small rocks, small coin stashes, gem stashes)
-                186, //ambient objects (bone piles, large rocks, large coin stashes)
-                187, //ambient objects (mossy / lava rocks, spider eggs, misc bg furniture (cave tents, etc)) sword shrine
-                201, 205, //tall grass (crimson), crimson vines
-                209, //Cannons
-                // 211, //Chlorophyte Ore (can only break one-block wide walls, otherwise all mud walls are permeable)
-                215, //campfires
-                217, 218, 220, //blend-o-matic, meat grinder, solidifier
-                221, 222, 223, //HM alt ores
-                227, 228, //dye plants and vat
-                231, 233, //QB larva, ambient objects (background leafy jungle plants)
-                234, 236, 238, //crimsand, life fruit, Plantera Bulb
-                240, //trophies
-                243, 247, //imbuing station, autohammer
-                254, //pumpkin seeds and growths
-                269, 283, 287, //womannequin, heavy work bench, ammo box
-                300, 301, 302, 303, 304, 305, 306, 307, 308, //theme furniture crafting stations
-                320, 323, 324, //seaweed planter, palm trees, seashells
-                352, //crimson thorns
-                354, 355, //bewitching table, alchemy table
-                372, 377, 378, //peace candle, sharpening station, target dummy
-                380, //herb planters (allows for moving of herb farms)
-                382, //flower vines
-                412, 463, //ancient manipulator, defenders forge
-                467, 469, //more chests, more tables
-                470, //mannequins
-                499, //decay chamber
-                506, //bast statue
-                518, 519, 528, //lily pads, cattails, mushroom vines
-                529, 530, //sea oats, oasis plants (ocean sand cosmetic growths)
-                549, //seaweeds
-                560, //golf trophies
-                571, //bamboo "trees"
-                583, 584, 585, 586, 587, 588, 589, 590, //gem trees
-                595, 596, //sakura sapling and tree
-                615, 616, //willow sapling and tree
-                621, 622, 624, //slice of cake, tea kettle, abigail's flower (harvestable item)
+                //6, 7, 8, 9, 22, 37, 58, 63, 64, 65, 66, 67, 67, 68, 107, 108, 111, 166, 167, 168, 169, 211, 221, 222, 223, //All Ores
+                //50, //books (Boss tome can be bought, or a few books can be found in the village for crafting it)
+                //56, 79, 85, //obsidian, beds, tombstones (misc notable disables)
+                4, 12, 13, 236, 215, // torches, Heart crystal, tabled bottles, life fruit, campfires, 
+                5, 20, 72, 323, 571, 583, 584, 585, 586, 587, 588, 589, 590, 595, 596, 615, 616, // all trees and saplings
+                14, 469, 94, 125, 217, 218, 228, 243, 622, //tables, specialized crafting stations
+                16, 17, 18, 77, 86, 96, 101, 106, 114, 133, 134, 172, 247, 283, 355, 412, //core crafting stations
+                220, 300, 301, 302, 303, 304, 305, 306, 307, 308, 499, //theme furniture crafting stations
+                21, 467, 29, 97, 463, 91, 287, 354, 377, 506, 621, //chests, piggy bank, safe, defenders forge, banners, buff stations
+                33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
+                71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
+                128, 269, 470, 378, 240, 560, //all mannequins, target dummy, trophies
+                162, 320, 380, 624, //thin ice (breakable kind), seaweed/herb planters, abigail's flower
+                27, 28, 51, 52, 62, 115, 205, 382, 528, //sunflower, pots, cobwebs, all cuttable vines
+                31, 32, 69, 352, 53, 112, 116, 234, //orbs/hearts, all thorns, all sands
+                165, 178, 185, 186, 187, 233, 530, 2311, 238, //all ambient objects (background breakables), QB Larva, Plantera Bulb
+                3, 24, 61, 73, 74, 110, 113, 184, 201, 518, 519, 529, 549, //cuttable plants - all biomes
             };
             #endregion
             //--------
             #region PlaceAllowed list
             PlaceAllowed = new List<int>() {
-                4, 5, //torchs, trees
-                //6, 7, 8, 9, //iron, copper, gold, silver ores (Pre-HM ores removed from breaklist)
-                12, 13, //Heart crystal, bottles and jugs
-                14, //table (Left in for MS Compatability)
-                16, 17, 18, //anvils, furnace, workbenches (Left in for MS Compatability)
-                20, 21, //sapling, chests
-                //22, // demonite ore (Pre-HM ores removed from breaklist)
-                //26, //altars
-                27, 28, 29, 31, //sunflower, pots, piggy bank, orbs/hearts
-                33, //candle (used for making water candles)
-                //37, //meteorite (Pre-HM ores removed from breaklist)
-                49, //water candle
-                //50, //books (No Construction) (you only need 1 for the boss tome)
-                51, 52, 53, //cobweb, vines, sand
-                //55, //Sign (Removed - signs shouldn't be breakable.) 
-                //56, //obsidian (removed at tim's request)
-                //58, //hellstone
-                //63, 64, 65, 66, 67, 68, //gem ores
-                71, 72, 73, 74, //mushrooms, plants
-                77, //hellforge (MS Compatibility)
-                78, //clay pot
-                //79, //bed
-                80, 81, 82, 83, 84, //cactus, coral, herbs
-                //85, //tombstone (player death drops have been fixed)
-                86, //loom
-                91, //banners (still drop)
-                94, 96, 97, 101, //keg, cooking pots, safe, bookcases
-                //105, //statues
-                106, 107, 108, //sawmill, cobalt ore, mythril ore
-                111, 112, //adamatite ore, ebonsand
-                114, 116, 125, //tinkerer's workbench, pearlsand, crystal ball
-                128, 129, 133, 134, //mannequin [L], crystal/gelatin shards, HM forges/anvils
-                //166, 167, 168, 169, //alternate pre-hm ores
-                172, //sinks
-                174, //platinum candle (can be crafted into water candles)
-                178, //gem rocks
-                209, //Cannons
-                // 211, //Chlorophyte Ore (can only break one-block wide walls, otherwise all mud walls are permeable)
-                215, //campfires
-                217, 218, 220, //blend-o-matic, meat grinder, solidifier
-                221, 222, 223, //HM alt ores
-                227, 228, //dye plants and vat
-                234, 236, //crimsand, life fruit
-                240, //trophies
-                243, 247, //imbuing station, autohammer
-                254, //pumpkin seeds and growths
-                269, 283, 287, //womannequin, heavy work bench, ammo box
-                300, 301, 302, 303, 304, 305, 306, 307, 308, //theme furniture crafting stations
-                320, 323, 324, //seaweed planter, palm trees, seashells
-                354, 355, //bewitching table, alchemy table
-                372, 377, 378, //peace candle, sharpening station, target dummy
-                380, //herb planters (allows for moving of herb farms)
-                412, 463, //ancient manipulator, defenders forge
-                467, 469, //more chests, more tables
-                470, //mannequins
-                499, //decay chamber
-                506, //bast statue
-                549, //seaweeds
-                560, //golf trophies
-                583, 584, 585, 586, 587, 588, 589, 590, //gem trees
-                595, 596, //sakura sapling and tree
-                615, 616, //willow sapling and tree
-                621, 622, //slice of cake, tea kettle,
+                4, 12, 13, 236, 215, // torches, Heart crystal, tabled bottles, life fruit, campfires, 
+                5, 20, 72, 323, 571, 583, 584, 585, 586, 587, 588, 589, 590, 595, 596, 615, 616, // all trees and saplings
+                14, 469, 94, 125, 217, 218, 228, 243, 622, //tables, specialized crafting stations
+                16, 17, 18, 77, 86, 96, 101, 106, 114, 133, 134, 172, 247, 283, 355, 412, //core crafting stations
+                220, 300, 301, 302, 303, 304, 305, 306, 307, 308, 499, //theme furniture crafting stations
+                21, 467, 29, 97, 463, 91, 287, 354, 377, 506, 621, //chests, piggy bank, safe, defenders forge, banners, buff stations
+                33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
+                71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
+                128, 269, 470, 378, 240, 560, //all mannequins, target dummy, trophies
+                320, 380, 27, 53, 112, 116, 234, //thin ice (breakable kind), seaweed/herb planters, sunflower, all sands
             };
             #endregion
             //--------
             #region IgnoredTiles list
             IgnoredTiles = new List<int>() {
-                3, //tall grass
-                4, //torches
-                24, //tall grass (corruption)
-                32, //corruption thorn
-                51, //cobweb
-                52, //vines
-                61, //tall grass (jungle)
-                62, //jungle vines
-                69, //jungle thorn
-                73, //tall grass (misc)
-                74, //tall jungle plants
-                82, //plants (growing)
-                83, //plants (matured)
-                84, //plants (blooming)
-                85, //tombstone
-                115, //hallowed vines
-                129, //crystal shard
-                135, //pressure plates
-                165, //ambient objects (stalagmites / stalactites, icicles)
-                184, //moss growth
-                185, //ambient objects (small rocks, small coin stashes, gem stashes)
-                186, //ambient objects (bone piles, large rocks, large coin stashes)
-                187, //ambient objects (mossy / lava rocks, spider eggs, misc bg furniture (cave tents, etc))
-                201, //tall grass (crimson)
-                205, //crimson vines
-                227, //strange plant
-                233, //ambient objects (background leafy jungle plants)
-                324, //sea shells
-                352, //crimson thorn
-                382, //flower vines
+                4, 12, 236, 91, // torches, Heart crystal, life fruit, banners
+                5, 20, 72, 323, 571, 583, 584, 585, 586, 587, 588, 589, 590, 595, 596, 615, 616, // all trees and saplings
+                129, 324, 162, 624, //crystal/gelatin shards, seashells, thin ice (breakable kind), abigail's flower
+                71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
+                27, 28, 51, 52, 62, 115, 205, 382, 528, //sunflower, pots, cobwebs, all cuttable vine
+                31, 32, 69, 352, 210, 484, //orbs/hearts, all thorns, land mines, rolling cactus
+                165, 178, 185, 186, 187, 233, 530, 2311, 238, //all ambient objects (background breakables), QB Larva, Plantera Bulb
+                3, 24, 61, 73, 74, 110, 113, 184, 201, 518, 519, 529, 549, //cuttable plants - all biomes
+                132, 135, 136, 143, 144, 419, 420, 421, 422, 423, 424, 425, 428, 429, 440, 442, //wiring, incl pressure plates
             };
             #endregion
             //--------
