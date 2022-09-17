@@ -9,22 +9,22 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("17% increased movement speed" +
-                "\nDouble Jump Skill");
+            Tooltip.SetDefault("18% increased movement speed" +
+                "\nIncreases melee speed by 27%");
         }
         public override void SetDefaults()
         {
             Item.width = 22;
             Item.height = 18;
-            Item.defense = 7;
+            Item.defense = 8;
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.fromItem(Item);
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.hasJumpOption_Santank = true; //so it stacks with commonly used Cloud in a Bottle
             player.moveSpeed += 0.17f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.27f;
         }
 
         public override void AddRecipes()

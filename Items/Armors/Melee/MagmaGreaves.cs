@@ -9,19 +9,20 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+14% melee speed");
+            Tooltip.SetDefault("Increases movement and melee speed by 18%");
         }
         public override void SetDefaults()
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 9;
+            Item.defense = 10;
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Melee) += 0.14f;
+            player.moveSpeed += 0.18f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.18f;
         }
         public override void AddRecipes()
         {

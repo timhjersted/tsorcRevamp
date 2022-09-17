@@ -10,14 +10,15 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("15% increased melee damage" +
-                "\nSet bonus: +10% melee damage multiplier");
+            Tooltip.SetDefault("Increases melee damage by 15%" +
+                "\nSet bonus: Increases melee damage by 10% multiplicatively" +
+                "\nGrants the Magma Stone effect");
         }
         public override void SetDefaults()
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 13;
+            Item.defense = 11;
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.fromItem(Item);
         }
@@ -32,6 +33,8 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void UpdateArmorSet(Player player)
         {
             player.GetDamage(DamageClass.Melee) *= 1.1f;
+            player.magmaStone = true;
+
             if (Main.rand.NextBool(3))
             {
                 Color color = new Color();

@@ -9,19 +9,21 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("5% Increased Magic Damage");
+            Tooltip.SetDefault("Increases movement speed by 10%" +
+                "\n15% increased magic critical strike chance");
         }
         public override void SetDefaults()
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 6;
+            Item.defense = 7;
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Magic) += 0.05f;
+            player.moveSpeed += 0.1f;
+            player.GetCritChance(DamageClass.Magic) += 9;
         }
         public override void AddRecipes()
         {

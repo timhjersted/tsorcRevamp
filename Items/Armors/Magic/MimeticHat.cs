@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("9% increased Magic critical strike\n+20 Mana");
+            Tooltip.SetDefault("Increases your max mana by 80 and reduces mana costs by 13%");
         }
         public override void SetDefaults()
         {
@@ -21,8 +21,8 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Magic) += 9;
-            player.statManaMax2 += 20;
+            player.statManaMax2 += 80;
+            player.manaCost -= 0.13f;
         }
         public override void AddRecipes()
         {

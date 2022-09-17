@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases movement speed by 15%");
+            Tooltip.SetDefault("Increases movement speed by 14%");
         }
         public override void SetDefaults()
         {
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.15f;
+            player.moveSpeed += 0.14f;
         }
         public override void AddRecipes()
         {

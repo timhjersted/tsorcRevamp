@@ -66,6 +66,8 @@ namespace tsorcRevamp
 
         public bool OldWeapon = false;
 
+        public bool WaspPower = false;
+
         public bool Miakoda = false;
         public bool RTQ2 = false;
 
@@ -236,6 +238,7 @@ namespace tsorcRevamp
             GemBox = false;
             OldWeapon = false;
             Miakoda = false;
+            WaspPower = false;
             RTQ2 = false;
             DarkInferno = false;
             BoneRevenge = false;

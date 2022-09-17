@@ -10,24 +10,20 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Burning Mana Skill activates +5 Mana Regen when life falls below 120\nSet bonus: 13% Reduced Mana Cost, +6% Magic Crit, +15% Magic Damage");
+            Tooltip.SetDefault("Increases magic damage by 11%" +
+                "\nSet Bonus: Burning Mana Skill activates when life falls below 50%, increasing mana regen by 5");
         }
         public override void SetDefaults()
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 7;
+            Item.defense = 8;
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
-            if (player.statLife <= 120)
-            {
-                player.manaRegen += 5;
-                int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Green, 1.0f);
-                Main.dust[dust].noGravity = true;
-            }
+            player.GetDamage(DamageClass.Magic) += 0.11f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -35,9 +31,13 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.manaCost -= 0.13f;
-            player.GetDamage(DamageClass.Magic) += 0.15f;
-            player.GetCritChance(DamageClass.Magic) += 6;
+            if (player.statLife <= (player.statLifeMax / 2))
+            {
+                player.manaRegen += 5;
+
+                int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Green, 1.0f);
+                Main.dust[dust].noGravity = true;
+            }
         }
         public override void AddRecipes()
         {

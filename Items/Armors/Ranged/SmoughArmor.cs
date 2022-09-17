@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases ranged damage by 2 flat\nSet Bonus: Grants sandstorm double jump\nIncreases ranged damage by 10%\nReduces ammo costs by 25%");
+            Tooltip.SetDefault("Increases ranged damage by 3 flat\nSet Bonus: Grants sandstorm double jump\nReduces chance to consume ammo by 25%");
         }
 
         public override void SetDefaults()

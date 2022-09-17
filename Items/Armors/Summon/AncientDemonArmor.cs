@@ -10,7 +10,10 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Forged by those who brave Annihilation.\n+10% minion damage\nSet bonus: +20% whip range, +25% whip speed and 15% extra when under 166 life\n+20% whip damage");
+            Tooltip.SetDefault("Forged by those who brave Annihilation" +
+                "\n+27% whip damage" +
+                "\nSet bonus: Increases whip range by 20%" +
+                "\nIncreases summon attack speed by 25% + 25% extra when under 50% health");
             ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = false;
         }
 
@@ -24,7 +27,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.1f;
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.27f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -33,17 +36,17 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateArmorSet(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
             player.whipRangeMultiplier += 0.2f;
-            if (player.statLife <= 166)
+            player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
+
+            if (player.statLife <= (player.statLifeMax / 2))
             {
-                player.GetAttackSpeed(DamageClass.Summon) += 0.15f;
+                player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Green, 1.0f);
                 Main.dust[dust].noGravity = true;
 
             }
-            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.2f;
         }
 
         public override void DrawArmorColor(Player drawPlayer, float shadow, ref Color color, ref int glowMask, ref Color glowMaskColor)

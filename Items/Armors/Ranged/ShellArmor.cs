@@ -10,12 +10,13 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Armor made from the shell of a legendary creature. \n20% chance not to consume ammo");
+            Tooltip.SetDefault("Armor made from the shell of a legendary creature" +
+                "\nIncreases ranged damage by 15%");
         }
 
         public override void SetDefaults()
         {
-            Item.defense = 7;
+            Item.defense = 9;
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.fromItem(Item);
             Item.width = 18;
@@ -33,7 +34,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.ammoCost80 = true;
+            player.GetDamage(DamageClass.Ranged) += 0.15f;
         }
     }
 }

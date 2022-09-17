@@ -9,21 +9,20 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases magic damage by 4 flat" +
-                "\n+20% Movespeed");
+            Tooltip.SetDefault("Increases movement speed by 16%");
         }
         public override void SetDefaults()
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 9;
+            Item.defense = 7;
             Item.rare = ItemRarityID.Pink;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
             player.GetDamage(DamageClass.Magic).Flat += 4;
-            player.moveSpeed += 0.2f;
+            player.moveSpeed += 0.16f;
         }
         public override void AddRecipes()
         {

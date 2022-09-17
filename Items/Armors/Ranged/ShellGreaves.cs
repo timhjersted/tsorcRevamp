@@ -9,12 +9,13 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Armor made from the shell of a legendary creature. \n+12% movement speed, +15% ranged damage");
+            Tooltip.SetDefault("Armor made from the shell of a legendary creature" +
+                "\n+15% movement speed");
         }
 
         public override void SetDefaults()
         {
-            Item.defense = 3;
+            Item.defense = 8;
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.fromItem(Item);
             Item.width = 18;
@@ -32,8 +33,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.12f;
-            player.GetDamage(DamageClass.Ranged) += 0.15f;
+            player.moveSpeed += 0.15f;
         }
     }
 }

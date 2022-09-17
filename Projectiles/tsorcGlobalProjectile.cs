@@ -15,6 +15,18 @@ namespace tsorcRevamp.Projectiles
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
+                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().WaspPower & projectile.type == ProjectileID.HornetStinger)
+                {
+                    projectile.penetrate = 4;
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 10;
+                } 
+                else if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().WaspPower & projectile.type == ProjectileID.HornetStinger)
+                {
+                    projectile.penetrate = 1;
+                    projectile.usesLocalNPCImmunity = false;
+                }
+
                 if (projectile.type == ProjectileID.BloodArrow)
                 {
                     projectile.tileCollide = false;

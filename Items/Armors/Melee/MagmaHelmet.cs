@@ -9,19 +9,19 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+17% melee crit");
+            Tooltip.SetDefault("Increase melee critical strike chance by 10%");
         }
         public override void SetDefaults()
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 5;
+            Item.defense = 9;
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += 17;
+            player.GetCritChance(DamageClass.Melee) += 10;
         }
         public override void AddRecipes()
         {
