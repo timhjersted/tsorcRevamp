@@ -201,47 +201,29 @@ namespace tsorcRevamp
             //--------
             #region Unbreakable list
             Unbreakable = new List<int>() {
-                19, //platforms
-                48, //spikes
-                55, //sign
-                105, //statues
-                132, //lever
-                130, 131, //toggled stone blocks
-                135, 136, 137, 138, //pressure plates, switches, traps, boulders
-                139, //music boxes
-                141, //explosives
-                143, 144, //pumps and timers
-                210, //land mines (can still be triggered, 1-shot traps)
-                213, //rope
-                214, //chain
-                216, //party rockets (do 150 damage a pop, abusable. pre-placed ones can still be triggered)
-                232, //jungle spikes
-                235, //teleporters
-                353, 365, 366, //vine, silk, and web ropes
-                379, //bubble (prevent damaging of liquid-based designs)
-                410, //lunar monoliths
-                411, //detonator
-                419, 420, 421, 422, 423, 424, 425, //various wiring components
-                428, 429, 440, //weighted pressure plates, wire bulbs, gem locks
-                442, //teal pressure pad - projectile switch
-                480, //blood moon monolith
-                484, //rolling cactus (somewhat evil, cannot be mined to prematurely trigger)
-                509, //void monolith
-                531, //boulder statue (wireable multi-use boulder)
-                546, 557, //grate open/closed -same reasons as bubble
-                597, // Pylons
+                19, 55, 235, 597, //platforms, signs, teleporters, pylons
+                139, 410, 480, 509, //music boxes, all monoliths
+                213, 214, 353, 365, 366, //all ropes and chain
+                48, 232, 210, 484, //spikes, jungle spikes, land mines, rolling cactus
+                105, 531, 137, 138, 141, 216, 411, //statues, boulder statue, traps, boulders, explosives, party rockets, detonator
+                130, 131, 379, 546, 557, //toggled stone blocks, bubbles, grates open and closed
+                132, 135, 136, 143, 144, 419, 420, 421, 422, 423, 424, 425, 428, 429, 440, 442, // ALL (other) WIRING
             };
             #endregion
             //--------
             #region KillAllowed list
             KillAllowed = new List<int>() {
                 3, 4, 5, //small plants, torchs, trees
-                //6, 7, 8, 9, //iron, copper, gold, silver ores (Pre-HM ores removed from breaklist)
+                
+                
+                //6, 7, 8, 9, //iron, copper, gold, silver ores (All ores removed from breaklist)
+                
+                
                 12, 13, //Heart crystal, bottles and jugs
                 14, //table (Left in for MS Compatability)
                 16, 17, 18, //anvils, furnace, workbenches (Left in for MS Compatability)
                 20, 21, //sapling, chests
-                //22, // demonite ore (Pre-HM ores removed from breaklist)
+                //22, // demonite ore
                 24, //small corruption plants
                 //26, //altars
                 27, 28, 29, 31, 32, //sunflower, pots, piggy bank, orbs/hearts, corruption thorns
@@ -250,7 +232,6 @@ namespace tsorcRevamp
                 49, //water candle
                 //50, //books (No Construction) (you only need 1 for the boss tome)
                 51, 52, 53, //cobweb, vines, sand
-                //55, //Sign (Removed - signs shouldn't be breakable.) 
                 //56, //obsidian (removed at tim's request)
                 //58, //hellstone
                 61, 62, //small jungle plants, jungle vines
