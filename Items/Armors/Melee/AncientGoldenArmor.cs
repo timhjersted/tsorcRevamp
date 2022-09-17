@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("A lost prince's armor." +
-                "\nIncreases melee damage by 8%" +
+                "\nIncreases melee damage by 4 flat" +
                 "\nSet bonus: +11% melee speed");
         }
         public override void SetDefaults()
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.08f;
+            player.GetDamage(DamageClass.Melee).Flat += 4f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
