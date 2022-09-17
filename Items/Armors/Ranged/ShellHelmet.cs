@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Armor made from the shell of a legendary creature." +
-                "Increases ranged critical strike chance by 10%" +
+            Tooltip.SetDefault("Armor made from the shell of a legendary creature" +
+                "\nIncreases ranged critical strike chance by 16%" +
                 "\nSet Bonus: Ranged Critical Strike Chance is doubled under 50% max health" +
                 "\nReduces chance to consume ammo by 25%");
         }
@@ -25,6 +25,10 @@ namespace tsorcRevamp.Items.Armors.Ranged
             Item.defense = 7;
         }
 
+        public override void UpdateEquip(Player player)
+        {
+            player.GetCritChance(DamageClass.Ranged) += 16;
+        }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
             return body.type == ModContent.ItemType<ShellArmor>() && legs.type == ModContent.ItemType<ShellGreaves>();
@@ -32,11 +36,9 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateArmorSet(Player player)
         {
-            player.GetCritChance(DamageClass.Ranged) += 10;
-
             if (player.statLife <= (player.statLifeMax / 2))
             {
-                player.GetCritChance(DamageClass.Ranged) *= 2;
+                player.GetCritChance(DamageClass.Ranged) += player.GetWeaponCrit(player.HeldItem);
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Black, 1.0f);
                 Main.dust[dust].noGravity = true;

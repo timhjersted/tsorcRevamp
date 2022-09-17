@@ -7,7 +7,6 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Body)]
     class ShellArmor : ModItem
     {
-
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Armor made from the shell of a legendary creature" +
