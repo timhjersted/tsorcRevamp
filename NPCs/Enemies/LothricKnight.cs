@@ -50,6 +50,10 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath2;
             NPC.lavaImmune = true;
 
+            //NPC.buffImmune[BuffID.Poisoned] = true;
+            //NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            //NPC.buffImmune[BuffID.CursedInferno] = true;
 
             /*Banner = npc.type;
             BannerItem = ModContent.ItemType<Banners.DunlendingBanner>();*/

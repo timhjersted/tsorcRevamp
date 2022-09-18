@@ -28,8 +28,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BasiliskHunter>();
 
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            //NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
         }
 
         int cursedBreathDamage = 20;

@@ -27,8 +27,10 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BasiliskShifterBanner>();
+
+            //NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[24] = true;
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)

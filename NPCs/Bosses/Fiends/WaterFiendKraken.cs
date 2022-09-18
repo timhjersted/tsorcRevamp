@@ -34,9 +34,12 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.lavaImmune = true;
             NPC.boss = true;
             NPC.value = 600000;
+
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
+
             despawnHandler = new NPCDespawnHandler("Water Fiend Kraken submerges into the depths...", Color.DeepSkyBlue, 180);
             InitializeMoves();
         }

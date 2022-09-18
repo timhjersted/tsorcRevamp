@@ -37,6 +37,9 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath2;
             /*Banner = npc.type;
             BannerItem = ModContent.ItemType<Banners.DunlendingBanner>();*/
+
+            NPC.buffImmune[BuffID.Confused] = true;
+            
         }
 
         public override void HitEffect(int hitDirection, double damage)

@@ -36,10 +36,12 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             NPC.behindTiles = true;
             NPC.boss = true;
             NPC.value = 25000;
+
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
+
             despawnHandler = new NPCDespawnHandler(DustID.OrangeTorch);
 
             bodyTypes = new int[] { ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),

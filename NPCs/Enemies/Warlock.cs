@@ -26,6 +26,11 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.rarity = 3;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.WarlockBanner>();
+
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            //NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+
             if (!Main.hardMode)
             {
                 NPC.damage = 40;

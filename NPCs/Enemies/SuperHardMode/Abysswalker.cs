@@ -25,6 +25,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.width = 18;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AbysswalkerBanner>();
+
+            NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
         }
 
         public override void SetStaticDefaults()

@@ -63,7 +63,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            //NPC.lifeMax = (int)(NPC.lifeMax / 2);
+            NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);
             poisonStrikeDamage = (int)(poisonStrikeDamage * tsorcRevampWorld.SubtleSHMScale);
             redKnightsSpearDamage = (int)(redKnightsSpearDamage * tsorcRevampWorld.SubtleSHMScale);
@@ -175,10 +175,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 
                 player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
 
-                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                if (holdTimer <= 0)
                 {
-                    Main.NewText("Artorias is protected by a magical barrier. Only the Shaman Elder knows how to break it!", 175, 75, 255);
-                    holdTimer = 3000;
+                    UsefulFunctions.BroadcastText("Artorias is protected by a magical barrier. Only the Shaman Elder knows how to break it!", 175, 75, 255);
+                    holdTimer = 12000;
                 }
 
             }

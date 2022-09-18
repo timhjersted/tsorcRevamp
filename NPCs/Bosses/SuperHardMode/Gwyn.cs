@@ -35,8 +35,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 1000000;
-            NPC.buffImmune[BuffID.Confused] = true;
+
+            NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
+
             despawnHandler = new NPCDespawnHandler("You have fallen before the Lord of Cinder...", Color.OrangeRed, 6);
         }
 
@@ -205,9 +209,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 1300)
             {
                 NPC.defense = 9999;
-                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                if (holdTimer <= 0)
                 {
-                    Main.NewText("Gwyn is protected by the soul of cinder -- you're too far away!", 175, 75, 255);
+                    UsefulFunctions.BroadcastText("Gwyn is protected by the soul of cinder -- you're too far away!", 175, 75, 255);
                     holdTimer = 200;
                 }
                 else

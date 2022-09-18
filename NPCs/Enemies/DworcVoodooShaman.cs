@@ -20,7 +20,9 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.knockBackResist = 0.2f;
             NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
+            //NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DworcVoodooShamanBanner>();
 

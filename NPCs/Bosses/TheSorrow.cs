@@ -39,9 +39,11 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.width = 140;
             NPC.height = 60;
 
-            NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Poisoned] = true;
+            //NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
+            //NPC.buffImmune[BuffID.CursedInferno] = true;
+
             despawnHandler = new NPCDespawnHandler("The Sorrow claims you...", Color.DarkCyan, 29);
         }
 

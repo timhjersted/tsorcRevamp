@@ -29,6 +29,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 81870;
             NPC.knockBackResist = 0.36f;
             Banner = NPC.type;
+            NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
             BannerItem = ModContent.ItemType<Banners.GreatRedKnightOfTheAbyssBanner>();
         }
 

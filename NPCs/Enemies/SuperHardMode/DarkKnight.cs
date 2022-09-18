@@ -26,6 +26,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 9680;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DarkKnightBanner>();
+
+            //NPC.buffImmune[BuffID.Poisoned] = true;
+            //NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
         }
 
         int stormWaveDamage = 35;

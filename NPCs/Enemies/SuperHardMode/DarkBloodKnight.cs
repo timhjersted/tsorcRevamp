@@ -27,6 +27,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.knockBackResist = 0;
             NPC.value = 10430;
             Banner = NPC.type;
+            //NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            //NPC.buffImmune[BuffID.CursedInferno] = true;
             BannerItem = ModContent.ItemType<Banners.DarkBloodKnightBanner>();
         }
 

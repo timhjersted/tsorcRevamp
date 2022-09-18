@@ -33,6 +33,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             despawnHandler = new NPCDespawnHandler(DustID.GreenFairy);
             DrawOffsetY = 15;
 
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
 
             bodyTypes = new int[43];
             int bodyID = ModContent.NPCType<LichKingSerpentBody>();

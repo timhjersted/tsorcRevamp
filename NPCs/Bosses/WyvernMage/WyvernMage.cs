@@ -32,8 +32,9 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             NPC.boss = true;
             NPC.value = 150000;
             NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
+            //NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler("The Wyvern Mage stands victorious...", Color.DarkCyan, DustID.Demonite);
             nextWarpPoint = Main.rand.NextVector2CircularEdge(320, 320);
         }
@@ -228,6 +229,11 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                         Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
                         Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Enemies.Archdeacon>(), 0);
                         Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
+
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Paraspawn, 0f, 0f, 0f, 0);
+                        }
 
                         num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaDamage, 0f, Main.myPlayer);
                         num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaDamage, 0f, Main.myPlayer);

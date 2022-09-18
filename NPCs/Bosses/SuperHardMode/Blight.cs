@@ -37,7 +37,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.friendly = false;
             NPC.alpha = 255;
             NPC.boss = true;
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler("Inevitable", new Color(255, 50, 50), DustID.Firework_Blue);
         }
 

@@ -38,7 +38,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.width = 140;
             NPC.height = 60;
 
-            NPC.buffImmune[BuffID.OnFire] = true;
+            //NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             despawnHandler = new NPCDespawnHandler("The Hunter seeks its next prey...", Color.Green, 89);
@@ -128,11 +128,9 @@ namespace tsorcRevamp.NPCs.Bosses
             //2nd phase, spawns the hunter's child
             if (NPC.Distance(player.Center) < 1550 && NPC.life < NPC.lifeMax / 2)
             {        
-                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                if (holdTimer <= 0)
                 {
-                    
-                    Main.NewText("The Hunter has decided to feed you to its child. It's fully camouflaged!", 235, 199, 23);//deep yellow
-                    //Main.NewText("The Hunter has drained your life force. You're starving to death!", 57, 227, 48);//green
+                    UsefulFunctions.BroadcastText("The Hunter has decided to feed you to its child. It's fully camouflaged!", 235, 199, 23);//deep yellow
                     holdTimer = 9000;
                 }
                 

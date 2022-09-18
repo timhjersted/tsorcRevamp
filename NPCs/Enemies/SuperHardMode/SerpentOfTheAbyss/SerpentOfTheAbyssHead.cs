@@ -38,6 +38,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
             NPC.behindTiles = true;
             NPC.value = 25500;
             Banner = NPC.type;
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            //NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
             BannerItem = ModContent.ItemType<Banners.SerpentOfTheAbyssBanner>();
 
             bodyTypes = new int[33];

@@ -83,9 +83,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 player.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 60, false); 
                 player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
 
-                if (holdTimer2 <= 0 && Main.netMode != NetmodeID.Server)
+                if (holdTimer2 <= 0)
                 {
-                    Main.NewText("Chaos rips your wings and fractures your armor!", 255, 255, 0); //yellow
+                    UsefulFunctions.BroadcastText("Chaos rips your wings and fractures your armor!", 255, 255, 0); //yellow
                     holdTimer2 = 9000;
                 }
 
@@ -93,9 +93,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 1000)
             {
                 NPC.defense = 9999;
-                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                if (holdTimer <= 0)
                 {
-                    Main.NewText("Chaos is protected by unseen powers -- you're too far away!", 175, 75, 255);
+                    UsefulFunctions.BroadcastText("Chaos is protected by unseen powers -- you're too far away!", 175, 75, 255);
                     holdTimer = 200;
                 }
                 else

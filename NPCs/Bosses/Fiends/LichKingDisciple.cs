@@ -84,10 +84,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 player.AddBuff(BuffID.Ichor, 600, false);
                 //player.AddBuff(BuffID.PotionSickness, 60, false);
 
-                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                if (holdTimer <= 0)
                 {
-                    Main.NewText("The Lich King's Disciple emanates a miasma of Ichor around him!", 199, 21, 133);//medium violet red
-                    holdTimer = 3000;
+                    UsefulFunctions.BroadcastText("The Lich King's Disciple emanates a miasma of Ichor around him!", 199, 21, 133);//medium violet red
+                    holdTimer = 9000;
                 }
 
             }

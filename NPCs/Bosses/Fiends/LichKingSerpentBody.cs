@@ -29,6 +29,11 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.behindTiles = true;
             NPC.value = 460;
 
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
+
             bodyTypes = new int[43];
             int bodyID = ModContent.NPCType<LichKingSerpentBody>();
             for (int i = 0; i < 43; i++)

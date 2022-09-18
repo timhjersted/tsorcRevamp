@@ -29,7 +29,9 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noTileCollide = true;
             NPC.value = 850;
             NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
             Main.npcFrameCount[NPC.type] = 4;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BarrowWightBanner>();

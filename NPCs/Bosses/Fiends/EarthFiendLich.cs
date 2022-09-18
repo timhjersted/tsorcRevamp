@@ -36,6 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
             despawnHandler = new NPCDespawnHandler("Earth Fiend Lich returns to the ground...", Color.DarkGreen, DustID.GreenFairy);
 
         }
@@ -98,10 +99,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 player.AddBuff(BuffID.OnFire, 120, false); //on fire
                 player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
                 
-                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                if (holdTimer <= 0)
                 {
-                    Main.NewText("The Lich King emanates the heat of the Earth's magma core!", 255, 255, 0); //yellow
-                    holdTimer = 3000;
+                    UsefulFunctions.BroadcastText("The Lich King emanates the heat of the Earth's magma core!", 255, 255, 0); //yellow
+                    holdTimer = 9000;
                 }
 
             }

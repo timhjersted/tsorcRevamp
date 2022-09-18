@@ -25,6 +25,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.knockBackResist = 0;
             NPC.value = 7230;
 
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            //NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
+
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CrystalKnightBanner>();
         }
