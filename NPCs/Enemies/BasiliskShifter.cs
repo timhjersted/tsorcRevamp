@@ -71,6 +71,20 @@ namespace tsorcRevamp.NPCs.Enemies
             bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
             // P.townNPCs > 0f // is no town NPCs nearby
 
+            //Ensuring it can't spawn if two already exists.
+            int count = 0;
+            for (int i = 0; i < Main.npc.Length; i++)
+            {
+                if (Main.npc[i].type == NPC.type)
+                {
+                    count++;
+                    if (count > 1)
+                    {
+                        return 0;
+                    }
+                }
+            }
+
             if (spawnInfo.Water) return 0f;
 
             //SPAWNS IN HM JUNGLE AT NIGHT ABOVE GROUND AFTER THE RAGE IS DEFEATED

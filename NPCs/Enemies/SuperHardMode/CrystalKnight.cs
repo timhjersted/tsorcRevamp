@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     {
         public override void SetDefaults()
         {
-            NPC.npcSlots = 2;
+            NPC.npcSlots = 3;
             Main.npcFrameCount[NPC.type] = 20;
             AnimationType = 110;
             NPC.width = 18;
@@ -20,10 +20,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
-            NPC.lifeMax = 4000;
+            NPC.lifeMax = 3500;
             NPC.scale = 0.9f;
             NPC.knockBackResist = 0;
-            NPC.value = 7930;
+            NPC.value = 7230;
 
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CrystalKnightBanner>();
@@ -40,9 +40,21 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             Player player = spawnInfo.Player;
             bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-
-            // these are all the regular stuff you get , now lets see......
             float chance = 0;
+
+            //Ensuring it can't spawn if one already exists.
+            int count = 0;
+            for (int i = 0; i < Main.npc.Length; i++)
+            {
+                if (Main.npc[i].type == NPC.type)
+                {
+                    count++;
+                    if (count > 0)
+                    {
+                        return 0;
+                    }
+                }
+            }
 
             if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneOverworldHeight && (FrozenOcean || player.ZoneHallow))
             {
@@ -69,7 +81,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void AI()
         {
             // ArcherAI(NPC npc, int projectileType, int projectileDamage, float projectileVelocity, int projectileCooldown, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, bool hatesLight = false, int passiveSound = 0, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, float projectileGravity = 0.035f, int soundType = 2, int soundStyle = 5)
-            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyCrystalKnightBolt>(), crystalBoltDamage, 14, 70, 2, 0.07f, canTeleport: true, lavaJumping: true, shootSound: SoundID.Item30 with { Pitch = 1.1f });
+            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyCrystalKnightBolt>(), crystalBoltDamage, 14, 100, 2, 0.07f, canTeleport: true, lavaJumping: true, shootSound: SoundID.Item30 with { Pitch = 1.1f });
         }
 
 

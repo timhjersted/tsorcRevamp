@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void SetDefaults()
         {
 
-            NPC.npcSlots = 2;
+            NPC.npcSlots = 3;
             Main.npcFrameCount[NPC.type] = 12;
             AnimationType = 28;
             NPC.knockBackResist = 0.03f;
@@ -20,10 +20,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.defense = 90; //was 105
             NPC.height = 54;
             NPC.width = 54;
-            NPC.lifeMax = 5000;
+            NPC.lifeMax = 5300;
             NPC.HitSound = SoundID.NPCHit20;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.value = 4820;
+            NPC.value = 8820;
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BasiliskHunter>();
@@ -75,8 +75,21 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
             bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
-
             float chance = 0;
+
+            //Ensuring it can't spawn if two already exists.
+            int count = 0;
+            for (int i = 0; i < Main.npc.Length; i++)
+            {
+                if (Main.npc[i].type == NPC.type)
+                {
+                    count++;
+                    if (count > 1)
+                    {
+                        return 0;
+                    }
+                }
+            }
 
             if (spawnInfo.Water) return 0f;
 

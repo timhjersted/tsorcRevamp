@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     {
         public override void SetDefaults()
         {
-            NPC.npcSlots = 2;
+            NPC.npcSlots = 3;
             Main.npcFrameCount[NPC.type] = 20;
             AnimationType = 110;
             NPC.width = 18;
@@ -21,9 +21,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.defense = 30;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.lifeMax = 7000;
+            NPC.lifeMax = 5600;
             NPC.knockBackResist = 0f;
-            NPC.value = 3680;
+            NPC.value = 9680;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DarkKnightBanner>();
         }
@@ -41,8 +41,23 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
             bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
 
-            // these are all the regular stuff you get , now lets see......
+            
             float chance = 0;
+
+            //Ensuring it can't spawn if one already exists.
+            int count = 0;
+            for (int i = 0; i < Main.npc.Length; i++)
+            {
+                if (Main.npc[i].type == NPC.type)
+                {
+                    count++;
+                    if (count > 0)
+                    {
+                        return 0;
+                    }
+                }
+            }
+
             if (tsorcRevampWorld.SuperHardMode && player.townNPCs < 1f && (player.ZoneCorrupt || player.ZoneCrimson || player.ZoneDungeon) && !player.ZoneMeteor && !player.ZoneJungle && !player.ZoneUnderworldHeight && !player.ZoneHallow && !Ocean)
             {
                 chance = 0.2f;
@@ -63,7 +78,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void AI()
         {
-            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormWave>(), stormWaveDamage, 14, 80, 1.4f, 0.04f, 0.04f, true, lavaJumping: true);
+            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormWave>(), stormWaveDamage, 14, 90, 1.4f, 0.04f, 0.04f, true, lavaJumping: true);
         }
 
         #region Gore

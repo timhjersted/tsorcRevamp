@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.width = 20;
             NPC.damage = 105;
             NPC.defense = 61; //was 211
-            NPC.lifeMax = 13000; //was 35k
+            NPC.lifeMax = 13330; //was 35k
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 81870;
@@ -62,7 +62,19 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             bool Ocean = spawnInfo.SpawnTileX < 3600 || spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
             bool BeforeFourAfterSix = spawnInfo.SpawnTileX < Main.maxTilesX * 0.4f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.6f; //Before 3/10ths or after 7/10ths width (a little wider than ocean bool?)
 
-            // these are all the regular stuff you get , now lets see......
+            //Ensuring it can't spawn if one already exists.
+            int count = 0;
+            for (int i = 0; i < Main.npc.Length; i++)
+            {
+                if (Main.npc[i].type == NPC.type)
+                {
+                    count++;
+                    if (count > 0)
+                    {
+                        return 0;
+                    }
+                }
+            }
 
             if (tsorcRevampWorld.SuperHardMode && BeforeFourAfterSix && Main.bloodMoon && AboveEarth && Main.rand.NextBool(200))
 
@@ -534,9 +546,3 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 }
 
-/*
-  
-
-
-                
-*/

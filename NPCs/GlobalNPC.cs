@@ -127,19 +127,19 @@ namespace tsorcRevamp.NPCs
             //desert or underground desert and dungeon(shadow temple)
             if ((spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneUndergroundDesert) && spawnInfo.Player.ZoneDungeon && Main.hardMode)
             {
-                pool.Add(NPCID.DiabolistRed, 0.015f);
+                pool.Add(NPCID.DiabolistRed, 0.01f);
             }
 
             //machine temple (in water)
             if (spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
             {
                 pool.Add(NPCID.GreenJellyfish, 8f);
+                pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 2f);
             }
             //machine temple (not in water)
             if (!spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode && !tsorcRevampWorld.SuperHardMode)
             {
-                pool.Add(ModContent.NPCType<Enemies.SuperHardMode.IceSkeleton>(), 0.2f);
-                pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 2f);
+                pool.Add(ModContent.NPCType<Enemies.SuperHardMode.IceSkeleton>(), 0.2f); 
             }
             //sky
             if (spawnInfo.Player.ZoneSkyHeight && Main.hardMode)
@@ -161,29 +161,29 @@ namespace tsorcRevamp.NPCs
             //mushroom
             if (spawnInfo.Player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode)
             {
-                pool.Add(NPCID.DD2LightningBugT3, 0.3f);
+                pool.Add(NPCID.DD2LightningBugT3, 0.25f);
             }
             if (spawnInfo.Player.ZoneUnderworldHeight && !spawnInfo.Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.SolarCrawltipedeHead, 0.002f);
-                pool.Add(NPCID.SolarSroller, 0.5f); //.5 is 16%
+                pool.Add(NPCID.SolarSroller, 0.4f); //.5 is 16%
                 pool.Add(NPCID.SolarCorite, 0.01f);
-                pool.Add(NPCID.SolarSpearman, 0.5f);
-                pool.Add(NPCID.SolarDrakomire, 0.5f);
-                pool.Add(NPCID.SolarSolenian, 1f);
+                pool.Add(NPCID.SolarSpearman, 0.4f);
+                pool.Add(NPCID.SolarDrakomire, 0.4f);
+                pool.Add(NPCID.SolarSolenian, 0.6f);
             }
             //catacombs
             if (spawnInfo.SpawnTileType == TileID.BoneBlock && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.NebulaBrain, 0.2f); //.1 is 3%
-                pool.Add(NPCID.NebulaHeadcrab, 0.5f); //.1 is 3%
-                pool.Add(NPCID.NebulaBeast, 1f); //.1 is 3%
+                pool.Add(NPCID.NebulaHeadcrab, 0.4f); //.1 is 3%
+                pool.Add(NPCID.NebulaBeast, 0.6f); //.1 is 3%
                 pool.Add(NPCID.NebulaSoldier, 0.5f); //.1 is 3%
             }
             //spaceships
             if (spawnInfo.SpawnTileType == TileID.MartianConduitPlating && tsorcRevampWorld.SuperHardMode)
             {
-                pool.Add(NPCID.VortexLarva, 0.4f); //.1 is 3%
+                pool.Add(NPCID.VortexLarva, 1f); //.1 is 3%
             }
             //one of the outer thirds of the map
             if ((Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3) && tsorcRevampWorld.SuperHardMode)
@@ -193,7 +193,7 @@ namespace tsorcRevamp.NPCs
             // molten sky temple
             if (spawnInfo.Player.ZoneUnderworldHeight && spawnInfo.SpawnTileType == TileID.MeteoriteBrick && tsorcRevampWorld.SuperHardMode)
             {
-                pool.Add(NPCID.StardustWormHead, 0.4f); //.1 is 3%
+                pool.Add(NPCID.StardustWormHead, 0.1f); //.1 is 3%
                 pool.Add(NPCID.StardustCellBig, 0.02f); //.5 is 16%
                 pool.Add(NPCID.StardustJellyfishBig, 0.3f);
                 pool.Add(NPCID.StardustSpiderBig, 0.6f);

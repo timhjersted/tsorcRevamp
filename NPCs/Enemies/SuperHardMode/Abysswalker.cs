@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.damage = 105;
             NPC.defense = 72;
             NPC.height = 40;
-            NPC.lifeMax = 5000;
+            NPC.lifeMax = 5100;
             NPC.scale = 1.2f;
             NPC.HitSound = SoundID.NPCHit29;
             NPC.DeathSound = SoundID.NPCDeath31;
@@ -53,9 +53,23 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             // these are all the regular stuff you get , now lets see......
             float chance = 0;
 
+            //Ensuring it can't spawn if one already exists.
+            int count = 0;
+            for (int i = 0; i < Main.npc.Length; i++)
+            {
+                if (Main.npc[i].type == NPC.type)
+                {
+                    count++;
+                    if (count > 0)
+                    {
+                        return 0;
+                    }
+                }
+            }
+
             if ((player.ZoneMeteor || player.ZoneJungle) && tsorcRevampWorld.SuperHardMode && !player.ZoneDungeon && !(player.ZoneCorrupt || player.ZoneCrimson))
             {
-                chance = 0.25f;
+                chance = 0.15f;
             }
             if (player.ZoneDirtLayerHeight)
             {

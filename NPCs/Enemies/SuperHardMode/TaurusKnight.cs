@@ -73,6 +73,19 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             // these are all the regular stuff you get , now lets see......
 
+            //Ensuring it can't spawn if one already exists.
+            int count = 0;
+            for (int i = 0; i < Main.npc.Length; i++)
+            {
+                if (Main.npc[i].type == NPC.type)
+                {
+                    count++;
+                    if (count > 0)
+                    {
+                        return 0;
+                    }
+                }
+            }
 
             if (tsorcRevampWorld.SuperHardMode && Dungeon && Main.rand.NextBool(60))
 

@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         public override void SetDefaults()
         {
             NPC.netAlways = true;
-            NPC.npcSlots = 2;
+            NPC.npcSlots = 3;
             NPC.width = 42;
             NPC.height = 81;
             NPC.aiStyle = 6;
@@ -67,6 +67,21 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
             Player p = spawnInfo.Player;
             Point pTile = p.Center.ToTileCoordinates();
             bool worldEdge = (pTile.X < Main.maxTilesX * 0.3f) || (pTile.X > Main.maxTilesX * 0.7f); //thanks i hate it
+
+            //Ensuring it can't spawn if one already exists.
+            int count = 0;
+            for (int i = 0; i < Main.npc.Length; i++)
+            {
+                if (Main.npc[i].type == NPC.type)
+                {
+                    count++;
+                    if (count > 0)
+                    {
+                        return 0;
+                    }
+                }
+            }
+
             if (tsorcRevampWorld.SuperHardMode)
             {
                 if (p.ZoneUnderworldHeight)

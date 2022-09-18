@@ -41,12 +41,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             if (Main.expertMode)
             {
-                Main.player[Main.myPlayer].AddBuff(BuffID.Frozen, 15, false); //slowed
+                Main.player[Main.myPlayer].AddBuff(BuffID.Frozen, 10, false); //slowed
                 Main.player[Main.myPlayer].AddBuff(32, 300, false); //normal slow
             }
             else
             {
-                Main.player[Main.myPlayer].AddBuff(BuffID.Frozen, 30, false); //slowed
+                Main.player[Main.myPlayer].AddBuff(BuffID.Frozen, 15, false); //slowed
                 Main.player[Main.myPlayer].AddBuff(32, 600, false); //normal slow
             }
         }

@@ -2129,7 +2129,7 @@ namespace tsorcRevamp.NPCs
                 #region Plantera
                 case (NPCID.Plantera):
                     {
-                        npc.damage = 83; //base 70
+                        npc.damage = 93; //base 70
                         npc.value = 295930;
                         npc.lifeMax = 35000;
                         break;
@@ -2137,21 +2137,21 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.PlanterasTentacle):
                     {
-                        npc.damage = 76; //base 70
+                        npc.damage = 86; //base 70
                         npc.value = 1490;
                         break;
                     }
 
                 case (NPCID.PlanterasHook):
                     {
-                        npc.damage = 83; //base 70
+                        npc.damage = 93; //base 70
                         npc.value = 1490;
                         break;
                     }
 
                 case (NPCID.Spore):
                     {
-                        npc.damage = 79; //base 70 (ie 140)
+                        npc.damage = 89; //base 70 (ie 140)
                         npc.value = 130;
                         break;
                     }
@@ -2181,7 +2181,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.Golem): //35k souls total
                     {
                         npc.lifeMax = 30000;
-                        npc.damage = 150;
+                        npc.damage = 155;
                         npc.value = 293650;
                         break;
                     }
@@ -2189,7 +2189,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.GolemHead):
                     {
                         npc.lifeMax = 16000;    
-                        npc.damage = 75;
+                        npc.damage = 80;
                         npc.value = 24500;
                         break;
                     }

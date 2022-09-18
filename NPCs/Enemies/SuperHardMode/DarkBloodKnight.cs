@@ -10,7 +10,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void SetDefaults()
         {
 
-            NPC.npcSlots = 2;
+            NPC.npcSlots = 3;
             Main.npcFrameCount[NPC.type] = 20;
             AnimationType = 110;
             NPC.width = 18;
@@ -23,9 +23,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.defense = 67;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.lifeMax = 8700;
+            NPC.lifeMax = 6700;
             NPC.knockBackResist = 0;
-            NPC.value = 5430;
+            NPC.value = 10430;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DarkBloodKnightBanner>();
         }
@@ -44,8 +44,22 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Player player = spawnInfo.Player;
             bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
             bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
-
             float chance = 0;
+
+            //Ensuring it can't spawn if one already exists.
+            int count = 0;
+            for (int i = 0; i < Main.npc.Length; i++)
+            {
+                if (Main.npc[i].type == NPC.type)
+                {
+                    count++;
+                    if (count > 0)
+                    {
+                        return 0;
+                    }
+                }
+            }
+
             if (tsorcRevampWorld.SuperHardMode && player.ZoneJungle && !player.ZoneDungeon && !(player.ZoneCorrupt || player.ZoneCrimson) && !Ocean)
             {
                 if (player.ZoneOverworldHeight)
