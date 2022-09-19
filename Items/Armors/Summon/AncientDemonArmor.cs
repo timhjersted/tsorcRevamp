@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Armors.Summon
             Tooltip.SetDefault("Forged by those who brave Annihilation" +
                 "\n+27% whip damage" +
                 "\nSet bonus: Increases whip range by 20%" +
-                "\nIncreases summon attack speed by 25% + 25% extra when under 50% health");
+                "\nIncreases summon attack speed by 25%, this gets doubled when under 50% health");
             ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = false;
         }
 
