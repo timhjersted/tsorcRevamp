@@ -132,11 +132,11 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
                 }
                 tooltips.Insert(line++, new TooltipLine(Mod, "", "Does not consume a buff slot."));
                 tooltips.Insert(line++, new TooltipLine(Mod, "", "Use to toggle effect."));
-                if (ExclusivePermanents.Equals(ExclusiveSetFlasks)) {
+                if (ExclusivePermanents != null && ExclusivePermanents.Equals(ExclusiveSetFlasks)) {
                     tooltips.Insert(line++, new TooltipLine(Mod, "", "Not compatible with other weapon imbues."));
 
                 }
-                else if (ExclusivePermanents.Equals(ExclusiveSetWellFed)) {
+                else if (ExclusivePermanents != null && ExclusivePermanents.Equals(ExclusiveSetWellFed)) {
                     tooltips.Insert(line++, new TooltipLine(Mod, "", "Not compatible with other food items."));
 
                 }
