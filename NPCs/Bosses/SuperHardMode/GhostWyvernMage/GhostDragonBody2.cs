@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 750;
-            NPC.damage = 80;
+            NPC.damage = 0;
             NPC.defense = 20;
             NPC.HitSound = SoundID.NPCHit7;
             NPC.DeathSound = SoundID.NPCDeath8;
@@ -78,33 +78,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 NPC.HitEffect(0, 10.0);
                 NPC.active = false;
             }
-            //if (npc.position.X > Main.npc[(int)npc.ai[1]].position.X)
-            //{
-            //	npc.spriteDirection = 1;
-            //}
-            //if (npc.position.X < Main.npc[(int)npc.ai[1]].position.X)
-            //{
-            //	npc.spriteDirection = -1;
-            //}
+            
 
             if (Timer >= 0)
             {
-                if (Main.netMode != 2)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float num48 = 4f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width / 2), NPC.position.Y + (NPC.height / 2));
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     rotation += Main.rand.Next(-50, 50) / 100;
-                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ProjectileID.LostSoulHostile, fireDamage, 0f, Main.myPlayer);
-                    Timer = -1200 - Main.rand.Next(200);
+                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(), fireDamage, 0f, Main.myPlayer);
+                    Timer = -5000;
                 }
             }
 
-            //if (Main.rand.Next(2)==0)
-            //{
-            //	int dust = Dust.NewDust(new Vector2((float) npc.position.X, (float) npc.position.Y), npc.width, npc.height, 62, 0, 0, //100, Color.White, 2.0f);
-            //	Main.dust[dust].noGravity = true;
-            //}
+            
         }
 
         public static Texture2D texture;

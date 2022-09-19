@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs.Enemies
     class BarrowWight : ModNPC
     {
 
-        int chargeDamage = 0;
+      
         bool chargeDamageFlag = false;
 
         public override void SetDefaults()
@@ -65,9 +65,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (NPC.ai[1] >= 10f)
             {
                 NPC.TargetClosest(true);
-                NPC.netUpdate = true;
-
-
+                
 
                 // charge forward code 
                 if (Main.rand.NextBool(400) && Main.netMode != NetmodeID.MultiplayerClient)
@@ -95,18 +93,13 @@ namespace tsorcRevamp.NPCs.Enemies
                         NPC.velocity.Y = (float)(Math.Sin(rotation) * 7) * -1;
                         NPC.ai[1] = 1f;
 
-                        NPC.damage = 60;
-                        //chargeDamage++;
-
+                        NPC.netUpdate = true;
                     }
 
-                    //if (chargeDamage >= 115)
                     if (chargeTelegraphTimer > 130)
                     {
                         chargeDamageFlag = false;
-                        NPC.damage = 75;
-                        chargeTelegraphTimer = 0;
-                        //chargeDamage = 0;
+                        chargeTelegraphTimer = 0;     
                     }
 
                 }

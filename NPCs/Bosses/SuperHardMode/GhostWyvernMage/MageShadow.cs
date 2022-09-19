@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.defense = 56;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 1000;
+            NPC.lifeMax = 500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.noGravity = false;
@@ -39,12 +39,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         }
 
 
-        int frozenSawDamage = 150;
-        int lightningDamage = 100;
+        int frozenSawDamage = 100;
+        int lightningDamage = 120;
         int Timer2 = -Main.rand.Next(200);
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
+            NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);
             frozenSawDamage = (int)(frozenSawDamage / 2);
             lightningDamage = (int)(lightningDamage / 2);
@@ -52,10 +53,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-
-            int expertScale = 1;
-            if (Main.expertMode) expertScale = 2;
-            target.AddBuff(BuffID.Blackout, 120, false);
+            target.AddBuff(BuffID.Frostburn, 90, false);
             target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
             target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
         }
@@ -71,13 +69,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             if (NPC.Distance(player.Center) < 300)
             {
                
-                player.AddBuff(BuffID.Darkness, 60, false);
+                player.AddBuff(BuffID.Darkness, 300, false);
 
             }
-            if (NPC.Distance(player.Center) < 200)
+            if (NPC.Distance(player.Center) < 100)
             {
-                player.AddBuff(BuffID.CursedInferno, 60, false);
-                player.AddBuff(BuffID.Obstructed, 60, false);
+                player.AddBuff(BuffID.CursedInferno, 30, false);
+                //player.AddBuff(BuffID.Obstructed, 60, false);
                 player.AddBuff(BuffID.ManaSickness, 180, false);
             }
 
@@ -89,18 +87,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
             // npc.ai[2]++; // Shots
 
-            if (NPC.life < 51)
+            if (NPC.life < 201)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, Type: DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y, 150, Color.Blue, 1f);
                 Main.dust[dust].noGravity = true;
             }
 
 
-            if (Main.netMode != 2)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if (NPC.ai[0] >= 7 && NPC.ai[2] < 3)
+                if (NPC.ai[0] >= 12 && NPC.ai[2] < 3)
                 {
-                    float num48 = 1f;
+                    float num48 = 3f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                     int type = ModContent.ProjectileType<Projectiles.Enemy.FrozenSawII>();
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
@@ -108,6 +106,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     NPC.ai[0] = 0;
                     NPC.ai[2]++;
+                    //Timer2 = 0;
                 }
             }
 
@@ -118,7 +117,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 NPC.velocity.Y *= 0.27f;
             }
 
-            if ((NPC.ai[1] >= 200 && NPC.life > 2000) || (NPC.ai[1] >= 120 && NPC.life <= 2000))
+            if ((NPC.ai[1] >= 300 && NPC.life > 300) || (NPC.ai[1] >= 200 && NPC.life <= 300))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int num36 = 0; num36 < 10; num36++)
@@ -126,10 +125,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);
                     Main.dust[dust].noGravity = false;
                 }
-                NPC.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
+                NPC.ai[3] = 0;//(float)(Main.rand.Next(360) * (Math.PI / 180));
                 NPC.ai[2] = 0;
                 NPC.ai[1] = 0;
-
+                
 
                 Player Pt = Main.player[NPC.target];
                 Vector2 NC = NPC.position + new Vector2(NPC.width / 2, NPC.height / 2);
@@ -137,8 +136,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 NPC.position.X = Pt.position.X + (float)((600 * Math.Cos(NPC.ai[3])) * -1);
                 NPC.position.Y = Pt.position.Y - 45 + (float)((30 * Math.Sin(NPC.ai[3])) * -1);
 
-                float MinDIST = 400f;
-                float MaxDIST = 700f;
+                float MinDIST = 600f;
+                float MaxDIST = 900f;
                 Vector2 Diff = NPC.position - Pt.position;
                 if (Diff.Length() > MaxDIST)
                 {
@@ -158,9 +157,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
             }
 
-            //end of W1k's Death code
+            
             Timer2++;
-            if (Timer2 >= 0)
+            if (Timer2 >= 120)
             {
 
 
@@ -182,48 +181,58 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                     //speed += Main.rand.NextVector2Circular(-10, -8);
                     if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                     {
-                        int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, 80, 0f, Main.myPlayer);
-                        //ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()
-                        //DesertDjinnCurse; ProjectileID.DD2DrakinShot
-
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-                        if (Timer2 >= 300)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Timer2 = -200 - Main.rand.Next(1250);
+                            if (Main.rand.NextBool(4))
+                            {
+                                int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, 80, 0f, Main.myPlayer);
+                                //ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
+                            }
+                        }
+                        
+                        if (Timer2 >= 400)
+                        {
+                            Timer2 = -100;
+
+                            if (Main.rand.NextBool(2))
+                            {
+                                if (Main.netMode != NetmodeID.MultiplayerClient)
+                                {
+                                    float num48 = 2f;
+                                    Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 220 + (NPC.height / 2));
+                                    float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
+                                    float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
+                                    if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                                    {
+                                        float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                        num51 = num48 / num51;
+                                        speedX *= num51;
+                                        speedY *= num51;
+                                        int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>();//44;//0x37; //14;
+                                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, lightningDamage, 0f, Main.myPlayer);
+                                        Main.projectile[num54].timeLeft = 250;
+                                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
+                                        NPC.ai[3] = 0;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
                 else
                 {
-                    Timer2 = -200 - Main.rand.Next(100);
+                    Timer2 = -100;
                 }
 
             }
-            //beginning of Omnir's Ultima Weapon projectile code
+            
 
             NPC.ai[3]++;
 
-            if (NPC.ai[3] >= 100) //how often the crystal attack can happen in frames per second
+            if (NPC.ai[3] >= 50) //how often the crystal attack can happen in frames per second
             {
-                if (Main.rand.NextBool(2)) //1 in 2 chance boss will use attack when it flies down on top of you
-                {
-                    float num48 = 0.9f;
-                    Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 220 + (NPC.height / 2));
-                    float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
-                    float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
-                    if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
-                    {
-                        float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                        num51 = num48 / num51;
-                        speedX *= num51;
-                        speedY *= num51;
-                        int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>();//44;//0x37; //14;
-                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, lightningDamage, 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 250;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
-                        NPC.ai[3] = 0;
-                    }
-                }
+                
 
 
             }

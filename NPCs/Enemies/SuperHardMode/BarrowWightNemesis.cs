@@ -35,6 +35,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             BannerItem = ModContent.ItemType<Banners.BarrowWightNemesisBanner>();
         }
 
+        
         int breathDamage = 35;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -48,6 +49,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         bool breath = false;
         int chargeDamage = 0;
         bool chargeDamageFlag = false;
+        int chargeTelegraphTimer = 0;
 
         //Spawns from the Surface into the Cavern, from 2/10th to 3.5/10th and again from 6.5/10th to 8/10th (Width) on Normal Mode. Also spawns in the Dungeon and in the sky in Hardmode.
 
@@ -101,57 +103,81 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 NPC.TargetClosest(true);
 
-
-
                 // charge forward code 
-                if (Main.rand.NextBool(1650))
+                if (Main.rand.NextBool(400) && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC.netUpdate = true; //new
                     chargeDamageFlag = true;
-                    Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                    NPC.velocity.X = (float)(Math.Cos(rotation) * 11) * -1;
-                    NPC.velocity.Y = (float)(Math.Sin(rotation) * 11) * -1;
-                    NPC.ai[1] = 1f;
-                    NPC.netUpdate = true;
+
                 }
                 if (chargeDamageFlag == true)
                 {
-                    NPC.damage = 115;
-                    chargeDamage++;
-                }
-                if (chargeDamage >= 115)
-                {
-                    chargeDamageFlag = false;
-                    NPC.damage = 115;
-                    chargeDamage = 0;
+                    chargeTelegraphTimer++;
+                    Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                    if (Main.rand.NextBool(2))
+                    {
+                        int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
+
+                        Main.dust[pink].noGravity = true;
+                    }
+
+                    if (chargeTelegraphTimer >= 120 && chargeTelegraphTimer <= 130)
+                    {
+
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                        NPC.velocity.X = (float)(Math.Cos(rotation) * 10) * -1; //10 was 11
+                        NPC.velocity.Y = (float)(Math.Sin(rotation) * 10) * -1;
+                        NPC.ai[1] = 1f;
+                        NPC.netUpdate = true;
+
+                    }
+
+                    if (chargeTelegraphTimer > 130)
+                    {
+                        chargeDamageFlag = false;
+                        
+                        chargeTelegraphTimer = 0;
+                        
+                    }
+
                 }
 
-                // fire breath attack
-                if (Main.rand.NextBool(525))
+
+
+
+                // ice breath attack
+                if (Main.rand.NextBool(525) && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     breath = true;
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 }
                 if (breath)
                 {
-                    float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
-                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, (float)((Math.Cos(rotation) * 15) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 0f, Main.myPlayer);
-                    Main.projectile[num54].timeLeft = 30;
-                    NPC.netUpdate = true;
+                        Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                        if (Main.rand.NextBool(2))
+                        {
+                            int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.IceTorch, NPC.velocity.X, NPC.velocity.Y, Scale: 3f);
 
+                            Main.dust[pink].noGravity = true;
+                        }
 
+                        if (breathCD <= 60)
+                        {
+                            float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, (float)((Math.Cos(rotation) * 15) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 0f, Main.myPlayer);
+                            Main.projectile[num54].timeLeft = 30;
+                        }
+                        
                     breathCD--;
-                    //}
+                   
                 }
                 if (breathCD <= 0)
                 {
                     breath = false;
-                    breathCD = 60;
-                    //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                    breathCD = 120;
+                    
                 }
-
-                //end fire breath attack
+                //end breath attack
 
 
             }

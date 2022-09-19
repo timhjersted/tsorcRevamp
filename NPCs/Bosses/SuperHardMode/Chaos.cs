@@ -48,7 +48,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int fireTrailsDamage = 45;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            NPC.damage = (int)(NPC.damage / 2);
+            NPC.lifeMax = (int)(NPC.lifeMax / 2);
+            NPC.damage = (int)(NPC.damage / 2); 
+            //damage above numbers are based on a 4x multiplier
         }
 
         int chaosHealed = 0;

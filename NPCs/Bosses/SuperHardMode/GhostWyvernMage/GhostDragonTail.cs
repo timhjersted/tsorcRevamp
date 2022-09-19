@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 750;
-            NPC.damage = 55;
+            NPC.damage = 0;
             NPC.defense = 0;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath10;
@@ -74,14 +74,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 NPC.HitEffect(0, 10.0);
                 NPC.active = false;
             }
-            //if (npc.position.X > Main.npc[(int)npc.ai[1]].position.X)
-            //{
-            //	npc.spriteDirection = 1;
-            //}
-            //if (npc.position.X < Main.npc[(int)npc.ai[1]].position.X)
-            //{
-            //	npc.spriteDirection = -1;
-            //}
+          
 
             //Color color = new Color();
             int dust1 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, Type: DustID.Snow, 0, 0, 100, Color.White, 1.0f);//npc.position.Y+10

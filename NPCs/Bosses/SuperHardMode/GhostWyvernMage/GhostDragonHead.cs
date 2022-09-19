@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
     {
         public override void SetDefaults()
         {
-            NPC.netAlways = true;
+            //NPC.netAlways = true;
             NPC.npcSlots = 1;
             NPC.width = 45;
             NPC.height = 45;
@@ -42,15 +42,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         public static int drawOffset = 52;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
+            NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-
-            int expertScale = 1;
-            if (Main.expertMode) expertScale = 2;
-
+            
             target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
             target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
         }
@@ -68,12 +66,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             NPC.localAI[1]++;
             NPC.localAI[2]++;
-            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<GhostDragonHead>(), bodyTypes, ModContent.NPCType<GhostDragonTail>(), 23, -2f, 15f, 0.23f, true, false, true, false, false);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[2], 1500, ProjectileID.CultistBossLightningOrb, lightningDamage, 10, Main.rand.NextBool(200), false, SoundID.Item17);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 660, ProjectileID.FrostWave, lightningDamage, 1, Main.rand.NextBool(200), false, SoundID.Item20);
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<GhostDragonHead>(), bodyTypes, ModContent.NPCType<GhostDragonTail>(), 23, 10f, 9f, 0.01f, true, false, true, false, false);//.01 was .23, 0 was -2
 
+            Player player = Main.player[NPC.target];
+            if (NPC.Distance(player.Center) > 700)
+            {
+                tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[2], 1500, ProjectileID.CultistBossLightningOrb, lightningDamage, 10, Main.rand.NextBool(200), false, SoundID.Item17);
+            }
+            //tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 660, ProjectileID.FrostWave, lightningDamage, 1, Main.rand.NextBool(200), false, SoundID.Item20);
+            
             //this makes the head always stay in the same position even when it flips upside down
-            if (NPC.velocity.X < 0f) { NPC.spriteDirection = 1; }
+            if (NPC.velocity.X < 0f) { NPC.spriteDirection = 1; }//was 1
             else  //both -1 is correct
             if (NPC.velocity.X > 0f) { NPC.spriteDirection = -1; }
         }

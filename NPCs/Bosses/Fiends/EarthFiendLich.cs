@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             AnimationType = -1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 120000;
+            NPC.lifeMax = 450000;
             NPC.timeLeft = 22500;
             NPC.friendly = false;
             NPC.noTileCollide = true;
@@ -60,6 +60,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         //We can override this even further on a per-NPC basis here
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
+            NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);
             NPC.defense = NPC.defense += 12;
             lightningDamage = (int)(lightningDamage / 2);

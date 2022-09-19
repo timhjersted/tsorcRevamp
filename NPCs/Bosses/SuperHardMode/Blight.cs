@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.scale = 1f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.value = 500000;
+            NPC.value = 650000;
             NPC.friendly = false;
             NPC.alpha = 255;
             NPC.boss = true;
@@ -54,7 +54,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-
+            NPC.lifeMax = (int)(NPC.lifeMax / 2);
+            NPC.damage = (int)(NPC.damage / 2);
         }
 
         int chargeDamage = 0;
