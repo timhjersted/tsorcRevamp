@@ -42,15 +42,17 @@ namespace tsorcRevamp.Items.BossItems
         }
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
+                Recipe recipe = CreateRecipe();
+
                 recipe.AddIngredient(ItemID.StoneBlock, 1);
                 recipe.AddIngredient(ModContent.ItemType<Humanity>(), 15);
                 recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 50);
                 recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 1);
                 recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
                 recipe.AddTile(TileID.DemonAltar);
+
                 recipe.Register();
             }
         }

@@ -21,6 +21,21 @@ namespace tsorcRevamp.Items.BossItems
             Item.consumable = false;
             Item.value = -1;
         }
+        public override void AddRecipes()
+        {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                Recipe recipe = CreateRecipe();
+
+                recipe.AddIngredient(ItemID.MagicMirror);
+                recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 10);
+                recipe.AddIngredient(ItemID.SoulofNight, 8);
+                recipe.AddIngredient(ItemID.LunarBar, 5);
+                recipe.AddTile(TileID.DemonAltar);
+
+                recipe.Register();
+            }
+        }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
