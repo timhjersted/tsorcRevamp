@@ -9,6 +9,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using tsorcRevamp.UI;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.Items
 {
@@ -617,6 +618,33 @@ namespace tsorcRevamp.Items
                 ItemID.HallowedTorch,
                 ItemID.JungleTorch
             };
+        }
+
+        public override void OnConsumeItem(Item item, Player player) {
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.consumedPotions ??= new Dictionary<ItemDefinition, int>();
+
+            bool isPotion = false;
+            if (potionList.Contains(item.type)) {
+                isPotion = true;
+            }
+
+            if (!isPotion) {
+                if (item.buffType > 0 && item.consumable) {
+                    isPotion = true;
+                }
+            }
+            
+
+            if (isPotion) {
+                ItemDefinition pot = new(item.type);
+                if (modPlayer.consumedPotions.ContainsKey(pot)) {
+                    modPlayer.consumedPotions[pot] += 1;
+                }
+                else {
+                    modPlayer.consumedPotions.Add(pot, 1);
+                }
+            }
         }
 
         public static void populateSoulRecipes()

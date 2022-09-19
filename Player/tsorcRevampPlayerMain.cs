@@ -16,6 +16,7 @@ using tsorcRevamp.Buffs;
 using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.UI;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp
 {
@@ -24,6 +25,7 @@ namespace tsorcRevamp
         public static readonly int PermanentBuffCount = 56;
         public static List<int> startingItemsList;
         public List<int> bagsOpened;
+        public Dictionary<ItemDefinition, int> consumedPotions;
 
         public override void Initialize()
         {
@@ -137,6 +139,10 @@ namespace tsorcRevamp
             List<bool> permaBuffs = PermanentBuffToggles.ToList();
             tag.Add("PermanentBuffToggles", permaBuffs);
             tag.Add("finishedQuest", finishedQuest);
+
+            consumedPotions ??= new Dictionary<ItemDefinition, int>();
+            tag.Add("consumedPotionsKeys", consumedPotions.Keys.ToList());
+            tag.Add("consumedPotionsValues", consumedPotions.Values.ToList());
         }
 
         public override void LoadData(TagCompound tag)
@@ -199,6 +205,15 @@ namespace tsorcRevamp
 
             bool? quest = tag.GetBool("finishedQuest");
             finishedQuest = quest ?? false;
+
+            consumedPotions ??= new Dictionary<ItemDefinition, int>();
+            if (tag.ContainsKey("consumedPotionsKeys")) {
+                List<ItemDefinition> potKey = tag.GetList<ItemDefinition>("consumedPotionsKeys") as List<ItemDefinition>;
+                List<int> potValue = tag.GetList<int>("consumedPotionsValues") as List<int>;
+                for (int i = 0; i < potKey.Count; i++) {
+                    consumedPotions.Add(potKey[i], potValue[i]);
+                }
+            }
         }
 
         public void SetDirection() => SetDirection(false);
