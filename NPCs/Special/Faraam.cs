@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Special
 {
@@ -513,7 +514,7 @@ namespace tsorcRevamp.NPCs.Special
             }
 
             #region Aftermath
-            //Main.NewText(tsorcRevampWorld.Slain[ModContent.NPCType<NPCs.Special.LeonhardPhase1>()]);
+            //Main.NewText(tsorcRevampWorld.NewSlain[ModContent.NPCType<NPCs.Special.LeonhardPhase1>()]);
             if (NPC.dontTakeDamage) //This meakes health bar dissapear, and no damage can be taken
             {
                 NPC.friendly = true; //This makes npc not deal contact damage
@@ -582,7 +583,7 @@ namespace tsorcRevamp.NPCs.Special
                     if (NPC.alpha > 250)
                     {
                         NPC.active = false;
-                        tsorcRevampWorld.Slain[ModContent.NPCType<NPCs.Special.LeonhardPhase1>()] = 1;
+                        tsorcRevampWorld.NewSlain[new NPCDefinition(ModContent.NPCType<NPCs.Special.LeonhardPhase1>())] = 1;
                     }
                 }
             }

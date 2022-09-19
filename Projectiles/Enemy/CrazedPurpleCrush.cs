@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -43,7 +44,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 100, color, 1.0f);
             Main.dust[dust].noGravity = true;
 
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())))
             {
                 int dust2 = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width / 2, Projectile.height / 2, 6, Projectile.velocity.X, Projectile.velocity.Y, 80, Color.Yellow, 1f);
                 Main.dust[dust2].noGravity = true;
@@ -66,7 +67,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             target.AddBuff(BuffID.Poisoned, 1200 / buffLengthMod, false); //poisoned
 
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())))
             {
                 target.AddBuff(BuffID.OnFire, 180 / buffLengthMod, false); //on fire   
             }

@@ -4,6 +4,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -81,10 +82,10 @@ namespace tsorcRevamp.NPCs.Bosses
             //	return 0;
             //}
 
-            //if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.NextBool(500)) { UsefulFunctions.BroadcastText("A hero from Lumelia has come to kill you for unleashing darkness upon the world... ", 175, 75, 255); return 1; }//why tim xD -- haha, no more preHM spawn with the new lore
-            //if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.NextBool(350)) { UsefulFunctions.BroadcastText("A hero from Lumelia has come seeking justice for their slain brother, Aaron...", 175, 75, 255); return 1; }
-            //if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneSnow && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.NextBool(300)) { Main.NewText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying Aaron... ", 175, 75, 255); return 1; }
-            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneDesert && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && !(P.ZoneCorrupt || P.ZoneCrimson) && !P.ZoneBeach && Main.rand.NextBool(500)) { UsefulFunctions.BroadcastText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying his kin... ", 175, 75, 255); return 1; }
+            //if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.NextBool(500)) { UsefulFunctions.BroadcastText("A hero from Lumelia has come to kill you for unleashing darkness upon the world... ", 175, 75, 255); return 1; }//why tim xD -- haha, no more preHM spawn with the new lore
+            //if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.NextBool(350)) { UsefulFunctions.BroadcastText("A hero from Lumelia has come seeking justice for their slain brother, Aaron...", 175, 75, 255); return 1; }
+            //if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneSnow && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.NextBool(300)) { Main.NewText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying Aaron... ", 175, 75, 255); return 1; }
+            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneDesert && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>())) && !(P.ZoneCorrupt || P.ZoneCrimson) && !P.ZoneBeach && Main.rand.NextBool(500)) { UsefulFunctions.BroadcastText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying his kin... ", 175, 75, 255); return 1; }
 
             return 0;
         }
@@ -1066,7 +1067,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (!Main.expertMode)
                 {
 
-                    if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<HeroofLumelia>()))
+                    if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<HeroofLumelia>())))
                     {
                         Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ArcheryPotion, 3);
                         Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 5091);

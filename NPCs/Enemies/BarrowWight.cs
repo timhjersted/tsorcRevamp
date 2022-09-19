@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using static tsorcRevamp.oSpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -43,7 +44,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Player p = spawnInfo.Player;
             int playerXTile = (int)(p.Bottom.X + 8f) / 16;
             if (p.townNPCs > 0f || p.ZoneMeteor) return 0;
-            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && (oSurface(p) || oUnderSurface(p) || oUnderground(p) || oCavern(p)) && (playerXTile > Main.maxTilesX * 0.2f && playerXTile < Main.maxTilesX * 0.35f || playerXTile > Main.maxTilesX * 0.65f && playerXTile < Main.maxTilesX * 0.8f)) return 0.005f;
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)) && (oSurface(p) || oUnderSurface(p) || oUnderground(p) || oCavern(p)) && (playerXTile > Main.maxTilesX * 0.2f && playerXTile < Main.maxTilesX * 0.35f || playerXTile > Main.maxTilesX * 0.65f && playerXTile < Main.maxTilesX * 0.8f)) return 0.005f;
             if (!Main.hardMode && p.ZoneDungeon) return .00833f;
             if (!tsorcRevampWorld.SuperHardMode && Main.hardMode && oSky(p)) return 0.0567f;
             if (!tsorcRevampWorld.SuperHardMode && Main.hardMode && p.ZoneDungeon) return 0.033f;

@@ -5,6 +5,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -85,7 +86,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (spawnInfo.Water) return 0f;
 
-            if (!Main.hardMode && !Main.dayTime && (Corruption || Jungle) && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && Main.rand.NextBool(24)) return 1;
+            if (!Main.hardMode && !Main.dayTime && (Corruption || Jungle) && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)) && Main.rand.NextBool(24)) return 1;
 
 
             //new chance to spawn in the corruption or crimson below ground (poison and cursed aren't activated until EoW and Skeletron respectively for balance; now we'll finally have a unique mod npc that fits well in these zones)
@@ -259,7 +260,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 player.AddBuff(20, 300, false); //poisoned
             }
-            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EaterofWorldsHead)))
             {
                 player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 100
                 player.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 5;

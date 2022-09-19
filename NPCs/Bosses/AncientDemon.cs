@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -67,18 +68,18 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 if (Main.hardMode)
                 {
-                    bool hunterDowned = tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheHunter>());
+                    bool hunterDowned = tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>()));
 
-                    if (hunterDowned && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientDemon>()) && Main.rand.NextBool(100)) return 1;
+                    if (hunterDowned && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AncientDemon>())) && Main.rand.NextBool(100)) return 1;
                     if (hunterDowned && Main.rand.NextBool(800)) return 1;
                     if (hunterDowned && !Main.dayTime && Main.rand.NextBool(500)) return 1;
-                    else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.25f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && Main.rand.NextBool(500)) return 1;
+                    else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.25f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())) && Main.rand.NextBool(500)) return 1;
                     return 0;
                 }
 
                 if (tsorcRevampWorld.SuperHardMode)
                 {
-                    if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientDemon>()) && Main.rand.NextBool(10)) return 1;
+                    if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AncientDemon>())) && Main.rand.NextBool(10)) return 1;
                     if (Main.rand.NextBool(800)) return 1;
                     else if (!Main.dayTime && Main.rand.NextBool(400)) return 1;
                     return 0;
@@ -525,7 +526,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void OnKill()
         {
 
-            if (!Main.expertMode && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientDemon>()))
+            if (!Main.expertMode && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AncientDemon>())))
             { 
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.EyeOfTheGods>(), 1);

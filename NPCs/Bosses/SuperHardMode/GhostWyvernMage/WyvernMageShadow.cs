@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 {
@@ -328,7 +329,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 else
                 {
                     UsefulFunctions.BroadcastText("The souls of " + NPC.GivenOrTypeName + " have been released!", 175, 255, 75);
-                    tsorcRevampWorld.Slain[ModContent.NPCType<WyvernMageShadow>()] = 1;
+                    tsorcRevampWorld.NewSlain[new NPCDefinition(ModContent.NPCType<WyvernMageShadow>())] = 1;
                 }
             }
         }

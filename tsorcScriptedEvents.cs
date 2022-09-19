@@ -8,6 +8,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp
 {
@@ -513,7 +514,7 @@ namespace tsorcRevamp
 
         public static bool LumeliaCustomCondition()
         {
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>())))
             {
                 return true;
             }
@@ -574,7 +575,7 @@ namespace tsorcRevamp
         public static bool MarilithCustomCondition()
         {
 
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.MarilithIntro>()))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>())) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.MarilithIntro>()))
             {
                 return false;
             }
@@ -630,7 +631,7 @@ namespace tsorcRevamp
 
         public static bool SlograGaibonCondition()
         {
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Slogra>()) || (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gaibon>())) || (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Slogra>()) && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Gaibon>())))
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Slogra>()) || (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gaibon>())) || (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Slogra>())) && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Gaibon>()))))
             {
                 return false;
             }
@@ -639,7 +640,7 @@ namespace tsorcRevamp
 
         public static bool SerrisCustomCondition()
         {
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>())) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()))
             {
                 return false;
             }
@@ -651,7 +652,7 @@ namespace tsorcRevamp
 
         public static bool AttraidiesTheSorrowCondition()
         {
-            if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
+            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
             {
                 return true;
             }
@@ -663,7 +664,7 @@ namespace tsorcRevamp
 
         public static bool LeonhardPhase1Undefeated()
         {
-            if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Special.LeonhardPhase1>()))
+            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Special.LeonhardPhase1>())))
             {
                 return true;
             }

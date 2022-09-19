@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -38,12 +39,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.height += 20;
             spriteType = Main.rand.Next(3, 5);
 
-            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EaterofWorldsHead)))
             {
                 target.AddBuff(20, 600, false); //poisoned
             }
 
-            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)))
             {
                 //target.AddBuff(30, 150, false); //bleeding
                 target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 HP after several hits

@@ -4,6 +4,7 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
@@ -386,7 +387,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
         {
             if (!Main.expertMode)
             {
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPC.type)))
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 35000);
                 }

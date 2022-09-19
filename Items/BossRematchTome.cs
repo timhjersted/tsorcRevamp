@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.Items
 {
@@ -34,20 +35,20 @@ namespace tsorcRevamp.Items
         }
 
         int index = 0;
-        List<int> keys;
+        List<NPCDefinition> keys;
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             string selectedBoss;
-            if(tsorcRevampWorld.Slain == null || tsorcRevampWorld.Slain.Keys.Count == 0)
+            if(tsorcRevampWorld.NewSlain == null || tsorcRevampWorld.NewSlain.Keys.Count == 0)
             {
                 selectedBoss = "No bosses defeated!";
             }
             else
             {
-                keys = new List<int>(tsorcRevampWorld.Slain.Keys);
+                keys = new List<NPCDefinition>(tsorcRevampWorld.NewSlain.Keys);
                 RemoveBannedBosses(keys);
                 NPC temp = new NPC();
-                temp.SetDefaults(keys[index]);
+                temp.SetDefaults(keys[index].Type);
 
                 selectedBoss = temp.GivenOrTypeName;
 
@@ -63,9 +64,9 @@ namespace tsorcRevamp.Items
 
         public override bool? UseItem(Player player)
         {
-            keys = new List<int>(tsorcRevampWorld.Slain.Keys);
+            keys = new List<NPCDefinition>(tsorcRevampWorld.NewSlain.Keys);
             RemoveBannedBosses(keys);
-            if (tsorcRevampWorld.Slain == null || tsorcRevampWorld.Slain.Keys.Count == 0 || keys.Count == 0)
+            if (tsorcRevampWorld.NewSlain == null || tsorcRevampWorld.NewSlain.Keys.Count == 0 || keys.Count == 0)
             {
                 UsefulFunctions.BroadcastText("No bosses defeated!");
                 return true;
@@ -85,7 +86,7 @@ namespace tsorcRevamp.Items
                     }
                 }
                 NPC temp = new NPC();
-                temp.SetDefaults(keys[index]);
+                temp.SetDefaults(keys[index].Type);
 
                 string selectedBoss = temp.GivenOrTypeName;
 
@@ -93,11 +94,11 @@ namespace tsorcRevamp.Items
                 {
                     selectedBoss = "Slogra and Gaibon";
                 }
-                if (keys[index] == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>())
+                if (keys[index].Type == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>())
                 {
                     selectedBoss = "Attraidies First Phase";
                 }
-                if (keys[index] == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())
+                if (keys[index].Type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())
                 {
                     selectedBoss = "Attraidies Final Form";
                 }
@@ -117,11 +118,11 @@ namespace tsorcRevamp.Items
                 }
                 if (!bossAlive)
                 {
-                    if (keys[index] == ModContent.NPCType<NPCs.Bosses.Slogra>())
+                    if (keys[index].Type == ModContent.NPCType<NPCs.Bosses.Slogra>())
                     {
                         NPC.NewNPCDirect(Item.GetSource_FromThis(), player.Center + new Vector2(0, -300), ModContent.NPCType<NPCs.Bosses.Gaibon>());
                     }
-                    NPC.NewNPCDirect(Item.GetSource_FromThis(), player.Center + new Vector2(0, -300), keys[index]);
+                    NPC.NewNPCDirect(Item.GetSource_FromThis(), player.Center + new Vector2(0, -300), keys[index].Type);
                 }
                 else
                 {
@@ -131,7 +132,7 @@ namespace tsorcRevamp.Items
             return base.UseItem(player);
         }
 
-        public void RemoveBannedBosses(List<int> keys)
+        public void RemoveBannedBosses(List<NPCDefinition> keys)
         {
             //Most of these get spawned automatically by the "main" boss they complement. The exceptions to this are noted:
             List<int> bannedBosses = new List<int>();
@@ -151,9 +152,9 @@ namespace tsorcRevamp.Items
 
             for (int i = 0; i < bannedBosses.Count; i++)
             {
-                if (keys.Contains(bannedBosses[i]))
+                if (keys.Contains(new NPCDefinition(bannedBosses[i])))
                 {
-                    keys.Remove(bannedBosses[i]);
+                    keys.Remove(new NPCDefinition(bannedBosses[i]));
                 }
             }
         }

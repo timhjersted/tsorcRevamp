@@ -12,6 +12,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp
 {
@@ -26,10 +27,12 @@ namespace tsorcRevamp
         public static bool TheEnd;
         public static bool CustomMap;
 
+        [Obsolete("Use NewSlain, and \"new NPCDefinition(npc.type)\" instead of \"npc.type\"")]
         public static Dictionary<int, int> Slain;
 
         public static List<Vector2> LitBonfireList;
 
+        public static Dictionary<NPCDefinition, int> NewSlain;
 
 
         public override void OnWorldLoad()
@@ -41,9 +44,10 @@ namespace tsorcRevamp
             SuperHardMode = false;
             TheEnd = false;
             CustomMap = false;
-            Slain = new Dictionary<int, int>();
+            //Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
             initialized = false;
+            NewSlain = new();
             tsorcScriptedEvents.InitializeScriptedEvents();
         }
 
@@ -119,12 +123,9 @@ namespace tsorcRevamp
 
         private void SaveSlain(TagCompound tag)
         {
-            if(Slain == null)
-            {
-                Slain = new Dictionary<int, int>();
-            }
-            tag.Add("type", Slain.Keys.ToList());
-            tag.Add("value", Slain.Values.ToList());
+            NewSlain ??= new();
+            tag.Add("NewSlainKeys", NewSlain.Keys.ToList());
+            tag.Add("NewSlainValues", NewSlain.Values.ToList());
         }
 
         private void LoadSlain(TagCompound tag)
@@ -135,7 +136,8 @@ namespace tsorcRevamp
                 List<int> list2 = tag.Get<List<int>>("value");
                 for (int i = 0; i < list.Count; i++)
                 {
-                    Slain.Add(list[i], list2[i]);
+                    NPCDefinition npc = new(list[i]);
+                    NewSlain.Add(npc, list2[i]);
                 }
             }
         }
@@ -148,12 +150,13 @@ namespace tsorcRevamp
                 writer.Write(SuperHardMode);
 
                 //Storing it in an int32 just so its exact type is guranteed, since that does matter
-                int slainSize = Slain.Count;
+                int slainSize = NewSlain.Count;
                 writer.Write(slainSize);
-                foreach (KeyValuePair<int, int> pair in Slain)
+                foreach (KeyValuePair<NPCDefinition, int> pair in NewSlain)
                 {
+                    
                     //Fuck it, i'm encoding each entry of slain as a Vector2. It's probably more sane than doing it byte by byte.
-                    writer.WriteVector2(new Vector2(pair.Key, pair.Value));
+                    writer.WriteVector2(new Vector2(pair.Key.Type, pair.Value));
                 }
 
                 int bonfireSize = LitBonfireList.Count;
@@ -176,13 +179,13 @@ namespace tsorcRevamp
             for (int i = 0; i < slainSize; i++)
             {
                 Vector2 readData = reader.ReadVector2();
-                if (Slain.ContainsKey((int)readData.X))
+                if (NewSlain.ContainsKey(new NPCDefinition((int)readData.X)))
                 {
-                    Slain[(int)readData.X] = (int)readData.Y;
+                    NewSlain[new NPCDefinition((int)readData.X)] = (int)readData.Y;
                 }
                 else
                 {
-                    Slain.Add((int)readData.X, (int)readData.Y);
+                    NewSlain.Add(new NPCDefinition((int)readData.X), (int)readData.Y);
                 }
             }
 
@@ -964,61 +967,63 @@ namespace tsorcRevamp
         {
             get
             {
-                if (Slain == null)
+                if (NewSlain == null)
                 {
                     return 0;
                 }
 
                 int count = 0;
-                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>()))
+                if (NewSlain.ContainsKey(
+                    new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>())
+                    ))
                 {
                     count++;
                 }
-                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()))
+                if ((NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()))))
                 {
                     count++;
                 }
-                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>()))
+                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>())))
                 {
                     count++;
                 }
-                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()))
+                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>())))
                 {
                     count++;
                 }
-                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()))
+                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>())))
                 {
                     count++;
                 }
-                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()))
+                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>())))
                 {
                     count++;
                 }
-                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()))
+                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>())))
                 {
                     count++;
                 }
-                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))
+                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())))
                 {
                     count++;
                 }
-                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>()))
+                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>())))
                 {
                     count++;
                 }
-                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()))
+                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())))
                 {
                     count++;
                 }
-                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>()))
+                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>())))
                 {
                     count++;
                 }
-                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()))
+                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>())))
                 {
                     count++;
                 }
-                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()))
+                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>())))
                 {
                     count++;
                 }

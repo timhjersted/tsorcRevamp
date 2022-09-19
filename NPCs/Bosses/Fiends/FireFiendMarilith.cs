@@ -7,6 +7,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
 
 namespace tsorcRevamp.NPCs.Bosses.Fiends
@@ -587,7 +588,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.LargeSapphire);
                 }
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPC.type)))
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
                 }

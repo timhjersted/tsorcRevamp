@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.Utilities;
 using tsorcRevamp.Buffs;
 
@@ -170,7 +171,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 nextSlot++;
             }
 
-                if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>()) || tsorcRevampWorld.SuperHardMode /*just in case*/)
+                if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition((ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>()))) || tsorcRevampWorld.SuperHardMode /*just in case*/)
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.PurgingStone>());
                 shop.item[nextSlot].shopCustomPrice = 10000;

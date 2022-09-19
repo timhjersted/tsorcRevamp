@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses.WyvernMage
@@ -215,7 +216,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 900);
             if (!Main.expertMode)
             {
-                if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<MechaDragonHead>())))
+                if (!(tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<MechaDragonHead>()))))
                 { //If the boss has not yet been killed
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 5000); //Then drop the souls
                 }

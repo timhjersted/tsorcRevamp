@@ -6,6 +6,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.Utilities;
 using tsorcRevamp.Items;
 
@@ -79,15 +80,15 @@ namespace tsorcRevamp.NPCs.Friendly
             chat.Add("I'm thirsty...");
             chat.Add("After you defeat the Eater of Worlds, I'll have cheap sticky bombs for sale!");
 
-            if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()) && !NPC.downedMechBoss1)
+            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) && !NPC.downedMechBoss1)
             {
                 chat.Add("If you're able to defeat The Sorrow or The Destroyer, I'll have more things to sell later...");
             }
-            if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()) && NPC.downedMechBoss1)
+            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) && NPC.downedMechBoss1)
             {
                 chat.Add("If you're able to defeat The Sorrow, I'll have more things to sell later...");
             }
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()) && !NPC.downedMechBoss1)
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) && !NPC.downedMechBoss1)
             {
                 chat.Add("If you're able to defeat The Destroyer, I'll have more things to sell later...");
             }
@@ -158,7 +159,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 index++;
             }
 
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())))
             {
                 chest.item[index].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenIceBrand>());
                 chest.item[index].shopCustomPrice = 4000;

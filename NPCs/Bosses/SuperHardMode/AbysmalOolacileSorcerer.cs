@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -89,13 +90,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             // these are all the regular stuff you get , now lets see......
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && AboveEarth && Main.rand.NextBool(200)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Witchking>())) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AbysmalOolacileSorcerer>())) && AboveEarth && Main.rand.NextBool(200)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && InBrownLayer && Main.rand.NextBool(500)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Witchking>())) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AbysmalOolacileSorcerer>())) && InBrownLayer && Main.rand.NextBool(500)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && AboveEarth && Main.rand.NextBool(50)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Witchking>())) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AbysmalOolacileSorcerer>())) && AboveEarth && Main.rand.NextBool(50)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Artorias>()) && AboveEarth && Main.rand.NextBool(2850)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Witchking>())) && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AbysmalOolacileSorcerer>())) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Artorias>())) && AboveEarth && Main.rand.NextBool(2850)) return 1;
 
             return 0;
         }

@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using Terraria.Utilities;
 using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Weapons.Magic;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -53,7 +54,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void PostAI()
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Bosses.TheSorrow>()))
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheSorrow>())))
             {
                 NPC.homeTileX = 75;
                 NPC.homeTileY = 520;
@@ -237,7 +238,7 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].shopCustomPrice = 5;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>()) || tsorcRevampWorld.SuperHardMode /*just in case*/)
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>())) || tsorcRevampWorld.SuperHardMode /*just in case*/)
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>());
                 shop.item[nextSlot].shopCustomPrice = 4000;
