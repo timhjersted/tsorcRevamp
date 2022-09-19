@@ -131,6 +131,10 @@ namespace tsorcRevamp.NPCs.Friendly
                 shop.item[nextSlot].shopCustomPrice = 230;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
+                shop.item[nextSlot].SetDefaults(ItemID.BladedGlove);
+                shop.item[nextSlot].shopCustomPrice = 300;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
             }
             if (NPC.downedMechBoss1) //mechboss 1 is the destroyer, 2 is the twins, 3 is skelleprime
             {

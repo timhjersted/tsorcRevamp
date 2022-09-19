@@ -408,10 +408,17 @@ namespace tsorcRevamp
                 #endregion
                 ,
                 #region BossSummoners IDs
+                ItemID.GoblinBattleStandard,
+                ItemID.SlimeCrown,
+                ItemID.SuspiciousLookingEye,
                 ItemID.WormFood,
+                ItemID.BloodySpine,
+                ItemID.Abeemination,
+                ItemID.DeerThing,
                 ItemID.MechanicalEye,
                 ItemID.MechanicalSkull,
-                ItemID.MechanicalWorm
+                ItemID.MechanicalWorm,
+                ItemID.CelestialSigil
                 #endregion
                 ,
                 #region Large Gems IDs
