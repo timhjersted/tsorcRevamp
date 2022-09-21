@@ -122,8 +122,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
                 if (CanScale) {
                     //spaces intentionally missing before and after {BuffName}
                     tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:Grants a weaker{BuffName}effect which increases]"));
-                    tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:increases in strength with each non-permanent]"));
-                    tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:source of{BuffName}consumed. Total consumed:] {ConsumedAmount}"));
+                    tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:in strength with each non-permanent source of]"));
+                    tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:{BuffName}consumed. Total consumed:] {ConsumedAmount}"));
                     tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:Effect potency is ]{EffectPotency * 100:F2}%"));
 
                 }
