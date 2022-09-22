@@ -114,7 +114,7 @@ namespace tsorcRevamp.Items
         }
 
         #region permanent potion recipes
-        public static void PermaPotionRecipeS(Mod mod, int IngredientPotion, int ResultPotion)
+        public static void PermaPotionRecipeS(int IngredientPotion, int ResultPotion)
         {
             Recipe recipe = Recipe.Create(ResultPotion, 1)
             .AddIngredient(ModContent.ItemType<DarkSoul>(), 31000)
@@ -123,7 +123,7 @@ namespace tsorcRevamp.Items
             .AddTile(TileID.DemonAltar);
             recipe.Register();
         }
-        public static void PermaPotionRecipeA(Mod mod, int IngredientPotion, int ResultPotion)
+        public static void PermaPotionRecipeA(int IngredientPotion, int ResultPotion)
         {
             Recipe recipe = Recipe.Create(ResultPotion, 1)
             .AddIngredient(ModContent.ItemType<DarkSoul>(), 16000)
@@ -132,7 +132,7 @@ namespace tsorcRevamp.Items
             .AddTile(TileID.DemonAltar);
             recipe.Register();
         }
-        public static void PermaPotionRecipeB(Mod mod, int IngredientPotion, int ResultPotion)
+        public static void PermaPotionRecipeB(int IngredientPotion, int ResultPotion)
         {
             Recipe recipe = Recipe.Create(ResultPotion, 1)
             .AddIngredient(ModContent.ItemType<DarkSoul>(), 9000)
@@ -141,7 +141,7 @@ namespace tsorcRevamp.Items
             .AddTile(TileID.DemonAltar);
             recipe.Register();
         }
-        public static void PermaPotionRecipeC(Mod mod, int IngredientPotion, int ResultPotion)
+        public static void PermaPotionRecipeC(int IngredientPotion, int ResultPotion)
         {
             Recipe recipe = Recipe.Create(ResultPotion, 1)
             .AddIngredient(ModContent.ItemType<DarkSoul>(), 5000)
