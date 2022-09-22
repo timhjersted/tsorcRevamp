@@ -56,8 +56,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
                  (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
                 string name = $"{GetType().Name}";
                 name = splitAtCapitals.Replace(name, " ");
-                name = name.Replace("Permanent", "");
-                name = name.Replace("Potion", "");
+                name = name.Replace("Permanent ", "");
+                name = name.Replace(" Potion", "");
                 return name;
             }
         }
@@ -120,15 +120,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
                 int line = ttindex;
                 line++;
                 if (CanScale) {
-                    //spaces intentionally missing before and after {BuffName}
-                    tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:Grants a weaker{BuffName}effect which increases]"));
+                    tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:Grants a weaker {BuffName} effect which increases]"));
                     tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:in strength with each non-permanent source of]"));
-                    tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:{BuffName}consumed. Total consumed:] {ConsumedAmount}"));
+                    tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:{BuffName} consumed. Total consumed:] {ConsumedAmount}"));
                     tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:Effect potency is ]{EffectPotency * 100:F2}%"));
 
                 }
                 else {
-                    tooltips.Insert(line++, new TooltipLine(Mod, "", $"Permanently grants the{BuffName}buff."));
+                    tooltips.Insert(line++, new TooltipLine(Mod, "", $"Permanently grants the {BuffName} buff."));
                 }
                 tooltips.Insert(line++, new TooltipLine(Mod, "", "Does not consume a buff slot."));
                 tooltips.Insert(line++, new TooltipLine(Mod, "", "Use to toggle effect."));
@@ -142,6 +141,10 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
                 }
 
                 tooltips.Insert(line++, new TooltipLine(Mod, "", "[c/ff7777:Does nothing while the non-permanent buff is active.]"));
+                if (BuffName == "Shine") {
+                    tooltips.Insert(line++, new TooltipLine(Mod, "", "Has no effect on the [c/6d8827:Bearer of the Curse]"));
+
+                }
             }
         }
 
@@ -336,20 +339,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 Lighting.AddLight((int)(player.Center.X / 16), (int)(player.Center.Y / 16), 0.8f, 0.95f, 1f);
-            }
-        }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            Player player = Main.LocalPlayer;
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {
-                //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
-                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
-                if (ttindex != -1)
-                {// if we find one
-                    //insert the extra tooltip line
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "", "Has no effect on the [c/6d8827:Bearer of the Curse]"));
-                }
             }
         }
     }
