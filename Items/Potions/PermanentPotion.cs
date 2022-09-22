@@ -439,14 +439,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int PermanentID => 18;
         public override int BuffType => BuffID.Tipsy;
         public override bool CanScale => true;
-        public override int ScalingFactor => 187;
+        public override int ScalingFactor => 150;
         public override float EffectPotency {
             get {
                 //higher base, slower scaling
                 //because having more stats to scale means a low base value hurts a lot more
                 //still capped at 150%
                 float potency = (float)ConsumedAmount / (float)ScalingFactor;
-                potency += 0.7f;
+                potency += 0.1f;
                 return Math.Min(potency, 1.5f);
             }
         }
@@ -668,13 +668,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_2328";
         public override int PermanentID => 33;
         public override int BuffType => BuffID.Summoning;
+        public override bool CanScale => true;
         public override int ScalingFactor => 80;
         public override float EffectPotency
         {
             get
             {
                 float potency = (float)ConsumedAmount / (float)ScalingFactor;
-                potency += 1f;
+                potency += 0.5f;
                 return Math.Min(potency, 2f);
             }
         }
