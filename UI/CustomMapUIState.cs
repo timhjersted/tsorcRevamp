@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections;
 using System.IO;
+using System.Windows.Forms;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -261,7 +262,7 @@ namespace tsorcRevamp.UI
             }
             else
             {
-                System.Windows.Forms.MessageBox.Show("The Story of Red Cloud failed to download the custom map automatically!\nYou must download it manually from our discord instead: https://discord.gg/UGE6Mstrgz", "TSORC: Map Download Failure!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Windows.Forms.MessageBox.Show("Error: Adventure Map template missing or corrupted!\nHead back to the main menu and ensure it has finished downloading.\nIf this error persists, download it manually from our discord instead: https://discord.gg/UGE6Mstrgz", "TSORC: Map Download Failure!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 //targetPanel.SetText("Error: Map missing or corrupted!\nVisit our discord for help: discord.gg/UGE6Mstrgz");
             }
 
