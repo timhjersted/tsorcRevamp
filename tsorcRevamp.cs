@@ -32,6 +32,8 @@ using static tsorcRevamp.ILEdits;
 using static tsorcRevamp.MethodSwaps;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Potions.PermanentPotions;
+using Terraria.ModLoader.Core;
+using System.Security.Cryptography;
 
 namespace tsorcRevamp
 {
@@ -63,6 +65,8 @@ namespace tsorcRevamp
         public static int DarkSoulCustomCurrencyId;
         internal bool UICooldown = false;
         internal bool worldButtonClicked = false;
+        internal static int worldDownloadFailures = 0;
+        internal static int musicModDownloadFailures = 0;
         public static List<int> KillAllowed;
         public static List<int> PlaceAllowed;
         public static List<int> Unbreakable;
@@ -105,6 +109,9 @@ namespace tsorcRevamp
         public static bool SpecialReloadNeeded = false;
         public static bool DownloadingMusic = false;
         public static float MusicDownloadProgress = 0;
+        public static string newMapUpdateString = "";
+        public static float MapDownloadProgress = 0;
+        public static float MapDownloadTotalBytes = 0;
         public static ModKeybind DodgerollKey;
         //public static ModHotKey SwordflipKey;
 
@@ -1455,8 +1462,8 @@ namespace tsorcRevamp
             char separator = Path.DirectorySeparatorChar;
             string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
             string changelogPath = dataDir + separator + "tsorcChangelog.txt"; //Downloaded changelog from the github
-            string curVersionPath = dataDir + separator + "tsorcCurrentVer.txt"; //Stored file recording current map and music mod versions
             string musicTempPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcMusic.tmod"; //Where the music mod is downloaded to
+            string mapBasePath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcBaseMap.wld"; //Where the map template is downloaded to
 
             //Check if the data directory exists, if not then create it
             if (!Directory.Exists(dataDir))
@@ -1467,15 +1474,37 @@ namespace tsorcRevamp
             //If it finds a music mod in the data folder, do the second phase of loading it
             if (File.Exists(musicTempPath))
             {
-                InstallMusicMod();
+                FileInfo musicModFileInfo = new FileInfo(musicTempPath);
+
+                
+                if (IsMusicInvalid(musicTempPath))
+                {
+                    //System.Windows.Forms.MessageBox.Show("The Story of Red Cloud failed to download the music mod automatically!\nYou must download it manually from our discord instead: https://discord.gg/UGE6Mstrgz", "TSORC: Music Mod Download Failure!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    musicModFileInfo.Delete();
+                    musicModDownloadFailures++;
+                    ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("", "000000");
+                }
+                else
+                {
+                    InstallMusicMod();
+                }
             }
 
-
+            //If the template file doesn't exist or fails to load for whatever reason, flag its update id to 0 to force a download
+            if (IsMapInvalid(mapBasePath))
+            {
+                ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("000000", "");
+            }            
 
             try
             {
-
                 using StreamReader reader = await GetChangelogAsync();
+
+                //If it's null, that means the changelog download failed
+                if(reader == null)
+                {
+                    throw new Exception("Failed to download changelog");
+                }
 
                 //If it exists, read from it. If not, put a warning in the log that it failed to download.
                 if (File.Exists(changelogPath))
@@ -1520,58 +1549,28 @@ namespace tsorcRevamp
                         SimplifyVersionString(ref mapString);
                         SimplifyVersionString(ref musicString);
 
-                        //Append 0's to both strings to make them fixed-length, so that different sized version numbers are all read the same
-                        int initialLength = mapString.Length;
-                        for (int i = 0; i < 10 - initialLength; i++)
-                        {
-                            mapString += "0";
+                        //Get the version info of the existing files
+                        Tuple<int, int> versionInfo = ReadVersionInfo();
+
+                        //If the current map template is a lower version than the new update, then update it
+                        if(versionInfo.Item1 < Int32.Parse(mapString)){
+                            newMapUpdateString = mapString;
+                            MapDownload();
                         }
 
-                        initialLength = musicString.Length;
-                        for (int i = 0; i < 10 - initialLength; i++)
+                        //If the music one is less, then flag it as needing an update so the UI can ask the user if they want to download it
+                        //It only actually writes the version info after the music mod has been successfully updated (justUpdatedMusic)
+                        if (versionInfo.Item2 < Int32.Parse(musicString))
                         {
-                            musicString += "0";
-                        }
-
-                        //If no stored version file exists, create it with version 000000
-                        if (!File.Exists(curVersionPath))
-                        {
-                            using (StreamWriter versionFile = new StreamWriter(curVersionPath))
+                            if (justUpdatedMusic)
                             {
-                                versionFile.WriteLine("000000");
-                                versionFile.WriteLine("000000");
+                                WriteVersionInfo("", musicString);
+                            }
+                            else
+                            {
+                                MusicNeedsUpdate = true; //Not setting music current version just yet, that happens once the file is *actually* downloaded
                             }
                         }
-
-                        //Ensure that it now does exist and read the first line for the map version.
-                        //If it's less than the current map string, download the new one and update the stored version.
-                        //If the music one is less, then flag it as needing an update so the UI can display that to the user
-                        if (File.Exists(curVersionPath))
-                        {
-                            string[] curVersionFile = File.ReadAllLines(curVersionPath);
-
-                            if (Int32.Parse(curVersionFile[0]) < Int32.Parse(mapString))
-                            {
-                                if (MapDownload())
-                                {
-                                    curVersionFile[0] = mapString;
-                                }
-                            }
-                            if (Int32.Parse(curVersionFile[1]) < Int32.Parse(musicString))
-                            {
-                                if (justUpdatedMusic)
-                                {
-                                    curVersionFile[1] = musicString;
-                                }
-                                else
-                                {
-                                    MusicNeedsUpdate = true; //Not setting music current version just yet, that happens once the file is *actually* downloaded
-                                }
-                            }
-                            File.WriteAllLines(curVersionPath, curVersionFile);
-                        }
-
-
                     }
                 }
                 else
@@ -1588,6 +1587,49 @@ namespace tsorcRevamp
             //TryCopyMap();
         }
 
+        //Returns a tuple containing the version info for the map and music mod, respectively
+        public Tuple<int, int> ReadVersionInfo()
+        {
+            char separator = Path.DirectorySeparatorChar;
+            string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
+            string curVersionPath = dataDir + separator + "tsorcCurrentVer.txt"; //Stored file recording current map and music mod versions
+            string[] curVersionFile = File.ReadAllLines(curVersionPath);
+
+            return new Tuple<int, int>(Int32.Parse(curVersionFile[0]), Int32.Parse(curVersionFile[1]));
+        }
+
+        //Writes the version info of the map and music to the file. Passing "" means that will not be overwritten.
+        public void WriteVersionInfo(string mapVersion, string musicVersion)
+        {
+            char separator = Path.DirectorySeparatorChar;
+            string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
+            string curVersionPath = dataDir + separator + "tsorcCurrentVer.txt"; //Stored file recording current map and music mod versions
+
+            //If no stored version file exists, create it with version 000000
+            if (!File.Exists(curVersionPath))
+            {
+                using (StreamWriter versionFile = new StreamWriter(curVersionPath))
+                {
+                    versionFile.WriteLine("000000");
+                    versionFile.WriteLine("000000");
+                }
+            }
+
+            //If it's less than the current map string, download the new one and update the stored version.
+            string[] curVersionFile = File.ReadAllLines(curVersionPath);
+
+            if (mapVersion != "")
+            {
+                curVersionFile[0] = mapVersion;
+            }
+            if (musicVersion != "")
+            {
+                curVersionFile[1] = musicVersion;
+            }
+
+            File.WriteAllLines(curVersionPath, curVersionFile);
+        }
+
         public void SimplifyVersionString(ref string s)
         {
             string output = "";
@@ -1599,58 +1641,111 @@ namespace tsorcRevamp
                 }
             }
 
+            //Append 0's to both strings to make them fixed-length, so that different sized version numbers are all read the same
+            int initialLength = output.Length;
+            for (int i = 0; i < 10 - initialLength; i++)
+            {
+                output += "0";
+            }
+
             s = output;
         }
 
-        //Returns true if download successful
-        public bool MapDownload()
+        public bool IsMapInvalid(string path)
+        {
+            if (!File.Exists(path))
+            {
+                return true;
+            }
+            else
+            {
+                Terraria.IO.WorldFileData worldData = Terraria.IO.WorldFile.GetAllMetadata(path, false);
+                if (worldData == null || !worldData.IsValid)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void MapDownload()
         {
             char separator = Path.DirectorySeparatorChar;
-            string filePath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcBaseMap.wld";
-
-            if (File.Exists(filePath))
-            {
-                Logger.Info("Deleting outdated world template.");
-                File.Delete(filePath);
-            }
+            string filePath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcBaseMapDownload.wld";
+                        
             Logger.Info("Attempting to download updated world template.");
             try
             {
                 using (WebClient client = new WebClient())
                 {
                     client.DownloadFileAsync(new Uri(VariousConstants.MAP_URL), filePath);
+                    client.DownloadProgressChanged += MapDownloadProgressChanged;
                     client.DownloadFileCompleted += TryCopyMap;
                 }
-
-                return true;
             }
             catch (WebException e)
             {
                 Logger.Warn("Automatic world download failed ({0}). Connection to the internet failed or the file's location has changed.", e);
             }
-
             catch (Exception e)
             {
                 Logger.Warn("Automatic world download failed ({0}).", e);
             }
-            return false;
+            return;
+        }
+
+        public static void MapDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs downloadEvent)
+        {
+            MapDownloadProgress = downloadEvent.BytesReceived;
+            MapDownloadTotalBytes = downloadEvent.TotalBytesToReceive;
         }
 
 
         //Checks if there is already a copy of the adventure map in the Worlds folder, and if not automatically copies one there.
-        public static void TryCopyMap(object sender = null, AsyncCompletedEventArgs downloadEvent = null)
+        public void TryCopyMap(object sender = null, AsyncCompletedEventArgs downloadEvent = null)
         {
             char separator = Path.DirectorySeparatorChar;
             string userMapFileName = separator + "TheStoryofRedCloud.wld";
             string worldsFolder = Main.SavePath + separator + "Worlds";
             string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
             string baseMapFileName = separator + "tsorcBaseMap.wld";
+            string newMapFileName = separator + "tsorcBaseMapDownload.wld";
 
-            FileInfo fileToCopy = new FileInfo(dataDir + baseMapFileName);
+            FileInfo fileToCopy = new FileInfo(dataDir + newMapFileName);
             DirectoryInfo worlds = new DirectoryInfo(worldsFolder);
             bool worldExists = false;
             log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
 
+            //Check if the new file exists and is not too small (indicates corruption or failed download)
+            if (IsMapInvalid(dataDir + newMapFileName))
+            {
+                fileToCopy.Delete();
+
+                worldDownloadFailures++;
+                if (worldDownloadFailures < 3)
+                {
+                    ((tsorcRevamp)ModLoader.GetMod("tsorcRevamp")).MapDownload();
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("The Story of Red Cloud failed to download the custom map automatically!\nYou must download it manually from our discord instead: https://discord.gg/UGE6Mstrgz", "TSORC: Map Download Failure!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                return;
+            }
+            else
+            {
+                //If it exists and is valid, then overwrite the old map tempate with it
+                fileToCopy.CopyTo(dataDir + baseMapFileName, true);
+
+                //Delete the temporary file
+                fileToCopy.Delete();
+
+                //Update version info
+                WriteVersionInfo(newMapUpdateString, "");
+            }
+
+            //Then check if there is a copy of the adventure map in the players worlds folder, and if not auto-copy one there
             if (!Directory.Exists(worldsFolder))
             {
                 try
@@ -1694,6 +1789,50 @@ namespace tsorcRevamp
             }
         }
 
+        public bool IsMusicInvalid(string path)
+        {
+            //Try opening the file. If it fails, return false.
+            try
+            {
+                FileStream musicModStream = File.OpenRead(path);
+                BinaryReader reader = new BinaryReader(musicModStream);
+
+                //Read from the file until we reach the point inside it where its hash is stored. Then keep reading a bit more, to reach the point where we can compute it ourselves, and do so.
+                //If they don't match, then it is corrupt or incomplete.
+                _ = reader.ReadBytes(4);
+                _ = reader.ReadString();
+                byte[] hash = reader.ReadBytes(20);
+                _ = reader.ReadBytes(256);
+                _ = reader.ReadInt32();
+                byte[] computedHash = SHA1.Create().ComputeHash(musicModStream);
+                bool mismatchFound = false;
+                for(int i = 0; i < computedHash.Length; i++)
+                {
+                    if(hash[i] != computedHash[i])
+                    {
+                        mismatchFound = true;
+                        break;
+                    }
+                }
+
+                musicModStream.Close();
+
+                if (mismatchFound)
+                {
+                    Logger.Warn("Hash mismatch on downloaded music mod file. File corrupt or incomplete.");
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                Logger.Warn("Failure opening downloaded music mod file. File corrupt or incomplete");
+                return true;
+            }
+        }
         public static void MusicDownload()
         {
             ServicePointManager.Expect100Continue = true;
@@ -1728,6 +1867,7 @@ namespace tsorcRevamp
         {
             char separator = Path.DirectorySeparatorChar;
             string changelogPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcChangelog.txt";
+            log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
 
             Logger.Info("Attempting to download changelog.");
             if (File.Exists(changelogPath))
@@ -1745,11 +1885,19 @@ namespace tsorcRevamp
             catch (Exception e)
             {
                 //at least it isnt log and throw
-                log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
-                thisLogger.InfoFormat("GetChangelogAsync threw error {0}", e);
+                Logger.InfoFormat("GetChangelogAsync threw error {0}", e);
             }
             //NOT a using statement, because if we discard it here it wont be available later
-            StreamReader r = File.OpenText(changelogPath);
+            StreamReader r = null;
+            if (File.Exists(changelogPath))
+            {
+                r = File.OpenText(changelogPath);
+            }
+            else
+            {
+                Logger.Error("Failed to check for map or music mod updates");
+            }
+
             return r;
         }
 
@@ -1779,9 +1927,22 @@ namespace tsorcRevamp
 
         public static void MusicDownloadCompleted(object sender, AsyncCompletedEventArgs downloadEvent)
         {
-            MusicDownloadProgress = 0;
-            DownloadingMusic = false;
-            DisableMusicAndReload();
+            char separator = Path.DirectorySeparatorChar;
+            string musicTempPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcMusic.tmod"; //Where the music mod is downloaded to
+            FileInfo musicModFileInfo = new FileInfo(musicTempPath);
+            if (((tsorcRevamp)ModLoader.GetMod("tsorcRevamp")).IsMusicInvalid(musicTempPath))
+            {
+                //System.Windows.Forms.MessageBox.Show("Failed to download the music mod automatically!\nYou may need to download it manually from our discord instead: https://discord.gg/UGE6Mstrgz", "Music Mod Download Failure!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                musicModFileInfo.Delete();
+                tsorcRevamp.musicModDownloadFailures++;
+                ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("", "000000");
+            }
+            else
+            {
+                MusicDownloadProgress = 0;
+                DownloadingMusic = false;
+                DisableMusicAndReload();
+            }
         }
 
         //Performs the tasks necessary to replace the old music mod file with the newly downloaded one
@@ -1823,7 +1984,7 @@ namespace tsorcRevamp
                         ReloadNeeded = true;
                         tsorcRevamp.SpecialReloadNeeded = false;
                     }
-                    catch ()
+                    catch
                     {
                         System.Windows.Forms.MessageBox.Show("Restarting to finish updating music mod!\nThis is totally normal, just hit OK and re-launch!", "Restarting!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         Main.WeGameRequireExitGame();

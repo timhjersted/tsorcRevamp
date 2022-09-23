@@ -1323,20 +1323,24 @@ namespace tsorcRevamp
                     String musicText = "";
                     if (tsorcRevamp.DownloadingMusic)
                     {
-                        musicText = "Download in progress: " + (int)tsorcRevamp.MusicDownloadProgress + "%";
-                    }
+                        musicText = "Updating Music Mod: " + (int)tsorcRevamp.MusicDownloadProgress + "%";
+                    }                    
                     else if (!File.Exists(musicModDir))
                     {
-                        musicText = "Click here to get the Story of Red Cloud music mod!";
+                        musicText = "Click here to get the Story of Red Cloud Music Mod!";
                     }
                     else if (tsorcRevamp.MusicNeedsUpdate)
                     {
                         musicText = "Music mod update available, click here to download! (Will restart the game!)";
                     }
+                    if (tsorcRevamp.musicModDownloadFailures > 0 && !tsorcRevamp.DownloadingMusic)
+                    {
+                        musicText = "Music Mod Download Failed, click to retry...";
+                    }
 
                     float musicTextScale = 2;
                     Vector2 musicTextOrigin = FontAssets.MouseText.Value.MeasureString(musicText);
-                    Vector2 musicTextPosition = new Vector2((Main.screenWidth / 2f), 590f);
+                    Vector2 musicTextPosition = new Vector2((Main.screenWidth / 2f), 610f);
                     Vector2 unscaledMusicTextPosition = musicTextPosition;
                     musicTextPosition *= Main.UIScale;
 
@@ -1359,6 +1363,32 @@ namespace tsorcRevamp
                     Main.spriteBatch.Begin();
                     DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, musicText, new Vector2(musicTextPosition.X + 2, musicTextPosition.Y + 2), Color.Black, 0, Vector2.Zero, musicTextScale, SpriteEffects.None, 0);
                     DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, musicText, musicTextPosition, musicTextColor, 0, Vector2.Zero, musicTextScale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
+                    Main.spriteBatch.End();
+                }
+
+
+                if(tsorcRevamp.MapDownloadTotalBytes > 0)
+                {
+                    string mapText = "Adventure Map Download In Progress: " + (int)(((float)tsorcRevamp.MapDownloadProgress / (float)tsorcRevamp.MapDownloadTotalBytes) * 100) + "%";// (" + tsorcRevamp.MapDownloadProgress + " / " + tsorcRevamp.MapDownloadTotalBytes + " bytes)";
+
+                    if(tsorcRevamp.MapDownloadProgress == tsorcRevamp.MapDownloadTotalBytes)
+                    {
+                        mapText = "Adventure Map Update Complete!";
+                    }
+
+                    float musicTextScale = 2;
+                    Vector2 musicTextOrigin = FontAssets.MouseText.Value.MeasureString(mapText);
+                    Vector2 musicTextPosition = new Vector2((Main.screenWidth / 2f), 650f);
+                    Vector2 unscaledMusicTextPosition = musicTextPosition;
+                    musicTextPosition *= Main.UIScale;
+
+                    musicTextPosition.X -= musicTextOrigin.X;
+                    Color musicTextColor = Main.DiscoColor;
+                   
+
+                    Main.spriteBatch.Begin();
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, mapText, new Vector2(musicTextPosition.X + 2, musicTextPosition.Y + 2), Color.Black, 0, Vector2.Zero, musicTextScale, SpriteEffects.None, 0);
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, mapText, musicTextPosition, musicTextColor, 0, Vector2.Zero, musicTextScale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
                     Main.spriteBatch.End();
                 }
             }

@@ -21,6 +21,8 @@ namespace tsorcRevamp.UI
 
         public static bool Visible = false;
 
+        bool invalidMap = false;
+
         tsorcUICenteredTextButton newCustomMap;
         public override void OnInitialize()
         {
@@ -98,6 +100,11 @@ namespace tsorcRevamp.UI
 
 
             Append(mapSelector);
+        }
+
+        private void NewCustomMap_OnUpdate(UIElement affectedElement)
+        {
+            UITextPanel<string> targetPanel = affectedElement as UITextPanel<string>;
         }
 
         public override void Update(GameTime gameTime)
@@ -179,6 +186,7 @@ namespace tsorcRevamp.UI
         private void CustomMapSelected(UIMouseEvent evt, UIElement listeningElement)
         {
             SoundEngine.PlaySound(SoundID.MenuOpen);
+            UITextPanel<string> targetPanel = evt.Target as UITextPanel<string>;
 
             string dataDir = Main.SavePath + "\\ModConfigs\\tsorcRevampData";
 
@@ -188,67 +196,75 @@ namespace tsorcRevamp.UI
 
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
             tsorcRevamp thisMod = (tsorcRevamp)mod;
-
-            if (File.Exists(dataDir + baseMapFileName))
+            if (!thisMod.IsMapInvalid(dataDir + baseMapFileName))
             {
-                if (!File.Exists(worldsFolder + userMapFileName))
+                if (File.Exists(dataDir + baseMapFileName))
                 {
+                    if (!File.Exists(worldsFolder + userMapFileName))
+                    {
+                        FileInfo fileToCopy = new FileInfo(dataDir + baseMapFileName);
+                        mod.Logger.Info("Attempting to copy world.");
 
-                    FileInfo fileToCopy = new FileInfo(dataDir + baseMapFileName);
-                    mod.Logger.Info("Attempting to copy world.");
-                    try
-                    {
-                        fileToCopy.CopyTo(worldsFolder + userMapFileName, false);
-                    }
-                    catch (System.Security.SecurityException e)
-                    {
-                        mod.Logger.Warn("World copy failed ({0}). Try again with administrator privileges?", e);
-                    }
-                    catch (Exception e)
-                    {
-                        mod.Logger.Warn("World copy failed ({0}).", e);
-                    }
-                }
-                else
-                {
-                    mod.Logger.Info("World already exists. Making renamed copy.");
-                    FileInfo fileToCopy = new FileInfo(dataDir + baseMapFileName);
-                    try
-                    {
-                        string newFileName;
-                        bool validName = false;
-                        int worldCount = 1;
-                        do
+                        try
                         {
-                            newFileName = "\\TheStoryOfRedCloud_" + worldCount.ToString() + ".wld";
-                            if (File.Exists(worldsFolder + newFileName))
+                            fileToCopy.CopyTo(worldsFolder + userMapFileName, false);
+                        }
+                        catch (System.Security.SecurityException e)
+                        {
+                            mod.Logger.Warn("World copy failed ({0}). Try again with administrator privileges?", e);
+                        }
+                        catch (Exception e)
+                        {
+                            mod.Logger.Warn("World copy failed ({0}).", e);
+                        }
+                    }
+                    else
+                    {
+                        mod.Logger.Info("World already exists. Making renamed copy.");
+                        FileInfo fileToCopy = new FileInfo(dataDir + baseMapFileName);
+                        try
+                        {
+                            string newFileName;
+                            bool validName = false;
+                            int worldCount = 1;
+                            do
                             {
-                                worldCount++;
-                                if (worldCount > 255)
+                                newFileName = "\\TheStoryOfRedCloud_" + worldCount.ToString() + ".wld";
+                                if (File.Exists(worldsFolder + newFileName))
                                 {
-                                    mod.Logger.Warn("World copy failed, too many copies.");
+                                    worldCount++;
+                                    if (worldCount > 255)
+                                    {
+                                        mod.Logger.Warn("World copy failed, too many copies.");
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                validName = true;
-                            }
-                        } while (!validName);
+                                else
+                                {
+                                    validName = true;
+                                }
+                            } while (!validName);
 
-                        fileToCopy.CopyTo(worldsFolder + newFileName, false);
-                    }
-                    catch (System.Security.SecurityException e)
-                    {
-                        mod.Logger.Warn("World copy failed ({0}). Try again with administrator privileges?", e);
-                    }
-                    catch (Exception e)
-                    {
-                        mod.Logger.Warn("World copy failed ({0}).", e);
+                            fileToCopy.CopyTo(worldsFolder + newFileName, false);
+                        }
+                        catch (System.Security.SecurityException e)
+                        {
+                            mod.Logger.Warn("World copy failed ({0}). Try again with administrator privileges?", e);
+                        }
+                        catch (Exception e)
+                        {
+                            mod.Logger.Warn("World copy failed ({0}).", e);
+                        }
                     }
                 }
+
+                Main.OpenWorldSelectUI();
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("The Story of Red Cloud failed to download the custom map automatically!\nYou must download it manually from our discord instead: https://discord.gg/UGE6Mstrgz", "TSORC: Map Download Failure!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //targetPanel.SetText("Error: Map missing or corrupted!\nVisit our discord for help: discord.gg/UGE6Mstrgz");
             }
 
-            Main.OpenWorldSelectUI();
         }
 
         private void BackButtonPressed (UIMouseEvent evt, UIElement listeningElement)
