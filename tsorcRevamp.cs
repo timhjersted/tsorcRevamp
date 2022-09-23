@@ -1823,7 +1823,7 @@ namespace tsorcRevamp
                         ReloadNeeded = true;
                         tsorcRevamp.SpecialReloadNeeded = false;
                     }
-                    catch (Exception e)
+                    catch ()
                     {
                         System.Windows.Forms.MessageBox.Show("Restarting to finish updating music mod!\nThis is totally normal, just hit OK and re-launch!", "Restarting!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         Main.WeGameRequireExitGame();
