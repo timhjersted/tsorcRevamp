@@ -13,7 +13,6 @@ namespace tsorcRevamp.Projectiles
 
         public override void SetDefaults()
         {
-            Projectile.aiStyle = 9;
             Projectile.friendly = true;
             Projectile.height = 16;
             Projectile.width = 16;
@@ -21,8 +20,6 @@ namespace tsorcRevamp.Projectiles
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = 1;
             Projectile.tileCollide = true;
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 100;
         }
         public override void AI()
         {
@@ -41,6 +38,15 @@ namespace tsorcRevamp.Projectiles
         {
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
+            for (int i = 0; i < 20; i++)
+            {
+                int thisDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
+                Main.dust[thisDust].noGravity = true;
+                thisDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f); ;
+                Main.dust[thisDust].noGravity = true;
+            }
+
+            Projectile.position -= Projectile.Size / 2;
 
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<Explosion>(), Projectile.damage, 8f, Projectile.owner);
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<Explosion>(), Projectile.damage, 8f, Projectile.owner);
@@ -48,13 +54,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height * -2), 0, 0, ModContent.ProjectileType<Explosion>(), Projectile.damage, 8f, Projectile.owner);
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height * 4), 0, 0, ModContent.ProjectileType<Explosion>(), Projectile.damage, 8f, Projectile.owner);
 
-            for (int i = 0; i < 20; i++)
-            {
-                int thisDust = Dust.NewDust(new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y), Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
-                Main.dust[thisDust].noGravity = true;
-                thisDust = Dust.NewDust(new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y), Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
-                Main.dust[thisDust].noGravity = true;
-            }
+           
         }
     }
 }
