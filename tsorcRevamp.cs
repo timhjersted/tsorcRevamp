@@ -269,6 +269,17 @@ namespace tsorcRevamp
             };
             #endregion
             //--------
+            #region RecipeDelete list
+            RecipeDelete = new List<int>() {
+                ItemID.DirtBlock, ItemID.StoneBlock, ItemID.Wood, ItemID.WoodenDoor, ItemID.StoneWall, ItemID.DirtWall, ItemID.WoodenChair,
+                ItemID.EbonstoneBlock, ItemID.WoodWall, ItemID.WoodPlatform, ItemID.CopperChandelier, ItemID.SilverChandelier, ItemID.GoldChandelier,
+                129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, //block and wall chunk
+                ItemID.Sign, ItemID.MudBlock, ItemID.ObsidianBrick, ItemID.HellstoneBrick, ItemID.Bed, ItemID.Piano, ItemID.Dresser, ItemID.Bench, ItemID.Bathtub,
+                ItemId.LampPost, ItemID.TikiTorch, ItemID.CookingPot, ItemID.Candelabra, ItemID.Throne, ItemID.Bowl, ItemID.Toilet, ItemID.GrandfatherClock, 
+                ItemID.ArmorStatue, ItemID.GlassWall, //currently up to ID 392
+            };
+            #endregion
+            //--------
             #region CrossModTiles list
             CrossModTiles = new List<int>();
 
@@ -466,6 +477,7 @@ namespace tsorcRevamp
                 ItemID.RopeCoil,
                 ItemID.VineRopeCoil,
                 ItemID.WebRope,
+                ItemID.SilkRope,
                 ItemID.WebRopeCoil,
                 ItemID.SilkRopeCoil
                 #endregion
@@ -856,6 +868,7 @@ namespace tsorcRevamp
             PlaceAllowed                                        = null;
             Unbreakable                                         = null;
             IgnoredTiles                                        = null;
+            DeleteRecipe                                        = null;
             CrossModTiles                                       = null;
             BannedItems                                         = null;
             RestrictedHooks                                     = null;
@@ -932,7 +945,47 @@ namespace tsorcRevamp
             // add new recipes
             ModRecipeHelper.AddRecipes();
         }
-
+        public override void RemoveRecipes()
+        {
+            RecipeFinder finder = new RecipeFinder(); //initialize finder
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                foreach (var IDnum in DeleteRecipes)
+                {
+                    finder = new RecipeFinder();
+                    finder.SetResult(IDnum, 1); //search for all recipes that result in exactly one of the item
+                    foreach (Recipe recipe in finder.SearchRecipes()) {
+                        RecipeEditor editor = new RecipeEditor(recipe);
+                        editor.DeleteRecipe();
+                    }
+                    finder.SetResult(IDnum, 2); //search for all recipes that result in exactly 2 of the item (mostly platforms)
+                    foreach (Recipe recipe in finder.SearchRecipes()) {
+                        RecipeEditor editor = new RecipeEditor(recipe);
+                        editor.DeleteRecipe();
+                    }
+                    finder.SetResult(IDnum, 3); //search for all recipes that result in exactly 3 of the item (misc blocks)
+                    foreach (Recipe recipe in finder.SearchRecipes()) {
+                        RecipeEditor editor = new RecipeEditor(recipe);
+                        editor.DeleteRecipe();
+                    }
+                    finder.SetResult(IDnum, 4); //search for all recipes that result in exactly 4 of the item (mostly walls)
+                    foreach (Recipe recipe in finder.SearchRecipes()) {
+                        RecipeEditor editor = new RecipeEditor(recipe);
+                        editor.DeleteRecipe();
+                    }
+                    finder.SetResult(IDnum, 5); //search for all recipes that result in exactly 5 of the item (Misc blocks)
+                    foreach (Recipe recipe in finder.SearchRecipes()) {
+                        RecipeEditor editor = new RecipeEditor(recipe);
+                        editor.DeleteRecipe();
+                    }
+                    finder.SetResult(IDnum, 20); //search for all recipes that result in exactly 20 of the item (mostly Gemspark blocks)
+                    foreach (Recipe recipe in finder.SearchRecipes()) {
+                        RecipeEditor editor = new RecipeEditor(recipe);
+                        editor.DeleteRecipe();
+                    }
+                }
+            }
+        }
         public override void HandlePacket(BinaryReader reader, int whoAmI)
         {
             int message = reader.ReadByte(); //(byte) 1;
