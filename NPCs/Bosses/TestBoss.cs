@@ -41,11 +41,6 @@ namespace tsorcRevamp.NPCs.Bosses
         float lastTimer = 1;
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
-            if (projectile.type == ModContent.ProjectileType<Projectiles.BlackFirelet>())
-            {
-                NPC.active = false;
-            }
-
             if(damageCounter == 0)
             {
                 thisWatch = new Stopwatch();

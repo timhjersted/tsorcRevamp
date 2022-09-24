@@ -207,6 +207,18 @@ namespace tsorcRevamp.Projectiles
             Projectile.active = false;
         }
 
+        public override bool? CanHitNPC(NPC target)
+        {
+            if (target.immune[Projectile.owner] > 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
             if (Main.rand.NextBool(5))
