@@ -94,6 +94,8 @@ namespace tsorcRevamp
         internal UserInterface PotionBagUserInterface;
         internal CustomMapUIState DownloadUIState;
         internal UserInterface DownloadUI;
+        internal MapMarkersUIState MarkerState;
+        internal UserInterface MarkerInterface;
 
         public static FieldInfo AudioLockInfo;
         public static FieldInfo ActiveSoundInstancesInfo;
@@ -118,6 +120,8 @@ namespace tsorcRevamp
         internal static bool[] CustomDungeonWalls;
 
         public static bool ActuationBypassActive = false;
+
+        public static int MarkerSelected = -1;
 
         public override void Load()
         {
@@ -147,6 +151,9 @@ namespace tsorcRevamp
             DownloadUIState = new CustomMapUIState();
             DownloadUI = new UserInterface();
 
+            MarkerState = new MapMarkersUIState();
+            MarkerInterface = new UserInterface();
+
 
             ApplyMethodSwaps();
             ApplyILs();
@@ -161,6 +168,8 @@ namespace tsorcRevamp
             _estusFlaskUIState.SetState(EstusFlaskUIState);
             PotionBagUserInterface.SetState(PotionUIState);
             DownloadUI.SetState(DownloadUIState);
+            MarkerState.Activate();
+            MarkerInterface.SetState(MarkerState);
 
             Main.QueueMainThreadAction(TransparentTextureHandler.TransparentTextureFix);
 

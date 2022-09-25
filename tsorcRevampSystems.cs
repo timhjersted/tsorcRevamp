@@ -9,21 +9,33 @@ using Terraria.UI;
 using tsorcRevamp.Items;
 using tsorcRevamp.UI;
 using Terraria.Localization;
+using System;
+using tsorcRevamp.Textures;
 
 namespace tsorcRevamp
 {
-    class tsorcRevampSystems : ModSystem
-    {
-        Texture2D BonfireMinimapTexture;
+    class tsorcRevampSystems : ModSystem {
         public static RecipeGroup UpgradedMirrors;
         public static RecipeGroup CobaltHelmets;
 
+
+        static ForceLoadTexture[] mapTextures = new ForceLoadTexture[6] {
+            new ForceLoadTexture("tsorcRevamp/UI/Markers/0"),
+            new ForceLoadTexture("tsorcRevamp/UI/Markers/1"),
+            new ForceLoadTexture("tsorcRevamp/UI/Markers/2"),
+            new ForceLoadTexture("tsorcRevamp/UI/Markers/3"),
+            new ForceLoadTexture("tsorcRevamp/UI/Markers/4"),
+            new ForceLoadTexture("tsorcRevamp/UI/MinimapBonfire"),
+
+        };
+
         public override void PostDrawFullscreenMap(ref string mouseText)
         {
-            if (BonfireMinimapTexture == null || BonfireMinimapTexture.IsDisposed)
-            {
-                BonfireMinimapTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/MinimapBonfire", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            foreach (ForceLoadTexture texture in mapTextures) {
+                texture.KeepLoaded();
             }
+
+            Texture2D BonfireMinimapTexture = mapTextures[5].texture;
 
             //Step 1: Convert mouse position on the minimap screen to position in-world
             //Also convert these to vectors because it dramatically simplifies calculations. Why aren't they vectors to start with?
@@ -48,6 +60,9 @@ namespace tsorcRevamp
             float mapScale = Main.mapFullscreenScale / Main.UIScale;
             Vector2 scaledMapCoords = Main.mapFullscreenPos * mapScale * -1;
             scaledMapCoords += scrCenter;
+
+            float hoverRange = 32 / Main.mapFullscreenScale;
+
             foreach (Vector2 bonfirePoint in tsorcRevampWorld.LitBonfireList)
             {
                 Vector2 bonfireDrawCoords = bonfirePoint;
@@ -57,7 +72,6 @@ namespace tsorcRevamp
                 bonfireDrawCoords += scaledMapCoords;
 
                 //Step 3: While drawing check if it's in-range of the cursor, and if so give it a rainbow backdrop
-                float hoverRange = 32 / Main.mapFullscreenScale;
                 if ((mouseTile - bonfirePoint).Length() <= hoverRange)
                 {
                     for (int i = 0; i < 4; i++)
@@ -101,6 +115,32 @@ namespace tsorcRevamp
                     Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords, null, Color.White, 0, BonfireMinimapTexture.Size() / 2, 0.85f, SpriteEffects.None, 1);
                 }
             }
+            MapMarkersUIState.Visible = true;
+
+            foreach (KeyValuePair<Vector2, int> marker in tsorcRevampWorld.MapMarkers) {
+                Vector2 markerDrawCoords = marker.Key;
+                markerDrawCoords.X += 1.5f;
+                markerDrawCoords.Y += 1f;
+                markerDrawCoords *= mapScale;
+                markerDrawCoords += scaledMapCoords;
+                Texture2D markerTexture = mapTextures[marker.Value].texture;
+                Main.spriteBatch.Draw(markerTexture, markerDrawCoords, null, Color.White, 0, markerTexture.Size() / 2, 0.85f, SpriteEffects.None, 1);
+
+                mouseTile = new Vector2((float)Math.Floor(mouseTile.X), (float)Math.Floor(mouseTile.Y));
+
+                if (tsorcRevamp.MarkerSelected == 4 && (mouseTile - marker.Key).Length() < hoverRange && Main.mouseLeft) { //delete mode
+                    tsorcRevampWorld.MapMarkers.Remove(marker.Key);
+                }
+            }
+            if (!MapMarkersUIState.Switching && tsorcRevamp.MarkerSelected > -1 && tsorcRevamp.MarkerSelected != 4 && Main.mouseLeft && !tsorcRevampWorld.MapMarkers.ContainsKey(mouseTile)) {
+                tsorcRevampWorld.MapMarkers.Add(mouseTile, tsorcRevamp.MarkerSelected);
+                tsorcRevamp.MarkerSelected = -1;
+            }
+
+            if(tsorcRevamp.MarkerSelected > -1) {
+                Main.spriteBatch.Draw(mapTextures[tsorcRevamp.MarkerSelected].texture, new Vector2(Main.MouseScreen.X - 32, Main.MouseScreen.Y - 32), Color.White);
+            }
+            ModContent.GetInstance<tsorcRevamp>().MarkerInterface.Draw(Main.spriteBatch, new GameTime());
         }
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
@@ -219,6 +259,8 @@ namespace tsorcRevamp
             {
                 mod.PotionBagUserInterface.Update(gameTime);
             }
+
+            if (MapMarkersUIState.Visible) mod.MarkerInterface.Update(gameTime);
         }
 
         public override void PostDrawInterface(SpriteBatch spriteBatch)

@@ -30,7 +30,7 @@ namespace tsorcRevamp
 
         public static List<Vector2> LitBonfireList;
 
-
+        public static Dictionary<Vector2, int> MapMarkers;
 
         public override void OnWorldLoad()
         {
@@ -45,6 +45,7 @@ namespace tsorcRevamp
             LitBonfireList = new List<Vector2>();
             initialized = false;
             tsorcScriptedEvents.InitializeScriptedEvents();
+            MapMarkers = new();
         }
 
         public override void SaveWorldData(TagCompound tag)
@@ -77,6 +78,10 @@ namespace tsorcRevamp
             tag.Add("world_state", world_state);
             SaveSlain(tag);
             tsorcScriptedEvents.SaveScriptedEvents(tag);
+
+            MapMarkers ??= new();
+            tag.Add("MapMarkerKeys", MapMarkers.Keys.ToList());
+            tag.Add("MapMarkerValues", MapMarkers.Values.ToList());
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -114,6 +119,15 @@ namespace tsorcRevamp
                         NPCs.Bosses.SuperHardMode.DarkCloud.ActuatePyramid();
                     }
                 }
+            }
+
+            if (tag.ContainsKey("MapMarkerKeys")) {
+                List<Vector2> markerKeys = (List<Vector2>)tag.GetList<Vector2>("MapMarkerKeys");
+                List<int> markerValues = (List<int>)tag.GetList<int>("MapMarkerValues");
+                for (int i = 0; i < markerKeys.Count; i++) {
+                    MapMarkers.Add(markerKeys[i], markerValues[i]);
+                }
+
             }
         }
 
@@ -163,6 +177,12 @@ namespace tsorcRevamp
                     //Fuck it, i'm encoding each entry of slain as a Vector2. It's probably more sane than doing it byte by byte.
                     writer.WriteVector2(bonfire);
                 }
+                int markerSize = MapMarkers.Count;
+                writer.Write(markerSize);
+                foreach (KeyValuePair<Vector2, int> marker in MapMarkers) {
+                    writer.WriteVector2(marker.Key);
+                    writer.Write(marker.Value);
+                }
             }
         }
 
@@ -198,6 +218,17 @@ namespace tsorcRevamp
                 if (!LitBonfireList.Contains(bonfire))
                 {
                     LitBonfireList.Add(bonfire);
+                }
+            }
+
+            int markerSize = reader.ReadInt32();
+
+            MapMarkers ??= new();
+            for (int i = 0; i < markerSize; i++) {
+                Vector2 markerKey = reader.ReadVector2();
+                int markerValue = reader.ReadInt32();
+                if (!MapMarkers.ContainsKey(markerKey)) {
+                    MapMarkers.Add(markerKey, markerValue);
                 }
             }
         }
