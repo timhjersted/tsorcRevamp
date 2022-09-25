@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("+20% minion damage\nIncreases your max number of minions and turrets by 1" +
-                "\nSet Bonus: Increases your max number of minions and turrets by 1\n+20% whip range, +25% summon attack speed");
+                "\nSet Bonus: Increases your max number of minions and turrets by 1\n+25% whip range, +25% summon attack speed");
         }
         public override void SetDefaults()
         {
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.maxMinions += 1;
             player.maxTurrets += 1;
             player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
-            player.whipRangeMultiplier += 0.2f;
+            player.whipRangeMultiplier += 0.25f;
 
             int i2 = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;
             int j2 = (int)(player.position.Y + 2f) / 16;
