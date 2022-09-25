@@ -989,64 +989,32 @@ namespace tsorcRevamp
                 return false;
             }
         }
-        public static bool SHM1Downed
+        public static Recipe.Condition SHM1Downed
         {
             get
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i].active && Main.npc[i].boss)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("One Guardian of the Abyss Slain"), r => SHMDowned > 0);
             }
         }
-        public static bool SHM4Downed
+        public static Recipe.Condition SHM4Downed
         {
             get
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i].active && Main.npc[i].boss)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Four Guardians of the Abyss Slain"), r => SHMDowned > 3);
             }
         }
-        public static bool SHM8Downed
+        public static Recipe.Condition SHM8Downed
         {
             get
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i].active && Main.npc[i].boss)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Eight Guardians of the Abyss Slain"), r => SHMDowned > 7);
             }
         }
-        public static bool SHM12Downed
+        public static Recipe.Condition SHM12Downed
         {
             get
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i].active && Main.npc[i].boss)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Twelve Guardians of the Abyss Slain"), r => SHMDowned > 12);
             }
         }
 

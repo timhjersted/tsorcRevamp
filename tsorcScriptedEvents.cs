@@ -1064,7 +1064,7 @@ namespace tsorcRevamp
                 return;
             }
 
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode == NetmodeID.MultiplayerClient)
             {                
                 DrawNetworkEvents(player);
                 return;                

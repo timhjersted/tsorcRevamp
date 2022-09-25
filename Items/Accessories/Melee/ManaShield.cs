@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
             recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 50);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.AddCondition(Terraria.Localization.NetworkText.FromKey("5 Guardians of the Abyss Slain"), r => Main.LocalPlayer.statLife < Main.LocalPlayer.statLifeMax / 2);
+           //recipe.AddCondition(tsorcRevampWorld.SHM1Downed);
             recipe.Register();
         }
 
