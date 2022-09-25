@@ -106,16 +106,8 @@ namespace tsorcRevamp.Items
             }
             else
             {
-                bool bossAlive = false;
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i] != null && Main.npc[i].active && Main.npc[i].boss)
-                    {
-                        bossAlive = true;
-                        break;
-                    }
-                }
-                if (!bossAlive)
+                
+                if (!tsorcRevampWorld.BossAlive)
                 {
                     if (keys[index] == ModContent.NPCType<NPCs.Bosses.Slogra>())
                     {

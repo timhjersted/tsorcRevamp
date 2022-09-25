@@ -252,20 +252,9 @@ namespace tsorcRevamp.NPCs
             if (player.statLifeMax2 > 400)
             {
                 spawnRate = (int)(spawnRate * 1.3f);   
-            }
-            bool bossAlive = false;
+            }           
 
-            //This might look expensive but it's really not, since there are rarely a significant number of NPCs in the array at once
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                if (Main.npc[i] != null && Main.npc[i].active && Main.npc[i].boss)
-                {
-                    bossAlive = true;
-                    break;
-                }
-            }
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff || bossAlive || player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()))
+            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff || tsorcRevampWorld.BossAlive || player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()))
             {
                 spawnRate = 9999999;//Higher is less spawns
                 maxSpawns = 0;
@@ -471,9 +460,9 @@ namespace tsorcRevamp.NPCs
 
 
             #region Event saving and custom drops code
-            if (tsorcScriptedEvents.ActiveEvents != null && tsorcScriptedEvents.ActiveEvents.Count > 0)
+            if (tsorcScriptedEvents.RunningEvents != null && tsorcScriptedEvents.RunningEvents.Count > 0)
             {
-                foreach (ScriptedEvent thisEvent in tsorcScriptedEvents.ActiveEvents)
+                foreach (ScriptedEvent thisEvent in tsorcScriptedEvents.RunningEvents)
                 {
                     if (thisEvent.spawnedNPC != null && thisEvent.spawnedNPC.active && thisEvent.spawnedNPC.whoAmI == npc.whoAmI)
                     {

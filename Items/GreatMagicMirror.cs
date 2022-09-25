@@ -72,7 +72,7 @@ namespace tsorcRevamp.Items
                 Main.NewText("The Curse prevents you from using this!", Color.OrangeRed);
                 return false;
             }
-            if (tsorcRevampWorld.bossAlive)
+            if (tsorcRevampWorld.BossAlive)
             {
                 Main.NewText("Can not be used while a boss is alive!", Color.Yellow);
                 return false;

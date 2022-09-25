@@ -69,7 +69,7 @@ namespace tsorcRevamp
                     mouseText = "Teleport to Bonfire Checkpoint";
 
                     //Step 4: Check if they're left-clicking, and close the minimap + teleport them if so
-                    if (Main.mouseLeft && !tsorcRevampWorld.bossAlive)
+                    if (Main.mouseLeft && !tsorcRevampWorld.BossAlive)
                     {
                         if (Main.LocalPlayer.HasBuff(ModContent.BuffType<Buffs.InCombat>())) {
                             Main.mapFullscreen = false;
@@ -88,7 +88,7 @@ namespace tsorcRevamp
                         }
                     }
 
-                    if (tsorcRevampWorld.bossAlive)
+                    if (tsorcRevampWorld.BossAlive)
                     {
                         mouseText = "Can not teleport while a boss is alive!";
                     }

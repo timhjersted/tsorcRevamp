@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items
         }
         public override bool CanUseItem(Player player)
         {
-            if (tsorcRevampWorld.bossAlive)
+            if (tsorcRevampWorld.BossAlive)
             {
                 Main.NewText("Can not be used while a boss is alive!", Color.Yellow);
                 return false;

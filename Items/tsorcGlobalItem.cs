@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items
         {
             if(item.type == ItemID.MagicMirror || item.type == ItemID.RecallPotion)
             {
-                if (tsorcRevampWorld.bossAlive)
+                if (tsorcRevampWorld.BossAlive)
                 {
                     Main.NewText("Can not be used while a boss is alive!", Color.Yellow);
                     return false;

@@ -943,11 +943,71 @@ namespace tsorcRevamp
             return false;
         }
 
-        public static bool bossAlive
+        public static bool BossAlive
         {
             get
             {
                 for(int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && Main.npc[i].boss)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+        public static bool SHM1Downed
+        {
+            get
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && Main.npc[i].boss)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+        public static bool SHM4Downed
+        {
+            get
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && Main.npc[i].boss)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+        public static bool SHM8Downed
+        {
+            get
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && Main.npc[i].boss)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+        public static bool SHM12Downed
+        {
+            get
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (Main.npc[i].active && Main.npc[i].boss)
                     {

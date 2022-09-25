@@ -292,18 +292,8 @@ namespace tsorcRevamp
         {
             //No more Distorted debuff
             Player.buffImmune[BuffID.VortexDebuff] = true;
-
-            bool bossAlive = false;
-
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                if (Main.npc[i] != null && Main.npc[i].active && Main.npc[i].boss)
-                {
-                    bossAlive = true;
-                    break;
-                }
-            }
-            if (bossAlive)
+           
+            if (tsorcRevampWorld.BossAlive)
             {
                 Player.AddBuff(ModContent.BuffType<Buffs.BossZenBuff>(), 5);
             }

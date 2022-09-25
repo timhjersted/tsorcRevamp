@@ -270,6 +270,7 @@ namespace tsorcRevamp
             #endregion
             //--------
             #region RecipeDelete list
+            /*
             RecipeDelete = new List<int>() {
                 ItemID.DirtBlock, ItemID.StoneBlock, ItemID.Wood, ItemID.WoodenDoor, ItemID.StoneWall, ItemID.DirtWall, ItemID.WoodenChair,
                 ItemID.EbonstoneBlock, ItemID.WoodWall, ItemID.WoodPlatform, ItemID.CopperChandelier, ItemID.SilverChandelier, ItemID.GoldChandelier,
@@ -277,7 +278,7 @@ namespace tsorcRevamp
                 ItemID.Sign, ItemID.MudBlock, ItemID.ObsidianBrick, ItemID.HellstoneBrick, ItemID.Bed, ItemID.Piano, ItemID.Dresser, ItemID.Bench, ItemID.Bathtub,
                 ItemId.LampPost, ItemID.TikiTorch, ItemID.CookingPot, ItemID.Candelabra, ItemID.Throne, ItemID.Bowl, ItemID.Toilet, ItemID.GrandfatherClock, 
                 ItemID.ArmorStatue, ItemID.GlassWall, //currently up to ID 392
-            };
+            };*/
             #endregion
             //--------
             #region CrossModTiles list
@@ -868,7 +869,7 @@ namespace tsorcRevamp
             PlaceAllowed                                        = null;
             Unbreakable                                         = null;
             IgnoredTiles                                        = null;
-            DeleteRecipe                                        = null;
+            //DeleteRecipe                                        = null;
             CrossModTiles                                       = null;
             BannedItems                                         = null;
             RestrictedHooks                                     = null;
@@ -945,6 +946,8 @@ namespace tsorcRevamp
             // add new recipes
             ModRecipeHelper.AddRecipes();
         }
+
+        /*
         public override void RemoveRecipes()
         {
             RecipeFinder finder = new RecipeFinder(); //initialize finder
@@ -986,6 +989,7 @@ namespace tsorcRevamp
                 }
             }
         }
+        */
         public override void HandlePacket(BinaryReader reader, int whoAmI)
         {
             int message = reader.ReadByte(); //(byte) 1;
@@ -1016,8 +1020,9 @@ namespace tsorcRevamp
                         float radius = reader.ReadSingle();
                         int dustID = reader.ReadInt32();
                         bool square = reader.ReadBoolean();
+                        bool queued = reader.ReadBoolean();
 
-                        tsorcScriptedEvents.NetworkEvents.Add(new NetworkEvent(center, radius, dustID, square));
+                        tsorcScriptedEvents.NetworkEvents.Add(new NetworkEvent(center, radius, dustID, square, queued));
                     }
                 }
             }
