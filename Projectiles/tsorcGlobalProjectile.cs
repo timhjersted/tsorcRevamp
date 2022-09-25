@@ -17,9 +17,10 @@ namespace tsorcRevamp.Projectiles
 
                 if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().WaspPower & projectile.type == ProjectileID.HornetStinger)
                 {
-                    projectile.penetrate = 4;
+                    projectile.penetrate = 6;
                     projectile.usesLocalNPCImmunity = true;
                     projectile.localNPCHitCooldown = 10;
+                    projectile.extraUpdates = 5;
                 } 
                 else if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().WaspPower & projectile.type == ProjectileID.HornetStinger)
                 {
