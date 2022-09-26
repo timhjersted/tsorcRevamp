@@ -32,6 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.useTime = 150;
             Item.value = PriceByRarity.Lime_7;
             Item.width = 66;
+            Item.knockBack = 50f;
         }
 
         public override void AddRecipes()

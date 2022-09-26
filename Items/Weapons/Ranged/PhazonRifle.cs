@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.useTime = 4;
             Item.maxStack = 1;
             Item.damage = 25;
-            Item.knockBack = 0f;
+            Item.knockBack = 0.01f;
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item31;
             Item.rare = ItemRarityID.LightPurple;
@@ -34,12 +34,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.useAmmo = AmmoID.Bullet;
         }
 
-        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
             type = ModContent.ProjectileType<Projectiles.PhazonRound>();
-            return true;
         }
-
 
         public override bool CanConsumeAmmo(Item ammo, Player player)
         {
