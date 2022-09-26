@@ -1,11 +1,13 @@
-﻿/*
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon {
+namespace tsorcRevamp.Items.Weapons.Summon
+{
     public class ArcherStaff : ModItem {
+
+        public override bool IsLoadingEnabled(Mod mod) => false;
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Gwyn/Petal";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Summons a friendly archer to fight for you.");
@@ -25,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Summon {
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
             Item.buffType = ModContent.BuffType<Buffs.Summon.ArcherBuff>();
-            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Archer>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Archer.ArcherToken>();
         }
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {
@@ -35,4 +37,4 @@ namespace tsorcRevamp.Items.Weapons.Summon {
             return true;
         }
     }
-}*/
+}

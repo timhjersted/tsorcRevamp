@@ -1,7 +1,8 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Summon {
+namespace tsorcRevamp.Buffs.Summon
+{
     public class ArcherBuff : ModBuff {
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Gwyn/Petal";
@@ -13,7 +14,7 @@ namespace tsorcRevamp.Buffs.Summon {
         }
 
         public override void Update(Player player, ref int buffIndex) {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Archer>()] > 0) {
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Archer.ArcherToken>()] > 0) {
                 player.buffTime[buffIndex] = 18000;
             }
             else {
