@@ -598,6 +598,14 @@ namespace tsorcRevamp
                 float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
                 damage = (int)(damage * damageMult);
             }
+            if (Player.GetModPlayer<tsorcRevampPlayer>().CritDamage250)
+            {
+                if(crit)
+                {
+                    damage *= 5;
+                    damage /= 4;
+                }
+            }
             if (crit)
                 DoMultiCrits(ref damage, Player.GetTotalCritChance(item.DamageType));
         }
@@ -616,6 +624,14 @@ namespace tsorcRevamp
             if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>())
             {
                 damage = (int)(damage * 0.55);
+            }
+            if (Player.GetModPlayer<tsorcRevampPlayer>().CritDamage250)
+            {
+                if (crit)
+                {
+                    damage *= 5;
+                    damage /= 4;
+                }
             }
             if (crit)
                 DoMultiCrits(ref damage, Player.GetTotalCritChance(proj.DamageType));

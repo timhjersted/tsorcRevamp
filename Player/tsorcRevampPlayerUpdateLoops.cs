@@ -66,6 +66,8 @@ namespace tsorcRevamp
 
         public bool OldWeapon = false;
 
+        public bool CritDamage250 = false;
+
         public bool WaspPower = false;
 
         public bool Miakoda = false;
@@ -233,6 +235,7 @@ namespace tsorcRevamp
             Player.armorEffectDrawShadowEOCShield = false;
             UndeadTalisman = false;
             DuskCrownRing = false;
+            CritDamage250 = false;
             Celestriad = false;
             DragoonBoots = false;
             GemBox = false;
