@@ -125,7 +125,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
+            NPC.lifeMax = (int)(NPC.lifeMax / 2.3);
             NPC.damage = (int)(NPC.damage / 2);
             deathBallDamage = (int)(deathBallDamage / 2);
             phantomSeekerDamage = (int)(phantomSeekerDamage / 2);
@@ -419,7 +419,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     //ORANGE PHANTOM SEEKER
                     int num59;
-                    if (customAi3 >= 230 && NPC.Distance(player.Center) > 300 && Main.rand.NextBool(1100))
+                    if (customAi3 >= 230 && NPC.Distance(player.Center) > 300 && Main.rand.NextBool(1500))
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {

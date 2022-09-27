@@ -157,13 +157,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 //Storing the distance means we don't have to re-calculate it multiple times
                 float distance = NPC.Distance(player.Center);
 
-                //CLOSE-RANGE TRIGGERS FROSTBURN 
-                if (distance < 90)
-                {
-                    player.AddBuff(BuffID.Frostburn, 60, false);
-                }
-
-                //Phase 2 triggers chilled and slow
+               
+                //Phase 2 triggers chilled, slow and frostburn
                 if (distance < 1550 && secondPhase)
                 {
                     player.AddBuff(BuffID.Chilled, 30, false);
@@ -171,6 +166,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (distance < 200)
                     {
                         player.AddBuff(BuffID.Slow, 30, false);
+                        player.AddBuff(BuffID.Frostburn, 30, false);
                     }
 
                     //announce proximity debuffs once

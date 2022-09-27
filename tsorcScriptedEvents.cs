@@ -233,7 +233,7 @@ namespace tsorcRevamp
             ScriptedEvent KingSlimeEvent = new ScriptedEvent(new Vector2(5995, 1117), 20, NPCID.KingSlime, DustID.MagicMirror, true, true, "King Slime appears!", Color.Blue, false, peaceCandleEffect: true);
 
             //HERO OF LUMELIA FIGHT
-            ScriptedEvent HeroofLumeliaFight = new ScriptedEvent(new Vector2(4413, 717), 120, ModContent.NPCType<NPCs.Bosses.HeroofLumelia>(), DustID.OrangeTorch, true, true, "'You killed my brother, Red! ... You've unleashed hell upon this world!' A hero from Lumelia has come seeking justice... ", Color.LightGoldenrodYellow, false, LumeliaCustomCondition, peaceCandleEffect: true);
+            ScriptedEvent HeroofLumeliaFight = new ScriptedEvent(new Vector2(4413, 717), 110, ModContent.NPCType<NPCs.Bosses.HeroofLumelia>(), DustID.OrangeTorch, true, true, "'You killed my brother, Red! ... You've unleashed hell upon this world!' A hero from Lumelia has come seeking justice... ", Color.LightGoldenrodYellow, false, LumeliaCustomCondition, peaceCandleEffect: true);
             //HeroofLumeliaFight.SetCustomStats(1600, 12, 52, 1555);
             //HeroofLumeliaFight.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion }, new List<int>() { 2, 2 });
 
@@ -308,7 +308,7 @@ namespace tsorcRevamp
             ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, true, "[c/D3D3D3:Attraidies:] \"See if you can handle this.\"", Color.OrangeRed, false, AttraidiesTheSorrowCondition, peaceCandleEffect: true);
 
             //TWIN EATER OF WORLDS FIGHT
-            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1220), 30, default, DustID.ShadowbeamStaff, true, true, "Twin Eaters surface from the depths!", Color.Purple, false, EoWCustomCondition, TwinEoWAction, peaceCandleEffect: true);
+            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1215), 20, default, DustID.ShadowbeamStaff, true, true, "Twin Eaters surface from the depths!", Color.Purple, false, EoWCustomCondition, TwinEoWAction, peaceCandleEffect: true);
 
             //DUNLEDING AMBUSH
             List<int> DunledingAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>() };

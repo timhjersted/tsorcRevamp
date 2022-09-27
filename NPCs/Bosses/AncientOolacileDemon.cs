@@ -72,7 +72,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            
+            NPC.lifeMax = (int)(NPC.lifeMax / 1.25);
             NPC.damage = (int)(NPC.damage / 2);
             meteorDamage = (int)(meteorDamage / 2);
             cultistFireDamage = (int)(cultistFireDamage / 2);
@@ -133,12 +133,13 @@ namespace tsorcRevamp.NPCs.Bosses
             //MELEE RANGE
             if (NPC.Distance(player.Center) < 100 && NPC.localAI[1] < 70f) 
             {
-                NPC.localAI[1] = 50f;
+                NPC.localAI[1] = 40f;
 
                 //TELEPORT MELEE
                 if (Main.rand.NextBool(12))
                 {
                     tsorcRevampAIs.Teleport(NPC, 25, true);
+                    NPC.localAI[1] = 0f;
                 }
             }
             //RISK ZONE
@@ -147,14 +148,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
                 float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-10f, -7f);
                 NPC.velocity.X = v;
-                //if (Main.rand.NextBool(2))
-                //{
-                //npc.localAI[1] = 80f;
-                //} 
-                //else
-                //{ npc.localAI[1] = 1f; }
-
-
+                
                 NPC.netUpdate = true;
             }
 
@@ -166,8 +160,8 @@ namespace tsorcRevamp.NPCs.Bosses
             //TELEPORT RANGED
             if (Main.rand.NextBool(24))
             {
-                tsorcRevampAIs.Teleport(NPC, 20, true);
-                NPC.localAI[1] = 70f;
+                tsorcRevampAIs.Teleport(NPC, 25, true);
+                NPC.localAI[1] = 0f;
             }
             //RANGED
             if (NPC.Distance(Player.Center) > 201 && NPC.velocity.Y == 0f && Main.rand.NextBool(3))
@@ -184,10 +178,69 @@ namespace tsorcRevamp.NPCs.Bosses
         //int breathTimer gives weird cool arrow shape, float does the circle
         float breathTimer = 0;
         int spawnedDemons = 0;
+        float boredTeleport = 0;
+        float stuckTeleport = 0;
+
         public override void AI()
         {
 
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
+
+
+            //If the enemy doesn't have line of sight, spawn a cursed skull and then teleport
+            //Since this is a boss, the distance and time is fairly aggressive.
+            bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
+            if (clearLineofSight)
+            {
+                boredTeleport = 0;
+            }
+
+            if (NPC.velocity.X == 0 && breathTimer > 0)
+            {
+
+                stuckTeleport++;
+                if (stuckTeleport == 60)
+                {
+                    //NPC.localAI[1] = 0;
+                    tsorcRevampAIs.Teleport(NPC, 60, false);
+                    stuckTeleport = 0;
+                    //breathTimer = 1;
+                }
+            }
+            if (NPC.velocity.X > 0)
+            {
+                stuckTeleport = 0;
+            }
+
+
+                if (!clearLineofSight)
+            {
+                boredTeleport++;
+
+                if (boredTeleport == 200)
+                {
+
+                    int Skull = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.CursedSkull, 0);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
+
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Skull, 0f, 0f, 0f, 0);
+                    }
+
+                }
+
+                if (boredTeleport == 300)
+                {
+                    NPC.localAI[1] = 0;
+                    tsorcRevampAIs.Teleport(NPC, 40, true);
+                    boredTeleport = 0;
+                }
+
+            }
+
+
             int choice = Main.rand.Next(6);
 
 
@@ -276,7 +329,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     //npc.velocity.Y = -1.1f;
                     NPC.velocity.Y = Main.rand.NextFloat(-4f, -1.1f);
-                    NPC.velocity.X = 0f;
+                    NPC.velocity.X = 0.5f;
 
                     //play breath sound
                     if (Main.rand.NextBool(3))
@@ -288,9 +341,8 @@ namespace tsorcRevamp.NPCs.Bosses
                     Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].OldPos(9), 9);
                     breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
 
-                    //Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X + (5 * npc.direction), npc.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y - 40f, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
-                    NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
+                    //NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
                     NPC.localAI[1] = -50;
                 }
             }
@@ -318,13 +370,16 @@ namespace tsorcRevamp.NPCs.Bosses
             Player player3 = Main.player[NPC.target];
             if (Main.rand.NextBool(100) && NPC.Distance(player3.Center) > 600)
             {
-                Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8f, 1.06f, true, true);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ProjectileID.DesertDjinnCurse, lostSoulDamage, 7f, Main.myPlayer);
-                //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, NPC.Center); //wobble
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8f, 1.06f, true, true);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ProjectileID.DesertDjinnCurse, lostSoulDamage, 7f, Main.myPlayer);
+                    //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, NPC.Center); //wobble
+                }
                 NPC.localAI[1] = 1f;
 
-                NPC.netUpdate = true;
+                
             }
             //tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], ProjectileID.LostSoulHostile, lostSoulDamage, 3, lineOfSight, true, 4, 9);
 
