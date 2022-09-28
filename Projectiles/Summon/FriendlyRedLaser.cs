@@ -9,8 +9,6 @@ namespace tsorcRevamp.Projectiles.Summon
 
     public class FriendlyRedLaser : EnemyGenericLaser
     {
-
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Laser");

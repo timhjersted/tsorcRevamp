@@ -1008,10 +1008,6 @@ namespace tsorcRevamp
         //Chaos
         //Dark Cloud
 
-
-
-
-
         public static Recipe.Condition SHM1Downed
         {
             get

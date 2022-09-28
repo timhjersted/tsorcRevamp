@@ -249,7 +249,7 @@ namespace tsorcRevamp
         ///<param name="direction">The direction it's aiming in</param>
         ///<param name="maxDistance">How far to search for</param>
         ///<param name="ignoreFriendly">Ignore town NPCs in collision checks</param>
-        public static Vector2 GetFirstCollision(Vector2 start, Vector2 direction, float maxDistance = 5000f, bool ignoreFriendly = false)
+        public static Vector2 GetFirstCollision(Vector2 start, Vector2 direction, float maxDistance = 5000f, bool ignoreFriendly = false, bool ignoreNPCs = false)
         {
             direction.Normalize();
             Vector2 unitVector = direction;
@@ -262,33 +262,38 @@ namespace tsorcRevamp
 
                 if (!Collision.CanHit(start, 1, 1, currentPosition, 1, 1) && !Collision.CanHitLine(start, 1, 1, currentPosition, 1, 1))
                 {
-                    distance -= 5f;
+                    currentPosition = start + (direction * (distance - 1));
                     break;
                 }
             }
 
             float closestCollision = maxDistance;
-            for(int i = 0; i < Main.maxNPCs; i++)
-            {
-                if (Main.npc[i] == null || Main.npc[i].active == false)
-                {
-                    continue;
-                }
-                if (ignoreFriendly && Main.npc[i].friendly) { continue; }
-                else
-                {
-                    NPC npc = Main.npc[i];
-                    float collision = maxDistance;
 
-                    //Expand the enemy hitbox slightly to increase consistency
-                    Vector2 adjustedPosition = npc.position;
-                    Vector2 adjustedSize = npc.Size;
-                    adjustedSize *= 1.5f;
-                    adjustedPosition -= (adjustedSize - npc.Size) / 2;
-                    if(Collision.CheckAABBvLineCollision(adjustedPosition, adjustedSize, start, currentPosition, 32, ref collision)){
-                        if(collision < closestCollision)
+            if (!ignoreNPCs)
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i] == null || Main.npc[i].active == false)
+                    {
+                        continue;
+                    }
+                    if (ignoreFriendly && Main.npc[i].friendly) { continue; }
+                    else
+                    {
+                        NPC npc = Main.npc[i];
+                        float collision = maxDistance;
+
+                        //Expand the enemy hitbox slightly to increase consistency
+                        Vector2 adjustedPosition = npc.position;
+                        Vector2 adjustedSize = npc.Size;
+                        adjustedSize *= 1.5f;
+                        adjustedPosition -= (adjustedSize - npc.Size) / 2;
+                        if (Collision.CheckAABBvLineCollision(adjustedPosition, adjustedSize, start, currentPosition, 32, ref collision))
                         {
-                            closestCollision = collision;
+                            if (collision < closestCollision)
+                            {
+                                closestCollision = collision;
+                            }
                         }
                     }
                 }

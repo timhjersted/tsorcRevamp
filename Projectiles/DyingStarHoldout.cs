@@ -7,17 +7,11 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles
 {
     class DyingStarHoldout : ModProjectile
-    {
-
-        public override string Texture => "tsorcRevamp/Projectiles/GlaiveBeamHoldout";
-         
+    {         
         public static float MaxCharge = 60f;
-
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dying Star Holdout");
-
             //Signals to Terraria that this projectile requires a unique identifier beyond its index in the projectile array.
             ProjectileID.Sets.NeedsUUID[Projectile.type] = true;
         }
