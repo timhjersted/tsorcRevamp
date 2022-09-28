@@ -217,7 +217,7 @@ namespace tsorcRevamp
             //--------
             #region Unbreakable list
             Unbreakable = new List<int>() {
-                19, 55, 235, 597, //platforms, altars, signs, teleporters, pylons, 22 was demonite ore, should be breakable
+                19, 55, 235, 597, //platforms, altars, signs, teleporters, pylons, 22 ie demonite ore was removed here as it should be breakable
                 139, 410, 480, 509, //music boxes, all monoliths
                 213, 214, 353, 365, 366, //all ropes and chain
                 48, 232, 210, 484, //spikes, jungle spikes, land mines, rolling cactus
@@ -232,7 +232,6 @@ namespace tsorcRevamp
                 //6, 7, 8, 9, 22, 37, 58, 63, 64, 65, 66, 67, 67, 68, 107, 108, 111, 166, 167, 168, 169, 211, 221, 222, 223, //All Ores
                 //50, //books (Boss tome can be bought, or a few books can be found in the village for crafting it)
                 //56, 79, 85, //obsidian, beds, tombstones (misc notable disables)
-                22, //demonite ore
                 4, 12, 13, 236, 215, // torches, Heart crystal, tabled bottles, life fruit, campfires, 
                 5, 20, 72, 323, 571, 583, 584, 585, 586, 587, 588, 589, 590, 595, 596, 615, 616, // all trees and saplings
                 14, 469, 94, 125, 217, 218, 228, 243, 622, //tables, specialized crafting stations
