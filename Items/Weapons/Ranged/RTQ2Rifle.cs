@@ -29,6 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.value = PriceByRarity.LightPurple_6;
             Item.useAmmo = AmmoID.Bullet;
             Item.DamageType = DamageClass.Ranged;
+            Item.knockBack = 1f;
         }
 
         public override void AddRecipes()

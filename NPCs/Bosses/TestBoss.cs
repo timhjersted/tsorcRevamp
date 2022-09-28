@@ -47,14 +47,18 @@ namespace tsorcRevamp.NPCs.Bosses
                 thisWatch.Start();
             }
 
-            watchTimer = 250;
+            watchTimer = 60;
             damageCounter += damage;
+            if (crit)
+            {
+                damageCounter += damage;
+            }
             lastTimer = (float)thisWatch.Elapsed.TotalSeconds;
         }
 
         public override void AI()
         {
-            NPC.defense = 12;
+            NPC.defense = 220;
             if (damageCounter > 0)
             {
                 Main.NewText("DPS: " + damageCounter / thisWatch.Elapsed.TotalSeconds);

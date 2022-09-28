@@ -31,6 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.value = PriceByRarity.LightRed_4;
             Item.noUseGraphic = true;
             Item.shoot = ProjectileID.PurificationPowder;
+            Item.knockBack = 5f;
         }
 
         public override void AddRecipes()

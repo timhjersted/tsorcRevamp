@@ -1817,6 +1817,7 @@ namespace tsorcRevamp.NPCs
                         //damage changes here are for first phase
                         npc.damage = 27; //legacy: 37
                         npc.value = 33330;
+                        //npc.lifeMax = 4615; //Which is actually 7k hp in expert mode 
                         if (Main.expertMode)
                         {
                             npc.damage = 21; //revamp expert: 42
@@ -1826,6 +1827,7 @@ namespace tsorcRevamp.NPCs
                             if (Main.expertMode)
                             {
                                 npc.lifeMax = 3077; // Which is actually 4k hp in expert mode
+                                //npc.lifeMax = 5000; 
                             }
                             npc.scale = 1.1f;
                         }
@@ -1843,12 +1845,14 @@ namespace tsorcRevamp.NPCs
                 #region Brain of Cthulhu
                 case (NPCID.BrainofCthulhu):
                     {
+                        //npc.lifeMax = ;
                         npc.value = 42250;
                         break;
                     }
 
                 case (NPCID.Creeper):
                     {
+                        //npc.lifeMax = ;
                         npc.value = 710; //*20 per brain, making 1420
                         break;
                     }

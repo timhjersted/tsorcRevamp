@@ -143,8 +143,38 @@ namespace tsorcRevamp.NPCs.Friendly
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
             }
-            
-            
+
+
+
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
+            {
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenIceBrand>());
+                shop.item[nextSlot].shopCustomPrice = 4000;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenPearlSpear>());
+                shop.item[nextSlot].shopCustomPrice = 4000;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
+            }
+
+            if (NPC.downedMechBossAny)
+            {
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenPoisonAxe>());
+                shop.item[nextSlot].shopCustomPrice = 6000;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenSwordbreaker>());
+                shop.item[nextSlot].shopCustomPrice = 6000;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenImpHalberd>());
+                shop.item[nextSlot].shopCustomPrice = 6000;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
+            }
+
+
         }
 
         public override void HitEffect(int hitDirection, double damage)

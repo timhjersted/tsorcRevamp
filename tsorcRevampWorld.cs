@@ -989,6 +989,29 @@ namespace tsorcRevamp
                 return false;
             }
         }
+
+        //13 SHM bosses:
+        //8 Mandatory:
+        //Kraken
+        //Marilith
+        //Lich
+        //Seath
+        //Blight
+        //Wyvern Mage Shadow
+        //Artorias
+        //Gwyn
+
+        //5 optional:
+        //Hellkite Dragon
+        //Witchking
+        //Oolicale Sorcerer
+        //Chaos
+        //Dark Cloud
+
+
+
+
+
         public static Recipe.Condition SHM1Downed
         {
             get
@@ -996,25 +1019,25 @@ namespace tsorcRevamp
                 return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("One Guardian of the Abyss Slain"), r => SHMDowned > 0);
             }
         }
-        public static Recipe.Condition SHM4Downed
+        public static Recipe.Condition SHM3Downed
         {
             get
             {
-                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Four Guardians of the Abyss Slain"), r => SHMDowned > 3);
+                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Three Guardians of the Abyss Slain"), r => SHMDowned >= 3);
             }
         }
-        public static Recipe.Condition SHM8Downed
+        public static Recipe.Condition SHM6Downed
         {
             get
             {
-                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Eight Guardians of the Abyss Slain"), r => SHMDowned > 7);
+                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Six Guardians of the Abyss Slain"), r => SHMDowned >= 6);
             }
         }
-        public static Recipe.Condition SHM12Downed
+        public static Recipe.Condition SHM9Downed
         {
             get
             {
-                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Twelve Guardians of the Abyss Slain"), r => SHMDowned > 12);
+                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Nine Guardians of the Abyss Slain"), r => SHMDowned >= 9);
             }
         }
 
