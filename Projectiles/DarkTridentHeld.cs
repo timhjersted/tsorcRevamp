@@ -159,6 +159,7 @@ namespace tsorcRevamp.Projectiles
                 cropped, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            //DrawPoints();
         }
     }
 }

@@ -29,15 +29,7 @@ namespace tsorcRevamp.Projectiles {
 		protected float charge;
 
 		protected Vector2 aimVector;
-		/*
-		private int _points;
 
-		private short[] _lineStripIndices;
-
-		private VertexPositionNormalTexture[] _pointList;
-
-		private BasicEffect _eff;
-		*/
 		protected int ammoType {
 			get {
 				return (int)Projectile.ai[0];
@@ -60,72 +52,17 @@ namespace tsorcRevamp.Projectiles {
 			Projectile.alpha = 0;
 			Projectile.timeLeft = 999999; //"ummm zeo if you hold left click for 4.6 irl hours the bow disappears!!!! please fix!!!" 
 			SetStats();
-
-			//supposed to be for drawing a charge circle, but i cant get it working
-			//i hate primitives
-			//Main.QueueMainThreadAction(PreparePrimitives);
 		}
-		/*
-		private void PreparePrimitives() {
-			//create a list of vertices in 3d space that represents the endpoints of the lines
-			_points = 16;
-			double angle = MathHelper.TwoPi / _points;
-			_pointList = new VertexPositionNormalTexture[_points + 1];
-			_pointList[0] = new VertexPositionNormalTexture(Vector3.Zero, Vector3.Forward, Vector2.One);
-			for (int i = 1; i < _points; i++) {
-				_pointList[i] = new VertexPositionNormalTexture(
-					new Vector3((float)Math.Round(Math.Sin(angle * i), 4), (float)Math.Round(Math.Cos(angle * i), 4), 0.0f),
-					Vector3.Forward,
-					Main.MouseWorld - Main.LocalPlayer.position
-					);
-			}
 
-			//create an array for which endpoints should be connected
-			//equivalent to [1, 2, 3, ..., n, 1]
-			_lineStripIndices = new short[_points + 1];
-			for (int i = 0; i < _points; i++) {
-				_lineStripIndices[i] = (short)(i + 1);
-			}
-			_lineStripIndices[_points] = 1;
-
-		}
-		*/
 		protected abstract void SetStats();
 
 		protected virtual void SpecialBehavior() {
 		}
 
 		protected virtual void Animate() {
-			Projectile.frame = (int)((Main.projFrames[Projectile.type] - 1) * charge);
-			//charge circle
-			/*
-			GraphicsDevice gd = Main.instance.GraphicsDevice;
-			int width = gd.Viewport.Width;
-			int height = gd.Viewport.Height;
-			Vector2 zoom = Main.GameViewMatrix.Zoom;
-			Matrix view = Matrix.CreateLookAt(Vector3.Zero, Vector3.UnitZ, Vector3.Up) * Matrix.CreateTranslation(width / 2, height / -2, 0f) * Matrix.CreateRotationZ((float)Math.PI) * Matrix.CreateScale(zoom.X, zoom.Y, 1f);
-			Matrix projection = Matrix.CreateOrthographic(width, height, 0f, 1000f);
+            Projectile.frame = (int)((Main.projFrames[Projectile.type] - 1) * charge);
 
-			_eff = new BasicEffect(gd) {
-				VertexColorEnabled = true
-			};
-			_eff.View = view;
-			_eff.Projection = projection;
-			foreach (EffectPass pass in _eff.CurrentTechnique.Passes) {
-				pass.Apply();
-			}
-
-			Main.instance.GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(
-				PrimitiveType.LineStrip,
-				_pointList,
-				0,   // vertex buffer offset to add to each element of the index buffer
-				(int)(Math.Ceil(_points * charge)),   // number of vertices to draw
-				_lineStripIndices,
-				0,   // first index element to read
-				(int)(Math.Ceil(_points * charge) + 1)    // number of primitives to draw
-			);
-			*/
-		}
+        }
 
 		protected abstract void Shoot();
 
@@ -180,6 +117,33 @@ namespace tsorcRevamp.Projectiles {
 				Projectile.velocity = aimVector * holdoutOffset;
 			}
 		}
+        public override void PostDraw(Color lightColor) {
+            DrawPoints();
+        }
+
+        protected virtual void DrawPoints() {
+            if (ModContent.GetInstance<tsorcRevampConfig>().ChargeCircleOpacity == 0) return;
+
+            //forces the projectile to be drawn after liquids, and incidentally wires
+            if (!Main.instance.DrawCacheProjsOverWiresUI.Contains(Projectile.whoAmI)) Main.instance.DrawCacheProjsOverWiresUI.Add(Projectile.whoAmI);
+
+            int maxPoints = 90;
+            int points = (int)(charge * maxPoints) + 1;
+            float opacity = (float)ModContent.GetInstance<tsorcRevampConfig>().ChargeCircleOpacity / 200;
+            Texture2D pointTexture = ModContent.Request<Texture2D>("tsorcRevamp/Textures/ChargePoint", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            Rectangle srect = new(0, 0, pointTexture.Width, pointTexture.Height);
+            Vector2 origin = new(2, 2);
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            for (int i = 0; i < points - 2; i++) {
+                Vector2 pos = (Main.MouseScreen + new Vector2(6, 6)) - (Vector2.UnitY * 24).RotatedBy(MathHelper.ToRadians((360 / maxPoints) * i));
+                Main.EntitySpriteDraw(pointTexture, pos, srect, Color.White * opacity, 0f, origin, 1f, SpriteEffects.None, 0);
+            }
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+
+        }
+
 
 		/// <summary>
 		/// Get the value [amount]% of the way from [min] to [max]

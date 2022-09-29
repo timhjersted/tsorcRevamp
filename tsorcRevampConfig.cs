@@ -91,7 +91,13 @@ namespace tsorcRevamp
         [Tooltip("The Y position of the Estus Flask.")]
         public int EstusFlaskPosY { get; set; }
 
-        
+        [Label("Charged Weapon Indicator Opacity")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [Tooltip("Some charged weapons draw a circle around the cursor to indicate the\ncurrent charge level. The opacity of that circle can be set here.\nSet to 0 to disable charge circles.")]
+        [DefaultValue(100)]
+        public uint ChargeCircleOpacity { get; set; }
+
+
         [Label("Disable Gravitation Effect Screen Flip")]
         [BackgroundColor(200, 80, 80, 192)]
         [SliderColor(224, 165, 56, 128)]
