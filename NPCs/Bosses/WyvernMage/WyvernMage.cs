@@ -45,17 +45,17 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         }
 
         bool OptionSpawned = false;
-        int frozenSawDamage = 55;
-        int lightningDamage = 75;
+        int frozenSawDamage = 60;
+        int lightningDamage = 80;
        
-        int plasmaDamage = 35;
+        int plasmaDamage = 40;
         int lifeTimer = 0;
 
         int holdTimer = 0;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            frozenSawDamage = (int)(frozenSawDamage * 1.3 / 2);
-            lightningDamage = (int)(lightningDamage * 1.3 / 2);
+            frozenSawDamage = (int)(frozenSawDamage / 2);
+            lightningDamage = (int)(lightningDamage / 2);
         }
 
         //When this hits 5, the boss fires an orb and resets it back to 0. Only happens right at the start of its teleport.
@@ -127,7 +127,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
                 {
                     Main.NewText("The Wyvern Mage emits a a chilling wave of frost! The cold is unbearable!", 235, 199, 23);//deep yellow
-                    holdTimer = 9000;
+                    holdTimer = 12000;
                 }
 
             }
@@ -219,7 +219,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
                 }
 
-                if (NPC.life <= 16000 && lifeTimer < 1 || NPC.life <= 12000 && lifeTimer < 2 || NPC.life <= 8000 && lifeTimer < 3 || NPC.life <= 4000 && lifeTimer < 3)
+                if (NPC.life <= 16000 && lifeTimer < 1 || NPC.life <= 12000 && lifeTimer < 2 || NPC.life <= 8000 && lifeTimer < 3 || NPC.life <= 4000 && lifeTimer < 4 || NPC.life <= 2000 && lifeTimer < 5)
                 {
                     UsefulFunctions.BroadcastText("The Wyvern Mage summons the Archdeacons!", 175, 75, 255);
 
