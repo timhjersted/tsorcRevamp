@@ -21,6 +21,7 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.UI;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp
 {
@@ -84,6 +85,9 @@ namespace tsorcRevamp
 			On.Terraria.Player.DashMovement += Player_DashMovement;
 
 			On.Terraria.Player.DropTombstone += Player_DropTombstone;
+
+            On.Terraria.DataStructures.PlayerDrawLayers.DrawPlayer_TransformDrawData += PaperMarioMode;
+
         }
 
 		private static void Player_DropTombstone(On.Terraria.Player.orig_DropTombstone orig, Player self, int coinsOwned, Terraria.Localization.NetworkText deathText, int hitDirection)
@@ -1857,5 +1861,35 @@ namespace tsorcRevamp
             }
 
         }
+
+        
+        private static void PaperMarioMode(On.Terraria.DataStructures.PlayerDrawLayers.orig_DrawPlayer_TransformDrawData orig, ref Terraria.DataStructures.PlayerDrawSet drawinfo) {
+            orig(ref drawinfo);
+            for (int k = 0; k < drawinfo.DrawDataCache.Count; k++) {
+                drawinfo.DrawDataCache[k] = ManipulateDrawInfo(drawinfo.DrawDataCache[k], drawinfo.drawPlayer);
+            }
+        }
+        private static DrawData ManipulateDrawInfo(DrawData input, Player Player) {
+            float rotation = Player.GetModPlayer<tsorcRevampPlayer>().rotation3d;
+
+            if (rotation != 0) 
+            {
+                float sin = (float)Math.Sin(rotation + 1.57f * Player.direction);
+                int offset = Math.Abs((int)((input.useDestinationRectangle ? input.destinationRectangle.Width : input.sourceRect?.Width ?? input.texture.Width) * sin));
+
+                SpriteEffects effect = sin > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+                if (input.effect == SpriteEffects.FlipHorizontally) effect = effect == SpriteEffects.FlipHorizontally ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+                DrawData newData = new(input.texture, new Rectangle((int)input.position.X, (int)input.position.Y, offset, input.useDestinationRectangle ? input.destinationRectangle.Height : input.sourceRect?.Height ?? input.texture.Height),
+                    input.sourceRect, input.color, input.rotation, input.origin, effect, 0) {
+                    shader = input.shader
+                };
+
+                return newData;
+            }
+
+            return input;
+        }
+
     }
 }

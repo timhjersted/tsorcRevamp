@@ -193,6 +193,8 @@ namespace tsorcRevamp
         public bool finishedQuest;
         public bool touchedSurface;
 
+        public float rotation3d;
+
         public string DeathText;
         bool setDeathText = false;
         public static List<string> DeathTextList
@@ -289,6 +291,7 @@ namespace tsorcRevamp
             HasFracturingArmor = false;
             GravityField = false;
             DragoonHorn = false;
+            if (!Player.channel) rotation3d = 0;
         }
         
         public override void PreUpdate()
