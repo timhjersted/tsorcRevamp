@@ -100,7 +100,7 @@ namespace tsorcRevamp.Items
             recipe = Recipe.Create(ItemID.MagicMirror)
             .AddRecipeGroup(tsorcRevampSystems.UpgradedMirrors)
             .AddTile(TileID.DemonAltar)
-            .AddOnCraftCallback(delegate (Recipe recipe, Item item, List<Item> consumedItems)
+            .AddOnCraftCallback(delegate
             { //refund the player's souls when they revert to a base mirror
                 Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), Main.LocalPlayer.getRect(), ModContent.ItemType<DarkSoul>(), 100);
             }

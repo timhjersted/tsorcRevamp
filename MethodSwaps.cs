@@ -71,8 +71,6 @@ namespace tsorcRevamp
 
             On.Terraria.WorldGen.StartHardmode += WorldGen_StartHardmode;
 
-            On.Terraria.Player.QuickGrapple_GetItemToUse += Player_QuickGrapple_GetItemToUse;
-
             On.Terraria.Projectile.FishingCheck += Projectile_FishingCheck;
 
             On.Terraria.Main.CraftItem += Main_CraftItem;
