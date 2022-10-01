@@ -37,11 +37,11 @@ namespace tsorcRevamp.Projectiles
         {
             Player pOwner = Main.player[Projectile.owner];
 
-            if (Main.rand.NextBool(8))
+            if (Main.rand.NextBool(6))
             {
                 if (!hasHealed)
                 {
-                    int healAmount = 5;
+                    int healAmount = 6;
                     pOwner.statLife += healAmount;
                     pOwner.HealEffect(healAmount, true);
                     hasHealed = true;

@@ -10,13 +10,13 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Legendary spear fabled to hold sway over the world.\nIncreases attack damage by 50% when falling.");
+            Tooltip.SetDefault("Legendary spear fabled to hold sway over the world.\nIncreases attack damage by 30% when falling and has a chance to heal 3 HP on hit.");
         }
 
 
         public override void SetDefaults()
         {
-            Item.damage = 200;
+            Item.damage = 175;
             Item.knockBack = 9f;
 
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             if (player.gravDir == 1f && player.velocity.Y > 0 || player.gravDir == -1f && player.velocity.Y < 0)
             {
-                damage += 1.5f;
+                damage += 1.3f;
             }
         }
 
