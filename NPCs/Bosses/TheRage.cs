@@ -220,13 +220,13 @@ namespace tsorcRevamp.NPCs.Bosses
 
             //FIRE FROM ABOVE ATTACK - 2nd Phase
             //counts up each tick. used to space out shots
-            if (FlameShotTimer >= 45 && FlameShotCounter < 20)
+            if (FlameShotTimer >= 45 && FlameShotCounter < 15)
             {
                 //more fire trails
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 600 + Main.rand.Next(1200), (float)player.position.Y - 600f, (float)(-40 + Main.rand.Next(80)) / 10, 2f, ModContent.ProjectileType<FireTrails>(), fireTrailsDamage, 2f, Main.myPlayer); //  ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>()
 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, PitchVariance = 2 }, NPC.Center);
-                NPC.netUpdate = true; //new
+                
 
                 FlameShotTimer = 0;
                 FlameShotCounter++;
@@ -234,7 +234,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 
             }
             //homing fireballs - part of 2nd phase 
-            if (FlameShotTimer3 >= 25 && FlameShotCounter3 < 15)
+            if (FlameShotTimer3 >= 25 && FlameShotCounter3 < 10)
             {
                 //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 500 + Main.rand.Next(500), (float)player.position.Y - 400f, (float)(-40 + Main.rand.Next(80)) / 10, 2.5f, ModContent.ProjectileType<Hellwing>(), fireTrailsDamage, 2f, Main.myPlayer); // ModContent.ProjectileType<FireTrails>()
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 200 + Main.rand.Next(400), (float)player.position.Y - 480f, (float)(-40 + Main.rand.Next(80)) / 10, 3f, ProjectileID.CultistBossFireBall, fireTrailsDamage, 3f, Main.myPlayer); //ProjectileID.NebulaBlaze2 would be cool to use at the end of attraidies or gwyn fight with the text, "The spirit of your father summons cosmic light to aid you!"
@@ -285,39 +285,42 @@ namespace tsorcRevamp.NPCs.Bosses
             //1st phase frequency
             if (Main.rand.NextBool(300) && (player.position.Y + 30 >= NPC.position.Y) && NPC.life > NPC.lifeMax / 2)
             {
-                for (int num36 = 0; num36 < 10; num36++)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
-                    Main.dust[pink].noGravity = true;
-                }
-
+                        for (int num36 = 0; num36 < 10; num36++)
+                        {
+                            int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
+                            Main.dust[pink].noGravity = true;
+                        }
+                
                
-                Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 6.5f, .1f, true, true);
-                velocity += Target.velocity / 1.5f;
-                if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), fireTrailsDamage, 0.5f, Main.myPlayer); 
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), fireTrailsDamage, 0.5f, Main.myPlayer); //ProjectileID.LostSoulHostile
+                    Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 6.5f, .1f, true, true);
+                    velocity += Target.velocity / 1.5f;
+                    if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), fireTrailsDamage, 0.5f, Main.myPlayer); 
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), fireTrailsDamage, 0.5f, Main.myPlayer); //ProjectileID.LostSoulHostile
+                    }
                 }
             }
             //2nd phase frequency
             if (Main.rand.NextBool(80) && (player.position.Y + 30 >= NPC.position.Y) && NPC.life < NPC.lifeMax / 2)
             {
-                for (int num36 = 0; num36 < 10; num36++)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
+                    for (int num36 = 0; num36 < 10; num36++)
+                    {
+                        int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
 
-                    Main.dust[pink].noGravity = true;
-
-                    
-                }
-               
-                Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 6.5f, .1f, true, true);
-                velocity += Target.velocity / 1.5f;
-                if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), fireTrailsDamage, 0.5f, Main.myPlayer);
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), fireTrailsDamage, 0.5f, Main.myPlayer); 
+                        Main.dust[pink].noGravity = true;
+                    }
+                    Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 6.5f, .1f, true, true);
+                    velocity += Target.velocity / 1.5f;
+                    if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), fireTrailsDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), fireTrailsDamage, 0.5f, Main.myPlayer);
+                    }
                 }
             }
 
@@ -326,8 +329,7 @@ namespace tsorcRevamp.NPCs.Bosses
             { 
                 bool lineOfSight = Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
                 tsorcRevampAIs.SimpleProjectile(NPC, ref lostSoulTimer, 1100, ModContent.ProjectileType<Projectiles.Enemy.AntiGravityBlast>(), fireTrailsDamage, 1, lineOfSight, true, SoundID.Item79 with { Volume = 0.5f, PitchVariance = 2f }, 0); //ProjectileID.LostSoulHostile
-                
-
+              
             }
 
 

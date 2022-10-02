@@ -174,7 +174,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
             //chance to trigger frogs spawning
-            if (Main.rand.NextBool(300) && NPC.life >= NPC.lifeMax / 2)
+            if (Main.rand.NextBool(400) && NPC.life >= NPC.lifeMax / 2)
             {
                 FrogSpawnCounter = 0;
                 
@@ -401,7 +401,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 
                     //FrogSpawnCounter = 0;
                     NPC.ai[3] = 1;
-                    NPC.life += 1200;
+                    if (NPC.life > (NPC.lifeMax / 2) + 100 || NPC.life < (NPC.lifeMax / 2) - 1100)
+                    {
+                        NPC.life += 1000;
+                    }
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }
                 if (NPC.ai[1] >= 0)

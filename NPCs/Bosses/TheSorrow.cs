@@ -474,7 +474,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.ai[3] = 1;
                     if (NPC.life > (NPC.lifeMax / 2) + 100 || NPC.life < (NPC.lifeMax / 2) - 950)
                     {
-                        NPC.life += 900; //amount boss heals when going invisible
+                        NPC.life += 700; //amount boss heals when going invisible
                     }
                         
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
