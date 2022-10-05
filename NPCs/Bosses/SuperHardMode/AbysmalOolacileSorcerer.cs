@@ -16,20 +16,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Main.npcFrameCount[NPC.type] = 3;
             AnimationType = 29;
             NPC.aiStyle = 0;
-            NPC.damage = 96;
+            NPC.damage = 196;
             NPC.defense = 110;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 186800;
+            NPC.lifeMax = 166800;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.boss = true;
+            NPC.scale = 1.1f;
             NPC.noGravity = false;
             NPC.noTileCollide = false;
             NPC.lavaImmune = true;
             NPC.value = 430000;
             NPC.width = 28;
-            NPC.knockBackResist = 0.1f;
+            NPC.knockBackResist = 0f;
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
@@ -37,9 +38,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
 
-        int darkBeadDamage = 81;
+        int darkBeadDamage = 91;
         int darkOrbDamage = 94;
-        int seekerDamage = 69;
+        int seekerDamage = 79;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -72,6 +73,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         float NPCSpawningTimer;
+        float NPCSpawningTimer2;
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -141,10 +143,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public void SpawnNPCs()
         {
-            NPCSpawningTimer += (Main.rand.Next(2, 5) * 0.1f);
+            NPCSpawningTimer++;
+            NPCSpawningTimer2++;
+            //NPCSpawningTimer += (Main.rand.Next(2, 5) * 0.1f);
             if (NPCSpawningTimer >= 10f)
             {
-                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightPhantom>()) < 200) && Main.rand.NextBool(130))
+                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightPhantom>()) < 4) && Main.rand.NextBool(250))
                 {
                     int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightPhantom>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
@@ -155,21 +159,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     }
                 }
-                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightNemesis>()) < 2) && Main.rand.NextBool(3000))
+                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightNemesis>()) < 2) && Main.rand.NextBool(2000))
                 {
                     int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
                     Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
+                    NPCSpawningTimer = 0;
                     if (Main.netMode == 2)
                     {
                         NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
                     }
                 }
-                if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.TaurusKnight>()) < 1) && Main.rand.NextBool(2050))
+                
+            }
+            if (NPCSpawningTimer2 >= 5000f)
+            {
+                if (NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.TaurusKnight>()) < 1)
                 {
                     int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
                     Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
+                    NPCSpawningTimer2 = 0;
                     if (Main.netMode == 2)
                     {
                         NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
@@ -213,6 +223,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public void OolacileTeleport()
         {
+            //bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
+
             if ((TeleportTimer >= 200 && NPC.life > NPC.lifeMax / 4) || (TeleportTimer >= 120 && NPC.life <= NPC.lifeMax / 4))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);

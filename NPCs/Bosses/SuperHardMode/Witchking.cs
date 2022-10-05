@@ -23,17 +23,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void SetDefaults()
         {
             NPC.npcSlots = 5;
-            NPC.aiStyle = 3;
+            //NPC.aiStyle = 3;
             NPC.height = 45;
             NPC.width = 30;
-            NPC.damage = 150;
+            NPC.damage = 220;
             NPC.defense = 10;
             NPC.lifeMax = 60000;
             NPC.scale = 1.1f;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.value = 350000;
-            NPC.knockBackResist = 0.001f;
+            NPC.knockBackResist = 0.0f;
             NPC.boss = true;
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
@@ -44,6 +44,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             despawnHandler = new NPCDespawnHandler("The Witchking claims another victim...", Color.Purple, DustID.PurpleTorch);
         }
 
+        float poisonStrikeTimer = 0;
+        float poisonStormTimer = 0;
+        int chargeTelegraphTimer = 0;
         int blackBreathDamage = 53;
         bool defenseBroken = false;
 
@@ -56,27 +59,62 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Main.rand.NextBool(2))
-            {
+            
                 target.AddBuff(BuffID.Weak, 7200);
                 target.AddBuff(BuffID.Bleeding, 1200);
                 target.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 8200);
+            
+        }
+
+        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        {
+            if (NPC.justHit && Main.rand.NextBool(12))
+            {
+                tsorcRevampAIs.Teleport(NPC, 25, true);
+                
+            }
+            if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(12))//
+            {
+                NPC.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
+                float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-9f, -6f);
+                NPC.velocity.X = v;
+                NPC.netUpdate = true;
+            }
+
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        {
+            if (Main.rand.NextBool(8))
+            {
+                poisonStrikeTimer = 70f;
+                NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f);
+                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 4f);
+               
+                NPC.netUpdate = true;
+
+            }
+
+            if (NPC.justHit && Main.rand.NextBool(25))
+            {
+                tsorcRevampAIs.Teleport(NPC, 25, true);
+                poisonStrikeTimer = 0f;
             }
         }
 
-
-
         #region AI
-        #region Movement
+        
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+            tsorcRevampAIs.FighterAI(NPC, 0.8f, canTeleport: false, enragePercent: 0.5f, enrageTopSpeed: 1.6f); 
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             if (NPC.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
             {
                 defenseBroken = true;
             }
-
+            /*
+            #region Movement
             bool flag2 = false;
             int num5 = 60;
             bool flag3 = true;
@@ -325,9 +363,48 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
             #endregion
+            */
+
+            // charge forward code 
+            if (Main.rand.NextBool(400) && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                chargeDamageFlag = true;
+
+            }
+            if (chargeDamageFlag == true)
+            {
+                chargeTelegraphTimer++;
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                if (Main.rand.NextBool(2))
+                {
+                    int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1f);
+
+                    Main.dust[pink].noGravity = true;
+                }
+
+                if (chargeTelegraphTimer >= 120 && chargeTelegraphTimer <= 130)
+                {
+
+                    Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                    NPC.velocity.X = (float)(Math.Cos(rotation) * 11) * -1; //7 was 11
+                    NPC.velocity.Y = (float)(Math.Sin(rotation) * 11) * -1;
+                    NPC.ai[1] = 1f;
+
+                    NPC.netUpdate = true;
+                }
+
+                if (chargeTelegraphTimer > 130)
+                {
+                    chargeDamageFlag = false;
+                    chargeTelegraphTimer = 0;
+                }
+
+            }
+
+            /*
             #region Charge
-            //if(Main.netMode != 1)
-            //{
+            
             if (Main.rand.NextBool(300))
             {
                 chargeDamageFlag = true;
@@ -340,19 +417,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (chargeDamageFlag == true)
             {
-                NPC.damage = 150;
+                NPC.damage = 250;
                 chargeDamage++;
             }
             if (chargeDamage >= 101)
             {
                 chargeDamageFlag = false;
-                NPC.damage = 100;
+                NPC.damage = 200;
                 chargeDamage = 0;
             }
             #endregion
+            */
             #region Projectiles
-            customAi1 += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
-
+            //customAi1 += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
+            customAi1++;
             //Proximity Debuffs
             Player player = Main.player[NPC.target];
             if (NPC.Distance(player.Center) < 600)
@@ -365,19 +443,96 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (NPC.Distance(player.Center) < 150)
             {
                 player.AddBuff(BuffID.Silenced, 180, false);
-                player.AddBuff(BuffID.Bleeding, 180, false);
+                player.AddBuff(BuffID.Bleeding, 600, false);
             }
 
+            bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
 
-            if (customAi1 >= 10f)
+            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStrikeTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), 75, 8, clearLineofSight, true, SoundID.Item20, 0);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 700, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 95, 0, true, true, SoundID.Item100);
+
+            /*
+            if (poisonStormTimer == 699 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if ((customspawn1 < 36) && Main.rand.NextBool(800))
+                float num48 = 8f; //was 8f
+                Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                {
+                    float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                    num51 = num48 / num51;
+                    speedX *= num51;
+                    speedY *= num51;
+                    int type = ProjectileID.DemonScythe;//44;//0x37; //14;
+                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, blackBreathDamage, 0f, Main.myPlayer);
+                   
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                    customAi1 = 1f;
+                }
+
+            }
+            */
+
+            if (poisonStrikeTimer >= 60)//GREEN DUST
+            {
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CursedTorch, NPC.velocity.X, NPC.velocity.Y);
+            }
+
+            if (poisonStrikeTimer >= 110)//PINK DUST
+            {
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                if (Main.rand.NextBool(2))
+                {
+                    int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
+
+                    Main.dust[pink].noGravity = true;
+                }
+            }
+
+            if (Main.rand.NextBool(450) && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                poisonStrikeTimer = 120;
+            }
+
+            if (poisonStormTimer >= 520)//SHRINKING CIRCLE DUST
+            {
+                UsefulFunctions.DustRing(NPC.Center, 700 - poisonStormTimer, DustID.CrystalSerpent, 12, 4);
+                Lighting.AddLight(NPC.Center, Color.Blue.ToVector3() * 5);
+                if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
+                {
+                    //NPC.velocity = Vector2.Zero;
+                }
+
+            }
+
+            //IF HIT BEFORE PINK DUST TELEGRAPH, RESET TIMER, BUT CHANCE TO BREAK STUN LOCK
+            //(WORKS WITH 2 TELEGRAPH DUSTS, AT 60 AND 110)
+            if (NPC.justHit && poisonStrikeTimer <= 109)
+            {
+                if (Main.rand.NextBool(9))
+                {
+                    poisonStrikeTimer = 110;
+                }
+                else
+                {
+                    poisonStrikeTimer = 0;
+                }
+            }
+           
+
+
+
+            if (customAi1 >= 2000f)
+            {
+                if ((customspawn1 < 36) && Main.rand.NextBool(50))
                 { //was 2 and 900
                     int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.GhostOfTheDarkmoonKnight>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
                     Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
                     NPC.ai[0] = 20 - Main.rand.Next(180); //was 80
                     customspawn1 += 1f;
+                    customAi1 = 0;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
@@ -385,31 +540,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
 
-
-                if (Main.rand.NextBool(65))
-                {
-                    float num48 = 8f; //was 8f
-                    Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                    float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                    float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                    if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
-                    {
-                        float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                        num51 = num48 / num51;
-                        speedX *= num51;
-                        speedY *= num51;
-                        int type = ModContent.ProjectileType<Projectiles.Enemy.BlackBreath>();//44;//0x37; //14;
-                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, blackBreathDamage, 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 40;
-                        Main.projectile[num54].aiStyle = 1;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                        customAi1 = 1f;
-                    }
-                    NPC.netUpdate = true;
-                }
             }
-            //}
-
+            
+            /*
             #region Phase Through Walls
             if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
             {
@@ -430,7 +563,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.velocity.Y += 8f;
                 }
             }
-            #endregion           
+            #endregion    
+            */
         }
         #endregion
         #endregion

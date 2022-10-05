@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.lavaImmune = true;
             NPC.value = 660000;
             NPC.width = 28;
-            NPC.knockBackResist = 0.2f;
+            NPC.knockBackResist = 0f;
             NPC.buffImmune[BuffID.Poisoned] = true;
             //NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             despawnHandler = new NPCDespawnHandler("The Wyvern Mage's imprisoned shadow breaks free...", Color.DarkCyan, DustID.Demonite);
         }
 
-
+        int mageShadowTimer = 0;
         int frozenSawDamage = 55;
         int lightningDamage = 68;
         int Timer2 = -Main.rand.Next(200);
@@ -234,17 +234,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             
 
             NPC.ai[3]++;
+            mageShadowTimer++;
 
-            if (NPC.ai[3] >= 100) //how often the attack can happen in frames per second
+            if (mageShadowTimer >= 1000) //how often the attack can happen in frames per second
             {
                
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                        int Random = Main.rand.Next(60);
+                        
                         int Paraspawn = 0;
-                        if (Random == 0) Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 676 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
+                        Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 676 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
                         Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
-                        if (Random == 0) Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 676 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
+                        Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 676 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
                         Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
 
                         if (Main.netMode == NetmodeID.Server)
@@ -252,7 +253,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                             NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Paraspawn, 0f, 0f, 0f, 0);
                         }
 
-                    NPC.ai[3] = 0;
+                    mageShadowTimer = 0;
                 }
                 
             }

@@ -332,7 +332,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit5 with { Volume = 0.1f, Pitch = 0.0f }, NPC.Center); //
                 }
                 
-                NPC.netUpdate = true; //new
+               
 
                 FrostShotTimer = 0;
                 FrostShotCounter++;
@@ -355,53 +355,54 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
                 }
                 
-                NPC.netUpdate = true; //new
+                
 
                 FrostShot2Timer = 0;
                 FrostShot2Counter++;
 
             }
 
+            
 
-
-            //massive ice crystal shards falling down   
-            if (Main.rand.NextBool(240))
-            {
-                float num48 = 6f;
-                Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 1350 + Main.rand.Next(200)); //* 0.5
-                float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
-                float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
-                if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                //massive ice crystal shards falling down   
+                if (Main.rand.NextBool(250) && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                    num51 = num48 / num51;
-                    speedX *= num51;
-                    speedY *= num51;
-                    int type = ModContent.ProjectileType<Projectiles.Enemy.Okiku.MassiveCrystalShardsSpell>();
-                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, largeShardDamage, 0f, Main.myPlayer);
-                    Main.projectile[num54].timeLeft = 100;
-                    Main.projectile[num54].aiStyle = 4;
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.2f, Pitch = -0.9f }, NPC.Center); //ice materialize - good
-                    Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 2f);
-                    Dust.NewDust(NPC.position, NPC.width * 2, NPC.height * 2, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y);
-                    NPC.ai[3] = 0; ;
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.4f, Pitch = 0f }, NPC.Center); //item 29- sheen, 28- standard ice, item 30- magical ice
-                    //Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 120, 0.3f, .1f); //ice mist howl sounds crazy
-                    if (Main.rand.NextBool(5))
+
+                    float num48 = 6f;
+                    Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 1350 + Main.rand.Next(200)); //* 0.5
+                    float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
+                    float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
+                    if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                     {
-                        FrostShotCounter = 0;
+                        float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                        num51 = num48 / num51;
+                        speedX *= num51;
+                        speedY *= num51;
+                        int type = ModContent.ProjectileType<Projectiles.Enemy.Okiku.MassiveCrystalShardsSpell>();
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, largeShardDamage, 0f, Main.myPlayer);
+                        Main.projectile[num54].timeLeft = 100;
+                        Main.projectile[num54].aiStyle = 4;
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.2f, Pitch = -0.9f }, NPC.Center); //ice materialize - good
+                        Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 2f);
+                        Dust.NewDust(NPC.position, NPC.width * 2, NPC.height * 2, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y);
+                        NPC.ai[3] = 0; ;
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.4f, Pitch = 0f }, NPC.Center); //item 29- sheen, 28- standard ice, item 30- magical ice
+                        //Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 120, 0.3f, .1f); //ice mist howl sounds crazy
+                        if (Main.rand.NextBool(7))
+                        {
+                            FrostShotCounter = 0;
+                        }
+                        if (Main.rand.NextBool(6))
+                        {
+                            FrostShot2Counter = 0;
+                        }
                     }
-                    if (Main.rand.NextBool(4))
-                    {
-                        FrostShot2Counter = 0;
-                    }
+                
                 }
-                NPC.netUpdate = true;
-            }
 
             
             //ice storm horizontal attack
-            if (Main.rand.NextBool(160))
+            if (Main.rand.NextBool(180) && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 float num48 = 6f;
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width / 2), NPC.position.Y + (NPC.height / 2)); //.2 was .5
@@ -428,7 +429,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                    
 
                 }
-                NPC.netUpdate = true;
+               
             }
 
 

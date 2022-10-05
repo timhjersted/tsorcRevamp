@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             Main.npcFrameCount[NPC.type] = 8;
             NPC.width = 120;
             NPC.height = 160;
-            NPC.damage = 155;
+            NPC.damage = 255;
             NPC.defense = 70;
             NPC.aiStyle = 22;
             NPC.alpha = 100;
@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             AnimationType = -1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 450000;
+            NPC.lifeMax = 350000;
             NPC.timeLeft = 22500;
             NPC.friendly = false;
             NPC.noTileCollide = true;
@@ -55,8 +55,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         //chaos
         int holdTimer = 0;
 
-        int lightningDamage = 89;
-        int oracleDamage = 75;
+        int lightningDamage = 95;
+        int oracleDamage = 85;
         //We can override this even further on a per-NPC basis here
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -97,13 +97,13 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             //Proximity Debuffs
             if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1200)
             {
-                player.AddBuff(BuffID.OnFire, 120, false); //on fire
-                player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
+                player.AddBuff(BuffID.OnFire, 30, false); //on fire
+                player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 30, false);
                 
                 if (holdTimer <= 0)
                 {
                     UsefulFunctions.BroadcastText("The Lich King emanates the heat of the Earth's magma core!", 255, 255, 0); //yellow
-                    holdTimer = 9000;
+                    holdTimer = 12000;
                 }
 
             }
@@ -114,7 +114,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             {
                 if (Main.rand.NextBool(90))
                 {
-                    Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
+                    Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 9);
                     projVector += Main.rand.NextVector2Circular(20, 20);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
@@ -122,7 +122,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 }
                 if (Main.rand.NextBool(20))
                 {
-                    Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 12);
+                    Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 13);
                     projVector += Main.rand.NextVector2Circular(10, 10);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.TheOracle>(), oracleDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);

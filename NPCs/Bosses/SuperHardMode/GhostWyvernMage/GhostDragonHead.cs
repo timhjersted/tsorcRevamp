@@ -12,19 +12,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
     {
         public override void SetDefaults()
         {
-            //NPC.netAlways = true;
+            NPC.netAlways = true;
             NPC.npcSlots = 1;
             NPC.width = 45;
             NPC.height = 45;
             DrawOffsetY = drawOffset;
-            NPC.aiStyle = 6;
+            NPC.aiStyle = 6; 
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22750;
-            NPC.damage = 115;
+            NPC.damage = 185;
             NPC.defense = 120;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath10;
-            NPC.lifeMax = 760000;
+            NPC.lifeMax = 700000;
             NPC.boss = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -66,7 +66,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             NPC.localAI[1]++;
             NPC.localAI[2]++;
-            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<GhostDragonHead>(), bodyTypes, ModContent.NPCType<GhostDragonTail>(), 23, 10f, 9f, 0.01f, true, false, true, false, false);//.01 was .23, 0 was -2
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<GhostDragonHead>(), bodyTypes, ModContent.NPCType<GhostDragonTail>(), 23, 10f, 15f, 0.13f, true, false, true, false, false);//.01 was .23, 0 was -2
 
             Player player = Main.player[NPC.target];
             if (NPC.Distance(player.Center) > 700)
@@ -76,8 +76,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             //tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 660, ProjectileID.FrostWave, lightningDamage, 1, Main.rand.NextBool(200), false, SoundID.Item20);
             
             //this makes the head always stay in the same position even when it flips upside down
-            if (NPC.velocity.X < 0f) { NPC.spriteDirection = 1; }//was 1
-            else  //both -1 is correct
+            if (NPC.velocity.X < 0f) { NPC.spriteDirection = 1; }
+            else  
             if (NPC.velocity.X > 0f) { NPC.spriteDirection = -1; }
         }
 
