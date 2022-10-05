@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.defense = 56;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 500;
+            NPC.lifeMax = 1000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.noGravity = false;
@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.lavaImmune = true;
             NPC.value = 0;
             NPC.width = 28;
-            NPC.knockBackResist = 0.2f;
+            NPC.knockBackResist = 0f;
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
@@ -87,7 +87,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
             // npc.ai[2]++; // Shots
 
-            if (NPC.life < 201)
+            if (NPC.life < 301)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, Type: DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y, 150, Color.Blue, 1f);
                 Main.dust[dust].noGravity = true;

@@ -236,10 +236,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.ai[3]++;
             mageShadowTimer++;
 
-            if (mageShadowTimer >= 1000) //how often the attack can happen in frames per second
+            if (NPC.ai[3] >= 100) //how often the attack can happen in frames per second
             {
                
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (mageShadowTimer >= 900 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                         
                         int Paraspawn = 0;
@@ -254,8 +254,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                         }
 
                     mageShadowTimer = 0;
+                    
                 }
-                
+                NPC.ai[3] = 0;
+
             }
 
             NPC.ai[3] += 1; // my attempt at adding the timer that switches back to the shadow orb
