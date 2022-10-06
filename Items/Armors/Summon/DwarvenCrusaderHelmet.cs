@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Armors.Summon
                 "\nSet Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active" +
                 "\nDefense, minion slots and whip range are not affected by this" +
                 "\nIncreases life regen by 4" +
-                "\nIncreases whip range by 25%");
+                "\nIncreases whip range by 30%");
         }
 
         public override void SetDefaults()
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             player.onHitDodge = true;
 
-            player.whipRangeMultiplier += 0.25f;
+            player.whipRangeMultiplier += 0.3f;
 
             player.lifeRegen += 4;
 
