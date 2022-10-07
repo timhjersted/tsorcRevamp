@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             Tooltip.SetDefault("Forged by those who brave Annihilation" +
                 "\n+27% whip damage" +
-                "\nSet bonus: Increases whip range by 25%" +
+                "\nSet bonus: Increases whip range by 30%" +
                 "\nIncreases summon attack speed by 25%, this gets doubled when under 50% health");
             ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = false;
         }
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateArmorSet(Player player)
         {
-            player.whipRangeMultiplier += 0.25f;
+            player.whipRangeMultiplier += 0.3f;
             player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
 
             if (player.statLife <= (player.statLifeMax / 2))
