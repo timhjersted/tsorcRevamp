@@ -454,6 +454,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.Summon.WitchkingTop>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.Summon.WitchkingBottoms>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.CovenantOfArtorias>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BossItems.DarkMirror>()));
             itemLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonAdventureModeRule, ModContent.ItemType<BrokenStrangeMagicRing>()));
         }
     }
