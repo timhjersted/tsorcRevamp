@@ -232,6 +232,7 @@ namespace tsorcRevamp
                 //6, 7, 8, 9, 22, 37, 58, 63, 64, 65, 66, 67, 67, 68, 107, 108, 111, 166, 167, 168, 169, 211, 221, 222, 223, //All Ores
                 //50, //books (Boss tome can be bought, or a few books can be found in the village for crafting it)
                 //56, 79, 85, //obsidian, beds, tombstones (misc notable disables)
+                TileID.Demonite,
                 4, 12, 13, 236, 215, // torches, Heart crystal, tabled bottles, life fruit, campfires, 
                 5, 20, 72, 323, 571, 583, 584, 585, 586, 587, 588, 589, 590, 595, 596, 615, 616, // all trees and saplings
                 14, 469, 94, 125, 217, 218, 228, 243, 622, //tables, specialized crafting stations
@@ -260,7 +261,7 @@ namespace tsorcRevamp
                 33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
                 128, 269, 470, 378, 240, 560, //all mannequins, target dummy, trophies
-                320, 380, 27, 53, 112, 116, 234, //thin ice (breakable kind), seaweed/herb planters, sunflower, all sands
+                320, 380, 27, //thin ice (breakable kind), seaweed/herb planters, sunflower, all sands
             };
             #endregion
             //--------

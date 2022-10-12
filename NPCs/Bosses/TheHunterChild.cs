@@ -76,9 +76,13 @@ namespace tsorcRevamp.NPCs.Bosses
             if (NPC.ai[0] > 0) NPC.ai[0] -= hitTime / 10;
             //dusts get bigger as damage taken increases
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 89, NPC.velocity.X, NPC.velocity.Y, 200, default, 0.01f + (5.5f * (NPC.ai[0] / (NPC.lifeMax / 10)))); //.1 was 0.5f
-            Main.dust[dust].noGravity = true;
 
+            Player player = Main.player[NPC.target];
+            if (player.HasBuff(BuffID.Hunter) || player.HasItem(ModContent.ItemType<Items.Potions.PermanentPotions.PermanentHunterPotion>()))
+            {
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 89, NPC.velocity.X, NPC.velocity.Y, 200, default, 0.01f + (5.5f * (NPC.ai[0] / (NPC.lifeMax / 10)))); //.1 was 0.5f
+                Main.dust[dust].noGravity = true;
+            }
 
             flapWings++;
 
@@ -94,7 +98,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 flapWings = 0;
             }
 
-            Player player = Main.player[NPC.target];
             //getting close triggers hunter vision
             if (NPC.Distance(player.Center) < 80)
             {
@@ -262,16 +265,26 @@ namespace tsorcRevamp.NPCs.Bosses
             if (NPC.ai[3] == 0)
             {
                 
-                if (player.HasBuff(BuffID.Hunter))
-                { NPC.alpha = 50; }
-                else { NPC.alpha = 255; }
+                if (player.HasBuff(BuffID.Hunter) || player.HasItem(ModContent.ItemType<Items.Potions.PermanentPotions.PermanentHunterPotion>()))
+                { 
+                    NPC.alpha = 50; 
+                }
+                else
+                { 
+                    NPC.alpha = 255; 
+                }
                 Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
             }
             else
             {
-                if (player.HasBuff(BuffID.Hunter))
-                { NPC.alpha = 150; }
-                else { NPC.alpha = 255; }
+                if (player.HasBuff(BuffID.Hunter) || player.HasItem(ModContent.ItemType<Items.Potions.PermanentPotions.PermanentHunterPotion>()))
+                { 
+                    NPC.alpha = 150; 
+                }
+                else
+                { 
+                    NPC.alpha = 255; 
+                }
                 Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
             }
         }
