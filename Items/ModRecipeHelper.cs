@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items
             PermaPotionRecipeS(mod, ItemID.LifeforcePotion, ModContent.ItemType<PermanentLifeforcePotion>());
             PermaPotionRecipeS(mod, ItemID.ManaRegenerationPotion, ModContent.ItemType<PermanentManaRegenerationPotion>());
             PermaPotionRecipeS(mod, ItemID.GoldenDelight, ModContent.ItemType<PermanentGoldenDelight>());
-            PermaPotionRecipeC(mod, ItemID.FeatherfallPotion, ModContent.ItemType<PermanentFeatherfallPotion>());
+            PermaPotionRecipeS(mod, ItemID.FeatherfallPotion, ModContent.ItemType<PermanentFeatherfallPotion>());
             #endregion
             #region add a tier recipes
             PermaPotionRecipeA(mod, ItemID.Ale, ModContent.ItemType<PermanentAle>());
