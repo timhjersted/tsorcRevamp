@@ -807,11 +807,6 @@ namespace tsorcRevamp
             {
                 PowerfulCurseLevel = 1; //Not sure why 1 is the default
             }
-
-            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {
-                Player.buffImmune[BuffID.Shine] = true;
-            }
         }
 
         public override void PostUpdateEquips()
