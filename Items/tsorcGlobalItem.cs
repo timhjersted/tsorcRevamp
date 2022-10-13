@@ -73,7 +73,7 @@ namespace tsorcRevamp.Items
         
         public override bool CanEquipAccessory(Item item, Player player, int slot, bool modded)
         {
-            if(item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0)
+            if(item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0 && !player.HasItem(ModContent.ItemType<Items.Weapons.DebugTome>()))
             {
                 if (!NPC.downedMechBoss3)
                 {
@@ -85,18 +85,9 @@ namespace tsorcRevamp.Items
         
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
-            if (item.createTile > 0 && !tsorcRevamp.PlaceAllowed.Contains(item.createTile))
+            if (hasSoulRecipe.Contains(item.type))
             {
-                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "[c/fc1c03:Can not be placed in adventure mode!]."));
-            }
-            if(item.type == ItemID.DirtRod && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
-            {
-                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "[c/fc1c03:This item is disabled in adventure mode!]."));
-            }
-            if (item.type == ItemID.Picksaw && !tsorcRevampWorld.SuperHardMode && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
-            {
-                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] by [c/aa00ff:Attraidies]"));
-                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "The only thing that will break it is his death..."));
+                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "RecipeTooltip", $"[i:{ModContent.ItemType<DarkSoul>()}][c/66fc03:Dark Soul recipe material]"));
             }
 
             if (item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0)
@@ -108,16 +99,41 @@ namespace tsorcRevamp.Items
                 }
             }
 
-            
-            if (tsorcRevamp.RestrictedHooks.Contains(item.type) && !NPC.downedBoss3 && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] and can't be used yet"));
-                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "You can see a strange [c/878787:skull] symbol glowing on its surface..."));
-            }
+                if (item.createWall > 0)
+                {
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "[c/fc1c03:Can not be placed in adventure mode!]"));
+                }
 
-            if (hasSoulRecipe.Contains(item.type))
-            {
-                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "RecipeTooltip", $"[i:{ModContent.ItemType<DarkSoul>()}][c/66fc03:Dark Soul recipe material]"));
+                if(item.createTile > -1)
+                {
+                    if (tsorcRevamp.PlaceAllowed.Contains(item.createTile) || tsorcRevamp.CrossModTiles.Contains(item.createTile) || tsorcRevamp.PlaceAllowedModTiles.Contains(item.createTile))
+                    {
+                        tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Enabled", "[c/1cfc03:Can be placed in adventure mode!]"));
+                    }
+                    else
+                    {
+                        tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "[c/fc1c03:Can not be placed in adventure mode!]."));
+                    }
+                }
+
+                if (item.type == ItemID.DirtRod)
+                {
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "[c/fc1c03:This item is disabled in adventure mode!]."));
+                }
+
+                if (item.type == ItemID.Picksaw && !tsorcRevampWorld.SuperHardMode)
+                {
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] by [c/aa00ff:Attraidies]"));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "The only thing that will break it is his death..."));
+                }
+
+                if (tsorcRevamp.RestrictedHooks.Contains(item.type) && !NPC.downedBoss3)
+                {
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] and can't be used yet"));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "You can see a strange [c/878787:skull] symbol glowing on its surface..."));
+                }
             }
         }
 

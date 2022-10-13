@@ -213,7 +213,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 }
                 if (chatState == 9)
                 {
-                    Main.npcChatText = "Bearer of the Curse, the Estus Flask will no doubt prove" + "\nto be invaluable on your journey. Farewell.";
+                    Main.npcChatText = "Bearer of the Curse, these lifegems will no doubt prove" + "\nto be invaluable on your journey. Farewell.";
                     player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift = true;
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulShekel>(), 100);

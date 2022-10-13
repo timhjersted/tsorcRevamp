@@ -1418,6 +1418,9 @@ namespace tsorcRevamp
                 PhazonCorruption = false;
                 Falling = false;
                 FracturingArmor = 1;
+                tsorcRevampEstusPlayer estusPlayer = Player.GetModPlayer<tsorcRevampEstusPlayer>();
+                estusPlayer.isDrinking = false;
+                estusPlayer.estusDrinkTimer = 0;
             }
         }
 
