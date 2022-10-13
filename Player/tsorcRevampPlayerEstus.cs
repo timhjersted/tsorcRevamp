@@ -67,7 +67,7 @@ namespace tsorcRevamp
         public override void PostUpdateBuffs()
         {
             if (Player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && !Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200])
-                && estusChargesCurrent != estusChargesMax && Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift) //When the player visits a bonfire, restore charges
+                && estusChargesCurrent != estusChargesMax && Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) //When the player visits a bonfire, restore charges
             {
                 estusChargesCurrent = estusChargesMax;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f }, Player.position);
