@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories.Expert
+namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class CrackedDragonStone : ModItem
     {

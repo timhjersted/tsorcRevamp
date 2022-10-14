@@ -590,18 +590,19 @@ namespace tsorcRevamp
 
             Vector2 targetLocation = Vector2.UnitY;
             bool foundTarget = false;
+            float distance = 9999999;
 
             for (int i = 0; i < 200; i++)
             {
                 if (!Main.npc[i].active) continue;
                 float toNPCEdge = (Main.npc[i].width / 2) + (Main.npc[i].height / 2); //make homing on larger targets more consistent
-
+                float npcDistance = projectile.Distance(Main.npc[i].Center);
                 //WithinRange is just faster Distance (skips sqrt)
-                if (Main.npc[i].CanBeChasedBy(projectile) && projectile.WithinRange(Main.npc[i].Center, homingRadius + toNPCEdge) && (!needsLineOfSight || Collision.CanHitLine(projectile.Center, 1, 1, Main.npc[i].Center, 1, 1)))
+                if (Main.npc[i].CanBeChasedBy(projectile) && projectile.WithinRange(Main.npc[i].Center, homingRadius + toNPCEdge) && (!needsLineOfSight || Collision.CanHitLine(projectile.Center, 1, 1, Main.npc[i].Center, 1, 1)) && npcDistance < distance)
                 {
                     targetLocation = Main.npc[i].Center;
                     foundTarget = true;
-                    break;
+                    distance = npcDistance;
                 }
             }
 

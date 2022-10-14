@@ -279,8 +279,9 @@ namespace tsorcRevamp
             Projectile.NewProjectile(Player.GetSource_Misc("Bloodsign"), Player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, Player.whoAmI);
             //Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath58.WithVolume(0.8f).WithPitchVariance(.3f), player.position);
 
-            //you died sound                    \
-            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/you-died") with { Volume = 0.4f }, Player.Center);
+            //you died sound
+            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/you-died") with { Volume = 0.4f });
+            
 
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.statLifeMax > 215)
             {
@@ -589,10 +590,11 @@ namespace tsorcRevamp
 
         public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit)
         {
-            if (BurningAura || BurningStone)
+            if ((BurningAura || BurningStone) && target.onFire == true)
             {
                 damage = (int)(damage * 1.05f);
             }
+
             if (OldWeapon)
             {
                 float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);

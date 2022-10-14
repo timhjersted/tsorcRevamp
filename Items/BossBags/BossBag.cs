@@ -144,7 +144,7 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Expert.CrackedDragonStone>(), 1));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.CrackedDragonStone>(), 1));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.EyeOfTheGods>(), 1));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.BarrierRing>(), 1));
         }

@@ -15,15 +15,12 @@ namespace tsorcRevamp.Items
             Tooltip.SetDefault("Consume to become the [c/6d8827:Bearer of the Curse]" +
                                "\nPlaying as the [c/6d8827:Bearer of the Curse] has the following effects:" +
                                "\nYou deal +20% damage(multiplicative), receive +20% more souls and your stamina recovers much faster" +
-                               "\nHowever, using weapons drains stamina, life regen is halved while stamina isn't at max," +
-                               "\nminions do not benefit from this damage bonus and cap your stamina at 70%" +
+                               "\nHowever, [c/dd3333:using weapons drains stamina], life regen is halved while stamina isn't at max," +
+                               "\nminions do not benefit from the damage bonus and cap your stamina at 70%," +
                                "\nand each time you die you lose 20 of your max HP (doesn't drop lower than 200)" +
-                               "\nShine potions have no effect, you'll have to make use of other sources of light" +
-                               "\nGreater Magic Mirror use is inhibited; the Village Mirror will only" +
-                               "\ntake you to the village. Additionally, instant-heal items won't heal you" +
-                               "\nSeek out the Emerald Herald, perhaps she has a gift for you..." +
-                               "\n[c/ca1e00:This mode is intended for players experienced with the mod, and is not recommended]" +
-                               "\n[c/ca1e00:on first playthroughs. There is now one symbolic reward for beating the game as the Bearer of the Curse.]");
+                               "\nGreater Magic Mirror use is prohibited, and instant-heal items won't heal you" +
+                               "\n[c/ca1e00:This mode is intended for players experienced with the mod]" +
+                               "\n[c/ca1e00:It is not reccomended on first playthroughs.]");
 
             ItemID.Sets.ItemNoGravity[Item.type] = true; // Makes item float in world.
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(20, 6));

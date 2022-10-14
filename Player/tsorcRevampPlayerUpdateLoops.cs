@@ -1417,6 +1417,11 @@ namespace tsorcRevamp
                 estusPlayer.isDrinking = false;
                 estusPlayer.estusDrinkTimer = 0;
             }
+
+            if(Player.respawnTimer > 600 && !tsorcRevampWorld.BossAlive)
+            {
+                Player.respawnTimer = 600;
+            }
         }
 
         public override void PostUpdateMiscEffects() {
