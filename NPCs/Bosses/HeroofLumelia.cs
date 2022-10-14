@@ -553,7 +553,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (boredTeleport == 900)
                     {
                         customAi1 = 1f;
-                        tsorcRevampAIs.Teleport(NPC, 10, false);
+                        tsorcRevampAIs.Teleport(NPC, 12, false);
                         boredTeleport = 0;
                     }
                 }

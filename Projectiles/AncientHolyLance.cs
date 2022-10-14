@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.width = 45;
             Projectile.height = 45;
             Projectile.aiStyle = 19;
-            Projectile.penetrate = 5;
+            Projectile.penetrate = 9999;
             Projectile.timeLeft = 3600;
             Projectile.friendly = true; //can hit enemies
             Projectile.hostile = false; //can hit player / friendly NPCs

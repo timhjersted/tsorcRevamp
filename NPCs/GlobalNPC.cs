@@ -2279,6 +2279,10 @@ namespace tsorcRevamp.NPCs
             {
                 //Pick a random point to target. Make sure it's at least 11 blocks away from the player to avoid cheap hits.
                 Vector2 teleportTarget = Vector2.Zero;
+                if(range < 12)
+                {
+                    range = 12;
+                }
                 teleportTarget.X = Main.rand.Next(11, range);
                 if (Main.rand.NextBool())
                 {
