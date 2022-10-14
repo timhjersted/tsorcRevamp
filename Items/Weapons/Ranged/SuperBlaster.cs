@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -27,14 +28,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.value = 25000;
             Item.scale = 0.7f;
             Item.rare = ItemRarityID.Orange;
-            Item.shoot = Mod.Find<ModProjectile>("SuperBlasterShot").Type;
+            Item.shoot = ModContent.ProjectileType<SuperBlasterShot>();
             Item.shootSpeed = 18f;
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(null, "Blaster");
+            recipe.AddIngredient(ModContent.ItemType<Blaster>());
             recipe.AddIngredient(ItemID.HellstoneBar, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
             recipe.AddTile(TileID.DemonAltar);

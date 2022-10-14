@@ -2,7 +2,7 @@
 using Terraria.ModLoader;
 using Terraria;
 
-namespace tsorcRevamp.Items.Weapons.Ranged
+namespace tsorcRevamp.Items.Weapons.Ranged.Bows
 {
     public class Gastraphetes : ModItem
     {

@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -29,14 +30,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.rare = ItemRarityID.Pink;
             Item.crit = 5;
             Item.UseSound = SoundID.Item40;
-            Item.shoot = Mod.Find<ModProjectile>("SentenzaShot").Type;
+            Item.shoot = ModContent.ProjectileType<SentenzaShot>();
             Item.shootSpeed = 26f;
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(null, "Blackhawk");
+            recipe.AddIngredient(ModContent.ItemType<Blackhawk>());
             recipe.AddIngredient(ItemID.HallowedBar, 10);
             recipe.AddIngredient(ItemID.SoulofNight, 20);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);

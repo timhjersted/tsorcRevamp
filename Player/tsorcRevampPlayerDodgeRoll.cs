@@ -157,7 +157,7 @@ namespace tsorcRevamp
                 }
 
 
-                if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Ranged.ArtemisBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.SagittariusBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()))
+                if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.ArtemisBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.SagittariusBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>()))
                 {
                     Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .5f;
                 }

@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged
+namespace tsorcRevamp.Items.Weapons.Ranged.RocketLaunchers
 {
     class Blast : ModItem
     {

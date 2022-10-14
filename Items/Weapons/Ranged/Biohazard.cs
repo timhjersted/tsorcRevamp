@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -31,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.value = PriceByRarity.Yellow_8;
             Item.scale = 0.8f;
             Item.rare = ItemRarityID.Yellow;
-            Item.shoot = Mod.Find<ModProjectile>("BiohazardShot").Type;
+            Item.shoot = ModContent.ProjectileType<BiohazardShot>();
             Item.shootSpeed = 10f;
         }
 
@@ -54,14 +55,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged
                 Item.useTime = 22;
                 Item.useAnimation = 22;
                 Item.shootSpeed = 24.05f;
-                Item.shoot = ModContent.ProjectileType<Projectiles.BiohazardDetonator>();
+                Item.shoot = ModContent.ProjectileType<BiohazardDetonator>();
             }
             else
             {
                 Item.useTime = 14;
                 Item.useAnimation = 14;
                 Item.shootSpeed = 16.12f;
-                Item.shoot = ModContent.ProjectileType<Projectiles.BiohazardShot>();
+                Item.shoot = ModContent.ProjectileType<BiohazardShot>();
             }
 
             return base.CanUseItem(player);
@@ -114,7 +115,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("VirulentCatalyzer").Type);
+            recipe.AddIngredient(ModContent.ItemType<VirulentCatalyzer>());
             recipe.AddIngredient(ItemID.ShroomiteBar, 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
             recipe.AddTile(TileID.DemonAltar);

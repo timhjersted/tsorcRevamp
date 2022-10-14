@@ -357,7 +357,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             //no expert-exclusive item yet
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.FlareTome>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.ElfinBow>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.Bows.ElfinBow>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfChaos>(), 1, 3, 3));
         }

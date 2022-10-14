@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items
                 {
                     return true;
                 }
-                else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * .8f && !item.CountsAsClass(DamageClass.Melee) && !(item.type == ModContent.ItemType<Weapons.Ranged.SagittariusBow>() || item.type == ModContent.ItemType<Weapons.Ranged.ArtemisBow>() || item.type == ModContent.ItemType<Weapons.Ranged.CernosPrime>()))
+                else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * .8f && !item.CountsAsClass(DamageClass.Melee) && !(item.type == ModContent.ItemType<Weapons.Ranged.Bows.SagittariusBow>() || item.type == ModContent.ItemType<Weapons.Ranged.Bows.ArtemisBow>() || item.type == ModContent.ItemType<Weapons.Ranged.Bows.CernosPrime>()))
                 {
                     return false;
                 }

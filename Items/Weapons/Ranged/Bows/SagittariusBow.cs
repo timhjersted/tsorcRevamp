@@ -4,7 +4,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged
+namespace tsorcRevamp.Items.Weapons.Ranged.Bows
 {
     class SagittariusBow : ModItem
     {
@@ -42,8 +42,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("ArtemisBow").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 5);
+            recipe.AddIngredient(ModContent.ItemType<ArtemisBow>());
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
             recipe.AddTile(TileID.DemonAltar);
 

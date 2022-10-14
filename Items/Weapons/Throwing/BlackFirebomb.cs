@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Throwing
 {
@@ -23,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Throwing
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = 500;
-            Item.shoot = Mod.Find<ModProjectile>("BlackFirebomb").Type;
+            Item.shoot = ModContent.ProjectileType<BlackFirebombProj>();
             Item.shootSpeed = 6.5f;
             Item.useAnimation = 50;
             Item.useTime = 50;
@@ -35,8 +36,8 @@ namespace tsorcRevamp.Items.Weapons.Throwing
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe(2);
-            recipe.AddIngredient(Mod.Find<ModItem>("Firebomb").Type, 2);
-            recipe.AddIngredient(Mod.Find<ModItem>("CharcoalPineResin").Type);
+            recipe.AddIngredient(ModContent.ItemType<Firebomb>(), 2);
+            recipe.AddIngredient(ModContent.ItemType<CharcoalPineResin>());
             recipe.AddIngredient(ItemID.SoulofNight);
             recipe.Register();
         }

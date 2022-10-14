@@ -2,7 +2,7 @@
 using Terraria.ModLoader;
 using Terraria;
 
-namespace tsorcRevamp.Items.Weapons.Ranged
+namespace tsorcRevamp.Items.Weapons.Ranged.Thrown
 {
     class EphemeralThrowingSpear : ModItem
     {
@@ -33,8 +33,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe(30);
-            recipe.AddIngredient(Mod.Find<ModItem>("RoyalThrowingSpear").Type, 30);
-            recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 5);
+            recipe.AddIngredient(ModContent.ItemType<RoyalThrowingSpear>(), 30);
+            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

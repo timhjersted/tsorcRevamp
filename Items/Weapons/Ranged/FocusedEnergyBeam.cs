@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
+using tsorcRevamp.Items.Ammo;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -28,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.noMelee = true;
             Item.autoReuse = true;
             Item.rare = ItemRarityID.Red;
-            Item.useAmmo = Mod.Find<ModItem>("TeslaBolt").Type;
+            Item.useAmmo = ModContent.ItemType<TeslaBolt>();
             Item.shootSpeed = 30;
             Item.useAnimation = 45;
             Item.useTime = 45;
@@ -42,8 +43,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);
-            recipe.AddIngredient(Mod.Find<ModItem>("CompactFrame").Type);
-            recipe.AddIngredient(Mod.Find<ModItem>("DestructionElement").Type);
+            recipe.AddIngredient(ModContent.ItemType<CompactFrame>());
+            recipe.AddIngredient(ModContent.ItemType<DestructionElement>());
             recipe.AddIngredient(ItemID.SpaceGun, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
 

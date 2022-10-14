@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -29,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.value = 20000;
             Item.scale = 0.7f;
             Item.rare = ItemRarityID.Blue;
-            Item.shoot = Mod.Find<ModProjectile>("BlasterShot").Type;
+            Item.shoot = ModContent.ProjectileType<BlasterShot>();
             Item.shootSpeed = 14f;
         }
 

@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 using Terraria;
 
 
-namespace tsorcRevamp.Items.Weapons.Ranged
+namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 {
     class HighCaliberRifle : ModItem
     {

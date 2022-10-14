@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -31,14 +32,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.crit = 5;
             Item.UseSound = SoundID.Item40;
             //item.autoReuse = true;
-            Item.shoot = Mod.Find<ModProjectile>("APShot").Type;
+            Item.shoot = ModContent.ProjectileType<APShot>();
             Item.shootSpeed = 26f;
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(null, "Silversix");
+            recipe.AddIngredient(ModContent.ItemType<Silversix>());
             recipe.AddIngredient(ItemID.HallowedBar, 10);
             recipe.AddIngredient(ItemID.PixieDust, 35);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);

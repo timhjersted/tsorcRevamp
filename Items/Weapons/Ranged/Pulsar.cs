@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -33,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.value = 20000;
             Item.scale = 0.8f;
             Item.rare = ItemRarityID.Green;
-            Item.shoot = Mod.Find<ModProjectile>("PulsarShot").Type;
+            Item.shoot = ModContent.ProjectileType<PulsarShot>();
             Item.shootSpeed = 5f;
             //item.glowMask = TransparentTextureType.PulsarGlowmask;
         }

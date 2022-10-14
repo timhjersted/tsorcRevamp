@@ -57,9 +57,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Ranged.FocusedEnergyBeam>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<Items.GhostWyvernSoul>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<Items.BequeathedSoul>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<FocusedEnergyBeam>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200000);
             recipe.AddTile(TileID.DemonAltar);
 

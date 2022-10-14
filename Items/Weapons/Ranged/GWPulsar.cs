@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -29,13 +30,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.value = PriceByRarity.Pink_5;
             Item.scale = 0.8f;
             Item.rare = ItemRarityID.Pink;
-            Item.shoot = Mod.Find<ModProjectile>("GWPulsarShot").Type;
+            Item.shoot = ModContent.ProjectileType<GWPulsarShot>();
             Item.shootSpeed = 6.2f;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("Pulsar").Type);
+            recipe.AddIngredient(ModContent.ItemType<Pulsar>());
             recipe.AddIngredient(ItemID.HallowedBar, 8);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);

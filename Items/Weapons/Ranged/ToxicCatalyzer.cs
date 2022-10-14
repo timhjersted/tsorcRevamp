@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.value = 20000;
             Item.scale = 0.8f;
             Item.rare = ItemRarityID.Green;
-            Item.shoot = Mod.Find<ModProjectile>("ToxicCatShot").Type;
+            Item.shoot = ModContent.ProjectileType<ToxicCatShot>();
             Item.shootSpeed = 6.6f;
         }
 
@@ -52,13 +53,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             {
                 Item.useTime = 26;
                 Item.useAnimation = 26;
-                Item.shoot = ModContent.ProjectileType<Projectiles.ToxicCatDetonator>();
+                Item.shoot = ModContent.ProjectileType<ToxicCatDetonator>();
             }
             else
             {
                 Item.useTime = 18;
                 Item.useAnimation = 18;
-                Item.shoot = ModContent.ProjectileType<Projectiles.ToxicCatShot>();
+                Item.shoot = ModContent.ProjectileType<ToxicCatShot>();
             }
             return base.CanUseItem(player);
         }

@@ -3,13 +3,13 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged
+namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 {
-    public class RadiantStrand : ModItem
+    public class Barrage : ModItem
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Fires arrows of light which leave a damaging trail of energy as they fly");
+            Tooltip.SetDefault("Unleashes a storm of homing missiles toward your foes");
         }
         public override void SetDefaults()
         {
@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.knockBack = 1;
             Item.autoReuse = true;
             Item.shootSpeed = 16;
-            Item.useAmmo = AmmoID.Arrow;
+            Item.useAmmo = AmmoID.Rocket;
             Item.rare = ItemRarityID.Cyan;
             Item.value = PriceByRarity.Cyan_9;
             Item.shoot = 10;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            type = ModContent.ProjectileType<Projectiles.Ranged.RadiantStrand>();
+            type = ModContent.ProjectileType<Projectiles.Ranged.BarrageBlast>();
         }
 
         public override void AddRecipes()

@@ -623,7 +623,7 @@ namespace tsorcRevamp
                 float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
                 damage = (int)(damage * damageMult);
             }
-            if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>())
+            if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>())
             {
                 damage = (int)(damage * 0.55);
             }

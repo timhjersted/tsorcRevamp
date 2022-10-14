@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Throwing
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = 500;
-            Item.shoot = Mod.Find<ModProjectile>("Firebomb").Type;
+            Item.shoot = ModContent.ItemType<Firebomb>();
             Item.shootSpeed = 6.5f;
             Item.useAnimation = 50;
             Item.useTime = 50;

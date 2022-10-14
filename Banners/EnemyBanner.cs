@@ -321,6 +321,9 @@ namespace tsorcRevamp.Banners
                 case 83:
                     item = "VampireBatBanner";
                     break;
+                case 84:
+                    item = "ArchdeaconBanner";
+                    break;
 
                 default:
                     return;
@@ -595,6 +598,9 @@ namespace tsorcRevamp.Banners
                         break;
                     case 83:
                         type = "VampireBat";
+                        break;
+                    case 84:
+                        type = "Archdeacon";
                         break;
 
                     default:
@@ -1788,6 +1794,20 @@ namespace tsorcRevamp.Banners
         {
             base.SetDefaults();
             Item.placeStyle = 83; //change when texture added
+        }
+    }
+    public class ArchdeaconBanner : EnemyBanner
+    {
+
+        public override string Texture => "tsorcRevamp/Banners/placeholder";
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Nearby players get a bonus against: Archdeacon");
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Item.placeStyle = 84; //change when texture added
         }
     }
 

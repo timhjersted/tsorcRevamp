@@ -1,6 +1,7 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
+using tsorcRevamp.Items.Ammo;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -23,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.noMelee = true;
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ProjectileID.PurificationPowder;
-            Item.useAmmo = Mod.Find<ModItem>("Bolt").Type;
+            Item.useAmmo = ModContent.ItemType<Bolt>();
             Item.shootSpeed = 10;
             Item.useAnimation = 45;
             Item.UseSound = SoundID.Item5;

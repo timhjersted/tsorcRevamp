@@ -5,7 +5,7 @@ namespace tsorcRevamp.Projectiles
 {
     class Crissaegrim : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/Crissaegrim";
+        public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/Thrown/Crissaegrim";
         public override void SetDefaults()
         {
             Projectile.width = 28;

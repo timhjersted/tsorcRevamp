@@ -7,7 +7,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     public class BoulderDropRight : ModProjectile //for use in events. Boulder will roll right
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/ThrowingSpear"; //it's invis
+        public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/Thrown/ThrowingSpear"; //it's invis
 
         public override void SetStaticDefaults()
         {

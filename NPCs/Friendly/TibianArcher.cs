@@ -121,7 +121,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shop.item[nextSlot].shopCustomPrice = 180;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Ranged.OldLongbow>());
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Ranged.Bows.OldLongbow>());
                 shop.item[nextSlot].shopCustomPrice = 350;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
@@ -199,7 +199,7 @@ namespace tsorcRevamp.NPCs.Friendly
         }
         public override void DrawTownAttackGun(ref float scale, ref int item, ref int closeness)
         {
-            item = ModContent.ItemType<Items.Weapons.Ranged.ElfinBow>();
+            item = ModContent.ItemType<Items.Weapons.Ranged.Bows.ElfinBow>();
             scale = 1f;
             closeness = 20;
         }

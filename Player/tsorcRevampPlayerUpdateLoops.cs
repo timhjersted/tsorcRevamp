@@ -546,8 +546,8 @@ namespace tsorcRevamp
             #endregion
 
 
-            if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 10 && (Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.SagittariusBow>() || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.ArtemisBow>()
-                || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>() || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
+            if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 10 && (Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.SagittariusBow>() || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.ArtemisBow>()
+                || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>() || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
             {
                 Player.channel = false;
             }

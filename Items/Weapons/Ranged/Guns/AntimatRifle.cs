@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged
+namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 {
     public class AntimatRifle : ModItem
     {
@@ -46,10 +46,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.SniperRifle, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DestructionElement").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfChaos").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 20);
-            recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 100);
+            recipe.AddIngredient(ModContent.ItemType<DestructionElement>());
+            recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>());
+            recipe.AddIngredient(ModContent.ItemType<Humanity>(), 20);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 100);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 240000);
 
             recipe.AddTile(TileID.DemonAltar);

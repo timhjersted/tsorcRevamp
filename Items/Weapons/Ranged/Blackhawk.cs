@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -30,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.rare = ItemRarityID.LightRed;
             Item.crit = 5;
             Item.UseSound = SoundID.Item40;
-            Item.shoot = Mod.Find<ModProjectile>("SentenzaShot").Type;
+            Item.shoot = ModContent.ProjectileType<SentenzaShot>();
             Item.shootSpeed = 22f;
         }
 

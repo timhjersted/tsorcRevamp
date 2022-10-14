@@ -6,7 +6,7 @@ namespace tsorcRevamp.Projectiles
 {
     class HeavenSword : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/HeavenSword";
+        public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/Thrown/HeavenSword";
         public override void SetDefaults()
         {
             Projectile.width = 28;

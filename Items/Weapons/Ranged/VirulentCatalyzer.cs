@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -30,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.value = PriceByRarity.Pink_5;
             Item.scale = 0.8f;
             Item.rare = ItemRarityID.Pink;
-            Item.shoot = Mod.Find<ModProjectile>("VirulentCatShot").Type;
+            Item.shoot = ModContent.ProjectileType<VirulentCatShot>();
             Item.shootSpeed = 11f;
         }
 
@@ -53,14 +54,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged
                 Item.useTime = 24;
                 Item.useAnimation = 24;
                 Item.shootSpeed = 15f;
-                Item.shoot = ModContent.ProjectileType<Projectiles.VirulentCatDetonator>();
+                Item.shoot = ModContent.ProjectileType<VirulentCatDetonator>();
             }
             else
             {
                 Item.useTime = 15;
                 Item.useAnimation = 15;
                 Item.shootSpeed = 11f;
-                Item.shoot = ModContent.ProjectileType<Projectiles.VirulentCatShot>();
+                Item.shoot = ModContent.ProjectileType<VirulentCatShot>();
             }
 
             return base.CanUseItem(player);
@@ -113,7 +114,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("ToxicCatalyzer").Type);
+            recipe.AddIngredient(ModContent.ItemType<ToxicCatalyzer>());
             recipe.AddIngredient(ItemID.SpiderFang, 20);
             recipe.AddIngredient(ItemID.HallowedBar, 8);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);

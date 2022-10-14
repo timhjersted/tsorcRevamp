@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             Banner = NPC.type;
-            //BannerItem = ModContent.ItemType<Banners.Archdeacon>();
+            BannerItem = ModContent.ItemType<Banners.ArchdeaconBanner>();
         }
 
        

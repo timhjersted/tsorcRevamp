@@ -7,7 +7,7 @@ namespace tsorcRevamp.Projectiles
 {
     class ThrowingSpear : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/ThrowingSpear";
+        public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/Thrown/ThrowingSpear";
         public override void SetDefaults()
         {
             Projectile.friendly = true;

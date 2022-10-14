@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -30,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.scale = 0.8f;
             Item.rare = ItemRarityID.Lime;
             Item.autoReuse = true;
-            Item.shoot = Mod.Find<ModProjectile>("PolarisShot").Type;
+            Item.shoot = ModContent.ProjectileType<PolarisShot>();
             Item.shootSpeed = 8f;
         }
 
@@ -94,7 +95,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
 
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(null, "GWPulsar");
+            recipe.AddIngredient(ModContent.ItemType<GWPulsar>());
             recipe.AddIngredient(ItemID.LihzahrdPowerCell, 2);
             recipe.AddIngredient(ItemID.ShroomiteBar, 10);
             recipe.AddIngredient(ItemID.ElectrosphereLauncher);

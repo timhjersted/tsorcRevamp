@@ -3,9 +3,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged
+namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 {
-    class QuadroCannon : ModItem
+    class ExpulsorCannon : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -15,58 +15,47 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         }
         public override void SetDefaults()
         {
-            Item.width = 64;
+            Item.width = 56;
             Item.height = 24;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 16;
             Item.useTime = 4;
             Item.reuseDelay = 18;
-            Item.damage = 35;
-            Item.knockBack = 5;
-            Item.crit = 3;
+            Item.damage = 50;
+            Item.knockBack = 3;
+            Item.crit = 5;
+            Item.autoReuse = true;
             Item.UseSound = SoundID.Item11;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ItemRarityID.Purple;
             Item.shoot = ProjectileID.PurificationPowder;
-            Item.shootSpeed = 10;
+            Item.shootSpeed = 13;
+            Item.useAmmo = AmmoID.Bullet;
             Item.noMelee = true;
-            Item.value = PriceByRarity.Red_10;
+            Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Ranged;
             Item.autoReuse = true;
-            Item.useAmmo = AmmoID.Bullet;
-        }
-
-
-        public override Vector2? HoldoutOffset()
-        {
-            return new Vector2(-6, 2);
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("PhazonRifle").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 25);
-            recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
+            recipe.AddIngredient(ModContent.ItemType<QuadroCannon>());
+            recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
+            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 30);
+            //recipe.AddIngredient(ModContent.ItemType<SoulofBlight>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 90);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 280000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
         }
-
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             int ShotAmt = 4;
             int spread = 24;
             float spreadMult = 0.05f;
             type = ModContent.ProjectileType<Projectiles.PhazonRound>();
-
-            Vector2 muzzleOffset = Vector2.Normalize(speed) * 15f;
-            if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0))
-            {
-                position -= muzzleOffset;
-            }
-
             for (int i = 0; i < ShotAmt; i++)
             {
                 float vX = speed.X + Main.rand.Next(-spread, spread + 1) * spreadMult;
@@ -74,7 +63,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged
                 Projectile.NewProjectile(player.GetSource_ItemUse(Item), position, new Vector2(vX, vY), type, damage, knockBack, player.whoAmI);
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item11);
             }
-
             return false;
         }
 

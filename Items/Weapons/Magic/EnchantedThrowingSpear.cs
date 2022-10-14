@@ -1,6 +1,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
+using tsorcRevamp.Items.Weapons.Ranged.Thrown;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -39,9 +40,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("ThrowingSpear").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<ThrowingSpear>(), 1);
             recipe.AddIngredient(ItemID.SoulofLight, 3);
-            recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 30);
+            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 30);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
 
             recipe.AddTile(TileID.DemonAltar);
