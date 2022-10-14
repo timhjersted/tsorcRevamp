@@ -10,9 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Enchanted Molten Ring grants fire-walking ability and negates knockback" +
-                                "\n+10% Melee Damage" +
-                                "\nThe enchanted ring's power is fueled by a +5% mana cost");
+            Tooltip.SetDefault("\n+10% Melee Damage and Magma Stone effect");
         }
 
         public override void SetDefaults()
@@ -27,9 +25,9 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.HellstoneBar, 10);
-            recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 6);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
+            recipe.AddIngredient(ItemID.MagmaStone);
+            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 6);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -37,10 +35,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.fireWalk = true;
             player.GetDamage(DamageClass.Melee) += 0.1f;
-            player.noKnockback = true;
-            player.manaCost += 0.05f;
+            player.magmaStone = true;
         }
 
     }
