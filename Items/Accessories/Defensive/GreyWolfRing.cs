@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("One of the rings worn by Artorias." +
-                                "\nImmunity to the on-fire, bleeding, poisoned, and broken-armor debuffs." +
-                                "\n+22 defense within the Abyss, +10 defense otherwise." +
+                                "\nInherits Ring of Clarity effects" +
+                                "\n+22 defense within the Abyss, +10 defense otherwise" +
                                 "\nGrants Magma Stone and Fire Flask effect" +
                                 "\n+4 HP Regen. +120 Mana.");
         }
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("WolfRing").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("BandOfSupremeCosmicPower").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("PoisonbloodRing").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<RingOfClarity>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -43,12 +43,26 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             player.magmaStone = true;
             player.statManaMax2 += 120;
-            player.buffImmune[BuffID.OnFire] = true;
-            player.buffImmune[BuffID.BrokenArmor] = true;
-            player.buffImmune[BuffID.Bleeding] = true;
-            player.buffImmune[BuffID.Poisoned] = true;
             player.AddBuff(BuffID.WeaponImbueFire, 60, false);
 
+            player.GetDamage(DamageClass.Generic) += 0.03f;
+            player.noKnockback = true;
+            player.fireWalk = true;
+            player.buffImmune[BuffID.OnFire] = true;
+            player.buffImmune[BuffID.Bleeding] = true;
+            player.buffImmune[BuffID.Poisoned] = true;
+            player.buffImmune[BuffID.Burning] = true;
+            player.buffImmune[BuffID.Chilled] = true;
+            player.buffImmune[BuffID.CursedInferno] = true;
+            player.buffImmune[BuffID.BrokenArmor] = true;
+            player.buffImmune[BuffID.Ichor] = true;
+            player.buffImmune[BuffID.Slow] = true;
+            player.buffImmune[BuffID.Confused] = true;
+            player.buffImmune[BuffID.Gravitation] = true;
+            player.buffImmune[ModContent.BuffType<Buffs.Chilled>()] = true;
+
+            player.lifeRegen += 4;
+            player.statDefense += 9;
 
             if (Main.bloodMoon)
             { // Apparently this is the flag used in the Abyss?

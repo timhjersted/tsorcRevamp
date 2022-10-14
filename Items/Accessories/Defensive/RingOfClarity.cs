@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override string Texture => "tsorcRevamp/Items/Accessories/Defensive/PoisonbloodRing";
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The Ring of Clarity prevents confusion, gravitation disorientation, bleeding, and poisoning. \n+4 HP Regeneration and 9 defense");
+            Tooltip.SetDefault("Prevents a wide variety of debuffs, including many DoT effects. \n+ 3% damage, +4 regeneration, and 9 defense");
         }
         public override void SetDefaults()
         {
@@ -37,11 +37,21 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-
+            player.GetDamage(DamageClass.Generic) += 0.03f;
+            player.noKnockback = true;
+            player.fireWalk = true;
+            player.buffImmune[BuffID.OnFire] = true;
+            player.buffImmune[BuffID.Burning] = true;
+            player.buffImmune[BuffID.Chilled] = true;
+            player.buffImmune[BuffID.CursedInferno] = true;
+            player.buffImmune[BuffID.Ichor] = true;
+            player.buffImmune[BuffID.BrokenArmor] = true;
+            player.buffImmune[BuffID.Slow] = true;
             player.buffImmune[BuffID.Confused] = true;
             player.buffImmune[BuffID.Gravitation] = true;
             player.buffImmune[BuffID.Bleeding] = true;
             player.buffImmune[BuffID.Poisoned] = true;
+            player.buffImmune[ModContent.BuffType<Buffs.Chilled>()] = true;
 
             player.lifeRegen += 4;
             player.statDefense += 9;
