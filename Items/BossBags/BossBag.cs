@@ -418,7 +418,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.DragonStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BossItems.HellkiteStone>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.HiRyuuSpear>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Spears.HiRyuuSpear>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 22, 28));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulShekel>(), 1, 5, 10));

@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void SetDefaults()
         {
             Item.DamageType = DamageClass.Ranged;
-            Item.shoot = ModContent.ProjectileType<Projectiles.DarkTridentHeld>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Spears.DarkTridentHeld>();
             Item.channel = true;
 
             Item.damage = 90;
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
                 Item.useStyle = ItemUseStyleID.HoldUp;
             }
 
-            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<Projectiles.DarkTridentHeld>(), damage, knockback, player.whoAmI, type);
+            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<Projectiles.Spears.DarkTridentHeld>(), damage, knockback, player.whoAmI, type);
             return false;
         }
 

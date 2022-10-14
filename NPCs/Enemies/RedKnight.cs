@@ -380,7 +380,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 10));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.ForgottenPearlSpear>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Spears.ForgottenPearlSpear>(), 20));
 
 
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());

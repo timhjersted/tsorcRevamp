@@ -152,7 +152,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shop.item[nextSlot].shopCustomPrice = 4000;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenPearlSpear>());
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Spears.ForgottenPearlSpear>());
                 shop.item[nextSlot].shopCustomPrice = 4000;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
@@ -168,7 +168,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shop.item[nextSlot].shopCustomPrice = 6000;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenImpHalberd>());
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Spears.ForgottenImpHalberd>());
                 shop.item[nextSlot].shopCustomPrice = 6000;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
