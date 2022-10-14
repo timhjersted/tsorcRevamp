@@ -1796,6 +1796,8 @@ namespace tsorcRevamp.Banners
             Item.placeStyle = 83; //change when texture added
         }
     }
+
+    /*
     public class ArchdeaconBanner : EnemyBanner
     {
 
@@ -1809,7 +1811,7 @@ namespace tsorcRevamp.Banners
             base.SetDefaults();
             Item.placeStyle = 84; //change when texture added
         }
-    }
+    }*/
 
     #endregion
 
