@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
-    class Firebomb : ModProjectile
+    class FirebombProj : ModProjectile
     {
 
         public override void SetDefaults()

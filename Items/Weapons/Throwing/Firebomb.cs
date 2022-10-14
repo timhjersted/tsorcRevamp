@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Throwing
 {
@@ -23,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Throwing
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = 500;
-            Item.shoot = ModContent.ItemType<Firebomb>();
+            Item.shoot = ModContent.ProjectileType<FirebombProj>();
             Item.shootSpeed = 6.5f;
             Item.useAnimation = 50;
             Item.useTime = 50;

@@ -217,7 +217,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
         {
-            projType = ModContent.ProjectileType<Projectiles.Firebomb>();
+            projType = ModContent.ProjectileType<Projectiles.FirebombProj>();
             attackDelay = 5;
         }
 
