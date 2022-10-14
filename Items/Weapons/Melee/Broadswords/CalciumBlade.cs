@@ -20,11 +20,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.width = 61;
             Item.height = 74;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 25;
-            Item.useTime = 25;
+            Item.useAnimation = 33;
+            Item.useTime = 33;
             Item.maxStack = 1;
-            Item.damage = 33;
-            Item.knockBack = 7f;
+            Item.damage = 30;
+            Item.knockBack = 3.3f;
             Item.scale = 0.9f;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Green;
@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ItemID.Bone, 35);
+            recipe.AddIngredient(ItemID.Bone, 15);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
 
             recipe.AddTile(TileID.DemonAltar);

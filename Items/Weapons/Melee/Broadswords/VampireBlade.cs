@@ -18,9 +18,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.height = 40;
             Item.autoReuse = true;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 27;
-            Item.useTime = 23;
-            Item.damage = 48;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
+            Item.damage = 62;
             Item.knockBack = 2;
             Item.scale = 1.1f;
             Item.UseSound = SoundID.Item1;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.AdamantiteBar, 25);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 18);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 

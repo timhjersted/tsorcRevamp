@@ -12,13 +12,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Tooltip.SetDefault("Shatter the earth" +
                                 "\nBreaks walls and trees with amazing speed" +
                                 "\nAlso retains the pickaxe strength of the Molten Pickaxe" +
-                                "\nHold the cursor away from you to wield only as a weapon");
+                                "\nHold the cursor away from you to wield only as a weapon" +
+                                "\nSummons electrospheres upon hitting an enemy");
         }
-
         public override void SetDefaults()
         {
-            Item.width = 24;
-            Item.height = 28;
+            Item.width = 41;
+            Item.height = 42;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 25;
             Item.useTime = 14;
@@ -35,7 +35,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Melee;
         }
-
+        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        {
+            Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center, Vector2.Zero, ProjectileID.Electrosphere, damage, knockBack, Main.myPlayer);
+        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
