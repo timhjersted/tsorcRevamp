@@ -133,6 +133,15 @@ namespace tsorcRevamp.NPCs
             //machine temple (in water)
             if (spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
             {
+                if (!pool.ContainsKey(NPCID.GreenJellyfish))
+                {
+                    pool.Remove(NPCID.GreenJellyfish);
+                }
+                if (!pool.ContainsKey(ModContent.NPCType<Enemies.MutantToad>()))
+                {
+                    pool.Remove(ModContent.NPCType<Enemies.MutantToad>());
+                }
+
                 pool.Add(NPCID.GreenJellyfish, 8f);
                 pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 2f);
             }

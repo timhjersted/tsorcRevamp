@@ -229,7 +229,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         }
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
-            SetImmune(projectile, NPC);
+            if(projectile.DamageType != DamageClass.Melee)
+            {
+                SetImmune(projectile, NPC);
+            }
         }
 
         public override void BossLoot(ref string name, ref int potionType)

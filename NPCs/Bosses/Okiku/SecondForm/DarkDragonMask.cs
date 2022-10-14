@@ -80,7 +80,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
                 if (TimerSpawn == 1) //teleport above player right after dragon is killed
                 {
                     randPosX = nextRandPosX;
-                    nextRandPosX = Main.rand.Next(-250, 250);
+                    nextRandPosX = Main.rand.Next(-150, 150);
                     NPC.netUpdate = true;
                 }
 
@@ -88,7 +88,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
                 if (TimerSpawn <= 600)
                 {
                     NPC.position.X = Main.player[NPC.target].position.X + randPosX;
-                    NPC.position.Y = Main.player[NPC.target].position.Y - 300;
+                    NPC.position.Y = Main.player[NPC.target].position.Y - 250;
 
                     TimerRain++;
                     if (TimerRain >= 2)
