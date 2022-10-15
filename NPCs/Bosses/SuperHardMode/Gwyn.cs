@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.scale = 1.3f;
             Music = 12;
             NPC.damage = 105; //was 295
-            NPC.defense = ;
+            NPC.defense = 140;
             NPC.lifeMax = 1000000;
             NPC.knockBackResist = 0.01f;
             NPC.boss = true;
