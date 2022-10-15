@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void SetDefaults()
         {
             NPC.knockBackResist = 0;
-            NPC.damage = 105;
+            NPC.damage = 84;
             NPC.defense = 50;
             NPC.height = 40;
             NPC.width = 30;
@@ -37,16 +37,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             despawnHandler = new NPCDespawnHandler("Artorias, the Abysswalker stands victorious...", Color.Gold, DustID.GoldFlame);
         }
 
-        public int poisonStrikeDamage = 75;
-        public int redKnightsSpearDamage = 95;
-        public int redMagicDamage = 80;
-        public int burningSphereDamage = 289;
+        public int poisonStrikeDamage = 60;
+        public int redKnightsSpearDamage = 76;
+        public int redMagicDamage = 64;
+        public int burningSphereDamage = 231;
 
-        int darkBeadDamage = 90;
+        int darkBeadDamage = 72;
 
         
-        public int blackBreathDamage = 135;
-        public int phantomSeekerDamage = 140;
+        public int blackBreathDamage = 108;
+        public int phantomSeekerDamage = 112;
 
         //This attack does damage equal to 25% of your max health no matter what, so its damage stat is irrelevant and only listed for readability.
         public int gravityBallDamage = 0;

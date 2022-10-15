@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.aiStyle = 23;
             //NPC.timeLeft = 22500;
             NPC.knockBackResist = 0;
-            NPC.damage = 185;
+            NPC.damage = 130;
             NPC.defense = 35;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;

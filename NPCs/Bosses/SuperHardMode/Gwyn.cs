@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.scale = 1.3f;
             Music = 12;
             NPC.damage = 105; //was 295
-            NPC.defense = 220;
+            NPC.defense = ;
             NPC.lifeMax = 1000000;
             NPC.knockBackResist = 0.01f;
             NPC.boss = true;
@@ -45,38 +45,38 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         //old attacks, not all used
-        int deathBallDamage = 100; //200
-        int phantomSeekerDamage = 130; //225
-        int armageddonBallDamage = 110; //300
-        int holdBallDamage = 35;
-        int fireballBallDamage = 145;
-        int blazeBallDamage = 55;
-        int blackBreathDamage = 90;
-        int purpleCrushDamage = 155;
-        int iceStormDamage = 92;
-        int gravityBallDamage = 150;//300
+        int deathBallDamage = 75; //200
+        int phantomSeekerDamage = 97; //225
+        int armageddonBallDamage = 82; //300
+        int holdBallDamage = 26;
+        int fireballBallDamage = 108;
+        int blazeBallDamage = 41;
+        int blackBreathDamage = 67;
+        int purpleCrushDamage = 116;
+        int iceStormDamage = 69;
+        int gravityBallDamage = 112;//300
 
         //basilisk attacks
-        int cursedBreathDamage = 66; //100
-        int cursedFlamesDamage = 75; //100
-        int disruptDamage = 85;//203
-        int bioSpitDamage = 80;//185
-        int bioSpitfinalDamage = 85;//230
+        int cursedBreathDamage = 49; //100
+        int cursedFlamesDamage = 56; //100
+        int disruptDamage = 63;//203
+        int bioSpitDamage = 60;//185
+        int bioSpitfinalDamage = 63;//230
 
         //ultimate attack not used yet
-        public int redMagicDamage = 100;
+        public int redMagicDamage = 75;
 
         //lumelia attacks
-        public int throwingKnifeDamage = 83;//180
-        public int smokebombDamage = 150;//295
+        public int throwingKnifeDamage = 62;//180
+        public int smokebombDamage = 113;//295
 
         //death skull attack when player gets too far away
-        public int herosArrowDamage = 96; //400
+        public int herosArrowDamage = 72; //400
 
         //slogra attacks
-        public int tridentDamage = 100; //150
+        public int tridentDamage = 75; //150
         //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
-        public int burningSphereDamage = 279;//360
+        public int burningSphereDamage = 209;//360
 
         //gwyn 
         float customAi1;
@@ -99,22 +99,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int lineOfSightTimer = 0;
 
         //serris x
-        int plasmaOrbDamage = 137;
+        int plasmaOrbDamage = 102;
 
         //oolicile sorcerer
         public float DarkBeadShotTimer;
         public float DarkBeadShotCounter;
-        int darkBeadDamage = 91;
+        int darkBeadDamage = 68;
 
         //ancient demon
-        int cultistFireDamage = 100;//192
-        int cultistMagicDamage = 160;//259
-        int cultistLightningDamage = 105;//260
-        int fireBreathDamage = 90;//131
-        int lostSoulDamage = 95;//223
-        int greatFireballDamage = 96;//216
-        int blackFireDamage = 147;//147
-        int greatAttackDamage = 102;//162
+        int cultistFireDamage = 75;//192
+        int cultistMagicDamage = 120;//259
+        int cultistLightningDamage = 78;//260
+        int fireBreathDamage = 67;//131
+        int lostSoulDamage = 71;//223
+        int greatFireballDamage = 72;//216
+        int blackFireDamage = 110;//147
+        int greatAttackDamage = 76;//162
 
         int demonBreathTimer = 0;
 

@@ -59,5 +59,16 @@ namespace tsorcRevamp.Items.VanillaItems
                 SwordHit = 2;
             }
         }
+        public override void ModifyItemScale(Item item, Player player, ref float scale)
+        {
+            base.ModifyItemScale(item, player, ref scale);
+
+            if (item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand
+                | item.type == ItemID.TrueExcalibur | item.type == ItemID.TrueNightsEdge | item.type == ItemID.TerraBlade
+                | item.type == ItemID.Meowmere | item.type == ItemID.StarWrath)
+            {
+                scale *= 1.25f;
+            }
+        }
     }
 }
