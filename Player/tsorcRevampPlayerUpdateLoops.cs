@@ -292,6 +292,7 @@ namespace tsorcRevamp
             GravityField = false;
             DragoonHorn = false;
             if (!Player.channel) rotation3d = 0;
+            MeleeArmorVamp10 = false;
         }
         
         public override void PreUpdate()

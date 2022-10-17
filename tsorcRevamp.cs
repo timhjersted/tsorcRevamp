@@ -1547,9 +1547,14 @@ namespace tsorcRevamp
                 if (IsMusicInvalid(musicTempPath))
                 {
                     //System.Windows.Forms.MessageBox.Show("The Story of Red Cloud failed to download the music mod automatically!\nYou must download it manually from our discord instead: https://discord.gg/UGE6Mstrgz", "TSORC: Music Mod Download Failure!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    try{
                     musicModFileInfo.Delete();
                     musicModDownloadFailures++;
                     ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("", "000000");
+                    }
+                    catch {
+                        //do nothing
+                    }
                 }
                 else
                 {
