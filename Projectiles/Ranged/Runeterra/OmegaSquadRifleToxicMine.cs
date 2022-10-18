@@ -3,13 +3,13 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
+namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
-	public class TSShroomMine : ModProjectile
+	public class OmegaSquadRifleToxicMine: ModProjectile
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Shroom Mine");
+			DisplayName.SetDefault("Toxic Mine");
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5; // The length of old position to be recorded
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // The recording mode
 		}

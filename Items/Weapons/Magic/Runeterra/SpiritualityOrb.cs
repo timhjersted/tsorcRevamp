@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 {
-    public class OoDItem3 : ModItem
+    public class OrbofSpirituality : ModItem
     {
         public static int useOoDItem3 = 0;
         public static bool OoDOrb3Exists = false;

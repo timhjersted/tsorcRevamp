@@ -4,12 +4,12 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Runeterra;
+using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra;
 
-namespace tsorcRevamp.Projectiles.Runeterra
+namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
-	public class ScorchingPointStar : ModProjectile
+	public class ScorchingPointFireball : ModProjectile
 	{
 		public static float angularSpeed = 0.03f;
 		public static float circleRad = 50f;
@@ -89,19 +89,19 @@ namespace tsorcRevamp.Projectiles.Runeterra
 		{
 			if (owner.dead || !owner.active)
 			{
-				owner.ClearBuff(ModContent.BuffType<CenterOfTheHeat>());
+				owner.ClearBuff(ModContent.BuffType<CenteroftheHeat>());
 
 				return false;
 			}
 
-			if (!owner.HasBuff(ModContent.BuffType<CenterOfTheHeat>()))
+			if (!owner.HasBuff(ModContent.BuffType<CenteroftheHeat>()))
       {
 				circleRad = 50f;
         currentAngle = 0;
 				ScorchingPoint.projectiles.Clear();
       }
 
-			if (owner.HasBuff(ModContent.BuffType<CenterOfTheHeat>()))
+			if (owner.HasBuff(ModContent.BuffType<CenteroftheHeat>()))
 			{
 				Projectile.timeLeft = 2;
 			}

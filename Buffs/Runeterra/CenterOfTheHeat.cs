@@ -1,11 +1,11 @@
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Runeterra;
-using tsorcRevamp.Projectiles.Runeterra;
+using tsorcRevamp.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Projectiles.Summon.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra
 {
-	public class CenterOfTheHeat : ModBuff
+	public class CenteroftheHeat : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Buffs.Runeterra
 		public override void Update(Player player, ref int buffIndex)
 		{
       // If the minions exist reset the buff time, otherwise remove the buff from the player
-      if (player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointStar>()] > 0)
+      if (player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointFireball>()] > 0)
 			{
 				// update projectiles
 				ScorchingPoint.ReposeProjectiles(player);

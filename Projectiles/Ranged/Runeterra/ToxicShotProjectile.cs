@@ -3,13 +3,13 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
+namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
-	public class TSBlindDart : ModProjectile
+	public class ToxicShotProjectile : ModProjectile
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Blinding Dart");
+			DisplayName.SetDefault("Toxic Shot");
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5; // The length of old position to be recorded
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // The recording mode
 		}
@@ -34,12 +34,12 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
         public override void AI()
         {
 			var owner = Main.player[Projectile.owner];
-			Projectile.damage = (int)((owner.GetWeaponDamage(owner.HeldItem) + (0.8f * (owner.GetDamage(DamageClass.Magic).ApplyTo(owner.GetWeaponDamage(owner.HeldItem))))));
-			Dust.NewDust(Projectile.Center, 10, 10, DustID.Demonite, 0, 0, 0, Color.HotPink, 0.75f);
+			Projectile.damage = (int)((owner.GetWeaponDamage(owner.HeldItem) * 0.8 + (0.2f * (owner.GetDamage(DamageClass.Magic).ApplyTo(owner.GetWeaponDamage(owner.HeldItem))))));
+			Dust.NewDust(Projectile.Center, 10, 10, DustID.VenomStaff, 0, 0, 0, Color.LightPink, 0.75f);
 		}
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-			target.AddBuff(BuffID.Confused, 120);
+			target.AddBuff(BuffID.Venom, 120);
         }
     }
 }

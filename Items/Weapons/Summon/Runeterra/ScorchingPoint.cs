@@ -6,15 +6,15 @@ using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Runeterra;
+using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra
+namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
 	[LegacyName("CotUItem1")]
 	public class ScorchingPoint : ModItem
 	{
-		public static List<ScorchingPointStar> projectiles = null;
+		public static List<ScorchingPointFireball> projectiles = null;
 		public static int processedProjectilesCount = 0;
 
 		public override void SetStaticDefaults()
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra
 		}
     public override void SetDefaults()
 		{
-			projectiles = new List<ScorchingPointStar>(){};
+			projectiles = new List<ScorchingPointFireball>(){};
 
 			Item.damage = 22;
 			Item.knockBack = 3f;
@@ -49,8 +49,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra
 
 			Item.noMelee = true;
 			Item.DamageType = DamageClass.Summon;
-			Item.buffType = ModContent.BuffType<CenterOfTheHeat>();
-			Item.shoot = ModContent.ProjectileType<ScorchingPointStar>();
+			Item.buffType = ModContent.BuffType<CenteroftheHeat>();
+			Item.shoot = ModContent.ProjectileType<ScorchingPointFireball>();
 		}
 
 		public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
@@ -79,7 +79,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra
         public static void ReposeProjectiles(Player player) 
 		{
 			// repose projectiles relatively to the first one so they are evenly spread on the radial circumference
-			processedProjectilesCount = player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointStar>()];
+			processedProjectilesCount = player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointFireball>()];
 			for (int i = 1; i < processedProjectilesCount; ++i) {
 				projectiles[i].currentAngle = projectiles[i - 1].currentAngle + 2f * (float)Math.PI / processedProjectilesCount;
 			}

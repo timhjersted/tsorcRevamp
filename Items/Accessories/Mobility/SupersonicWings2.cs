@@ -30,33 +30,33 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         public override void AddRecipes()
         {
             Recipe recipe4 = CreateRecipe();
-            recipe4.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
-            recipe4.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
-            recipe4.AddIngredient(ItemID.EmpressFlightBooster, 1);
-            recipe4.AddIngredient(Mod.Find<ModItem>("ImprovedBundleofBalloons").Type, 1);
+            recipe4.AddIngredient(ModContent.ItemType<SupersonicWings>());
+            recipe4.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
+            recipe4.AddIngredient(ItemID.EmpressFlightBooster);
+            recipe4.AddIngredient(ModContent.ItemType<ImprovedBundleofBalloons>());
             recipe4.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe4.AddTile(TileID.DemonAltar);
             recipe4.Register();
 
             Recipe recipe3 = CreateRecipe();
-            recipe3.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
-            recipe3.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
-            recipe3.AddIngredient(Mod.Find<ModItem>("ImprovedBundleofBalloons").Type, 1);
+            recipe3.AddIngredient(ModContent.ItemType<SupersonicWings>());
+            recipe3.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
+            recipe3.AddIngredient(ModContent.ItemType<ImprovedBundleofBalloons>());
             recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
             recipe3.AddTile(TileID.DemonAltar);
             recipe3.Register();
 
             Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
-            recipe2.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
-            recipe2.AddIngredient(ItemID.EmpressFlightBooster, 1);
+            recipe2.AddIngredient(ModContent.ItemType<SupersonicWings>());
+            recipe2.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
+            recipe2.AddIngredient(ItemID.EmpressFlightBooster);
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.Register();
 
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<SupersonicWings>());
+            recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register(); 

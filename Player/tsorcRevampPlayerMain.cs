@@ -900,19 +900,19 @@ namespace tsorcRevamp
                     }
                 }*/
             }
-            if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Runeterra.ScorchingPoint>())
+            if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Summon.Runeterra.ScorchingPoint>())
             {
                 if (Main.keyState.IsKeyDown(Keys.LeftShift))
                 {
-                    Projectiles.Runeterra.ScorchingPointStar.circleRad -= 1.5f;
-                    if(Projectiles.Runeterra.ScorchingPointStar.circleRad < 50)
+                    Projectiles.Summon.Runeterra.ScorchingPointFireball.circleRad -= 1.5f;
+                    if(Projectiles.Summon.Runeterra.ScorchingPointFireball.circleRad < 50)
                     {
-                        Projectiles.Runeterra.ScorchingPointStar.circleRad = 50;
+                        Projectiles.Summon.Runeterra.ScorchingPointFireball.circleRad = 50;
                     }
                 }
                 else
                 {
-                    Projectiles.Runeterra.ScorchingPointStar.circleRad += 1.5f;
+                    Projectiles.Summon.Runeterra.ScorchingPointFireball.circleRad += 1.5f;
                 }
                 Dust.NewDustDirect(Player.Center, 10, 10, DustID.FlameBurst, 0.5f, 0.5f, 0, Color.Firebrick, 0.5f);
             }

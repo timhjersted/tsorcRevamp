@@ -4,9 +4,9 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
+namespace tsorcRevamp.Projectiles.Swords.Runeterra
 {
-    public class STNado3 : ModProjectile
+    public class SteelTempestTornado : ModProjectile
     {
         public int soundtimer = 0;
         public override void SetStaticDefaults()
@@ -32,11 +32,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         {
             SoundEngine.FindActiveSound(SoundID.DD2_BookStaffTwisterLoop);
             SoundEngine.StopTrackedSounds();
-        }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
-            //STItem3.dashCD -= 5f;
-            //STItem3.wallCD -= 5f;
         }
         public override void AI()
         {

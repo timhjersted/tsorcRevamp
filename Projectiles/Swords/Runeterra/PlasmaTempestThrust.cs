@@ -4,13 +4,13 @@ using Terraria.Enums;
 using Terraria.ModLoader;
 using Terraria.ID;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
+namespace tsorcRevamp.Projectiles.Swords.Runeterra
 {
 	// Shortsword projectiles are handled in a special way with how they draw and damage things
 	// The "hitbox" itself is closer to the player, the sprite is centered on it
 	// However the interactions with the world will occur offset from this hitbox, closer to the sword's tip (CutTiles, Colliding)
 	// Values chosen mostly correspond to Iron Shortword
-	public class STStab3 : ModProjectile
+	public class PlasmaTempestThrust : ModProjectile
 	{
 		public static int steeltempest = 0;
 		public static int steeltempesthittimer = 0;
@@ -136,10 +136,10 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
 		}
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
+
 			if (steeltempesthittimer == 0)
             {
-				//STItem3.dashCD -= 2f;
-				//STItem3.wallCD -= 2f;
+				//STItem2.dashCD -= 2f;
 				steeltempest += 1;
 				steeltempesthittimer = 1;
             }

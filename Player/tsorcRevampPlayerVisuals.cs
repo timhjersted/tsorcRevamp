@@ -447,7 +447,7 @@ namespace tsorcRevamp
             #endregion
 
             #region Scorching Point
-            if (drawPlayer.HeldItem.type == ModContent.ItemType<Items.Weapons.Runeterra.ScorchingPoint>())
+            if (drawPlayer.HeldItem.type == ModContent.ItemType<Items.Weapons.Summon.Runeterra.ScorchingPoint>())
             {
                 //1) Get texture
                 Texture2D scorchingPointTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Runeterra/ScorchingPoint_Hand");

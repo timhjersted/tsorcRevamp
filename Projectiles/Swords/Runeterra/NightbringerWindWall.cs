@@ -1,12 +1,14 @@
 using Terraria;
+using System;
+using Microsoft.Xna.Framework;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
+namespace tsorcRevamp.Projectiles.Swords.Runeterra
 {
-    public class STNado1 : ModProjectile
+    public class NightbringerWindWall: ModProjectile
     {
         public int soundtimer = 0;
         public override void SetStaticDefaults()
@@ -26,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         }
         public override void OnSpawn(IEntitySource source)
         {
-            SoundEngine.PlaySound(SoundID.DD2_BookStaffTwisterLoop, Projectile.Center);
+            //SoundEngine.PlaySound(SoundID.DD2_BookStaffTwisterLoop, Projectile.Center);
         }
         public override void Kill(int timeLeft)
         {
@@ -35,9 +37,23 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         }
         public override void AI()
         {
-            Player owner = Main.player[Projectile.owner];
-            Projectile.damage = (int)(owner.GetWeaponDamage(owner.HeldItem) * 1.75f);
-            Visuals();
+            Player owner = Main.player[Main.myPlayer];
+            Vector2 unitVectorTowardsMouse = owner.Center.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * owner.direction);
+            owner.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
+            if (Main.GameUpdateCount % 15 == 0)
+            {
+                Projectile.velocity = Vector2.Zero;
+            }
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile other = Main.projectile[i];
+
+                if (i != Projectile.whoAmI && other.active && !other.friendly && Math.Abs(Projectile.position.X - other.position.X) + Math.Abs(Projectile.position.Y - other.position.Y) < Projectile.width)
+                {
+                    other.Kill();
+                }
+            }
+                    Visuals();
         }
         private void Visuals()
         {

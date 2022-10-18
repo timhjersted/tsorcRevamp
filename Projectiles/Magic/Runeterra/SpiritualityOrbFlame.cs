@@ -4,9 +4,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
+namespace tsorcRevamp.Projectiles.Magic.Runeterra
 {
-    public class OoDFlame1 : ModProjectile
+    public class SpiritualityOrbFlame : ModProjectile
     {
         public float angularSpeed = 0.3f;
         public float circleRad1 = 50f;
@@ -19,9 +19,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
         }
         public override void SetDefaults()
         {
-			Projectile.width = 16;
-            Projectile.height = 16;
-            Projectile.scale = 1.5f;
+			Projectile.width = 24;
+            Projectile.height = 24;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = 1;
             Projectile.timeLeft = 900;
@@ -81,8 +80,23 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
         }
         private void Visuals()
         {
+            int frameSpeed = 5;
+
+            Projectile.frameCounter++;
+
+            if (Projectile.frameCounter >= frameSpeed)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
+                {
+                    Projectile.frame = 0;
+                }
+            }
+
             Lighting.AddLight(Projectile.Center, Color.Firebrick.ToVector3() * 0.78f);
-            Dust.NewDust(Projectile.TopLeft, 16, 16, DustID.HeatRay, 0, 0, 200, Color.Firebrick, 1f);
+            Dust.NewDust(Projectile.Center, 2, 2, DustID.Firework_Blue, 0, 0, 150, default, 0.5f);
         }
     }
 }
