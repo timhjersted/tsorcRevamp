@@ -6,15 +6,13 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon.SpiritBell
+namespace tsorcRevamp.Items.Weapons.Summon
 {
 	public class SpiritBell : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
-			Tooltip.SetDefault("Summons a raging Phoenix to fight for you" +
-                "\nDeals extra damage after warming up, this scales well with crits" +
-                "\nUses 2 minion slots");
+			Tooltip.SetDefault("Summons a Barrow Wight to fight for you");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
@@ -25,8 +23,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.SpiritBell
 			Item.damage = 24;
 			Item.knockBack = 3f;
 			Item.mana = 10;
-			Item.width = 32;
-			Item.height = 32;
+			Item.width = 50;
+			Item.height = 50;
 			Item.useTime = 30;
 			Item.useAnimation = 30;
 			Item.useStyle = ItemUseStyleID.Swing;
