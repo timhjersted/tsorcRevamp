@@ -2,7 +2,7 @@
 using Terraria.ModLoader;
 using Terraria;
 
-namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
+namespace tsorcRevamp.Items.Weapons.Melee.Hammers
 {
     class AncientWarhammer : ModItem
     {

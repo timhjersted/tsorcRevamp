@@ -1,15 +1,15 @@
-/*
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
+namespace tsorcRevamp.Projectiles.Magic.Runeterra
 {
-    public class OoDOrb1 : ModProjectile
+    public class OrbofSpiritualityProj : ModProjectile
     {
-		public static int EssenceThief1 = 0;
-		public static bool EssenceFilled1 = false;
+		public static int EssenceThief3 = 0;
+		public static bool EssenceFilled3 = false;
         private enum AIState
         {
             InHand,
@@ -37,8 +37,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
         public override void SetDefaults()
         {
             Projectile.netImportant = true;
-			Projectile.width = 28;
-            Projectile.height = 28;
+			Projectile.width = 48;
+            Projectile.height = 48;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = -1;
             Projectile.extraUpdates = 1;
@@ -52,18 +52,18 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Player owner = Main.player[Projectile.owner];
 			Projectile.CritChance = owner.GetWeaponCrit(owner.HeldItem);
 
-			if (CurrentAIState == AIState.InHand & OoDItem1.useOoDItem1 == 2)
-			{
-				OoDItem1.useOoDItem1 = 0;
-			}
-
-			int launchTimeLimit = 50;  // How much time the projectile can go before retracting (speed and shootTimer will set the flail's range)
-            float launchSpeed = 10f; // How fast the projectile can move
+            int launchTimeLimit = 50;  // How much time the projectile can go before retracting (speed and shootTimer will set the flail's range)
+            float launchSpeed = 16f; // How fast the projectile can move
             float maxLaunchLength = 1000f; // How far the projectile's chain can stretch before being forced to retract when in launched state
-            float retractAcceleration = 5f; // How quickly the projectile will accelerate back towards the player while retracting
-            float maxRetractSpeed = 10f; // The max speed the projectile will have while retracting
-            float forcedRetractAcceleration = 10f; // How quickly the projectile will accelerate back towards the player while being forced to retract
-            float maxForcedRetractSpeed = 20f; // The max speed the projectile will have while being forced to retract
+            float retractAcceleration = 8f; // How quickly the projectile will accelerate back towards the player while retracting
+            float maxRetractSpeed = 16f; // The max speed the projectile will have while retracting
+            float forcedRetractAcceleration = 16f; // How quickly the projectile will accelerate back towards the player while being forced to retract
+            float maxForcedRetractSpeed = 32f; // The max speed the projectile will have while being forced to retract
+
+			if (CurrentAIState == AIState.InHand & OrbofSpirituality.useOrbofSpirituality == 2)
+            {
+				OrbofSpirituality.useOrbofSpirituality = 0;
+            }
 
             if (!owner.active || owner.dead || owner.noItems || owner.CCed || Vector2.Distance(Projectile.Center, owner.Center) > 1500f)
             {
@@ -87,14 +87,14 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 
 							Vector2 unitVectorTowardsMouse = owner.Center.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * owner.direction);
 							owner.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
-							if (OoDItem1.useOoDItem1 == 1) // If the player releases then change to moving forward mode
+							if (OrbofSpirituality.useOrbofSpirituality == 1) // If the player releases then change to moving forward mode
 							{
-								if (EssenceThief1 >= 9)
+								if (EssenceThief3 >= 9)
 								{
-									EssenceFilled1 = true;
+									EssenceFilled3 = true;
 								} else
                                 {
-									EssenceFilled1 = false;
+									EssenceFilled3 = false;
                                 }
 								CurrentAIState = AIState.ThrownForward;
 								StateTimer = 0f;
@@ -104,7 +104,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 								break;
 							}
 						}
-						OoDItem1.useOoDItem1 = 0;
+						OrbofSpirituality.useOrbofSpirituality = 0;
 						Projectile.damage = 0;
 						break;
 					}
@@ -114,7 +114,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 						bool shouldSwitchToRetracting = StateTimer++ >= launchTimeLimit;
 						shouldSwitchToRetracting |= Projectile.Distance(owner.Center) >= maxLaunchLength;
 
-						if (OoDItem1.useOoDItem1 == 2) // If the player clicks, transition to the ForcedRetract state
+						if (OrbofSpirituality.useOrbofSpirituality == 2) // If the player clicks, transition to the ForcedRetract state
 						{
 							CurrentAIState = AIState.ForcedRetracting;
 							Projectile.ResetLocalNPCHitImmunity();
@@ -139,11 +139,11 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 						Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(owner.Center).SafeNormalize(Vector2.Zero);
 						if (Projectile.Distance(owner.Center) <= 25f)
 						{
-							OoDItem1.useOoDItem1 = 0;
+							OrbofSpirituality.useOrbofSpirituality = 0;
 							CurrentAIState = AIState.InHand;
-							if(EssenceFilled1 == true)
+							if(EssenceFilled3 == true)
                             {
-								EssenceThief1 -= 9;
+								EssenceThief3 -= 9;
                             }
 							if (owner.direction == 1)
 							{
@@ -155,9 +155,9 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 							}
 							return;
 						}
-						if (OoDItem1.useOoDItem1 == 2 | Projectile.Distance(owner.Center) >= 1000f) // If the player clicks, transition to the ForcedRetract state
+						if (OrbofSpirituality.useOrbofSpirituality == 2 | Projectile.Distance(owner.Center) >= 1000f) // If the player clicks, transition to the ForcedRetract state
 						{
-							OoDItem1.useOoDItem1 = 2;
+							OrbofSpirituality.useOrbofSpirituality = 2;
 							CurrentAIState = AIState.ForcedRetracting;
 							StateTimer = 0f;
 							Projectile.netUpdate = true;
@@ -174,11 +174,11 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 						Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(owner.Center).SafeNormalize(Vector2.Zero);
 						if (Projectile.Distance(owner.Center) <= 25f)
 						{
-							OoDItem1.useOoDItem1 = 0;
+                            OrbofSpirituality.useOrbofSpirituality = 0;
 							CurrentAIState = AIState.InHand;
-							if (EssenceFilled1 == true)
+							if (EssenceFilled3 == true)
 							{
-								EssenceThief1 -= 9;
+								EssenceThief3 -= 9;
 							}
 							return;
 						}
@@ -205,23 +205,30 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 			Player owner = Main.player[Projectile.owner];
 			if (crit)
 			{
-				EssenceThief1 += 2;
+				EssenceThief3 += 2;
 			}
 			else
 			{
-				EssenceThief1 += 1;
+				EssenceThief3 += 1;
 			}
-			if (EssenceFilled1)
+			if (EssenceFilled3)
 			{
-				if(crit)
-                {
+				if (crit)
+				{
+					Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Top, Vector2.One, ModContent.ProjectileType<OrbofSpiritualityFlame>(), owner.GetWeaponDamage(owner.HeldItem), owner.GetWeaponKnockback(owner.HeldItem), Main.myPlayer);
+					Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Bottom, Vector2.One, ModContent.ProjectileType<OrbofSpiritualityFlame>(), owner.GetWeaponDamage(owner.HeldItem), owner.GetWeaponKnockback(owner.HeldItem), Main.myPlayer);
+
 					owner.Heal(damage / 5);
-                } else
-				owner.Heal(damage / 10);
+				}
+				else
+				{
+					Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Center, Vector2.One, ModContent.ProjectileType<OrbofSpiritualityFlame>(), owner.GetWeaponDamage(owner.HeldItem), owner.GetWeaponKnockback(owner.HeldItem), Main.myPlayer);
+					owner.Heal(damage / 10);
+				}
 			}
 
 		}
-        private void Visuals()
+		private void Visuals()
         {
             int frameSpeed = 5;
 
@@ -242,4 +249,4 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
         }
     }
-}*/
+}

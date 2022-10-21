@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
 {
-    public class SpiritualityOrbFlame : ModProjectile
+    public class OrbofSpiritualityFlame : ModProjectile
     {
         public float angularSpeed = 0.3f;
         public float circleRad1 = 50f;

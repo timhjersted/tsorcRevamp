@@ -1,12 +1,12 @@
-/*
+using tsorcRevamp.Projectiles.Swords.Runeterra;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
+namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
-    public class STItem2: ModItem
+    public class PlasmaTempest: ModItem
     {
         public float cooldown = 0;
         public static float dashCD = 0f;
@@ -58,15 +58,15 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
             doublecritchancetimer = 0.5f;
-            if (Main.mouseRight & !Main.mouseLeft & STStab2.steeltempest == 2 & cooldown <= 0)
+            if (Main.mouseRight & !Main.mouseLeft & PlasmaTempestThrust.steeltempest2 == 2 & cooldown <= 0)
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
-                Item.shoot = ModContent.ProjectileType<STNado2>();
+                Item.shoot = ModContent.ProjectileType<PlasmaTempestTornado>();
                 cooldown = ((3 / attackspeedscaling) + 1);
-                STStab2.steeltempest = 0;
+                PlasmaTempestThrust.steeltempest2 = 0;
             } else
             if (Main.mouseRight & !Main.mouseLeft)
             {
@@ -75,7 +75,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
                 cooldown = ((3 / attackspeedscaling) + 1);
-                Item.shoot = ModContent.ProjectileType<STStab2>();
+                Item.shoot = ModContent.ProjectileType<PlasmaTempestThrust>();
             }
             if (Main.mouseLeft)
             {
@@ -150,18 +150,18 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         {
                 return true;
         }
-
+        /*
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ModContent.ItemType<STItem1>());
+            recipe.AddIngredient(ModContent.ItemType<SteelTempest>());
             recipe.AddIngredient(ItemID.HallowedBar, 12);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
 
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }
+        }*/
     }
-}*/
+}

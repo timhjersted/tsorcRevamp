@@ -1,15 +1,16 @@
-/*
+
+using tsorcRevamp.Projectiles.Magic.Runeterra;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
+namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
     public class OrbofSpirituality : ModItem
     {
-        public static int useOoDItem3 = 0;
-        public static bool OoDOrb3Exists = false;
+        public static int useOrbofSpirituality = 0;
+        public static bool OrbofSpiritualityProjExists = false;
         public float dashCD = 0f;
         public float dashTimer = 0f;
         public float invincibility = 0f;
@@ -64,14 +65,14 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
         {
             if (player.altFunctionUse == 1)
             {
-                if (useOoDItem3 == 0)
+                if (useOrbofSpirituality == 0)
                 {
-                    useOoDItem3 = 1;
+                    useOrbofSpirituality = 1;
                 }
                 else
-                if (useOoDItem3 == 1)
+                if (useOrbofSpirituality == 1)
                 {
-                    useOoDItem3 = 2;
+                    useOrbofSpirituality = 2;
                 }
             } else
             if (player.altFunctionUse == 2)
@@ -92,20 +93,20 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
                 invincibility = 0.5f;
                 if (Main.GameUpdateCount % 1 == 0)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), player.Top, Vector2.One, ModContent.ProjectileType<OoDFlame1>(), player.GetWeaponDamage(player.HeldItem), player.GetWeaponKnockback(player.HeldItem), Main.myPlayer);
+                    Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), player.Top, Vector2.One, ModContent.ProjectileType<OrbofSpiritualityFlame>(), player.GetWeaponDamage(player.HeldItem), player.GetWeaponKnockback(player.HeldItem), Main.myPlayer);
                 }
             }
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<OoDOrb3>() && Main.projectile[i].owner == player.whoAmI)
+                if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<OrbofSpiritualityProj>() && Main.projectile[i].owner == player.whoAmI)
                 {
-                    OoDOrb3Exists = true;
+                    OrbofSpiritualityProjExists = true;
                     break;
                 }
             }
-            if (!OoDOrb3Exists)
+            if (!OrbofSpiritualityProjExists)
             {
-                var projectile = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OoDOrb3>(), Item.damage, Item.knockBack, Main.myPlayer);
+                var projectile = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbofSpiritualityProj>(), Item.damage, Item.knockBack, Main.myPlayer);
                 projectile.originalDamage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage);
             }
         }
@@ -136,18 +137,18 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
         public override bool AltFunctionUse(Player player)
         {
             return true;
-        }
+        }/*
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ModContent.ItemType<OoDItem2>());
+            recipe.AddIngredient(ModContent.ItemType<OrbofFlame>());
             recipe.AddIngredient(ItemID.LunarBar, 12);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
 
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }
+        }*/
     }
-}*/
+}

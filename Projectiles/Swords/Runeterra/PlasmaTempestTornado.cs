@@ -41,7 +41,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            //STItem2.dashCD -= 5f;
+            //PlasmaTempest.dashCD -= 5f;
         }
         private void Visuals()
         {

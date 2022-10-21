@@ -1,14 +1,14 @@
-/*
+using tsorcRevamp.Projectiles.Magic.Runeterra;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
+namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
-    public class OoDItem2 : ModItem
+    public class OrbofFlame : ModItem
     {
-        public static int useOoDItem2 = 0;
+        public static int useOrbofFlame = 0;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Orb of Flame");
@@ -44,44 +44,44 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 
         public override bool? UseItem(Player player)
         {
-            if(useOoDItem2 == 0)
+            if(useOrbofFlame == 0)
             {
-                useOoDItem2 = 1;
+                useOrbofFlame = 1;
             } else
-            if (useOoDItem2 == 1)
+            if (useOrbofFlame == 1)
             {
-                useOoDItem2 = 2;
+                useOrbofFlame = 2;
             }
             return true;
         }
         public override void HoldItem(Player player)
         {
-            bool OoDOrb2Exists = false;
+            bool OrbofFlameProjExists = false;
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<OoDOrb2>() && Main.projectile[i].owner == player.whoAmI)
+                if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<OrbofFlameProj>() && Main.projectile[i].owner == player.whoAmI)
                 {
-                    OoDOrb2Exists = true;
+                    OrbofFlameProjExists = true;
                     break;
                 }
             }
-            if (!OoDOrb2Exists)
+            if (!OrbofFlameProjExists)
             {
-                var projectile = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OoDOrb2>(), Item.damage, Item.knockBack, Main.myPlayer);
+                var projectile = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbofFlameProj>(), Item.damage, Item.knockBack, Main.myPlayer);
                 projectile.originalDamage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage);
             }
-        }
+        }/*
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ModContent.ItemType<OoDItem1>());
+            recipe.AddIngredient(ModContent.ItemType<OrbofDeception>());
             recipe.AddIngredient(ItemID.HallowedBar, 12);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
 
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }
+        }*/
     }
-}*/
+}

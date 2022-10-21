@@ -116,11 +116,11 @@ namespace tsorcRevamp.NPCs.Friendly
             nextSlot++;
             if (NPC.downedBoss1)
             {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenIceRod>());
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenIceRod>());
                 shop.item[nextSlot].shopCustomPrice = 600;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenThunderRod>());
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenThunderRod>());
                 shop.item[nextSlot].shopCustomPrice = 600;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
@@ -138,7 +138,7 @@ namespace tsorcRevamp.NPCs.Friendly
             }
             if (NPC.downedMechBoss1) //mechboss 1 is the destroyer, 2 is the twins, 3 is skelleprime
             {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenStardustRod>());
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenStardustRod>());
                 shop.item[nextSlot].shopCustomPrice = 8000;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
@@ -160,7 +160,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
             if (NPC.downedMechBossAny)
             {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenPoisonAxe>());
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Axes.ForgottenPoisonAxe>());
                 shop.item[nextSlot].shopCustomPrice = 6000;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;

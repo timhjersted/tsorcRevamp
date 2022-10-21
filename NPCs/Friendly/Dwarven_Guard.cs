@@ -84,7 +84,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void DrawTownAttackSwing(ref Texture2D item, ref int itemSize, ref float scale, ref Vector2 offset)
         {
-            item = (Texture2D)TextureAssets.Item[ModContent.ItemType<Items.Weapons.Melee.Broadswords.AncientWarhammer>()];
+            item = (Texture2D)TextureAssets.Item[ModContent.ItemType<Items.Weapons.Melee.Hammers.AncientWarhammer>()];
             itemSize = 38;
         }
 

@@ -1,12 +1,12 @@
-/*
+using tsorcRevamp.Projectiles.Swords.Runeterra;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
+namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
-    public class STItem1: ModItem
+    public class SteelTempest: ModItem
     {
         public float cooldown = 0;
         public float attackspeedscaling;
@@ -53,15 +53,15 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
             doublecritchancetimer = 0.5f;
-            if (Main.mouseRight & !Main.mouseLeft & STStab1.steeltempest == 2 & cooldown <= 0)
+            if (Main.mouseRight & !Main.mouseLeft & SteelTempestThrust.steeltempest == 2 & cooldown <= 0)
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
-                Item.shoot = ModContent.ProjectileType<STNado1>();
+                Item.shoot = ModContent.ProjectileType<SteelTempestTornado>();
                 cooldown = ((3 / attackspeedscaling) + 1);
-                STStab1.steeltempest = 0;
+                SteelTempestThrust.steeltempest = 0;
             } else
             if (Main.mouseRight & !Main.mouseLeft)
             {
@@ -70,7 +70,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
                 cooldown = ((3 / attackspeedscaling) + 1);
-                Item.shoot = ModContent.ProjectileType<STStab1>();
+                Item.shoot = ModContent.ProjectileType<SteelTempestThrust>();
             }
             if (Main.mouseLeft)
             {
@@ -125,7 +125,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
         {
                 return true;
         }
-
+        /*
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
@@ -136,6 +136,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Melee
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }
+        }*/
     }
-}*/
+}

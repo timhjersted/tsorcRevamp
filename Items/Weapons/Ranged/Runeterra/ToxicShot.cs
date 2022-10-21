@@ -1,13 +1,13 @@
-/*
+using tsorcRevamp.Projectiles.Ranged.Runeterra;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
+namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
-    public class TSItem1 : ModItem
+    public class ToxicShot : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -36,7 +36,14 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
             Item.shootSpeed = 10f;
             Item.useAmmo = AmmoID.Dart;
         }
-
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+        {
+            if (type == ProjectileID.Seed)
+            {
+                type = ModContent.ProjectileType<ToxicShotProj>();
+            }
+        }
+        /*
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
@@ -46,13 +53,7 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }
-        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
-        {
-            if (type == ProjectileID.Seed)
-            {
-                type = ModContent.ProjectileType<TSToxicShot>();
-            }
-        }
+        }*/
+
     }
-}*/
+}

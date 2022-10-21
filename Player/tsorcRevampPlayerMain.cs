@@ -17,6 +17,10 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.UI;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Items.Weapons.Melee.Runeterra;
+using tsorcRevamp.Items.Weapons.Magic.Runeterra;
+using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 
 namespace tsorcRevamp
 {
@@ -867,40 +871,40 @@ namespace tsorcRevamp
             }
            if (tsorcRevamp.specialAbility.JustReleased)
             {
-                //Items.Weapons.Runeterra.Summon.CotUStar1.circleRad += 1f;
-                /*for (int i = 0; i < Main.maxNPCs; i++)
+
+                for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC other = Main.npc[i];
 
-                    if (other.active & !other.friendly & other.Distance(Main.MouseWorld) <= 25 & other.Distance(owner.Center) <= 10000 & (Items.Weapons.Runeterra.Melee.STItem3.doublecritchance | Items.Weapons.Runeterra.Melee.STItem2.doublecritchance)& (Items.Weapons.Runeterra.Melee.STItem3.dashCD <= 0 | Items.Weapons.Runeterra.Melee.STItem2.dashCD <= 0))
+                    if (other.active & !other.friendly & other.Distance(Main.MouseWorld) <= 25 & other.Distance(owner.Center) <= 10000 & (Nightbringer.doublecritchance | PlasmaTempest.doublecritchance)& (Nightbringer.dashCD <= 0 | PlasmaTempest.dashCD <= 0))
                     {
-                        Items.Weapons.Runeterra.Melee.STItem2.dashTimer = 0.1f;
-                        Items.Weapons.Runeterra.Melee.STItem3.dashTimer = 0.1f;
+                        PlasmaTempest.dashTimer = 0.1f;
+                        Nightbringer.dashTimer = 0.1f;
                         if (Main.GameUpdateCount % 1 == 0)
                         {
-                            Items.Weapons.Runeterra.Melee.STItem3.dashCD = 30f;
-                            Items.Weapons.Runeterra.Melee.STItem2.dashCD = 30f;
+                            Nightbringer.dashCD = 30f;
+                            PlasmaTempest.dashCD = 30f;
                         }
                     } else
-                    if (other.active & !other.friendly & other.Distance(Main.MouseWorld) > 25 & Items.Weapons.Runeterra.Melee.STItem3.doublecritchance & (Items.Weapons.Runeterra.Melee.STItem3.dashTimer <= 0) & Items.Weapons.Runeterra.Melee.STItem3.wallCD <= 0)
+                    if (other.active & !other.friendly & other.Distance(Main.MouseWorld) > 25 & Nightbringer.doublecritchance & (Nightbringer.dashTimer <= 0) & Nightbringer.wallCD <= 0)
                     {
-                        Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Center, unitVectorTowardsMouse * 10f, ModContent.ProjectileType<Items.Weapons.Runeterra.Melee.STWindWall>(), 0, 0, Main.myPlayer);
+                        Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Center, unitVectorTowardsMouse * 10f, ModContent.ProjectileType<Projectiles.Swords.Runeterra.NightbringerWindWall>(), 0, 0, Main.myPlayer);
                         if (Main.GameUpdateCount % 1 == 0)
                         {
-                            Items.Weapons.Runeterra.Melee.STItem3.wallCD = 90f;
+                            Nightbringer.wallCD = 90f;
                         }
                     }
                 }
-                if (Items.Weapons.Runeterra.Ranged.TSItem3.ToxicShotHeld & Items.Weapons.Runeterra.Ranged.TSItem3.shroomCD <= 0)
+                if (OmegaSquadRifle.ToxicShotHeld & OmegaSquadRifle.shroomCD <= 0)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Items.Weapons.Runeterra.Ranged.TSShroomMine>(), owner.GetWeaponDamage(Player.HeldItem), owner.GetWeaponKnockback(Player.HeldItem), Main.myPlayer);
+                    Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Ranged.Runeterra.OmegaSquadRifleToxicMine>(), owner.GetWeaponDamage(Player.HeldItem), owner.GetWeaponKnockback(Player.HeldItem), Main.myPlayer);
                     if(Main.GameUpdateCount % 1 == 0)
                     {
-                        Items.Weapons.Runeterra.Ranged.TSItem3.shroomCD = 15;
+                        OmegaSquadRifle.shroomCD = 15;
                     }
-                }*/
+                }
             }
-            if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Summon.Runeterra.ScorchingPoint>())
+            if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>())
             {
                 if (Main.keyState.IsKeyDown(Keys.LeftShift))
                 {
@@ -1127,10 +1131,10 @@ namespace tsorcRevamp
         public void DoMultiCrits(ref int damage, float critType)
         {
             int critLevel = (int)(Math.Floor(critType / 100f));
-            /*if (Items.Weapons.Runeterra.Melee.STItem1.doublecritchance == true | Items.Weapons.Runeterra.Melee.STItem2.doublecritchance == true | Items.Weapons.Runeterra.Melee.STItem3.doublecritchance == true)
+            if (SteelTempest.doublecritchance == true | PlasmaTempest.doublecritchance == true | Nightbringer.doublecritchance == true)
             { 
                 critLevel *= 2;
-            }*/
+            }
             if (critLevel != 0)
             {
                 if (critLevel > 1)
@@ -1140,13 +1144,13 @@ namespace tsorcRevamp
                         damage *= 2;
                     }
                 }
-               /*if (Items.Weapons.Runeterra.Melee.STItem1.doublecritchance == true | Items.Weapons.Runeterra.Melee.STItem2.doublecritchance == true | Items.Weapons.Runeterra.Melee.STItem3.doublecritchance == true)
+               if (SteelTempest.doublecritchance == true | PlasmaTempest.doublecritchance == true | Nightbringer.doublecritchance == true)
                 {
                     if (Main.rand.Next(1, 101) <= (critType * 2) - (100 * critLevel))
                     {
                         damage *= 2;
                     }
-                } else*/
+                } else
                     if (Main.rand.Next(1, 101) <= critType - (100 * critLevel))
                 {
                     damage *= 2;

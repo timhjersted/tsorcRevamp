@@ -3,7 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Enemies;
 
-namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
+namespace tsorcRevamp.Items.Weapons.Melee.Axes
 {
     class ForgottenRuneAxe : ModItem
     {

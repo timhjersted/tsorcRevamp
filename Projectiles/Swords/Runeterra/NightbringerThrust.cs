@@ -12,8 +12,8 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 	// Values chosen mostly correspond to Iron Shortword
 	public class NightbringerThrust : ModProjectile
 	{
-		public static int steeltempest = 0;
-		public static int steeltempesthittimer = 0;
+		public static int steeltempest3 = 0;
+		public static int steeltempesthittimer3 = 0;
 		public const int FadeInDuration = 7;
 		public const int FadeOutDuration = 4;
 
@@ -54,7 +54,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			{
 				// Kill the projectile if it reaches it's intended lifetime
 				Projectile.Kill();
-				steeltempesthittimer = 0;
+				steeltempesthittimer3 = 0;
 				return;
 			}
 			else
@@ -136,12 +136,12 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		}
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-			if (steeltempesthittimer == 0)
+			if (steeltempesthittimer3 == 0)
             {
-				//STItem3.dashCD -= 2f;
-				//STItem3.wallCD -= 2f;
-				steeltempest += 1;
-				steeltempesthittimer = 1;
+				//Nightbringer.dashCD -= 2f;
+				//Nightbringer.wallCD -= 2f;
+				steeltempest3 += 1;
+				steeltempesthittimer3 = 1;
             }
         }
     }

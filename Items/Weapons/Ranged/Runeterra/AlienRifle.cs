@@ -1,13 +1,13 @@
-/*
+using tsorcRevamp.Projectiles.Ranged.Runeterra;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
+namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
-    public class TSItem2 : ModItem
+    public class AlienRifle : ModItem
     {
         public float cooldown = 0f;
         public override void SetStaticDefaults()
@@ -42,11 +42,11 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
         {
             if (type == ProjectileID.Seed & player.altFunctionUse == 1)
             {
-                type = ModContent.ProjectileType<TSToxicShot>();
+                type = ModContent.ProjectileType<ToxicShotProj>();
             }
             if (player.altFunctionUse == 2)
             {
-                type = ModContent.ProjectileType<TSBlindDart>();
+                type = ModContent.ProjectileType<AlienRifleBlindingLaser>();
             }
         }
         public override void UseStyle(Player player, Rectangle heldItemFrame)
@@ -82,17 +82,17 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Ranged
             {
                 cooldown -= 0.0167f;
             }
-        }
+        }/*
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ModContent.ItemType<TSItem1>());
+            recipe.AddIngredient(ModContent.ItemType<ToxicShot>());
             recipe.AddIngredient(ItemID.HallowedBar, 12);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }
+        }*/
     }
-}*/
+}

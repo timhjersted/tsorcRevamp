@@ -1,14 +1,14 @@
-/*
+using tsorcRevamp.Projectiles.Magic.Runeterra;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
+namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
-    public class OoDItem1 : ModItem
+    public class OrbofDeception : ModItem
     {
-        public static int useOoDItem1 = 0;
+        public static int useOrbofDeception = 0;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Orb of Deception");
@@ -43,33 +43,33 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
 
         public override bool? UseItem(Player player)
         {
-            if(useOoDItem1 == 0)
+            if(useOrbofDeception == 0)
             {
-                useOoDItem1 = 1;
+                useOrbofDeception = 1;
             } else
-            if (useOoDItem1 == 1)
+            if (useOrbofDeception == 1)
             {
-                useOoDItem1 = 2;
+                useOrbofDeception = 2;
             }
             return true;
         }
         public override void HoldItem(Player player)
         {
-            bool OoDOrb1Exists = false;
+            bool OrbofDeceptionProjExists = false;
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<OoDOrb1>() && Main.projectile[i].owner == player.whoAmI)
+                if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<OrbofDeceptionProj>() && Main.projectile[i].owner == player.whoAmI)
                 {
-                    OoDOrb1Exists = true;
+                    OrbofDeceptionProjExists = true;
                     break;
                 }
             }
-            if (!OoDOrb1Exists)
+            if (!OrbofDeceptionProjExists)
             {
-                var projectile = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OoDOrb1>(), Item.damage, Item.knockBack, Main.myPlayer);
+                var projectile = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbofDeceptionProj>(), Item.damage, Item.knockBack, Main.myPlayer);
                 projectile.originalDamage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage);
             }
-        }
+        }/*
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
@@ -80,6 +80,6 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Magic
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }
+        }*/
     }
-}*/
+}

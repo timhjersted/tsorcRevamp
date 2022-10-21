@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
-	public class ToxicShotProjectile : ModProjectile
+	public class ToxicShotProj : ModProjectile
 	{
 		public override void SetStaticDefaults()
 		{

@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
+namespace tsorcRevamp.Items.Weapons.Melee.Hammers
 {
     public class Mjolnir : ModItem
     {
@@ -20,12 +20,12 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.width = 41;
             Item.height = 42;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 25;
-            Item.useTime = 14;
+            Item.useAnimation = 30;
+            Item.useTime = 10;
             Item.pick = 100;
             Item.axe = 120;
-            Item.hammer = 200;
-            Item.damage = 44;
+            Item.hammer = 120;
+            Item.damage = 64;
             Item.knockBack = 15;
             Item.autoReuse = true;
             Item.useTurn = true;
