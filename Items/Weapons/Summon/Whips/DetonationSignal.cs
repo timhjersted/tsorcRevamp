@@ -12,6 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 			Tooltip.SetDefault("Enemies struck by this whip will explode once on minion hit" +
                 "\nScales with double the minion damage" +
+                "\nInflicts Hellfire" +
                 "\nYour minions will focus struck enemies" +
                 "\nThis whip swings faster than most whips");
 		}

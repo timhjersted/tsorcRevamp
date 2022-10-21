@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 {
 	public class NightsCrackerProjectile : ModProjectile
 	{
-		public static int Charges = 0;
+		public static int NightCharges = 0;
 
 		public override void SetStaticDefaults()
 		{
@@ -104,9 +104,9 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
                 Projectile.WhipSettings.RangeMultiplier += 0.08f;
                 Projectile.WhipSettings.Segments++;
             }
-            if (ChargeTime % 60 == 0) // Double damage every 60 ticks of charge.
+            if (ChargeTime % 30 == 0) // Double damage every 60 ticks of charge.
             {
-                Projectile.damage *= 2;
+                Projectile.damage += (int)(Projectile.damage * 0.5f);
             }
 
             owner = Main.player[Projectile.owner];
@@ -127,7 +127,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 		{
 			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerBuff>(), 240);
 			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.NightsCrackerDebuff>(), 240);
-			Charges = (int)ChargeTime / 40 + 1;
+			NightCharges = (int)ChargeTime / 40 + 1;
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.85f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
 		}

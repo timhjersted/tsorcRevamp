@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
                 Item.noMelee = true;
                 Item.noUseGraphic = true;
                 Item.useStyle = ItemUseStyleID.Shoot;
-                Item.shoot = ModContent.ProjectileType<Projectiles.Spears.OldHalberd>();
+                Item.shoot = ModContent.ProjectileType<Projectiles.Spears.OldHalberdProj>();
             }
             return base.CanUseItem(player);
         }

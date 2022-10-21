@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 using Terraria;
 using Terraria.ModLoader;
@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Spears
 {
-    class ForgottenPolearm : ModProjectile
+    class HiRyuuSpearProj : ModProjectile
     {
 
         public override void SetDefaults()
@@ -17,13 +17,15 @@ namespace tsorcRevamp.Projectiles.Spears
             Projectile.aiStyle = 19;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 3600;
-            Projectile.friendly = true;
-            Projectile.hostile = false;
+            Projectile.friendly = true; //can hit enemies
+            Projectile.hostile = false; //can hit player / friendly NPCs
             Projectile.ownerHitCheck = false;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
             Projectile.hide = true;
-            Projectile.scale = 1.3f;
+            //projectile.usesLocalNPCImmunity = true;
+            //projectile.localNPCHitCooldown = 5;
+            Projectile.scale = 1f;
 
         }
         public float moveFactor
@@ -46,16 +48,16 @@ namespace tsorcRevamp.Projectiles.Spears
             {
                 if (moveFactor == 0f)
                 { //when initially thrown
-                    moveFactor = 3.4f; //move forward
+                    moveFactor = 3.07f; //move forward (2.4% of projectile scaled sprite size)
                     Projectile.netUpdate = true;
                 }
                 if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2)
                 { //after x animation frames, return
-                    moveFactor -= 3.2f;
+                    moveFactor -= 2.82f; //2.2% of projctile scaled sprite size
                 }
                 else
                 { //extend spear
-                    moveFactor += 3.4f;
+                    moveFactor += 3.07f; //(2.4% of projectile scaled sprite size)
                 }
 
             }

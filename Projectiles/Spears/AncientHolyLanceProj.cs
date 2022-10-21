@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 
 using Terraria;
 using Terraria.ModLoader;
@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Spears
 {
-    class ForgottenPearlSpear : ModProjectile
+    class AncientHolyLanceProj : ModProjectile
     {
 
         public override void SetDefaults()
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Spears
             Projectile.hide = true;
             //projectile.usesLocalNPCImmunity = true;
             //projectile.localNPCHitCooldown = 5;
-            Projectile.scale = 1f;
+            Projectile.scale = 1.3f;
 
         }
         public float moveFactor
@@ -48,16 +48,16 @@ namespace tsorcRevamp.Projectiles.Spears
             {
                 if (moveFactor == 0f)
                 { //when initially thrown
-                    moveFactor = 1.39f; //move forward (2.4% of projectile scaled sprite size)
+                    moveFactor = 3.1f; //move forward
                     Projectile.netUpdate = true;
                 }
                 if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2)
                 { //after x animation frames, return
-                    moveFactor -= 1.28f; //2.2% of projctile scaled sprite size
+                    moveFactor -= 2.86f;
                 }
                 else
                 { //extend spear
-                    moveFactor += 1.39f; //(2.4% of projectile scaled sprite size)
+                    moveFactor += 3.1f;
                 }
 
             }

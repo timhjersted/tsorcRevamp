@@ -115,6 +115,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
 			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.DominatrixDebuff>(), 240);
+			//Make it inflict Blood Butcherer bleeding debuff
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
 		}

@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             Item.value = PriceByRarity.Pink_5;
             Item.height = 50;
             Item.width = 50;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Spears.ForgottenImpHalberd>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Spears.ForgottenImpHalberdProj>();
         }
     }
 }

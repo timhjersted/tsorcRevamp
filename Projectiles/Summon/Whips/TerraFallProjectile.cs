@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -10,9 +11,10 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
 	public class TerraFallProjectile : ModProjectile
-	{
+    {
+        public static int TerraCharges = 0;
 
-		public override void SetStaticDefaults()
+        public override void SetStaticDefaults()
 		{
 			// This makes the projectile use whip collision detection and allows flasks to be applied to it.
 			ProjectileID.Sets.IsAWhip[Type] = true;
@@ -128,7 +130,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 		{
 			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.TerraFallBuff>(), 180);
 			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.TerraFallDebuff>(), 240);
-			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
+            TerraCharges = (int)ChargeTime / 40 + 1;
+            Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.85f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
 		}
 

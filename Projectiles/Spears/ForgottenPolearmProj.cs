@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Spears
 {
-    class AncientBloodLance : ModProjectile
+    class ForgottenPolearmProj : ModProjectile
     {
 
         public override void SetDefaults()
@@ -17,15 +17,13 @@ namespace tsorcRevamp.Projectiles.Spears
             Projectile.aiStyle = 19;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 3600;
-            Projectile.friendly = true; //can hit enemies
-            Projectile.hostile = false; //can hit player / friendly NPCs
+            Projectile.friendly = true;
+            Projectile.hostile = false;
             Projectile.ownerHitCheck = false;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
             Projectile.hide = true;
-            //projectile.usesLocalNPCImmunity = true;
-            //projectile.localNPCHitCooldown = 5;
-            Projectile.scale = 1f;
+            Projectile.scale = 1.3f;
 
         }
         public float moveFactor
@@ -48,16 +46,16 @@ namespace tsorcRevamp.Projectiles.Spears
             {
                 if (moveFactor == 0f)
                 { //when initially thrown
-                    moveFactor = 2.59f; //move forward (2.4% of projectile scaled sprite size)
+                    moveFactor = 3.4f; //move forward
                     Projectile.netUpdate = true;
                 }
                 if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2)
                 { //after x animation frames, return
-                    moveFactor -= 2.37f; //2.2% of projctile scaled sprite size
+                    moveFactor -= 3.2f;
                 }
                 else
                 { //extend spear
-                    moveFactor += 2.59f; //(2.4% of projectile scaled sprite size)
+                    moveFactor += 3.4f;
                 }
 
             }

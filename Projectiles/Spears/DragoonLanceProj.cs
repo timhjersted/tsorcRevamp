@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 
 using Terraria;
 using Terraria.ModLoader;
@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Spears
 {
-    class HiRyuuSpear : ModProjectile
+    class DragoonLanceProj : ModProjectile
     {
 
         public override void SetDefaults()
@@ -23,9 +23,9 @@ namespace tsorcRevamp.Projectiles.Spears
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
             Projectile.hide = true;
-            //projectile.usesLocalNPCImmunity = true;
-            //projectile.localNPCHitCooldown = 5;
-            Projectile.scale = 1f;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = -1;
+            Projectile.scale = 1.1f;
 
         }
         public float moveFactor
@@ -48,16 +48,16 @@ namespace tsorcRevamp.Projectiles.Spears
             {
                 if (moveFactor == 0f)
                 { //when initially thrown
-                    moveFactor = 3.07f; //move forward (2.4% of projectile scaled sprite size)
+                    moveFactor = 3.1f; //move forward
                     Projectile.netUpdate = true;
                 }
                 if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2)
                 { //after x animation frames, return
-                    moveFactor -= 2.82f; //2.2% of projctile scaled sprite size
+                    moveFactor -= 2.85f;
                 }
                 else
                 { //extend spear
-                    moveFactor += 3.07f; //(2.4% of projectile scaled sprite size)
+                    moveFactor += 3.1f;
                 }
 
             }
@@ -76,6 +76,16 @@ namespace tsorcRevamp.Projectiles.Spears
             }
 
 
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            return base.PreDraw(ref lightColor);
+        }
+
+        public override void PostDraw(Color lightColor)
+        {
+            base.PostDraw(lightColor);
         }
 
     }

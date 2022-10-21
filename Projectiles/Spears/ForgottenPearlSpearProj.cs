@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 using Terraria;
 using Terraria.ModLoader;
@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Spears
 {
-    class GaeBolg : ModProjectile
+    class ForgottenPearlSpearProj : ModProjectile
     {
 
         public override void SetDefaults()
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Spears
             Projectile.hide = true;
             //projectile.usesLocalNPCImmunity = true;
             //projectile.localNPCHitCooldown = 5;
-            Projectile.scale = 1.3f;
+            Projectile.scale = 1f;
 
         }
         public float moveFactor
@@ -48,16 +48,16 @@ namespace tsorcRevamp.Projectiles.Spears
             {
                 if (moveFactor == 0f)
                 { //when initially thrown
-                    moveFactor = 3f; //move forward
+                    moveFactor = 1.39f; //move forward (2.4% of projectile scaled sprite size)
                     Projectile.netUpdate = true;
                 }
                 if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2)
                 { //after x animation frames, return
-                    moveFactor -= 1.7f;
+                    moveFactor -= 1.28f; //2.2% of projctile scaled sprite size
                 }
                 else
                 { //extend spear
-                    moveFactor += 2.25f;
+                    moveFactor += 1.39f; //(2.4% of projectile scaled sprite size)
                 }
 
             }
@@ -75,15 +75,6 @@ namespace tsorcRevamp.Projectiles.Spears
                 Projectile.rotation -= MathHelper.ToRadians(90f);
             }
 
-
-            if (Main.rand.NextBool(5))
-            {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 15, 0f, 0f, 150, default, 1.4f);
-            }
-            int num116 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 15, Projectile.velocity.X * 0.2f + (float)(Projectile.direction * 3), Projectile.velocity.Y * 0.2f, 100, default, 1.2f);
-            Main.dust[num116].velocity /= 2f;
-            num116 = Dust.NewDust(Projectile.position - Projectile.velocity * 2f, Projectile.width, Projectile.height, 15, 0f, 0f, 150, default, 1.4f);
-            Main.dust[num116].velocity /= 5f;
 
         }
 

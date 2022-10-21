@@ -38,7 +38,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
 			if (markedByNightsCracker && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
-				int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(42)); //42 is the base dmg of the Searing Lash
+				int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(42)); //42 is the base dmg of Night's Cracker
 				int tagbonusdamage = 0;
 				if (npc.HasBuff(BuffID.BlandWhipEnemyDebuff))
 				{
@@ -70,7 +70,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 				}
 				if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()))
 				{
-					tagbonusdamage += Projectiles.Summon.Whips.NightsCrackerProjectile.Charges * 2;
+					tagbonusdamage += Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 2;
 				}
 				if (npc.HasBuff(ModContent.BuffType<PyrosulfateDebuff>()))
 				{
@@ -82,13 +82,13 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 				}
 				if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
                 {
-					tagbonusdamage = 20;
+                    tagbonusdamage += Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 5;
                 }
-				float damagescale = Projectiles.Summon.Whips.NightsCrackerProjectile.Charges * 8 * 0.01f;
-				int damagescale2 = Projectiles.Summon.Whips.NightsCrackerProjectile.Charges * 2;
-                damage += (int)((projectile.damage + tagbonusdamage) * damagescale * whipDamage * 0.01);
-				damage += damagescale2;
-				if (Main.rand.NextBool(100 / Projectiles.Summon.Whips.NightsCrackerProjectile.Charges))
+                float searingdamagescaling = Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 8 * 0.01f;
+				int tagdamagescaling = Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 2;
+                damage += (int)((projectile.damage + tagbonusdamage) * searingdamagescaling * whipDamage * 0.01f);
+				damage += tagdamagescaling;
+				if (Main.rand.NextBool(100 / Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges))
 				{
 					crit = true;
 				}

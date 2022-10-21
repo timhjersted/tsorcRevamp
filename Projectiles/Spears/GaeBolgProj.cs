@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Spears
 {
-    class DragoonLance : ModProjectile
+    class GaeBolgProj : ModProjectile
     {
 
         public override void SetDefaults()
@@ -23,9 +23,9 @@ namespace tsorcRevamp.Projectiles.Spears
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
             Projectile.hide = true;
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = -1;
-            Projectile.scale = 1.1f;
+            //projectile.usesLocalNPCImmunity = true;
+            //projectile.localNPCHitCooldown = 5;
+            Projectile.scale = 1.3f;
 
         }
         public float moveFactor
@@ -48,16 +48,16 @@ namespace tsorcRevamp.Projectiles.Spears
             {
                 if (moveFactor == 0f)
                 { //when initially thrown
-                    moveFactor = 3.1f; //move forward
+                    moveFactor = 3f; //move forward
                     Projectile.netUpdate = true;
                 }
                 if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2)
                 { //after x animation frames, return
-                    moveFactor -= 2.85f;
+                    moveFactor -= 1.7f;
                 }
                 else
                 { //extend spear
-                    moveFactor += 3.1f;
+                    moveFactor += 2.25f;
                 }
 
             }
@@ -76,16 +76,15 @@ namespace tsorcRevamp.Projectiles.Spears
             }
 
 
-        }
+            if (Main.rand.NextBool(5))
+            {
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 15, 0f, 0f, 150, default, 1.4f);
+            }
+            int num116 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 15, Projectile.velocity.X * 0.2f + (float)(Projectile.direction * 3), Projectile.velocity.Y * 0.2f, 100, default, 1.2f);
+            Main.dust[num116].velocity /= 2f;
+            num116 = Dust.NewDust(Projectile.position - Projectile.velocity * 2f, Projectile.width, Projectile.height, 15, 0f, 0f, 150, default, 1.4f);
+            Main.dust[num116].velocity /= 5f;
 
-        public override bool PreDraw(ref Color lightColor)
-        {
-            return base.PreDraw(ref lightColor);
-        }
-
-        public override void PostDraw(Color lightColor)
-        {
-            base.PostDraw(lightColor);
         }
 
     }

@@ -18,7 +18,7 @@ namespace tsorcRevamp.Buffs.Summon
 
         public override void Update(Player player, ref int buffIndex)
         {
-			attackspeed = Projectiles.Summon.Whips.NightsCrackerProjectile.Charges * 6;
+			attackspeed = Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 6;
 			player.GetAttackSpeed(DamageClass.Summon) += attackspeed / 100;
 		}
 		public override void ModifyBuffTip(ref string tip, ref int rare)

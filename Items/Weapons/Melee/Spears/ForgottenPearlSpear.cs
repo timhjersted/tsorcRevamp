@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             Item.rare = ItemRarityID.Pink;
             Item.maxStack = 1;
             Item.UseSound = SoundID.Item1;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Spears.ForgottenPearlSpear>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Spears.ForgottenPearlSpearProj>();
 
         }
 

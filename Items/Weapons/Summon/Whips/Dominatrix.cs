@@ -11,6 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 			Tooltip.SetDefault("7% summon tag critical strike chance" +
+                "\nInflicts bleeding debuff" +
 				"\nYour summons will focus struck enemies");
 		}
 

@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
-    class EphemeralThrowingAxe : ModProjectile
+    class EphemeralThrowingAxeProj : ModProjectile
     {
 
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/EphemeralThrowingAxe";

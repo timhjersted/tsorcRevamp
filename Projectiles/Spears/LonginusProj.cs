@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+
 using Terraria;
 using Terraria.ModLoader;
 
@@ -6,11 +7,13 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Spears
 {
-    class CelestialLance : ModProjectile
+    class LonginusProj : ModProjectile
     {
+
         bool hasHealed = false;
+
         public override void SetDefaults()
-        {  
+        {
             Projectile.width = 45;
             Projectile.height = 45;
             Projectile.aiStyle = 19;
@@ -24,8 +27,7 @@ namespace tsorcRevamp.Projectiles.Spears
             Projectile.hide = true;
             //projectile.usesLocalNPCImmunity = true;
             //projectile.localNPCHitCooldown = 5;
-            Projectile.scale = 1f;
-
+            Projectile.scale = 1.2f;
         }
         public float moveFactor
         { //controls spear speed
@@ -41,7 +43,7 @@ namespace tsorcRevamp.Projectiles.Spears
             {
                 if (!hasHealed)
                 {
-                    int healAmount = 6;
+                    int healAmount = 3;
                     pOwner.statLife += healAmount;
                     pOwner.HealEffect(healAmount, true);
                     hasHealed = true;
@@ -65,16 +67,16 @@ namespace tsorcRevamp.Projectiles.Spears
             {
                 if (moveFactor == 0f)
                 { //when initially thrown
-                    moveFactor = 3.4f; //move forward
+                    moveFactor = 4f; //move forward
                     Projectile.netUpdate = true;
                 }
                 if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2)
                 { //after x animation frames, return
-                    moveFactor -= 3.1f;
+                    moveFactor -= 3.74f;
                 }
                 else
                 { //extend spear
-                    moveFactor += 3.4f;
+                    moveFactor += 4f;
                 }
 
             }

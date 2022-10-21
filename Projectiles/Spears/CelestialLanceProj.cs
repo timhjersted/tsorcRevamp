@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-
 using Terraria;
 using Terraria.ModLoader;
 
@@ -7,11 +6,11 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Spears
 {
-    class AncientHolyLance : ModProjectile
+    class CelestialLanceProj : ModProjectile
     {
-
+        bool hasHealed = false;
         public override void SetDefaults()
-        {
+        {  
             Projectile.width = 45;
             Projectile.height = 45;
             Projectile.aiStyle = 19;
@@ -25,13 +24,31 @@ namespace tsorcRevamp.Projectiles.Spears
             Projectile.hide = true;
             //projectile.usesLocalNPCImmunity = true;
             //projectile.localNPCHitCooldown = 5;
-            Projectile.scale = 1.3f;
+            Projectile.scale = 1f;
 
         }
         public float moveFactor
         { //controls spear speed
             get => Projectile.ai[0];
             set => Projectile.ai[0] = value;
+        }
+
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            Player pOwner = Main.player[Projectile.owner];
+
+            if (Main.rand.NextBool(6))
+            {
+                if (!hasHealed)
+                {
+                    int healAmount = 6;
+                    pOwner.statLife += healAmount;
+                    pOwner.HealEffect(healAmount, true);
+                    hasHealed = true;
+                }
+
+            }
+
         }
 
         public override void AI()
@@ -48,16 +65,16 @@ namespace tsorcRevamp.Projectiles.Spears
             {
                 if (moveFactor == 0f)
                 { //when initially thrown
-                    moveFactor = 3.1f; //move forward
+                    moveFactor = 3.4f; //move forward
                     Projectile.netUpdate = true;
                 }
                 if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2)
                 { //after x animation frames, return
-                    moveFactor -= 2.86f;
+                    moveFactor -= 3.1f;
                 }
                 else
                 { //extend spear
-                    moveFactor += 3.1f;
+                    moveFactor += 3.4f;
                 }
 
             }
@@ -74,7 +91,6 @@ namespace tsorcRevamp.Projectiles.Spears
             {
                 Projectile.rotation -= MathHelper.ToRadians(90f);
             }
-
 
         }
 

@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Spears
 {
-    class OldHalberd : ModProjectile
+    class CobaltHalberdProj : ModProjectile
     {
 
         public override void SetDefaults()
@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Spears
             Projectile.tileCollide = false;
             Projectile.hide = true;
             Projectile.scale = 1f;
-            Projectile.ownerHitCheck = true;
+
         }
         public float moveFactor
         { //controls spear speed
@@ -43,16 +43,16 @@ namespace tsorcRevamp.Projectiles.Spears
             {
                 if (moveFactor == 0f)
                 { //when initially thrown
-                    moveFactor = 2.4f; //move forward
+                    moveFactor = 3f; //move forward
                     Projectile.netUpdate = true;
                 }
                 if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2)
                 { //after x animation frames, return
-                    moveFactor -= 2.26f;
+                    moveFactor -= 2.76f;
                 }
                 else
                 { //extend spear
-                    moveFactor += 2.4f;
+                    moveFactor += 3f;
                 }
 
             }

@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             Item.rare = ItemRarityID.Orange;
             Item.maxStack = 1;
             Item.UseSound = SoundID.Item1;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Spears.AncientBloodLance>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Spears.AncientBloodLanceProj>();
 
         }
 

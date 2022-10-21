@@ -34,7 +34,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 		// TODO: Inconsistent with vanilla, increasing damage AFTER it is randomised, not before. Change to a different hook in the future.
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
-			int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(30)); //30 is the base dmg of the Searing Lash
+			int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(30)); //30 is the base dmg of Searing Lash
 			int tagbonusdamage = 0;
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
 			if (markedBySearingLash && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
@@ -67,11 +67,11 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 				{
 					tagbonusdamage += 7;
 				}
-				if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()))
-				{
-					tagbonusdamage += 5;
-				}
-				if (npc.HasBuff(ModContent.BuffType<PyrosulfateDebuff>()))
+                if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()))
+                {
+                    tagbonusdamage += Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 2;
+                }
+                if (npc.HasBuff(ModContent.BuffType<PyrosulfateDebuff>()))
 				{
 					tagbonusdamage += 8;
 				}
@@ -79,11 +79,11 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
                 {
 					tagbonusdamage += 3;
                 }
-				if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
-				{
-					tagbonusdamage = 20;
-				}
-				damage += (int)((projectile.damage + tagbonusdamage) * 0.66f * whipDamage * 0.01);
+                if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
+                {
+                    tagbonusdamage += Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 5;
+                }
+                damage += (int)((projectile.damage + tagbonusdamage) * 0.66f * whipDamage * 0.01);
 			}
 		}
 	}

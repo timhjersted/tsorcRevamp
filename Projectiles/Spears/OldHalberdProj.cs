@@ -1,32 +1,27 @@
-using Microsoft.Xna.Framework;
-
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 
-//using tsorcRevamp.Dusts;
-
 namespace tsorcRevamp.Projectiles.Spears
 {
-    class ForgottenRadiantLance : ModProjectile
+    class OldHalberdProj : ModProjectile
     {
 
         public override void SetDefaults()
         {
-            Projectile.width = 45;
-            Projectile.height = 45;
+            Projectile.width = 16;
+            Projectile.height = 16;
             Projectile.aiStyle = 19;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 3600;
-            Projectile.friendly = true; //can hit enemies
-            Projectile.hostile = false; //can hit player / friendly NPCs
+            Projectile.friendly = true;
+            Projectile.hostile = false;
             Projectile.ownerHitCheck = false;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
             Projectile.hide = true;
-            //projectile.usesLocalNPCImmunity = true;
-            //projectile.localNPCHitCooldown = 5;
-            Projectile.scale = 1.3f;
-
+            Projectile.scale = 1f;
+            Projectile.ownerHitCheck = true;
         }
         public float moveFactor
         { //controls spear speed
@@ -48,28 +43,28 @@ namespace tsorcRevamp.Projectiles.Spears
             {
                 if (moveFactor == 0f)
                 { //when initially thrown
-                    moveFactor = 3.4f; //move forward
+                    moveFactor = 2.4f; //move forward
                     Projectile.netUpdate = true;
                 }
                 if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2)
                 { //after x animation frames, return
-                    moveFactor -= 3.2f;
+                    moveFactor -= 2.26f;
                 }
                 else
                 { //extend spear
-                    moveFactor += 3.4f;
+                    moveFactor += 2.4f;
                 }
 
             }
 
-            if (pOwner.itemAnimation == 0)
+            if (pOwner.itemAnimation == 4)
             {
                 Projectile.Kill();
             }
 
             Projectile.position += Projectile.velocity * moveFactor;
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(135f);
-
+            Projectile.spriteDirection = Projectile.direction;
             if (Projectile.spriteDirection == -1)
             {
                 Projectile.rotation -= MathHelper.ToRadians(90f);
