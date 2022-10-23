@@ -19,6 +19,7 @@ namespace tsorcRevamp.Projectiles
         {
             Projectile.width = 20;
             Projectile.height = 20;
+            Projectile.DamageType = DamageClass.Generic;
             Projectile.penetrate = 3;
             Projectile.friendly = true;
             Projectile.tileCollide = true;

@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             Item.height = 32;
             Item.knockBack = 5;
             Item.maxStack = 1;
-            Item.DamageType = DamageClass.Melee;
+            Item.DamageType = DamageClass.Generic;
             Item.scale = 0.9f;
             Item.useAnimation = 20;
             Item.useTime = 20;
