@@ -100,7 +100,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(ItemID.ShroomiteBar, 10);
             recipe.AddIngredient(ItemID.ElectrosphereLauncher);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 125000);
-            recipe.AddTile(TileID.MythrilAnvil);
+            recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
 
