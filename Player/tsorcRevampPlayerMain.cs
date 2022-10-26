@@ -447,6 +447,25 @@ namespace tsorcRevamp
             MastersScroll.SetDefaults(ModContent.ItemType<MastersScroll>());
             startingItems.Add(MastersScroll);
 
+            if (ModLoader.TryGetMod("MagicStorage", out Mod MagicStorage)) {
+                Item StorageHeart = new();
+                MagicStorage.TryFind("StorageHeart", out ModItem heart);
+                StorageHeart.SetDefaults(heart.Type);
+                startingItems.Add(StorageHeart);
+
+                Item CraftingAccess = new();
+                MagicStorage.TryFind("CraftingAccess", out ModItem ca);
+                CraftingAccess.SetDefaults(ca.Type);
+                startingItems.Add(CraftingAccess);
+
+                Item StorageUnit = new();
+                MagicStorage.TryFind("StorageUnit", out ModItem unit);
+                StorageUnit.SetDefaults(unit.Type);
+                StorageUnit.stack = 16;
+                startingItems.Add(StorageUnit);
+
+            }
+
             return startingItems;
         }
 
