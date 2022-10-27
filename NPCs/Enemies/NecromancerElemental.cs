@@ -119,11 +119,11 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ManaRegenerationBand));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GreaterHealingPotion));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.MagicPowerPotion, 5));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RegenerationPotion, 5));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ManaRegenerationBand, 10));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GreaterHealingPotion, 10));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 20));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.MagicPowerPotion, 25));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RegenerationPotion, 25));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 50));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 50));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 50));

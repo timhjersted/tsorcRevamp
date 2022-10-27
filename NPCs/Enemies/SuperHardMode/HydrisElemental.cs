@@ -95,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.DyingWindShard>(), 100, 1, 1, 40));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.DyingWindShard>(), 100, 1, 1, 50));
         }
     }
 }

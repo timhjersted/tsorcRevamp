@@ -168,7 +168,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
 
         public override void OnKill()
         {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Humanity>(), 2);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Humanity>(), 3);
 
             if (Main.rand.NextBool(12))
             {

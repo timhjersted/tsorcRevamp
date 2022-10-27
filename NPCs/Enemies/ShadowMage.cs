@@ -330,7 +330,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.ManaRegenerationPotion, 100, 1, 1, 40));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GreaterHealingPotion, 5, 1, 1, 2));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GreaterHealingPotion, 10, 1, 1, 1));
 
         }
     }

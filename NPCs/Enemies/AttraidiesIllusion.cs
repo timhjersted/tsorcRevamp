@@ -381,16 +381,16 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ShinePotion, 5));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.RegenerationPotion, 5, 1, 1, 4));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.MagicPowerPotion, 5, 1, 1, 3));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HunterPotion, 5));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ShinePotion, 55));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.RegenerationPotion, 35, 1, 1, 4));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.MagicPowerPotion, 35, 1, 1, 3));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HunterPotion, 35));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GillsPotion, 75));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.IronskinPotion, 5, 1, 1, 2));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.ManaRegenerationPotion, 10, 1, 1, 9));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.IronskinPotion, 35, 1, 1, 2));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.ManaRegenerationPotion, 30, 1, 1, 9));
             npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GoldenKey, 10, 1, 1, 3));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Magic.AquamarineRing>(), 20));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GreaterHealingPotion, 1, 2, 2));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GreaterHealingPotion, 10, 2, 2));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
         }
     }
