@@ -12,6 +12,8 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using tsorcRevamp.Textures;
+using tsorcRevamp.Tiles;
 
 namespace tsorcRevamp
 {
@@ -249,8 +251,10 @@ namespace tsorcRevamp
                 for (int y = 0; y < Main.maxTilesY - 2; y++)
                 {
 
+                    Tile worldTile = Framing.GetTileSafely(x, y);
+
                     //Campfire to Bonfire
-                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.Campfire)
+                    if (worldTile.HasTile && worldTile.TileType == TileID.Campfire)
                     {
 
                         //kill the space above the campfire, to remove vines and such
@@ -319,7 +323,7 @@ namespace tsorcRevamp
                     }
 
                     //Slime blocks to SkullLeft - SlimeBlock-PinkSlimeBlock (I tried to stick right and lefts together but the code refuses to work for both, I swear I'm not just being dumb) 
-                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.PinkSlimeBlock && Main.tile[x - 1, y].TileType == TileID.SlimeBlock)
+                    if (worldTile.HasTile && worldTile.TileType == TileID.PinkSlimeBlock && Main.tile[x - 1, y].TileType == TileID.SlimeBlock)
                     {
 
                         //kill the space the skull occupies, to remove vines and such
@@ -377,7 +381,7 @@ namespace tsorcRevamp
                             tile.TileFrameY = (short)(num + 18);
                             tile.TileFrameX = num2;
                             tile.TileType = type;
-                            tile = Main.tile[x, y];
+                            tile = worldTile;
                             tile.HasTile = true;
                             tile.TileFrameY = (short)(num + 18);
                             tile.TileFrameX = (short)(num2 + 18);
@@ -386,7 +390,7 @@ namespace tsorcRevamp
                     }
 
                     //Slime block to SkullRight - PinkSlimeBlock-SlimeBlock
-                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.SlimeBlock && Main.tile[x - 1, y].TileType == TileID.PinkSlimeBlock)
+                    if (worldTile.HasTile && worldTile.TileType == TileID.SlimeBlock && Main.tile[x - 1, y].TileType == TileID.PinkSlimeBlock)
                     {
 
                         //kill the space the skull occupies, to remove vines and such
@@ -444,7 +448,7 @@ namespace tsorcRevamp
                             tile.TileFrameY = (short)(num + 18);
                             tile.TileFrameX = num2;
                             tile.TileType = type;
-                            tile = Main.tile[x, y];
+                            tile = worldTile;
                             tile.HasTile = true;
                             tile.TileFrameY = (short)(num + 18);
                             tile.TileFrameX = (short)(num2 + 18);
@@ -453,7 +457,7 @@ namespace tsorcRevamp
                     }
 
                     //Stucco blocks to SkellyLeft - GreyStucco-GreenStuccoBlock-GreyStuccoBlock
-                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.GreenStucco && Main.tile[x + 1, y].TileType == TileID.GrayStucco && Main.tile[x - 1, y].TileType == TileID.GrayStucco)
+                    if (worldTile.HasTile && worldTile.TileType == TileID.GreenStucco && Main.tile[x + 1, y].TileType == TileID.GrayStucco && Main.tile[x - 1, y].TileType == TileID.GrayStucco)
                     {
 
                         //kill the space the skelly occupies, to remove vines and such
@@ -496,7 +500,7 @@ namespace tsorcRevamp
                             tile.TileFrameY = 0;
                             tile.TileFrameX = num;
                             tile.TileType = type;
-                            tile = Main.tile[x, y];
+                            tile = worldTile;
                             tile.HasTile = true;
                             tile.TileFrameY = 0;
                             tile.TileFrameX = (short)(num + 18);
@@ -510,7 +514,7 @@ namespace tsorcRevamp
                     }
 
                     //Stucco blocks to SkellyRight - GreenStucco-GreyStuccoBlock-GreenStuccoBlock
-                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.GrayStucco && Main.tile[x + 1, y].TileType == TileID.GreenStucco && Main.tile[x - 1, y].TileType == TileID.GreenStucco)
+                    if (worldTile.HasTile && worldTile.TileType == TileID.GrayStucco && Main.tile[x + 1, y].TileType == TileID.GreenStucco && Main.tile[x - 1, y].TileType == TileID.GreenStucco)
                     {
 
                         //kill the space the skelly occupies, to remove vines and such
@@ -553,7 +557,7 @@ namespace tsorcRevamp
                             tile.TileFrameY = 0;
                             tile.TileFrameX = num;
                             tile.TileType = type;
-                            tile = Main.tile[x, y];
+                            tile = worldTile;
                             tile.HasTile = true;
                             tile.TileFrameY = 0;
                             tile.TileFrameX = (short)(num + 18);
@@ -567,7 +571,7 @@ namespace tsorcRevamp
                     }
 
                     //Confetti blocks to SkellyHangingUp (wrists chained) - Confetti Block
-                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.Confetti)
+                    if (worldTile.HasTile && worldTile.TileType == TileID.Confetti)
                     {
 
                         //kill the space the skelly occupies, to remove vines and such
@@ -622,7 +626,7 @@ namespace tsorcRevamp
                     }
 
                     //Confetti blocks to SkellyHangingDown (ankles chained) - Confetti Black Block (aka Midnight Confetti Block)
-                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.ConfettiBlack)
+                    if (worldTile.HasTile && worldTile.TileType == TileID.ConfettiBlack)
                     {
 
                         //kill the space the skelly occupies, to remove vines and such
@@ -771,6 +775,22 @@ namespace tsorcRevamp
                     {
                         Tiles.SoulSkellyGeocache.InitializeSkellys();
                         CampfireToBonfire();
+
+                        //this only ever needs to run once, since tileentities are saved in the world
+                        //so, lets just check some magic coordinates that we know belong to the first soapstone
+                        //todo come up with a better way to do this?
+                        if (Framing.GetTileSafely(4950, 865).TileType != ModContent.TileType<SoapstoneTile>()) {
+                            SoapstoneMessage.InitSoapstones();
+                            foreach (SoapstoneMessage cache in SoapstoneMessage.SoapstoneList) {
+                                WorldGen.PlaceTile(cache.location.X, cache.location.Y, ModContent.TileType<SoapstoneTile>());
+                                //make double sure theres a tileentity at the coordinates before trying to modify it
+                                if (TileUtils.TryGetTileEntityAs(cache.location.X, cache.location.Y, out SoapstoneTileEntity entity)) {
+                                    entity.text = cache.text;
+                                }
+
+                            }
+                        }
+                        
                     }
 
                     //Stuff that should only be done by either a solo player or the server
@@ -863,6 +883,10 @@ namespace tsorcRevamp
                         UsefulFunctions.BroadcastText("This is intended for the custom map and can break randomly generated worlds! To prevent issues, please disable this setting and reload mods!", Color.OrangeRed);
                     }
                 }
+            }
+            if (tsorcRevamp.NearbySoapstone != null) {
+                if (tsorcRevamp.NearbySoapstone.timer <= 0)
+                    tsorcRevamp.NearbySoapstone = null;
             }
         }
 

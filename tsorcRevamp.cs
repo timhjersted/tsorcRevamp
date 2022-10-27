@@ -34,6 +34,7 @@ using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Potions.PermanentPotions;
 using Terraria.ModLoader.Core;
 using System.Security.Cryptography;
+using tsorcRevamp.Tiles;
 
 namespace tsorcRevamp
 {
@@ -122,6 +123,8 @@ namespace tsorcRevamp
         public static bool ActuationBypassActive = false;
 
         public static int MarkerSelected = -1;
+
+        public static SoapstoneTileEntity NearbySoapstone; 
 
         public override void Load()
         {
@@ -2468,7 +2471,8 @@ namespace tsorcRevamp
             LightrifleFire,
             Lightning,
             BulletHellLaser,
-            HeavenPiercerGlowmask
+            HeavenPiercerGlowmask,
+            SoapstoneMessage
         }
 
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -2519,7 +2523,8 @@ namespace tsorcRevamp
                 {TransparentTextureType.LightrifleFire, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Magic/LightrifleFire", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.Lightning, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyLightningStrike", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.BulletHellLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Gwyn/BulletHellLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.HeavenPiercerGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/HeavenPiercerGlowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)}
+                {TransparentTextureType.HeavenPiercerGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/HeavenPiercerGlowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.SoapstoneMessage, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Tiles/SoapstoneMessage", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
 
             };
 

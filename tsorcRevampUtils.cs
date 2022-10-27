@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -837,5 +838,33 @@ namespace tsorcRevamp
             return croppedImage;
         }
 
+        /// <summary>
+        /// Automatically insert new lines into strings when they exceed a given width.
+        /// </summary>
+        /// <param name="input">The string to wrap</param>
+        /// <param name="maxWidth">The maximum width of one line</param>
+        /// <param name="font">Whichever font you are using to draw the string</param>
+        /// <param name="scale">The text scale</param>
+        /// <returns></returns>
+        public static string WrapString(string input, DynamicSpriteFont font, float maxWidth = 240, float scale = 1f) {
+            string finalText = "";
+            string[] array = input.Split();
+            string currentLine = "";
+            foreach (string currentWord in array) {
+                if (currentWord == "NEWBLOCK") {
+                    finalText += "\n\n";
+                    currentLine = "";
+                }
+                else if (font.MeasureString(currentLine + " " + currentWord).X * scale <= (float)maxWidth) {
+                    finalText = finalText + " " + currentWord;
+                    currentLine = currentLine + " " + currentWord;
+                }
+                else {
+                    finalText = finalText + "\n " + currentWord;
+                    currentLine = currentWord;
+                }
+            }
+            return finalText;
+        }
     }
 }

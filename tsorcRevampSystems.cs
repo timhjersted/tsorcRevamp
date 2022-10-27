@@ -11,6 +11,9 @@ using tsorcRevamp.UI;
 using Terraria.Localization;
 using System;
 using tsorcRevamp.Textures;
+using ReLogic.Graphics;
+using tsorcRevamp.Tiles;
+using System.Linq;
 
 namespace tsorcRevamp
 {
@@ -267,6 +270,30 @@ namespace tsorcRevamp
         {
             tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.Draw(spriteBatch);
+            if (tsorcRevamp.NearbySoapstone != null) {
+                if (tsorcRevamp.NearbySoapstone.timer <= 0) return;
+                SoapstoneTileEntity soapstone = tsorcRevamp.NearbySoapstone;
+                int textWidth = 240;
+                string text = UsefulFunctions.WrapString(soapstone.text, FontAssets.ItemStack.Value, textWidth, 1);
+                float alpha = (soapstone.timer / 60);
+                Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition) - new Vector2((textWidth / 2) - 4, 128);
+
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied); //allows it to have alpha
+
+                Texture2D boxTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/blackpixel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+
+                int lineCount = text.Count(a => a == '\n') + 1;
+                int height = (FontAssets.ItemStack.Value.LineSpacing * lineCount) + 8;
+                Rectangle drect = new((int)textPosition.X - 4, (int)textPosition.Y - 4, textWidth + 8, height);
+                Color bgColor = new(0, 0, 0, (0.5f * alpha) + 0.1f);
+                Main.spriteBatch.Draw(boxTexture, drect, bgColor);
+
+                Color textColor = new(1, 1, 1, alpha);
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, text, textPosition, textColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin();
+            }
         }
 
         public override void Unload()
