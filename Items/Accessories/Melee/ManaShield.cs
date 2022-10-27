@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
     {
 
         public static int manaCost = 75;
-        public static int regenDelay = 900;
+        public static int regenDelay = 1000;
         public static float damageResistance = 0.35f;
         public override void SetStaticDefaults()
         {
@@ -30,8 +30,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
-            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 50);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
+            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 1);
             recipe.AddTile(TileID.DemonAltar);
            //recipe.AddCondition(tsorcRevampWorld.SHM1Downed);
             recipe.Register();

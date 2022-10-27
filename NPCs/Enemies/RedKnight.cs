@@ -378,13 +378,17 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
 
-            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 10));
-            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 30));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 50));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Spears.ForgottenPearlSpear>(), 20));
 
+            int[] weaponIDs = new int[] {
+                ModContent.ItemType<Items.Weapons.Melee.Spears.ForgottenPearlSpear>(),
+            };
+            npcLoot.Add(new DropMultiple(weaponIDs, 10, 1, NPC.downedBoss3));
 
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
-            hmCondition.OnSuccess(ItemDropRule.Common(ItemID.RegenerationPotion, 10));
+            hmCondition.OnSuccess(ItemDropRule.Common(ItemID.RegenerationPotion, 30));
             npcLoot.Add(hmCondition);
 
 

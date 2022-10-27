@@ -910,10 +910,10 @@ namespace tsorcRevamp.NPCs.Enemies
             hmCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 10));
             npcLoot.Add(hmCondition);
 
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Melee.SpikedIronShield>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Melee.SpikedIronShield>(), 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.LostUndeadSoul>(), 5));
-            npcLoot.Add(ItemDropRule.Common(ItemID.RagePotion, 3));
-            npcLoot.Add(ItemDropRule.Common(ItemID.WrathPotion, 3));
+            npcLoot.Add(ItemDropRule.Common(ItemID.RagePotion, 13));
+            npcLoot.Add(ItemDropRule.Common(ItemID.WrathPotion, 13));
         }
 
         #region Drawing and Animation

@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             {
                 
                 Item.shoot = ModContent.ProjectileType<Projectiles.CrescentTrue>();
-                Item.shootSpeed = 12f;
+                Item.shootSpeed = 14f;
                 Item.useTime = 40;
                 Item.useAnimation = 40;
                 Item.damage = 186;

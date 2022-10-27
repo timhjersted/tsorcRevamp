@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Shield of a nameless knight" +
+            Tooltip.SetDefault("Unique shield of a nameless knight" +
                          $"\n[c/ffbf00:Reduces incoming damage by {damageResistance * 100}% when not attacking or {damageResistance3 * 100}% when attacking, but drains {staminaCost} stamina per hit]" +
                          "\nHolding the shield also prevents knockback and protects against fire but reduces stamina regen by 15%" +
                          $"\nGetting hit while low on stamina will stagger you and only reduce damage taken by 5%");

@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("SupersonicBoots").Type, 1);
             recipe.AddIngredient(ItemID.AngelWings, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

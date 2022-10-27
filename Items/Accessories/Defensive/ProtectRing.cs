@@ -24,10 +24,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.AdamantiteBar, 3);
-            recipe.AddIngredient(ItemID.Emerald, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 20);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 1);
+            //recipe.AddIngredient(ItemID.Emerald, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

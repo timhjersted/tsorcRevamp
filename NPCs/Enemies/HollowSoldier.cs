@@ -814,10 +814,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulShekel>(), 1, 3, 9));
-            npcLoot.Add(ItemDropRule.Common(ItemID.EndurancePotion, 3));
-            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 3));
+            npcLoot.Add(ItemDropRule.Common(ItemID.EndurancePotion, 30));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 30));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 10));
-            npcLoot.Add(ItemDropRule.Common(ItemID.CobaltShield, 15));
+            //npcLoot.Add(ItemDropRule.Common(ItemID.CobaltShield, 15));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Melee.IronShield>(), 15));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Lifegem>(), 15));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 30));

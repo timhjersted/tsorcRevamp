@@ -102,13 +102,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(ItemDropRule.Common(ItemID.SpellTome, 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.DeadChicken>(), 20));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.AttraidiesRelic>(), 100, 1, 1, 12));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.DeadChicken>(), 25));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.AttraidiesRelic>(), 100, 1, 1, 10));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WandOfFire>(), 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WandOfDarkness>(), 10));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WoodenWand>(), 5));
             npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 1, 1, 3));
-            npcLoot.Add(ItemDropRule.Common(ItemID.HealingPotion, 8, 2, 2));
+            npcLoot.Add(ItemDropRule.Common(ItemID.HealingPotion, 12, 2, 2));
             npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 8));
 
             int[] armorIDs = new int[] {
@@ -118,7 +118,7 @@ namespace tsorcRevamp.NPCs.Enemies
             };
             //i just wanna say that, while terraria's convention is (denominator, numerator)
             //and im following that convention with DropMultiple, i completely detest it
-            npcLoot.Add(new DropMultiple(armorIDs, 10, 1, !NPC.downedBoss1));
+            npcLoot.Add(new DropMultiple(armorIDs, 20, 1, !NPC.downedBoss1));
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)

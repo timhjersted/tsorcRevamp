@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Accessories
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Melee.ManaShield>(), 1);
             recipe.AddIngredient(ModContent.ItemType<Magic.EssenceOfMana>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 30);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200000);
             recipe.AddTile(TileID.DemonAltar);

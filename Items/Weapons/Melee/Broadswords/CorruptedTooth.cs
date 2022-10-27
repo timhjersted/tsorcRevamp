@@ -66,7 +66,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverBroadsword);
-            recipe.AddIngredient(ItemID.RottenChunk, 3);
+            recipe.AddIngredient(ItemID.RottenChunk, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 800);
             recipe.AddTile(TileID.DemonAltar);
 

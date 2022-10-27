@@ -196,7 +196,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.TitanGlove);
-            recipe.AddIngredient(ItemID.MythrilBar, 10);
+            //recipe.AddIngredient(ItemID.MythrilBar, 3);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);

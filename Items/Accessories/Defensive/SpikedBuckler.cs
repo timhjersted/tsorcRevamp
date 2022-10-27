@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Thorns Effect and No Knockback.");
+            Tooltip.SetDefault("Grants Thorns Effect and No Knockback.");
 
         }
 
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
             recipe.AddIngredient(Mod.Find<ModItem>("SpikedNecklace").Type, 1);
             recipe.AddIngredient(ItemID.CobaltShield, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 300);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

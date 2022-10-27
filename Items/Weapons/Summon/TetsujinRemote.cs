@@ -64,7 +64,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<DestructionElement>(), 1);
 			recipe.AddIngredient(ModContent.ItemType<CompactFrame>(), 1);
-			recipe.AddIngredient(ModContent.ItemType<Ammo.TeslaBolt>(), 100);
+			//recipe.AddIngredient(ModContent.ItemType<Ammo.TeslaBolt>(), 100);
 			recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
 			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 75000);
 			recipe.AddTile(TileID.DemonAltar);

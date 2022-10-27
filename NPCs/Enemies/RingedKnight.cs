@@ -1055,11 +1055,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 4));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 4));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 12));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Broadswords.AncientFireSword>(), 10));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.RagePotion, 5, 1, 1, 3));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.WrathPotion, 5, 1, 1, 3));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 5, 1, 1, 3));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.RagePotion, 100, 1, 1, 10));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.WrathPotion, 100, 1, 1, 10));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 100, 1, 1, 10));
 
         }
 

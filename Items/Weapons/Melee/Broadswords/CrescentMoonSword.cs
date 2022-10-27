@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             DisplayName.SetDefault("Crescent Moon Sword");
             Tooltip.SetDefault("Ringfinger Leonhard's weapon of choice," +
                                "\na type of shotel imbued with the power of the moon" +
-                               "\nShoots beams of crescent moonlight that pierce walls at night");
+                               "\n[c/ffbf00:Shoots beams of crescent moonlight that pierce walls at night]");
         }
 
         public override void SetDefaults()
@@ -64,9 +64,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), 1);
-            recipe.AddIngredient(ItemID.AdamantiteBar, 5);
-            recipe.AddIngredient(ItemID.SoulofLight, 7);
-            recipe.AddIngredient(ItemID.SoulofNight, 7);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 3);
+            //recipe.AddIngredient(ItemID.SoulofLight, 7);
+            recipe.AddIngredient(ItemID.SoulofNight, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
             recipe.AddTile(TileID.DemonAltar);
 

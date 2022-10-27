@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("BandOfCosmicPower").Type, 1);
-            recipe.AddIngredient(ItemID.ShadowScale, 10);
+            //recipe.AddIngredient(ItemID.ShadowScale, 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
 
