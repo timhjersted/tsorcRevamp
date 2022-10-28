@@ -943,7 +943,7 @@ namespace tsorcRevamp.NPCs.Enemies
             hmCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 10));
             npcLoot.Add(hmCondition);
 
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Melee.SpikedIronShield>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.SpikedIronShield>(), 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>(), 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.LostUndeadSoul>(), 5));
             npcLoot.Add(ItemDropRule.Common(ItemID.LifeforcePotion, 5));

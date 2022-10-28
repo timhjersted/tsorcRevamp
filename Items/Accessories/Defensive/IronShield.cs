@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories.Melee
+namespace tsorcRevamp.Items.Accessories.Defensive
 {
 
     [AutoloadEquip(EquipType.Shield)]
@@ -11,9 +11,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Greater defense for melee warriors" +
-                                "\nReduces damage taken by 4% " +
-                                "\nbut also reduces non-melee damage by 20% and movement speed by 10%" +
+            Tooltip.SetDefault("Reduces damage taken by 4% " +
+                                "\nbut also reduces movement speed by 10%" +
                                 "\nCan be upgraded with 2000 Dark Souls.");
         }
 
@@ -31,9 +30,6 @@ namespace tsorcRevamp.Items.Accessories.Melee
         {
             player.endurance += 0.04f;
             player.moveSpeed *= 0.9f;
-            player.GetDamage(DamageClass.Ranged) -= 0.2f;
-            player.GetDamage(DamageClass.Magic) -= 0.2f;
-            player.GetDamage(DamageClass.Summon) -= 0.2f;
         }
 
         public override void AddRecipes()

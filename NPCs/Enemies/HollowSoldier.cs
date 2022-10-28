@@ -818,7 +818,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 30));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 10));
             //npcLoot.Add(ItemDropRule.Common(ItemID.CobaltShield, 15));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Melee.IronShield>(), 15));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.IronShield>(), 15));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Lifegem>(), 15));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 30));
 
