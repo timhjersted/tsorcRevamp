@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Tooltip.SetDefault("A sword crafted for magic users" +
                                "\nDeals +1 damage for every 20 mana the user has over 200" +
-                               "\nCan be upgraded with 25,000 Dark Souls & 3 Souls of Light");
+                               "\nCan be upgraded");// with 25,000 Dark Souls & 3 Souls of Light
         }
 
         public override void SetDefaults()
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Muramasa, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

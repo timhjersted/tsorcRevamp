@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.BossItems
             {
                 Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 10);
-                recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 15);
+                recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 10);
                 recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
                 recipe.AddTile(TileID.DemonAltar);
                 

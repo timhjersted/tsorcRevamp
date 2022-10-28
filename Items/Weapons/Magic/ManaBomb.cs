@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ManaCrystal, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 250);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

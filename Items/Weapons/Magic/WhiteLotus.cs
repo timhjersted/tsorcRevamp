@@ -39,9 +39,9 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         public override void AddRecipes() {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.LeafBlower);
-            recipe.AddIngredient(ItemID.ShroomiteBar, 8);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 85000);
+            recipe.AddIngredient(ItemID.FlowerPacketWhite);
+            recipe.AddIngredient(ItemID.ShroomiteBar, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

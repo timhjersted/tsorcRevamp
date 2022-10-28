@@ -26,8 +26,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MagmaStone);
-            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 6);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
+            recipe.AddIngredient(ItemID.HellstoneBar);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

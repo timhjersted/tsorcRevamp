@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Wood, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 220);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

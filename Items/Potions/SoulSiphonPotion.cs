@@ -39,8 +39,8 @@ namespace tsorcRevamp.Items.Potions
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BottledWater);
-            recipe.AddIngredient(ItemID.Bone, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 20);
+            //recipe.AddIngredient(ItemID.Bone, 5);
+            recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 25);
             recipe.AddIngredient(Mod.Find<ModItem>("LostUndeadSoul").Type);
             recipe.AddTile(TileID.Bottles);
 

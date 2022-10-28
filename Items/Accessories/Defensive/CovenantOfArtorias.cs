@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 16000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 17000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GoldGreaves, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 250);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

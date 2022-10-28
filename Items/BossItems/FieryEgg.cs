@@ -47,8 +47,8 @@ namespace tsorcRevamp.Items.BossItems
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
                 Recipe recipe = CreateRecipe();
-                recipe.AddIngredient(ItemID.CobaltOre, 30);
-                recipe.AddIngredient(ItemID.ShadowScale, 1);
+                recipe.AddIngredient(ItemID.CobaltBar, 10);
+                //recipe.AddIngredient(ItemID.ShadowScale, 1);
                 recipe.AddTile(TileID.DemonAltar);
                 
                 recipe.Register();

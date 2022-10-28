@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("PoisonbiteRing").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("BloodbiteRing").Type, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

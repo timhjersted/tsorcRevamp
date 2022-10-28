@@ -32,9 +32,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Stinger, 10);
+            recipe.AddIngredient(ItemID.Stinger, 3);
             recipe.AddIngredient(Mod.Find<ModItem>("PoisonFieldRune").Type, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

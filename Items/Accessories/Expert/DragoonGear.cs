@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
             recipe.AddIngredient(ModContent.ItemType<DragoonBoots>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DragoonHorn>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
 
             recipe.AddTile(TileID.DemonAltar);
 

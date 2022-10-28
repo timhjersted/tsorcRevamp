@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("FreezeBolt").Type, 1);
-            recipe.AddIngredient(ItemID.FallenStar, 30);
+            //recipe.AddIngredient(ItemID.FallenStar, 30);
             recipe.AddIngredient(ItemID.SoulofMight, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
             recipe.AddTile(TileID.DemonAltar);

@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Accessories
             recipe.AddIngredient(ItemID.SorcererEmblem, 1);
             recipe.AddIngredient(ItemID.WarriorEmblem, 1);
             recipe.AddIngredient(ItemID.SummonerEmblem, 1);
-            recipe.AddIngredient(ItemID.ChlorophyteBar, 5);
+            recipe.AddIngredient(ItemID.ChlorophyteBar, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
             recipe.AddTile(TileID.DemonAltar);
 

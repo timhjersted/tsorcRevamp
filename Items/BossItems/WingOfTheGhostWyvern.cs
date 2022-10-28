@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items.BossItems
             {
                 Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(ModContent.ItemType<WingOfTheFallen>());
-                recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 20);
+                recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 9);
                 recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
                 recipe.AddTile(TileID.DemonAltar);
 

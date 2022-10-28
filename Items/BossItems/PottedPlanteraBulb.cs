@@ -50,8 +50,8 @@ namespace tsorcRevamp.Items.BossItems
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.JungleSpores, 99);
-            recipe.AddIngredient(ItemID.Vine, 99);
+            recipe.AddIngredient(ItemID.JungleSpores, 9);
+            recipe.AddIngredient(ItemID.HallowedBar, 1);
             recipe.AddTile(TileID.DemonAltar);
             
             recipe.Register();

@@ -1027,9 +1027,9 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.DarkSoul>(), 1, 400, 400));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.DarkSoul>(), 1, 500, 1000));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.EternalCrystal>()));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.SoulSiphonPotion>(), 5, 1, 1, 4));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.SoulSiphonPotion>(), 5, 1, 2, 4));
             npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.EndurancePotion, 5, 1, 1, 4));
             npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.EternalCrystal>(), 5, 1, 1, 3));
         }

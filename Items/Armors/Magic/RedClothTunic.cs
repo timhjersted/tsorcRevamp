@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Silk, 5);
+            recipe.AddIngredient(ItemID.Silk, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 250);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

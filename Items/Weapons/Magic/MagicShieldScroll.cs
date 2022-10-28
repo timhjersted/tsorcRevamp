@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             DisplayName.SetDefault("Magic Shield");
             Tooltip.SetDefault("A lost beginner's scroll\n" +
-                                "[c/ffbf00:Casts Magic Shield on the player, raising defense by 8 for 15 seconds]" +
+                                "[c/ffbf00:Casts Magic Shield on the player, raising defense by 10 for 15 seconds]" +
                                 "\nDoes not stack with other shield or barrier spells");
 
         }
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.rare = ItemRarityID.Blue;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
-            Item.mana = 20;
+            Item.mana = 30;
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useTime = 20;

@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.BossItems
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
                 Recipe recipe = CreateRecipe();
-                recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 3);
+                recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
                 recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
                 recipe.AddTile(TileID.DemonAltar);
                 

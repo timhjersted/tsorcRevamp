@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverBar, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1800);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

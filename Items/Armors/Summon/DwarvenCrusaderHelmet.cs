@@ -61,7 +61,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedHood, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6600);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

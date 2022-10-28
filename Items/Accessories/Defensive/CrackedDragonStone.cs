@@ -37,8 +37,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CobaltBar, 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8300);
+            recipe.AddIngredient(ItemID.CobaltBar, 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 9000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

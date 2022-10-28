@@ -49,9 +49,9 @@ namespace tsorcRevamp.Items.BossItems
             {
                 Recipe recipe = CreateRecipe();
 
-                recipe.AddIngredient(ItemID.MythrilOre, 30);
+                recipe.AddIngredient(ItemID.MythrilBar, 3);
                 recipe.AddIngredient(ItemID.Coral, 1);
-                recipe.AddIngredient(ItemID.ShadowScale, 1);
+                //recipe.AddIngredient(ItemID.ShadowScale, 1);
                 recipe.AddTile(TileID.DemonAltar);
 
                 recipe.Register();

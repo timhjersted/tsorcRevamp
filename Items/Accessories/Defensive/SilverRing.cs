@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Grants 4 defense");
+            Tooltip.SetDefault("Grants 4 defense. Can be upgraded.");
         }
 
         public override void SetDefaults()
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SilverBar, 2);
+            recipe.AddIngredient(ItemID.SilverBar, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 400);
             recipe.AddTile(TileID.DemonAltar);
 

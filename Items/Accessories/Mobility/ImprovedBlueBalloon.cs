@@ -28,8 +28,8 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CloudinaBalloon, 1);
-            recipe.AddIngredient(ItemID.ShadowScale, 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 400);
+            //recipe.AddIngredient(ItemID.ShadowScale, 5);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

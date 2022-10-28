@@ -53,9 +53,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Starfury, 1);
-            recipe.AddIngredient(ItemID.FallenStar, 100);
-            recipe.AddIngredient(ItemID.SoulofLight, 20);
-            recipe.AddIngredient(ItemID.AdamantiteBar, 10);
+            recipe.AddIngredient(ItemID.FallenStar, 30);
+            //recipe.AddIngredient(ItemID.SoulofLight, 3);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
             recipe.AddTile(TileID.DemonAltar);
 

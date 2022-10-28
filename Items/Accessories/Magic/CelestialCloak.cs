@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
             recipe.AddIngredient(ItemID.CelestialCuffs, 1);
             recipe.AddIngredient(ItemID.ManaCloak, 1);
             recipe.AddIngredient(ModContent.ItemType<SoulOfLife>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 66000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

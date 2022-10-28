@@ -48,9 +48,9 @@ namespace tsorcRevamp.Items.BossItems
             {
                 Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(ItemID.SpellTome, 1);
-                recipe.AddIngredient(ItemID.ShadowScale, 1);
-                recipe.AddIngredient(ItemID.MeteoriteBar, 12);
-                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100);
+                //recipe.AddIngredient(ItemID.ShadowScale, 1);
+                recipe.AddIngredient(ItemID.MeteoriteBar, 3);
+                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
                 recipe.AddTile(TileID.DemonAltar);
                 
                 recipe.Register();

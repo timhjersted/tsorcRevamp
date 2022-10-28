@@ -47,9 +47,9 @@ namespace tsorcRevamp.Items.BossItems
                 Recipe recipe = CreateRecipe();
 
                 recipe.AddIngredient(ItemID.StoneBlock, 1);
-                recipe.AddIngredient(ModContent.ItemType<Humanity>(), 15);
-                recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 50);
-                recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 1);
+                recipe.AddIngredient(ModContent.ItemType<Humanity>(), 10);
+                recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 30);
+                recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 5);
                 recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
                 recipe.AddTile(TileID.DemonAltar);
 

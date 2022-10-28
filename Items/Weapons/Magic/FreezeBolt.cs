@@ -34,9 +34,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.WaterBolt, 1);
-            recipe.AddIngredient(ItemID.FallenStar, 50);
-            recipe.AddIngredient(ItemID.Bone, 40);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 12);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 12000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

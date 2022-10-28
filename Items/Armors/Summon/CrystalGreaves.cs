@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpiderGreaves, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4800);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Accessories
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.ShadowOrb, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1);
 
             recipe.AddTile(TileID.DemonAltar);
 

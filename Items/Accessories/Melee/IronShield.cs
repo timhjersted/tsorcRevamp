@@ -39,8 +39,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.IronBar, 4);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 600);
+            recipe.AddIngredient(ItemID.IronBar, 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -170,12 +170,15 @@ namespace tsorcRevamp.Items
         }
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.MagicMirror, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100);
-            recipe.AddTile(TileID.DemonAltar);
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                Recipe recipe = CreateRecipe();
+                recipe.AddIngredient(ItemID.MagicMirror, 1);
+                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+                recipe.AddTile(TileID.DemonAltar);
 
-            recipe.Register();
+                recipe.Register();
+            }
         }
     }
 }

@@ -25,9 +25,9 @@ namespace tsorcRevamp.Items.Accessories.Summon
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SummonerEmblem, 1);
             recipe.AddIngredient(ItemID.PygmyNecklace, 1);
-            recipe.AddIngredient(ItemID.HallowedBar, 5);
-            recipe.AddIngredient(ItemID.SoulofNight, 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
+            recipe.AddIngredient(ItemID.HallowedBar, 1);
+            //recipe.AddIngredient(ItemID.SoulofNight, 5);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

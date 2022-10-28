@@ -54,8 +54,8 @@ namespace tsorcRevamp.Items.BossItems
             {
                 Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(ItemID.Feather);
-                recipe.AddIngredient(ItemID.ShadowScale, 1);
-                recipe.AddIngredient(ItemID.Bone, 12);
+                //recipe.AddIngredient(ItemID.ShadowScale, 1);
+                recipe.AddIngredient(ItemID.Bone, 1);
                 recipe.AddTile(TileID.DemonAltar);
                  
                 recipe.Register();

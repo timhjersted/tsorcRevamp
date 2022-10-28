@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Tooltip.SetDefault("A lost tome fabled to deal great damage.\n" +
                                 "\nSlows and occasionally freezes enemies" +
                                 "Only mages will be able to realize this tome's full potential. \n" +
-                                "Can be upgraded with 80,000 Dark Souls");
+                                "Can be upgraded");
 
         }
 
@@ -59,7 +59,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("Ice2Tome").Type, 1);
-            recipe.AddIngredient(ItemID.SoulofLight, 15);
+            recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
             recipe.AddTile(TileID.DemonAltar);
 

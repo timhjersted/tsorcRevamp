@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("BandOfGreatCosmicPower").Type, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 16000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         {
             Tooltip.SetDefault("For melee warriors only" +
                                 "\nGrants immunity to knockback and fire blocks" +
-                                "\nReduces movement speed by 20%");
+                                "\nReduces movement speed by 20% and increased mana cost by 7%");
         }
         public override void SetDefaults()
         {

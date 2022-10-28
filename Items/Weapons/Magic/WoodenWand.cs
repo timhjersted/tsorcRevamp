@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Wood, 5);
+            recipe.AddIngredient(ItemID.Wood, 3);
 
             recipe.Register();
         }

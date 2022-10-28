@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             player.AddBuff(BuffID.WeaponImbueFire, 60, false);
             Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().DragonStone = true;
         }
-
+        //dropped by hellkite dragon
 
     }
 }

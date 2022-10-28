@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ObsidianShield);
             recipe.AddIngredient(ModContent.ItemType<SpikedIronShield>());
-            recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 5000);
+            recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 4000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

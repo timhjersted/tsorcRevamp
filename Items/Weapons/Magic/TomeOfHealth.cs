@@ -56,10 +56,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome);
-            recipe.AddIngredient(ItemID.LifeCrystal, 5);
-            recipe.AddIngredient(ItemID.CrystalShard, 30);
-            recipe.AddIngredient(ItemID.SoulofLight, 10);
-            recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 7000);
+            recipe.AddIngredient(ItemID.LifeCrystal, 10);
+            //recipe.AddIngredient(ItemID.CrystalShard, 30);
+            recipe.AddIngredient(ItemID.SoulofFlight, 9);
+            recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

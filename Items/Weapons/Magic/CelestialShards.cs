@@ -44,9 +44,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(ItemID.MeteoriteBar, 25);
-            recipe.AddIngredient(ItemID.SandBlock, 150);
-            recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 20);
+            recipe.AddIngredient(ItemID.CrystalShard, 12);
+            //recipe.AddIngredient(ItemID.SandBlock, 150);
+            recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 12);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
             recipe.AddTile(TileID.DemonAltar);
 

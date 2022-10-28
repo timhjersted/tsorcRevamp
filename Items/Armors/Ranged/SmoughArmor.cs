@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.FossilShirt, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2800);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

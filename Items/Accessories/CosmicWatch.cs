@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Accessories
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverWatch, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

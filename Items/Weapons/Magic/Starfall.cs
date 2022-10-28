@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
             Item.UseSound = SoundID.Item25;
             Item.mana = 14;
-            Item.damage = 76;
+            Item.damage = 80;
             Item.useAnimation = Item.useTime = 15;
             Item.shoot = ModContent.ProjectileType<Projectiles.StarfallProjectile>();
             Item.autoReuse = true;
@@ -39,8 +39,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(ItemID.FallenStar, 100);
-            recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 10);
+            recipe.AddIngredient(ItemID.FallenStar, 30);
+            recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
             recipe.AddTile(TileID.DemonAltar);

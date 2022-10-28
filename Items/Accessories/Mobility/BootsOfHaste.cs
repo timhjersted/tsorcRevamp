@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HermesBoots, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

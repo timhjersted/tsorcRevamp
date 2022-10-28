@@ -146,13 +146,13 @@ namespace tsorcRevamp.Items.Potions
         public override void AddRecipes()
         {
                 Recipe recipe = CreateRecipe();
-                recipe.AddIngredient(ItemID.LesserHealingPotion, 20);
+                recipe.AddIngredient(ItemID.LesserHealingPotion, 10);
                 recipe.AddTile(TileID.Bottles);
 
                 recipe.Register();
 
                 Recipe recipe2 = CreateRecipe();
-                recipe2.AddIngredient(ItemID.HealingPotion, 10);
+                recipe2.AddIngredient(ItemID.HealingPotion, 5);
                 recipe2.AddTile(TileID.Bottles);
 
                 recipe2.Register();

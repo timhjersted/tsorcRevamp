@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             DisplayName.SetDefault("Ice 2 Tome");
             Tooltip.SetDefault("A lost tome for artisans, with a high rate of casting." +
                                 "\nSlows and occasionally freezes enemies" +
-                                "\nCan be upgraded with 25,000 Dark Souls and 15 Souls of Light.");
+                                "\nCan be upgraded");
         }
 
         //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing
@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("Ice1Tome").Type, 1);
-            recipe.AddIngredient(ItemID.JungleSpores, 5);
+            recipe.AddIngredient(ItemID.JungleSpores, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
             recipe.AddTile(TileID.DemonAltar);
 

@@ -52,8 +52,8 @@ namespace tsorcRevamp.Items.BossItems
             {
                 Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(ModContent.ItemType<BrokenStrangeMagicRing>(), 1);
-                recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 7);
-                recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
+                recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 10);
+                //recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
                 recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
                 recipe.AddTile(TileID.DemonAltar);
                 

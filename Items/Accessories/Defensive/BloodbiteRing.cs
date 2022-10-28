@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("SilverRing").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("BloodredMossClump").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("BloodredMossClump").Type, 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
             recipe.AddTile(TileID.DemonAltar);
 

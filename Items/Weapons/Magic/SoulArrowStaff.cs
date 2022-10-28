@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             DisplayName.SetDefault("Soul Arrow");
             Tooltip.SetDefault("Shoots a lightly homing soul arrow" +
-                                "\nCan be upgraded with 3000 Dark Souls and a Soul Siphon potion");
+                                "\nCan be upgraded"); // with 3000 Dark Souls and a Soul Siphon potion
         }
         public override void SetDefaults()
         {
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 40;
             Item.useTime = 40;
-            Item.damage = 24;
+            Item.damage = 25;
             Item.knockBack = 4.5f;
             Item.mana = 6;
             Item.UseSound = SoundID.Item8;
@@ -80,7 +80,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("WoodenWand").Type, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 300);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

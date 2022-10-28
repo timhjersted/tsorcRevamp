@@ -49,7 +49,7 @@ namespace tsorcRevamp.Items.Armors
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Melee.ShadowNinjaMask>());
             recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

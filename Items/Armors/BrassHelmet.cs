@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Armors
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.PlatinumHelmet);
-            recipe.AddIngredient(ItemID.BeeWax, 5);
+            recipe.AddIngredient(ItemID.BeeWax, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
             recipe.AddTile(TileID.DemonAltar);
 

@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.BossItems
         {
             DisplayName.SetDefault("Lost Scroll of Gwyn");
             Tooltip.SetDefault("Used to summon Gwyn, Lord of Cinder. \n" +
-                //"You must enter The Abyss with the Covenant of Artorias equipped to summon Lord Gwyn.  \n" +
-                //"Upon the scroll it reads: \"Once living, now Undead, and a fitting heir to father Gwyn thou art, \n" +
+                "Gwyn may prove impossible to defeat unless you have defeated 7 guardians of the Abyss:\n" +
+                "Artorias, Seath, the Lich King, Kraken, Marilith, the Blight, and the Wyvern Mage Shadow. \n" +
                 //"And beseech thee. Succeed Lord Gwyn, and inheriteth the Fire of our world. \n" +
                 //"Thou shall endeth this eternal twilight, and avert further Undead sacrifices.\"\n" +
                 "Only the true warrior of the age will survive this fight. ");
@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.BossItems
             {
                 Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>(), 1);
-                recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>(), 1);
+                //recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>(), 1);
                 recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
                 recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
                 recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
