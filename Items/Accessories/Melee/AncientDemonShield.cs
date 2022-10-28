@@ -10,9 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Powerful, but reduces non-melee damage by 30%" +
-                               "\nGreat Shield that reduces damage taken by 5%, grants immunity to knockback and gives thorns buff" +
-                               "\nAlso provides immunity to fire blocks");
+            Tooltip.SetDefault("Powerful Greatshield that reduces damage taken by 5%, inherits Obsidian Shields effects and gives thorns buff");
         }
 
         public override void SetDefaults()
@@ -28,9 +26,6 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void UpdateEquip(Player player)
         {
             player.noKnockback = true;
-            player.GetDamage(DamageClass.Ranged) -= 0.3f;
-            player.GetDamage(DamageClass.Magic) -= 0.3f;
-            player.GetDamage(DamageClass.Summon) -= 0.3f;
             player.thorns = 1f;
             player.fireWalk = true;
             player.endurance += 0.05f;
