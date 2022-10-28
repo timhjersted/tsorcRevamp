@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A green ooze dribbles from the tooth, which deals" +
-                                "\nquadruple damage to enemies of a similar nature." +
+            Tooltip.SetDefault("[c/ffbf00:A green ooze dribbles from the tooth, which deals]" +
+                                "\n[c/ffbf00:triple damage to enemies of a similar nature, potentially more.]" +
                                 "\nHas a chance to heal the player on hit." +
                                 "\nHeal chance is doubled on non-corrupted enemies.");
         }
@@ -36,9 +36,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 || target.type == NPCID.EaterofWorldsHead
                 || target.type == NPCID.EaterofWorldsBody
                 || target.type == NPCID.EaterofWorldsTail
+                || target.type == ModContent.NPCType<NPCs.Enemies.BasiliskShifter>()
                 )
             {
-                damage *= 4;
+                damage *= 3;
                 if (Main.rand.NextBool(20))
                 {
                     player.statLife += damage;
@@ -53,13 +54,21 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                     player.HealEffect(damage);
                 }
             }
-            if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.GuardianCorruptor>())
+            if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.GuardianCorruptor>())     
             {
                 //please *DO* use this on a guardian corruptor!
                 crit = false;
                 damage = 100074;//reduced to 99999 after defense
             }
-            
+            if (target.type == ModContent.NPCType<NPCs.Enemies.BasiliskWalker>())
+            {
+                damage *= 2;
+            }
+            if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.BasiliskHunter>())
+            {
+                damage *= 11;
+            }
+
         }
 
         public override void AddRecipes()
@@ -67,7 +76,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverBroadsword);
             recipe.AddIngredient(ItemID.RottenChunk, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 800);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

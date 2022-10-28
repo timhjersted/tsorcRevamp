@@ -29,9 +29,9 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe(40);
-            recipe.AddIngredient(ItemID.Wood, 10);
-            recipe.AddIngredient(ItemID.StoneBlock, 10);
+            Recipe recipe = CreateRecipe(50);
+            recipe.AddIngredient(ItemID.Wood, 5);
+            recipe.AddIngredient(ItemID.StoneBlock, 5);
             recipe.AddTile(TileID.Anvils);
             recipe.Register();
         }

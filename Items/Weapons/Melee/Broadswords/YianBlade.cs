@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.autoReuse = true;
             Item.useTime = 21;
             Item.maxStack = 1;
-            Item.damage = 17;
+            Item.damage = 18;
             Item.knockBack = (float)5;
             Item.useTurn = true;
             Item.scale = (float)1.1;

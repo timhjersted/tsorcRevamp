@@ -66,7 +66,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), 1);
             recipe.AddIngredient(ItemID.AdamantiteBar, 3);
             //recipe.AddIngredient(ItemID.SoulofLight, 7);
-            recipe.AddIngredient(ItemID.SoulofNight, 1);
+            //recipe.AddIngredient(ItemID.SoulofNight, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
             recipe.AddTile(TileID.DemonAltar);
 

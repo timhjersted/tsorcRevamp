@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("A sword used to kill magic users." +
-                                "\nDoes up to 8x damage to mages" +
+                                "\n[c/ffbf00:Does up to 8x damage to mages]" +
                                 "\nEvery third hit with the Blade generates a magic slash");
         }
         public int shootstacks = 0;
@@ -51,7 +51,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 || target.type == ModContent.NPCType<ShadowMage>()
                 || target.type == ModContent.NPCType<AttraidiesIllusion>()
                 || target.type == ModContent.NPCType<AttraidiesManifestation>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>()
                 || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.AttraidiesMimic>()
                 || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()
                 )
@@ -63,6 +62,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>()
                 || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.DarkDragonMask>()
                 || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.Okiku>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>()
                 || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()
 
                 || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerKingServant>()
@@ -71,7 +71,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingDisciple>()
                 )
             {
-                damage *= 5;
+                damage *= 8;
             }
         }
         public override bool CanShoot(Player player)

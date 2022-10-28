@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The Moonlight Greatsword, the sword of legend..." +
+            Tooltip.SetDefault("[c/ffbf00:The Moonlight Greatsword, the sword of legend...]" +
                                 "\nGlows and gains piercing projectiles at night" +
                                 "\nScales with your magic or melee stats, whichever is higher" +
                                 "\nLaunches glimmering waves of moonlight");

@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BladedGlove, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1200);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

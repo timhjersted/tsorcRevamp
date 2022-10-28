@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.AdamantiteBar, 1);
-            recipe.AddIngredient(ItemID.SoulofNight, 6);
+            recipe.AddIngredient(ItemID.Fireblossom, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
 
             recipe.AddTile(TileID.DemonAltar);
