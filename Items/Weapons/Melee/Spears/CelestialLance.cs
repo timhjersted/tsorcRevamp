@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Celestial Lance");
-            Tooltip.SetDefault("Celestial lance fabled to hold sway over the world.\nGains 50% attack damage while falling and has a chance to heal 6 HP on hit.");
+            Tooltip.SetDefault("Celestial lance fabled to hold sway over the world.\nDoubled damage while falling and has a chance to heal 6 HP on hit.");
         }
 
 
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         {
             if (player.gravDir == 1f && player.velocity.Y > 0 || player.gravDir == -1f && player.velocity.Y < 0)
             {
-                damage += 1.5f;
+                damage += 2f;
             }
         }
 
