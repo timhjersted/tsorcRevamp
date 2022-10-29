@@ -848,6 +848,7 @@ namespace tsorcRevamp
         /// <param name="scale">The text scale</param>
         /// <returns></returns>
         public static string WrapString(string input, DynamicSpriteFont font, float maxWidth = 240, float scale = 1f) {
+            if (input == null || input == string.Empty) return string.Empty;
             StringBuilder finalText = new("");
             string[] array = input.Split();
             StringBuilder currentLine = new("");

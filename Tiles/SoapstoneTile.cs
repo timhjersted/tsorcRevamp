@@ -56,7 +56,7 @@ namespace tsorcRevamp.Tiles {
         }
 
         public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem) {
-            fail = true; 
+            fail = false; 
         }
         public override void PostDraw(int i, int j, SpriteBatch spriteBatch) {
             if (TileUtils.TryGetTileEntityAs(i, j, out SoapstoneTileEntity entity)) {
@@ -71,6 +71,11 @@ namespace tsorcRevamp.Tiles {
                 Vector2 position = new(i * 16 - ((int)Main.screenPosition.X + textureSize.X / 2) + 16, j * 16 - (int)Main.screenPosition.Y - textureSize.Y);
 
                 Color shimmerColor = new(192 + (Main.DiscoR / 2), 128 + (Main.DiscoG / 4), 16);
+                if (entity.read)
+                    shimmerColor.R /= 2;
+                    shimmerColor.G /= 2;
+                    shimmerColor.B /= 2;
+                    //shimmerColor.MultiplyRGB(Color.DarkSlateGray);
 
                 spriteBatch.Draw(texture, position + zero, new Rectangle(0, 0, (int)textureSize.X, (int)textureSize.Y), shimmerColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
 
@@ -82,8 +87,10 @@ namespace tsorcRevamp.Tiles {
     }
     public class SoapstoneTileEntity : ModTileEntity {
         public string text;
+        public int textWidth;
         public float timer;
         public bool nearPlayer;
+        public bool read = false;
 
         public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate) {
             if (Main.netMode == NetmodeID.MultiplayerClient) {
@@ -114,22 +121,19 @@ namespace tsorcRevamp.Tiles {
             nearPlayer = false;
             for (int i = 0; i < Main.maxPlayers; i++) {
                 Player p = Main.player[i];
-                if (p.active && Vector2.Distance (p.Center, Position.ToVector2() * 16) < 64) {
+                if (p.position.Y / 16 < Position.Y && Vector2.Distance(p.Center, Position.ToVector2() * 16) <= 64) {
                     nearPlayer = true;
+                    read = true;
+                    if (text == null) {
+                        foreach (SoapstoneMessage cache in SoapstoneMessage.SoapstoneList) {
+                            if (Position == cache.location) {
+                                text = cache.text;
+                                break;
+                            }
+                        }
+                    }
                     break;
                 }
-            }
-
-            if (Main.player.Any(Player => Player.position.Y/16 < Position.Y && Vector2.Distance(Player.Center, Position.ToVector2() * 16) <= 64) ) {
-                if (text == null) {
-                    foreach (SoapstoneMessage cache in SoapstoneMessage.SoapstoneList) {
-                        if (Position == cache.location) {
-                            text = cache.text;
-                            break;
-                        }
-                    } 
-                }
-                
             }
             if (nearPlayer) {
                 if (timer < 60) timer += 3;
@@ -143,19 +147,32 @@ namespace tsorcRevamp.Tiles {
 
         public override void NetSend(BinaryWriter writer) {
             writer.Write(text);
+            writer.Write(textWidth);
+            writer.Write(read);
         }
 
         public override void NetReceive(BinaryReader reader) {
             text = reader.ReadString();
+            textWidth = reader.ReadInt32();
+            read = reader.ReadBoolean();
         }
 
         public override void SaveData(TagCompound tag) {
             tag.Add("text", text);
+            tag.Add("boxWidth", textWidth);
+            tag.Add("read", read);
         }
 
         public override void LoadData(TagCompound tag) {
             string? saved = tag.GetString("text");
             text = saved;
+
+            int? width = tag.GetInt("boxWidth");
+            textWidth = width ?? SoapstoneMessage.DEFAULT_WIDTH;
+
+            bool? dim = tag.GetBool("read");
+            read = dim ?? false;
+
         }
     }
 }

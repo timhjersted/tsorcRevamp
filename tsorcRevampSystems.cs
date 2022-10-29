@@ -273,7 +273,7 @@ namespace tsorcRevamp
             if (tsorcRevamp.NearbySoapstone != null) {
                 if (tsorcRevamp.NearbySoapstone.timer <= 0) return;
                 SoapstoneTileEntity soapstone = tsorcRevamp.NearbySoapstone;
-                int textWidth = 240;
+                int textWidth = soapstone.textWidth > 0?soapstone.textWidth:SoapstoneMessage.DEFAULT_WIDTH;
                 string text = UsefulFunctions.WrapString(soapstone.text, FontAssets.ItemStack.Value, textWidth, 1);
                 float alpha = (soapstone.timer / 60);
                 Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition) - new Vector2((textWidth / 2) - 4, 128);

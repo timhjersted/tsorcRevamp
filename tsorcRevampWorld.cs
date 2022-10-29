@@ -776,18 +776,21 @@ namespace tsorcRevamp
                         Tiles.SoulSkellyGeocache.InitializeSkellys();
                         CampfireToBonfire();
 
-                        //this only ever needs to run once, since tileentities are saved in the world
-                        //so, lets just check some magic coordinates that we know belong to the first soapstone
+                        //ideally we only need to run this once ever, but for testing just run it every time
                         //todo come up with a better way to do this?
-                        if (Framing.GetTileSafely(4950, 865).TileType != ModContent.TileType<SoapstoneTile>()) {
-                            SoapstoneMessage.InitSoapstones();
-                            foreach (SoapstoneMessage cache in SoapstoneMessage.SoapstoneList) {
-                                WorldGen.PlaceTile(cache.location.X, cache.location.Y, ModContent.TileType<SoapstoneTile>());
-                                //make double sure theres a tileentity at the coordinates before trying to modify it
-                                if (TileUtils.TryGetTileEntityAs(cache.location.X, cache.location.Y, out SoapstoneTileEntity entity)) {
+                        
+                        SoapstoneMessage.InitSoapstones();
+                        foreach (SoapstoneMessage cache in SoapstoneMessage.SoapstoneList) {
+                            int locX = cache.location.X;
+                            int locY = cache.location.Y;
+                            WorldGen.PlaceTile(locX, locY, ModContent.TileType<SoapstoneTile>(), false, true);
+                            ModContent.GetInstance<SoapstoneTileEntity>().Place(locX, locY);
+                            //make double sure theres a tileentity at the coordinates before trying to modify it
+                            if (TileUtils.TryGetTileEntityAs(locX, locY, out SoapstoneTileEntity entity)) {
+                                if (entity.text != cache.text) { 
                                     entity.text = cache.text;
+                                    entity.textWidth = cache.textWidth;
                                 }
-
                             }
                         }
                         
