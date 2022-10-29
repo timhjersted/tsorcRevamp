@@ -8,6 +8,8 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using tsorcRevamp.Items;
+using tsorcRevamp.NPCs.Enemies;
 
 namespace tsorcRevamp
 {
@@ -240,10 +242,11 @@ namespace tsorcRevamp
             //FIRE LURKER PATH OF PAIN
             ScriptedEvent FireLurkerPain = new ScriptedEvent(new Vector2(3245, 1252), 9, ModContent.NPCType<NPCs.Enemies.FireLurker>(), DustID.CursedTorch, true, true, "A cursed Fire Lurker appears...", Color.Purple, false, default, FireLurkerPainCustomAction, peaceCandleEffect: true);
             FireLurkerPain.SetCustomStats(1900, 12, 85, 1755);
-            FireLurkerPain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion }, new List<int>() { 2, 2 });
+            FireLurkerPain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<WorldRune>() }, new List<int>() { 2, 2, 2 });
 
             //RED KNIGHT IN PATH OF PAIN
             ScriptedEvent RedKnightPain = new ScriptedEvent(new Vector2(3897, 1219), 20, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, "A Red Knight appears...", Color.Purple, false, default, RedKnightPainCustomAction, peaceCandleEffect: true);
+            RedKnightPain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<WorldRune>() }, new List<int>() { 2, 2, 2 });
             RedKnightPain.SetCustomStats(2700, 10, 75, 3255);
 
             //RED KNIGHT IN TWIN PEAKS MOUNTAIN
