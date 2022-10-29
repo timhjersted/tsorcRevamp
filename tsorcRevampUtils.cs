@@ -4,6 +4,7 @@ using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Terraria;
 using Terraria.Chat;
 using Terraria.ID;
@@ -847,24 +848,25 @@ namespace tsorcRevamp
         /// <param name="scale">The text scale</param>
         /// <returns></returns>
         public static string WrapString(string input, DynamicSpriteFont font, float maxWidth = 240, float scale = 1f) {
-            string finalText = "";
+            StringBuilder finalText = new("");
             string[] array = input.Split();
-            string currentLine = "";
+            StringBuilder currentLine = new("");
             foreach (string currentWord in array) {
                 if (currentWord == "NEWBLOCK") {
-                    finalText += "\n\n";
-                    currentLine = "";
+                    finalText.Append("\n\n");
+                    currentLine.Clear();
                 }
                 else if (font.MeasureString(currentLine + " " + currentWord).X * scale <= (float)maxWidth) {
-                    finalText = finalText + " " + currentWord;
-                    currentLine = currentLine + " " + currentWord;
+                    finalText.Append(" " + currentWord);
+                    currentLine.Append(" " + currentWord);
                 }
                 else {
-                    finalText = finalText + "\n " + currentWord;
-                    currentLine = currentWord;
+                    finalText.Append("\n " + currentWord);
+                    currentLine.Clear();
+                    currentLine.Append(currentWord);
                 }
             }
-            return finalText;
+            return finalText.ToString();
         }
     }
 }
