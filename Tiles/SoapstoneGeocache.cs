@@ -20,9 +20,9 @@ namespace tsorcRevamp.Tiles {
         public static void InitSoapstones() {
             SoapstoneList ??= new();
 
-            SoapstoneList.Add(new SoapstoneMessage("Use the Recipe Browser mod to see what can be crafted with Dark Souls. Anything that says it's a DS crafting material should be investigated.", new Point16(4950, 865)));
+            //SoapstoneList.Add(new SoapstoneMessage("Glowing green skulls and hanging skeletons hold important secrets. Right-click to discover.", new Point16(4278, 951)));
 
-            //Glowing green skulls and skeletons often hold important secrets. Right-click to discover.
+            //Use the Recipe Browser mod to see what can be crafted with Dark Souls. Anything that says it's a DS crafting material should be investigated.
 
             /*
                          "The dodgeroll makes you immune to attacks. Mastering it is necessary for survival!",
