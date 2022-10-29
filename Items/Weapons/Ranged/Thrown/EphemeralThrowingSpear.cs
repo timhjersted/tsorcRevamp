@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Thrown
         {
             Recipe recipe = CreateRecipe(30);
             recipe.AddIngredient(ModContent.ItemType<RoyalThrowingSpear>(), 30);
-            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

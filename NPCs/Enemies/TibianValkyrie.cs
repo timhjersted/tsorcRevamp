@@ -48,6 +48,12 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Spears.OldHalberd>(), 30));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.Diamond, 5));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.DeadChicken>(), 10));
+
+            //doesn't have a HM stats yet
+            //if (Main.hardMode)
+            //{
+            //    npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofLight, 10));
+            //}
         }
 
         #region Spawn

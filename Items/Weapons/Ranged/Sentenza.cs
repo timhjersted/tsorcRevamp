@@ -38,8 +38,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Blackhawk>());
-            recipe.AddIngredient(ItemID.HallowedBar, 10);
-            recipe.AddIngredient(ItemID.SoulofNight, 20);
+            recipe.AddIngredient(ItemID.HallowedBar, 3);
+            recipe.AddIngredient(ItemID.SoulofNight, 9);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 

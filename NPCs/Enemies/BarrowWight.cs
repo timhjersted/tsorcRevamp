@@ -361,7 +361,12 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RegenerationPotion, 35));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SpelunkerPotion, 35));       
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 40));
+           
 
+            if (Main.hardMode)
+            {
+                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofFlight, 10));
+            }
             if (tsorcRevampWorld.SuperHardMode) 
             {
                 npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>(), 5));

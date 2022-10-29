@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Longinus>());
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 20);
-            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 30);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
             recipe.AddIngredient(ItemID.FallenStar, 20);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 240000);
 

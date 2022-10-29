@@ -115,8 +115,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<ToxicCatalyzer>());
-            recipe.AddIngredient(ItemID.SpiderFang, 20);
-            recipe.AddIngredient(ItemID.HallowedBar, 8);
+            recipe.AddIngredient(ItemID.SpiderFang, 9);
+            recipe.AddIngredient(ItemID.HallowedBar, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 

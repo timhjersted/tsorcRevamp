@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Items.FlameOfTheAbyss>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<Items.CursedSoul>(), 10);
+            recipe.AddIngredient(ModContent.ItemType<Items.CursedSoul>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
             recipe.AddTile(TileID.DemonAltar);
 

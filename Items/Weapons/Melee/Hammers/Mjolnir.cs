@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MoltenPickaxe, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 12000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

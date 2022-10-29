@@ -130,6 +130,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.HunterPotion, 100, 1, 1, 6));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.MagicPowerPotion, 25));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ShinePotion, 25));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofNight, 2));
         }
         #endregion
 

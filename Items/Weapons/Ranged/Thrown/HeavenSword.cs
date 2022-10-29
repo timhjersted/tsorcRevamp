@@ -37,8 +37,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Thrown
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.AdamantiteBar, 5);
-            recipe.AddIngredient(ItemID.SoulofLight, 25);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 3);
+            recipe.AddIngredient(ItemID.SoulofLight, 15);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);
 

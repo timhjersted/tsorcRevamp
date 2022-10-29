@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<ArtemisBow>());
             recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

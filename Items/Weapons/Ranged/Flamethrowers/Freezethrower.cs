@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Flamethrowers
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Flamethrower, 1);
-            recipe.AddIngredient(ItemID.SoulofNight, 30);
+            recipe.AddIngredient(ItemID.SoulofNight, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
             recipe.AddTile(TileID.DemonAltar);
 

@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             recipe.AddIngredient(ItemID.SniperRifle, 1);
             recipe.AddIngredient(ModContent.ItemType<DestructionElement>());
             recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>());
-            recipe.AddIngredient(ModContent.ItemType<Humanity>(), 20);
+            recipe.AddIngredient(ModContent.ItemType<Humanity>(), 10);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 100);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 240000);
 

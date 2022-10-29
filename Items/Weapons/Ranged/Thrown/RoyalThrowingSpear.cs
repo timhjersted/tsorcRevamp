@@ -30,10 +30,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Thrown
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe(100);
-            recipe.AddIngredient(ItemID.Wood, 20);
-            recipe.AddIngredient(ItemID.StoneBlock, 20);
-            recipe.AddIngredient(ItemID.SilverCoin, 50);
-            recipe.AddTile(TileID.Anvils);
+            recipe.AddIngredient(ItemID.Wood, 10);
+            recipe.AddIngredient(ItemID.StoneBlock, 10);
+            recipe.AddIngredient(ItemID.SilverCoin, 100);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200);
+            recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }
     }

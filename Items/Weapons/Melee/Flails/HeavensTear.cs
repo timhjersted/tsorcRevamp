@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
 
             recipe.AddIngredient(ItemID.FlowerPow, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 20);
+            //recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
 

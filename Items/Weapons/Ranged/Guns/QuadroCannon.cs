@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<PhazonRifle>());
             recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
-            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 25);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<Humanity>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
             recipe.AddTile(TileID.DemonAltar);

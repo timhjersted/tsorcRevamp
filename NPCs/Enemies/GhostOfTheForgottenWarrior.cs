@@ -151,6 +151,10 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GoldenKey, 10));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.EphemeralDust>(), 1, 2, 4));
 
+            if (Main.hardMode)
+            {
+                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofNight, 10));
+            }
         }
     }
 }

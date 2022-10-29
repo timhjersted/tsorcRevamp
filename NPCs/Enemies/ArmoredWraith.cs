@@ -81,5 +81,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
         }
-    }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+
+            if (Main.hardMode)
+            {
+                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofFlight, 10));
+            }
+        }
+}
 }

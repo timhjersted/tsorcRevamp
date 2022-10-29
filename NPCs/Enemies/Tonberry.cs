@@ -113,6 +113,11 @@ namespace tsorcRevamp.NPCs.Enemies
             condition.OnSuccess(drop2);
             condition.OnSuccess(drop3);
             npcLoot.Add(condition);
+
+            if (Main.hardMode)
+            {
+                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofNight, 1, 3, 6));
+            }
         }
         static Texture2D spearTexture;
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

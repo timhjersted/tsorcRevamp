@@ -123,7 +123,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<YellowTail>());
-            recipe.AddIngredient(ItemID.HellstoneBar, 10);
+            recipe.AddIngredient(ItemID.HellstoneBar, 3);
             recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);
 

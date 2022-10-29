@@ -966,6 +966,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 npcLoot.Add(ItemDropRule.Common(ItemID.WrathPotion, 13));
                 npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulShekel>(), 1, 36, 42));
             }
+
+            if (Main.hardMode)
+            {
+                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofLight, 1));
+            }
         }
 
         #region Drawing and Animation

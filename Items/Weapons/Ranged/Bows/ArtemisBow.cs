@@ -46,9 +46,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ItemID.GoldBow, 1);
-            recipe.AddIngredient(ItemID.AdamantiteBar, 12);
-            recipe.AddIngredient(ItemID.SoulofLight, 18);
+            recipe.AddIngredient(ItemID.MoltenFury, 1);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 3);
+            //recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
 
             recipe.AddTile(TileID.DemonAltar);

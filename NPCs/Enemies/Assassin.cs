@@ -50,6 +50,11 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HolyArrow, 1, 100, 150));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.UnicornHorn, 1, 1, 2));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.SoulShekel>(), 1, 3, 6));
+
+            if (Main.hardMode)
+            {
+                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofNight, 1));
+            }
         }
 
         

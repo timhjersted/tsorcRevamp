@@ -96,8 +96,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<GWPulsar>());
-            recipe.AddIngredient(ItemID.LihzahrdPowerCell, 2);
-            recipe.AddIngredient(ItemID.ShroomiteBar, 10);
+            recipe.AddIngredient(ItemID.LihzahrdPowerCell, 1);
+            recipe.AddIngredient(ItemID.ShroomiteBar, 3);
             recipe.AddIngredient(ItemID.ElectrosphereLauncher);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 125000);
             recipe.AddTile(TileID.DemonAltar);

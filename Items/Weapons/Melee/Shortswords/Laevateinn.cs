@@ -41,9 +41,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CobaltBar, 5);
-            recipe.AddIngredient(ItemID.MythrilBar, 5);
-            recipe.AddIngredient(ItemID.AdamantiteBar, 5);
+            //recipe.AddIngredient(ItemID.CobaltBar, 5);
+            //recipe.AddIngredient(ItemID.MythrilBar, 5);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 

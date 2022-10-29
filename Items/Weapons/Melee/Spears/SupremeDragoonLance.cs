@@ -67,7 +67,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<DragoonLance>());
-            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 10);
+            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 9);
+            recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 9);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>());
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 170000);

@@ -64,8 +64,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ItemID.CobaltBar, 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddIngredient(ItemID.CobaltBar, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
 
             recipe.AddTile(TileID.DemonAltar);
 

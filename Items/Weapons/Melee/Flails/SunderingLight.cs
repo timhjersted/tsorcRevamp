@@ -43,9 +43,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(Mod.Find<ModItem>("HeavensTear").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 15);
+            recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 10);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>());
-            recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 20);
+            recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 220000);
 
             recipe.AddTile(TileID.DemonAltar);

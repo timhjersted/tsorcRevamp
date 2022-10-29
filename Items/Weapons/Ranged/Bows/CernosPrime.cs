@@ -46,9 +46,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<SagittariusBow>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 15);
+            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 10);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 30);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
             recipe.AddTile(TileID.DemonAltar);
 

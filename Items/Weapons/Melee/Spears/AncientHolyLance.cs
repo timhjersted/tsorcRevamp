@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MythrilHalberd);
-            recipe.AddIngredient(ItemID.SoulofLight);
+            recipe.AddIngredient(ItemID.MythrilBar);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
 
             recipe.AddTile(TileID.DemonAltar);

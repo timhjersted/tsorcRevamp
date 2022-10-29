@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.VenusMagnum);
-            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>());
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
             recipe.AddTile(TileID.DemonAltar);
 

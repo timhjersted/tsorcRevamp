@@ -55,8 +55,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.AddIngredient(ItemID.ThornWhip);
 			recipe.AddIngredient(ItemID.BoneWhip);
 			recipe.AddIngredient(ModContent.ItemType<SearingLash>());
-			recipe.AddIngredient(ItemID.SoulofNight, 25);
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 12500);
+			recipe.AddIngredient(ItemID.SoulofNight, 20);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 13000);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();

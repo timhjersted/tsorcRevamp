@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GoldShortsword, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -262,8 +262,13 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.LifeforcePotion));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.MagicPowerPotion, 30));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.Lifegem>(), 1, 3, 3));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 1, 3, 6));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.UnicornHorn, 3));
+
+            if (Main.hardMode)
+            {
+                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofLight, 1, 3, 6));
+            }
         }
     }
 }

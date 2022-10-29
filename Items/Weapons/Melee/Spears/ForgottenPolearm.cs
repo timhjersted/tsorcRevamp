@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 35);
+            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 15);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
 
             recipe.AddTile(TileID.DemonAltar);

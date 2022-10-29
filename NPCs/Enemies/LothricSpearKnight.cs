@@ -946,8 +946,14 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.SpikedIronShield>(), 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>(), 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.LostUndeadSoul>(), 5));
-            npcLoot.Add(ItemDropRule.Common(ItemID.LifeforcePotion, 5));
-            npcLoot.Add(ItemDropRule.Common(ItemID.EndurancePotion, 5));
+            npcLoot.Add(ItemDropRule.Common(ItemID.LifeforcePotion, 6));
+            npcLoot.Add(ItemDropRule.Common(ItemID.EndurancePotion, 6));
+
+            if (Main.hardMode)
+            {
+                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 10, 2, 4));
+                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofLight, 1));
+            }
         }
 
         #region Drawing & Animation

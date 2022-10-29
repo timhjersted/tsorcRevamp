@@ -50,9 +50,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		{
 			
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient(ItemID.ChlorophyteBar, 13);
+			recipe.AddIngredient(ItemID.ChlorophyteBar, 3);
 			recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 1);
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 46000);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();

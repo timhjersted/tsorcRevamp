@@ -40,21 +40,22 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.DemonBow, 1);
-            recipe.AddIngredient(ItemID.ShadowScale, 10);
+            //recipe.AddIngredient(ItemID.ShadowScale, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
 
-
+            /*
             Recipe recipe2 = CreateRecipe();
 
             recipe2.AddIngredient(ItemID.DemonBow, 1);
-            recipe2.AddIngredient(ItemID.TissueSample, 10);
+            recipe2.AddIngredient(ItemID.TissueSample, 1);
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();
+            */
         }
 
 
