@@ -5,7 +5,7 @@ using tsorcRevamp.Projectiles.Summon.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra
 {
-	public class CenteroftheHeat : ModBuff
+	public class CenterOfTheHeat : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{

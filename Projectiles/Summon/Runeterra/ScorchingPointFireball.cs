@@ -89,19 +89,19 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		{
 			if (owner.dead || !owner.active)
 			{
-				owner.ClearBuff(ModContent.BuffType<CenteroftheHeat>());
+				owner.ClearBuff(ModContent.BuffType<CenterOfTheHeat>());
 
 				return false;
 			}
 
-			if (!owner.HasBuff(ModContent.BuffType<CenteroftheHeat>()))
+			if (!owner.HasBuff(ModContent.BuffType<CenterOfTheHeat>()))
       {
 				circleRad = 50f;
         currentAngle = 0;
 				ScorchingPoint.projectiles.Clear();
       }
 
-			if (owner.HasBuff(ModContent.BuffType<CenteroftheHeat>()))
+			if (owner.HasBuff(ModContent.BuffType<CenterOfTheHeat>()))
 			{
 				Projectile.timeLeft = 2;
 			}

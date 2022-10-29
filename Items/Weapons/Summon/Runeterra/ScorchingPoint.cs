@@ -49,7 +49,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 
 			Item.noMelee = true;
 			Item.DamageType = DamageClass.Summon;
-			Item.buffType = ModContent.BuffType<CenteroftheHeat>();
+			Item.buffType = ModContent.BuffType<CenterOfTheHeat>();
 			Item.shoot = ModContent.ProjectileType<ScorchingPointFireball>();
 		}
 

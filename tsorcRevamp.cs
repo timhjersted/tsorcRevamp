@@ -1139,6 +1139,17 @@ namespace tsorcRevamp
                 }
 
             }
+            else if (message == tsorcPacketID.SpawnNPC)
+            {
+                int npcID = reader.ReadInt32();
+                Vector2 npcLocation = reader.ReadVector2();
+
+                int Spawned = NPC.NewNPC(null, (int)npcLocation.X, (int)npcLocation.Y, npcID, 0);
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
+                }
+            }
 
 
             /**
@@ -2108,6 +2119,7 @@ namespace tsorcRevamp
         public const byte DropSouls = 5;
         public const byte SyncPlayerDodgeroll = 6;
         public const byte SyncBonfire = 7;
+        public const byte SpawnNPC = 8;
     }
 
     //config moved to separate file

@@ -63,6 +63,11 @@ namespace tsorcRevamp.Items
 
         public override bool? UseItem(Player player)
         {
+            if(player.whoAmI != Main.myPlayer || Main.netMode == NetmodeID.Server)
+            {
+                return false;
+            }
+
             keys = new List<int>(tsorcRevampWorld.Slain.Keys);
             RemoveBannedBosses(keys);
             if (tsorcRevampWorld.Slain == null || tsorcRevampWorld.Slain.Keys.Count == 0 || keys.Count == 0)
@@ -111,9 +116,31 @@ namespace tsorcRevamp.Items
                 {
                     if (keys[index] == ModContent.NPCType<NPCs.Bosses.Slogra>())
                     {
-                        NPC.NewNPCDirect(Item.GetSource_FromThis(), player.Center + new Vector2(0, -300), ModContent.NPCType<NPCs.Bosses.Gaibon>());
+                        if (Main.netMode == NetmodeID.SinglePlayer)
+                        {
+                            NPC.NewNPCDirect(Item.GetSource_FromThis(), player.Center + new Vector2(0, -300), ModContent.NPCType<NPCs.Bosses.Gaibon>());
+                        }
+                        else
+                        {
+                            ModPacket spawnNPCPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                            spawnNPCPacket.Write(tsorcPacketID.SpawnNPC);
+                            spawnNPCPacket.Write(ModContent.NPCType<NPCs.Bosses.Gaibon>());
+                            spawnNPCPacket.WriteVector2(player.Center + new Vector2(0, -300));
+                            spawnNPCPacket.Send();
+                        }
                     }
-                    NPC.NewNPCDirect(Item.GetSource_FromThis(), player.Center + new Vector2(0, -300), keys[index]);
+                    if (Main.netMode == NetmodeID.SinglePlayer)
+                    {
+                        NPC.NewNPCDirect(Item.GetSource_FromThis(), player.Center + new Vector2(0, -300), keys[index]);
+                    }
+                    else
+                    {
+                        ModPacket spawnNPCPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                        spawnNPCPacket.Write(tsorcPacketID.SpawnNPC);
+                        spawnNPCPacket.Write(keys[index]);
+                        spawnNPCPacket.WriteVector2(player.Center + new Vector2(0, -300));
+                        spawnNPCPacket.Send();
+                    }
                 }
                 else
                 {
