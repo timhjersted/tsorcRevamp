@@ -52,9 +52,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.Register();
 
 			Recipe recipe2 = CreateRecipe();
-			recipe.AddIngredient(ItemID.CrimtaneBar, 3);
-			recipe.AddIngredient(ItemID.TissueSample, 3);
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
+			recipe2.AddIngredient(ItemID.CrimtaneBar, 3);
+			recipe2.AddIngredient(ItemID.TissueSample, 3);
+			recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
 			recipe2.AddTile(TileID.DemonAltar);
 			recipe2.Register();
 		}
