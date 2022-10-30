@@ -13,7 +13,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
                                 "\nInherits Ring of Clarity effects" +
                                 "\n+22 defense within the Abyss, +10 defense otherwise" +
                                 "\nGrants Magma Stone and Fire Flask effect" +
-                                "\n+4 HP Regen. +120 Mana.");
+                                "\n+4 HP Regen. +120 Mana." +
+                                "\nFire imbue effect can be toggled by hiding the accessory.");
         }
 
         public override void SetDefaults()
@@ -43,7 +44,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             player.magmaStone = true;
             player.statManaMax2 += 120;
-            player.AddBuff(BuffID.WeaponImbueFire, 60, false);
+            
 
             player.GetDamage(DamageClass.Generic) += 0.03f;
             player.noKnockback = true;
@@ -70,5 +71,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             }
         }
 
+        public override void UpdateAccessory(Player player, bool hideVisual) {
+            if (!hideVisual) player.AddBuff(BuffID.WeaponImbueFire, 60, false);
+        }
     }
 }

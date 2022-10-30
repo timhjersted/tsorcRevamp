@@ -11,7 +11,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Tooltip.SetDefault("One of the rings worn by Artorias." +
                                 "\nImmunity to the on-fire and broken-armor debuffs." +
                                 "\n+18 defense within the Abyss, +6 defense otherwise." +
-                                "\nGrants Fire Flask effect");
+                                "\nGrants Fire imbue effect" +
+                                "\nFire imbue effect can be toggled by hiding the accessory.");
         }
 
         public override void SetDefaults()
@@ -28,7 +29,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.AddBuff(BuffID.WeaponImbueFire, 60, false);
             player.buffImmune[BuffID.OnFire] = true;
             player.buffImmune[BuffID.BrokenArmor] = true;
 
@@ -36,6 +36,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             { // Apparently this is the flag used in the Abyss?
                 player.statDefense += 12;
             }
+        }
+        public override void UpdateAccessory(Player player, bool hideVisual) {
+            if (!hideVisual) player.AddBuff(BuffID.WeaponImbueFire, 60, false);
         }
 
     }
