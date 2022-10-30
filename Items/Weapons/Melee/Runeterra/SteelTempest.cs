@@ -130,8 +130,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         {
             Recipe recipe = CreateRecipe();
 
+            recipe.AddIngredient(ModContent.ItemType<WorldRune>());
             recipe.AddIngredient(ItemID.Katana, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
 
             recipe.AddTile(TileID.DemonAltar);
 
