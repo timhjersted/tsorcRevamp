@@ -46,17 +46,19 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.DemoniteBar, 3);
-			recipe.AddIngredient(ItemID.ShadowScale, 3);
+            recipe.AddIngredient(ItemID.ShadowScale, 3);
+			recipe.AddIngredient(ItemID.CrimtaneBar, 3);
+			recipe.AddIngredient(ItemID.TissueSample, 3);
 			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();
 
-			Recipe recipe2 = CreateRecipe();
-			recipe2.AddIngredient(ItemID.CrimtaneBar, 3);
-			recipe2.AddIngredient(ItemID.TissueSample, 3);
-			recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
-			recipe2.AddTile(TileID.DemonAltar);
-			recipe2.Register();
+			//Recipe recipe2 = CreateRecipe();
+			//recipe2.AddIngredient(ItemID.CrimtaneBar, 3);
+			//recipe2.AddIngredient(ItemID.TissueSample, 3);
+			//recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
+			//recipe2.AddTile(TileID.DemonAltar);
+			//recipe2.Register();
 		}
 	}
 }
