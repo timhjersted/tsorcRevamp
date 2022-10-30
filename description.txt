@@ -1,13 +1,13 @@
 The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack. Your 1-4 player journey will span 17 dungeons spread across an expansive, hand-crafted open world, offering a 20 to 30+ hr experience for a first playthrough.
 
-- The Custom Map will load automatically when you reach the Select World screen. To create a fresh or updated map, click New on the World screen.
+✅ The Custom Map will load automatically when you reach the Select World screen. To create a fresh or updated map, click New on the World screen.
 
-- To download TSORC's Music Mod, click the text prompt you'll see on TML's main menu after enabling this mod.
+✅ To download TSORC's Music Mod, click the text prompt you'll see on TML's main menu after enabling this mod.
 
-- Scroll down to read about our Discord, Cross Mod Compatibility, and the Game Manual
+⚠️  Scroll down to read about our Discord, Cross Mod Compatibility, and the Game Manual
 
 
-TOP FEATURES
+✅ TOP FEATURES
 ------------------------------------------
 *Explore a vast, interconnected and richly illustrated world, developed over the span of 4 years
 *Companion Soundtrack with 59 songs! (Dark Souls, Elden Ring and Zelda fans will love it)
@@ -18,12 +18,12 @@ TOP FEATURES
 *The mod enforces old school adventure map rules, so if you can do it, it's okay to do it!
 
 
-PROJECT STATUS: BETA
+⚠️ PROJECT STATUS: BETA
 ------------------------------------------
 The game is fairly polished up to the end of the main story (defeating Attraidies). Development is currently focused on balancing and revamping the sizeable post-Attraidies content, especially the bosses. We recommend waiting to play this third chapter when we're out of beta, unless you'd like to be a part of the journey to 1.0. 
 
 
-DISCORD
+✅ DISCORD
 ------------------------------------------
 Join our discord to discuss the mod and give feedback:
 https://discord.gg/UGE6Mstrgz
@@ -34,7 +34,7 @@ https://discord.gg/UGE6Mstrgz
 -Share Let's Plays or video recordings of your playthrough in #tsorc-media.
 
 
-CROSS MOD COMPATIBILITY:
+⚠️ CROSS MOD COMPATIBILITY:
 ------------------------------------------
 Highly Recommended QoL mods:
 ✅  Recipe Browser
@@ -56,7 +56,7 @@ Unsupported Mods:
 ⛔  Any mod that changes the behavior of respawning in multiplayer
 
 
-GAME MANUAL:
+⚠️ GAME MANUAL:
 ------------------------------------------
 *Create a new character named Red Cloud (for multiplayer, everyone should use a different name)
 
@@ -72,4 +72,4 @@ GAME MANUAL:
 
 *Multiplayer is supported for 4 players. Class diversity recommended. Post issues you find under #bug-reports. Thanks! 
 
-*Go to #tips in our Discord for more game hints
+*Go to #tips in our Discord for all game hints
