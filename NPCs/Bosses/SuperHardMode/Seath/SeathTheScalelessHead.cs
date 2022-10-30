@@ -498,7 +498,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         }
 
         //Make it take damage as if its whole body was one entity
-        //Whenever any of its parts takes a hit, it sets all other living parts to be immune for 10 frames
+        //Whenever any of its parts takes a hit, it sets all other living parts to be immune for 5 frames
         //Does *not* apply to true melee attacks! 100% intentional, easy to change by calling SetImmune in OnHitByItem too if necessary
         public static void SetImmune(Projectile projectile, NPC hitNPC)
         {
@@ -507,7 +507,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 NPC currentNPC = Main.npc[i];
                 if (currentNPC.type == ModContent.NPCType<SeathTheScalelessHead>() || currentNPC.type == ModContent.NPCType<SeathTheScalelessBody>() || currentNPC.type == ModContent.NPCType<SeathTheScalelessBody2>() || currentNPC.type == ModContent.NPCType<SeathTheScalelessBody3>() || currentNPC.type == ModContent.NPCType<SeathTheScalelessLegs>() || currentNPC.type == ModContent.NPCType<SeathTheScalelessTail>())
                 {
-                    currentNPC.immune[projectile.owner] = 10;
+                    currentNPC.immune[projectile.owner] = 5;//was 10
                 }
             }
         }
