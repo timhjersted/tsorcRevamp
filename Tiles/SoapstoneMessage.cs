@@ -26,7 +26,7 @@ namespace tsorcRevamp.Tiles {
             
 
             //SoapstoneList.Add(new SoapstoneMessage("Glowing green skulls and hanging skeletons hold important secrets. Right-click to discover.", new Point16(4278, 951)));
-            SoapstoneList.Add(new SoapstoneMessage("Testing soapstone system. hello! i just need this to run out to multiple lines", new Point16(4950, 865)));
+            //SoapstoneList.Add(new SoapstoneMessage("If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction", new Point16(4960, 878)));
 
             //Use the Recipe Browser mod to see what can be crafted with Dark Souls. Anything that says it's a DS crafting material should be investigated.
 
