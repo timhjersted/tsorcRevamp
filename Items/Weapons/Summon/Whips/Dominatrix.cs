@@ -41,12 +41,12 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         {
             return true;
         }
-        public override void AddRecipes()
+		public override void AddRecipes()
 		{
-			
+
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.DemoniteBar, 3);
-            recipe.AddIngredient(ItemID.ShadowScale, 3);
+			recipe.AddIngredient(ItemID.ShadowScale, 3);
 			recipe.AddIngredient(ItemID.CrimtaneBar, 3);
 			recipe.AddIngredient(ItemID.TissueSample, 3);
 			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
@@ -69,5 +69,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 				recipe3.AddTile(TileID.DemonAltar);
 				recipe3.Register();
 			}
+		}
 	}
 }
