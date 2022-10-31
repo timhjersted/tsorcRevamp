@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.thorns = 1f;
+            player.thorns += 1f;
         }
         public override void AddRecipes()
         {

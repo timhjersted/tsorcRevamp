@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void UpdateEquip(Player player)
         {
             player.statDefense += 4;
-            player.thorns = 1f;
+            player.thorns += 1f;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual) {
