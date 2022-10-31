@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void UpdateEquip(Player player)
         {
             player.noKnockback = true;
-            player.thorns = 1f;
+            player.thorns += 1f;
             player.fireWalk = true;
             player.endurance += 0.05f;
             player.moveSpeed *= 1f;

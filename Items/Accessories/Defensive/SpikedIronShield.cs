@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.thorns = 1f;
+            player.thorns += 1f;
             player.endurance += 0.04f;
             player.moveSpeed *= 0.95f;
         }
