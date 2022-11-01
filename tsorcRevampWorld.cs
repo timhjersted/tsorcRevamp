@@ -887,7 +887,7 @@ namespace tsorcRevamp
 
 
             //kill signs and rebuild json. if youre making manual edits to the json you probably dont need this any more
-            if (JustPressed(Keys.NumPad7)) {
+            if (JustPressed(Keys.NumPad7) && JustPressed(Keys.Home)) {
 
                 for (int x = 0; x < Main.maxTilesX - 2; x++) {
                     for (int y = 0; y < Main.maxTilesY - 2; y++) {
