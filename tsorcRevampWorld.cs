@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -779,20 +780,6 @@ namespace tsorcRevamp
                         //ideally we only need to run this once ever, but for testing just run it every time
                         //todo come up with a better way to do this?
                         
-                        SoapstoneMessage.InitSoapstones();
-                        foreach (SoapstoneMessage cache in SoapstoneMessage.SoapstoneList) {
-                            int locX = cache.location.X;
-                            int locY = cache.location.Y;
-                            WorldGen.PlaceTile(locX, locY, ModContent.TileType<SoapstoneTile>(), false, true);
-                            ModContent.GetInstance<SoapstoneTileEntity>().Place(locX, locY);
-                            //make double sure theres a tileentity at the coordinates before trying to modify it
-                            if (TileUtils.TryGetTileEntityAs(locX, locY, out SoapstoneTileEntity entity)) {
-                                if (entity.text != cache.text) { 
-                                    entity.text = cache.text;
-                                    entity.textWidth = cache.textWidth;
-                                }
-                            }
-                        }
                         
                     }
 
@@ -893,10 +880,106 @@ namespace tsorcRevamp
             }
         }
 
+        internal static void HandleDevKeys() {
+            char separator = Path.DirectorySeparatorChar;
+
+            string jsonPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcSoapstones.json"; //Where the music mod is downloaded to
+
+
+            //kill signs and rebuild json. if youre making manual edits to the json you probably dont need this any more
+            if (JustPressed(Keys.NumPad7)) {
+
+                for (int x = 0; x < Main.maxTilesX - 2; x++) {
+                    for (int y = 0; y < Main.maxTilesY - 2; y++) {
+                        Tile worldTile = Framing.GetTileSafely(x, y);
+                        if (worldTile.HasTile && worldTile.TileType == TileID.Signs) {
+                            string h = Main.sign[Sign.ReadSign(x, y, false)].text;
+
+                            SignJSONSerializable signJson = new();
+                            signJson.text = h;
+                            signJson.tileX = x;
+                            signJson.tileY = y;
+                            signJson.textWidth = SoapstoneMessage.DEFAULT_WIDTH;
+                            signJson.style = SoapstoneMessage.DEFAULT_STYLE;
+
+                            JsonSerializerOptions opt = new JsonSerializerOptions { WriteIndented = true };
+                            string rawJson = JsonSerializer.Serialize(signJson, opt);
+                            List<string> asList = new() { rawJson };
+                            File.AppendAllLines(jsonPath, asList);
+                            for (int q = x; q < x + 2; q++) {
+                                for (int w = y; w < y + 2; w++) {
+                                    WorldGen.KillTile(q, w);
+                                }
+                            }
+                        }
+                    }
+                }
+                for (int i = 0; i < 400; i++) {
+                    if (Main.item[i].type == ItemID.Sign && Main.item[i].active) {
+                        Main.item[i].active = false; //delete ground items (in this case campfires)
+                    }
+                }
+                Main.NewText("wrote json!");
+            }
+
+
+            //kill signs and place soapstones from the json. for testing manual json edits
+            //eventually can be done on world load, or something
+            if (JustPressed(Keys.NumPad5)) {
+
+                for (int x = 0; x < Main.maxTilesX - 2; x++) {
+                    for (int y = 0; y < Main.maxTilesY - 2; y++) {
+                        Tile worldTile = Framing.GetTileSafely(x, y);
+                        if (worldTile.HasTile && worldTile.TileType == TileID.Signs) {
+                            for (int q = x; q < x + 2; q++) {
+                                for (int w = y; w < y + 2; w++) {
+                                    WorldGen.KillTile(q, w);
+                                }
+                            }
+                        }
+                    }
+                }
+                for (int i = 0; i < 400; i++) {
+                    if (Main.item[i].type == ItemID.Sign && Main.item[i].active) {
+                        Main.item[i].active = false;
+                    }
+                }
+                Main.NewText("killed signs!");
+
+                string bigJson = File.ReadAllText(jsonPath);
+                List<SignJSONSerializable> texts = UsefulFunctions.DeserializeMultiple<SignJSONSerializable>(bigJson).ToList();
+                foreach (SignJSONSerializable sign in texts) {
+                    int locX = sign.tileX;
+                    int locY = sign.tileY;
+                    Dust.QuickBox(new Vector2(locX, locY) * 16, new Vector2(locX + 1, locY + 1) * 16, 2, Color.YellowGreen, null);
+
+                    
+                    Tile tile = Framing.GetTileSafely(locX, locY);
+                    if (tile.TileType != ModContent.TileType<SoapstoneTile>()) {
+
+                        //tip: i am so fucking mad
+                        if (!tile.HasTile) tile.HasTile = true;
+                        tile.TileType = (ushort)ModContent.TileType<SoapstoneTile>();
+                        tile.TileFrameX = 0;
+                        tile.TileFrameY = 0;
+                        tile.TileFrameNumber = 0;
+
+                        ModContent.GetInstance<SoapstoneTileEntity>().Place(locX, locY);
+                        if (TileUtils.TryGetTileEntityAs(locX, locY, out SoapstoneTileEntity entity)) {
+                            entity.text = sign.text;
+                            entity.textWidth = sign.textWidth;
+                            entity.style = sign.style;
+                        } 
+                    }
+                }
+                Main.NewText("attempted to read json!");
+            }
+        }
         public override void PostUpdateEverything()
         {
             if (JustPressed(Keys.Home) && JustPressed(Keys.NumPad0)) //they have to be pressed *on the same tick*. you can't hold one and then press the other.
                 CampfireToBonfire();
+            HandleDevKeys();
             bool charm = false;
             foreach (Player p in Main.player)
             {
@@ -953,6 +1036,10 @@ namespace tsorcRevamp
                     }
                 }
             }
+        }
+
+        public override void OnWorldUnload() {
+            tsorcRevamp.NearbySoapstone = null;
         }
 
         //Called upon the death of Gwyn, Lord of Cinder. Disables both hardmode and superhardmode, and sets the world state to "The End".

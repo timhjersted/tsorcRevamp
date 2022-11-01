@@ -1,8 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Terraria;
@@ -853,8 +855,8 @@ namespace tsorcRevamp
             string[] array = input.Split();
             StringBuilder currentLine = new("");
             foreach (string currentWord in array) {
-                if (currentWord == "NEWBLOCK") {
-                    finalText.Append("\n\n");
+                if (currentWord == "--NEWLINE") {
+                    finalText.Append('\n');
                     currentLine.Clear();
                 }
                 else if (font.MeasureString(currentLine + " " + currentWord).X * scale <= (float)maxWidth) {
@@ -868,6 +870,22 @@ namespace tsorcRevamp
                 }
             }
             return finalText.ToString();
+        }
+
+        /// <summary>
+        /// Deserializes JSON into multiple instances of a specified class. For use on files with many JSON objects.
+        /// </summary>
+        /// <typeparam name="T">The class to deserialize to</typeparam>
+        /// <param name="input">The input json</param>
+        /// <returns></returns>
+        public static IEnumerable<T> DeserializeMultiple<T>(string input) {
+            JsonSerializer serializer = new();
+            using var sr = new StringReader(input);
+            using var reader = new JsonTextReader(sr);
+            reader.SupportMultipleContent = true;
+            while (reader.Read()) {
+                yield return serializer.Deserialize<T>(reader);
+            }
         }
     }
 }

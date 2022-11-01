@@ -2484,7 +2484,8 @@ namespace tsorcRevamp
             Lightning,
             BulletHellLaser,
             HeavenPiercerGlowmask,
-            SoapstoneMessage
+            SoapstoneMessage0,
+            SoapstoneMessage1
         }
 
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -2536,7 +2537,8 @@ namespace tsorcRevamp
                 {TransparentTextureType.Lightning, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyLightningStrike", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.BulletHellLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Gwyn/BulletHellLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.HeavenPiercerGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/HeavenPiercerGlowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.SoapstoneMessage, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Tiles/SoapstoneMessage", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.SoapstoneMessage0, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Tiles/SoapstoneMessage_0", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.SoapstoneMessage1, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Tiles/SoapstoneMessage_1", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
 
             };
 

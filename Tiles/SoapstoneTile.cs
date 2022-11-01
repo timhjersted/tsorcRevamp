@@ -52,11 +52,14 @@ namespace tsorcRevamp.Tiles {
             Main.tileWaterDeath[Type] = false;
             Main.tileLavaDeath[Type] = false;
             Main.tileSolid[Type] = false;
-            Main.tileNoAttach[Type] = true;
+        }
+
+        public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak) {
+            return false;
         }
 
         public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem) {
-            fail = false; 
+            fail = true; 
         }
         public override void PostDraw(int i, int j, SpriteBatch spriteBatch) {
             if (TileUtils.TryGetTileEntityAs(i, j, out SoapstoneTileEntity entity)) {
@@ -65,19 +68,47 @@ namespace tsorcRevamp.Tiles {
                 if (Main.drawToScreen) {
                     zero = Vector2.Zero;
                 }
-                Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.SoapstoneMessage];
+
+                TransparentTextureHandler.TransparentTextureType type;
+                switch (entity.style) {
+                    case SoapstoneStyle.Runes: {
+                        type = TransparentTextureHandler.TransparentTextureType.SoapstoneMessage0;
+                        break;
+                    }
+                    case SoapstoneStyle.Dialogue: {
+                        type = TransparentTextureHandler.TransparentTextureType.SoapstoneMessage1;
+                        break;
+                    }
+                    default: {
+                        type = TransparentTextureHandler.TransparentTextureType.SoapstoneMessage0;
+                        break;
+                    }
+                }
+                Texture2D texture = TransparentTextureHandler.TransparentTextures[type];
+
                 Vector2 textureSize = texture.Size();
 
-                Vector2 position = new(i * 16 - ((int)Main.screenPosition.X + textureSize.X / 2) + 16, j * 16 - (int)Main.screenPosition.Y - textureSize.Y);
+                Vector2 position = new(i * 16 - ((int)Main.screenPosition.X + textureSize.X / 2) + 16, j * 16 - (int)Main.screenPosition.Y - (textureSize.Y / 2));
 
-                Color shimmerColor = new(192 + (Main.DiscoR / 2), 128 + (Main.DiscoG / 4), 16);
-                if (entity.read)
-                    shimmerColor.R /= 2;
-                    shimmerColor.G /= 2;
-                    shimmerColor.B /= 2;
-                    //shimmerColor.MultiplyRGB(Color.DarkSlateGray);
+                Color ShimmerColor;
+                switch (entity.style) {
+                    case SoapstoneStyle.Runes: {
+                        ShimmerColor = new(192 + (Main.DiscoR / 2), 128 + (Main.DiscoG / 4), 16);
+                        break;
+                    }
+                    default: {
+                        ShimmerColor = Color.PapayaWhip;
+                        break;
+                    }
+                }
 
-                spriteBatch.Draw(texture, position + zero, new Rectangle(0, 0, (int)textureSize.X, (int)textureSize.Y), shimmerColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
+                if (entity.read) {
+                    ShimmerColor.R /= 2;
+                    ShimmerColor.G /= 2;
+                    ShimmerColor.B /= 2;
+                }
+
+                spriteBatch.Draw(texture, position + zero, new Rectangle(0, 0, (int)textureSize.X, (int)textureSize.Y), ShimmerColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
 
                 if (entity.timer > 0) {
                     tsorcRevamp.NearbySoapstone = entity;
@@ -88,6 +119,7 @@ namespace tsorcRevamp.Tiles {
     public class SoapstoneTileEntity : ModTileEntity {
         public string text;
         public int textWidth;
+        public SoapstoneStyle style;
         public float timer;
         public bool nearPlayer;
         public bool read = false;
@@ -121,7 +153,7 @@ namespace tsorcRevamp.Tiles {
             nearPlayer = false;
             for (int i = 0; i < Main.maxPlayers; i++) {
                 Player p = Main.player[i];
-                if (p.position.Y / 16 < Position.Y && Vector2.Distance(p.Center, Position.ToVector2() * 16) <= 64) {
+                if (Vector2.Distance(p.Center, Position.ToVector2() * 16) <= 64) {
                     nearPlayer = true;
                     read = true;
                     if (text == null) {

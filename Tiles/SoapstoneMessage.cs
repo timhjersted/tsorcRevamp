@@ -6,19 +6,26 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Tiles {
+    public enum SoapstoneStyle {
+        Runes = 0,
+        Dialogue = 1
+    }
     public class SoapstoneMessage {
         public static List<SoapstoneMessage> SoapstoneList;
 
         public string text;
         public Point16 location;
         public int textWidth;
+        public SoapstoneStyle style;
 
         public const int DEFAULT_WIDTH = 240;
+        public const SoapstoneStyle DEFAULT_STYLE = SoapstoneStyle.Runes;
 
-        public SoapstoneMessage(string text, Point16 location, int textWidth = DEFAULT_WIDTH) {
+        public SoapstoneMessage(string text, Point16 location, int textWidth = DEFAULT_WIDTH, SoapstoneStyle style = DEFAULT_STYLE) {
             this.text = text;
             this.location = location;
             this.textWidth = textWidth;
+            this.style = style;
         }   
 
         public static void InitSoapstones() {
@@ -26,7 +33,7 @@ namespace tsorcRevamp.Tiles {
             
 
             //SoapstoneList.Add(new SoapstoneMessage("Glowing green skulls and hanging skeletons hold important secrets. Right-click to discover.", new Point16(4278, 951)));
-            //SoapstoneList.Add(new SoapstoneMessage("If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction", new Point16(4960, 878)));
+            SoapstoneList.Add(new SoapstoneMessage("If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction", new Point16(4960, 878)));
 
             //Use the Recipe Browser mod to see what can be crafted with Dark Souls. Anything that says it's a DS crafting material should be investigated.
 
@@ -55,5 +62,14 @@ namespace tsorcRevamp.Tiles {
                          "Teal pressure plates must be hit with a ranged weapon to activate",
             */
         }
+    }
+
+    //exists only so vanilla signs can be de/serialized from/to json
+    public class SignJSONSerializable {
+        public string text { get; set; }
+        public int tileX { get; set; }
+        public int tileY { get; set; }
+        public int textWidth { get; set; }
+        public SoapstoneStyle style { get; set; }
     }
 }
