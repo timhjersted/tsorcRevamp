@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Potions
             Item.useTime = 17;
             Item.height = 44;
             Item.width = 44;
-            Item.maxStack = 100;
+            Item.maxStack = 9999;
             Item.scale = .6f;
             Item.value = 100;
         }

@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Potions
             Item.useStyle = ItemUseStyleID.EatFood;
             Item.useTime = 17;
             Item.height = 16;
-            Item.maxStack = 100;
+            Item.maxStack = 9999;
             Item.scale = 1;
             Item.value = 2;
             Item.width = 20;
