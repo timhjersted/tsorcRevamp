@@ -692,7 +692,7 @@ namespace tsorcRevamp.NPCs
                 {
                     npc.lifeRegen = 0;
                 }
-                npc.lifeRegen = -8;
+                npc.lifeRegen -= 30;
 
                 int dust = Dust.NewDust(npc.position, npc.width, npc.height, 185, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
                 Main.dust[dust].noGravity = true;
