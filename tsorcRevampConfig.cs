@@ -33,7 +33,7 @@ namespace tsorcRevamp
 
         [Label("Delete Dropped Souls on Death")]
         [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Any Dark Souls in the world will be deleted when a player dies.\nEven if this option is disabled, your Souls will be deleted \nif over 400 items are active in the world after you die, \nor if you exit the game while your Souls are still on the ground.\nDoes not take effect in multiplayer.\nDefaults to On")]
+        [Tooltip("Dark Souls dropped by dying will be deleted if you die again\nbefore picking them up. Even if this option is disabled, your\nSouls will be deleted if you exit the game while your Souls\nare still on the ground. Does not take effect in multiplayer.\nDefaults to On")]
         [DefaultValue(true)]
         public bool DeleteDroppedSoulsOnDeath { get; set; }
 
@@ -97,6 +97,12 @@ namespace tsorcRevamp
         [DefaultValue(100)]
         public uint ChargeCircleOpacity { get; set; }
 
+        [Label("Hide Read Soapstones")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [SliderColor(224, 165, 56, 128)]
+        [DefaultValue(true)]
+        [Tooltip("If enabled, soapstone messages that have been read will\nnot be shown until a button is clicked to show them.\nDefaults to on.")]
+        public bool HideSoapstones { get; set; }
 
         [Label("Disable Gravitation Effect Screen Flip")]
         [BackgroundColor(200, 80, 80, 192)]

@@ -275,7 +275,7 @@ namespace tsorcRevamp
                 if (soapstone.timer > 0 && soapstone.show) {
                     int textWidth = soapstone.textWidth > 0 ? soapstone.textWidth : SoapstoneMessage.DEFAULT_WIDTH;
                     string text = UsefulFunctions.WrapString(soapstone.text, FontAssets.ItemStack.Value, textWidth, 1);
-                    float alpha = (soapstone.timer / 60);
+                    float alpha = (soapstone.timer / 20);
                     Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition) - new Vector2((textWidth / 2) - 4, 128);
 
                     Main.spriteBatch.End();
@@ -316,7 +316,7 @@ namespace tsorcRevamp
                         Main.LocalPlayer.mouseInterface = true;
                         if (Main.mouseLeft) {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
-                            soapstone.timer = 3;
+                            soapstone.timer = 1;
                         }
                     }
                 }

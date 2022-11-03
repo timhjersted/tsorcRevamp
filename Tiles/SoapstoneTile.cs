@@ -151,7 +151,7 @@ namespace tsorcRevamp.Tiles {
         }
 
         public override void Update() {
-            show = !read;
+            show = !read || !ModContent.GetInstance<tsorcRevampConfig>().HideSoapstones;
             nearPlayer = false;
             for (int i = 0; i < Main.maxPlayers; i++) {
                 Player p = Main.player[i];
@@ -173,11 +173,11 @@ namespace tsorcRevamp.Tiles {
                 show = true;
             }
             if (nearPlayer && show) {
-                if (timer < 60) timer += 3;
+                if (timer < 20) timer += 1;
             }
             else {
                 if (timer >= 1) {
-                    timer -= 6;
+                    timer -= 2;
                 }
             }
         }
