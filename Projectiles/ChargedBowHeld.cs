@@ -140,7 +140,7 @@ namespace tsorcRevamp.Projectiles {
                 Main.EntitySpriteDraw(pointTexture, pos, srect, Color.White * opacity, 0f, origin, 1f, SpriteEffects.None, 0);
             }
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin();
 
         }
 
