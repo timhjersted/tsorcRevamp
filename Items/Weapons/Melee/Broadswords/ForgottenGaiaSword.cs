@@ -28,6 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useTime = 21;
             Item.value = PriceByRarity.Red_10;
             Item.width = 50;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
 

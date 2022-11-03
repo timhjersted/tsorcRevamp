@@ -1,4 +1,6 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Enemies;
@@ -30,8 +32,22 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useTime = 20;
             Item.value = PriceByRarity.Green_2;
             Item.width = 36;
-            Item.shoot = ProjectileID.DD2SquireSonicBoom;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             Item.shootSpeed = 7.5f;
+        }
+
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
+            switch (shootstacks) {
+                case < 3: {
+                    type = ModContent.ProjectileType<Projectiles.Nothing>();
+                    break;
+                }
+                default: {
+                    type = ProjectileID.DD2SquireSonicBoom;
+                    break;
+                }
+            }              
+            return base.Shoot(player, source, position, velocity, type, damage, knockback);
         }
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
         {
@@ -72,18 +88,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 )
             {
                 damage *= 8;
-            }
-        }
-        public override bool CanShoot(Player player)
-        {
-            if (shootstacks < 3)
-            {
-                return false;
-            }
-            else
-            {
-                shootstacks = 0;
-                return true;
             }
         }
         public override void AddRecipes()

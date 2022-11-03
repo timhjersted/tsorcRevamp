@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
         {
-            target.AddBuff(BuffID.Frostburn, 360);
+            target.AddBuff(BuffID.Frostburn2, 360);
         }
         public override void AddRecipes()
         {

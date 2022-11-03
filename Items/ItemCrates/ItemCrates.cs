@@ -167,17 +167,18 @@ namespace tsorcRevamp.Items.ItemCrates
     [LegacyName("ReforgedOldTwoHandedSword")]
     [LegacyName("SilverFlail")]
     [LegacyName("SilverSpear")]
-    public class SoulShekelCrate : ItemCrates
+    [LegacyName("SoulShekelCrate")]
+    public class SoulCoinCrate : ItemCrates
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A crate containing 1000 soul shekels" +
+            Tooltip.SetDefault("A crate containing 1000 soul coins" +
                                 "\nGiven as weregild for an item that no longer exists" +
                                 "\n{$CommonItemTooltip.RightClickToOpen}");
         }
         public override void RightClick(Player player)
         {
-            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ModContent.ItemType<Items.SoulShekel>(), 1000);
+            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ModContent.ItemType<Items.SoulCoin>(), 1000);
         }
     }
 

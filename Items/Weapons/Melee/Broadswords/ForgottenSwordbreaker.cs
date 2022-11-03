@@ -26,6 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.UseSound = SoundID.Item1;
             Item.value = PriceByRarity.Pink_5;
             Item.width = 28;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)

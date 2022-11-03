@@ -31,6 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.LightPurple_6;
             Item.width = 58;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
         public override void AddRecipes()

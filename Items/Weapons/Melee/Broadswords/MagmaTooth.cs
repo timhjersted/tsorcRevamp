@@ -27,6 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.Orange_3;
             Item.DamageType = DamageClass.Melee;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)

@@ -6,7 +6,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items
 {
-    class SoulShekel : BaseRarityItem
+    [LegacyName("SoulShekel")]
+    class SoulCoin : BaseRarityItem
     {
         public override void SetStaticDefaults()
         {
@@ -56,7 +57,7 @@ namespace tsorcRevamp.Items
             bool openSlot = false;
             for (int i = 0; i < /*Main.maxInventory*/ 50; i++) //Main.maxInventory == 58 would include coin and ammo slots, we don't want to take those into account in this case
             {
-                if (player.inventory[i].IsAir || player.HasItem(ModContent.ItemType<SoulShekel>()))
+                if (player.inventory[i].IsAir || player.HasItem(ModContent.ItemType<SoulCoin>()))
                 {
                     openSlot = true;
                 }
@@ -91,7 +92,7 @@ namespace tsorcRevamp.Items
         {
 
             Lighting.AddLight(Item.Center, 0.1f, 0.45f, 0.21f);
-            Texture2D texture = (Texture2D)Mod.Assets.Request<Texture2D>("Items/SoulShekel_InWorld");
+            Texture2D texture = (Texture2D)Mod.Assets.Request<Texture2D>("Items/SoulCoin_InWorld");
             var myrectangle = texture.Frame(1, 8, 0, itemframe);
             spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(7, 11), Item.scale, SpriteEffects.None, 0.1f);
 

@@ -27,6 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Melee;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
         public override void AddRecipes()

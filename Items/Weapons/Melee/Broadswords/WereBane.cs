@@ -28,6 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.width = 42;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.UseSound = SoundID.Item1;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
         public override void AddRecipes()

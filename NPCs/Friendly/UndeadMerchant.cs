@@ -230,7 +230,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override bool CanTownNPCSpawn(int numTownNPCs, int money)
         {
-            int type = ModContent.ItemType<Items.SoulShekel>();
+            int type = ModContent.ItemType<Items.SoulCoin>();
 
             for (int i = 0; i < Main.maxPlayers; i++)
             {

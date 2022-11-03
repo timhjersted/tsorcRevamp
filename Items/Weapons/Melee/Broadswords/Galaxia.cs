@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.value = PriceByRarity.LightPurple_6;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
-            Item.useTurn = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
         public override void AddRecipes()

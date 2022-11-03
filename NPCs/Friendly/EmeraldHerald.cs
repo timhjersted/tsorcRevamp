@@ -202,7 +202,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     Main.npcChatText = "If you ever need more, you may roast some over the flames of a bonfire. Farewell.";
                     player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift = true;
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
-                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulShekel>(), 100);
+                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);
 
                     if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
@@ -216,7 +216,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     Main.npcChatText = "Bearer of the Curse, these lifegems will no doubt prove" + "\nto be invaluable on your journey. Farewell.";
                     player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift = true;
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
-                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulShekel>(), 100);
+                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.Lifegem>(), 10);
 
                     if (Main.netMode != NetmodeID.Server)

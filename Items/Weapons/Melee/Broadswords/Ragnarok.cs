@@ -28,6 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 21;
             Item.value = PriceByRarity.Cyan_9;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
     }
 }

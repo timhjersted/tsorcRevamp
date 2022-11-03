@@ -25,6 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useTime = 15;
             Item.value = PriceByRarity.Pink_5;
             Item.width = 42;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
         public override bool? UseItem(Player player)

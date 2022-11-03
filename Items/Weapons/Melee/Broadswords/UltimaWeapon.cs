@@ -30,6 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Yellow_8;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
         public override void AddRecipes()
         {
