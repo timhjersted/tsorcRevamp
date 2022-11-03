@@ -875,7 +875,7 @@ namespace tsorcRevamp
                 }
             }
             if (tsorcRevamp.NearbySoapstone != null) {
-                if (tsorcRevamp.NearbySoapstone.timer <= 0)
+                if (tsorcRevamp.NearbySoapstone.timer <= 0 && !tsorcRevamp.NearbySoapstone.nearPlayer)
                     tsorcRevamp.NearbySoapstone = null;
             }
         }

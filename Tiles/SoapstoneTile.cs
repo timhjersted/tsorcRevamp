@@ -110,7 +110,7 @@ namespace tsorcRevamp.Tiles {
 
                 spriteBatch.Draw(texture, position + zero, new Rectangle(0, 0, (int)textureSize.X, (int)textureSize.Y), ShimmerColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
 
-                if (entity.timer > 0) {
+                if (entity.nearPlayer) {
                     tsorcRevamp.NearbySoapstone = entity;
                 }
             }
@@ -123,6 +123,7 @@ namespace tsorcRevamp.Tiles {
         public float timer;
         public bool nearPlayer;
         public bool read = false;
+        public bool show;
 
         public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate) {
             if (Main.netMode == NetmodeID.MultiplayerClient) {
@@ -150,6 +151,7 @@ namespace tsorcRevamp.Tiles {
         }
 
         public override void Update() {
+            show = !read;
             nearPlayer = false;
             for (int i = 0; i < Main.maxPlayers; i++) {
                 Player p = Main.player[i];
@@ -167,7 +169,10 @@ namespace tsorcRevamp.Tiles {
                     break;
                 }
             }
-            if (nearPlayer) {
+            if (timer > 0) {
+                show = true;
+            }
+            if (nearPlayer && show) {
                 if (timer < 60) timer += 3;
             }
             else {

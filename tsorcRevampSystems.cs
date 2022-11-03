@@ -271,28 +271,55 @@ namespace tsorcRevamp
             tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.Draw(spriteBatch);
             if (tsorcRevamp.NearbySoapstone != null) {
-                if (tsorcRevamp.NearbySoapstone.timer <= 0) return;
                 SoapstoneTileEntity soapstone = tsorcRevamp.NearbySoapstone;
-                int textWidth = soapstone.textWidth > 0?soapstone.textWidth:SoapstoneMessage.DEFAULT_WIDTH;
-                string text = UsefulFunctions.WrapString(soapstone.text, FontAssets.ItemStack.Value, textWidth, 1);
-                float alpha = (soapstone.timer / 60);
-                Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition) - new Vector2((textWidth / 2) - 4, 128);
+                if (soapstone.timer > 0 && soapstone.show) {
+                    int textWidth = soapstone.textWidth > 0 ? soapstone.textWidth : SoapstoneMessage.DEFAULT_WIDTH;
+                    string text = UsefulFunctions.WrapString(soapstone.text, FontAssets.ItemStack.Value, textWidth, 1);
+                    float alpha = (soapstone.timer / 60);
+                    Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition) - new Vector2((textWidth / 2) - 4, 128);
 
-                Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied); //allows it to have alpha
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied); //allows it to have alpha
 
-                Texture2D boxTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/blackpixel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                    Texture2D boxTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/blackpixel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
-                int lineCount = text.Count(a => a == '\n') + 1;
-                int height = (FontAssets.ItemStack.Value.LineSpacing * lineCount) + 8;
-                Rectangle drect = new((int)textPosition.X - 4, (int)textPosition.Y - 4, textWidth + 8, height);
-                Color bgColor = new(0, 0, 0, (0.5f * alpha) + 0.1f);
-                Main.spriteBatch.Draw(boxTexture, drect, bgColor);
+                    int lineCount = text.Count(a => a == '\n') + 1;
+                    int height = (FontAssets.ItemStack.Value.LineSpacing * lineCount) + 8;
+                    Rectangle drect = new((int)textPosition.X - 4, (int)textPosition.Y - 4, textWidth + 8, height);
+                    Color bgColor = new(0, 0, 0, (0.5f * alpha) + 0.1f);
+                    Main.spriteBatch.Draw(boxTexture, drect, bgColor);
 
-                Color textColor = new(1, 1, 1, alpha);
-                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, text, textPosition, textColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-                Main.spriteBatch.End();
-                Main.spriteBatch.Begin();
+                    Color textColor = new(1, 1, 1, alpha);
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, text, textPosition, textColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin();
+                }
+                else {
+                    if (!soapstone.nearPlayer) return;
+                    Dust.NewDust(Main.MouseScreen, 4, 4, DustID.Clentaminator_Purple);
+                    int textWidth = 38;
+                    Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition) - new Vector2((textWidth / 2) - 4, 64);
+
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+
+                    Texture2D boxTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/blackpixel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+
+                    Rectangle drect = new((int)textPosition.X - 4, (int)textPosition.Y - 4, textWidth + 8, 28);
+                    Main.spriteBatch.Draw(boxTexture, drect, new(0, 0, 0, 153));
+
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, "Show", textPosition, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin();
+                    Point scaledMouseScreen = (Main.MouseScreen * Main.UIScale).ToPoint();
+                    if (drect.Contains(scaledMouseScreen)) {
+                        Main.LocalPlayer.mouseInterface = true;
+                        if (Main.mouseLeft) {
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
+                            soapstone.timer = 3;
+                        }
+                    }
+                }
             }
         }
 
