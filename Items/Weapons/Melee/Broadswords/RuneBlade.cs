@@ -44,10 +44,12 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 }
                 default: {
                     type = ProjectileID.DD2SquireSonicBoom;
+                    shootstacks = 0;
                     break;
                 }
-            }              
-            return base.Shoot(player, source, position, velocity, type, damage, knockback);
+            }
+            Projectile.NewProjectile(source, position, velocity, type, damage, knockback);
+            return false;
         }
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
         {
