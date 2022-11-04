@@ -152,22 +152,25 @@ namespace tsorcRevamp.Items
 
         public void RemoveBannedBosses(List<int> keys)
         {
-            //Most of these get spawned automatically by the "main" boss they complement. The exceptions to this are noted:
+            //These are pieces or alternate phases of bosses which automatically get spawned by their 'parent' boss and should not be spawned on their own
             List<int> bannedBosses = new List<int>();
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.Gaibon>());
-            bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>()); //Head is detached from its body
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>());
-            bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()); //Just spawns the head, nothing more
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>());
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.Fiends.LichKingDisciple>());
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.Fiends.LichKingSerpentHead>());
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloudMirror>());
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>());
+            bannedBosses.Add(NPCID.EaterofWorldsBody);
+            bannedBosses.Add(NPCID.EaterofWorldsTail);
+
+            //These are bugged and need to be fixed
+            bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>()); //Head is detached from its body
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()); //Head is detached from its body
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()); //Head is detached from its body
+            bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()); //Just spawns the head, nothing more
 
-
-
+            //Check if the keys list has any of the banned bosses, and if so remove them
             for (int i = 0; i < bannedBosses.Count; i++)
             {
                 if (keys.Contains(bannedBosses[i]))

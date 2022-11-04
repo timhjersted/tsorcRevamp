@@ -94,12 +94,16 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].shopCustomPrice = 100;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.ThrowingAxeCrate>());
-            shop.item[nextSlot].shopCustomPrice = 8;
+            shop.item[nextSlot].SetDefaults(ItemID.BladedGlove);
+            shop.item[nextSlot].shopCustomPrice = 50;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Broadswords.SunBlade>());
             shop.item[nextSlot].shopCustomPrice = 300;
+            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+            nextSlot++;
+            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.ThrowingAxeCrate>());
+            shop.item[nextSlot].shopCustomPrice = 8;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Melee.AncientGoldenHelmet>());

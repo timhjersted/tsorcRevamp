@@ -89,7 +89,6 @@ namespace tsorcRevamp
                     if (Main.mouseLeft && !tsorcRevampWorld.BossAlive)
                     {
                         if (Main.LocalPlayer.HasBuff(ModContent.BuffType<Buffs.InCombat>())) {
-                            Main.mapFullscreen = false;
                             if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().TextCooldown >= 0) {
                                 Main.NewText("Can not teleport while in combat!");
                             }

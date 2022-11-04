@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
             recipe.AddTile(TileID.DemonAltar);
 
-            recipe.Register();
+            //recipe.Register();
         }
 
         public override Vector2? HoldoutOffset()
