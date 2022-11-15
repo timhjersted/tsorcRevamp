@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         {
             Item.rare = ItemRarityID.LightPurple;
             Item.value = Item.buyPrice(0, 30, 0, 0);
-            Item.damage = 40;
+            Item.damage = 60;
             Item.crit = 4;
             Item.width = 52;
             Item.height = 54;
@@ -37,12 +37,12 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Item.autoReuse = true;
             Item.maxStack = 1;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 22;
-            Item.useTime = 22;
+            Item.useAnimation = 17;
+            Item.useTime = 17;
             Item.noUseGraphic = false;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.shootSpeed = 4.2f;
+            Item.shootSpeed = 6.2f;
             Item.useTurn = false;
         }
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)

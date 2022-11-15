@@ -86,8 +86,8 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		private void SetVisualOffsets()
 		{
 			// 32 is the sprite size (here both width and height equal)
-			const int HalfSpriteWidth = 54 / 2;
-			const int HalfSpriteHeight = 52 / 2;
+			const int HalfSpriteWidth = 85 / 2;
+			const int HalfSpriteHeight = 82 / 2;
 
 			int HalfProjWidth = Projectile.width / 2;
 			int HalfProjHeight = Projectile.height / 2;
@@ -130,7 +130,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			// "Hit anything between the player and the tip of the sword"
 			// shootSpeed is 2.1f for reference, so this is basically plotting 12 pixels ahead from the center
 			Vector2 start = Projectile.Center;
-			Vector2 end = start + Projectile.velocity * 6f;
+			Vector2 end = start + Projectile.velocity * 18f;
 			float collisionPoint = 0f; // Don't need that variable, but required as parameter
 			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
 		}
