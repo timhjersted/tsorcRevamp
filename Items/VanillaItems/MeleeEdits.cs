@@ -27,6 +27,10 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.useTime = 30;
                 item.damage = 40;
             }
+            if (item.type == ItemID.FlyingKnife)
+            {
+                item.damage = 30;
+            }
         }
         public override void UpdateInventory(Item item, Player player)
         {
