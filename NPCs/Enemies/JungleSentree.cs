@@ -355,7 +355,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (Main.rand.NextBool(2) && wooddropped < 5)
                 {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.Wood);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.RichMahogany);
                     wooddropped++;
                 }
 
