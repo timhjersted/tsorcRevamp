@@ -4,14 +4,14 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
-    class RangerNerfs : GlobalItem
+    class RangerEdits : GlobalItem
     {
         public override void SetDefaults(Item item)
         {
             if (item.type == ItemID.ChlorophyteBullet)
             {
                 //chlorophyte bullets are fucking stupid, dont @ me
-                item.damage = 6; //from 10
+                item.damage = 1; //from 10
             }
 
             //Lunar items

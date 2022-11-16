@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using tsorcRevamp.Items.Armors.Summon;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
-    class SummonerNerfs : GlobalItem
+    class SummonerEdits : GlobalItem
     {
 
         public override void SetDefaults(Item item)
@@ -85,6 +85,23 @@ namespace tsorcRevamp.Items.VanillaItems
                 {
                     damage *= 0.88f;
                 }
+            }
+        }
+        public override string IsArmorSet(Item head, Item body, Item legs)
+        {
+            if (head.type == ModContent.ItemType<OldChainCoif>() && body.type == ItemID.FlinxFurCoat && legs.type == ModContent.ItemType<OldChainGreaves>())
+            {
+                return "FlinxFurChained";
+            }
+            else return base.IsArmorSet(head, body, legs);
+        }
+        public override void UpdateArmorSet(Player player, string set)
+        {
+            if (set == "FlinxFurChained")
+            {
+                player.setBonus = "Increases your max number of minions by 1";
+
+                player.maxMinions += 1;
             }
         }
 

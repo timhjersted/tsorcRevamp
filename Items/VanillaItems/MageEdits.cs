@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
-    class MageNerfs : GlobalItem
+    class MageEdits : GlobalItem
     {
 
         public override void SetDefaults(Item item)

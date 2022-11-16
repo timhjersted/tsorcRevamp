@@ -2,6 +2,12 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Items.Weapons.Melee;
+using tsorcRevamp.Items;
+using tsorcRevamp.Projectiles.Summon.Runeterra;
+using tsorcRevamp.Projectiles.Summon.Whips;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -338,17 +344,8 @@ namespace tsorcRevamp.NPCs.Enemies
         public int resindropped = 0;
         public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
         {
-            //axes
-            if ((item.type == ItemID.CopperAxe) || (item.type == ItemID.TinAxe) || (item.type == ItemID.IronAxe) || (item.type == ItemID.LeadAxe) || (item.type == ItemID.LeadAxe) || (item.type == ItemID.SilverAxe) || (item.type == ItemID.TungstenAxe) || (item.type == ItemID.GoldAxe) || (item.type == ItemID.PlatinumAxe)
-                /*continued*/|| (item.type == ItemID.WarAxeoftheNight) || (item.type == ItemID.BloodLustCluster) || (item.type == ItemID.MeteorHamaxe) || (item.type == ItemID.MoltenHamaxe) || (item.type == ItemID.CobaltWaraxe) || (item.type == ItemID.CobaltChainsaw) || (item.type == ItemID.PalladiumWaraxe) || (item.type == ItemID.PalladiumChainsaw)
-                /*half way ugh*/|| (item.type == ItemID.MythrilWaraxe) || (item.type == ItemID.MythrilChainsaw) || item.type == ItemID.OrichalcumWaraxe || (item.type == ItemID.OrichalcumChainsaw) || (item.type == ItemID.AdamantiteWaraxe) || (item.type == ItemID.AdamantiteChainsaw) || (item.type == ItemID.TitaniumWaraxe)
-                /*regret*/|| (item.type == ItemID.TitaniumChainsaw) || (item.type == ItemID.PickaxeAxe) || (item.type == ItemID.SawtoothShark) || (item.type == ItemID.Drax) || (item.type == ItemID.ChlorophyteGreataxe) || (item.type == ItemID.ChlorophyteChainsaw) || (item.type == ItemID.ButchersChainsaw)
-                /*Do ittttttttt! Kill meeeee! Aghhh agh aghh!*/|| (item.type == ItemID.TheAxe) || (item.type == ItemID.Picksaw) || (item.type == ItemID.ShroomiteDiggingClaw) || (item.type == ItemID.SpectreHamaxe) || (item.type == ItemID.SolarFlareAxe) || (item.type == ItemID.NebulaAxe) || (item.type == ItemID.StardustAxe)
-                || (item.type == ItemID.VortexAxe) || item.type == Mod.Find<ModItem>("AncientFireAxe").Type || item.type == Mod.Find<ModItem>("CobaltHalberd").Type
-                /*top 10 biggest mistakes of my life*/|| item.type == Mod.Find<ModItem>("DunlendingAxe").Type || item.type == Mod.Find<ModItem>("EphemeralThrowingAxe").Type
-                /*spent more time making this list than the NPC iteself*/|| item.type == Mod.Find<ModItem>("OldAxe").Type || item.type == Mod.Find<ModItem>("OldDoubleAxe").Type || item.type == Mod.Find<ModItem>("OldHalberd").Type
-                || item.type == Mod.Find<ModItem>("ReforgedOldAxe").Type || item.type == Mod.Find<ModItem>("ReforgedOldDoubleAxe").Type || (item.type == Mod.Find<ModItem>("ReforgedOldHalberd").Type) || (item.type == Mod.Find<ModItem>("ForgottenAxe").Type) || item.type == Mod.Find<ModItem>("ForgottenGreatAxe").Type
-                || item.type == Mod.Find<ModItem>("ForgottenPoisonAxe").Type || item.type == Mod.Find<ModItem>("ForgottenRuneAxe").Type || item.type == Mod.Find<ModItem>("GigantAxe").Type)
+            if (item.Name.Contains("Axe") || item.Name.Contains("axe") || item.Name.Contains("saw") || (item.type == ItemID.BloodLustCluster) || (item.type == ItemID.SawtoothShark) || (item.type == ItemID.Drax)
+                || (item.type == ItemID.ShroomiteDiggingClaw) || item.ModItem.Name.Contains("Axe") || item.ModItem.Name.Contains("Halberd") && !item.ModItem.Name.Contains("Pick") && !item.Name.Contains("Pick"))
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
                 damage *= 2; //I never want to see or hear the word "axe" again in my life
@@ -358,14 +355,16 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (Main.rand.NextBool(2) && wooddropped < 5)
                 {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.RichMahogany);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.Wood);
                     wooddropped++;
                 }
+
             }
+
             //fire melee
-            if (player.HasBuff(BuffID.WeaponImbueFire) || item.type == Mod.Find<ModItem>("AncientFireSword").Type || item.type == Mod.Find<ModItem>("AncientFireAxe").Type
-                 || item.type == Mod.Find<ModItem>("ForgottenRisingSun").Type || item.type == Mod.Find<ModItem>("MagmaTooth").Type
-                 || item.type == ItemID.FieryGreatsword || item.type == ItemID.MoltenHamaxe || item.type == ItemID.MoltenPickaxe || item.type == Mod.Find<ModItem>("SunBlade").Type)
+            if (player.HasBuff(BuffID.WeaponImbueFire) || item.type == ModContent.ItemType<AncientFireSword>() || item.type == ModContent.ItemType<Items.Weapons.Melee.Axes.AncientFireAxe>()
+                 || item.type == ModContent.ItemType<ForgottenRisingSun>() || item.type == ModContent.ItemType<MagmaTooth>()
+                 || item.type == ItemID.FieryGreatsword || item.type == ItemID.MoltenHamaxe || item.type == ItemID.MoltenPickaxe || item.type == ModContent.ItemType<SunBlade>())
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
                 damage *= 2;
@@ -375,7 +374,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (Main.rand.NextBool(3) && resindropped < 1)
                 {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ModContent.ItemType<CharcoalPineResin>());
                     resindropped++;
                 }
             }
@@ -388,33 +387,24 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 damage -= 5; //because lets face it, no one ever uprooted a tree with a bullet... A missle? Perhaps
             }
-
             //However... If it is a fire projectile...
-            if (projectile.type == ProjectileID.FireArrow || projectile.type == ProjectileID.BallofFire || projectile.type == ProjectileID.Flamarang || projectile.type == ProjectileID.Flamelash || projectile.type == ProjectileID.Sunfury || projectile.type == ProjectileID.HellfireArrow ||
-                projectile.type == ProjectileID.Flames || projectile.type == ProjectileID.CursedFlameFriendly || projectile.type == ProjectileID.CursedArrow || projectile.type == ProjectileID.CursedBullet || projectile.type == ProjectileID.Flare || projectile.type == ProjectileID.BlueFlare ||
-                projectile.type == ProjectileID.FlamesTrap || projectile.type == ProjectileID.FlamethrowerTrap || projectile.type == ProjectileID.ImpFireball || projectile.type == ProjectileID.MolotovCocktail || projectile.type == ProjectileID.MolotovFire || projectile.type == ProjectileID.MolotovFire2 ||
-                projectile.type == ProjectileID.MolotovFire3 || projectile.type == ProjectileID.Meteor1 || projectile.type == ProjectileID.Meteor2 || projectile.type == ProjectileID.Meteor3 || projectile.type == ProjectileID.SolarFlareChainsaw || projectile.type == ProjectileID.SolarFlareDrill ||
-                projectile.type == ProjectileID.CursedDart || projectile.type == ProjectileID.CursedDartFlame || projectile.type == ProjectileID.Hellwing || projectile.type == ProjectileID.ShadowFlameArrow || projectile.type == ProjectileID.ShadowFlame || projectile.type == ProjectileID.ShadowFlameKnife ||
-                projectile.type == ProjectileID.Spark || projectile.type == ProjectileID.Cascade || projectile.type == ProjectileID.HelFire || projectile.type == ProjectileID.DesertDjinnCurse || projectile.type == ProjectileID.SolarWhipSword || projectile.type == ProjectileID.SolarWhipSwordExplosion ||
-                projectile.type == ProjectileID.Daybreak || projectile.type == ProjectileID.SpiritFlame || projectile.type == ProjectileID.DD2FlameBurstTowerT1Shot || projectile.type == ProjectileID.DD2FlameBurstTowerT2Shot || projectile.type == ProjectileID.DD2FlameBurstTowerT3Shot || projectile.type == ProjectileID.DD2PhoenixBowShot ||
-                projectile.type == Mod.Find<ModProjectile>("BlackFire").Type || projectile.type == Mod.Find<ModProjectile>("BlackFirelet").Type || projectile.type == Mod.Find<ModProjectile>("CursedFlames").Type || projectile.type == Mod.Find<ModProjectile>("CursedFlamelash").Type || projectile.type == Mod.Find<ModProjectile>("DevilSickle").Type ||
-                projectile.type == Mod.Find<ModProjectile>("FireBall").Type || projectile.type == Mod.Find<ModProjectile>("Explosion").Type || projectile.type == Mod.Find<ModProjectile>("ExplosionBall").Type || projectile.type == Mod.Find<ModProjectile>("Firebomb").Type || projectile.type == Mod.Find<ModProjectile>("FireBombBall").Type ||
-                projectile.type == Mod.Find<ModProjectile>("FireField").Type || projectile.type == Mod.Find<ModProjectile>("FireFieldBall").Type || projectile.type == ModContent.ProjectileType<Projectiles.Fireball1>() || projectile.type == ModContent.ProjectileType<Projectiles.Fireball2>() || projectile.type == ModContent.ProjectileType<Projectiles.Fireball3>() ||
-                projectile.type == ModContent.ProjectileType<Projectiles.Fireball4>() || projectile.type == ModContent.ProjectileType<Projectiles.FireballInferno1>() || projectile.type == ModContent.ProjectileType<Projectiles.FireballInferno2>() || projectile.type == Mod.Find<ModProjectile>("FlameStrike").Type || projectile.type == Mod.Find<ModProjectile>("GreatFireball").Type ||
-                projectile.type == Mod.Find<ModProjectile>("GreatFireballBall").Type || projectile.type == Mod.Find<ModProjectile>("GreatFireStrike").Type || projectile.type == Mod.Find<ModProjectile>("Meteor").Type || projectile.type == Mod.Find<ModProjectile>("MeteorShower").Type || projectile.type == Mod.Find<ModProjectile>("RedLaserBeam").Type ||
-                projectile.type == Mod.Find<ModProjectile>("BlackFire").Type || projectile.type == Mod.Find<ModProjectile>("BlackFirelet").Type || projectile.type == Mod.Find<ModProjectile>("CursedFlames").Type || projectile.type == Mod.Find<ModProjectile>("CursedFlamelash").Type || projectile.type == Mod.Find<ModProjectile>("DevilSickle").Type ||
+            if (projectile.Name.Contains("Fire") || projectile.Name.Contains("fire") || projectile.Name.Contains("Flame") || projectile.Name.Contains("flame") || projectile.Name.Contains("Curse") ||
+                projectile.Name.Contains("Flare") || projectile.Name.Contains("Molotov") || projectile.Name.Contains("Meteor") || projectile.type == ProjectileID.Hellwing || projectile.type == ModContent.ProjectileType<ScorchingPointFireball>() || projectile.type == ModContent.ProjectileType<SearingLashProjectile>() || projectile.type == ModContent.ProjectileType<DetonationSignalProjectile>() ||
+                projectile.type == ProjectileID.Spark || projectile.type == ProjectileID.Cascade || projectile.type == ProjectileID.SolarWhipSword || projectile.type == ProjectileID.SolarWhipSwordExplosion ||
+                projectile.type == ProjectileID.Daybreak || projectile.type == ProjectileID.DD2PhoenixBowShot ||
+                (projectile.ModProjectile != null && (projectile.ModProjectile.Name.Contains("Fire") || projectile.ModProjectile.Name.Contains("Flame") || projectile.ModProjectile.Name.Contains("Explosion") || projectile.ModProjectile.Name.Contains("Meteor"))) ||
+                projectile.type == ModContent.ProjectileType<DevilSickle>() || projectile.type == ModContent.ProjectileType<RedLaserBeam>() ||
                 (projectile.DamageType == DamageClass.Melee && player.meleeEnchant == 3))
             {
-                damage *= 2;
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
-
+                damage *= 2;
                 if (damage < 20)
                 {
                     damage = 20; //damage before defence
                 }
                 if (Main.rand.NextBool(20) && resindropped < 1)
                 {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ModContent.ItemType<CharcoalPineResin>());
                     resindropped++;
                 }
             }

@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
-    class MeleeNerfs : GlobalItem
+    class MeleeEdits : GlobalItem
     {
         public static int SwordHit = 0;
         public override void SetDefaults(Item item)

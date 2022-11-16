@@ -9,6 +9,8 @@ using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.NPCs.Friendly;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.Summon.Runeterra;
+using tsorcRevamp.Projectiles.Summon.Whips;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -50,7 +52,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             float chance = 0;
 
-            if (Main.dayTime && NPC.CountNPCS(Mod.Find<ModNPC>("AbandonedStump").Type) < 2 && TileID.Sets.Conversion.Grass[spawnInfo.SpawnTileType] && /*!spawnInfo.Water &&*/ ((Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 5].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 8].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 12].WallType == WallID.None) || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 2].WallType == WallID.MudUnsafe)
+            if (Main.dayTime && NPC.CountNPCS(ModContent.NPCType<AbandonedStump>()) < 2 && TileID.Sets.Conversion.Grass[spawnInfo.SpawnTileType] && /*!spawnInfo.Water &&*/ ((Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 5].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 8].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 12].WallType == WallID.None) || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 2].WallType == WallID.MudUnsafe)
                 && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneMeteor)//all this is to prevent the npc spawning in really odd looking places
                 && Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY].TileType == TileID.Grass && !Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY].RightSlope//make sure block to left and right are jungle grass
                 && Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY - 1].TileType != TileID.Grass && Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY - 1].TileType != TileID.Dirt && !Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY - 1].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY - 1].LeftSlope
@@ -335,7 +337,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             //However... If it is a fire projectile...
             if (projectile.Name.Contains("Fire") || projectile.Name.Contains("fire") || projectile.Name.Contains("Flame") || projectile.Name.Contains("flame") || projectile.Name.Contains("Curse") ||
-                projectile.Name.Contains("Flare") || projectile.Name.Contains("Molotov") || projectile.Name.Contains("Meteor") || projectile.type == ProjectileID.Hellwing ||
+                projectile.Name.Contains("Flare") || projectile.Name.Contains("Molotov") || projectile.Name.Contains("Meteor") || projectile.type == ProjectileID.Hellwing || projectile.type == ModContent.ProjectileType<ScorchingPointFireball>() || projectile.type == ModContent.ProjectileType<SearingLashProjectile>() || projectile.type == ModContent.ProjectileType<DetonationSignalProjectile>() ||
                 projectile.type == ProjectileID.Spark || projectile.type == ProjectileID.Cascade || projectile.type == ProjectileID.SolarWhipSword || projectile.type == ProjectileID.SolarWhipSwordExplosion ||
                 projectile.type == ProjectileID.Daybreak ||  projectile.type == ProjectileID.DD2PhoenixBowShot ||
                 (projectile.ModProjectile != null && (projectile.ModProjectile.Name.Contains("Fire") || projectile.ModProjectile.Name.Contains("Flame") || projectile.ModProjectile.Name.Contains("Explosion") || projectile.ModProjectile.Name.Contains("Meteor"))) ||

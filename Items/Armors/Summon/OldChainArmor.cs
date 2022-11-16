@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+1 flat minion damage\nSet Bonus: Increases your max number of minions by 1");
+            Tooltip.SetDefault("+1 flat minion damage\nSet Bonus: Increases your max number of minions by 1\nA Flinx Fur Coat will also proc this set bonus");
         }
         public override void SetDefaults()
         {
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return head.type == ModContent.ItemType<OldChainCoif>() && legs.type == ModContent.ItemType<OldChainGreaves>();
+            return head.type == ModContent.ItemType<OldChainCoif>() && legs.type == ModContent.ItemType<OldChainGreaves>(); 
         }
 
         public override void UpdateArmorSet(Player player)
