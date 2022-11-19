@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("\nIncreases movement speed by 20%" +
-                "\nIncreases your max number of minions and turrets by 1");
+                "\nIncreases your max number of turrets by 2");
         }
         public override void SetDefaults()
         {
@@ -23,8 +23,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += 0.2f;
-            player.maxMinions += 1;
-            player.maxTurrets += 1;
+            player.maxTurrets += 2;
         }
         public override void AddRecipes()
         {
