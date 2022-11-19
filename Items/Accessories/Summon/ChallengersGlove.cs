@@ -1,10 +1,14 @@
-/*
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Summon
 {
+    [AutoloadEquip(new EquipType[]
+    {
+        EquipType.HandsOn,
+        EquipType.HandsOff
+    })]
     public class ChallengersGlove : ModItem
     {
         public override void SetStaticDefaults()
@@ -16,27 +20,15 @@ namespace tsorcRevamp.Items.Accessories.Summon
                 "\nIncreases the size of whips by 10%" +
                 "\nEnemies are more likely to target you");
         }
-
         public override void SetDefaults()
         {
-            Item.width = 20;
-            Item.height = 40;
+            Item.width = 22;
+            Item.height = 24;
             Item.accessory = true;
             Item.value = PriceByRarity.LightRed_4;
             Item.rare = ItemRarityID.LightRed;
             Item.defense = 8;
         }
-
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.AvengerEmblem);
-            recipe.AddIngredient(ItemID.BerserkerGlove);
-            recipe.AddTile(TileID.TinkerersWorkbench);
-
-            recipe.Register();
-        }
-
         public override void UpdateEquip(Player player)
         {
             player.GetKnockback(DamageClass.SummonMeleeSpeed) += 2f;
@@ -46,5 +38,14 @@ namespace tsorcRevamp.Items.Accessories.Summon
             player.whipRangeMultiplier += 0.1f;
             player.aggro += 400;
         }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.AvengerEmblem);
+            recipe.AddIngredient(ItemID.BerserkerGlove);
+            recipe.AddTile(TileID.TinkerersWorkbench);
+
+            recipe.Register();
+        }
     }
-}*/
+}
