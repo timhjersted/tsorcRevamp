@@ -161,7 +161,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
                     i++;
                 } while (i < dustCount - 1);
 
-                Main.NewText(i);
             }
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null, Main.UIScaleMatrix);
@@ -181,8 +180,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
                 Lighting.AddLight(Item.Center + new Vector2(0, 250).RotatedBy(MathHelper.TwoPi * i / lightingQuality), new Vector3(0, 0.4f, 1f));
             }
 
-            dustCount = 5000;
-            float dustRadius = 250;
+            //dustCount = 5000;
+            //float dustRadius = 250;
+            dustCount = 100;
+            dustRadius = 20;
             if (psuedoDusts == null || psuedoDusts.Length != dustCount)
             {
                 psuedoDusts = new PsuedoDust[dustCount];
@@ -232,7 +233,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
                     i++;
                 } while (i < dustCount - 1);
 
-                Main.NewText(i);
             }
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null, Main.UIScaleMatrix);
@@ -243,13 +243,14 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 20);
+            recipe.AddIngredient(ItemID.CrystalShard, 1);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(),5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
+            recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);
 
-            //recipe.Register();
+            recipe.Register();
         }
     }
 
