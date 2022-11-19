@@ -17,11 +17,11 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.ScytheWhip)
             {
-                item.damage = 70;
+                item.damage = 80;
             }
             if (item.type == ItemID.MaceWhip)
             {
-                item.damage = 115;
+                item.damage = 110;
             }
             if (item.type == ItemID.BoneWhip)
             {
@@ -55,6 +55,15 @@ namespace tsorcRevamp.Items.VanillaItems
                     tooltips.Insert(ttindex2, new TooltipLine(Mod, "TagCritNerfed", "5% summon tag critical strike chance"));
                 }
             }
+            /*if (item.type == ItemID.MaceWhip)
+            {
+                int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
+                if (ttindex1 != -1)
+                {
+                    tooltips.RemoveAt(ttindex1);
+                    tooltips.Insert(ttindex1, new TooltipLine(Mod, "TagCritNerfed", "4% summon tag critical strike chance"));
+                }
+            }*/
             if (item.type == ItemID.EmpressBlade && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))
             {
                 int ttindex2 = tooltips.FindLastIndex(t => t.Name == "Tooltip0");
