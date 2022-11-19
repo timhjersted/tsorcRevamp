@@ -132,41 +132,37 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             if (Projectile.frame >= 5)
             {
                 Projectile.frame = 0;
-            }            
+            }
+
+            for (int i = 0; i < Main.maxPlayers; i++) {
+                if (Projectile.Hitbox.Contains(Main.player[i].Center.ToPoint()))
+                {
+                    Main.player[i].statLife -= 5;
+                    CombatText.NewText(Main.player[i].Hitbox, Color.Red, 5);
+                    if (Main.player[i].statLife < 1)
+                    {
+                        Main.player[i].statLife = 1;
+                        Main.player[i].immune = false;
+                        Main.player[i].immuneTime = 0;
+                    }
+                }
+            }
         }
 
-        
+
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
+        {
+
+        }
+
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             if (progress >= 100)
             {
-                target.immune = false;
-                target.immuneTime = 0;
+                //target.immune = false;
+                //target.immuneTime = 0;
             }
-            /*
-            if (Projectile.ai[0] == 0)
-            {
-                if (target.Center.X < Projectile.Center.X)
-                {
-                    target.velocity = new Vector2(-10, 0);
-                }
-                else
-                {
-                    target.velocity = new Vector2(10, 0);
-                }
-            }
-            else
-            {
-                if (target.Center.Y < Projectile.Center.Y)
-                {
-                    target.velocity = new Vector2(0, -10);
-                }
-                else
-                {
-                    target.velocity = new Vector2(0, 10);
-                }
-            }*/
         }
 
         public static Texture2D flameJetTexture;
@@ -177,15 +173,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-            //data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer);
 
             //Apply the shader, caching it as well
-            //if (data == null)
+            if (data == null)
             {
                 data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/FireWallShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "FireWallShaderPass");
             }
-
-            
 
             if (flameJetTexture == null || flameJetTexture.IsDisposed)
             {
@@ -212,46 +205,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Rectangle sourceRectangle = new Rectangle(0, 0, Projectile.width, Projectile.height);
             Vector2 origin = sourceRectangle.Size() / 2f;
 
-
             Main.EntitySpriteDraw(flameJetTexture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
-            /*
-
-            if (Projectile.ai[0] == 0 || Projectile.ai[0] == 1)
-            {
-                int drawCount = Projectile.height / frameHeight;
-                for (int i = 0; i < drawCount; i++)
-                {
-                    Vector2 startPosition = new Vector2(Projectile.Center.X, Projectile.position.Y);
-                    if (Projectile.ai[0] == 0)
-                    {
-                        startPosition = new Vector2(Projectile.position.X + Projectile.width, Projectile.position.Y);
-                    }
-                    if (Projectile.ai[0] == 1)
-                    {
-                        startPosition = new Vector2(Projectile.position.X, Projectile.position.Y);
-                    }
-                    Vector2 drawPosition = startPosition - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
-                    drawPosition.Y += (frameHeight * i) + (frameHeight / 2);
-                    Main.EntitySpriteDraw(flameJetTexture, drawPosition, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
-                }
-            }
-            else
-            {
-                int drawCount = Projectile.width / flameJetTexture.Width;
-                for (int i = 0; i < drawCount; i++)
-                {
-                    Vector2 startPosition = new Vector2(Projectile.Center.X, Projectile.position.Y);
-                    Vector2 drawPosition = startPosition - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
-                    if (Projectile.ai[0] == 2)
-                    {
-                        drawPosition.Y += 95;
-                    }
-                    drawPosition.X -= Projectile.width / 2f;
-                    drawPosition.X += (flameJetTexture.Width * i) + (flameJetTexture.Width / 2);
-                    Main.EntitySpriteDraw(flameJetTexture, drawPosition, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
-                }
-            }*/
-
+            
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 

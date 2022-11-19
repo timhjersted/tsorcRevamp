@@ -58,7 +58,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void AI()
         {
-            NPC.defense = 18;
+            NPC.defense = 0;
             if (damageCounter > 0)
             {
                 Main.NewText("DPS: " + damageCounter / thisWatch.Elapsed.TotalSeconds);

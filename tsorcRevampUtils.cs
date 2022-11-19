@@ -565,7 +565,7 @@ namespace tsorcRevamp
         ///<param name="Y">The Y coordinate of the tile</param>
         public static bool IsTileReallySolid(int X, int Y)
         {
-            if (Main.tile.Width > X && Main.tile.Height > Y)
+            if (Main.tile.Width > X && Main.tile.Height > Y && X >= 0 && Y >= 0)
             {
                 Tile thisTile = Main.tile[X, Y];
 
@@ -775,6 +775,44 @@ namespace tsorcRevamp
             {
                 NetMessage.SendData(MessageID.WorldData);
             }
+        }
+
+        public static Vector2 GetPlayerHandOffset(Player player)
+        {
+            Vector2 handOffset = Vector2.Zero;
+            //Standing
+            if (player.bodyFrame.Y == 0)
+            {
+                handOffset.Y += 1.75f;
+            }
+            //Falling
+            else if (player.bodyFrame.Y == 280)
+            {
+                handOffset.Y -= 20;
+                handOffset.X -= 2 * player.direction;
+            }
+            //Flying
+            else if (player.bodyFrame.Y == 336)
+            {
+                handOffset.Y -= 5;
+                handOffset.X += 2 * player.direction;
+            }
+            //Running
+            else if (player.bodyFrame.Y >= 392 && player.bodyFrame.Y < 1064)
+            {
+                float offset = player.bodyFrame.Y;
+                offset -= 392;
+                offset /= 56 * 2;
+                handOffset.X += offset * player.direction;
+                handOffset.Y -= 4;
+            }
+            //Running, but the final weird frame
+            else if (player.bodyFrame.Y >= 392 && player.bodyFrame.Y < 1064)
+            {
+                handOffset.Y -= 4;
+            }
+
+            return handOffset + player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, 0);
         }
 
         private static void ChangeRain()

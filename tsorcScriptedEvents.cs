@@ -143,6 +143,7 @@ namespace tsorcRevamp
             SerrisFight,
             MarilithFight,
             KrakenFight,
+            GwynTombVision,
             GwynFight,
             AbysmalOolacileSorcererFight,
             WitchkingFight,
@@ -269,13 +270,16 @@ namespace tsorcRevamp
 
             //SERRIS
             //Like Slogra and Gaibon, this one works a little different due to spawning two bosses.
-            ScriptedEvent SerrisEvent = new ScriptedEvent(new Vector2(1136, 956), 30, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>(), DustID.FireworkFountain_Blue, false, true, "The Twin Serris Worms have been enraged!", Color.Blue, false, SerrisCustomCondition, SerrisCustomAction, peaceCandleEffect: true);
+            ScriptedEvent SerrisEvent = new ScriptedEvent(new Vector2(1136, 956), 30, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>(), DustID.FireworkFountain_Blue, false, true, "The Serris Triplets have been enraged!", Color.Blue, false, SerrisCustomCondition, SerrisCustomAction, peaceCandleEffect: true);
 
             //MARILITH 
             ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(3235, 1770), 100, ModContent.NPCType<NPCs.Bosses.Fiends.MarilithIntro>(), DustID.RedTorch, false, true, "default", Color.Red, false, MarilithCustomCondition, peaceCandleEffect: true);
 
             //KRAKEN
             ScriptedEvent KrakenEvent = new ScriptedEvent(new Vector2(1821, 1702), 30, ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>(), DustID.MagicMirror, true, true, "The Water Fiend rises!", Color.Blue, false, SuperHardModeCustomCondition, peaceCandleEffect: true);
+
+            //GWYN's TOMB VISIONS
+            ScriptedEvent GwynsTombEvent = new ScriptedEvent(new Vector2(670, 1164), 150, ModContent.NPCType<NPCs.Special.GwynBossVision>(), DustID.RedTorch, false, true, "default", default, false, GwynsTombVisionCustomCondition, peaceCandleEffect: true);
 
             //GWYN
             ScriptedEvent GwynEvent = new ScriptedEvent(new Vector2(832, 1244), 16, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.OrangeTorch, true, true, "Gwyn has awoken to bring your journey to its final end...", Color.Red, false, SuperHardModeCustomCondition, peaceCandleEffect: true);
@@ -442,6 +446,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.SerrisFight, SerrisEvent},
                 {ScriptedEventType.MarilithFight, MarilithEvent},
                 {ScriptedEventType.KrakenFight, KrakenEvent},
+                {ScriptedEventType.GwynTombVision, GwynsTombEvent},
                 {ScriptedEventType.GwynFight, GwynEvent},
                 {ScriptedEventType.AbysmalOolacileSorcererFight, AbysmalOolacileSorcererEvent},
                 {ScriptedEventType.WitchkingFight, WitchkingEvent},
@@ -574,10 +579,23 @@ namespace tsorcRevamp
         {
             return tsorcRevampWorld.SuperHardMode;
         }
+
         public static bool MarilithCustomCondition()
         {
 
             if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.MarilithIntro>()))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public static bool GwynsTombVisionCustomCondition()
+        {
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Special.GwynBossVision>()))
             {
                 return false;
             }
