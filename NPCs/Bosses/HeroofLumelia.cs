@@ -532,13 +532,13 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (boredTeleport == 300)
                     {
  
-                        int Hammer = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.CursedHammer, 0); 
+                        int Sword = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.EnchantedSword, 0); 
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
 
                         if (Main.netMode == NetmodeID.Server)
                         {
-                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Hammer, 0f, 0f, 0f, 0);
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Sword, 0f, 0f, 0f, 0);
                         }
 
                     }

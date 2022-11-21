@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 if (spawnInfo.Player.ZoneUnderworldHeight)
                 {
-                    chance = 0.1f;
+                    chance = 0.004f;
 
                     if (BeforeThreeAfterSeven)
                     {
@@ -99,7 +99,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
                 if (oMagmaCavern)
                 {
-                    chance = 0.003f;
+                    chance = 0.001f;
                 }
             }
 

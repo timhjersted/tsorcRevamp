@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.height = 120;
             NPC.width = 50;
             NPC.damage = 46;
-            NPC.defense = 12;
+            NPC.defense = 8;
             NPC.lifeMax = 6000;
             NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit1;
@@ -88,33 +88,33 @@ namespace tsorcRevamp.NPCs.Bosses
             //alt code: if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead))
             if (NPC.downedBoss1)  
             {
-                NPC.defense = 22;
-                NPC.value = 9000;
+                NPC.defense = 18;
+                NPC.value = 90000;
                 meteorDamage = 31;
-                cultistFireDamage = 36;
-                cultistMagicDamage = 42;
-                cultistLightningDamage = 40;
-                fireBreathDamage = 33;
-                lostSoulDamage = 35;
-                greatFireballDamage = 46;
-                blackFireDamage = 57;
-                greatAttackDamage = 72;
+                cultistFireDamage = 33;
+                cultistMagicDamage = 39;
+                cultistLightningDamage = 37;
+                fireBreathDamage = 30;
+                lostSoulDamage = 30;
+                greatFireballDamage = 43;
+                blackFireDamage = 54;
+                greatAttackDamage = 69;
             }
 
             //difficulty should be on par with jungle wyvern
             if (NPC.downedBoss3)   
             {
-                NPC.defense = 40;
+                NPC.defense = 26;
                 NPC.value = 120000;
-                meteorDamage = 41;
-                cultistFireDamage = 46;
-                cultistMagicDamage = 59;
-                cultistLightningDamage = 60;
-                fireBreathDamage = 43;
-                lostSoulDamage = 45;
-                greatFireballDamage = 56;
-                blackFireDamage = 67;
-                greatAttackDamage = 82;
+                meteorDamage = 34;
+                cultistFireDamage = 37;
+                cultistMagicDamage = 42;
+                cultistLightningDamage = 40;
+                fireBreathDamage = 33;
+                lostSoulDamage = 33;
+                greatFireballDamage = 46;
+                blackFireDamage = 57;
+                greatAttackDamage = 72;
             }
            
         }
@@ -217,7 +217,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 boredTeleport++;
 
-                if (boredTeleport == 200)
+                if (boredTeleport == 900)
                 {
 
                     int Skull = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.CursedSkull, 0);
@@ -231,7 +231,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 }
 
-                if (boredTeleport == 300)
+                if (boredTeleport == 1000)
                 {
                     NPC.localAI[1] = 0;
                     tsorcRevampAIs.Teleport(NPC, 40, true);
