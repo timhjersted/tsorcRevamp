@@ -95,6 +95,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.PoisonbiteRing>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.BloodbiteRing>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.DarkTrident>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Summon.SunsetQuasar>()));
         }
     }
     public class GaibonBag : BossBag
@@ -110,6 +111,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.PoisonbiteRing>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.BloodbiteRing>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.DarkTrident>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Summon.SunsetQuasar>()));
         }
     }
     public class JungleWyvernBag : BossBag

@@ -579,6 +579,13 @@ namespace tsorcRevamp
                 Main.projectile[p].originalDamage = damage;
             }
 
+            if (Player.HasBuff(ModContent.BuffType<Buffs.Summon.SunsetQuasarBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarMinion>()] == 0) {
+                Item staff = new();
+                staff.SetDefaults(ModContent.ItemType<Items.Weapons.Summon.SunsetQuasar>());
+                int damage = staff.damage;
+                int p = Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarMinion>(), damage, 0, Player.whoAmI);
+                Main.projectile[p].originalDamage = damage;
+            }
             //--------------------
 
             //TODO REMOVE WHEN FINALIZED
