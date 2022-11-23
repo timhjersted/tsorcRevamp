@@ -47,16 +47,6 @@ namespace tsorcRevamp.Items.Weapons.Summon {
             projectile.originalDamage = Item.damage;
             return false;
         }
-        public override void AddRecipes() {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DestructionElement>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<CompactFrame>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 75000);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
-        }
     }
     //Custom Draw Wavelength
     public class CDW_SunsetQuasar : ModRarity {
