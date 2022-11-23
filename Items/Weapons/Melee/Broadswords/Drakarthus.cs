@@ -72,7 +72,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords {
                         Vector2 dustPos = proj.Center + dir;
                         Dust.NewDustPerfect(dustPos, DustID.GemRuby, Vector2.Zero, 200).noGravity = true;
                     }
-                    player.Center = proj.Center + teleportOffset;
+                    if (!WorldGen.SolidTile(player.Center.ToTileCoordinates())) {
+                        player.SafeTeleport(proj.Center + teleportOffset);
+                    }
                     float randOffset = Main.rand.NextVector2CircularEdge(4, 4).ToRotation();
                     for (int j = 0; j < 6; j++) {
                         Vector2 shotDir = new Vector2(0, 12).RotatedBy(MathHelper.ToRadians(0 - (60f * j)) + randOffset);
