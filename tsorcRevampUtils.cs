@@ -260,7 +260,7 @@ namespace tsorcRevamp
             direction *= 10;
 
             Vector2 currentPosition = direction * maxDistance / 10;
-            for (float distance = 0; distance <= maxDistance / 10f; distance += 1f)
+            for (float distance = 0; distance <= maxDistance / 10f; distance += 0.5f)
             {
                 currentPosition = start + (direction * distance);
 
@@ -288,11 +288,11 @@ namespace tsorcRevamp
                         float collision = maxDistance;
 
                         //Expand the enemy hitbox slightly to increase consistency
-                        Vector2 adjustedPosition = npc.position;
-                        Vector2 adjustedSize = npc.Size;
-                        adjustedSize *= 1.5f;
-                        adjustedPosition -= (adjustedSize - npc.Size) / 2;
-                        if (Collision.CheckAABBvLineCollision(adjustedPosition, adjustedSize, start, currentPosition, 32, ref collision))
+                        //Vector2 adjustedPosition = npc.position;
+                        //Vector2 adjustedSize = npc.Size;
+                        //adjustedSize *= 1.5f;
+                        //adjustedPosition -= (adjustedSize - npc.Size) / 2;
+                        if (Collision.CheckAABBvLineCollision(npc.position, npc.Size, start, currentPosition, 32, ref collision))
                         {
                             if (collision < closestCollision)
                             {

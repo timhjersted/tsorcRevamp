@@ -229,7 +229,7 @@ namespace tsorcRevamp.Projectiles.Magic
         private void UpdatePlayerVisuals(Player player, Vector2 playerHandPos)
         {
             Vector2 origin = GetOrigin();
-            Projectile.Center = new Vector2(origin.X + (-25 * player.direction), origin.Y - 15);
+            Projectile.Center = new Vector2(origin.X + (205 * player.direction), origin.Y - 15);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Projectile.spriteDirection = Projectile.direction;
 

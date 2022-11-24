@@ -38,6 +38,9 @@ namespace tsorcRevamp.Projectiles.Enemy
         //Set to 2 to draw in full, but still do no damage
         public int TargetingMode = 0;
 
+        //Should it pierce through all NPCs? If not it will stop at the first one it hits
+        public bool pierceNPCs = true;
+
         //Should the laser be offset from the center of its source? If so, how much?
         public Vector2 LaserOffset = new Vector2(0, 0);
 
@@ -141,11 +144,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         //Allows the projectile to be tagged with an ID upon creation, so that it can be identified across clients
         //Projectile id's aren't synced, so we have to do it ourself like this
         //Messing with this is only necessary if you need to change a laser *after* it has been created (ex: to make it move)
-        public float NetworkID
+        
+        /*public float NetworkID
         {
             get => Projectile.ai[0];
             set => Projectile.ai[0] = value;
-        }
+        }*/
 
         public int HostIdentifier
         {
@@ -199,10 +203,6 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
                 Color color;
 
-                if (!IsAtMaxCharge)
-                {
-                    color = Color.Wheat;
-                }
                 if (LaserTexture == TransparentTextureHandler.TransparentTextureType.GenericLaser)
                 {
                     color = LaserColor;
@@ -218,7 +218,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
 
 
-                DrawLaser(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], GetOrigin(),
+                DrawLaser(TransparentTextureHandler.TransparentTextures[LaserTexture], GetOrigin(),
                     Projectile.velocity, LaserTextureHead, LaserTextureBody, LaserTextureTail, -1.57f, LaserSize, color);
             }
             else if (TelegraphTime + Charge >= MaxCharge || TargetingMode == 1)
@@ -235,15 +235,14 @@ namespace tsorcRevamp.Projectiles.Enemy
 
                 color *= 0.65f + 0.35f * (float)(Math.Sin(Main.GameUpdateCount / 5f));
 
-
-                DrawLaser(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
+                DrawLaser(TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
                         Projectile.velocity, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, color);
             }
 
             return false;
         }
 
-        public void DrawLaser(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 unit, Rectangle headRect, Rectangle bodyRect, Rectangle tailRect, float rotation = 0f, float scale = 1f, Color color = default)
+        public void DrawLaser(Texture2D texture, Vector2 start, Vector2 unit, Rectangle headRect, Rectangle bodyRect, Rectangle tailRect, float rotation = 0f, float scale = 1f, Color color = default)
         {
 
             //Defines an area where laser segments should actually draw, 100 pixels larger on each side than the screen
@@ -300,7 +299,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             //Laser body
             float i = 0;
-            for (; i <= Distance; i += (bodyFrame.Height) * scale)
+            for (; i <= Distance - ((bodyFrame.Height) * scale); i += (bodyFrame.Height) * scale)
             {
                 Vector2 drawStart = startPos + i * unit;
                 if (FastContainsPoint(screenRect, drawStart))
@@ -504,9 +503,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Projectile.tileCollide)
             {
                 Vector2 endpoint = origin + Projectile.velocity * Distance;
-                float distance = Vector2.Distance(endpoint, origin);
                 float velocity = -8f;
-                Vector2 speed = ((endpoint - origin) / distance) * velocity;
+                Vector2 speed = ((endpoint - origin) / Distance) * velocity;
                 speed.X += Main.rand.Next(-1, 1);
                 speed.Y += Main.rand.Next(-1, 1);
 
@@ -552,18 +550,16 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
 
+            Vector2? collision = UsefulFunctions.GetFirstCollision(GetOrigin(), Projectile.velocity, LaserLength, true, pierceNPCs);
 
-
-            for (Distance = MOVE_DISTANCE; Distance <= 2200f; Distance += 5f)
+            if(collision != null)
             {
-                Vector2 origin = GetOrigin();
-                Vector2 start = origin + Projectile.velocity * Distance;
-                if (!Collision.CanHit(origin, 1, 1, start, 1, 1) && !Collision.CanHitLine(origin, 1, 1, start, 1, 1))
-                {
-                    Distance -= 5f;
-                    break;
-                }
-            }            
+                Distance = Vector2.Distance(GetOrigin(), collision.Value) + 32;
+            }
+            else
+            {
+                Distance = 2200f;
+            }
         }
 
         private void ProduceWaterRipples(Vector2 beamDims)
@@ -596,10 +592,6 @@ namespace tsorcRevamp.Projectiles.Enemy
                     MaxCharge = -1;
                 }
             }
-
-            
-
-            
 
             if(TargetingMode == 0)
             {

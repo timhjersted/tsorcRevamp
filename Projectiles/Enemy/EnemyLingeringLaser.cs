@@ -305,7 +305,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
                 color *= 0.85f + 0.15f * (float)(Math.Sin(Main.GameUpdateCount / 5f));
 
-                DrawLaser(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
+                DrawLaser(TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
                         Projectile.velocity, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, color);
             }
             else

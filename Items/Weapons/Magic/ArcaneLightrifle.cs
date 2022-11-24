@@ -48,6 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             mult = 0;
         }
 
+
         public override bool CanUseItem(Player player)
         {            
             if (player.statMana <= (int)(50 * player.manaCost))

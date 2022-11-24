@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Magic
         }
         public override void AI()
         {
-
+            Projectile.rotation += 0.05f;            
         }
     }
 

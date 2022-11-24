@@ -6,17 +6,18 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 {
-    public class OverchargedCoilgun : ModItem
+    public class CrystalSpectrum : ModItem
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Fires high-velocity slugs that inherit the properties of most bullet types");
+            Tooltip.SetDefault("Converts bullets into a beam of crystal light, which inherits their properties\n" +
+                "Fire rate oscillates over time");
         }
         public override void SetDefaults()
         {
             Item.DamageType = DamageClass.Ranged;
             Item.noMelee = true;
-            Item.useTime = Item.useAnimation = 10; //brrrrrr
+            Item.useTime = Item.useAnimation = 20;
             Item.damage = 38;
             Item.knockBack = 1;
             Item.autoReuse = true;
@@ -39,8 +40,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            Projectile.NewProjectile(source, player.Center, velocity, ModContent.ProjectileType<Projectiles.Ranged.CoilgunSlug>(), damage, knockback, player.whoAmI, type);
-            return true;
+            Projectile.NewProjectile(source, player.Center, velocity, ModContent.ProjectileType<Projectiles.Ranged.CrystalRay>(), damage, knockback, player.whoAmI, type);
+            return false;
         }
 
         public override void AddRecipes()

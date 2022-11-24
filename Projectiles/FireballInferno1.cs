@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles
         bool randomDelaySet = false;
         public override void AI()
         {
-            if (!randomDelaySet)
+            if (!randomDelaySet && Projectile.ai[0] != -999)
             {
                 Projectile.ai[0] = Main.rand.Next(0, 19);
                 randomDelaySet = true;
@@ -77,7 +77,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if(randomDelaySet && Projectile.ai[0] <= 0)
+            if((randomDelaySet && Projectile.ai[0] <= 0) || Projectile.ai[0] == -999)
             {
                 return base.Colliding(projHitbox, targetHitbox);
             }
