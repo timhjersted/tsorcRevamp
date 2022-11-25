@@ -89,7 +89,6 @@ namespace tsorcRevamp.Projectiles.Enemy
                 target.AddBuff(BuffID.Darkness, 18000, false);
                 target.AddBuff(BuffID.Bleeding, 18000, false);
             }
-            target.AddBuff(ModContent.BuffType<Buffs.Attraction>(), 3600, false);
         }
     }
 }

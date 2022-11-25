@@ -412,7 +412,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.StrengthPotion>(), 100, 1, 1, 5));
             npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 100, 1, 1, 5));
             npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 100, 1, 1, 5));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.AttractionPotion>(), 100, 1, 1, 5));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.BloodMoonStarter, 100, 1, 1, 5));
         }
     }
 }

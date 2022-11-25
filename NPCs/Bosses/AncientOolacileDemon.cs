@@ -580,7 +580,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (!Main.expertMode)
             {
                 if (Main.rand.Next(99) < 60) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), 3);
-                if (Main.rand.Next(99) < 60) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>(), 3);
+                if (Main.rand.Next(99) < 60) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.BloodMoonStarter, 3);
 
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 10);
             }
