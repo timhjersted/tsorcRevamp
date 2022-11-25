@@ -49,8 +49,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.VortexBeater);
+            recipe.AddIngredient(ItemID.CrystalShard, 50);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddCondition(tsorcRevampWorld.SHM3Downed);
 
