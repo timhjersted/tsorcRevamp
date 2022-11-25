@@ -114,7 +114,7 @@ namespace tsorcRevamp.Items
                     }
                     else
                     {
-                        tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "[c/fc1c03:Can not be placed in adventure mode!]."));
+                        tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "[c/fc1c03:Can not be placed in adventure mode!]"));
                     }
                 }
 
