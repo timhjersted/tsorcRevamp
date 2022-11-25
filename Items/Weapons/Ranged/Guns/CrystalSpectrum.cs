@@ -18,13 +18,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Item.DamageType = DamageClass.Ranged;
             Item.noMelee = true;
             Item.useTime = Item.useAnimation = 20;
-            Item.damage = 38;
+            Item.damage = 200;
             Item.knockBack = 1;
             Item.autoReuse = true;
             Item.shootSpeed = 16;
             Item.useAmmo = AmmoID.Bullet;
             Item.rare = ItemRarityID.Cyan;
             Item.value = PriceByRarity.Cyan_9;
+            Item.UseSound = SoundID.Item12;
             Item.shoot = 10;
             Item.height = 50;
             Item.width = 32;

@@ -48,6 +48,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
             mult = 0;
         }
 
+        public override Vector2? HoldoutOffset()
+        {
+            return new Vector2(-8, 0);
+        }
 
         public override bool CanUseItem(Player player)
         {            

@@ -142,8 +142,6 @@ namespace tsorcRevamp.Projectiles.Ranged
 
             base.AI();
 
-            Main.NewText(FiringDuration);
-
             if (!hasHit)
             {
                 if (Projectile.ai[0] != ProjectileID.ExplosiveBullet && Projectile.ai[0] != ProjectileID.CrystalBullet && Projectile.ai[0] != -999)
