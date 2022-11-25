@@ -168,6 +168,7 @@ namespace tsorcRevamp.Items.ItemCrates
     [LegacyName("SilverFlail")]
     [LegacyName("SilverSpear")]
     [LegacyName("SoulShekelCrate")]
+    [LegacyName("AttractionPotion")]
     public class SoulCoinCrate : ItemCrates
     {
         public override void SetStaticDefaults()
@@ -193,6 +194,19 @@ namespace tsorcRevamp.Items.ItemCrates
         public override void RightClick(Player player)
         {
             player.QuickSpawnItem(player.GetSource_ItemUse(Item), ItemID.MeteorShot, 100);
+        }
+    }
+
+    public class UnholyArrowCrate : ItemCrates
+    {
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("A crate containing 100 Unholy Arrows" +
+                                "\n{$CommonItemTooltip.RightClickToOpen}");
+        }
+        public override void RightClick(Player player)
+        {
+            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ItemID.UnholyArrow, 100);
         }
     }
 }

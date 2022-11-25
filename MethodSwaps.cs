@@ -651,10 +651,6 @@ namespace tsorcRevamp
             {
                 validItem = false;
             }
-            if (item.type == ModContent.ItemType<Items.Potions.AttractionPotion>())
-            {
-                validItem = false;
-            }
 
             //No using potions that are already active
             for (int j = 0; j < Player.MaxBuffs; j++)
