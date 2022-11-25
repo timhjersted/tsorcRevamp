@@ -15,17 +15,16 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         {
             Item.rare = ItemRarityID.Cyan;
             Item.damage = 105;
+            Item.width = 56;
             Item.height = 46;
             Item.knockBack = 5;
             Item.autoReuse = true;
             Item.DamageType = DamageClass.Melee;
-            Item.scale = 1f;
             Item.useAnimation = 23;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 21;
             Item.value = PriceByRarity.Cyan_9;
-            Item.width = 56;
         }
 
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
@@ -63,8 +62,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.GoldAxe, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
+            recipe.AddIngredient(ItemID.GoldAxe);
+            recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
             recipe.AddTile(TileID.DemonAltar);
 

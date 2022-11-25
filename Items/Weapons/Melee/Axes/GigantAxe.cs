@@ -17,7 +17,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.height = 80;
             Item.knockBack = 9;
             Item.DamageType = DamageClass.Melee;
-            Item.scale = .9f;
             Item.useAnimation = Item.useTime = 21;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;

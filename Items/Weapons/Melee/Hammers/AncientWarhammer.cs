@@ -19,20 +19,17 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.rare = ItemRarityID.Green;
             Item.DamageType = DamageClass.Melee;
             Item.damage = 32;
-            Item.height = 38;
-            Item.width = 38;
+            Item.width = 48;
+            Item.height = 48;
             Item.knockBack = 9f;
             Item.maxStack = 1;
             Item.autoReuse = true;
             Item.useTurn = true;
             Item.useAnimation = 40;
             Item.useTime = 29;
-            Item.scale = 1.25f;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Green_2;
-
-
         }
 
         public override void AddRecipes()

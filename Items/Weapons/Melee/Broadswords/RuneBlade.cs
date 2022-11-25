@@ -25,7 +25,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.maxStack = 1;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
-            Item.scale = 1f;
             Item.useAnimation = 20;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;

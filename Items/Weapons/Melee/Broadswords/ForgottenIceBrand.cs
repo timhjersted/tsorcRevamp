@@ -14,17 +14,16 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Item.rare = ItemRarityID.Pink;
             Item.damage = 52;
-            Item.height = 42;
+            Item.width = 48;
+            Item.height = 48;
             Item.knockBack = 4;
             Item.autoReuse = true;
             Item.DamageType = DamageClass.Melee;
-            Item.scale = 1.05f;
             Item.useAnimation = 22;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 15;
             Item.value = PriceByRarity.Pink_5;
-            Item.width = 42;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 

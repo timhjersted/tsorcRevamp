@@ -16,7 +16,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Rods
         {
             Item.rare = ItemRarityID.Pink;
             Item.damage = 70;
-            Item.height = 44;
+            Item.width = 34;
+            Item.height = 32;
             Item.knockBack = 4;
             Item.autoReuse = true;
             Item.DamageType = DamageClass.Melee;
@@ -25,7 +26,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Rods
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 21;
             Item.value = PriceByRarity.Pink_5;
-            Item.width = 46;
         }
 
         public override bool? UseItem(Player player)

@@ -16,7 +16,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
 
             Item.rare = ItemRarityID.Pink;
             Item.damage = 76;
-            Item.height = 46;
+            Item.width = 63;
+            Item.height = 58;
             Item.knockBack = 5;
             Item.DamageType = DamageClass.Melee;
             Item.scale = 1.2f;
@@ -25,7 +26,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 15;
             Item.value = PriceByRarity.Pink_5;
-            Item.width = 50;
         }
 
         public override void OnHitNPC(Player player, NPC npc, int damage, float knockBack, bool crit)

@@ -18,18 +18,17 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         {
             Item.rare = ItemRarityID.Green;
             Item.damage = 26;
-            Item.height = 32;
-            Item.knockBack = (float)10;
+            Item.width = 42;
+            Item.height = 34;
+            Item.knockBack = 10;
             Item.maxStack = 1;
             Item.DamageType = DamageClass.Melee;
-            Item.scale = (float)1.05;
             Item.autoReuse = true;
             Item.useAnimation = 25;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 25;
             Item.value = PriceByRarity.Green_2;
-            Item.width = 40;
             Item.scale = 1.5f;
         }
 

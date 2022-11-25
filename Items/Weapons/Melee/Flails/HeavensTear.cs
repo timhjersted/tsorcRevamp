@@ -27,11 +27,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Item.useTime = 38;
             Item.maxStack = 1;
             Item.damage = 200;
-            Item.knockBack = (float)10;
-            Item.scale = (float)1;
+            Item.knockBack = 10;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Red;
-            Item.shootSpeed = (float)14;
+            Item.shootSpeed = 14;
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = PriceByRarity.Red_10;
@@ -44,9 +43,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.FlowerPow, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
             //recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 10);
-            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
 
             recipe.AddTile(TileID.DemonAltar);

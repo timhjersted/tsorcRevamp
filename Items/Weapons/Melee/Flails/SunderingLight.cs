@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
         public override void SetDefaults()
         {
 
-            Item.width = 32;
+            Item.width = 36;
             Item.height = 32;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.channel = true;
@@ -26,11 +26,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Item.useTime = 30;
             Item.maxStack = 1;
             Item.damage = 400;
-            Item.knockBack = (float)10;
-            Item.scale = (float)1.1;
+            Item.knockBack = 10;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Purple;
-            Item.shootSpeed = (float)16;
+            Item.shootSpeed = 16;
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = PriceByRarity.Purple_11;
@@ -42,10 +41,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(Mod.Find<ModItem>("HeavensTear").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 10);
+            recipe.AddIngredient(ModContent.ItemType<HeavensTear>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<Humanity>(), 10);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>());
-            recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 10);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 220000);
 
             recipe.AddTile(TileID.DemonAltar);

@@ -24,7 +24,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useTime = 30;
             Item.damage = 56;
             Item.knockBack = 5f;
-            Item.scale = 1f;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.Orange_3;

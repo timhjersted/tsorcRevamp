@@ -14,15 +14,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
         public override void SetDefaults()
         {
-            Item.width = 40;
-            Item.height = 40;
+            Item.width = 74;
+            Item.height = 74;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 25;
             Item.useTime = 25;
             Item.maxStack = 1;
             Item.damage = 50;
             Item.knockBack = 8;
-            Item.scale = 1.5f;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.Orange_3;

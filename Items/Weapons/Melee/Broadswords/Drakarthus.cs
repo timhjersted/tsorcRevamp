@@ -20,8 +20,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords {
         public override void SetDefaults() {
             Item.rare = ModContent.RarityType<CDW_Drakarthus>();
             Item.damage = 182;
-            Item.height = 72;
-            Item.width = 72;
+            Item.height = 71;
+            Item.width = 71;
             Item.knockBack = 3f;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
@@ -32,7 +32,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords {
             Item.value = 1000000;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             Item.shootSpeed = 24f;
-            Item.scale = 1.1f;
         }
 
         public override bool AltFunctionUse(Player player) {

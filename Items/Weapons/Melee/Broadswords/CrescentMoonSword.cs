@@ -25,7 +25,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.knockBack = 4.5f;
             Item.maxStack = 1;
             Item.DamageType = DamageClass.Melee;
-            Item.scale = 1f;
             Item.useAnimation = 25;
             Item.useTime = 25;
             Item.UseSound = SoundID.Item1;
@@ -63,7 +62,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<ShatteredMoonlight>(), 1);
             recipe.AddIngredient(ItemID.AdamantiteBar, 3);
             //recipe.AddIngredient(ItemID.SoulofLight, 7);
             //recipe.AddIngredient(ItemID.SoulofNight, 1);

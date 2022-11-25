@@ -14,8 +14,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetDefaults()
         {
-            Item.width = 14;
-            Item.height = 28;
+            Item.width = 48;
+            Item.height = 48;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 25;
             Item.useTime = 5;
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.shoot = ProjectileID.Starfury;
             Item.shootSpeed = 12;
             Item.mana = 14;
-            Item.value = 200000;
+            Item.value = PriceByRarity.Blue_1;
             Item.DamageType = DamageClass.Magic;
         }
     }

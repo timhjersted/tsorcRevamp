@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
 
         public override void SetDefaults()
         {
-            Item.width = 32;
+            Item.width = 34;
             Item.height = 32;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.channel = true;

@@ -17,7 +17,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
             Item.useTurn = true;
             Item.rare = ItemRarityID.Cyan;
             Item.damage = 150;
-            Item.height = 12;
+            Item.width = 22;
+            Item.height = 22;
             Item.knockBack = 3;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 8;
@@ -25,7 +26,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Cyan_9;
-            Item.width = 18;
         }
         public override void AddRecipes()
         {

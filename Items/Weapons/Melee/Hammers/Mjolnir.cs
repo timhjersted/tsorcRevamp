@@ -17,8 +17,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
         }
         public override void SetDefaults()
         {
-            Item.width = 41;
-            Item.height = 42;
+            Item.width = 58;
+            Item.height = 59;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 30;
             Item.useTime = 10;
@@ -29,7 +29,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.knockBack = 15;
             Item.autoReuse = true;
             Item.useTurn = true;
-            Item.scale = 1.4f;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.LightRed_4;

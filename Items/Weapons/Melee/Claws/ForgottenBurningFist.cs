@@ -15,11 +15,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
         {
             Item.autoReuse = true;
             Item.damage = 62;
-            Item.width = 22;
-            Item.height = 18;
+            Item.width = 24;
+            Item.height = 20;
             Item.knockBack = 3;
             Item.DamageType = DamageClass.Melee;
-            Item.scale = 1.1f;
             Item.useAnimation = 8;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
