@@ -499,6 +499,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 SpawnDusts();
             }
 
+            CutTiles();
             SetLaserPosition();
             if (Projectile.tileCollide)
             {
@@ -682,12 +683,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void CutTiles()
         {
-            if (Charge == MaxCharge)
-            {
-                DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
-                Vector2 unit = Projectile.velocity;
-                Utils.PlotTileLine(Projectile.Center, Projectile.Center + unit * Distance, (Projectile.width + 16) * Projectile.scale, DelegateMethods.CutTiles);
-            }
+            DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+            Vector2 unit = Projectile.velocity;
+            Utils.PlotTileLine(Projectile.Center, Projectile.Center + unit * Distance, (Projectile.width + 16) * Projectile.scale, DelegateMethods.CutTiles);
         }
     }
 }
