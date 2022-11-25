@@ -40,20 +40,27 @@ namespace tsorcRevamp.Items
             string selectedBoss;
             if(tsorcRevampWorld.Slain == null || tsorcRevampWorld.Slain.Keys.Count == 0)
             {
-                selectedBoss = "No bosses defeated!";
+                selectedBoss = "No rematchable bosses defeated!";
             }
             else
             {
                 keys = new List<int>(tsorcRevampWorld.Slain.Keys);
                 RemoveBannedBosses(keys);
-                NPC temp = new NPC();
-                temp.SetDefaults(keys[index]);
-
-                selectedBoss = temp.GivenOrTypeName;
-
-                if (selectedBoss.Contains("Slogra"))
+                if(keys.Count == 0)
                 {
-                    selectedBoss = "Slogra and Gaibon";
+                    selectedBoss = "No rematchable bosses defeated!";
+                }
+                else
+                {
+                    NPC temp = new NPC();
+                    temp.SetDefaults(keys[index]);
+
+                    selectedBoss = temp.GivenOrTypeName;
+
+                    if (selectedBoss.Contains("Slogra"))
+                    {
+                        selectedBoss = "Slogra and Gaibon";
+                    }
                 }
             }
             
@@ -72,7 +79,7 @@ namespace tsorcRevamp.Items
             RemoveBannedBosses(keys);
             if (tsorcRevampWorld.Slain == null || tsorcRevampWorld.Slain.Keys.Count == 0 || keys.Count == 0)
             {
-                UsefulFunctions.BroadcastText("No bosses defeated!");
+                UsefulFunctions.BroadcastText("No rematchable bosses defeated!");
                 return true;
             }
 

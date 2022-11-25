@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.timeLeft = 22750;
             NPC.damage = 185;
             NPC.defense = 40;
-            NPC.HitSound = SoundID.NPCHit7;
+            NPC.HitSound = SoundID.NPCHit13;
             NPC.DeathSound = SoundID.NPCDeath8;
             NPC.lifeMax = 20000;
             NPC.noGravity = true;

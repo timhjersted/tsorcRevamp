@@ -708,10 +708,7 @@ namespace tsorcRevamp
                 {   ItemID.FishronBossBag           ,   new List<int>()                     },
                 {   ItemID.CultistBossBag           ,   new List<int>()                     },
                 {   ItemID.MoonLordBossBag          ,   new List<int>()                     },
-                {   ItemID.QueenSlimeBossBag        ,   new List<int>()
-                                                        {
-                                                            ItemID.QueenSlimeMountSaddle
-                                                        }                                   },
+                {   ItemID.QueenSlimeBossBag        ,   new List<int>()                     },
                 {   ItemID.FairyQueenBossBag        ,   new List<int>()                     },
                 {   ItemID.BossBagBetsy             ,   new List<int>()                     },
                 {   ItemID.DeerclopsBossBag         ,   new List<int>()                     }
@@ -723,7 +720,9 @@ namespace tsorcRevamp
             AddedBossBagLoot = new Dictionary<int, List<IItemDropRule>>() 
             {
                 #region Vanilla
-                {   ItemID.KingSlimeBossBag         ,   new List<IItemDropRule>()                                                        },
+                {   ItemID.KingSlimeBossBag         ,   new List<IItemDropRule>()   {
+                                                            ItemDropRule.Common(ItemID.SlimySaddle),
+                                                        }                                                          },
                 {   ItemID.EyeOfCthulhuBossBag      ,   new List<IItemDropRule>()                           
                                                         {
                                                             ItemDropRule.Common(ItemID.HermesBoots),

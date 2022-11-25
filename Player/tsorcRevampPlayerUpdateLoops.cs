@@ -299,7 +299,17 @@ namespace tsorcRevamp
         {
             //No more Distorted debuff
             Player.buffImmune[BuffID.VortexDebuff] = true;
-           
+
+            //Hacky but necessary. Mount items seem to bypass the CanUseItem check for some stupid reason
+            if (!NPC.downedBoss2)
+            {
+                Player.ClearBuff(BuffID.SlimeMount);
+            }
+            if (!NPC.downedMechBoss3)
+            {
+                Player.ClearBuff(BuffID.QueenSlimeMount);
+            }
+
             if (tsorcRevampWorld.BossAlive)
             {
                 Player.AddBuff(ModContent.BuffType<Buffs.BossZenBuff>(), 5);

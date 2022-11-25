@@ -35,6 +35,19 @@ namespace tsorcRevamp.Items
                 return false;
             }
 
+            if(item.type == ItemID.SlimySaddle && !NPC.downedBoss2)
+            {
+                return false;
+            }
+            if(item.type == ItemID.QueenSlimeMountSaddle && !NPC.downedMechBoss3)
+            {
+                return false;
+            }
+            if(tsorcRevamp.RestrictedHooks.Contains(item.type) && !NPC.downedBoss3)
+            {
+                return false;
+            }
+
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 if (player.GetModPlayer<tsorcRevampPlayer>().isDodging || player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking)
@@ -134,6 +147,15 @@ namespace tsorcRevamp.Items
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] and can't be used yet"));
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "You can see a strange [c/878787:skull] symbol glowing on its surface..."));
                 }
+                if(item.type == ItemID.SlimySaddle && !NPC.downedBoss2)
+                {
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] by the [c/701070:corruption] and can't be used yet"));
+                }
+                if (item.type == ItemID.QueenSlimeMountSaddle && !NPC.downedMechBoss3)
+                {
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] by a fierce [c/949494:Machine]"));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "It is now heavier than steel, and can not be used until it is defeated"));
+                }
             }
         }
 
@@ -145,10 +167,19 @@ namespace tsorcRevamp.Items
         public override void SetDefaults(Item item)
         {
             base.SetDefaults(item);
+
+            //Let all accessories be used in vanity slots (Remove in 1.4.4 where this becomes vanilla behavior)
             if (item.accessory)
             {
                 item.canBePlacedInVanityRegardlessOfConditions = true;
             }
+
+            //Let all items be auto-used (Remove in 1.4.4 where this becomes toggleable vanilla behavior)
+            if (item.damage >= 1 && !item.channel)
+            {
+                item.autoReuse = true;
+            }
+
             if (potionList == null)
             {
                 populatePotions();
@@ -172,11 +203,6 @@ namespace tsorcRevamp.Items
             if (torchList.Contains(item.type))
             {
                 item.maxStack = 9999;
-            }
-
-            if (item.damage >= 1 && !item.channel)
-            {
-                item.autoReuse = true;
             }
         }
 

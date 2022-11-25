@@ -5667,6 +5667,7 @@ namespace tsorcRevamp.NPCs
             if (npc.type == NPCID.KingSlime)
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), 500);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.SlimySaddle, 1);
                 if (!Main.expertMode)
                 {
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.GoldCoin, 10); //obtained from boss bag in Expert mode (see tsorcGlobalItem for boss bag edits)

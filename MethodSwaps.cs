@@ -51,6 +51,7 @@ namespace tsorcRevamp
             On.Terraria.Player.QuickMana += CustomQuickMana;
             On.Terraria.Player.QuickHeal += CustomQuickHeal;
             On.Terraria.Player.QuickGrapple_GetItemToUse += Player_QuickGrapple_GetItemToUse;
+            On.Terraria.Player.QuickMount_GetItemToUse += Player_QuickMount_GetItemToUse; ;
 
             On.Terraria.UI.ChestUI.LootAll += PotionBagLootAllPatch;
 
@@ -88,7 +89,59 @@ namespace tsorcRevamp
 
         }
 
-		private static void Player_DropTombstone(On.Terraria.Player.orig_DropTombstone orig, Player self, int coinsOwned, Terraria.Localization.NetworkText deathText, int hitDirection)
+        private static Item Player_QuickMount_GetItemToUse(On.Terraria.Player.orig_QuickMount_GetItemToUse orig, Player self)
+        {
+            Item item = null;
+            if (item == null && self.miscEquips[3].mountType != -1 && !MountID.Sets.Cart[self.miscEquips[3].mountType] && CombinedHooks.CanUseItem(self, self.miscEquips[3]))
+            {
+                bool restrictedHook = false;
+
+                if(self.miscEquips[3].type == ItemID.SlimeHook && !NPC.downedBoss2)
+                {
+                    restrictedHook = true;
+                }
+                if (self.miscEquips[3].type == ItemID.QueenSlimeMountSaddle && !NPC.downedMechBoss3)
+                {
+                    restrictedHook = true;
+                }
+
+                if (!restrictedHook)
+                {
+                    item = self.miscEquips[3];
+                }
+            }
+
+            if (item == null)
+            {
+                for (int i = 0; i < 58; i++)
+                {
+                    if (self.inventory[i].mountType != -1 && !MountID.Sets.Cart[self.inventory[i].mountType] && CombinedHooks.CanUseItem(self, self.inventory[i]))
+                    {
+                        bool restrictedHook = false;
+
+                        if (self.inventory[i].type == ItemID.SlimeHook && !NPC.downedBoss2)
+                        {
+                            restrictedHook = true;
+                        }
+                        if (self.inventory[i].type == ItemID.QueenSlimeMountSaddle && !NPC.downedMechBoss3)
+                        {
+                            restrictedHook = true;
+                        }
+
+                        if (!restrictedHook)
+                        {
+                            item = self.inventory[i];
+                            break;
+                        }
+                        
+                    }
+                }
+            }
+
+            return item;
+        }
+
+        private static void Player_DropTombstone(On.Terraria.Player.orig_DropTombstone orig, Player self, int coinsOwned, Terraria.Localization.NetworkText deathText, int hitDirection)
 		{
 			//thank you DarkLight66's NoMoreTombs
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
