@@ -166,7 +166,7 @@ namespace tsorcRevamp.NPCs.Bosses
                
                 if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
                 {
-                    Main.NewText("The Rage emits a scorching heat wave from its body! Your lungs are on fire!", 235, 199, 23);//deep yellow
+                    UsefulFunctions.BroadcastText("The Rage emits a scorching heat wave from its body! Your lungs are on fire!", 235, 199, 23);//deep yellow
                     holdTimer = 9000;
                 }
 
@@ -563,6 +563,8 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.ai[0] += (float)damage;
             if (NPC.ai[0] > (NPC.lifeMax / 10))
             {
+                UsefulFunctions.BroadcastText("The Rage has taken damage too fast, its natural defenses activate...", Color.Orange);
+
                 NPC.ai[3] = 1;
                 for (int i = 0; i < 50; i++)
                 {

@@ -489,6 +489,8 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.ai[0] += (float)damage;
             if (NPC.ai[0] > (NPC.lifeMax / 10))
             {
+                UsefulFunctions.BroadcastText("The Hunter has taken damage too fast, its natural defenses activate...", Color.Orange);
+
                 NPC.ai[3] = 1;
                 Color color = new Color();
                 for (int num36 = 0; num36 < 50; num36++)

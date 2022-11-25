@@ -546,6 +546,8 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.ai[0] += (float)damage;
             if (NPC.ai[0] > (NPC.lifeMax / 10))
             {
+                UsefulFunctions.BroadcastText("The Sorrow has taken damage too fast, its natural defenses activate...", Color.Orange);
+
                 NPC.ai[3] = 1; //begin inisibility/high defense state
                 for (int i = 0; i < 50; i++)
                 { //dustsplosion on invisibility
