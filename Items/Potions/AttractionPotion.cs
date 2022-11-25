@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Potions
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Summons a blood moon. Only usable at night." +
-                             "\nAlso gives Battle Potion effect.");
+                             "\nAlso gives Battle Potion effect." +
+                             "\nThese are never used by Quick Buff");
 
         }
 

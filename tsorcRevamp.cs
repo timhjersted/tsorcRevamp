@@ -227,6 +227,7 @@ namespace tsorcRevamp
                 105, 337, 531, 137, 138, 141, 216, 411, 441, 468, //all statues, traps, boulders, explosives, party rockets, detonator, trapped chests
                 130, 131, 379, 546, 557, //toggled stone blocks, bubbles, grates open and closed
                 132, 135, 136, 143, 144, 419, 420, 421, 422, 423, 424, 425, 428, 429, 440, 442, // ALL (other) WIRING
+                ItemID.RedLight, ItemID.GreenLight,
             };
             #endregion
             //--------
@@ -587,9 +588,8 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<TheSorrowBag>()             , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<TheHunterBag>()             , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<WyvernMageBag>()            , BossExtras.StaminaVessel      },
-                {   ModContent.ItemType<SerrisBag>()                , BossExtras.GuardianSoul
-                                                                    | BossExtras.StaminaVessel      },
-                {   ModContent.ItemType<DeathBag>()                 , BossExtras.GuardianSoul       },
+                {   ModContent.ItemType<SerrisBag>()                , BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<DeathBag>()                 , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<MindflayerIllusionBag>()    , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<AttraidiesBag>()            , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<KrakenBag>()                , BossExtras.GuardianSoul
@@ -818,6 +818,10 @@ namespace tsorcRevamp
                 { ItemID.DiamondHook,   new List<(int ItemID, int Count)>()
                                         {
                                             (ItemID.BeeWax, 1) 
+                                        }                                       },
+                { ItemID.AmberHook,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.BeeWax, 1)
                                         }                                       }
                 #endregion
                 ,

@@ -101,7 +101,7 @@ namespace tsorcRevamp.NPCs.Special
                             if (bossVisions[j].canActivate && bossVisions[j].activationProgress == 0)
                             {
                                 bossVisions[j].activationProgress = 1;
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath43 with { Volume = 0.4f, Pitch = 0.0f });
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.4f, Pitch = 0.0f });
                             }
                         }
                     }

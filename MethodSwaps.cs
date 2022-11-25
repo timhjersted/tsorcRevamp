@@ -86,7 +86,15 @@ namespace tsorcRevamp
 			On.Terraria.Player.DropTombstone += Player_DropTombstone;
 
             On.Terraria.DataStructures.PlayerDrawLayers.DrawPlayer_TransformDrawData += PaperMarioMode;
+            On.Terraria.Player.VanillaPreUpdateInventory += Player_VanillaPreUpdateInventory;
 
+        }
+
+        //I hate that this required a method swap, but unfortunately this does in fact require a method swap. It checks this *right* before applying the movement update.
+        private static void Player_VanillaPreUpdateInventory(On.Terraria.Player.orig_VanillaPreUpdateInventory orig, Player self)
+        {
+            if ((self.inventory[self.selectedItem].type == 277 || self.inventory[self.selectedItem].type == ModContent.ItemType<Items.Weapons.Melee.Spears.AncientDragonLance>()) && (!self.mount.Active || !self.mount.Cart))
+                self.trident = true;
         }
 
         private static Item Player_QuickMount_GetItemToUse(On.Terraria.Player.orig_QuickMount_GetItemToUse orig, Player self)
@@ -632,6 +640,23 @@ namespace tsorcRevamp
 
             int buffType = item.buffType;
             bool validItem = ItemLoader.CanUseItem(item, player);
+
+            //Block using finite or inconvienent potions on accident
+            if(item.type == ItemID.ObsidianSkinPotion && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                validItem = false;
+            }
+
+            if (item.type == ModContent.ItemType<Items.Potions.HolyWarElixir>())
+            {
+                validItem = false;
+            }
+            if (item.type == ModContent.ItemType<Items.Potions.AttractionPotion>())
+            {
+                validItem = false;
+            }
+
+            //No using potions that are already active
             for (int j = 0; j < Player.MaxBuffs; j++)
             {
                 if (buffType == BuffID.FairyBlue && (player.buffType[j] == BuffID.FairyBlue || player.buffType[j] == BuffID.FairyRed || player.buffType[j] == BuffID.FairyGreen))

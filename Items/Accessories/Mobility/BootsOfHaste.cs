@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Accessories.Mobility
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Multiplies your movement speed by 10%");
+            Tooltip.SetDefault("Multiplies your movement speed by 10%\n" +
+                "Inherits Hermes Boots effect");
 
         }
 
@@ -35,6 +36,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void UpdateEquip(Player player)
         {
+            player.accRunSpeed = 6;
             player.moveSpeed *= 1.1f;
         }
     }

@@ -111,9 +111,15 @@ namespace tsorcRevamp.Items
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "They are now heavier than steel, and can not be used until it is defeated"));
                 }
             }
+            
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
+                if (item.type == ItemID.ObsidianSkinPotion)
+                {
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "No Quick Buff", "Your supply of these is finite, so they are never used by Quick Buff"));
+                }
+
                 if (item.createWall > 0)
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "[c/fc1c03:Can not be placed in adventure mode!]"));

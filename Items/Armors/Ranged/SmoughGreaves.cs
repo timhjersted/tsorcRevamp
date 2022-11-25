@@ -32,6 +32,13 @@ namespace tsorcRevamp.Items.Armors.Ranged
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ItemID.GladiatorLeggings, 1);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 3500);
+            recipe2.AddTile(TileID.DemonAltar);
+
+            recipe2.Register();
         }
     }
 }

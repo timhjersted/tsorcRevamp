@@ -375,7 +375,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Diamond, Main.rand.Next(1, 7));
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Emerald, Main.rand.Next(1, 7));
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Amethyst, Main.rand.Next(1, 7));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Amethyst, Main.rand.Next(1, 7));
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Amber, Main.rand.Next(1, 7));
                 if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<JungleWyvernHead>())))
                 { //If the boss has not yet been killed
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 9000); //Then drop the souls

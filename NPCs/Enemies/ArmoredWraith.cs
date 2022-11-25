@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Armored Wraith");
+            DisplayName.SetDefault("Unarmored Wraith");
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Wraith];
         }
 

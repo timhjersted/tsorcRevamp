@@ -63,7 +63,7 @@ namespace tsorcRevamp
         [BackgroundColor(60, 140, 80, 192)]
         [SliderColor(224, 165, 56, 128)]
         [Range(0, 3840)]
-        [DefaultValue(180)]
+        [DefaultValue(460)]
         [Tooltip("The X position of the Soul Counter.")]
         public int SoulCounterPosX { get; set; }
 
@@ -71,7 +71,7 @@ namespace tsorcRevamp
         [BackgroundColor(60, 140, 80, 192)]
         [SliderColor(224, 165, 56, 128)]
         [Range(0, 2160)]
-        [DefaultValue(60)]
+        [DefaultValue(907)]
         [Tooltip("The Y position of the Soul Counter.")]
         public int SoulCounterPosY { get; set; }
 

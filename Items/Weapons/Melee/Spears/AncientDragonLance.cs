@@ -10,7 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Said to pierce any armor, even through walls" +
-                "\nCan hit multiple times");
+                "\nCan hit multiple times" +
+                "\nInherits Trident water effect");
         }
 
         public override void SetDefaults()

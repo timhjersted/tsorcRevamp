@@ -131,12 +131,19 @@ namespace tsorcRevamp.UI
             }
 
             //Blacklist
+
+            if (item.type == ModContent.ItemType<Items.EstusFlaskShard>())
+            {
+                valid = false;
+            }
+
+            //Was going to remove this, but also lmao
             //if (item.type == Terraria.ID.ItemID.ToxicFlask)
             //{
             //valid = false;
             //}
 
-            //Excluding these specifically because for now they need to be used by hand. Auto-moving them to the bag would be obnoxious.
+            //Excluding these specifically because for now they need to be used by hand. May change in the future.
             if (item.type == ModContent.ItemType<Items.Potions.Lifegem>())
             {
                 valid = false;
