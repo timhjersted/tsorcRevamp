@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Magic
 {
-
+    [AutoloadEquip(EquipType.Face)]
     [LegacyName("GrandWizardsHat")]
     public class EnchantedWizardsHat : ModItem
     {

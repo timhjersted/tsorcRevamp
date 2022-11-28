@@ -4,11 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Summon
 {
-    [AutoloadEquip(new EquipType[]
-    {
-        EquipType.HandsOn,
-        EquipType.HandsOff
-    })]
+    [AutoloadEquip(EquipType.HandsOn)]
     public class ChallengersGlove : ModItem
     {
         public override void SetStaticDefaults()

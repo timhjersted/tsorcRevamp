@@ -5,7 +5,6 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
 {
-    [AutoloadEquip(EquipType.Front)]
     public class RingOfTheBlueEye : ModItem
     {
         public override void SetStaticDefaults()
