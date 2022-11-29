@@ -49,52 +49,52 @@ namespace tsorcRevamp.Items.VanillaItems
 
                     case PrefixID.Large:
 
-                        scaleDelta = 0.06f;
+                        scaleDelta = 0.12f;
                         break;
 
                     case PrefixID.Massive:
 
-                        scaleDelta = 0.09f;
+                        scaleDelta = 0.18f;
                         break;
 
                     case PrefixID.Dangerous:
 
-                        scaleDelta = 0.03f;
+                        scaleDelta = 0.06f;
                         break;
 
                     case PrefixID.Tiny:
 
-                        scaleDelta = -0.09f;
+                        scaleDelta = -0.18f;
                         break;
 
                     case PrefixID.Terrible:
 
-                        scaleDelta = -0.07f;
+                        scaleDelta = -0.14f;
                         break;
 
                     case PrefixID.Small:
 
-                        scaleDelta = -0.05f;
+                        scaleDelta = -0.1f;
                         break;
 
                     case PrefixID.Unhappy:
 
-                        scaleDelta = -0.05f;
+                        scaleDelta = -0.1f;
                         break;
 
                     case PrefixID.Bulky:
 
-                        scaleDelta = 0.05f;
+                        scaleDelta = 0.1f;
                         break;
 
                     case PrefixID.Shameful:
 
-                        scaleDelta = 0.05f;
+                        scaleDelta = 0.1f;
                         break;
 
                     case PrefixID.Legendary:
 
-                        scaleDelta = 0.05f;
+                        scaleDelta = 0.1f;
                         break;
 
                     default:
