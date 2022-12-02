@@ -266,11 +266,15 @@ namespace tsorcRevamp
             //SLOGRA and GAIBON
             //This one works a little different from the others, because it's an event with two bosses that spawns them in an action instead of normally
             //As such, it doesn't "save". Instead, it simply has a custom condition that returns "false" if the boss has truly been beaten. Without this, it would save after just running once...
-            ScriptedEvent SlograAndGaibonEvent = new ScriptedEvent(new Vector2(6192, 1267), 30, default, DustID.Shadowflame, false, true, "Slogra and Gaibon have risen from the depths!", Color.Purple, false, SlograGaibonCondition, SlograAndGaibonCustomAction, peaceCandleEffect: true);
+            List<int> SoggyandGaibonEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Bosses.Slogra>(), ModContent.NPCType<NPCs.Bosses.Gaibon>() };
+            List<Vector2> SoggyandGaibonLocations = new List<Vector2>() { new Vector2(6192, 1297), new Vector2(6192, 1167) };
+            ScriptedEvent SlograAndGaibonEvent = new ScriptedEvent(new Vector2(6192, 1267), 30, SoggyandGaibonEnemyTypeList, SoggyandGaibonLocations, DustID.Shadowflame, false, true, "Slogra and Gaibon have risen from the depths!", Color.Purple, false, SlograGaibonCondition, peaceCandleEffect: true);
 
             //SERRIS
             //Like Slogra and Gaibon, this one works a little different due to spawning two bosses.
-            ScriptedEvent SerrisEvent = new ScriptedEvent(new Vector2(1136, 956), 30, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>(), DustID.FireworkFountain_Blue, false, true, "The Serris Triplets have been enraged!", Color.Blue, false, SerrisCustomCondition, SerrisCustomAction, peaceCandleEffect: true);
+            List<int> SerrisEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>(), ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>(), ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>() };
+            List<Vector2> SerrisEnemyLocations = new List<Vector2>() { new Vector2(1136, 956) + new Vector2(100, 0).RotatedBy(MathHelper.Pi / 3), new Vector2(1136, 956) + new Vector2(100, 0).RotatedBy(-MathHelper.Pi / 3), new Vector2(1136, 956) + new Vector2(100, 0).RotatedBy(MathHelper.Pi) };
+            ScriptedEvent SerrisEvent = new ScriptedEvent(new Vector2(1136, 956), 30, SerrisEnemyTypeList, SerrisEnemyLocations, DustID.FireworkFountain_Blue, false, true, "The Serris Triplets have been enraged!", Color.Blue, false, SerrisCustomCondition, peaceCandleEffect: true);
 
             //MARILITH 
             ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(3235, 1770), 100, ModContent.NPCType<NPCs.Bosses.Fiends.MarilithIntro>(), DustID.RedTorch, false, true, "default", Color.Red, false, MarilithCustomCondition, peaceCandleEffect: true);
@@ -315,7 +319,7 @@ namespace tsorcRevamp
             ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, true, "[c/D3D3D3:Attraidies:] \"See if you can handle this.\"", Color.OrangeRed, false, AttraidiesTheSorrowCondition, peaceCandleEffect: true);
 
             //TWIN EATER OF WORLDS FIGHT
-            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1215), 20, default, DustID.ShadowbeamStaff, true, true, "Twin Eaters surface from the depths!", Color.Purple, false, EoWCustomCondition, TwinEoWAction, peaceCandleEffect: true);
+            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1215), 20, default, DustID.ShadowbeamStaff, true, true, "Twin Eaters surface from the depths!", Color.Purple, false, TwinEoWCustomCondition, TwinEoWAction, peaceCandleEffect: true);
 
             //DUNLEDING AMBUSH
             List<int> DunledingAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>() };
@@ -627,7 +631,7 @@ namespace tsorcRevamp
             }
         }
 
-        public static bool EoWCustomCondition()
+        public static bool TwinEoWCustomCondition()
         {
             if(NPC.AnyNPCs(NPCID.EaterofWorldsHead) || NPC.AnyNPCs(NPCID.EaterofWorldsBody) || NPC.AnyNPCs(NPCID.EaterofWorldsTail))
             {
@@ -708,29 +712,35 @@ namespace tsorcRevamp
 
         #region customactions
         //You can make custom actions like this, and pass them as arguments to the event!
-        public static bool ExampleCustomAction(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus ExampleCustomAction(ScriptedEvent thisEvent)
         {
-            Dust.NewDust(player.position, 30, 30, DustID.GreenFairy, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 255);
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Dust.NewDust(Main.player[i].position, 30, 30, DustID.GreenFairy, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 255);
+            }
+
             if (thisEvent.eventTimer > 900)
             {
                 UsefulFunctions.BroadcastText("The example scripted event ends...", Color.Green);
-                thisEvent.endEvent = true;
-                return true;
+                return EventActionStatus.CompletedEvent;
             }
-            return false;
+            return EventActionStatus.Continue;
         }
 
 
         //This is an example artorias custom action. It spawns meteors and displays text every so often, and also changes the projectile damage for Artorias. Most enemies will require a very small change for their projectile damage changes to work (the word 'public' needs to be in front of the variable controlling that projectile's damage).
-        public static bool ArtoriasCustomAction(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus ArtoriasCustomAction(ScriptedEvent thisEvent)
         {
             //Spawning meteors:
             if (Main.rand.NextBool(200))
             {
                 UsefulFunctions.BroadcastText("Artorias rains fire from the Abyss...", Color.Gold);
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < Main.maxPlayers; i++)
                 {
-                    Projectile.NewProjectile(new EntitySource_Misc("Scripted Event"), (float)player.position.X - 100 + Main.rand.Next(200), (float)player.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), thisEvent.spawnedNPC.damage / 4, 2f, Main.myPlayer);
+                    for (int j = 0; j < 10; j++)
+                    {
+                        Projectile.NewProjectile(new EntitySource_Misc("Scripted Event"), (float)Main.player[i].position.X - 100 + Main.rand.Next(200), (float)Main.player[i].position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), thisEvent.spawnedNPC.damage / 4, 2f, Main.myPlayer);
+                    }
                 }
             }
 
@@ -748,17 +758,17 @@ namespace tsorcRevamp
                 ourArtorias.blackBreathDamage = 40;
                 ourArtorias.phantomSeekerDamage = 50;
             }
-            return false;
+            return EventActionStatus.Continue;
         }
 
 
-        public static bool StormCustomAction(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus StormCustomAction(ScriptedEvent thisEvent)
         {
             //typeof(Main).GetMethod("StartRain", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
-            return true;
+            return EventActionStatus.EndAction;
         }
 
-        public static bool SetNightCustomAction(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus SetNightCustomAction(ScriptedEvent thisEvent)
         {
             UsefulFunctions.BroadcastText("Time shifts forward...", Color.Purple);
             Main.dayTime = false;
@@ -767,12 +777,12 @@ namespace tsorcRevamp
             {
                 NetMessage.SendData(MessageID.WorldData);
             }
-            return true;
+            return EventActionStatus.EndAction;
         }
 
 
         //This is an example custom action that just changes the damage of an NPC's projectile. Most enemies will require a very small change for this to work with them (the word 'public' needs to be in front of the variable controlling that projectile's damage).
-        public static bool BlackKnightCustomAction(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus BlackKnightCustomAction(ScriptedEvent thisEvent)
         {
             //Changing projectile damage:
             //First, we make sure the NPC is the one we're talking about. This isn't strictly necessary since we know it should be that one, but it's good practice.
@@ -787,11 +797,11 @@ namespace tsorcRevamp
                 //Then you'll be able to access them from here and set them to anything!
                 ourKnight.spearDamage = 40;
             }
-            return true;
+            return EventActionStatus.EndAction;
         }
 
         //FIRE LURKER PAIN CUSTOM ACTION
-        public static bool FireLurkerPainCustomAction(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus FireLurkerPainCustomAction(ScriptedEvent thisEvent)
         {
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.FireLurker>())
             {
@@ -799,22 +809,22 @@ namespace tsorcRevamp
 
                 ourFireLurker.lostSoulDamage = 16; //was 23, then 13
             }
-            return true;
+            return EventActionStatus.EndAction;
         }
 
         //RED KNIGHT PAIN CUSTOM ACTION
-        public static bool RedKnightPainCustomAction(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus RedKnightPainCustomAction(ScriptedEvent thisEvent)
         {
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
                 NPCs.Enemies.RedKnight ourRedKnightPain = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.ModNPC;
                 ourRedKnightPain.redKnightsSpearDamage = 26; //was 20
             }
-            return true;
+            return EventActionStatus.EndAction;
         }
 
         //RED KNIGHT MOUNTAIN CUSTOM ACTION
-        public static bool RedKnightMountainCustomAction(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus RedKnightMountainCustomAction(ScriptedEvent thisEvent)
         {
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
@@ -822,58 +832,32 @@ namespace tsorcRevamp
                 ourRedKnight.redKnightsSpearDamage = 22; //was 19
                 ourRedKnight.redMagicDamage = 22; //was 19
             }
-            return true;
+            return EventActionStatus.EndAction;
         }
 
-        public static bool UndeadMerchantAction(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus UndeadMerchantAction(ScriptedEvent thisEvent)
         {
             NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 1686 * 16, 963 * 16, ModContent.NPCType<NPCs.Friendly.UndeadMerchant>());
-            thisEvent.endEvent = true;
-            return true;
+            return EventActionStatus.CompletedEvent;
         }
 
         //i dont want this event to last forever, so just spawn the tinkerer and immediately end the event
         //... is what it SHOULD do?
-        public static bool TinkererAction(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus TinkererAction(ScriptedEvent thisEvent)
         {
             NPC.savedGoblin = true;
             NPC goblinNPC = NPC.NewNPCDirect(new EntitySource_Misc("Scripted Event"), 4456 * 16, 1744 * 16, NPCID.GoblinTinkerer);
             goblinNPC.homeTileX = 4449;
             goblinNPC.homeTileY = 1740;
-            thisEvent.endEvent = true;
-            return true;
-        }
-
-        //TWIN EOW ACTION
-        public static bool TwinEoWAction(Player player, ScriptedEvent thisEvent)
-        {
-            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 3183 * 16, 1246 * 16, NPCID.EaterofWorldsHead);
-            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 3330 * 16, 1246 * 16, NPCID.EaterofWorldsHead);
-            return true;
-        }
-
-        //Slogra And Gaibon Action
-        public static bool SlograAndGaibonCustomAction(Player player, ScriptedEvent thisEvent)
-        {
-            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)player.Center.X + 300, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Slogra>());
-            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)player.Center.X - 300, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>());
-            thisEvent.endEvent = true;
-            return true;
-        }
-        public static bool SerrisCustomAction(Player player, ScriptedEvent thisEvent)
-        {
-            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)player.Center.X, (int)player.Center.Y + 300, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>());
-            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)player.Center.X, (int)player.Center.Y - 300, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>());
-            thisEvent.endEvent = true;
-            return true;
+            return EventActionStatus.CompletedEvent;
         }
 
         //ALIEN AMBUSH SPAWN DUSTS 
-        public static bool AlienAmbushAction(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus AlienAmbushAction(ScriptedEvent thisEvent)
         {
             if (thisEvent.eventTimer == 1)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass, player.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass, thisEvent.centerpoint);
             }
             if (thisEvent.eventTimer < 20)
             {
@@ -893,16 +877,16 @@ namespace tsorcRevamp
                     Main.dust[dust6].noGravity = true;
                 }
             }
-            return false;
+            return EventActionStatus.Continue;
         }
 
 
         //DUNDLEDING AMBUSH SPAWN DUSTS
-        public static bool DundledingAmbushAction(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus DundledingAmbushAction(ScriptedEvent thisEvent)
         {
             if (thisEvent.eventTimer == 1)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass, player.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass, thisEvent.centerpoint);
             }
             if (thisEvent.eventTimer < 20)
             {
@@ -916,21 +900,20 @@ namespace tsorcRevamp
                     Main.dust[dust3].noGravity = true;
                 }
             }
-            return false;
+            return EventActionStatus.Continue;
         }
 
         //BOULDERFALL EVENT 1 ACTION
 
-        public static bool BoulderfallEvent1Action(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus BoulderfallEvent1Action(ScriptedEvent thisEvent)
         {
             Projectile.NewProjectile(new EntitySource_Misc("ScriptedEvent"), new Vector2(4401 * 16, 895 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropLeft>(), 70, 1);
-            thisEvent.endEvent = true;
-            return true;
+            return EventActionStatus.CompletedEvent;
         }
 
         //BOULDERFALL EVENT 2 ACTION
 
-        public static bool BoulderfallEvent2Action(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus BoulderfallEvent2Action(ScriptedEvent thisEvent)
         {
             int rand1 = Main.rand.Next(10, 40);
             int rand2 = Main.rand.Next(240, 300);
@@ -955,27 +938,25 @@ namespace tsorcRevamp
             if (thisEvent.eventTimer == rand2)
             {
                 Projectile.NewProjectile(new EntitySource_Misc("ScriptedEvent"), new Vector2(3523 * 16, 409 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropLeft>(), 70, 1);
-                thisEvent.endEvent = true;
-                return true;
+                return EventActionStatus.CompletedEvent;
             }
-            return false;
+            return EventActionStatus.Continue;
         }
 
         //BOULDERFALL EVENT 3 ACTION
 
-        public static bool BoulderfallEvent3Action(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus BoulderfallEvent3Action(ScriptedEvent thisEvent)
         {
             Projectile.NewProjectile(new EntitySource_Misc("ScriptedEvent"), new Vector2(3639 * 16, 349 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropRight>(), 70, 1);
-            thisEvent.endEvent = true;
-            return true;
+            return EventActionStatus.CompletedEvent;
         }
 
         //FIREBOMB HOLLOW AMBUSH SPAWN DUSTS
-        public static bool FirebombHollowAmbushAction(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus FirebombHollowAmbushAction(ScriptedEvent thisEvent)
         {
             if (thisEvent.eventTimer == 1)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass, player.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass, thisEvent.centerpoint);
             }
             if (thisEvent.eventTimer < 20)
             {
@@ -987,24 +968,44 @@ namespace tsorcRevamp
                     Main.dust[dust2].noGravity = true;
                 }
             }
-            return false;
+            return EventActionStatus.Continue;
         }
 
-        public static bool MechanicAction(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus MechanicAction(ScriptedEvent thisEvent)
         {
             NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 277 * 16, 1366 * 16, NPCID.Mechanic);
             NPC.savedMech = true;
-            thisEvent.endEvent = true;
-            return true;
+            return EventActionStatus.CompletedEvent;
         }
 
-        public static bool WizardAction(Player player, ScriptedEvent thisEvent)
+        public static EventActionStatus WizardAction(ScriptedEvent thisEvent)
         {
             NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 7322 * 16, 603 * 16, NPCID.Wizard);
             NPC.savedWizard = true;
-            thisEvent.endEvent = true;
-            return true;
+            return EventActionStatus.CompletedEvent;
         }
+
+        public static EventActionStatus TwinEoWAction(ScriptedEvent thisEvent)
+        {
+            bool validPlayer = false;
+            for(int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].ZoneCorrupt && !Main.player[i].dead)
+                {
+                    validPlayer = true;
+                }
+            }
+
+            if (!validPlayer)
+            {
+                return EventActionStatus.FailedEvent;
+            }
+            else
+            {
+                return EventActionStatus.Continue;
+            }
+        }
+
         #endregion
 
         public static void SaveScriptedEvents(TagCompound tag)
@@ -1078,108 +1079,115 @@ namespace tsorcRevamp
         //int tick = 0;
         //How many ticks (plus one) should the checks be spread out over?
         //int tickSpread = 20;
-        public static void PlayerScriptedEventCheck(Player player)
+        public static void ScriptedEventCheck()
         {
-            if (player.dead)
+            for (int index = 0; index < Main.maxPlayers; index++)
             {
-                return;
-            }
-
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {                
-                DrawNetworkEvents(player);
-                return;                
-            }
-
-            RestoreQueuedEvents();
-
-            NetworkEvents = new List<NetworkEvent>();
-
-            //Check if the player is in range of any inactive events
-            for (int i = 0; i < EnabledEvents.Count; i++)
-            {
-                if (EnabledEvents[i].condition())
+                if (!Main.player[index].active || Main.player[index].dead)
                 {
-                    float distance = Vector2.DistanceSquared(player.position, EnabledEvents[i].centerpoint);
-                        
-                    if (!EnabledEvents[i].square)
-                    {
-
-                        //If the player is nearby, display some dust to make the region visible to them
-                        //This has a Math.Sqrt in it, but that's fine because this code only runs for the handful-at-most events that will be onscreen at a time
-                        if ((EnabledEvents[i].visible && distance < 6000000) || EnabledEvents[i].npcToSpawn == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>() && distance < 50000000
-                                || EnabledEvents[i].npcToSpawn == NPCID.HallowBoss && distance < 50000000)
-                        {
-                            //Add the event to the list of events that need to be synced to clients. These will be sent to the client once we're done here.
-                            if (Main.netMode == NetmodeID.Server && EnabledEvents[i].visible)
-                            {
-                                NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, false));
-                            }
-
-                            DrawCircularEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, false);                                
-                        }
-
-                        if (distance < EnabledEvents[i].radius * 6)
-                        {
-                            player.AddBuff(BuffID.PeaceCandle, 2);
-                        }
-                        if (distance < EnabledEvents[i].radius)
-                        {
-                            for (int j = 0; j < 100; j++)
-                            {
-                                Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
-                            }
-                            RunningEvents.Add(EnabledEvents[i]);
-                            EnabledEvents.RemoveAt(i);
-                        }
-                    }
-                    //Do the same thing, but square
-                    else
-                    {
-                        if (EnabledEvents[i].visible && distance < 6000000)
-                        {
-                            DrawSquareEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, false);
-                        }
-
-                        float sqrtRadius = (float)Math.Sqrt(EnabledEvents[i].radius);
-                        if ((Math.Abs(player.position.X - EnabledEvents[i].centerpoint.X) < sqrtRadius) && (Math.Abs(player.position.Y - EnabledEvents[i].centerpoint.Y) < sqrtRadius))
-                        {
-                            for (int j = 0; j < 100; j++)
-                            {
-                                Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
-                            }
-
-                            RunningEvents.Add(EnabledEvents[i]);
-                            EnabledEvents.RemoveAt(i);
-
-                        }
-                    }
+                    continue;
                 }
-            }
 
-            //Send events that need to be drawn to the clients
-            if (Main.netMode == NetmodeID.Server && Main.GameUpdateCount % 300 == 0)
-            {
-                for (int i = 0; i < QueuedEvents.Count; i++)
+                if (Main.netMode == NetmodeID.MultiplayerClient)
                 {
-                    if (QueuedEvents[i].condition())
+                    DrawNetworkEvents(Main.player[index]);
+                    continue;
+                }
+
+                RestoreQueuedEvents();
+
+                NetworkEvents = new List<NetworkEvent>();
+
+                //Check if the player is in range of any inactive events
+                for (int i = 0; i < EnabledEvents.Count; i++)
+                {
+                    if (EnabledEvents[i].condition())
                     {
-                        //Add the network event to the list of events that need to be drawn. These will be sent to the client once we're done here.
-                        if (QueuedEvents[i].visible && QueuedEvents[i].eventCooldownTimer < 300)
+                        float distance = Vector2.DistanceSquared(Main.player[index].position, EnabledEvents[i].centerpoint);
+
+                        if (!EnabledEvents[i].square)
                         {
-                            NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, true));
+
+                            //If the player is nearby, display some dust to make the region visible to them
+                            //This has a Math.Sqrt in it, but that's fine because this code only runs for the handful-at-most events that will be onscreen at a time
+                            if ((EnabledEvents[i].visible && distance < 6000000) || EnabledEvents[i].npcToSpawn == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>() && distance < 50000000
+                                    || EnabledEvents[i].npcToSpawn == NPCID.HallowBoss && distance < 50000000)
+                            {
+                                //Add the event to the list of events that need to be synced to clients. These will be sent to the client once we're done here.
+                                if (Main.netMode == NetmodeID.Server && EnabledEvents[i].visible)
+                                {
+                                    NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, false));
+                                }
+
+                                DrawCircularEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, false);
+                            }
+
+                            if (distance < EnabledEvents[i].radius * 6)
+                            {
+                                if (!Main.player[index].HasBuff(BuffID.PeaceCandle))
+                                {
+                                    Main.player[index].AddBuff(BuffID.PeaceCandle, 30, false);
+                                }
+                            }
+                            if (distance < EnabledEvents[i].radius)
+                            {
+                                for (int j = 0; j < 100; j++)
+                                {
+                                    Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
+                                }
+                                RunningEvents.Add(EnabledEvents[i]);
+                                EnabledEvents.RemoveAt(i);
+                            }
+                        }
+                        //Do the same thing, but square
+                        else
+                        {
+                            if (EnabledEvents[i].visible && distance < 6000000)
+                            {
+                                DrawSquareEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, false);
+                            }
+
+                            float sqrtRadius = (float)Math.Sqrt(EnabledEvents[i].radius);
+                            if ((Math.Abs(Main.player[index].position.X - EnabledEvents[i].centerpoint.X) < sqrtRadius) && (Math.Abs(Main.player[index].position.Y - EnabledEvents[i].centerpoint.Y) < sqrtRadius))
+                            {
+                                for (int j = 0; j < 100; j++)
+                                {
+                                    Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
+                                }
+
+                                RunningEvents.Add(EnabledEvents[i]);
+                                EnabledEvents.RemoveAt(i);
+
+                            }
                         }
                     }
                 }
 
-                SendDrawnEvents();
-            }
+                //Send events that need to be drawn to the clients
+                if (Main.netMode == NetmodeID.Server && Main.GameUpdateCount % 300 == 0)
+                {
+                    for (int i = 0; i < QueuedEvents.Count; i++)
+                    {
+                        if (QueuedEvents[i].condition())
+                        {
+                            //Add the network event to the list of events that need to be drawn. These will be sent to the client once we're done here.
+                            if (QueuedEvents[i].visible && QueuedEvents[i].eventCooldownTimer < 300)
+                            {
+                                NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, true));
+                            }
+                        }
+                    }
 
+                    SendDrawnEvents();
+                }
+            }
+            
+            
             //Run any active events
             for (int i = 0; i < RunningEvents.Count; i++)
             {
-                RunningEvents[i].RunEvent(player);
-            }                  
+                RunningEvents[i].RunEvent();
+            }
         }
 
 
@@ -1447,7 +1455,7 @@ namespace tsorcRevamp
         //A list pointing to the actual active NPC's that it has spawned
         public List<NPC> spawnedNPCs = new List<NPC>();
         //Stores which NPC's have been killed if in list mode
-        public List<bool> deadNPCs = new List<bool>();
+        public List<bool> killedNPCs = new List<bool>();
 
         //Stores which players have not died while this event is active
         //public List<bool> livingPlayers = new List<bool>();
@@ -1491,7 +1499,7 @@ namespace tsorcRevamp
         //Does it have a custom action? If so, what?
         public bool hasCustomAction = false;
         public bool finishedCustomAction = false;
-        public Func<Player, ScriptedEvent, bool> CustomAction = null;
+        public Func<ScriptedEvent, EventActionStatus> CustomAction = null;
 
         //Generic multipurpose timer that custom actions can use to time things
         public int eventTimer = 0;
@@ -1505,7 +1513,7 @@ namespace tsorcRevamp
 
         public int eventCooldownTimer = 300;
 
-        public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, int? npcType = null, int DustType = 31, bool saveEvent = false, bool visibleRange = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<Player, ScriptedEvent, bool> customAction = null, bool peaceCandleEffect = false)
+        public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, int? npcType = null, int DustType = 31, bool saveEvent = false, bool visibleRange = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<ScriptedEvent, EventActionStatus> customAction = null, bool peaceCandleEffect = false)
         {
             rangeDetectionMode = true;
             //Player position is stored as 16 times block distances
@@ -1543,7 +1551,7 @@ namespace tsorcRevamp
             peaceCandle = peaceCandleEffect;
         }
 
-        public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, List<int> npcs, List<Vector2> coords, int DustType = 31, bool saveEvent = false, bool visibleRange = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<Player, ScriptedEvent, bool> customAction = null, bool peaceCandleEffect = false)
+        public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, List<int> npcs, List<Vector2> coords, int DustType = 31, bool saveEvent = false, bool visibleRange = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<ScriptedEvent, EventActionStatus> customAction = null, bool peaceCandleEffect = false)
         {
             rangeDetectionMode = true;
             //Player position is stored as 16 times block distances
@@ -1605,7 +1613,7 @@ namespace tsorcRevamp
         }
 
         //Runs the event
-        public void RunEvent(Player player)
+        public void RunEvent()
         {
             //If this is its first time running, spawn the NPC's and display the text
             if (eventTimer == 0)
@@ -1620,12 +1628,26 @@ namespace tsorcRevamp
                 }
             }
 
-            //If it has a custom action, then run it. If it returns true, mark it as finished and do not run it again.
+            //If it has a custom action, then run it
+            //If it returns EndAction, mark its action as finished and do not run it again
+            //If it returns FailedEvent then immediately mark the event as failed and end it
+            //If it returns CompletedEvent then immediately mark the event as completed and end it
             if (hasCustomAction && !finishedCustomAction)
             {
-                if (CustomAction(player, this))
+                EventActionStatus status = CustomAction(this);
+                if (status == EventActionStatus.EndAction)
                 {
                     finishedCustomAction = true;
+                }
+                if (status == EventActionStatus.FailedEvent)
+                {
+                    EndEvent(false);
+                    return;
+                }
+                if (status == EventActionStatus.CompletedEvent)
+                {
+                    EndEvent(true);
+                    return;
                 }
             }
 
@@ -1642,6 +1664,8 @@ namespace tsorcRevamp
                     break;
                 }
             }
+
+            Main.NewText(playerAlive);
 
             //If we reach the end without hitting one, end the event.
             if (!playerAlive)
@@ -1663,18 +1687,29 @@ namespace tsorcRevamp
             else
             {
                 bool oneAlive = false;
-                for (int i = 0; i < deadNPCs.Count; i++)
+                for (int i = 0; i < killedNPCs.Count; i++)
                 {
-                    if (deadNPCs[i] == false)
+                    if (killedNPCs[i] == false)
                     {
-                        oneAlive = true;
+                        //If it's not marked as killed by a player and are indeed alive then the event isn't over
+                        if (spawnedNPCs[i].active)
+                        {
+                            oneAlive = true;
+                        }
+                        else
+                        {
+                            //If they aren't marked as killed by a player, but also are dead, then they despawned. End the event as failed.
+                            EndEvent(false);
+                            return;
+                        }
                     }
                 }
                 if (!oneAlive)
                 {
                     endEvent = true;
                 }
-            }
+            }          
+            
 
             if (endEvent)
             {
@@ -1689,7 +1724,7 @@ namespace tsorcRevamp
                 for (int i = 0; i < NPCIDs.Count; i++)
                 {
                     spawnedNPCs.Add(Main.npc[NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)NPCCoordinates[i].X * 16, (int)NPCCoordinates[i].Y * 16, NPCIDs[i])]);
-                    deadNPCs.Add(false);
+                    killedNPCs.Add(false);
                     if (newMaxLife != null)
                     {
                         spawnedNPCs[i].lifeMax = newMaxLife.Value;
@@ -1802,7 +1837,7 @@ namespace tsorcRevamp
             tsorcScriptedEvents.RunningEvents.Remove(this);
             eventTimer = 0;
             npcDead = false;
-            deadNPCs = new List<bool>();
+            killedNPCs = new List<bool>();
             spawnedNPCs = new List<NPC>();
             finishedCustomAction = false;
             endEvent = false;
@@ -1841,4 +1876,12 @@ namespace tsorcRevamp
             queued = queuedEvent;
         }
     }
+
+    public enum EventActionStatus {
+        Continue,
+        EndAction,
+        FailedEvent,
+        CompletedEvent    
+    }
+
 }

@@ -126,7 +126,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             //DEMON SPIRIT ATTACK
             if (Main.rand.NextBool(375))
             {
-                int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-600, 600), NPC.Center.Y + Main.rand.Next(-600, 600), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 70, 0f, Main.myPlayer);
+                int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-600, 600), NPC.Center.Y + Main.rand.Next(-600, 600), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 35, 0f, Main.myPlayer);
             }
 
             //Transparency. Higher alpha = more invisible

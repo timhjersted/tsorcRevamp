@@ -53,8 +53,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead))
             {
-                target.AddBuff(BuffID.Poisoned, 2400);
-                target.AddBuff(BuffID.Bleeding, 2400);
+                target.AddBuff(BuffID.Poisoned, 1200);
+                target.AddBuff(BuffID.Bleeding, 1200);
             }
         }
     }

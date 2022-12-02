@@ -490,7 +490,7 @@ namespace tsorcRevamp.NPCs
                         {
                             if (thisEvent.spawnedNPCs[i].active && thisEvent.spawnedNPCs[i].whoAmI == npc.whoAmI)
                             {
-                                thisEvent.deadNPCs[i] = true;
+                                thisEvent.killedNPCs[i] = true;
                                 if (thisEvent.CustomDrops != null && thisEvent.CustomDrops.Count > 0)
                                 {
                                     if (!thisEvent.onlyLastEnemy)
@@ -503,7 +503,7 @@ namespace tsorcRevamp.NPCs
                                     else
                                     {
                                         bool oneAlive = false;
-                                        foreach (bool thisBool in thisEvent.deadNPCs)
+                                        foreach (bool thisBool in thisEvent.killedNPCs)
                                         {
                                             if (thisBool == false)
                                             {

@@ -43,37 +43,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 160, color, 3.0f);
             Main.dust[dust].noGravity = true;
 
-            if (this.Projectile.timeLeft <= 320)
-            {
-                this.Projectile.scale = 0.4f;
-                this.Projectile.damage = 15;
-            }
-            if (this.Projectile.timeLeft <= 300)
-            {
-                this.Projectile.scale = 0.5f;
-                this.Projectile.damage = 20;
-            }
-            if (this.Projectile.timeLeft <= 290)
-            {
-                this.Projectile.scale = 0.6f;
-                this.Projectile.damage = 22;
-            }
-            if (this.Projectile.timeLeft <= 270)
-            {
-                this.Projectile.scale = 0.7f;
-                this.Projectile.damage = 35;
-            }
-            if (this.Projectile.timeLeft <= 250)
-            {
-                this.Projectile.scale = 0.8f;
-                this.Projectile.damage = 40;
-            }
-            if (this.Projectile.timeLeft <= 200)
-            {
-                this.Projectile.scale = 0.8f;
-                this.Projectile.damage = 52;
-            }
-
             this.Projectile.ai[0] += 1f;
 
 

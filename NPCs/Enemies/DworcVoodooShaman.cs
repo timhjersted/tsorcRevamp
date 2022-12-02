@@ -160,7 +160,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //DEMON SPIRIT ATTACK
             if (Main.rand.NextBool(425))
             {
-                int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-500, 500), NPC.Center.Y + Main.rand.Next(-600, 600), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 40, 0f, Main.myPlayer);      
+                int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-500, 500), NPC.Center.Y + Main.rand.Next(-600, 600), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 20, 0f, Main.myPlayer);      
             }
 
             //Higher alpha = more invisible

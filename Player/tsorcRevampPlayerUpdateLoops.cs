@@ -329,12 +329,7 @@ namespace tsorcRevamp
 
             //the item in the soul slot will only ever be souls, so we dont need to check type
             if (SoulSlot.Item.stack > 0) { darkSoulQuantity += SoulSlot.Item.stack; }
-
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
-            {
-                tsorcScriptedEvents.PlayerScriptedEventCheck(this.Player);
-            }
-
+            
             if (!Player.HasBuff(ModContent.BuffType<Bonfire>()))
             { //this ensures that BonfireUIState is only visible when within Bonfire range
                 if (Player.whoAmI == Main.LocalPlayer.whoAmI)

@@ -129,6 +129,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 MoveIndex = 0;
             }
 
+            MoveIndex = 3;
+
             //Main.NewText(Main.dust);
             CurrentMove.Move();
 
@@ -254,11 +256,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             {
                 if (MoveTimer % 30 == 0 && MoveTimer <= 1700)
                 {
-                    float dist = Vector2.Distance(NPC.Center, Target.Center);                    
-                    float time = dist / 16;
-
-                    //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithFireball>(), fireBallDamage, 0, Main.myPlayer, 0, Target.whoAmI);
-
                     if (MoveTimer % 60 == 0)
                     {
                         Vector2 lightningCenter = new Vector2(Main.rand.Next(3107, 3350), 1682) * 16;
@@ -304,8 +301,25 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
                 targetVector += Target.velocity * 2;
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+
+                targetVector = Main.rand.NextVector2Circular(1, 1);
+                targetVector.Normalize();
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector.RotatedBy(MathHelper.PiOver2), ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector.RotatedBy(MathHelper.Pi), ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector.RotatedBy(MathHelper.PiOver2 * 3), ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
             }
-            if(MoveTimer >= 600)
+
+            if (MoveTimer % 120 == 0)
+            {
+                int projectiles = Main.rand.Next(10, 20);
+                for (int i = 0; i < projectiles; i++)
+                {
+                    //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(6, 0).RotatedBy(i * MathHelper.TwoPi / projectiles), ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
+                }
+            }
+
+            if (MoveTimer >= 900)
             {
                 NextAttack();
             }
@@ -353,11 +367,14 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                         {
                             if (MoveTimer == 60)
                             {
-                                angles = new float[4];
+                                float offset = MathHelper.Pi / 3f;
+                                angles = new float[6];
                                 angles[0] = MathHelper.PiOver4;
-                                angles[1] = angles[0] + MathHelper.PiOver2;
-                                angles[2] = angles[1] + MathHelper.PiOver2;
-                                angles[3] = angles[2] + MathHelper.PiOver2;
+                                angles[1] = angles[0] + offset;
+                                angles[2] = angles[1] + offset;
+                                angles[3] = angles[2] + offset;
+                                angles[4] = angles[3] + offset;
+                                angles[5] = angles[4] + offset;
                             }
 
                             for (int i = 0; i < angles.Length; i++)

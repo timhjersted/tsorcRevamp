@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Enums;
@@ -177,7 +178,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                     {
                         for (int j = 0; j < branches[i].Count - 1; j++)
                         {
-                            if (Main.rand.Next(3) == 0 && j > 5)
+                            if (Main.rand.NextBool(3) && j > 5)
                             {
                                 //If it's the first set of splits, let them go longer
                                 int segmentLimit = 3;
@@ -322,16 +323,21 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 //Store the old bindings
                 RenderTargetBinding[] bindings = device.GetRenderTargets();
 
+                //Set the render target to null and clear it before using the new one
+                //This doesn't seem to fix the issue. But vanilla does it before setting the render target, so I thought it was worth a shot.
+                device.SetRenderTargets(null);
+                device.Clear(Color.Transparent);
 
 
                 //Create the target
                 lightningTarget = new RenderTarget2D(device, device.PresentationParameters.BackBufferWidth, device.PresentationParameters.BackBufferHeight, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
-
-                //Set the device target to the new target
+                
+                //Set the device target to it
                 device.SetRenderTarget(lightningTarget);
 
                 //Clear it
-                //device.Clear(Color.Transparent);
+                //Again, this doesn't seem to do anything since that target was just freshly created. Is it necessary?
+                device.Clear(Color.Transparent);
 
                 //Start a new "default" spritebatch and draw the lightning to the target
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
@@ -343,7 +349,15 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 storedPosition = Main.screenPosition;
 
                 //Re-set the old bindings
-                device.SetRenderTargets(null);
+                //If I do this instead, then everything drawn *before* the lightning (tiles, backrounds, etc) is blacked out this frame
+                device.SetRenderTargets(bindings);
+
+                //Alternatively, set the render target to null
+                //If I do this, then everything drawn *after* the lightning (other projectiles etc) does not draw this frame
+                //device.SetRenderTarget(null);
+
+                //If I do both, predictibly, the entire screen is blacked out this frame
+                //If I do neither, then the entire rest of the world is drawn to this rendertarget. That is even worse.
 
                 //Re-start the spritebatch
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
@@ -391,30 +405,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
             return false;
         }
-
-
-
-        /*
-         * if (!drawnFinalOnce) //This is set to true once the full lightning chain has been drawn once, so there is no need to draw it to the rendertarget again
-                {
-                    //Runs through a big for loop, simply calling Main.EntitySpriteDraw for every segment of the lightning
-                    
-                }
-         * 
-         * System.Diagnostics.Stopwatch thisWatch = new System.Diagnostics.Stopwatch();
-            thisWatch.Start();
-
-            thisWatch.Stop();
-            if (thisWatch.ElapsedMilliseconds > 1)
-            {
-                int totalCount = 0;
-                for(int i = 0; i < branches.Count; i++)
-                {
-                    totalCount += branches[i].Count;
-                }
-                System.TimeSpan avg = thisWatch.Elapsed / totalCount;
-                Main.NewText(totalCount + " branches at " + avg + " per branch for " + thisWatch.Elapsed + " total");
-            }*/
+        
 
         public void DrawPrims()
         {

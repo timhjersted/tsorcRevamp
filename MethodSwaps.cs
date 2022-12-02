@@ -104,7 +104,7 @@ namespace tsorcRevamp
             {
                 bool restrictedHook = false;
 
-                if(self.miscEquips[3].type == ItemID.SlimeHook && !NPC.downedBoss2)
+                if(self.miscEquips[3].type == ItemID.SlimySaddle && !NPC.downedBoss2)
                 {
                     restrictedHook = true;
                 }
@@ -127,7 +127,7 @@ namespace tsorcRevamp
                     {
                         bool restrictedHook = false;
 
-                        if (self.inventory[i].type == ItemID.SlimeHook && !NPC.downedBoss2)
+                        if (self.inventory[i].type == ItemID.SlimySaddle && !NPC.downedBoss2)
                         {
                             restrictedHook = true;
                         }
