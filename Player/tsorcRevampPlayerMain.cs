@@ -939,6 +939,22 @@ namespace tsorcRevamp
                 }
                 Dust.NewDustDirect(Player.Center, 10, 10, DustID.FlameBurst, 0.5f, 0.5f, 0, Color.Firebrick, 0.5f);
             }
+            if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>())
+            {
+                if (Main.keyState.IsKeyDown(Keys.LeftShift))
+                {
+                    Projectiles.Summon.Runeterra.InterstellarVesselShip.circleRad2 -= 1.5f;
+                    if (Projectiles.Summon.Runeterra.InterstellarVesselShip.circleRad2 < 50)
+                    {
+                        Projectiles.Summon.Runeterra.InterstellarVesselShip.circleRad2 = 50;
+                    }
+                }
+                else
+                {
+                    Projectiles.Summon.Runeterra.InterstellarVesselShip.circleRad2 += 1.5f;
+                }
+                Dust.NewDustDirect(Player.Center, 10, 10, DustID.FlameBurst, 0.5f, 0.5f, 0, Color.Firebrick, 0.5f);
+            }
         }
 
         //On hit, subtract the mana cost and disable natural mana regen for a short period
