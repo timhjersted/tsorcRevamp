@@ -470,6 +470,7 @@ namespace tsorcRevamp
             //TODO: Sync maxLife, defense, damage, value
             ModPacket npcExtrasPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
             npcExtrasPacket.Write(tsorcPacketID.SyncNPCExtras);
+            npcExtrasPacket.Write(npc.whoAmI);
             npcExtrasPacket.Write(npc.lifeMax);
             npcExtrasPacket.Write(npc.defense);
             npcExtrasPacket.Write(npc.damage);

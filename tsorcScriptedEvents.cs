@@ -504,6 +504,7 @@ namespace tsorcRevamp
 
             RunningEvents = new List<ScriptedEvent>();
             DisabledEvents = new List<ScriptedEvent>();
+            NetworkEvents = new List<NetworkEvent>();
         }
 
 
@@ -1086,21 +1087,18 @@ namespace tsorcRevamp
         {
             RestoreQueuedEvents();
 
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                DrawNetworkEvents(Main.LocalPlayer);
+                return;
+            }
+
             for (int index = 0; index < Main.maxPlayers; index++)
             {
                 if (!Main.player[index].active)
                 {
                     continue;
-                }
-
-                if (Main.netMode == NetmodeID.MultiplayerClient)
-                {
-                    DrawNetworkEvents(Main.player[index]);
-                    continue;
-                }
-
-
-                //NetworkEvents = new List<NetworkEvent>();
+                }                
 
                 //Check if the player is in range of any inactive events
                 for (int i = 0; i < EnabledEvents.Count; i++)
@@ -1122,7 +1120,19 @@ namespace tsorcRevamp
                                     //Add the event to the list of events that need to be synced to clients. These will be sent to the client once we're done here.
                                     if (Main.netMode == NetmodeID.Server && EnabledEvents[i].visible)
                                     {
-                                        NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, false));
+                                        bool duplicate = false;
+                                        for (int j = 0; j < NetworkEvents.Count; j++)
+                                        {
+                                            if (NetworkEvents[j].centerpoint == EnabledEvents[i].centerpoint)
+                                            {
+                                                duplicate = true;
+                                            }
+                                        }
+
+                                        if (!duplicate)
+                                        {
+                                            NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, false));
+                                        }
                                     }
 
                                     DrawCircularEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, false);
@@ -1151,6 +1161,19 @@ namespace tsorcRevamp
                         {
                             if (EnabledEvents[i].visible && distance < 6000000)
                             {
+                                bool duplicate = false;
+                                for (int j = 0; j < NetworkEvents.Count; j++)
+                                {
+                                    if (NetworkEvents[j].centerpoint == EnabledEvents[i].centerpoint)
+                                    {
+                                        duplicate = true;
+                                    }
+                                }
+                                if (!duplicate)
+                                {
+                                    NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, true));
+                                }
+
                                 DrawSquareEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, false);
                             }
 
@@ -1164,32 +1187,46 @@ namespace tsorcRevamp
 
                                 RunningEvents.Add(EnabledEvents[i]);
                                 EnabledEvents.RemoveAt(i);
-
                             }
                         }
                     }
-                }
-
-                //Send events that need to be drawn to the clients
-                if (Main.netMode == NetmodeID.Server && Main.GameUpdateCount % 300 == 0)
-                {
-                    for (int i = 0; i < QueuedEvents.Count; i++)
-                    {
-                        if (QueuedEvents[i].condition())
-                        {
-                            //Add the network event to the list of events that need to be drawn. These will be sent to the client once we're done here.
-                            if (QueuedEvents[i].visible && QueuedEvents[i].eventCooldownTimer < 300)
-                            {
-                                NetworkEvents.Add(new NetworkEvent(EnabledEvents[i].centerpoint, EnabledEvents[i].radius, EnabledEvents[i].dustID, EnabledEvents[i].square, true));
-                            }
-                        }
-                    }
-
-                    SendDrawnEvents();
-                }
+                }                
             }
-            
-            
+
+            //Send events that need to be drawn to the clients
+            if (Main.netMode == NetmodeID.Server && Main.GameUpdateCount % 150 == 0)
+            {
+                for (int i = 0; i < QueuedEvents.Count; i++)
+                {
+                    if (QueuedEvents[i].condition())
+                    {
+                        //Add the network event to the list of events that need to be drawn. These will be sent to the client once we're done here.
+                        if (QueuedEvents[i].visible && QueuedEvents[i].eventCooldownTimer < 300)
+                        {
+                            if (QueuedEvents[i].centerpoint.Y < 2000)
+                            {
+                                UsefulFunctions.BroadcastText("Adding broken centerpoint");
+                            }
+
+                            bool duplicate = false;
+                            for (int j = 0; j < NetworkEvents.Count; j++)
+                            {
+                                if (NetworkEvents[j].centerpoint == QueuedEvents[i].centerpoint)
+                                {
+                                    duplicate = true;
+                                }
+                            }
+                            if (!duplicate)
+                            {
+                                NetworkEvents.Add(new NetworkEvent(QueuedEvents[i].centerpoint, QueuedEvents[i].radius, QueuedEvents[i].dustID, QueuedEvents[i].square, true));
+                            }
+                        }
+                    }
+                }
+
+                SendDrawnEvents();
+            }
+
             //Run any active events
             for (int i = 0; i < RunningEvents.Count; i++)
             {
@@ -1227,6 +1264,7 @@ namespace tsorcRevamp
                     }
                     else
                     {
+                        UsefulFunctions.BroadcastText("Resetting event");
                         QueuedEvents[i].eventCooldownTimer = 300;
                         EnabledEvents.Add(QueuedEvents[i]);
                         QueuedEvents.Remove(QueuedEvents[i]);
@@ -1236,21 +1274,41 @@ namespace tsorcRevamp
         }
 
         public static void SendDrawnEvents()
-        {
+        {            
             ModPacket eventPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
             eventPacket.Write((byte)tsorcPacketID.SyncEventDust);
             eventPacket.Write(NetworkEvents.Count);
+            //UsefulFunctions.BroadcastText("Sending " + NetworkEvents.Count + " event(s)");
 
+            int i = 0;
             foreach (NetworkEvent thisEvent in NetworkEvents)
             {
+                UsefulFunctions.BroadcastText("Sending event:");
+                i++;
                 eventPacket.WriteVector2(thisEvent.centerpoint);
-                eventPacket.Write(thisEvent.radius);
-                eventPacket.Write(thisEvent.dustID);
+                UsefulFunctions.BroadcastText("Centerpoint: " + thisEvent.centerpoint);
+                eventPacket.Write((float)thisEvent.radius);
+                UsefulFunctions.BroadcastText("Radius: " + thisEvent.radius);
+                eventPacket.Write((int)thisEvent.dustID);
+                UsefulFunctions.BroadcastText("DustID:" + thisEvent.dustID);
                 eventPacket.Write(thisEvent.square);
+                //UsefulFunctions.BroadcastText("Square:" + thisEvent.square);
                 eventPacket.Write(thisEvent.queued);
+                UsefulFunctions.BroadcastText("Queued:" + thisEvent.queued);
+
+                if (thisEvent.queued)
+                {
+                    UsefulFunctions.BroadcastText("Sending queued event");
+                }
+                if (thisEvent.centerpoint.Y < 2000)
+                {
+                    UsefulFunctions.BroadcastText("Sending broken centerpoint y " + thisEvent.centerpoint.Y);
+                }
             }
 
             eventPacket.Send();
+
+            NetworkEvents = new List<NetworkEvent>();
         }
 
         public static void DrawNetworkEvents(Player player)
@@ -1258,28 +1316,32 @@ namespace tsorcRevamp
             //Check if the player is near any networked events and give them the peace candle buff if so
             if (NetworkEvents != null)
             {
-                for (int i = 0; i < NetworkEvents.Count; i++)
+                for (int i = NetworkEvents.Count - 1; i >= 0 && NetworkEvents.Count > 0; i--)
                 {
+                    if (NetworkEvents[i].queued)
+                    {
+                        //Main.NewText("queued");
+                    }
                     float distance = Vector2.DistanceSquared(player.position, NetworkEvents[i].centerpoint);
+
                     if (!NetworkEvents[i].square)
                     {
-                        //If the player is nearby, display some dust to make the region visible to them
-                        //This has a Math.Sqrt in it, but that's fine because this code only runs for the handful-at-most events that will be onscreen at a time
                         if (distance < 6000000)
                         {
-                            DrawCircularEvent(NetworkEvents[i].centerpoint, NetworkEvents[i].radius, NetworkEvents[i].dustID, false);
+                            DrawCircularEvent(NetworkEvents[i].centerpoint, NetworkEvents[i].radius, NetworkEvents[i].dustID, NetworkEvents[i].queued);
                         }
                         if (distance < NetworkEvents[i].radius * 6)
                         {
                             player.AddBuff(BuffID.PeaceCandle, 2);
                         }
 
-                        if (distance < NetworkEvents[i].radius)
+                        if (distance < NetworkEvents[i].radius && !NetworkEvents[i].queued && !Main.LocalPlayer.dead)
                         {
                             for (int j = 0; j < 100; j++)
                             {
                                 Dust.NewDustPerfect(NetworkEvents[i].centerpoint, NetworkEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
                             }
+                            NetworkEvents.Remove(NetworkEvents[i]);
                         }
                     }
                     //Do the same thing, but square
@@ -1288,19 +1350,21 @@ namespace tsorcRevamp
                         float sqrtRadius = (float)Math.Sqrt(NetworkEvents[i].radius);
                         if (distance < 6000000)
                         {
-                            DrawSquareEvent(NetworkEvents[i].centerpoint, NetworkEvents[i].radius, NetworkEvents[i].dustID, false);
+                            DrawSquareEvent(NetworkEvents[i].centerpoint, NetworkEvents[i].radius, NetworkEvents[i].dustID, NetworkEvents[i].queued);
                         }
 
-                        if ((Math.Abs(player.position.X - NetworkEvents[i].centerpoint.X) < sqrtRadius) && (Math.Abs(player.position.Y - NetworkEvents[i].centerpoint.Y) < sqrtRadius))
+                        if (!NetworkEvents[i].queued && !Main.LocalPlayer.dead && (Math.Abs(player.position.X - NetworkEvents[i].centerpoint.X) < sqrtRadius) && (Math.Abs(player.position.Y - NetworkEvents[i].centerpoint.Y) < sqrtRadius))
                         {
                             for (int j = 0; j < 100; j++)
                             {
                                 Dust.NewDustPerfect(NetworkEvents[i].centerpoint, NetworkEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
                             }
+                            NetworkEvents.Remove(NetworkEvents[i]);
                         }
                     }
                 }
             }
+
         }
 
         public static bool IsEventDisabled(ScriptedEvent currentEvent)
@@ -1585,7 +1649,7 @@ namespace tsorcRevamp
             //Player position is stored as 16 times block distances
             centerpoint = rangeCenterpoint * 16;
             //Radius is stored squared, because comparing the squares of distances is WAY faster than comparing their true values
-            radius = (rangeRadius * 16) * (rangeRadius * 16);
+            radius =  (float)Math.Pow(rangeRadius * 16, 2);
 
             if (npcs == null)
             {
@@ -1811,6 +1875,8 @@ namespace tsorcRevamp
 
         public void EndEvent(bool eventCompleted)
         {
+
+            UsefulFunctions.BroadcastText("Ending event with status " + eventCompleted);
             //Save the event if it's marked as a saved event and it is 'completed' (either by a customaction forcibly ending it, or by all the NPC's being killed)
             if (eventCompleted)
             {
@@ -1840,7 +1906,9 @@ namespace tsorcRevamp
                         NPC thisNPC = thisEventNPC.npc;
                         if (thisNPC.active && thisNPC.type == thisEventNPC.type && !thisNPC.boss)
                         {
+                            UsefulFunctions.BroadcastText("Despawning NPC");
                             thisNPC.active = false;
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, thisNPC.whoAmI);
                             for (int i = 0; i < 60; i++)
                             {
                                 Dust.NewDustDirect(thisNPC.position, thisNPC.width, thisNPC.height, dustID, Main.rand.Next(-5, 5), Main.rand.Next(-12, 12), 150, default, 3f).noGravity = true;
@@ -1888,6 +1956,10 @@ namespace tsorcRevamp
 
         public NetworkEvent(Vector2 position, float range, int DustType, bool squareRange, bool queuedEvent)
         {
+            if(position.Y < 2000)
+            {
+                UsefulFunctions.BroadcastText("Broken center");
+            }
             centerpoint = position;
             radius = range;
             dustID = DustType;
