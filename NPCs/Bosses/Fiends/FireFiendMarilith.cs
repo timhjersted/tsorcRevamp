@@ -129,9 +129,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 MoveIndex = 0;
             }
 
-            MoveIndex = 3;
-
-            //Main.NewText(Main.dust);
             CurrentMove.Move();
 
             for(int i = 0; i < Main.maxPlayers; i++)
@@ -289,34 +286,40 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
         //Marilith aimes a set of either 5 red or one blue targeting laser near the player, aimed at their predicted future position
         //One second later she fires either a barrage of inferno blasts from the incineration tome if it's red, or a bolt of lightning if it's blue
+
+        Vector2 targetVector;
         private void Barrage()
         {
             MarilithFloat();
             if(MoveTimer % 60 == 0)
             {
                 float distance = NPC.Distance(Target.Center);
-                Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, distance / 30);
+                targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, distance / 30);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
-                targetVector += Target.velocity;
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
-                targetVector += Target.velocity * 2;
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+                
+                
 
                 targetVector = Main.rand.NextVector2Circular(1, 1);
                 targetVector.Normalize();
+                //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector.RotatedBy(MathHelper.PiOver2), ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+                //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector.RotatedBy(MathHelper.Pi), ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+                //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector.RotatedBy(MathHelper.PiOver2 * 3), ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+            }
+            if(MoveTimer % 60 == 1)
+            {
+                targetVector += Target.velocity;
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector.RotatedBy(MathHelper.PiOver2), ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector.RotatedBy(MathHelper.Pi), ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector.RotatedBy(MathHelper.PiOver2 * 3), ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+            }
+            if (MoveTimer % 60 == 2)
+            {
+                targetVector += Target.velocity * 2;
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
             }
 
-            if (MoveTimer % 120 == 0)
+            Vector2 randomVel = Main.rand.NextVector2Circular(1, 1);
+            if (MoveTimer % 6 == 5)
             {
-                int projectiles = Main.rand.Next(10, 20);
-                for (int i = 0; i < projectiles; i++)
-                {
-                    //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(6, 0).RotatedBy(i * MathHelper.TwoPi / projectiles), ModContent.ProjectileType<MarilithHoldBall>(), holdBallDamage, 0.5f, Main.myPlayer);
-                }
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + randomVel * 8, randomVel, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
             }
 
             if (MoveTimer >= 900)

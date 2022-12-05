@@ -45,6 +45,7 @@ namespace tsorcRevamp.Items.BossItems
             {
                 UsefulFunctions.BroadcastText("You think death is the end? You haven't begun to understand my powers, Red... ", 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>());
+                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>());
             }
             return true;
         }

@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using On.Terraria.Utilities;
 using ReLogic.Graphics;
@@ -15,13 +15,13 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.Personalities;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.UI;
 using Terraria.DataStructures;
+using tsorcRevamp.Projectiles.Enemy.Marilith;
 
 namespace tsorcRevamp
 {
@@ -88,7 +88,47 @@ namespace tsorcRevamp
             On.Terraria.DataStructures.PlayerDrawLayers.DrawPlayer_TransformDrawData += PaperMarioMode;
             On.Terraria.Player.VanillaPreUpdateInventory += Player_VanillaPreUpdateInventory;
 
+            On.Terraria.Main.Draw += Main_Draw;
         }
+
+        
+        //Changing the rendertarget destroys everything currently in it
+        //So we have to do it here, before the game draws anything else
+        private static void Main_Draw(On.Terraria.Main.orig_Draw orig, Main self, GameTime gameTime)
+        {
+            if (Main.IsGraphicsDeviceAvailable)
+            {
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i] != null && Main.projectile[i].active)
+                    {
+                        //I really should just make one "Lightning" class that all these inherit from
+                        //But also ¯\_(ツ)_/¯
+                        if (Main.projectile[i].ModProjectile is MarilithLightning)
+                        {
+                            MarilithLightning lightning = (MarilithLightning)Main.projectile[i].ModProjectile;
+                            if (lightning.lightningTarget == null)
+                            {
+                                lightning.CreateRenderTarget();
+                            }
+                        }
+                        if (Main.projectile[i].ModProjectile is MarilithLightning)
+                        {
+                            MarilithLightning lightning = (MarilithLightning)Main.projectile[i].ModProjectile;
+                            if (lightning.lightningTarget == null)
+                            {
+                                lightning.CreateRenderTarget();
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            orig(self, gameTime);
+        }
+
+       
 
         //I hate that this required a method swap, but unfortunately this does in fact require a method swap. It checks this *right* before applying the movement update.
         private static void Player_VanillaPreUpdateInventory(On.Terraria.Player.orig_VanillaPreUpdateInventory orig, Player self)
@@ -507,6 +547,8 @@ namespace tsorcRevamp
 
         private static void DrawProjectilesPatch(On.Terraria.Main.orig_DrawProjectiles orig, Main self)
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             orig(self);
             
             //Draw all the additive lasers in one big batch
@@ -563,6 +605,9 @@ namespace tsorcRevamp
                 }
             }
             Main.spriteBatch.End();
+
+            //Main.NewText(stopwatch.Elapsed);
+            stopwatch.Stop();
         }
 
         private static void PotionBagLootAllPatch(On.Terraria.UI.ChestUI.orig_LootAll orig)

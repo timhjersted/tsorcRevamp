@@ -62,18 +62,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         public override void AI()
         {
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            if (OptionSpawned == false)
-            {
-                OptionId = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>(), NPC.whoAmI);
-                if (Main.netMode == 2 && OptionId < 200)
-                {
-                    NetMessage.SendData(23, -1, -1, null, OptionId, 0f, 0f, 0f, 0);
-                }
-                Main.npc[OptionId].velocity.Y = -10;
-                OptionSpawned = true;
-            }
-
-            NPC.netUpdate = false;
+            
             NPC.ai[0]++; // Timer Scythe
 
             NPC.ai[1]++; // Timer Teleport

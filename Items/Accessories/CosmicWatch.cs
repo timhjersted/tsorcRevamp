@@ -51,6 +51,8 @@ namespace tsorcRevamp.Items.Accessories
             {
                 ModPacket timePacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
                 timePacket.Write(tsorcPacketID.SyncTimeChange);
+                timePacket.Write(!Main.dayTime);
+                timePacket.Write(0);
                 timePacket.Send();
             }
             return true;

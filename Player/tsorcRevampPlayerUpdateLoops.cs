@@ -1091,7 +1091,10 @@ namespace tsorcRevamp
             if (GiveBossZen && ModContent.GetInstance<tsorcRevampConfig>().BossZenConfig)
             {
                 Player.AddBuff(ModContent.BuffType<BossZenBuff>(), 2, false);
-                Player.AddBuff(ModContent.BuffType<GravityField>(), 2, false);
+                if (Player.position.Y < 3200)
+                {
+                    Player.AddBuff(ModContent.BuffType<GravityField>(), 2, false);
+                }
             }
             #endregion
             #region boss magnet

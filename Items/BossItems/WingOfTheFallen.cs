@@ -40,6 +40,7 @@ namespace tsorcRevamp.Items.BossItems
             {
                 UsefulFunctions.BroadcastText("It was a mistake to summon me... ", 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>());
+                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>());
             }
             return true;
         }

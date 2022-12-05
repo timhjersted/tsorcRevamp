@@ -1047,15 +1047,19 @@ namespace tsorcRevamp
             {
                 if (Main.netMode == NetmodeID.Server)
                 {
-                    Main.dayTime = !Main.dayTime;
-                    Main.time = 0;
+                    Main.dayTime = reader.ReadBoolean();
+                    Main.time = reader.ReadInt32();
 
                     if (Main.dayTime)
                     {
-                        UsefulFunctions.BroadcastText("You shift time forward and a new day begins...", new Color(175, 75, 255));
+                        UsefulFunctions.BroadcastText("You shift time forward and a new day begins...", Color.Orange);
                     }
-                    else UsefulFunctions.BroadcastText("You shift time forward and a new night begins...", new Color(175, 75, 255));
+                    else
+                    {
+                        UsefulFunctions.BroadcastText("You shift time forward and a new night begins...", new Color(175, 75, 255));
+                    }
 
+                    //Sync it to clients
                     NetMessage.SendData(MessageID.WorldData);
                 }
             }
@@ -1152,6 +1156,14 @@ namespace tsorcRevamp
                 {
                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
                 }
+            }
+            else if (message == tsorcPacketID.SyncNPCExtras)
+            {
+                int npcIndex = reader.ReadInt32();
+                Main.npc[npcIndex].lifeMax = reader.ReadInt32();
+                Main.npc[npcIndex].defense = reader.ReadInt32();
+                Main.npc[npcIndex].damage = reader.ReadInt32();
+                Main.npc[npcIndex].value = reader.ReadInt32();
             }
 
 
@@ -2145,6 +2157,7 @@ namespace tsorcRevamp
         public const byte SyncPlayerDodgeroll = 6;
         public const byte SyncBonfire = 7;
         public const byte SpawnNPC = 8;
+        public const byte SyncNPCExtras = 9;
     }
 
     //config moved to separate file

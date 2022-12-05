@@ -17,17 +17,25 @@ namespace tsorcRevamp.NPCs
 {
     public class tsorcRevampGlobalNPC : GlobalNPC
     {
-
+        public override bool InstancePerEntity => true;
 
         float enemyValue;
         float multiplier = 1f;
         float divisorMultiplier = 1f;
         int DarkSoulQuantity;
 
+        //Stores the event this NPC belongs to
+        public ScriptedEvent ScriptedEventOwner;
+
+        //Stores which NPC in that event this is
+        public int ScriptedEventIndex;
+
+        //Stores the targeting, tracking, and despawning information for a NPC
+        NPCDespawnHandler despawnHandler;
+
         //Whatever custom expert scaling we want goes here. For reference 1 eliminates all expert mode doubling, and 2 is normal expert mode scaling.
         public static double expertScale = 2;
 
-        public override bool InstancePerEntity => true;
         public bool DarkInferno = false;
         public bool CrimsonBurn = false;
         public bool ToxicCatDrain = false;
@@ -403,8 +411,34 @@ namespace tsorcRevamp.NPCs
                         {
                             Main.StartInvasion();
                         }
+                        tsorcRevampWorld.PopulatePairedBosses();
+                        //Paired bosses have to have their slain entries work different
+                        if (tsorcRevampWorld.PairedBosses.Contains(npc.type)) {
+                            for (int i = 0; i < tsorcRevampWorld.PairedBosses.Count; i++)
+                            {
+                                if (tsorcRevampWorld.PairedBosses[i] == npc.type)
+                                {
+                                    int pairedNPCOffset = -1;
+                                    if (i % 2 == 0)
+                                    {
+                                        pairedNPCOffset = 1;
+                                    }
 
-                        tsorcRevampWorld.Slain.Add(npc.type, 1);
+                                    //If the other boss is not alive, then add them both. If not, don't.
+                                    if (!NPC.AnyNPCs(tsorcRevampWorld.PairedBosses[i + pairedNPCOffset]))
+                                    {
+                                        tsorcRevampWorld.Slain.Add(npc.type, 1);
+                                        tsorcRevampWorld.Slain.Add(tsorcRevampWorld.PairedBosses[i + pairedNPCOffset], 1);
+                                    }
+
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            tsorcRevampWorld.Slain.Add(npc.type, 1);
+                        }
 
                         if (Main.netMode == NetmodeID.Server)
                         {
@@ -469,64 +503,23 @@ namespace tsorcRevamp.NPCs
 
 
             #region Event saving and custom drops code
-            if (tsorcScriptedEvents.RunningEvents != null && tsorcScriptedEvents.RunningEvents.Count > 0)
-            {
-                foreach (ScriptedEvent thisEvent in tsorcScriptedEvents.RunningEvents)
-                {
-                    if (thisEvent.spawnedNPC != null && thisEvent.spawnedNPC.active && thisEvent.spawnedNPC.whoAmI == npc.whoAmI)
-                    {
-                        thisEvent.npcDead = true;
-                        if (thisEvent.CustomDrops != null && thisEvent.CustomDrops.Count > 0)
-                        {
-                            for (int j = 0; j < thisEvent.CustomDrops.Count; j++)
-                            {
-                                Item.NewItem(npc.GetSource_Loot(), npc.Center, thisEvent.CustomDrops[j], thisEvent.DropAmounts[j]);
-                            }
-                        }
-                    }
-                    if (thisEvent.spawnedNPCs != null && thisEvent.spawnedNPCs.Count > 0)
-                    {
-                        for (int i = 0; i < thisEvent.spawnedNPCs.Count; i++)
-                        {
-                            if (thisEvent.spawnedNPCs[i].active && thisEvent.spawnedNPCs[i].whoAmI == npc.whoAmI)
-                            {
-                                thisEvent.killedNPCs[i] = true;
-                                if (thisEvent.CustomDrops != null && thisEvent.CustomDrops.Count > 0)
-                                {
-                                    if (!thisEvent.onlyLastEnemy)
-                                    {
-                                        for (int j = 0; j < thisEvent.CustomDrops.Count; j++)
-                                        {
-                                            Item.NewItem(npc.GetSource_Loot(), npc.Center, thisEvent.CustomDrops[j], thisEvent.DropAmounts[j]);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        bool oneAlive = false;
-                                        foreach (bool thisBool in thisEvent.killedNPCs)
-                                        {
-                                            if (thisBool == false)
-                                            {
-                                                oneAlive = true;
-                                            }
-                                        }
 
-                                        if (!oneAlive)
-                                        {
-                                            for (int j = 0; j < thisEvent.CustomDrops.Count; j++)
-                                            {
-                                                Item.NewItem(npc.GetSource_Loot(), npc.Center, thisEvent.CustomDrops[j], thisEvent.DropAmounts[j]);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+            if (ScriptedEventOwner != null && ScriptedEventOwner.eventNPCs[ScriptedEventIndex].type == npc.type)
+            {
+                ScriptedEventOwner.eventNPCs[ScriptedEventIndex].killed = true;
+
+                if (ScriptedEventOwner.eventNPCs[ScriptedEventIndex].extraLootItems != null)
+                {
+                    for (int i = 0; i < ScriptedEventOwner.eventNPCs[ScriptedEventIndex].extraLootItems.Count; i++)
+                    {
+                        Item.NewItem(npc.GetSource_Loot(), npc.Center, ScriptedEventOwner.eventNPCs[ScriptedEventIndex].extraLootItems[i], ScriptedEventOwner.eventNPCs[ScriptedEventIndex].extraLootAmounts[i]);
                     }
                 }
             }
             #endregion
         }
+
+        
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {

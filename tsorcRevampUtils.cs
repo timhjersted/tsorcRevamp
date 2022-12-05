@@ -459,6 +459,26 @@ namespace tsorcRevamp
 
         }
 
+        
+        ///<summary> 
+        ///This syncs a few extra stats that the default SyncNPC does not
+        ///</summary>         
+        ///<param name="npc">The NPC to be synced</param>
+        public static void SyncNPCExtraStats(NPC npc)
+        {
+            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npc.whoAmI);
+            //TODO: Sync maxLife, defense, damage, value
+            ModPacket npcExtrasPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+            npcExtrasPacket.Write(tsorcPacketID.SyncNPCExtras);
+            npcExtrasPacket.Write(npc.lifeMax);
+            npcExtrasPacket.Write(npc.defense);
+            npcExtrasPacket.Write(npc.damage);
+            npcExtrasPacket.Write(npc.value);
+            npcExtrasPacket.Send();
+        }
+
+        
+
         ///<summary> 
         ///Broadcasts a message from the server to all players. Safe to use in either multiplayer or singleplayer contexts, where it simply defaults to a NewText() instead.
         ///It does nothing when run on a multiplayer client, as that would make it spam a new copy of the message for every client that runs it. Use NewText() for client-only code like items!

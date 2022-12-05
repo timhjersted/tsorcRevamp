@@ -15,6 +15,9 @@ namespace tsorcRevamp.NPCs
 {
     class VanillaChanges : GlobalNPC
     {
+
+
+
         #region SetDefaults
 
         public override void SetDefaults(NPC npc)

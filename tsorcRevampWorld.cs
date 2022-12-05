@@ -29,7 +29,9 @@ namespace tsorcRevamp
         public static bool TheEnd;
         public static bool CustomMap;
 
-        public static Dictionary<int, int> Slain;
+        public static Dictionary<int, int> Slain; 
+        
+        public static List<int> PairedBosses;
 
         public static List<Vector2> LitBonfireList;
 
@@ -49,6 +51,8 @@ namespace tsorcRevamp
             initialized = false;
             tsorcScriptedEvents.InitializeScriptedEvents();
             MapMarkers = new();
+
+            PopulatePairedBosses();
         }
 
         public override void SaveWorldData(TagCompound tag)
@@ -1245,6 +1249,26 @@ namespace tsorcRevamp
             {
                 return ((float)Math.Log(SHMDowned + 1, 5) * 0.13f) + 1;
             }
+        }
+
+        public static void PopulatePairedBosses()
+        {
+            PairedBosses = new List<int>();
+            //Wyvern Mage and his wyvern
+            PairedBosses.Add(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>());
+            PairedBosses.Add(ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>());
+
+            //Slogra and Gaibon
+            PairedBosses.Add(ModContent.NPCType<NPCs.Bosses.Slogra>());
+            PairedBosses.Add(ModContent.NPCType<NPCs.Bosses.Gaibon>());
+
+            //Wyvern Mage Shadow and its disciple
+            PairedBosses.Add(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>());
+            PairedBosses.Add(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>());
+
+            //Serris and Serris X
+            PairedBosses.Add(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>());
+            PairedBosses.Add(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>());
         }
     }
 }

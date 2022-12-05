@@ -1014,7 +1014,6 @@ namespace tsorcRevamp
 
         public override void OnRespawn(Player player)
         {
-            tsorcScriptedEvents.RefreshEvents();
             player.statLife = player.statLifeMax2;
             player.AddBuff(ModContent.BuffType<Invincible>(), 360);
             DeathText = PickDeathText();

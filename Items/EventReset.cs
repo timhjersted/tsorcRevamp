@@ -26,6 +26,7 @@ namespace tsorcRevamp.Items
         public override bool? UseItem(Player player)
         {
             tsorcScriptedEvents.InitializeScriptedEvents();
+            tsorcRevampWorld.Slain = new System.Collections.Generic.Dictionary<int, int>();
             return true;
         }
     }

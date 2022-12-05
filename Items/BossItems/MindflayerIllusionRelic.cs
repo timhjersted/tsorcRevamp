@@ -67,17 +67,10 @@ namespace tsorcRevamp.Items.BossItems
 
             if (Main.netMode != NetmodeID.SinglePlayer && (player.whoAmI == Main.LocalPlayer.whoAmI))
             {
-
-                if (!Main.dayTime) //If it's already night, we have to flip it turnways twice
-                {
-                    ModPacket timePacket2 = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                    timePacket2.Write(tsorcPacketID.SyncTimeChange);
-                    timePacket2.Send();
-                }
-
-                //If it's day, set it to night
                 ModPacket timePacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
                 timePacket.Write(tsorcPacketID.SyncTimeChange);
+                timePacket.Write(false);
+                timePacket.Write(0);
                 timePacket.Send();
             }
             else

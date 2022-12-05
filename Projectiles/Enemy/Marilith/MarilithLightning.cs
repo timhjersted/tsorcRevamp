@@ -66,17 +66,18 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             CastLight = true;
         }
 
-
+        public static SoundStyle ThunderSoundStyle = new SoundStyle("Terraria/Sounds/Thunder_0");
+        public SoundStyle ThunderSound = new SoundStyle("Terraria/Sounds/Thunder_0");
         public override void AI()
         {
-            //System.Diagnostics.Stopwatch thisWatch = new System.Diagnostics.Stopwatch();
-            //thisWatch.Start();
+            System.Diagnostics.Stopwatch thisWatch = new System.Diagnostics.Stopwatch();
+            thisWatch.Start();
             if (IsAtMaxCharge)
             {
                 displayDuration--;
             }
 
-            if (branches == null && Main.rand.NextBool(3))
+            if (branches == null)
             {
                 randomness = 25;
                 SetLaserPosition();
@@ -86,18 +87,19 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
 
             Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
+            int dustSpawned = 0;
 
             //Dust along lightning lines
+            
             if (FiringTimeLeft == 28)
             {
                 int dustCount = 4;
                 if (branches != null && branches.Count > 0)
                 {
-                    SoundStyle ThunderSound = new SoundStyle("Terraria/Sounds/Thunder_0");
                     float pitch = Main.rand.NextFloat(-0.2f, 0.2f);
-                    Terraria.Audio.SoundEngine.PlaySound(ThunderSound with { Volume = 0.4f, Pitch = pitch }, branches[0][0]);
-                    Terraria.Audio.SoundEngine.PlaySound(ThunderSound with { Volume = 0.4f, Pitch = pitch }, branches[0][branches[0].Count / 2]);
-                    Terraria.Audio.SoundEngine.PlaySound(ThunderSound with { Volume = 0.4f, Pitch = pitch }, branches[0][branches[0].Count - 1]);
+                    //Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f, Pitch = pitch }, branches[0][0]);
+                    //Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f, Pitch = pitch }, branches[0][branches[0].Count / 2]);
+                    //Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f, Pitch = pitch }, branches[0][branches[0].Count - 1]);
 
                     for (int i = 0; i < branches.Count; i++)
                     {
@@ -119,8 +121,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                                         lerpPercent = 0;
                                     }
 
+                                    
                                     for (int k = 0; k < dustCount; k++)
                                     {
+                                        dustSpawned++;
                                         Dust thisDust = Dust.NewDustPerfect(branches[i][j] + diff * k, DustID.AncientLight, Scale: scale);
                                         thisDust.noLight = true;
                                         thisDust.noGravity = true;
@@ -135,7 +139,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 }
             }
 
-            if (FiringTimeLeft > 5)
+            if (FiringTimeLeft == 28)
             {
                 for (int i = 0; i < Main.maxPlayers; i++)
                 {
@@ -144,9 +148,32 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 }
             }
 
-            //thisWatch.Stop();
+            thisWatch.Stop();
             //if (thisWatch.ElapsedMilliseconds > 1)
+            if (FiringTimeLeft == 28)
+            {
                 //Main.NewText("AI: " + thisWatch.Elapsed);
+                int branchCount = 0;
+                for (int i = 0; i < branches.Count; i++)
+                {
+                    for (int j = 0; j < branches[i].Count - 1; j++)
+                    {
+                        branchCount++;
+                    }
+                }
+
+                //Main.NewText("Branches: " + branchCount);
+
+                int dustCounter = 0;
+                for(int i = 0; i < Main.maxDust; i++)
+                {
+                    if (Main.dust[i].active)
+                    {
+                        dustCounter++;
+                    }
+                }
+                //Main.NewText("dustCounter: " + dustCounter);
+            }
         }
 
         public bool randomized = false;
@@ -300,67 +327,15 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
         public int displayDuration = 0;
 
-        RenderTarget2D lightningTarget;
+        public RenderTarget2D lightningTarget;
         Vector2 storedPosition;
         public static ArmorShaderData data;
         public override bool PreDraw(ref Color lightColor)
         {
             //Don't draw anything if it hasn't generated the branches
-            if (branches == null || branches.Count == 0)
+            if (branches == null || branches.Count == 0 || lightningTarget == null)
             {
                 return false;
-            }
-
-            //If the target hasn't been created yet
-            if (lightningTarget == null)
-            {
-                //End the old spritebatch 
-                Main.spriteBatch.End();
-
-                //Store a reference to the device to simplify code
-                GraphicsDevice device = Main.graphics.GraphicsDevice;
-
-                //Store the old bindings
-                RenderTargetBinding[] bindings = device.GetRenderTargets();
-
-                //Set the render target to null and clear it before using the new one
-                //This doesn't seem to fix the issue. But vanilla does it before setting the render target, so I thought it was worth a shot.
-                device.SetRenderTargets(null);
-                device.Clear(Color.Transparent);
-
-
-                //Create the target
-                lightningTarget = new RenderTarget2D(device, device.PresentationParameters.BackBufferWidth, device.PresentationParameters.BackBufferHeight, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
-                
-                //Set the device target to it
-                device.SetRenderTarget(lightningTarget);
-
-                //Clear it
-                //Again, this doesn't seem to do anything since that target was just freshly created. Is it necessary?
-                device.Clear(Color.Transparent);
-
-                //Start a new "default" spritebatch and draw the lightning to the target
-                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-                GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.LivingOceanDye), Main.LocalPlayer).Apply();
-                DrawSegments();
-                Main.spriteBatch.End();
-
-                //Store the current screen position at time of drawing so it can be used to calculate the draw offset later
-                storedPosition = Main.screenPosition;
-
-                //Re-set the old bindings
-                //If I do this instead, then everything drawn *before* the lightning (tiles, backrounds, etc) is blacked out this frame
-                device.SetRenderTargets(bindings);
-
-                //Alternatively, set the render target to null
-                //If I do this, then everything drawn *after* the lightning (other projectiles etc) does not draw this frame
-                //device.SetRenderTarget(null);
-
-                //If I do both, predictibly, the entire screen is blacked out this frame
-                //If I do neither, then the entire rest of the world is drawn to this rendertarget. That is even worse.
-
-                //Re-start the spritebatch
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
             }
 
             //Draw the target
@@ -406,6 +381,41 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             return false;
         }
         
+        public void CreateRenderTarget()
+        {
+            //Store a reference to the graphics device to simplify code
+            GraphicsDevice device = Main.graphics.GraphicsDevice;
+
+            //Create a rendertarget. Instead of drawing all 200 lightning branches every frame, we will draw them once and store the results in this.
+            //Once that is done, we can simply draw this one rendertarget to display the full lightning strike
+            lightningTarget = new RenderTarget2D(device, device.PresentationParameters.BackBufferWidth * 2, device.PresentationParameters.BackBufferHeight * 2, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
+
+            //Set the device target to the new rendertarget
+            device.SetRenderTarget(lightningTarget);
+
+            //Clear it, so that whatever was previously stored on the backbuffer (like other lightning) doesn't get put in this target
+            device.Clear(Color.Transparent);
+
+            //Start a new "default" texture-sorted spritebatch
+            Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend);
+
+            //Activate the living ocean shader to make it look nicer
+            GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.LivingOceanDye), Main.LocalPlayer).Apply();
+
+            //Draw the lightning
+            DrawSegments();
+
+            //End the spritebatch
+            Main.spriteBatch.End();
+
+            //Store the current screen position at time of drawing so it can be used to calculate where to draw the lightning later
+            storedPosition = Main.screenPosition;
+
+            //Re-set the old bindings
+            //If I do this instead, then everything drawn *before* the lightning (tiles, backrounds, etc) is blacked out this frame
+            //device.SetRenderTargets(bindings);
+            device.SetRenderTarget(null);
+        }
 
         public void DrawPrims()
         {
@@ -528,7 +538,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             for (; i <= distance; i += (bodyRect.Height) * scale)
             {
                 Vector2 drawStart = startPos + i * diff;
-                if (screenRect.Contains(drawStart.ToPoint()))
+                //if (screenRect.Contains(drawStart.ToPoint()))
                 {
                     Main.EntitySpriteDraw(texture, drawStart - Main.screenPosition, bodyRect, color, rotation + MathHelper.PiOver2, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);
                 }
@@ -546,41 +556,32 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         public void CustomCollision(Player target)
         {
             Rectangle targetHitbox = target.Hitbox;
-            if (branches == null || branches.Count == 0 || branches[0].Count == 0 || FiringTimeLeft != 28)
+            if (branches == null || branches.Count == 0 || branches[0].Count == 0)
             {
                 return;
             }
 
-            if (!IsAtMaxCharge)
-            {
-                if (!(Charge == MaxCharge / 2 || Charge == (MaxCharge / 3) - 5 || Charge == MaxCharge / 3))
-                {
-                    return;
-                }
-            }
-
-            bool collides = false;
             float point = 0;
 
-            if (branches.Count > 0 && !collides)
+            Vector2 topLeft = targetHitbox.TopLeft();
+            Vector2 size = targetHitbox.Size();
+
+            for (int i = 0; i < branches.Count; i++)
             {
-                for (int i = 0; i < branches.Count; i++)
+                if (branches[i].Count > 0)
                 {
-                    if (branches[i].Count > 0)
+                    for (int j = 0; j < branches[i].Count - 1; j++)
                     {
-                        for (int j = 0; j < branches[i].Count - 1; j++)
+                        if (Collision.CheckAABBvLineCollision(topLeft, size, branches[i][j], branches[i][j + 1], 10, ref point))
                         {
-                            if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), branches[i][j], branches[i][j + 1], 10, ref point))
-                            {
-                                CanHitPlayer(target);
-                                break;
-                            }
+                            CanHitPlayer(target);
+                            return;
                         }
                     }
                 }
             }
 
-            if (!collides && Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), branches[0][0], branches[0][branches[0].Count - 1], 10, ref point))
+            if (Collision.CheckAABBvLineCollision(topLeft, size, branches[0][0], branches[0][branches[0].Count - 1], 10, ref point))
             {
                 CanHitPlayer(target);
             }
@@ -588,73 +589,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            /*
-             * 
-             * 
-             * float percentCharged = Charge / MaxCharge;
-                //float minCharge = percentCharged - 0.15f;
-                float maxCharge = percentCharged + 0.15f;
-                for (int i = 0; i < branches.Count; i++)
-                {
-                    float percentDrawn = ((float)i) / ((float)branches.Count);
-                    if (percentDrawn < maxCharge || i == 0)
-                    {
-                        for (int j = 0; j < branches[i].Count - 1; j++)
-                        {
-                            float segmentPercentDrawn = ((float)j) / ((float)branches[i].Count);
-                            if ((segmentPercentDrawn < maxCharge))
-                            {
-                                float scale = 0.3f;
-                                if (i == 0)
-                                {
-                                    scale = 0.6f;
-                                }
-                                DrawLightning(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], branches[i][j],
-                                        branches[i][j + 1], LaserTargetingHead, LaserTextureBody, LaserTargetingTail, branchLengths[i][j], branchAngles[i][j], scale, Color.Gray * scale);
-                            }
-                        }
-                    }
-                }
-            if (branches == null || branches.Count == 0 || branches[0].Count == 0)
-            {
-                return false;
-            }
-
-            if (!IsAtMaxCharge)
-            {
-                if (!(Charge == MaxCharge / 2 || Charge == (MaxCharge / 3) - 5 || Charge == MaxCharge / 3))
-                {
-                    return false;
-                }
-            }
-
-            bool collides = false;
-            float point = 0;
-
-            if (branches.Count > 0 && !collides)
-            {
-                for (int i = 0; i < branches.Count; i++)
-                {
-                    if (branches[i].Count > 0)
-                    {
-                        for (int j = 0; j < branches[i].Count - 1; j++)
-                        {
-                            if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), branches[i][j], branches[i][j + 1], 10, ref point))
-                            {
-                                collides = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (!collides && Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), branches[0][0], branches[0][branches[0].Count - 1], 10, ref point))
-            {
-                collides = true;
-            }
-            */
+        {            
             return false;
         }
 
