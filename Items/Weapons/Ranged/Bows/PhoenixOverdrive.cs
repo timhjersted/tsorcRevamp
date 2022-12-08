@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Calls forth a storm of blazing phoenixes" +
-                "\nRepeated hits cause the target to detonate");
+                "\nCarve burning scars across the sky");
         }
         public override void SetDefaults()
         {
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
 
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            type = ProjectileID.DD2PhoenixBowShot;
+            type = ModContent.ProjectileType<Projectiles.Ranged.PhoenixFlame>();
         }
 
         public override void AddRecipes()

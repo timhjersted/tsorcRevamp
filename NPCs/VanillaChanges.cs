@@ -3816,6 +3816,24 @@ namespace tsorcRevamp.NPCs
                 return false;
             }
 
+            if (npc.type == NPCID.Retinazer)
+            {
+                /*
+                NPC.NewNPCDirect(npc.GetSource_FromThis(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
+                NPC.NewNPCDirect(npc.GetSource_FromThis(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<NPCs.Bosses.Cataluminance>());
+                npc.active = false;
+                return false;
+                */
+            }
+            if (npc.type == NPCID.Spazmatism)
+            {
+                /*
+                NPC.NewNPCDirect(npc.GetSource_FromThis(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
+                npc.active = false;
+                return false;
+                */
+            }
+
             #region Lunar Towers
 
             if (npc.type == NPCID.LunarTowerNebula || npc.type == NPCID.LunarTowerSolar || npc.type == NPCID.LunarTowerStardust || npc.type == NPCID.LunarTowerVortex)

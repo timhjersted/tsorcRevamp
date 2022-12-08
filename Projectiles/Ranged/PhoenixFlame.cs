@@ -7,7 +7,7 @@ namespace tsorcRevamp.Projectiles.Ranged
 {
     class PhoenixFlame : ModProjectile
     {
-
+        //Like the DD2 Phoenix projectile, but bigger, and leaves a damaging prim trail of fire behind it
         public override void SetDefaults()
         {
             Projectile.width = 16;
