@@ -83,7 +83,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 				projectiles[i].currentAngle2 = projectiles[i - 1].currentAngle2 + 2f * (float)Math.PI / processedProjectilesCount;
 			}
 		}
-		public override void AddRecipes()
+		/*public override void AddRecipes()
 		{
 			Recipe recipe = CreateRecipe();
 
@@ -94,6 +94,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 			recipe.AddTile(TileID.DemonAltar);
 
 			recipe.Register();
-		}
+		}*/
 	}
 }
