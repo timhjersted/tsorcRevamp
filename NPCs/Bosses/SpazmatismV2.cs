@@ -49,6 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         //If this is set to anything but -1, the boss will *only* use that attack ID
         int testAttack = -1;
+        float transformationTimer;
         SpazMove CurrentMove
         {
             get => MoveList[MoveIndex];
@@ -80,7 +81,16 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void AI()
         {
-            //Main.NewText(CurrentMove.Name + ": " + MoveTimer);
+            if (NPC.realLife < 0)
+            {
+                int? catID = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Cataluminance>());
+
+                if (catID != null)
+                {
+                    NPC.realLife = catID.Value;
+                }
+            }
+            Main.NewText("Spaz: " + CurrentMove.Name + " at " + MoveTimer);
             MoveTimer++;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
@@ -113,6 +123,13 @@ namespace tsorcRevamp.NPCs.Bosses
         //Charges, firing a shotgun spread of eye fire each time it does
         void Charging()
         {
+            //Telegraph for the first second before the starting charge
+            if(MoveTimer < 60)
+            {
+                UsefulFunctions.DustRing(NPC.Center, (60 - MoveTimer) * 30, DustID.CursedTorch, 100, 10);
+                return;
+            }
+
             if (MoveTimer % 60 < 10)
             {
                 UsefulFunctions.DustRing(NPC.Center, (10 - MoveTimer % 60) * 20, DustID.CursedTorch, 100, 10);
@@ -120,7 +137,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (MoveTimer % 60 == 10)
             {
-                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15) + target.velocity;
+                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15) + target.velocity / 3f;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -137,7 +154,7 @@ namespace tsorcRevamp.NPCs.Bosses
         //Spams cursed eye fire at the player
         void Firing()
         {
-            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(250, 250), 0.5f, 90);
+            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(350, 300), 0.5f, 20);
 
             if (MoveTimer % 60 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -154,7 +171,7 @@ namespace tsorcRevamp.NPCs.Bosses
         //It erupts in geysers of neon flame
         void CursedEruptions()
         {
-            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, 350), 0.5f, 90);
+            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, 350), 0.5f, 20);
 
             
 
@@ -182,6 +199,26 @@ namespace tsorcRevamp.NPCs.Bosses
 
             MoveTimer = 0;
             MoveCounter = 0;
+        }
+        float rotationVelocity;
+        void Transform()
+        {
+            transformationTimer++;
+
+            if (transformationTimer <= 60)
+            {
+                rotationVelocity = transformationTimer / 60;
+            }
+            else
+            {
+                rotationVelocity = 1 - (transformationTimer / 60);
+            }
+
+            if (transformationTimer == 60 && !Main.dedServ)
+            {
+                //TODO spawn gore
+            }
+            NPC.rotation += rotationVelocity;
         }
         private void InitializeMoves(List<int> validMoves = null)
         {
@@ -237,7 +274,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.frameCounter = 0.0;
             }
 
-            if (NPC.life >= NPC.lifeMax / 2f)
+            if (transformationTimer >= 60)
             {
                 if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type] / 2f)
                 {
@@ -267,9 +304,8 @@ namespace tsorcRevamp.NPCs.Bosses
             return false;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.KrakenBag>()));
-        }
+
+        //TODO: Copy vanilla death effects
         public override void OnKill()
         {
             if (!Main.dedServ)
@@ -282,15 +318,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 6").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 7").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 8").Type, 1f);
-            }
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>(), 10);
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
-                }
             }
         }
     }

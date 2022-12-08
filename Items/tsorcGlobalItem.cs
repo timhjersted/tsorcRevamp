@@ -170,6 +170,21 @@ namespace tsorcRevamp.Items
             return base.PreDrawInInventory(item, spriteBatch, position, frame, drawColor, itemColor, origin, scale);
         }
 
+        public override bool? UseItem(Item item, Player player)
+        {
+            if(item.type == ItemID.MechanicalEye)
+            {
+                //Triplets
+                UsefulFunctions.BroadcastText("The [c/ff1100:Tri][c/0085ad:ple][c/49fc03:ts] have awoken!");
+                NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y - 300, ModContent.NPCType<NPCs.Bosses.Cataluminance>());
+                NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X - 200, (int)player.Center.Y - 200, ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
+                NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X + 200, (int)player.Center.Y - 200, ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
+                return true;
+            }
+
+            return base.UseItem(item, player);
+        }
+
         public override void SetDefaults(Item item)
         {
             base.SetDefaults(item);
@@ -445,7 +460,7 @@ namespace tsorcRevamp.Items
                     return false;
                 }
             }
-
+                       
             return base.OnPickup(item, player);
         }
 

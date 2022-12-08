@@ -209,6 +209,24 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ItemID.WaterWalkingBoots));
         }
     }
+
+    //TODO: Add a shader to make it glow in three colors
+    public class TripletsBag : BossBag
+    {
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Treasure Bag (The Triplets)");
+            Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+        }
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfSky>()));
+            itemLoot.Add(ItemDropRule.Common(ItemID.MechanicalWheelPiece));
+            itemLoot.Add(ItemDropRule.Common(ItemID.HallowedBar, 1, 15, 30));
+            itemLoot.Add(ItemDropRule.Common(ItemID.SoulofSight, 1, 25, 40));
+            itemLoot.Add(ItemDropRule.Common(ItemID.TwinMask, 7));
+        }
+    }
     public class WyvernMageBag : BossBag
     {
         public override void SetStaticDefaults()

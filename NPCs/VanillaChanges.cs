@@ -3818,20 +3818,13 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.Retinazer)
             {
-                /*
-                NPC.NewNPCDirect(npc.GetSource_FromThis(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
-                NPC.NewNPCDirect(npc.GetSource_FromThis(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<NPCs.Bosses.Cataluminance>());
                 npc.active = false;
                 return false;
-                */
             }
             if (npc.type == NPCID.Spazmatism)
             {
-                /*
-                NPC.NewNPCDirect(npc.GetSource_FromThis(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
                 npc.active = false;
-                return false;
-                */
+                return false;                
             }
 
             #region Lunar Towers

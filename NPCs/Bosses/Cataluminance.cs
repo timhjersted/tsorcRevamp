@@ -50,6 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         //If this is set to anything but -1, the boss will *only* use that attack ID
         int testAttack = -1;
+        float transformationTimer = 0;
         CataMove CurrentMove
         {
             get => MoveList[MoveIndex];
@@ -81,10 +82,16 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void AI()
         {
+            Main.NewText("Cat: " + CurrentMove.Name + " at " + MoveTimer);
             MoveTimer++;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
             NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+
+            if(NPC.life < NPC.lifeMax / 2 && transformationTimer < 120)
+            {
+                Transform();
+            }
 
             if (testAttack != -1)
             {
@@ -112,7 +119,7 @@ namespace tsorcRevamp.NPCs.Bosses
         //Hover to the upper right of the screen and spam homing blasts that chase the player
         void StarBlasts()
         {
-            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(300, -250), 0.5f, 20, target.velocity);
+            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(350, -300), 0.5f, 20, target.velocity);
 
             if(MoveTimer % 20 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -141,6 +148,11 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.rotation = MathHelper.Pi;
 
             //TODO: Fire a glowing beam into the sky
+
+
+            
+
+
             UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -350), 0.5f, 20);
 
             //Spawn homing stars
@@ -168,12 +180,34 @@ namespace tsorcRevamp.NPCs.Bosses
             MoveTimer = 0;
             MoveCounter = 0;
         }
+
+        float rotationVelocity;
+        void Transform()
+        {
+            transformationTimer++;
+            
+            if(transformationTimer <= 60)
+            {
+                rotationVelocity = transformationTimer / 60;
+            }
+            else
+            {
+                rotationVelocity = 1 - (transformationTimer / 60);
+            }
+
+            if (transformationTimer == 60 && !Main.dedServ)
+            {
+                //TODO spawn gore
+            }
+            NPC.rotation += rotationVelocity;
+        }
+
         private void InitializeMoves(List<int> validMoves = null)
         {
             MoveList = new List<CataMove> {
                 new CataMove(StarBlasts, CataMoveID.StarBlasts, "Star Blasts"),
-                new CataMove(Pursuit, CataMoveID.Pursuit, "Pursuit"),
-                new CataMove(Starstorm, CataMoveID.Starstorm, "Starstorm"),
+                new CataMove(Starstorm, CataMoveID.Pursuit, "Pursuit"),
+                new CataMove(Pursuit, CataMoveID.Starstorm, "Starstorm"),
                 new CataMove(TBD, CataMoveID.TBD, "TBD"),
                 };
         }
@@ -214,7 +248,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.frameCounter = 0.0;
             }
 
-            if (NPC.life >= NPC.lifeMax / 2f)
+            if (transformationTimer >= 60)
             {
                 if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type] / 2f)
                 {
@@ -257,6 +291,8 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.KrakenBag>()));
         }
+
+        //TODO: Copy vanilla death effects
         public override void OnKill()
         {
             if (!Main.dedServ)
@@ -269,15 +305,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 6").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 7").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 8").Type, 1f);
-            }
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>(), 10);
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
-                }
             }
         }
     }
