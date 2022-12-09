@@ -90,11 +90,17 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.realLife = catID.Value;
                 }
             }
+
+            if (!Main.npc[NPC.realLife].active)
+            {
+                OnKill();
+                NPC.active = false;
+            }
+
             Main.NewText("Spaz: " + CurrentMove.Name + " at " + MoveTimer);
             MoveTimer++;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
-            NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
 
             if (testAttack != -1)
             {
@@ -126,12 +132,14 @@ namespace tsorcRevamp.NPCs.Bosses
             //Telegraph for the first second before the starting charge
             if(MoveTimer < 60)
             {
+                NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
                 UsefulFunctions.DustRing(NPC.Center, (60 - MoveTimer) * 30, DustID.CursedTorch, 100, 10);
                 return;
             }
 
             if (MoveTimer % 60 < 10)
             {
+                NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
                 UsefulFunctions.DustRing(NPC.Center, (10 - MoveTimer % 60) * 20, DustID.CursedTorch, 100, 10);
             }
 
@@ -141,12 +149,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float angle = -MathHelper.Pi / 3;
-                    for (int i = 0; i < 5; i++)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 5).RotatedBy(angle), ProjectileID.CursedFlameHostile, EyeFireDamage, 0.5f, Main.myPlayer);
-                        angle += MathHelper.Pi / 6;
-                    }
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 5), ProjectileID.CursedFlameHostile, EyeFireDamage, 0.5f, Main.myPlayer);
                 }
             }
         }
@@ -154,15 +157,16 @@ namespace tsorcRevamp.NPCs.Bosses
         //Spams cursed eye fire at the player
         void Firing()
         {
-            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(350, 300), 0.5f, 20);
+            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(600, 300), 1f, 20);
+            NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
 
-            if (MoveTimer % 60 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (MoveTimer % 90 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 float angle = -MathHelper.Pi / 3;
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 3; i++)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 5).RotatedBy(angle), ProjectileID.CursedFlameHostile, EyeFireDamage, 0.5f, Main.myPlayer);
-                    angle += MathHelper.Pi / 6;
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 4).RotatedBy(angle), ProjectileID.CursedFlameHostile, EyeFireDamage, 0.5f, Main.myPlayer);
+                    angle += MathHelper.Pi / 3;
                 }
             }
         }
@@ -172,8 +176,9 @@ namespace tsorcRevamp.NPCs.Bosses
         void CursedEruptions()
         {
             UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, 350), 0.5f, 20);
+            NPC.rotation = 0;
 
-            
+
 
             //Spawn cursed geysers
             if (MoveTimer % 60 == 10 && Main.netMode != NetmodeID.MultiplayerClient)
@@ -262,30 +267,30 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void FindFrame(int frameHeight)
         {
-            int num = 1;
+            int frameSize = 1;
             if (!Main.dedServ)
             {
-                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
+                frameSize = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
             }
             NPC.frameCounter += 1.0;
             if (NPC.frameCounter >= 4.0)
             {
-                NPC.frame.Y = NPC.frame.Y + num;
+                NPC.frame.Y = NPC.frame.Y + frameSize;
                 NPC.frameCounter = 0.0;
             }
 
             if (transformationTimer >= 60)
             {
-                if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type] / 2f)
+                if (NPC.frame.Y >= frameSize * Main.npcFrameCount[NPC.type] / 2f)
                 {
                     NPC.frame.Y = 0;
                 }
             }
             else
             {
-                if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
+                if (NPC.frame.Y >= frameSize * Main.npcFrameCount[NPC.type])
                 {
-                    NPC.frame.Y = num * Main.npcFrameCount[NPC.type] / 2;
+                    NPC.frame.Y = frameSize * Main.npcFrameCount[NPC.type] / 2;
                 }
             }
         }
@@ -297,10 +302,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
             }
 
-            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle sourceRectangle = NPC.frame;
             Vector2 origin = sourceRectangle.Size() / 2f;
-            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, origin, 1, effects, 0f);
+            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, origin, 1, SpriteEffects.None, 0f);
             return false;
         }
 

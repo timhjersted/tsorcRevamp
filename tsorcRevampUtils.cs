@@ -320,6 +320,42 @@ namespace tsorcRevamp
         {
             return (float)Math.Sin(source * MathHelper.PiOver2);
         }
+        
+        ///<summary> 
+        ///Returns the closest living player to a point
+        ///</summary>         
+        ///<param name="point">The point to compare against</param>
+        public static Player GetClosestPlayer(Vector2 point)
+        {
+            int targetIndex = 0;
+            float targetDistance = float.MaxValue;
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active && !Main.player[i].dead)
+                {
+                    float distance = Main.player[i].DistanceSQ(point);
+
+                    if (distance < targetDistance)
+                    {
+                        i = targetIndex;
+                        targetDistance = distance;
+
+                    }
+                }
+            }
+
+            if (targetIndex >= 0)
+            {
+                return Main.player[targetIndex];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
 
         ///<summary> 
         ///Returns a vector pointing from a source, to a target, with a speed.

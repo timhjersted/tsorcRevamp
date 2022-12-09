@@ -14,7 +14,6 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetDefaults()
         {
-            NPC.CloneDefaults(NPCID.Retinazer);
             Main.npcFrameCount[NPC.type] = 6;
             NPC.defense = 25;
             AnimationType = -1;
@@ -89,6 +88,13 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.realLife = catID.Value;
                 }
             }
+
+            if (!Main.npc[NPC.realLife].active)
+            {
+                OnKill();
+                NPC.active = false;
+            }
+
             Main.NewText("Ret: " + CurrentMove.Name + " at " + MoveTimer);
             MoveTimer++;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
@@ -161,7 +167,7 @@ namespace tsorcRevamp.NPCs.Bosses
         //Hovers top right of the player and fires hitscan lingering lasers repeatedly
         void Firing()
         {
-            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(-300, -350), 0.7f, 20);
+            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(-500, -350), 0.7f, 20);
 
             if (MoveTimer % 20 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -242,30 +248,30 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void FindFrame(int frameHeight)
         {
-            int num = 1;
+            int frameSize = 1;
             if (!Main.dedServ)
             {
-                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
+                frameSize = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
             }
             NPC.frameCounter += 1.0;
             if (NPC.frameCounter >= 4.0)
             {
-                NPC.frame.Y = NPC.frame.Y + num;
+                NPC.frame.Y = NPC.frame.Y + frameSize;
                 NPC.frameCounter = 0.0;
             }
 
             if (transformationTimer > 60)
             {
-                if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type] / 2f)
+                if (NPC.frame.Y >= frameSize * Main.npcFrameCount[NPC.type] / 2f)
                 {
                     NPC.frame.Y = 0;
                 }
             }
             else
             {
-                if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
+                if (NPC.frame.Y >= frameSize * Main.npcFrameCount[NPC.type])
                 {
-                    NPC.frame.Y = num * Main.npcFrameCount[NPC.type] / 2;
+                    NPC.frame.Y = frameSize * Main.npcFrameCount[NPC.type] / 2;
                 }
             }
         }
@@ -281,7 +287,7 @@ namespace tsorcRevamp.NPCs.Bosses
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle sourceRectangle = NPC.frame;
             Vector2 origin = sourceRectangle.Size() / 2f;
-            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, origin, 1, effects, 0f);
+            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, origin, 1, SpriteEffects.None, 0f);
             return false;
         }
 

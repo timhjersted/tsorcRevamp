@@ -119,19 +119,19 @@ namespace tsorcRevamp.NPCs.Bosses
         //Hover to the upper right of the screen and spam homing blasts that chase the player
         void StarBlasts()
         {
-            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(350, -300), 0.5f, 20, target.velocity);
+            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(550, -350), 0.5f, 20, target.velocity);
 
-            if(MoveTimer % 20 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            if(MoveTimer % 60 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 //TODO: Add magic blast projectile
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ProjectileID.DeathLaser, StarBlastDamage, 0.5f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer);
             }            
         }
 
         //Chase the player rapidly and smoothly, leaving a damaging trail in its wake that obstructs movement
         void Pursuit()
         {
-            UsefulFunctions.SmoothHoming(NPC, target.Center, 0.2f, 40, target.velocity, false);
+            UsefulFunctions.SmoothHoming(NPC, target.Center, 0.2f, 30, target.velocity, false);
             //TODO: Add damaging illuminant trail
             if(Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -140,27 +140,19 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
-        //Float above the player and summon a rain of homing stars
-        //Might be too similar to StarBlasts and also marilith's fire rain attacks though. Hmm...
+
         void Starstorm()
         {
             //Look at the sky
             NPC.rotation = MathHelper.Pi;
 
-            //TODO: Fire a glowing beam into the sky
-
-
-            
-
-
             UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -350), 0.5f, 20);
 
             //Spawn homing stars
-            if (MoveTimer % 20 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (MoveTimer % 10 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Vector2 projectileSpawn = NPC.Center + new Vector2(Main.rand.NextFloat(-500, 500), -700);
                 //TODO: Add star blast projectile
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), projectileSpawn, UsefulFunctions.GenerateTargetingVector(projectileSpawn, target.Center, 7), ProjectileID.DeathLaser, StarBlastDamage, 0.5f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(0, -37) + new Vector2(Main.rand.NextFloat(-25, 25), 0) + target.velocity, ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1);
             }
         }
 
@@ -236,30 +228,30 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void FindFrame(int frameHeight)
         {
-            int num = 1;
+            int frameSize = 1;
             if (!Main.dedServ)
             {
-                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
+                frameSize = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
             }
             NPC.frameCounter += 1.0;
             if (NPC.frameCounter >= 4.0)
             {
-                NPC.frame.Y = NPC.frame.Y + num;
+                NPC.frame.Y = NPC.frame.Y + frameSize;
                 NPC.frameCounter = 0.0;
             }
 
             if (transformationTimer >= 60)
             {
-                if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type] / 2f)
+                if (NPC.frame.Y >= frameSize * Main.npcFrameCount[NPC.type] / 2f)
                 {
                     NPC.frame.Y = 0;
                 }
             }
             else
             {
-                if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
+                if (NPC.frame.Y >= frameSize * Main.npcFrameCount[NPC.type])
                 {
-                    NPC.frame.Y = num * Main.npcFrameCount[NPC.type] / 2;
+                    NPC.frame.Y = frameSize * Main.npcFrameCount[NPC.type] / 2;
                 }
             }
         }
@@ -272,10 +264,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
             }
 
-            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle sourceRectangle = NPC.frame;
             Vector2 origin = sourceRectangle.Size() / 2f;
-            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, origin, 1, effects, 0f);
+            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, origin, 1, SpriteEffects.None, 0f);
             return false;
         }
 
@@ -289,7 +280,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.KrakenBag>()));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TripletsBag>()));
         }
 
         //TODO: Copy vanilla death effects
@@ -305,6 +296,18 @@ namespace tsorcRevamp.NPCs.Bosses
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 6").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 7").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 8").Type, 1f);
+            }
+
+            int? spaz = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
+            if(spaz != null)
+            {
+                Main.npc[spaz.Value].HitEffect(1, 9999999);
+            }
+
+            int? ret = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
+            if (ret != null)
+            {
+                Main.npc[ret.Value].HitEffect(1, 9999999);
             }
         }
     }
