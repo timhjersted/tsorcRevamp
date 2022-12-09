@@ -14,7 +14,6 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetDefaults()
         {
-            NPC.CloneDefaults(NPCID.Spazmatism);
             Main.npcFrameCount[NPC.type] = 6;
             NPC.defense = 25;
             AnimationType = -1;
@@ -28,7 +27,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.boss = true;
 
             NPC.value = 600000;
-            AnimationType = NPCID.Retinazer;
             NPC.aiStyle = -1;
 
             NPC.buffImmune[BuffID.Poisoned] = true;
@@ -96,11 +94,13 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
 
-            if (!Main.npc[NPC.realLife].active)
+            if (NPC.realLife < 0 || !Main.npc[NPC.realLife].active)
             {
                 OnKill();
                 NPC.active = false;
             }
+
+            FindFrame(0);
 
             Main.NewText("Spaz: " + CurrentMove.Name + " at " + MoveTimer);
             MoveTimer++;
@@ -138,6 +138,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
         //Charges, firing a shotgun spread of eye fire each time it does
+        //Phase 2: Fire breath too
         void Charging()
         {
             //Telegraph for the first second before the starting charge
@@ -156,7 +157,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (MoveTimer % 60 == 10)
             {
-                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15) + target.velocity / 3f;
+                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -166,6 +167,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         //Spams cursed eye fire at the player
+        //Phase 2: Flames leave a damaging trail, or maybe it fires 8 in all directions? Unsure
         void Firing()
         {
             UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(600, 300), 1f, 20);
@@ -183,7 +185,8 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         //Spaz aims down and breathes cursed fire into the earth
-        //It erupts in geysers of neon flame
+        //It erupts in bursts of neon green flame
+        //Phase 2: Geysers of continuous flame like kraken has
         void CursedEruptions()
         {
             UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, 350), 0.5f, 20);
@@ -283,14 +286,14 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 frameSize = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
             }
-            NPC.frameCounter += 1.0;
-            if (NPC.frameCounter >= 4.0)
+            NPC.frameCounter++;
+            if (NPC.frameCounter >= 8.0)
             {
                 NPC.frame.Y = NPC.frame.Y + frameSize;
                 NPC.frameCounter = 0.0;
             }
 
-            if (transformationTimer >= 60)
+            if (transformationTimer < 60)
             {
                 if (NPC.frame.Y >= frameSize * Main.npcFrameCount[NPC.type] / 2f)
                 {

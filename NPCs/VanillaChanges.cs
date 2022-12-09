@@ -3823,8 +3823,8 @@ namespace tsorcRevamp.NPCs
             }
             if (npc.type == NPCID.Spazmatism)
             {
-                npc.active = false;
-                return false;                
+               // npc.active = false;
+                //return false;                
             }
 
             #region Lunar Towers

@@ -834,7 +834,7 @@ namespace tsorcRevamp
 
             if (((underground && Player.ZoneHallow && !Ocean && !Player.ZoneDungeon /*&& !player.ZoneOverworldHeight*/) || Player.ZoneMeteor) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-
+                Player.AddBuff(ModContent.BuffType<Buffs.GravityAlignment>(), 5);
                 Player.gravControl = true;
             }
 

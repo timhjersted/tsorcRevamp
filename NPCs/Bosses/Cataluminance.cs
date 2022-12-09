@@ -15,7 +15,6 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetDefaults()
         {
-            NPC.CloneDefaults(NPCID.Retinazer);
             Main.npcFrameCount[NPC.type] = 6;
             NPC.defense = 25;
             AnimationType = -1;
@@ -29,7 +28,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.boss = true;
 
             NPC.value = 600000;
-            AnimationType = NPCID.Retinazer;
             NPC.aiStyle = -1;
 
             NPC.buffImmune[BuffID.Poisoned] = true;
@@ -92,6 +90,17 @@ namespace tsorcRevamp.NPCs.Bosses
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
             NPC.rotation = (NPC.rotation + (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2) / 2f;
+            FindFrame(0);
+
+            //This exists because I wanted to make the fight far faster paced than even supersonic wings 1 allows
+            //Unfinished: It will be applied by grazing Cataluimance's illuminant projectiles later
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active && !Main.player[i].dead)
+                {
+                    Main.player[i].AddBuff(ModContent.BuffType<Buffs.FasterThanSight>(), 5);
+                }
+            }
 
             if (NPC.life < NPC.lifeMax / 2 && transformationTimer < 120)
             {
@@ -137,10 +146,10 @@ namespace tsorcRevamp.NPCs.Bosses
         //Chase the player rapidly and smoothly, leaving a damaging trail in its wake that obstructs movement
         void Pursuit()
         {
-            UsefulFunctions.SmoothHoming(NPC, target.Center, 0.2f, 30, target.velocity, false);
+            UsefulFunctions.SmoothHoming(NPC, target.Center, 0.15f, 15, target.velocity, false);
             if(Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if (MoveTimer % 60 < 10 || PhaseTwo)
+                if (MoveTimer % 300 < 50 || PhaseTwo)
                 {
                     int trail = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
                     Main.projectile[trail].rotation = NPC.rotation;
@@ -159,10 +168,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 angle = Main.rand.NextFloat(-MathHelper.PiOver4, MathHelper.PiOver4);
             }
 
-            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -350), 0.5f, 20);
+            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -350), 2f, 20);
 
             //Spawn homing stars
-            if (MoveTimer % 15 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (MoveTimer % 20 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 //In phase 2 the stars leave damaging trails like EoL
                 if (PhaseTwo)
@@ -217,15 +226,9 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 //TODO spawn gore
             }
-
-            if(transformationTimer == 119)
-            {
-
-            }
             NPC.rotation += rotationVelocity;
         }
 
-        List<CataMove> Phase2MoveList;
         private void InitializeMoves(List<int> validMoves = null)
         {
             MoveList = new List<CataMove> {
@@ -257,6 +260,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 Name = AttackName;
             }
         }
+
         public override void FindFrame(int frameHeight)
         {
             int frameSize = 1;
@@ -264,14 +268,15 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 frameSize = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
             }
-            NPC.frameCounter += 1.0;
-            if (NPC.frameCounter >= 4.0)
+
+            NPC.frameCounter++;
+            if (NPC.frameCounter >= 8.0)
             {
                 NPC.frame.Y = NPC.frame.Y + frameSize;
                 NPC.frameCounter = 0.0;
             }
 
-            if (transformationTimer >= 60)
+            if (transformationTimer < 60)
             {
                 if (NPC.frame.Y >= frameSize * Main.npcFrameCount[NPC.type] / 2f)
                 {

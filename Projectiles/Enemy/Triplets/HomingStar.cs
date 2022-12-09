@@ -125,7 +125,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             starOffset.Normalize();
             starOffset *= 30;
             Main.spriteBatch.Draw(starTexture, Projectile.position - Main.screenPosition + starOffset, starSourceRectangle, Color.White, Projectile.rotation + starRotation, starOrigin, Projectile.scale * 0.75f, SpriteEffects.None, 0);
-            starRotation += 0.05f;
+            starRotation += 0.1f;
 
             return false;
         }
