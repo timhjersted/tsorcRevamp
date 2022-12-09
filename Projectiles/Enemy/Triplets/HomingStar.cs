@@ -118,7 +118,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             //Draw shadow trails
             for (float i = ProjectileID.Sets.TrailCacheLength[Projectile.type] - 1; i >= 0; i--)
             {
-                Main.spriteBatch.Draw(texture, Projectile.oldPos[(int)i] - Main.screenPosition, sourceRectangle, Color.Cyan * ((6 - i) / 6), trailRotations[(int)i] + MathHelper.Pi, origin, Projectile.scale * ((6 - i) / 6), SpriteEffects.None, 0);
+                Main.spriteBatch.Draw(texture, Projectile.oldPos[(int)i] - Main.screenPosition, sourceRectangle, Color.Cyan * ((6 - i) / 6), trailRotations[(int)i] + MathHelper.Pi, origin, Projectile.scale, SpriteEffects.None, 0);
             }
 
             Main.spriteBatch.Draw(texture, Projectile.position - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation + MathHelper.Pi, origin, Projectile.scale, SpriteEffects.None, 0);
