@@ -71,6 +71,11 @@ namespace tsorcRevamp.NPCs.Bosses
             set => NPC.ai[1] = value;
         }
 
+        public bool PhaseTwo
+        {
+            get => transformationTimer >= 120;
+        }
+
         public Player target
         {
             get => Main.player[NPC.target];
@@ -109,6 +114,12 @@ namespace tsorcRevamp.NPCs.Bosses
             if (MoveList == null)
             {
                 InitializeMoves();
+            }
+
+            if (NPC.life < NPC.lifeMax / 2 && transformationTimer < 120)
+            {
+                Transform();
+                return;
             }
 
             CurrentMove.Move();

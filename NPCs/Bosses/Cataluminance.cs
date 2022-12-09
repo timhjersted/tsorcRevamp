@@ -72,6 +72,11 @@ namespace tsorcRevamp.NPCs.Bosses
             set => NPC.ai[1] = value;
         }
 
+        public bool PhaseTwo
+        {
+            get => transformationTimer >= 120;
+        }
+
         public Player target
         {
             get => Main.player[NPC.target];
@@ -86,11 +91,12 @@ namespace tsorcRevamp.NPCs.Bosses
             MoveTimer++;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
-            NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+            NPC.rotation = (NPC.rotation + (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2) / 2f;
 
-            if(NPC.life < NPC.lifeMax / 2 && transformationTimer < 120)
+            if (NPC.life < NPC.lifeMax / 2 && transformationTimer < 120)
             {
                 Transform();
+                return;
             }
 
             if (testAttack != -1)
@@ -132,27 +138,47 @@ namespace tsorcRevamp.NPCs.Bosses
         void Pursuit()
         {
             UsefulFunctions.SmoothHoming(NPC, target.Center, 0.2f, 30, target.velocity, false);
-            //TODO: Add damaging illuminant trail
             if(Main.netMode != NetmodeID.MultiplayerClient)
             {
-                //TODO: Add star blast projectile
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ProjectileID.EyeBeam, StarBlastDamage, 0.5f, Main.myPlayer);
+                if (MoveTimer % 60 < 10 || PhaseTwo)
+                {
+                    int trail = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
+                    Main.projectile[trail].rotation = NPC.rotation;
+                }
             }
         }
 
 
+        float angle = 0;
         void Starstorm()
         {
-            //Look at the sky
             NPC.rotation = MathHelper.Pi;
+
+            if(MoveTimer == 0)
+            {
+                angle = Main.rand.NextFloat(-MathHelper.PiOver4, MathHelper.PiOver4);
+            }
 
             UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -350), 0.5f, 20);
 
             //Spawn homing stars
-            if (MoveTimer % 10 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (MoveTimer % 15 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                //TODO: Add star blast projectile
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(0, -37) + new Vector2(Main.rand.NextFloat(-25, 25), 0) + target.velocity, ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1);
+                //In phase 2 the stars leave damaging trails like EoL
+                if (PhaseTwo)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(0, -37), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer);
+                }
+                else
+                {
+
+                    //Stars fired upward for effect
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
+
+                    //Stars rain down
+                    Vector2 spawnPos = NPC.Center + new Vector2(Main.rand.NextFloat(-700, 700), -500);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1);
+                }
             }
         }
 
@@ -191,16 +217,21 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 //TODO spawn gore
             }
+
+            if(transformationTimer == 119)
+            {
+
+            }
             NPC.rotation += rotationVelocity;
         }
 
+        List<CataMove> Phase2MoveList;
         private void InitializeMoves(List<int> validMoves = null)
         {
             MoveList = new List<CataMove> {
                 new CataMove(StarBlasts, CataMoveID.StarBlasts, "Star Blasts"),
                 new CataMove(Starstorm, CataMoveID.Pursuit, "Pursuit"),
                 new CataMove(Pursuit, CataMoveID.Starstorm, "Starstorm"),
-                new CataMove(TBD, CataMoveID.TBD, "TBD"),
                 };
         }
 

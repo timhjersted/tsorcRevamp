@@ -34,9 +34,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
 
             FollowHost = true;
             LaserOrigin = Main.npc[HostIdentifier].Center;
-            TelegraphTime = 180;
             FiringDuration = 120;
-            MaxCharge = 180;
+            TelegraphTime = 30;
+            MaxCharge = 30;
             LaserLength = 5000;
             LaserColor = Color.Red;
             TileCollide = false;
@@ -63,6 +63,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         Player targetPlayer;
         bool aimLeft = false;
         Vector2 simulatedVelocity;
+
+        float rotDirection;
         public override void AI()
         {
             if (FiringTimeLeft > 0)
@@ -81,197 +83,28 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
                 }
             }
 
-            if (Projectile.ai[0] >= 0)
+            if (Main.player[(int)Projectile.ai[0]] != null && Main.player[(int)Projectile.ai[0]].active)
             {
-                //Big beam. Swings towards the player
-                if (Projectile.ai[0] >= 2000)
+                if (Main.npc[(int)Projectile.ai[1]] != null && Main.npc[(int)Projectile.ai[1]].active && Main.npc[(int)Projectile.ai[1]].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>())
                 {
-                    if (Main.player[(int)Projectile.ai[0] - 2000] != null && Main.player[(int)Projectile.ai[0] - 2000].active)
-                    {
-                        LaserName = "Channeled Laser";
-                        FiringDuration = 90;
-                        LineDust = Main.rand.NextBool(8);
-                        LaserDust = DustID.OrangeTorch;
-                        if (targetPlayer == null)
-                        {
-                            targetPlayer = Main.player[(int)Projectile.ai[0] - 2000];
-                            target = Main.player[(int)Projectile.ai[0] - 2000].Center;
-                        }
-
-                        if (FiringTimeLeft > 30)
-                        {
-                            float lastLength = simulatedVelocity.LengthSquared();
-                            simulatedVelocity += UsefulFunctions.GenerateTargetingVector(target, targetPlayer.Center, 0.5f);
-                            if (simulatedVelocity.HasNaNs())
-                            {
-                                simulatedVelocity = Vector2.Zero;
-                            }
-                            //Stop once it passes the player and starts slowing down to change directions
-                            if (simulatedVelocity == Vector2.Zero || lastLength > simulatedVelocity.LengthSquared())
-                            {
-                                FiringTimeLeft = 30;
-                            }
-                        }
-
-                        //Move target point according to velocity
-                        target += simulatedVelocity;
-
-                        //Update projectile aim to aim at target point
-                        Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target, 1);
-                    }
-                    else
-                    {
-                        Projectile.Kill();
-                    }
+                    Projectile.velocity = (Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2).ToRotationVector2() ;
                 }
 
-                //Little beams that it passively spams
-                else if (Projectile.ai[0] >= 1000)
+                LaserName = "Channeled Laser";
+                FiringDuration = 60;
+                LineDust = Main.rand.NextBool(8);
+                LaserDust = DustID.OrangeTorch;
+                if (targetPlayer == null)
                 {
-                    TileCollide = false;
-                    if(TelegraphTime == 180)
-                    {
-                        TelegraphTime = 85 + Main.rand.Next(0, 15);
-                        MaxCharge = 85 + Main.rand.Next(0, 15);
-                    }
-                    FiringDuration = 15;
-                    LaserName = "Rapid Laser";
-
-                    if (target == Vector2.Zero)
-                    {
-                        target = Main.player[(int)Projectile.ai[0] - 1000].Center;// + Main.rand.NextVector2Circular(48, 48);
-                        Vector2 prediction = Main.player[(int)Projectile.ai[0] - 1000].velocity * 48;
-                        //Don't randomize if it just shot the confining ring of lasers, because that's not possible to dodge
-                        if (NPCs.VanillaChanges.destroyerChargeTimer >= 300 || NPCs.VanillaChanges.destroyerChargeTimer < 0 || NPCs.VanillaChanges.destroyerAttackIndex != 0)
-                        {
-                            target += prediction * Main.rand.NextFloat(-0.15f, 1.15f);
-                        }
-                    }
-                    //Failsafe. If the boss charges too close to the focal point it causes the lasers to go haywire. This turns them off if that happens.
-                    if (Projectile.Distance(target) < 400 || Projectile.Distance(Main.player[(int)Projectile.ai[0] - 1000].Center) < 400)
-                    {
-                        Projectile.Kill();
-                    }
-                    Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target, 1);
-
-                    //Failsafe 2. If it is firing and the projectile's angle is too close to the "safe angle", don't fire. This stops lasers from sweeping across the safe area as the destroyer moves relative to it.
-                    if ((UsefulFunctions.CompareAngles(Projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.Pi / 6f || UsefulFunctions.CompareAngles(-Projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.Pi / 6f))
-                    {
-                        Projectile.Kill();
-                    }
+                    targetPlayer = Main.player[(int)Projectile.ai[0]];
+                    target = Main.player[(int)Projectile.ai[0]].Center;
                 }
-                //Track the player and aim tangental 300 units next to them. Constrains their movement.
-                else
-                {
-                    if (targetPlayer == null)
-                    {
-                        targetPlayer = Main.player[(int)Projectile.ai[0]];
-                        aimLeft = Main.rand.NextBool();
-                    }
-                    TelegraphTime = 180;
-                    FiringDuration = 100;
-                    MaxCharge = 180;
-                    LaserName = "Confinement Laser";
 
-                    //All this is to say: Aim 300 units to the left or right of the player, no matter what angle it's shooting at them from
-                    //Also, only track the player while it's charging. Once it starts firing its target point is locked in.
-                    if (Charge <= MaxCharge - 1)
-                    {
-                        initialTarget = targetPlayer.Center;
-                    }
 
-                    target = UsefulFunctions.GenerateTargetingVector(Projectile.Center, initialTarget, 1);
-                    target.Normalize();
-                    target *= 300;
-
-                    if (aimLeft)
-                    {
-                        target = target.RotatedBy(MathHelper.PiOver2);
-                    }
-                    else
-                    {
-                        target = target.RotatedBy(-MathHelper.PiOver2);
-                    }
-
-                    target += initialTarget;
-                    Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target, 1);
-
-                    //Failsafe. If the boss charges *through* the circle, it causes the lasers to go haywire. This turns them off if that happens.
-                    if (Projectile.Distance(target) < 400 || Projectile.Distance(targetPlayer.Center) < 400)
-                    {
-                        Projectile.Kill();
-                    }
-                }
             }
-
-            //Projectile stays where it's spawned, and either fires at a point or at a small range around it
-            if (Projectile.ai[0] == -1 || Projectile.ai[0] == -2 || Projectile.ai[0] == -3)
+            else
             {
-                //Make it sit where it spawned
-                FollowHost = false;
-                if (initialPosition == Vector2.Zero)
-                {
-                    initialPosition = Projectile.Center;
-                }
-
-                LaserOrigin = initialPosition;
-
-                //Circle of lasers
-                if (Projectile.ai[0] == -3)
-                {
-                    TelegraphTime = 120;
-                    FiringDuration = 120;
-                    MaxCharge = 120;
-                    LaserName = "Laser Array";
-                    LineDust = true;
-                    LaserDust = DustID.OrangeTorch;
-
-                    if (FiringTimeLeft > 0)
-                    {
-                        Projectile.velocity = Projectile.velocity.RotatedBy((2f / 3f) * MathHelper.Pi / 210f);
-                    }
-
-                    for (int i = 0; i < 5; i++)
-                    {
-                        Vector2 offset = Main.rand.NextVector2CircularEdge(1, 1);
-                        offset.Normalize();
-                        Vector2 velocity = offset * 3;
-                        offset *= (Charge - MaxCharge) * 3;
-
-                        if (FiringTimeLeft > 0)
-                        {
-                            velocity *= 3;
-                        }
-
-                        Dust.NewDustPerfect(LaserOrigin + offset, DustID.OrangeTorch, velocity, Scale: 3).noGravity = true;
-                    }
-                }
-                if (Projectile.ai[0] == -2)
-                {
-                    TelegraphTime = 60;
-                    FiringDuration = 10;
-                    MaxCharge = 60;
-                    LaserName = "Probe Laser";
-                    Dust.NewDustPerfect(LaserOrigin, DustID.OrangeTorch, Main.rand.NextVector2Circular(-3, 3), Scale: 4).noGravity = true;
-                }
-
-                //Square moving array
-                if (Projectile.ai[0] == -1)
-                {
-                    TelegraphTime = 150;
-                    FiringDuration = 120;
-                    MaxCharge = 150;
-                    LaserName = "Laser Array";
-                    initialPosition += new Vector2(3, 0).RotatedBy(NPCs.VanillaChanges.laserRotation);
-                    if (Main.rand.NextBool())
-                    {
-                        Dust.NewDustPerfect(LaserOrigin, DustID.OrangeTorch, Main.rand.NextVector2Circular(-3, 3), Scale: 5).noGravity = true;
-                    }
-
-                    LaserColor = Color.Red * 5;
-                }
-
-                Projectile.velocity.Normalize();
+                Projectile.Kill();
             }
 
             base.AI();
@@ -285,6 +118,19 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             {
                 LaserSize += (1.3f / 30f);
                 LaserAlpha += 1f / 30f;
+            }
+        }
+
+        public override Vector2 GetOrigin()
+        {
+            if (Main.npc[(int)Projectile.ai[1]] != null && Main.npc[(int)Projectile.ai[1]].active && Main.npc[(int)Projectile.ai[1]].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>())
+            {
+                return Main.npc[(int)Projectile.ai[1]].Center + new Vector2(65, 0).RotatedBy(Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2);
+            }
+            else
+            {
+                Projectile.Kill();
+                return Vector2.Zero;
             }
         }
 

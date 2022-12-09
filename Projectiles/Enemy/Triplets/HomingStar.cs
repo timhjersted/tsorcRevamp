@@ -43,7 +43,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
                 playedSound = true;
             }
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             for (int i = 5; i > 0; i--)
             {
@@ -53,28 +52,27 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
 
             Vector2 dustOffset = Projectile.velocity;
             dustOffset.Normalize();
-            //dustOffset *= 30;
-            //for (int i = 0; i < 3; i++)
-            {
-                Main.dust[Dust.NewDust(Projectile.position + dustOffset, Projectile.width, Projectile.height, DustID.FireworkFountain_Blue, Projectile.velocity.X, Projectile.velocity.Y)].noGravity = true;
-                Dust.NewDustPerfect(Projectile.Center + dustOffset, DustID.GemSapphire, Vector2.Zero, 160, default).noGravity = true;
-            }
+            Main.dust[Dust.NewDust(Projectile.position + dustOffset, Projectile.width, Projectile.height, DustID.FireworkFountain_Blue, Projectile.velocity.X, Projectile.velocity.Y)].noGravity = true;
+            Dust.NewDustPerfect(Projectile.Center + dustOffset, DustID.GemSapphire, Vector2.Zero, 160, default).noGravity = true;
 
             float homingAcceleration = 0.2f;
             if (Projectile.ai[0] == 1)
             {
                 Projectile.timeLeft = 100;
-                if (Projectile.velocity.Y < 7f)
+                if (Projectile.velocity.Y < 14f)
                 {
                     Projectile.velocity.Y += 1f;
-                    homingAcceleration = 0;
                 }
-                else
-                {
-                    homingAcceleration = 0.01f;
-                }
+                homingAcceleration = 0;
             }
-
+            if (Projectile.ai[0] == 2)
+            {
+                homingAcceleration = 0;
+            }
+            else
+            {
+                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            }
 
             Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
             if (target != null)

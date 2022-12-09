@@ -660,7 +660,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public Vector2 GetOrigin()
+        public virtual Vector2 GetOrigin()
         {
             if (FollowHost)
             {

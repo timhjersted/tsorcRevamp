@@ -70,6 +70,10 @@ namespace tsorcRevamp.NPCs.Bosses
             set => NPC.ai[1] = value;
         }
 
+        public bool PhaseTwo
+        {
+            get => transformationTimer >= 120;
+        }
         public Player target
         {
             get => Main.player[NPC.target];
@@ -78,6 +82,8 @@ namespace tsorcRevamp.NPCs.Bosses
         int MoveTimer = 0;
         NPCDespawnHandler despawnHandler;
 
+        float rotationTarget;
+        float rotationSpeed;
         public override void AI()
         {
             if(NPC.realLife < 0)
@@ -99,7 +105,11 @@ namespace tsorcRevamp.NPCs.Bosses
             MoveTimer++;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
-            NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+
+            Vector2 targetRotation = rotationTarget.ToRotationVector2();
+            Vector2 currentRotation = NPC.rotation.ToRotationVector2();
+            Vector2 nextRotationVector = Vector2.Lerp(currentRotation, targetRotation, rotationSpeed);
+            NPC.rotation = nextRotationVector.ToRotation();
 
             if (testAttack != -1)
             {
@@ -108,6 +118,12 @@ namespace tsorcRevamp.NPCs.Bosses
             if (MoveList == null)
             {
                 InitializeMoves();
+            }
+
+            if (NPC.life < NPC.lifeMax / 2 && transformationTimer < 120)
+            {
+                Transform();
+                return;
             }
 
             CurrentMove.Move();
@@ -124,21 +140,63 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
-        //Trails off behind the player, before firing an enormous OHKO laser repeatedly
+        //Trails off behind the player, before firing a piercing laser repeatedly. In phase 2 it fires an enormous OHKO laser.
+        int currentProjectile;
+        bool aimingDown;
         void BigIron()
         {
+            rotationSpeed = 0.04f;
             UsefulFunctions.SmoothHoming(NPC, Main.player[NPC.target].Center + new Vector2(-700, 0), 0.7f, 20);
 
-            if (MoveTimer % 90 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (MoveTimer % 150 < 30)
             {
-                //TODO: Replace this with an enormous fuck you laser
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ProjectileID.DeathLaser, DeathLaserDamage, 0.5f, Main.myPlayer);
+                UsefulFunctions.DustRing(NPC.Center, (30 - MoveTimer % 150) * 20, DustID.GemRuby, 100, 2);                
+            }
+            if (MoveTimer % 150 == 60 || MoveTimer == 1)
+            {
+                if (aimingDown)
+                {
+                    rotationTarget = MathHelper.PiOver4 - MathHelper.PiOver2;
+                }
+                else
+                {
+                    rotationTarget = -MathHelper.PiOver4 - MathHelper.PiOver2;
+                }
+            }
+            if (PhaseTwo)
+            {
+                if (MoveTimer % 150 == 30 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    //TODO: Replace this with an enormous fuck you laser
+                    currentProjectile = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetOmegaLaser>(), 249999999, 0.5f, Main.myPlayer, target.whoAmI, NPC.whoAmI);
+
+                    aimingDown = !aimingDown;
+                }
+            }
+            else
+            {
+                
+                if (MoveTimer % 150 == 30 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    //TODO: Replace this with an enormous fuck you laser
+                    currentProjectile = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetPiercingLaser>(), DeathLaserDamage, 0.5f, Main.myPlayer, target.whoAmI, NPC.whoAmI);
+                    aimingDown = !aimingDown;
+
+                }
+            }
+
+            if(MoveTimer == 870)
+            {
+                rotationSpeed = 0.2f;
+                rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
             }
         }
 
         //Dashes at (or maybe intentionally past?) the player, aiming at them and firing a barrage of lasers as it does
         void Charging()
         {
+            rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+            rotationSpeed = 1;
             //Telegraph for the first second before the starting charge
             if (MoveTimer < 60)
             {
@@ -167,6 +225,8 @@ namespace tsorcRevamp.NPCs.Bosses
         //Hovers top right of the player and fires hitscan lingering lasers repeatedly
         void Firing()
         {
+            rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+            rotationSpeed = 1;
             UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(-500, -350), 0.7f, 20);
 
             if (MoveTimer % 20 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
@@ -219,7 +279,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 new CataMove(BigIron, CataMoveID.BigIron, "Big Iron"),
                 new CataMove(Charging, CataMoveID.Charging, "Charging"),
                 new CataMove(Firing, CataMoveID.Firing, "Firing"),
-                new CataMove(TBD, CataMoveID.TBD, "TBD"),
                 };
         }
 
