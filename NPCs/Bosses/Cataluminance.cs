@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.Graphics;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -110,7 +111,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 Transform();
                 return;
             }
-
             if (testAttack != -1)
             {
                 MoveIndex = testAttack;
@@ -147,8 +147,18 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         //Chase the player rapidly and smoothly, leaving a damaging trail in its wake that obstructs movement
+        Vector2[] trailPositions;
+        float[] trailRotations;
         void Pursuit()
         {
+            if (MoveTimer == 1)
+            {
+                trailPositions = new Vector2[900];
+                trailRotations = new float[900];
+            }
+            trailPositions[MoveTimer - 1] = NPC.Center;
+            trailRotations[MoveTimer - 1] = NPC.velocity.ToRotation();
+
             if (PhaseTwo)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -161,21 +171,40 @@ namespace tsorcRevamp.NPCs.Bosses
                     {
                         NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 25);
                     }
-                    int trail = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
-                    Main.projectile[trail].rotation = NPC.velocity.RotatedBy(MathHelper.PiOver2).ToRotation();
                 }
             }
             else
             {
                 UsefulFunctions.SmoothHoming(NPC, target.Center, 0.25f, 25, target.velocity, false);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+            }
+
+            CheckTrailCollision();
+        }
+
+        void CheckTrailCollision()
+        {
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active && !Main.player[i].dead)
                 {
-                    int trail = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
-                    Main.projectile[trail].rotation = NPC.velocity.RotatedBy(MathHelper.PiOver2).ToRotation();
+                    Player player = Main.player[i];
+                    float discard = 0;
+
+                    //Draw a line between points 9 at a time to check for collision
+                    for (int j = 0; j < trailPositions.Length - 9; j += 9)
+                    {
+                        if(trailPositions[j + 8] == Vector2.Zero)
+                        {
+                            break;
+                        }
+                        if (Collision.CheckAABBvLineCollision(player.position, player.Size, trailPositions[j], trailPositions[j + 8], 90, ref discard))
+                        {
+                            player.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(player.name + " was incinerated by illuminant energy."), 150, 0);
+                        }
+                    }
                 }
             }
         }
-
 
         float angle = 0;
         void Starstorm()
@@ -311,7 +340,27 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
         }
+        float WidthFunction(float progress)
+        {
+            return 50;
+            float percent = 1f;
+            float lerpValue = Utils.GetLerpValue(0f, 0.6f, progress, clamped: true);
+            percent *= 1f - (1f - lerpValue) * (1f - lerpValue);
+            return MathHelper.Lerp(0f, 30f, percent);
+        }
 
+        Color ColorFunction(float progress)
+        {
+            float timeFactor = (float)Math.Sin(Math.Abs(progress - Main.GlobalTimeWrappedHourly * 1));
+            Color result = Color.Lerp(Color.Cyan, Color.DeepPink, (timeFactor + 1f) / 2f);
+            //Main.NewText(timeFactor + 1);
+            //result = ;
+            result.A = 0;
+
+            return result;
+        }
+
+        BasicEffect effect;
         public static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
@@ -320,9 +369,35 @@ namespace tsorcRevamp.NPCs.Bosses
                 texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
             }
 
+
+            if (effect == null)
+            {
+                effect = new BasicEffect(Main.graphics.GraphicsDevice);
+                effect.VertexColorEnabled = true;
+                effect.FogEnabled = false;
+                effect.View = Main.GameViewMatrix.TransformationMatrix;
+                var viewport = Main.instance.GraphicsDevice.Viewport;
+                effect.Projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, -1, 1);
+            }
+            if (trailPositions != null)
+            {
+                effect.World = Matrix.CreateTranslation(-new Vector3(Main.screenPosition.X, Main.screenPosition.Y, 0));
+
+                Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+
+                effect.CurrentTechnique.Passes[0].Apply();
+
+                VertexStrip vertexStrip = new VertexStrip();
+                vertexStrip.PrepareStrip(trailPositions, trailRotations, ColorFunction, WidthFunction, includeBacksides: true);
+                vertexStrip.DrawTrail();
+            }
+
             Rectangle sourceRectangle = NPC.frame;
             Vector2 origin = sourceRectangle.Size() / 2f;
             spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, origin, 1, SpriteEffects.None, 0f);
+
+
+
             return false;
         }
 
