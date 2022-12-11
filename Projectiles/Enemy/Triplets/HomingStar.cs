@@ -82,123 +82,79 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
 
         float Progress(float progress)
         {
-            float lerpPercent = 1f;
-            float startLerpValue = Utils.GetLerpValue(0f, 0.001f, progress, clamped: true);
-            lerpPercent *= 1f - (1f - startLerpValue) * (1f - startLerpValue);
-            float width = MathHelper.Lerp(0f, 100f, lerpPercent);
-
-            if(progress < 0.1f)
-            {
-                return 50f;
-            }
-
-            return 50;
+            float percent = 1f;
+            float lerpValue = Utils.GetLerpValue(0f, 0.6f, progress, clamped: true);
+            percent *= 1f - (1f - lerpValue) * (1f - lerpValue);
+            return MathHelper.Lerp(0f, 30f, percent);
         }
 
         Color ColorValue(float progress)
         {
-            float timeFactor = (float)Math.Sin((Main.GlobalTimeWrappedHourly * 2));
-            Color result = Color.Lerp(Color.Cyan, Color.DeepPink, progress + (timeFactor + 1) / 2);
-
+            float timeFactor = (float)Math.Sin(Math.Abs(progress - Main.GlobalTimeWrappedHourly * 3));
+            Color result = Color.Lerp(Color.Cyan, Color.DeepPink, (timeFactor + 1f) / 2f);
+            //Main.NewText(timeFactor + 1);
             //result = ;
             result.A = 0;
 
-            return Color.White;
             return result;
         }
 
         Texture2D texture;
+        Texture2D starTexture;
         Texture2D flameJetTexture;
         ArmorShaderData data;
         int vertexCount = 0;
+        BasicEffect effect;
+        float starRotation;
         public override bool PreDraw(ref Color lightColor)
         {
-            /*
-            MiscShaderData ShaderData = GameShaders.Misc["RainbowRod"];
-            ShaderData.UseSaturation(-.8f);
-            ShaderData.UseOpacity(1f);
-            ShaderData.Apply();
-            */
-
-            //Apply the shader, caching it as well
-            //if (data == null)
+            if (effect == null)
             {
-                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/FireWallShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "FireWallShaderPass");
+                effect = new BasicEffect(Main.graphics.GraphicsDevice);
+                effect.VertexColorEnabled = true;
+                effect.FogEnabled = false;
+                effect.View = Main.GameViewMatrix.TransformationMatrix;
+                var viewport = Main.instance.GraphicsDevice.Viewport;
+                effect.Projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, -1, 1);
             }
+            effect.World = Matrix.CreateTranslation(-new Vector3(Main.screenPosition.X, Main.screenPosition.Y, 0));
 
-            if (flameJetTexture == null || flameJetTexture.IsDisposed)
-            {
-                flameJetTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Marilith/CataclysmicFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            }
+            Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
+            effect.CurrentTechnique.Passes[0].Apply();
 
-            //Pass relevant data to the shader via these parameters
-            //data.UseSaturation(Projectile.ai[0]);
-            //data.UseSecondaryColor(1, 0, Main.GlobalTimeWrappedHourly);
-
-            /*
-            Effect thisEffect = , Main.LocalPlayer).Shader;
-            thisEffect.Parameters["uTexture"].SetValue(flameJetTexture);
-            thisEffect.Parameters["uTexture2"].SetValue(flameJetTexture);
-            thisEffect.Parameters["Progress"].SetValue(Main.GlobalTimeWrappedHourly * -1f);
-            thisEffect.Parameters["xMod"].SetValue(1.5f);
-            thisEffect.Parameters["StartColor"].SetValue(Color.Blue.ToVector4());
-            thisEffect.Parameters["MidColor"].SetValue(Color.Blue.ToVector4());
-            thisEffect.Parameters["EndColor"].SetValue(Color.Blue.ToVector4());
-            thisEffect.CurrentTechnique.Passes[0].Apply();
-            */
-
-
-            //This works
-            /*
-            MiscShaderData ShaderData = GameShaders.Misc["RainbowRod"];
-            ShaderData.UseSaturation(-.8f);
-            ShaderData.UseOpacity(1f);
-            ShaderData.Apply();
-            */
-
-            //This doesn't lol
-            //GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer).Apply();
-
-
-            Vector2 zoom = Main.GameViewMatrix.Zoom;
-            Matrix view = Matrix.CreateLookAt(Vector3.Zero, Vector3.UnitZ, Vector3.Up) * Matrix.CreateTranslation(Main.screenWidth / 2, Main.screenHeight / -2, 0) * Matrix.CreateRotationZ(MathHelper.Pi) * Matrix.CreateScale(zoom.X, zoom.Y, 1f);
-            Matrix projection = Matrix.CreateOrthographic(Main.screenWidth, Main.screenHeight, 0, 1000);
-
-            
-            Effect effect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/FireTrailShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            effect.Parameters["uTransform"].SetValue(Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1));
-
-
-            TestVertexStrip vertexStrip = new TestVertexStrip();
-            for(int i = 0; i < ProjectileID.Sets.TrailCacheLength[Projectile.type]; i++)
-            {
-                vertexCount = i;
-                if (Projectile.oldPos[i] == Vector2.Zero)
-                {
-                    break;
-                }
-            }
-            vertexStrip.PrepareStrip(Projectile.oldPos, Projectile.oldRot, ColorValue, Progress, Projectile.Size / 2f - Main.screenPosition, null, false);
+            VertexStrip vertexStrip = new VertexStrip();
+            vertexStrip.PrepareStrip(Projectile.oldPos, Projectile.oldRot, ColorValue, Progress, includeBacksides: true);
             vertexStrip.DrawTrail();
-            //Main.pixelShader.CurrentTechnique.Passes[0].Apply();
 
 
-            
-            if (texture == null || texture.IsDisposed)
+
+
+
+            if(texture == null || texture.IsDisposed)
             {
                 texture = (Texture2D)ModContent.Request<Texture2D>(Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
-            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
-            Vector2 origin = sourceRectangle.Size() / 2f;
-
-
-            //Draw a dot on every vertex, for debugging
-            for (int i = 0; i < vertexStrip._vertexAmountCurrentlyMaintained; i++)
+            if (starTexture == null || starTexture.IsDisposed)
             {
-                Main.spriteBatch.Draw(texture, vertexStrip._vertices[i].Position, sourceRectangle, Color.White, 0, origin, .05f, SpriteEffects.None, 0);
+                starTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
-            
+            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+            Rectangle starSourceRectangle = new Rectangle(0, 0, starTexture.Width, starTexture.Height);
+            Vector2 origin = sourceRectangle.Size() / 2f;
+            Vector2 starOrigin = starSourceRectangle.Size() / 2f;
+
+            //Draw shadow trails
+            for (float i = 5; i >= 0; i--)
+            {
+                Main.spriteBatch.Draw(texture, Projectile.oldPos[(int)i] - Main.screenPosition, sourceRectangle, Color.Cyan * ((6 - i) / 6), Projectile.oldRot[(int)i] - MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
+            }
+            Main.spriteBatch.Draw(texture, Projectile.position - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation - MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
+            Vector2 starOffset = Projectile.velocity;
+            starOffset.Normalize();
+            starOffset *= 30;
+            Main.spriteBatch.Draw(starTexture, Projectile.position - Main.screenPosition + starOffset, starSourceRectangle, Color.White, Projectile.rotation + starRotation, starOrigin, Projectile.scale * 0.75f, SpriteEffects.None, 0);
+            starRotation += 0.1f;
             return false;
         }
     }
