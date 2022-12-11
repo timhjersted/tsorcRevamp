@@ -547,8 +547,8 @@ namespace tsorcRevamp
 
         private static void DrawProjectilesPatch(On.Terraria.Main.orig_DrawProjectiles orig, Main self)
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+            //Stopwatch stopwatch = new Stopwatch();
+            //stopwatch.Start();
             orig(self);
             
             //Draw all the additive lasers in one big batch
@@ -556,21 +556,25 @@ namespace tsorcRevamp
             Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             List<EnemyGenericLaser> LaserList = new List<EnemyGenericLaser>();
+            List<Projectile> trailList = new List<Projectile>();
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i] != null && Main.projectile[i].active && Main.projectile[i].ModProjectile is EnemyGenericLaser)
+                if (Main.projectile[i] != null && Main.projectile[i].active)
                 {
-                    EnemyGenericLaser laser = (EnemyGenericLaser)Main.projectile[i].ModProjectile;
-
-                    if (laser.Additive && ((laser.IsAtMaxCharge && laser.TargetingMode == 0) || (laser.TargetingMode == 2)))
+                    if (Main.projectile[i].ModProjectile is EnemyGenericLaser)
                     {
-                        LaserList.Add(laser);
-                    }
-                    else
-                    {
-                        Color c = Color.White;
-                        laser.PreDraw(ref c);
+                        EnemyGenericLaser laser = (EnemyGenericLaser)Main.projectile[i].ModProjectile;
 
+                        if (laser.Additive && ((laser.IsAtMaxCharge && laser.TargetingMode == 0) || (laser.TargetingMode == 2)))
+                        {
+                            LaserList.Add(laser);
+                        }
+                        else
+                        {
+                            Color c = Color.White;
+                            laser.PreDraw(ref c);
+
+                        }
                     }
                 }
             }
@@ -604,10 +608,11 @@ namespace tsorcRevamp
                     laser.customContext = false;
                 }
             }
+
             Main.spriteBatch.End();
 
             //Main.NewText(stopwatch.Elapsed);
-            stopwatch.Stop();
+            //stopwatch.Stop();
         }
 
         private static void PotionBagLootAllPatch(On.Terraria.UI.ChestUI.orig_LootAll orig)

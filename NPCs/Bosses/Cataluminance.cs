@@ -148,16 +148,16 @@ namespace tsorcRevamp.NPCs.Bosses
 
         //Chase the player rapidly and smoothly, leaving a damaging trail in its wake that obstructs movement
         Vector2[] trailPositions;
-        float[] trailRotations;
+        float[] trailRotations; 
+        List<Vector2> oldTrailPositions;
+        List<float> oldTrailRotations;
+
         void Pursuit()
         {
             if (MoveTimer == 1)
             {
-                trailPositions = new Vector2[900];
-                trailRotations = new float[900];
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Trails.CataluminanceTrail>(), 35, 0, Main.myPlayer, 1, NPC.whoAmI);
             }
-            trailPositions[MoveTimer - 1] = NPC.Center;
-            trailRotations[MoveTimer - 1] = NPC.velocity.ToRotation();
 
             if (PhaseTwo)
             {
@@ -176,33 +176,6 @@ namespace tsorcRevamp.NPCs.Bosses
             else
             {
                 UsefulFunctions.SmoothHoming(NPC, target.Center, 0.25f, 25, target.velocity, false);
-            }
-
-            CheckTrailCollision();
-        }
-
-        void CheckTrailCollision()
-        {
-            for (int i = 0; i < Main.maxPlayers; i++)
-            {
-                if (Main.player[i].active && !Main.player[i].dead)
-                {
-                    Player player = Main.player[i];
-                    float discard = 0;
-
-                    //Draw a line between points 9 at a time to check for collision
-                    for (int j = 0; j < trailPositions.Length - 9; j += 9)
-                    {
-                        if(trailPositions[j + 8] == Vector2.Zero)
-                        {
-                            break;
-                        }
-                        if (Collision.CheckAABBvLineCollision(player.position, player.Size, trailPositions[j], trailPositions[j + 8], 90, ref discard))
-                        {
-                            player.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(player.name + " was incinerated by illuminant energy."), 150, 0);
-                        }
-                    }
-                }
             }
         }
 
@@ -369,34 +342,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
             }
 
-
-            if (effect == null)
-            {
-                effect = new BasicEffect(Main.graphics.GraphicsDevice);
-                effect.VertexColorEnabled = true;
-                effect.FogEnabled = false;
-                effect.View = Main.GameViewMatrix.TransformationMatrix;
-                var viewport = Main.instance.GraphicsDevice.Viewport;
-                effect.Projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, -1, 1);
-            }
-            if (trailPositions != null)
-            {
-                effect.World = Matrix.CreateTranslation(-new Vector3(Main.screenPosition.X, Main.screenPosition.Y, 0));
-
-                Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-
-                effect.CurrentTechnique.Passes[0].Apply();
-
-                VertexStrip vertexStrip = new VertexStrip();
-                vertexStrip.PrepareStrip(trailPositions, trailRotations, ColorFunction, WidthFunction, includeBacksides: true);
-                vertexStrip.DrawTrail();
-            }
-
             Rectangle sourceRectangle = NPC.frame;
             Vector2 origin = sourceRectangle.Size() / 2f;
             spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, origin, 1, SpriteEffects.None, 0f);
-
-
 
             return false;
         }
