@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
+using Terraria.Graphics;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -12,8 +15,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Seeking Star");
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 60;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 3;
         }
         public override void SetDefaults()
         {
@@ -37,25 +40,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         bool playedSound = false;
         public override void AI()
         {
+            Projectile.rotation = Projectile.velocity.ToRotation();
             if (!playedSound)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item43 with { Volume = 0.5f}, Projectile.Center);
                 playedSound = true;
             }
 
+            //Default homing strength
+            float homingAcceleration = 0.15f;
 
-            for (int i = 5; i > 0; i--)
-            {
-                trailRotations[i] = trailRotations[i - 1];
-            }
-            trailRotations[0] = Projectile.rotation;
-
-            Vector2 dustOffset = Projectile.velocity;
-            dustOffset.Normalize();
-            Main.dust[Dust.NewDust(Projectile.position + dustOffset, Projectile.width, Projectile.height, DustID.FireworkFountain_Blue, Projectile.velocity.X, Projectile.velocity.Y)].noGravity = true;
-            Dust.NewDustPerfect(Projectile.Center + dustOffset, DustID.GemSapphire, Vector2.Zero, 160, default).noGravity = true;
-
-            float homingAcceleration = 0.2f;
+            //Accelerate downwards, do not despawn until impact
             if (Projectile.ai[0] == 1)
             {
                 Projectile.timeLeft = 100;
@@ -65,15 +60,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
                 }
                 homingAcceleration = 0;
             }
+            
+            //No homing
             if (Projectile.ai[0] == 2)
             {
                 homingAcceleration = 0;
             }
-            else
-            {
-                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            }
 
+            //Perform homing
             Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
             if (target != null)
             {
@@ -84,59 +78,128 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         public override void Kill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.5f}, Projectile.Center);
+        }
 
-            // create glowing red embers that fill the explosion's radius
-            for (int i = 0; i < 20; i++)
+        float Progress(float progress)
+        {
+            float lerpPercent = 1f;
+            float startLerpValue = Utils.GetLerpValue(0f, 0.001f, progress, clamped: true);
+            lerpPercent *= 1f - (1f - startLerpValue) * (1f - startLerpValue);
+            float width = MathHelper.Lerp(0f, 100f, lerpPercent);
+
+            if(progress < 0.1f)
             {
-                Main.dust[Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.FireworkFountain_Blue, Projectile.velocity.X, Projectile.velocity.Y)].noGravity = true;
-                Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(4, 4), DustID.GemSapphire, Projectile.velocity + Main.rand.NextVector2Circular(4, 4), 160, default).noGravity = true;
+                return 50f;
             }
+
+            return 50;
+        }
+
+        Color ColorValue(float progress)
+        {
+            float timeFactor = (float)Math.Sin((Main.GlobalTimeWrappedHourly * 2));
+            Color result = Color.Lerp(Color.Cyan, Color.DeepPink, progress + (timeFactor + 1) / 2);
+
+            //result = ;
+            result.A = 0;
+
+            return Color.White;
+            return result;
         }
 
         Texture2D texture;
-        Texture2D starTexture;
-        float starRotation;
+        Texture2D flameJetTexture;
+        ArmorShaderData data;
+        int vertexCount = 0;
         public override bool PreDraw(ref Color lightColor)
         {
+            /*
+            MiscShaderData ShaderData = GameShaders.Misc["RainbowRod"];
+            ShaderData.UseSaturation(-.8f);
+            ShaderData.UseOpacity(1f);
+            ShaderData.Apply();
+            */
+
+            //Apply the shader, caching it as well
+            //if (data == null)
+            {
+                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/FireWallShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "FireWallShaderPass");
+            }
+
+            if (flameJetTexture == null || flameJetTexture.IsDisposed)
+            {
+                flameJetTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Marilith/CataclysmicFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            }
+
+
+            //Pass relevant data to the shader via these parameters
+            //data.UseSaturation(Projectile.ai[0]);
+            //data.UseSecondaryColor(1, 0, Main.GlobalTimeWrappedHourly);
+
+            /*
+            Effect thisEffect = , Main.LocalPlayer).Shader;
+            thisEffect.Parameters["uTexture"].SetValue(flameJetTexture);
+            thisEffect.Parameters["uTexture2"].SetValue(flameJetTexture);
+            thisEffect.Parameters["Progress"].SetValue(Main.GlobalTimeWrappedHourly * -1f);
+            thisEffect.Parameters["xMod"].SetValue(1.5f);
+            thisEffect.Parameters["StartColor"].SetValue(Color.Blue.ToVector4());
+            thisEffect.Parameters["MidColor"].SetValue(Color.Blue.ToVector4());
+            thisEffect.Parameters["EndColor"].SetValue(Color.Blue.ToVector4());
+            thisEffect.CurrentTechnique.Passes[0].Apply();
+            */
+
+
+            //This works
+            /*
+            MiscShaderData ShaderData = GameShaders.Misc["RainbowRod"];
+            ShaderData.UseSaturation(-.8f);
+            ShaderData.UseOpacity(1f);
+            ShaderData.Apply();
+            */
+
+            //This doesn't lol
+            //GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer).Apply();
+
+
+            Vector2 zoom = Main.GameViewMatrix.Zoom;
+            Matrix view = Matrix.CreateLookAt(Vector3.Zero, Vector3.UnitZ, Vector3.Up) * Matrix.CreateTranslation(Main.screenWidth / 2, Main.screenHeight / -2, 0) * Matrix.CreateRotationZ(MathHelper.Pi) * Matrix.CreateScale(zoom.X, zoom.Y, 1f);
+            Matrix projection = Matrix.CreateOrthographic(Main.screenWidth, Main.screenHeight, 0, 1000);
+
+            
+            Effect effect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/FireTrailShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            effect.Parameters["uTransform"].SetValue(Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1));
+
+
+            TestVertexStrip vertexStrip = new TestVertexStrip();
+            for(int i = 0; i < ProjectileID.Sets.TrailCacheLength[Projectile.type]; i++)
+            {
+                vertexCount = i;
+                if (Projectile.oldPos[i] == Vector2.Zero)
+                {
+                    break;
+                }
+            }
+            vertexStrip.PrepareStrip(Projectile.oldPos, Projectile.oldRot, ColorValue, Progress, Projectile.Size / 2f - Main.screenPosition, null, false);
+            vertexStrip.DrawTrail();
+            //Main.pixelShader.CurrentTechnique.Passes[0].Apply();
+
+
+            
             if (texture == null || texture.IsDisposed)
             {
                 texture = (Texture2D)ModContent.Request<Texture2D>(Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
-            if (starTexture == null || starTexture.IsDisposed)
-            {
-                starTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            }
-
             Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
-            Rectangle starSourceRectangle = new Rectangle(0, 0, starTexture.Width, starTexture.Height);
             Vector2 origin = sourceRectangle.Size() / 2f;
-            Vector2 starOrigin = starSourceRectangle.Size() / 2f;
 
 
-            //Draw shadow trails
-            for (float i = ProjectileID.Sets.TrailCacheLength[Projectile.type] - 1; i >= 0; i--)
+            //Draw a dot on every vertex, for debugging
+            for (int i = 0; i < vertexStrip._vertexAmountCurrentlyMaintained; i++)
             {
-                Main.spriteBatch.Draw(texture, Projectile.oldPos[(int)i] - Main.screenPosition, sourceRectangle, Color.Cyan * ((6 - i) / 6), trailRotations[(int)i] + MathHelper.Pi, origin, Projectile.scale, SpriteEffects.None, 0);
+                Main.spriteBatch.Draw(texture, vertexStrip._vertices[i].Position, sourceRectangle, Color.White, 0, origin, .05f, SpriteEffects.None, 0);
             }
-
-            Main.spriteBatch.Draw(texture, Projectile.position - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation + MathHelper.Pi, origin, Projectile.scale, SpriteEffects.None, 0);
-
-            Vector2 starOffset = Projectile.velocity;
-            starOffset.Normalize();
-            starOffset *= 30;
-            Main.spriteBatch.Draw(starTexture, Projectile.position - Main.screenPosition + starOffset, starSourceRectangle, Color.White, Projectile.rotation + starRotation, starOrigin, Projectile.scale * 0.75f, SpriteEffects.None, 0);
-            starRotation += 0.1f;
-
+            
             return false;
-        }
-
-        Vector2 dustPos()
-        {
-            return Main.rand.NextVector2Circular(Projectile.width / 6, Projectile.height / 6) + Projectile.Center;
-        }
-        Vector2 dustVel()
-        {
-            return Main.rand.NextVector2Circular(7, 7);
         }
     }
 }

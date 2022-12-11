@@ -184,8 +184,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             {
                 flameJetTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Marilith/CataclysmicFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
-
-
+                        
             //Pass relevant data to the shader via these parameters
             data.UseSaturation(Projectile.ai[0]);
             data.UseSecondaryColor(progress, cloudProgress, modifiedTime);

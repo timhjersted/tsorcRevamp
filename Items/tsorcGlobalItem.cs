@@ -48,13 +48,20 @@ namespace tsorcRevamp.Items
                 return false;
             }
 
-            if (item.type == ItemID.MechanicalEye && !Main.dayTime && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.RetinazerV2>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SpazmatismV2>()))
+            if (item.type == ItemID.MechanicalEye)
             {
-                //Triplets
-                UsefulFunctions.BroadcastText("The [c/ff1100:Tri][c/0085ad:pl][c/49fc03:ets] have awoken!");
-                NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y - 800, ModContent.NPCType<NPCs.Bosses.Cataluminance>());
-                NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X - 1000, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
-                NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X + 1000, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
+                if(!Main.dayTime && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.RetinazerV2>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SpazmatismV2>()))
+                {
+                    //Triplets
+                    UsefulFunctions.BroadcastText("The Triplets have awoken!", Color.MediumPurple);
+                    NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y - 800, ModContent.NPCType<NPCs.Bosses.Cataluminance>());
+                    NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X - 1000, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
+                    NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X + 1000, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
+                }
+                else
+                {
+                    UsefulFunctions.BroadcastText("The Triplets only awaken at night...", Color.MediumPurple);
+                }
                 return false;
             }
 

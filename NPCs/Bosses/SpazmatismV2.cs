@@ -15,6 +15,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             Main.npcFrameCount[NPC.type] = 6;
+            NPC.damage = 30;
             NPC.defense = 25;
             AnimationType = -1;
             NPC.lifeMax = (int)(32500 * (1 + (0.25f * (Main.CurrentFrameFlags.ActivePlayersCount - 1))));
@@ -41,6 +42,8 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Spazmatism");
+            NPCID.Sets.TrailCacheLength[NPC.type] = 50;
+            NPCID.Sets.TrailingMode[NPC.type] = 2;
         }
 
         int EyeFireDamage = 25;
@@ -102,7 +105,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             FindFrame(0);
 
-            Main.NewText("Spaz: " + CurrentMove.Name + " at " + MoveTimer);
+            //Main.NewText("Spaz: " + CurrentMove.Name + " at " + MoveTimer);
             MoveTimer++;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
@@ -154,14 +157,27 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
                 UsefulFunctions.DustRing(NPC.Center, (10 - MoveTimer % 60) * 20, DustID.CursedTorch, 100, 10);
             }
-
-            if (MoveTimer % 60 == 10)
+            
+            if (PhaseTwo)
             {
-                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15);
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (MoveTimer % 60 == 10)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 5), ProjectileID.CursedFlameHostile, EyeFireDamage, 0.5f, Main.myPlayer);
+                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 25);
+                }
+                NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ProjectileID.EyeFire, EyeFireDamage, 0.5f, Main.myPlayer);
+
+            }
+            else
+            {
+                UsefulFunctions.SmoothHoming(NPC, target.Center, 0.15f, 20, target.velocity, false);
+                if (MoveTimer % 60 == 10)
+                {
+                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 18);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 5), ProjectileID.CursedFlameHostile, EyeFireDamage, 0.5f, Main.myPlayer);
+                    }
                 }
             }
         }
@@ -172,6 +188,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(600, 300), 1f, 20);
             NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+
 
             if (MoveTimer % 90 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -238,6 +255,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //TODO spawn gore
             }
             NPC.rotation += rotationVelocity;
+            NPC.velocity *= 0.95f;
         }
         private void InitializeMoves(List<int> validMoves = null)
         {

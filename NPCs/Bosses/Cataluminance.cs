@@ -16,6 +16,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             Main.npcFrameCount[NPC.type] = 6;
+            NPC.damage = 30;
             NPC.defense = 25;
             AnimationType = -1;
             NPC.lifeMax = (int)(32500 * (1 + (0.25f * (Main.CurrentFrameFlags.ActivePlayersCount - 1))));
@@ -42,6 +43,8 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Cataluminance");
+            NPCID.Sets.TrailCacheLength[NPC.type] = 50;
+            NPCID.Sets.TrailingMode[NPC.type] = 2;
         }
 
         int StarBlastDamage = 25;
@@ -85,7 +88,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void AI()
         {
-            Main.NewText("Cat: " + CurrentMove.Name + " at " + MoveTimer);
+            //Main.NewText("Cat: " + CurrentMove.Name + " at " + MoveTimer);
             MoveTimer++;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
@@ -146,13 +149,29 @@ namespace tsorcRevamp.NPCs.Bosses
         //Chase the player rapidly and smoothly, leaving a damaging trail in its wake that obstructs movement
         void Pursuit()
         {
-            UsefulFunctions.SmoothHoming(NPC, target.Center, 0.15f, 15, target.velocity, false);
-            if(Main.netMode != NetmodeID.MultiplayerClient)
+            if (PhaseTwo)
             {
-                if (MoveTimer % 300 < 50 || PhaseTwo)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    if (MoveTimer % 75 < 30)
+                    {
+                        UsefulFunctions.DustRing(NPC.Center, (30 - MoveTimer % 75) * 15, DustID.GemSapphire, 150, 2);
+                    }
+                    if (MoveTimer % 75 == 30 && MoveTimer > 76)
+                    {
+                        NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 25);
+                    }
+                    int trail = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
+                    Main.projectile[trail].rotation = NPC.velocity.RotatedBy(MathHelper.PiOver2).ToRotation();
+                }
+            }
+            else
+            {
+                UsefulFunctions.SmoothHoming(NPC, target.Center, 0.25f, 25, target.velocity, false);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int trail = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
-                    Main.projectile[trail].rotation = NPC.rotation;
+                    Main.projectile[trail].rotation = NPC.velocity.RotatedBy(MathHelper.PiOver2).ToRotation();
                 }
             }
         }
@@ -227,6 +246,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //TODO spawn gore
             }
             NPC.rotation += rotationVelocity;
+            NPC.velocity *= 0.95f;
         }
 
         private void InitializeMoves(List<int> validMoves = null)
