@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		public static float angularSpeed = 0.03f;
 		public static float circleRad = 50f;
 		public float currentAngle = 0;
-    
+
 		public override void SetStaticDefaults()
 		{
 			Main.projFrames[Projectile.type] = 8;
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = 20;
 		}
-		public override void OnSpawn(IEntitySource source) 
+		public override void OnSpawn(IEntitySource source)
 		{
 			ScorchingPoint.projectiles.Add(this);
 		}
@@ -51,10 +51,13 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		{
 			return true;
 		}
-		public override void Kill(int timeLeft) 
+		public override void Kill(int timeLeft)
 		{
 			ScorchingPoint.projectiles.Remove(this);
 		}
+
+		bool spawnedTrail = false;
+		float countdown = 0;
 		public override void AI()
 		{
 			Player owner = Main.player[Projectile.owner];
@@ -66,31 +69,39 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 				return;
 			}
 
-      currentAngle += (angularSpeed / (circleRad * 0.001f + 1f)); 
+			currentAngle += (angularSpeed / (circleRad * 0.001f + 1f));
 
 			Vector2 offset = new Vector2(MathF.Sin(currentAngle), MathF.Cos(currentAngle)) * circleRad;
 
 			Projectile.position = visualplayercenter + offset;
+			Projectile.velocity = Projectile.rotation.ToRotationVector2();
+
+			countdown++;
+            if (!spawnedTrail && countdown > 60)
+			{
+				Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<ScorchingPointTrail>(), 0, 0, Projectile.owner, 0, Projectile.whoAmI);
+				spawnedTrail = true;
+			}
 
 
 
 
-
-      Visuals();
+			Visuals();
 		}
-    public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-    {
-      float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
+		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+		{
+			float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
 			if (distance < Projectile.height * 1.2f && distance > Projectile.height * 1.2f - 32)
 			{
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-    }
-    private bool CheckActive(Player owner)
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		private bool CheckActive(Player owner)
 		{
 			if (owner.dead || !owner.active)
 			{
@@ -108,8 +119,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			if (owner.HasBuff(ModContent.BuffType<CenterOfTheHeat>()))
 			{
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<ScorchingPointTrail>(), 0, 0, Projectile.owner, 0, Projectile.whoAmI);
-                Projectile.timeLeft = 2;
+				Projectile.timeLeft = 2;
 			}
 
 			return true;
@@ -117,9 +127,9 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		private void Visuals()
 		{
 
-      Projectile.rotation = currentAngle * -1f;
+			Projectile.rotation = currentAngle * -1f;
 
-      float frameSpeed = 3f;
+			float frameSpeed = 3f;
 
 			Projectile.frameCounter++;
 

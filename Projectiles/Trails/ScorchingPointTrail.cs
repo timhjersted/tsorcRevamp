@@ -6,20 +6,16 @@ using Terraria;
 using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static Humanizer.In;
-using tsorcRevamp.Buffs.Runeterra;
-using rail;
 
 namespace tsorcRevamp.Projectiles.Trails
 {
-    class ScorchingPointTrail : ModProjectile
+    class ScorchingPointTrail : DynamicTrail
     {
         public override void SetStaticDefaults()
         {
-            //Always draw this projectile even if its "center" is far offscreen
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
+            base.SetStaticDefaults();
+            DisplayName.SetDefault("Scorching Point Trail");
         }
-
         public override void SetDefaults()
         {
             Projectile.damage = 0;
@@ -29,113 +25,35 @@ namespace tsorcRevamp.Projectiles.Trails
             Projectile.tileCollide = false;
             Projectile.timeLeft = 99999999;
             Projectile.penetrate = -1;
+            Projectile.hostile = true;
+            Projectile.friendly = false;
+            trailWidth = 10;
+            trailLength = 10;
+            trailCollision = true;
+            collisionFrequency = 5;
         }
 
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
 
-        public int trailLength = 60;
-        public int trailWidth = 30;
-        public bool trailCollision = false;
-        public int collisionFrequency = 5;
-
-        public Effect customEffect;
-        public VertexStrip.StripColorFunction colorFunction;
-        public VertexStrip.StripHalfWidthFunction widthFunction;
-
-        public bool NPCSource
-        {
-            get => Projectile.ai[0] == 1;
-        }
-        public int hostIndex
-        {
-            get => (int)Projectile.ai[1];
-        }
-
-        public Entity hostEntity
-        {
-            get
-            {
-                if (NPCSource)
-                {
-                    return Main.npc[hostIndex];
-                }
-                else
-                {
-                    return Main.projectile[hostIndex];
-                }
-            }
-        }
-
-        public List<Vector2> trailPositions;
-        public List<float> trailRotations;
         public override void AI()
         {
-            Player owner = Main.player[Projectile.owner];
-
-            if (owner.HasBuff(ModContent.BuffType<CenterOfTheHeat>()))
-            {
-                Projectile.timeLeft = 2;
-            }
-
-            if (NPCSource)
-            {
-                Projectile.Center = Main.npc[hostIndex].Center;
-            }
-            else
-            {
-                Projectile.Center = Main.projectile[hostIndex].Center;
-            }
-
-            if (trailPositions == null)
-            {
-                trailPositions = new List<Vector2>();
-            }
-            if (trailRotations == null)
-            {
-                trailRotations = new List<float>();
-            }
-
-
-            if (hostEntity.active)
-            {
-                trailPositions.Add(hostEntity.Center);
-                trailRotations.Add(hostEntity.velocity.ToRotation());
-
-                if (trailPositions.Count > trailLength)
-                {
-                    trailPositions.RemoveAt(0);
-                    trailRotations.RemoveAt(0);
-                }
-            }
-            else
-            {
-                if (trailPositions.Count > 3)
-                {
-                    trailPositions.RemoveAt(0);
-                    trailRotations.RemoveAt(0);
-                }
-                else
-                {
-                    Projectile.Kill();
-                }
-            }
+            base.AI();
         }
-
         float DefaultWidthFunction(float progress)
         {
-            return 30;
+            float num = 1f;
+            float lerpValue = Utils.GetLerpValue(0f, 0.6f, 1 - progress, clamped: true);
+            num *= 1f - (1f - lerpValue) * (1f - lerpValue);
+            return MathHelper.Lerp(0f, 30f, num);
         }
 
         Color DefaultColorFunction(float progress)
         {
-            return Color.Red;
-            float timeFactor = (float)Math.Sin(Math.Abs(progress - Main.GlobalTimeWrappedHourly * 1));
-            Color result = Color.Lerp(Color.Cyan, Color.DeepPink, (timeFactor + 1f) / 2f);
+            float timeFactor = (float)Math.Sin(Math.Abs((1 - progress) * 10 - Main.GlobalTimeWrappedHourly * 20));
+            Color result = Color.Lerp(Color.Orange, Color.Red, (timeFactor + 1f) / 2f);
             result.A = 0;
 
             return result;
         }
-
 
         BasicEffect basicEffect;
         public override bool PreDraw(ref Color lightColor)
@@ -172,45 +90,13 @@ namespace tsorcRevamp.Projectiles.Trails
             }
 
             VertexStrip vertexStrip = new VertexStrip();
-            vertexStrip.PrepareStrip(Projectile.oldPos, Projectile.oldRot, colorFunction, widthFunction, includeBacksides: true);
+            vertexStrip.PrepareStrip(trailPositions.ToArray(), trailRotations.ToArray(), colorFunction, widthFunction, includeBacksides: true);
             vertexStrip.DrawTrail();
 
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             return false;
-        }
-
-        int ꙮ;
-
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            for (int i = 0; i < Main.maxPlayers; i++)
-            {
-                if (Main.player[i].active && !Main.player[i].dead)
-                {
-                    Player player = Main.player[i];
-                    float discard = 0;
-
-                    //Draw a line between points 9 at a time to check for collision
-                    for (int j = 0; j < trailPositions.Count - collisionFrequency; j += collisionFrequency)
-                    {
-                        if (trailPositions.Count < j + collisionFrequency - 1)
-                        {
-                            break;
-                        }
-                        if (trailPositions[j + collisionFrequency - 1] == Vector2.Zero)
-                        {
-                            break;
-                        }
-                        if (Collision.CheckAABBvLineCollision(player.position, player.Size, trailPositions[j], trailPositions[j + collisionFrequency - 1], 2 * widthFunction(j / trailPositions.Count), ref discard))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return base.Colliding(projHitbox, targetHitbox);
         }
     }
 }
