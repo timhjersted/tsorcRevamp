@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra;
+using tsorcRevamp.Projectiles.Trails;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
@@ -71,6 +72,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			Projectile.position = visualplayercenter + offset;
 
+
+
+
+
       Visuals();
 		}
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -95,15 +100,16 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			}
 
 			if (!owner.HasBuff(ModContent.BuffType<CenterOfTheHeat>()))
-      {
+			{
 				circleRad = 50f;
-        currentAngle = 0;
+				currentAngle = 0;
 				ScorchingPoint.projectiles.Clear();
-      }
+			}
 
 			if (owner.HasBuff(ModContent.BuffType<CenterOfTheHeat>()))
 			{
-				Projectile.timeLeft = 2;
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<ScorchingPointTrail>(), 0, 0, Projectile.owner, 0, Projectile.whoAmI);
+                Projectile.timeLeft = 2;
 			}
 
 			return true;
