@@ -57,7 +57,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		}
 
 		bool spawnedTrail = false;
-		float countdown = 0;
 		public override void AI()
 		{
 			Player owner = Main.player[Projectile.owner];
@@ -76,8 +75,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Projectile.position = visualplayercenter + offset;
 			Projectile.velocity = Projectile.rotation.ToRotationVector2();
 
-			countdown++;
-            if (!spawnedTrail && countdown > 60)
+            if (!spawnedTrail)
 			{
 				Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<ScorchingPointTrail>(), 0, 0, Projectile.owner, 0, Projectile.whoAmI);
 				spawnedTrail = true;
