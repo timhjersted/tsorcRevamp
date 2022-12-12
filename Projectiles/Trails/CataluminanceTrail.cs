@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Trails
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            Projectile.
+            DisplayName.SetDefault("Iluminant Trail");
         }
         public override void SetDefaults()
         {
