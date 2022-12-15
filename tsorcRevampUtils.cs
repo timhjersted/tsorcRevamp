@@ -848,6 +848,19 @@ namespace tsorcRevamp
 
             return Math.Abs(c);
         }
+        ///<summary> 
+        ///Rotates an object by a fixed amount of radians toward another thing
+        ///Sometimes just lerping the rotations isn't good enough
+        ///</summary>         
+        ///<param name="firstEntity">The thing rotating</param>
+        ///<param name="secondEntity">The thing being rotated toward</param>
+        ///<param name="radians">The amount in radians to rotate</param>
+        public static float SmoothlyRotateTowards(Entity firstEntity, Entity secondEntity, float radians)
+        {
+            //Unfinished
+            throw new NotImplementedException();
+            return 0;
+        }
 
         /// <summary>
         /// No more fall damage from teleports!

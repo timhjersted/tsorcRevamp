@@ -97,7 +97,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
 
-            if (!Main.npc[NPC.realLife].active)
+            if (NPC.realLife >= 0 && !Main.npc[NPC.realLife].active)
             {
                 OnKill();
                 NPC.active = false;
@@ -106,7 +106,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //Main.NewText("Ret: " + CurrentMove.Name + " at " + MoveTimer);
             MoveTimer++;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
+            Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 1f, 0.4f, 0.4f);
             FindFrame(0); 
 
             Vector2 targetRotation = rotationTarget.ToRotationVector2();
@@ -114,6 +114,7 @@ namespace tsorcRevamp.NPCs.Bosses
             Vector2 nextRotationVector = Vector2.Lerp(currentRotation, targetRotation, rotationSpeed);
             NPC.rotation = nextRotationVector.ToRotation();
 
+            MoveIndex = 0;
             if (testAttack != -1)
             {
                 MoveIndex = testAttack;
@@ -136,7 +137,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NextAttack();
             }
 
-            if (NPC.Distance(target.Center) > 4000)
+            if (NPC.Distance(target.Center) > 8000)
             {
                 NPC.Center = Main.player[NPC.target].Center + new Vector2(-1000, 0);
                 UsefulFunctions.BroadcastText("Retinazer Closes In...");
@@ -150,39 +151,54 @@ namespace tsorcRevamp.NPCs.Bosses
         void BigIron()
         {
             float laserCooldown = 200;
-            rotationSpeed = 0.04f;
-            UsefulFunctions.SmoothHoming(NPC, Main.player[NPC.target].Center + new Vector2(-700, 0), 0.7f, 20);
 
-            if (MoveTimer % laserCooldown < 30 && MoveTimer < 750)
-            {
-                UsefulFunctions.DustRing(NPC.Center, (30 - MoveTimer % laserCooldown) * 20, DustID.GemRuby, 100, 2);                
-            }
-            if (MoveTimer % laserCooldown == 60 || MoveTimer == 1)
-            {
-                if (aimingDown)
-                {
-                    rotationTarget = MathHelper.PiOver4 - MathHelper.PiOver2;
-                }
-                else
-                {
-                    rotationTarget = -MathHelper.PiOver4 - MathHelper.PiOver2;
-                }
-            }
+            rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
 
 
             if (PhaseTwo)
             {
-                if (MoveTimer % laserCooldown == 30 && MoveTimer < 750)
+                laserCooldown = 400;
+                if(MoveTimer % laserCooldown > 300)
+                {
+                    rotationSpeed = 0.1f;
+                    UsefulFunctions.SmoothHoming(NPC, Main.player[NPC.target].Center + new Vector2(-700, 0), 0.7f, 20);
+                }
+                else
+                {
+                    if (MoveTimer % laserCooldown > 1 && MoveTimer % laserCooldown < 260)
+                    {
+                        NPC.velocity *= 0.95f;
+
+                    }
+                }
+                if (MoveTimer % laserCooldown == 1 && MoveTimer < 750)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        currentProjectile = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetOmegaLaser>(), 249999999, 0.5f, Main.myPlayer, target.whoAmI, NPC.whoAmI);
+                        currentProjectile = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetOmegaLaser>(), 249999999, 0.5f, Main.myPlayer, NPC.whoAmI);
                     }
                 }
             }
             else
             {
-                
+                rotationSpeed = 0.04f;
+                UsefulFunctions.SmoothHoming(NPC, Main.player[NPC.target].Center + new Vector2(-700, 0), 0.7f, 20);
+
+                if (MoveTimer % laserCooldown < 30 && MoveTimer < 750)
+                {
+                    UsefulFunctions.DustRing(NPC.Center, (30 - MoveTimer % laserCooldown) * 20, DustID.GemRuby, 100, 2);
+                }
+                if (MoveTimer % laserCooldown == 60 || MoveTimer == 1)
+                {
+                    if (aimingDown)
+                    {
+                        rotationTarget = MathHelper.PiOver4 - MathHelper.PiOver2;
+                    }
+                    else
+                    {
+                        rotationTarget = -MathHelper.PiOver4 - MathHelper.PiOver2;
+                    }
+                }
                 if (MoveTimer % laserCooldown == 30 && MoveTimer < 750)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -225,6 +241,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 UsefulFunctions.SmoothHoming(NPC, target.Center, 0.25f, 25, null, false);
 
                 //Fire
+
                 if (MoveTimer % 75 == 0 && Main.netMode != NetmodeID.MultiplayerClient && MoveTimer < 800)
                 {
                     currentProjectile = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetPiercingLaser>(), DeathLaserDamage, 0.5f, Main.myPlayer, target.whoAmI, NPC.whoAmI);
