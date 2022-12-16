@@ -141,7 +141,13 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(550, -350), 0.5f, 20, target.velocity);
 
-            if(MoveTimer % 60 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            float delay = 60;
+            if (PhaseTwo)
+            {
+                delay = 80;
+            }
+
+            if(MoveTimer % delay == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 //Change projectile behavior in phase 2
                 int phase = 0;
@@ -151,7 +157,19 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 //TODO: Add magic blast projectile
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, phase);
-            }            
+            }           
+            
+            //Clear all homing stars when attack is over
+            if(MoveTimer == 899)
+            {
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>())
+                    {
+                        Main.projectile[i].Kill();
+                    }
+                }
+            }
         }
 
         //Chase the player rapidly and smoothly, leaving a damaging trail in its wake that obstructs movement
@@ -198,7 +216,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
             UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -350), 2f, 20);
 
-            //Spawn homing stars
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 //In phase 2 the stars leave damaging trails like EoL, but there are fewer of them
@@ -207,11 +224,11 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (MoveTimer % 30 == 0)
                     {
                         //Stars fired upward for effect
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2, 1 - Main.rand.NextBool(3).ToInt());
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2, 1);
 
                         //Stars rain down
                         Vector2 spawnPos = NPC.Center + new Vector2(Main.rand.NextFloat(-700, 700), -500);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1, 1 - Main.rand.NextBool(3).ToInt());
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1, 1);
                     }
                 }
                 else if (MoveTimer % 20 == 0)

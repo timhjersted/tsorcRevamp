@@ -15,6 +15,8 @@ namespace tsorcRevamp.Projectiles.Trails
         {
             base.SetStaticDefaults();
             DisplayName.SetDefault("Illuminant Trail");
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 60;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 3;
         }
         public override void SetDefaults()
         {
@@ -28,35 +30,22 @@ namespace tsorcRevamp.Projectiles.Trails
             Projectile.hostile = true;
             Projectile.friendly = false;
             trailWidth = 35;
-            trailLength = 23;
+            trailLength = 900;
             trailCollision = true;
             collisionFrequency = 5;
             trailYOffset = 50;
             widthFunction = HomingStarWidthFunction;
             colorFunction = HomingStarColorFunction;
+            trailDistanceCap = 500;
+            
         }
-
 
         public override void AI()
         {
             base.AI();
-        }
-        float DefaultWidthFunction(float progress)
-        {
-            float num = 1f;
-            float lerpValue = Utils.GetLerpValue(0f, 0.6f, 1 - progress, clamped: true);
-            num *= 1f - (1f - lerpValue) * (1f - lerpValue);
-            return MathHelper.Lerp(0f, 30f, num);
+            Projectile.rotation = Projectile.velocity.ToRotation();
         }
 
-        Color DefaultColorFunction(float progress)
-        {
-            float timeFactor = (float)Math.Sin(Math.Abs((1 - progress) * 10 - Main.GlobalTimeWrappedHourly * 20));
-            Color result = Color.Lerp(Color.Orange, Color.Red, (timeFactor + 1f) / 2f);
-            result.A = 0;
-
-            return result;
-        }
         Color HomingStarColorFunction(float progress)
         {
             float timeFactor = (float)Math.Sin(Math.Abs(progress - Main.GlobalTimeWrappedHourly * 1));
@@ -65,8 +54,6 @@ namespace tsorcRevamp.Projectiles.Trails
 
             return result;
         }
-
-
 
         float HomingStarWidthFunction(float progress)
         {
@@ -83,8 +70,44 @@ namespace tsorcRevamp.Projectiles.Trails
         }
 
         BasicEffect basicEffect;
+        Texture2D texture;
+        Texture2D starTexture;
+        float starRotation;
         public override bool PreDraw(ref Color lightColor)
         {
+            if (hostProjectile != null)
+            {
+                //Projectile core
+                if (texture == null || texture.IsDisposed)
+                {
+                    texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triplets/IlluminantHomingStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+                }
+                if (starTexture == null || starTexture.IsDisposed)
+                {
+                    starTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+                }
+
+
+                Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+                Rectangle starSourceRectangle = new Rectangle(0, 0, starTexture.Width, starTexture.Height);
+                Vector2 origin = sourceRectangle.Size() / 2f;
+                origin.Y += 20;
+                Vector2 starOrigin = starSourceRectangle.Size() / 2f;
+                DrawOriginOffsetY = 100;
+
+                Vector2 offset = hostProjectile.position - hostProjectile.Center;
+                //Draw shadow trails
+                for (float i = 5; i >= 0; i--)
+                {
+                    Main.spriteBatch.Draw(texture, hostProjectile.oldPos[(int)i * 2] - Main.screenPosition - offset, sourceRectangle, Color.MediumPurple * ((6 - i) / 6), hostProjectile.oldRot[(int)i * 2] - MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
+                }
+                Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, hostProjectile.rotation - MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
+                Vector2 starOffset = Projectile.velocity;
+                starOffset.Normalize();
+                starRotation += 0.1f;
+            }
+
+            //Trail
             if (trailPositions == null)
             {
                 return false;

@@ -68,8 +68,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         Vector2 simulatedVelocity;
 
         float rotDirection;
+
+        bool rapid = false;
         public override void AI()
         {
+            //Hacky way to pass one more bit of data through ai[0], but it works
+            if(Projectile.ai[0] >= 1000)
+            {
+                rapid = true;
+                Projectile.ai[0] -= 1000;
+            }
+
             if (FiringTimeLeft > 0)
             {
                 Vector2 origin = GetOrigin();
@@ -94,16 +103,21 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
                 }
 
                 LaserName = "Channeled Laser";
-                FiringDuration = 60;
-                LineDust = Main.rand.NextBool(8);
+                if (rapid)
+                {
+                    FiringDuration = 15;
+                }
+                else
+                {
+                    FiringDuration = 60;
+                }
+                LineDust = true;
                 LaserDust = DustID.OrangeTorch;
                 if (targetPlayer == null)
                 {
                     targetPlayer = Main.player[(int)Projectile.ai[0]];
                     target = Main.player[(int)Projectile.ai[0]].Center;
                 }
-
-
             }
             else
             {

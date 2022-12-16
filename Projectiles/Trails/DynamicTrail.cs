@@ -26,12 +26,16 @@ namespace tsorcRevamp.Projectiles.Trails
             Projectile.tileCollide = false;
             Projectile.timeLeft = 99999999;
             Projectile.penetrate = -1;
+            widthFunction = DefaultWidthFunction;
+            colorFunction = DefaultColorFunction;
         }
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
 
         public int trailLength = 60;
-        public int trailWidth = 30;     
+        public int trailWidth = 30;
+        public float trailDistanceCap = 200;
+        private float trailDistance;
         public bool trailCollision = false;
         public int collisionFrequency = 5;
         public float trailYOffset = 0;
@@ -72,6 +76,77 @@ namespace tsorcRevamp.Projectiles.Trails
         private bool initialized = false;
         public override void AI()
         {
+            Initialize();
+
+            if (HostEntityValid())
+            {
+                Vector2 offset = hostEntity.velocity;
+                offset.Normalize();
+                offset *= trailYOffset;
+
+                Projectile.Center = hostEntity.Center;
+                trailPositions.Add(hostEntity.Center + offset);
+                trailRotations.Add(hostEntity.velocity.ToRotation());
+
+                if (trailPositions.Count > 1)
+                {
+                    trailDistance += Vector2.Distance(trailPositions[trailPositions.Count - 1], trailPositions[trailPositions.Count - 2]);
+                }
+
+                if (trailPositions.Count > trailLength || trailDistance > trailDistanceCap)
+                {
+                    if (trailPositions.Count > 1)
+                    {
+                        trailDistance -= Vector2.Distance(trailPositions[0], trailPositions[1]);
+                    }
+                    trailPositions.RemoveAt(0);
+                    trailRotations.RemoveAt(0);
+                }
+            }
+            else
+            {
+                hostNPC = null;
+                hostProjectile = null;
+                if (trailPositions.Count > 3)
+                {
+                    if (trailPositions.Count > 1)
+                    {
+                        trailDistance -= Vector2.Distance(trailPositions[0], trailPositions[1]);
+                    }
+                    trailPositions.RemoveAt(0);
+                    trailRotations.RemoveAt(0);
+                }
+                else
+                {
+                    Projectile.Kill();
+                }
+            }
+        }
+
+        public bool HostEntityValid()
+        {
+            if (hostEntity == null)
+            {
+                return false;
+            }
+            if (!hostEntity.active)
+            {
+                return false;
+            }
+            if(NPCSource && hostNPC.type != hostEntityType)
+            {
+                return false;
+            }
+            if (!NPCSource && hostProjectile.type != hostEntityType)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public void Initialize()
+        {
             if (!initialized)
             {
                 trailPositions = new List<Vector2>();
@@ -88,37 +163,6 @@ namespace tsorcRevamp.Projectiles.Trails
                     hostEntityType = hostProjectile.type;
                 }
                 initialized = true;
-            }
-
-            if (hostEntity != null && hostEntity.active)
-            {
-                Vector2 offset = hostEntity.velocity;
-                offset.Normalize();
-                offset *= trailYOffset;
-
-                Projectile.Center = hostEntity.Center;
-                trailPositions.Add(hostEntity.Center + offset);
-                trailRotations.Add(hostEntity.velocity.ToRotation());
-
-                if (trailPositions.Count > trailLength)
-                {
-                    trailPositions.RemoveAt(0);
-                    trailRotations.RemoveAt(0);
-                }
-            }
-            else
-            {
-                hostNPC = null;
-                hostProjectile = null;
-                if (trailPositions.Count > 3)
-                {
-                    trailPositions.RemoveAt(0);
-                    trailRotations.RemoveAt(0);
-                }
-                else
-                {
-                    Projectile.Kill();
-                }
             }
         }
 
@@ -161,15 +205,6 @@ namespace tsorcRevamp.Projectiles.Trails
                 //Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
                 basicEffect.CurrentTechnique.Passes[0].Apply();
-            }
-
-            if(widthFunction == null)
-            {
-                widthFunction = DefaultWidthFunction;
-            }
-            if (colorFunction == null)
-            { 
-                colorFunction = DefaultColorFunction;
             }
 
             VertexStrip vertexStrip = new VertexStrip();

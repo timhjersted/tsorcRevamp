@@ -10,12 +10,12 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.Triplets
 {
-    class HomingStar : ModProjectile
+    class IchorShockwave : ModProjectile
     {
         
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Seeking Star");
+            DisplayName.SetDefault("Ichor Shockwave");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 60;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 3;
         }
@@ -29,10 +29,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             Projectile.tileCollide = false;
             Projectile.friendly = false;
         }
-        
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
+
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-
+            target.AddBuff(BuffID.OnFire, 300);
         }
 
 

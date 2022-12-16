@@ -104,6 +104,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 OnKill();
                 NPC.active = false;
             }
+            else
+            {
+                NPC.life = Main.npc[NPC.realLife].life;                
+            }
 
             //Main.NewText("Ret: " + CurrentMove.Name + " at " + MoveTimer);
             MoveTimer++;
@@ -154,21 +158,178 @@ namespace tsorcRevamp.NPCs.Bosses
         float spinDirection = 0;
         void BigIron()
         {
+            Vector2 targetPoint;
+            if(NPC.Center.X < target.Center.X)
+            {
+                targetPoint = Main.player[NPC.target].Center + new Vector2(-700, 0);
+            }
+            else
+            {
+                targetPoint = Main.player[NPC.target].Center + new Vector2(700, 0);
+            }
+            UsefulFunctions.SmoothHoming(NPC, targetPoint, 0.7f, 20, null, true);
+
+            if (PhaseTwo)
+            {
+                Vector2 targetOffset;
+                if (NPC.Center.X < target.Center.X)
+                {
+                    targetOffset = new Vector2(-500, -350);
+                }
+                else
+                {
+                    targetOffset = new Vector2(500, -350);
+                }
+                UsefulFunctions.SmoothHoming(NPC, target.Center + targetOffset, 0.7f, 20);
+
+                rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+                rotationSpeed = 0.012f;
+
+                //Lock on on the first frame
+                if (MoveTimer < 90)
+                {
+                    NPC.rotation = rotationTarget;
+                }
+                if (MoveTimer % 120 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetPiercingLaser>(), DeathLaserDamage, 0.5f, Main.myPlayer, target.whoAmI + 1000, NPC.whoAmI);
+
+                    Vector2 positionOffset = new Vector2(-100, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
+                    float rotationOffset = -MathHelper.PiOver4;
+
+                    for(int i = 0; i < 5; i++)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + positionOffset, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 7).RotatedBy(rotationOffset), ProjectileID.DeathLaser, DeathLaserDamage, 0.5f, Main.myPlayer);
+                        rotationOffset += MathHelper.PiOver4 / 2f;
+                    }
+                }
+                if (MoveTimer % 20 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 offset = new Vector2(-100, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
+                    
+
+                }
+            }
+            else
+            {
+                rotationSpeed = 0.03f;
+                if (MoveTimer == 1)
+                {
+                    aimingDown = true;
+                    rotationTarget = -MathHelper.PiOver4 - MathHelper.PiOver2;
+                    NPC.rotation = -MathHelper.PiOver4 - MathHelper.PiOver2;
+                }
+                float laserCooldown = 200;
+
+                if (MoveTimer % laserCooldown < 30 && MoveTimer < 750)
+                {
+                    UsefulFunctions.DustRing(NPC.Center, (30 - MoveTimer % laserCooldown) * 20, DustID.GemRuby, 100, 2);
+                }
+                if (MoveTimer % laserCooldown == 60)
+                {
+                    if (aimingDown)
+                    {
+                        rotationTarget = -MathHelper.PiOver4 - MathHelper.PiOver2;
+                    }
+                    else
+                    {
+                        rotationTarget = -MathHelper.PiOver4;
+                    }
+                }
+                if (MoveTimer % laserCooldown == 30 && MoveTimer < 750)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetPiercingLaser>(), DeathLaserDamage, 0.5f, Main.myPlayer, target.whoAmI, NPC.whoAmI);
+                    }
+                    aimingDown = !aimingDown;
+
+                }
+            }
+
+            if(MoveTimer == 870)
+            {
+                rotationSpeed = 0.2f;
+                rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+            }
+        }
+
+        //Dashes at (or maybe intentionally past?) the player, aiming at them and firing a barrage of lasers as it does
+        //Phase 2: Piercing laser instead of death lasers
+        void Charging()
+        {
+            rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+
+            //Telegraph for the first second before the starting charge
+            if (MoveTimer < 75)
+            {
+                UsefulFunctions.DustRing(NPC.Center, (75 - MoveTimer) * 30, DustID.GemRuby, 100, 10);
+                return;
+            }
+
+            if (PhaseTwo)
+            {
+                UsefulFunctions.SmoothHoming(NPC, target.Center, 0.15f, 20, null, false);
+                rotationSpeed = 0.06f;
+
+
+                //Fire
+                if (MoveTimer % 40 == 0 && Main.netMode != NetmodeID.MultiplayerClient && MoveTimer < 800)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetPiercingLaser>(), DeathLaserDamage, 0.5f, Main.myPlayer, target.whoAmI + 1000, NPC.whoAmI);
+                }
+                
+            }
+            else
+            {
+                rotationSpeed = 0.2f;
+
+                //Telegraph before each charge
+                if (MoveTimer % 75 < 15)
+                {
+                    UsefulFunctions.DustRing(NPC.Center, (15 - MoveTimer % 75) * 20, DustID.GemRuby, 100, 2);
+                }
+
+                //Charge
+                if (MoveTimer % 75 == 15)
+                {
+                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15);
+                }
+
+                //Fire
+                else if (MoveTimer % 75 > 15 && MoveTimer % 75 < 35)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 projVector = (NPC.rotation + MathHelper.PiOver2).ToRotationVector2();
+                        projVector.Normalize();
+                        projVector *= 11;
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVector, ProjectileID.DeathLaser, DeathLaserDamage, 0.5f, Main.myPlayer);
+                    }
+                }
+            }
+        }
+
+        //Hovers top right of the player and fires hitscan lingering lasers repeatedly
+        //Phase 2: Comes to a stop and then fires OHKO laser continuously, requiring orbiting the boss to survive
+        void Firing()
+        {
             if (PhaseTwo)
             {
                 if (MoveTimer == 1)
                 {
-                    UsefulFunctions.BroadcastText("Retinazer's Hull begins glowing fiercely...", Color.OrangeRed);
+                    UsefulFunctions.BroadcastText("Scorching heat radiates from Retinazer's hull...", Color.OrangeRed);
+                    UsefulFunctions.BroadcastText("The Triad prepares to take you down with them...", Color.Cyan);
                 }
 
                 rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-                
+
                 //Normal movement when not charging laser
                 if (laserCountdown == 0)
                 {
                     spinDirection = 0;
                     rotationSpeed = 0.2f;
-                    UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -400), 0.1f, 200);
+                    UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -400), 0.2f, 25);
                 }
                 else
                 {
@@ -221,142 +382,56 @@ namespace tsorcRevamp.NPCs.Bosses
                     {
                         NPC.velocity += new Vector2(7, 0).RotatedBy(NPC.rotation - MathHelper.PiOver2);
                     }
-                }                
-                
+                }
+
                 //Start the countdown 30 frames early to make the boss prematurely slow down
-                if(MoveTimer == 200)
+                if (MoveTimer == 300)
                 {
                     laserCountdown = 616;
                 }
 
                 //Fire laser
-                if (MoveTimer == 230)
+                if (MoveTimer == 330)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        currentProjectile = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetOmegaLaser>(), 249999999, 0.5f, Main.myPlayer, NPC.whoAmI);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetOmegaLaser>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI);
                     }
                 }
             }
             else
             {
-                rotationSpeed = 0.03f;
-                if (MoveTimer == 1)
+                Vector2 targetOffset;
+                if (NPC.Center.X < target.Center.X)
                 {
-                    aimingDown = true;
-                    rotationTarget = -MathHelper.PiOver4 - MathHelper.PiOver2;
-                    NPC.rotation = -MathHelper.PiOver4 - MathHelper.PiOver2;
+                    targetOffset = new Vector2(-500, -350);
                 }
-                float laserCooldown = 200;
-                UsefulFunctions.SmoothHoming(NPC, Main.player[NPC.target].Center + new Vector2(-700, 0), 0.7f, 20, null, true);
+                else
+                {
+                    targetOffset = new Vector2(500, -350);
+                }
+                UsefulFunctions.SmoothHoming(NPC, target.Center + targetOffset, 0.7f, 20);
 
-                if (MoveTimer % laserCooldown < 30 && MoveTimer < 750)
-                {
-                    UsefulFunctions.DustRing(NPC.Center, (30 - MoveTimer % laserCooldown) * 20, DustID.GemRuby, 100, 2);
-                }
-                if (MoveTimer % laserCooldown == 60)
-                {
-                    if (aimingDown)
-                    {
-                        rotationTarget = -MathHelper.PiOver4 - MathHelper.PiOver2;
-                    }
-                    else
-                    {
-                        rotationTarget = -MathHelper.PiOver4;
-                    }
-                }
-                if (MoveTimer % laserCooldown == 30 && MoveTimer < 750)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        currentProjectile = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetPiercingLaser>(), DeathLaserDamage, 0.5f, Main.myPlayer, target.whoAmI, NPC.whoAmI);
-                    }
-                    aimingDown = !aimingDown;
-
-                }
-            }
-
-            if(MoveTimer == 870)
-            {
-                rotationSpeed = 0.2f;
                 rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-            }
-        }
+                rotationSpeed = 0.012f;
 
-        //Dashes at (or maybe intentionally past?) the player, aiming at them and firing a barrage of lasers as it does
-        //Phase 2: Piercing laser instead of death lasers
-        void Charging()
-        {
-            rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-
-            //Telegraph for the first second before the starting charge
-            if (MoveTimer < 75)
-            {
-                UsefulFunctions.DustRing(NPC.Center, (75 - MoveTimer) * 30, DustID.GemRuby, 100, 10);
-                return;
-            }
-
-            
-
-
-            if (PhaseTwo && MoveTimer < 800)
-            {
-                rotationSpeed = NPC.Distance(target.Center) / 5000;
-
-
-                UsefulFunctions.SmoothHoming(NPC, target.Center, 0.25f, 25, null, false);
-
-                //Fire
-
-                if (MoveTimer % 75 == 0 && Main.netMode != NetmodeID.MultiplayerClient && MoveTimer < 800)
+                //Lock on on the first frame
+                if (MoveTimer < 90)
                 {
-                    currentProjectile = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetPiercingLaser>(), DeathLaserDamage, 0.5f, Main.myPlayer, target.whoAmI, NPC.whoAmI);
-                }
-            }
-            else
-            {
-                rotationSpeed = 0.2f;
-
-                //Telegraph before each charge
-                if (MoveTimer % 75 < 15)
-                {
-                    UsefulFunctions.DustRing(NPC.Center, (15 - MoveTimer % 75) * 20, DustID.GemRuby, 100, 2);
+                    NPC.rotation = rotationTarget;
                 }
 
-                //Charge
-                if (MoveTimer % 75 == 15)
+                if (MoveTimer % 20 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15);
-                }
-
-                //Fire
-                else if (MoveTimer % 75 > 15 && MoveTimer % 75 < 35)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Vector2 offset = new Vector2(-100, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
+                    if (MoveTimer % 120 == 0 && MoveTimer <= 800 && MoveTimer >= 100)
                     {
-                        Vector2 projVector = (NPC.rotation + MathHelper.PiOver2).ToRotationVector2();
-                        projVector.Normalize();
-                        projVector *= 11;
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVector, ProjectileID.DeathLaser, DeathLaserDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetPiercingLaser>(), DeathLaserDamage, 0.5f, Main.myPlayer, target.whoAmI + 1000, NPC.whoAmI);
                     }
+
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6), ProjectileID.DeathLaser, DeathLaserDamage, 0.5f, Main.myPlayer);
                 }
             }
-        }
-
-        //Hovers top right of the player and fires hitscan lingering lasers repeatedly
-        //Phase 2: Comes to a stop and then fires OHKO laser continuously, requiring orbiting the boss to survive
-        void Firing()
-        {
-            rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-            rotationSpeed = 1;
-            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(-500, -350), 0.7f, 20);
-
-            if (MoveTimer % 20 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                //TODO: Replace this with a hitscan laser
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6), ProjectileID.DeathLaser, DeathLaserDamage, 0.5f, Main.myPlayer);
-            }
-
         }
 
         void TBD()
@@ -486,16 +561,10 @@ namespace tsorcRevamp.NPCs.Bosses
         //TODO: Copy vanilla death effects
         public override void OnKill()
         {
+            UsefulFunctions.BroadcastText("Spazmatism has been defeated!", Color.MediumPurple);
             if (!Main.dedServ)
             {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 1").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 2").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 3").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 4").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 5").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 6").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 7").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 8").Type, 1f);
+
             }
         }
     }

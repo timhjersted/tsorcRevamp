@@ -104,6 +104,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 OnKill();
                 NPC.active = false;
             }
+            else
+            {
+                NPC.life = Main.npc[NPC.realLife].life;
+            }
 
             FindFrame(0);
 
@@ -143,26 +147,26 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
         //Charges, firing a shotgun spread of eye fire each time it does
-        //Phase 2: Fire breath too
+        //Phase 2: Fire aura
         void Charging()
         {
             //Telegraph for the first second before the starting charge
-            if(MoveTimer < 60)
+            if(MoveTimer < 70)
             {
                 NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-                UsefulFunctions.DustRing(NPC.Center, (60 - MoveTimer) * 30, DustID.CursedTorch, 100, 10);
+                UsefulFunctions.DustRing(NPC.Center, (70 - MoveTimer) * 30, DustID.CursedTorch, 100, 10);
                 return;
             }
 
-            if (MoveTimer % 60 < 10)
+            if (MoveTimer % 70 < 10)
             {
                 NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-                UsefulFunctions.DustRing(NPC.Center, (10 - MoveTimer % 60) * 20, DustID.CursedTorch, 100, 10);
+                UsefulFunctions.DustRing(NPC.Center, (10 - MoveTimer % 70) * 20, DustID.CursedTorch, 100, 10);
             }
             
             if (PhaseTwo)
             {
-                if (MoveTimer % 60 == 10)
+                if (MoveTimer % 70 == 10)
                 {
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 25);
                 }
@@ -173,7 +177,7 @@ namespace tsorcRevamp.NPCs.Bosses
             else
             {
                 UsefulFunctions.SmoothHoming(NPC, target.Center, 0.15f, 20, target.velocity, false);
-                if (MoveTimer % 60 == 10)
+                if (MoveTimer % 70 == 10)
                 {
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 18);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -194,10 +198,11 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (MoveTimer % 90 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
+                Vector2 offset = new Vector2(-50, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
                 float angle = -MathHelper.Pi / 3;
                 for (int i = 0; i < 3; i++)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 4).RotatedBy(angle), ProjectileID.CursedFlameHostile, EyeFireDamage, 0.5f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 4).RotatedBy(angle), ProjectileID.CursedFlameHostile, EyeFireDamage, 0.5f, Main.myPlayer);
                     angle += MathHelper.Pi / 3;
                 }
             }
@@ -346,6 +351,7 @@ namespace tsorcRevamp.NPCs.Bosses
         //TODO: Copy vanilla death effects
         public override void OnKill()
         {
+            UsefulFunctions.BroadcastText("Spazmatism has been defeated!", Color.MediumPurple);
             if (!Main.dedServ)
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 1").Type, 1f);

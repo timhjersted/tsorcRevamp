@@ -125,7 +125,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
                     {
                         Rectangle targetHitbox = Main.player[i].Hitbox;
                         if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center,
-                        Projectile.Center + Projectile.rotation.ToRotationVector2() * laserWidth, Projectile.height, ref point))
+                        Projectile.Center + Projectile.rotation.ToRotationVector2() * laserWidth, Projectile.height / 3f, ref point))
                         {
                             for (int j = 0; j < 6; j++)
                             {

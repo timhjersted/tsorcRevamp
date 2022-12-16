@@ -397,14 +397,7 @@ namespace tsorcRevamp.NPCs
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()) /*|| npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()) gwyn CLOSES the abyss portal!*/
                         {
-                            if (Main.netMode == NetmodeID.SinglePlayer) 
-                            {
-                                Main.NewText("The portal to The Abyss widens, and its denizens grow stronger...", Color.Orange);
-                            } 
-                            else if (Main.netMode == NetmodeID.Server) 
-                            {
-                                ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("The portal to The Abyss widens, and its denizens grow stronger..."), Color.Orange);
-                            }
+                            UsefulFunctions.BroadcastText("The portal to The Abyss widens, and its denizens grow stronger...", Color.Orange);
                         }
 
                         if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)
