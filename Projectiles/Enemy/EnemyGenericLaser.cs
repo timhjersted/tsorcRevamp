@@ -437,7 +437,10 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             for (int i = 0; i < LaserDebuffs.Count; i++)
             {
-                target.AddBuff(LaserDebuffs[i], DebuffTimers[i]);
+                if (!target.dontTakeDamage || !Main.debuff[LaserDebuffs[i]])
+                {
+                    target.AddBuff(LaserDebuffs[i], DebuffTimers[i]);
+                }
             }
 
             Vector2 endpoint = target.position;

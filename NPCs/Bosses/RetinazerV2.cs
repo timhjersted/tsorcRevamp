@@ -26,6 +26,8 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.knockBackResist = 0f;
             NPC.lavaImmune = true;
             NPC.boss = true;
+            NPC.width = 80;
+            NPC.height = 80;
 
             NPC.value = 600000;
             NPC.aiStyle = -1;
@@ -88,7 +90,7 @@ namespace tsorcRevamp.NPCs.Bosses
         float rotationSpeed;
         public override void AI()
         {
-            if(NPC.realLife < 0)
+            if (NPC.realLife < 0)
             {
                 int? catID = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Cataluminance>());
 
@@ -114,7 +116,7 @@ namespace tsorcRevamp.NPCs.Bosses
             Vector2 nextRotationVector = Vector2.Lerp(currentRotation, targetRotation, rotationSpeed);
             NPC.rotation = nextRotationVector.ToRotation();
 
-            MoveIndex = 0;
+
             if (testAttack != -1)
             {
                 MoveIndex = testAttack;
@@ -148,30 +150,87 @@ namespace tsorcRevamp.NPCs.Bosses
         //Phase 2: OHKO laser, too big to dodgeroll though but turns slow enough to avoid
         int currentProjectile;
         bool aimingDown;
+        int laserCountdown = 0;
+        float spinDirection = 0;
         void BigIron()
         {
-            float laserCooldown = 200;
-
-            rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-
-
             if (PhaseTwo)
             {
-                laserCooldown = 400;
-                if(MoveTimer % laserCooldown > 300)
+                if (MoveTimer == 1)
                 {
-                    rotationSpeed = 0.1f;
-                    UsefulFunctions.SmoothHoming(NPC, Main.player[NPC.target].Center + new Vector2(-700, 0), 0.7f, 20);
+                    UsefulFunctions.BroadcastText("Retinazer's Hull begins glowing fiercely...", Color.OrangeRed);
+                }
+
+                rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+                
+                //Normal movement when not charging laser
+                if (laserCountdown == 0)
+                {
+                    spinDirection = 0;
+                    rotationSpeed = 0.2f;
+                    UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -400), 0.1f, 200);
                 }
                 else
                 {
-                    if (MoveTimer % laserCooldown > 1 && MoveTimer % laserCooldown < 260)
-                    {
-                        NPC.velocity *= 0.95f;
+                    Lighting.AddLight(NPC.Center / 16, Color.Red.ToVector3() * 10);
+                    float spinVelocity = 0.015f;
+                    rotationSpeed = 0;
 
+                    //Spin slower while targeting
+                    if (laserCountdown > 376)
+                    {
+                        spinVelocity /= 3f;
                     }
+
+                    //Check if left or right is the closest
+                    Vector2 offset = new Vector2(10, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2);
+
+                    //If less than one turn unit from being aligned, just align it (stops weird vibration)
+                    if (Math.Abs(NPC.rotation - rotationTarget) < (spinVelocity / 2f) || Math.Abs(Math.Abs(NPC.rotation - rotationTarget) - MathHelper.TwoPi) < (spinVelocity / 2f))
+                    {
+                        NPC.rotation = rotationTarget;
+                    }
+                    else
+                    {
+                        if (Vector2.Distance(NPC.Center + offset.RotatedBy(0.1), target.Center) < Vector2.Distance(NPC.Center + offset.RotatedBy(-0.1), target.Center))
+                        {
+                            spinDirection += 0.07f;
+                            if (spinDirection > 1)
+                            {
+                                spinDirection = 1;
+                            }
+                        }
+                        else
+                        {
+                            spinDirection -= 0.07f;
+                            if (spinDirection < -1)
+                            {
+                                spinDirection = -1;
+                            }
+                        }
+                        NPC.rotation += spinVelocity * spinDirection;
+                    }
+
+                    laserCountdown--;
+
+                    //Slow down while charging/firing
+                    NPC.velocity *= 0.95f;
+
+                    //Recoil
+                    if (laserCountdown == 376)
+                    {
+                        NPC.velocity += new Vector2(7, 0).RotatedBy(NPC.rotation - MathHelper.PiOver2);
+                    }
+                }                
+                
+                //Start the countdown 30 frames early to make the boss prematurely slow down
+                if(MoveTimer == 200)
+                {
+                    laserCountdown = 616;
                 }
-                if (MoveTimer % laserCooldown == 1 && MoveTimer < 750)
+
+                //Fire laser
+                if (MoveTimer == 230)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -181,22 +240,29 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
-                rotationSpeed = 0.04f;
-                UsefulFunctions.SmoothHoming(NPC, Main.player[NPC.target].Center + new Vector2(-700, 0), 0.7f, 20);
+                rotationSpeed = 0.03f;
+                if (MoveTimer == 1)
+                {
+                    aimingDown = true;
+                    rotationTarget = -MathHelper.PiOver4 - MathHelper.PiOver2;
+                    NPC.rotation = -MathHelper.PiOver4 - MathHelper.PiOver2;
+                }
+                float laserCooldown = 200;
+                UsefulFunctions.SmoothHoming(NPC, Main.player[NPC.target].Center + new Vector2(-700, 0), 0.7f, 20, null, true);
 
                 if (MoveTimer % laserCooldown < 30 && MoveTimer < 750)
                 {
                     UsefulFunctions.DustRing(NPC.Center, (30 - MoveTimer % laserCooldown) * 20, DustID.GemRuby, 100, 2);
                 }
-                if (MoveTimer % laserCooldown == 60 || MoveTimer == 1)
+                if (MoveTimer % laserCooldown == 60)
                 {
                     if (aimingDown)
                     {
-                        rotationTarget = MathHelper.PiOver4 - MathHelper.PiOver2;
+                        rotationTarget = -MathHelper.PiOver4 - MathHelper.PiOver2;
                     }
                     else
                     {
-                        rotationTarget = -MathHelper.PiOver4 - MathHelper.PiOver2;
+                        rotationTarget = -MathHelper.PiOver4;
                     }
                 }
                 if (MoveTimer % laserCooldown == 30 && MoveTimer < 750)

@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {            
             Main.NewText(player.position / 16);            
-            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center + new Vector2(10, 0), speed, ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetOmegaLaser>(), damage, knockBack, Main.myPlayer);
+            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center + new Vector2(10, 0), speed, ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), damage, knockBack, Main.myPlayer, 2, 1);
 
             //Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyLightningStrike>(), damage, knockBack, Main.myPlayer);
             //NPC.NewNPC(source, 707 * 16, 1194 * 16, ModContent.NPCType<NPCs.Special.GwynBossVision>());

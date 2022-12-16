@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Graphics;
 using Terraria.Graphics.Shaders;
@@ -38,6 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
 
         float[] trailRotations = new float[6] { 0, 0, 0, 0, 0, 0 };
         bool playedSound = false;
+        bool spawnedTrail = false;
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
@@ -66,6 +68,18 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             {
                 homingAcceleration = 0;
             }
+
+            //Phase 2: Lighter homing, but also a trail
+            if (Projectile.ai[1] == 1)
+            {
+                homingAcceleration /= 2f;
+                if (!spawnedTrail)
+                {
+                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.Trails.HomingStarTrail>(), Projectile.damage, 0, Main.myPlayer, 0, Projectile.whoAmI);
+                    spawnedTrail = true;
+                }
+            }
+
 
             //Perform homing
             Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
@@ -98,62 +112,58 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
 
             return result;
         }
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        {
+            behindNPCs.Add(index);
+        }
 
         Texture2D texture;
+        Texture2D illuminantTexture;
         Texture2D starTexture;
-        Texture2D flameJetTexture;
-        ArmorShaderData data;
-        int vertexCount = 0;
-        BasicEffect effect;
         float starRotation;
         public override bool PreDraw(ref Color lightColor)
         {
-            if (effect == null)
-            {
-                effect = new BasicEffect(Main.graphics.GraphicsDevice);
-                effect.VertexColorEnabled = true;
-                effect.FogEnabled = false;
-                effect.View = Main.GameViewMatrix.TransformationMatrix;
-                var viewport = Main.instance.GraphicsDevice.Viewport;
-                effect.Projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, -1, 1);
-            }
-            effect.World = Matrix.CreateTranslation(-new Vector3(Main.screenPosition.X, Main.screenPosition.Y, 0));
-
-            Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-
-            effect.CurrentTechnique.Passes[0].Apply();
-
-            VertexStrip vertexStrip = new VertexStrip();
-            vertexStrip.PrepareStrip(Projectile.oldPos, Projectile.oldRot, ColorValue, Progress, includeBacksides: true);
-            vertexStrip.DrawTrail();
-
-
-
-
-
             if(texture == null || texture.IsDisposed)
             {
                 texture = (Texture2D)ModContent.Request<Texture2D>(Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            }
+            if (illuminantTexture == null || illuminantTexture.IsDisposed)
+            {
+                illuminantTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triplets/IlluminantHomingStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
             if (starTexture == null || starTexture.IsDisposed)
             {
                 starTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
+
+            Color shadowColor = Color.Cyan;
+
+            if (Projectile.ai[1] == 1)
+            {
+                texture = illuminantTexture;
+                shadowColor = Color.MediumPurple;
+            }
+
             Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
             Rectangle starSourceRectangle = new Rectangle(0, 0, starTexture.Width, starTexture.Height);
             Vector2 origin = sourceRectangle.Size() / 2f;
+            origin.Y += 20;
             Vector2 starOrigin = starSourceRectangle.Size() / 2f;
+            DrawOriginOffsetY = 100;
 
+            Vector2 offset = Projectile.position - Projectile.Center;
             //Draw shadow trails
             for (float i = 5; i >= 0; i--)
             {
-                Main.spriteBatch.Draw(texture, Projectile.oldPos[(int)i] - Main.screenPosition, sourceRectangle, Color.Cyan * ((6 - i) / 6), Projectile.oldRot[(int)i] - MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
+                Main.spriteBatch.Draw(texture, Projectile.oldPos[(int)i * 2] - Main.screenPosition - offset, sourceRectangle, shadowColor * ((6 - i) / 6), Projectile.oldRot[(int)i * 2] - MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
             }
-            Main.spriteBatch.Draw(texture, Projectile.position - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation - MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation - MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
             Vector2 starOffset = Projectile.velocity;
             starOffset.Normalize();
-            starOffset *= 30;
-            Main.spriteBatch.Draw(starTexture, Projectile.position - Main.screenPosition + starOffset, starSourceRectangle, Color.White, Projectile.rotation + starRotation, starOrigin, Projectile.scale * 0.75f, SpriteEffects.None, 0);
+            if (Projectile.ai[1] != 1)
+            {
+                Main.spriteBatch.Draw(starTexture, Projectile.Center - Main.screenPosition, starSourceRectangle, Color.White, Projectile.rotation + starRotation, starOrigin, Projectile.scale * 0.75f, SpriteEffects.None, 0);
+            }
             starRotation += 0.1f;
             return false;
         }

@@ -23,6 +23,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     //const float4 blueLaser = float4(0.1, 0.75, 1, 1);
     const float centerIntensity = 11.0;
     float scaleDown = uOpacity;
+    float scaleUp = uSaturation;
     float2 projectileSize = uTargetPosition;
 
 
@@ -51,41 +52,26 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
 
     //Tone down the intensity according to scaleDown, used for the charging and fade out effects
     intensity = intensity * scaleDown;
+    intensity = intensity * scaleUp;
 
     //Scale the start and end based on the scaleDown variable
-    float startPercent = 200 * scaleDown / projectileSize.x;
-    float endPercent = 0.8 * scaleDown;
+    float startPercent = 200 * scaleDown  / projectileSize.x;
     
     //Raise it to the power of 4, resulting in sharply increased intensity at the center that trails off smoothly
     intensity = pow(intensity, 4.0);
-
-    if (scaleDown < 1) {
-        intensity *= 0.9;
-    }
-
-    
 
     //Make the laser trail off at the start
     if (uv.x < startPercent) {
         intensity = lerp(0.0, intensity, pow(uv.x / startPercent, 0.5));
     }
-    
-    //Make the laser trail off at the end
-    if (uv.x > endPercent) {
-        intensity = lerp(0.0, intensity, pow((1.0 - uv.x) / (1 - endPercent), 0.5));
-    }
+
+    intensity *= 0.7;
 
     //Pick where to sample the texture used for the flowing effect
     float2 samplePoint = coords;
+
     //Stretch it horizontally and then shift it over time to make it appear to be flowing
-    float time = uTime;
-
-    //Make it flow the other way while charging
-    if (scaleDown < 1.0) {
-        time = uTime * -1;
-    }
-
-    samplePoint.x = (samplePoint.x - time) * 0.1;
+    samplePoint.x = (samplePoint.x + uTime) * 0.1;
     //Compress it vertically
     samplePoint.y = samplePoint.y * 2.0;
 
@@ -100,7 +86,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     float4 effectColor = noiseColor * intensity * 2.0;
 
     //Mix it with the color white raised to a higher exponent to make the center white beam
-    effectColor = effectColor + white * centerIntensity * (pow(intensity, 4.0) * sampleIntensity);
+    //effectColor = effectColor + white * centerIntensity * (pow(intensity, 4.0) * sampleIntensity);
     
     //Amplify the amount of of laserColor in the beam
     effectColor.r = effectColor.r * (1 + laserColor.r);
@@ -111,9 +97,9 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
 }
 
 
-technique IncineratingGaze
+technique IncineratingGazeTargeting
 {
-    pass IncineratingGazePass
+    pass IncineratingGazeTargetingPass
     {
         PixelShader = compile ps_2_0 PixelShaderFunction();
     }

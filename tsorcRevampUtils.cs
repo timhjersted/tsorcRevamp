@@ -627,7 +627,7 @@ namespace tsorcRevamp
         ///<param name="topSpeed">The max speed of the entity</param>
         ///<param name="targetVelocity">The velocity of its target, defaults to 0</param>
         ///<param name="bufferZone">Should it smoothly slow down on approach?</param>
-        public static void SmoothHoming(Entity actor, Vector2 target, float acceleration, float topSpeed, Vector2? targetVelocity = null, bool bufferZone = true, float bufferStrength = 0.05f)
+        public static void SmoothHoming(Entity actor, Vector2 target, float acceleration, float topSpeed, Vector2? targetVelocity = null, bool bufferZone = true, float bufferStrength = 0.1f)
         {
             //If the target has a velocity then factor it in
             Vector2 velTarget = Vector2.Zero;

@@ -36,7 +36,6 @@ namespace tsorcRevamp.Projectiles.Trails
         float timer = 0;
         public override void AI()
         {
-            Projectile.Center = Main.LocalPlayer.Center;
             timer++;
             //A phase is 900 seconds long
             //Once that is over, stop adding new positions

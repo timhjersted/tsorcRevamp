@@ -34,6 +34,10 @@ namespace tsorcRevamp.Projectiles.Trails
         public int trailWidth = 30;     
         public bool trailCollision = false;
         public int collisionFrequency = 5;
+        public float trailYOffset = 0;
+        public int hostEntityType = -1;
+        public NPC hostNPC;
+        public Projectile hostProjectile;
 
         public Effect customEffect;
         public VertexStrip.StripColorFunction colorFunction;
@@ -54,41 +58,46 @@ namespace tsorcRevamp.Projectiles.Trails
             {
                 if (NPCSource)
                 {
-                    return Main.npc[hostIndex];
+                    return hostNPC;
                 }
                 else
                 {
-                    return Main.projectile[hostIndex];
+                    return hostProjectile;
                 }
             }
         }
 
         public List<Vector2> trailPositions;
         public List<float> trailRotations;
+        private bool initialized = false;
         public override void AI()
         {
-            if (NPCSource)
-            {
-                Projectile.Center = Main.npc[hostIndex].Center;
-            }
-            else
-            {
-                Projectile.Center = Main.projectile[hostIndex].Center;
-            }
-
-            if(trailPositions == null)
+            if (!initialized)
             {
                 trailPositions = new List<Vector2>();
-            }
-            if (trailRotations == null)
-            {
                 trailRotations = new List<float>();
+
+                if (hostNPC == null && NPCSource)
+                {
+                    hostNPC = Main.npc[hostIndex];
+                    hostEntityType = hostNPC.type;
+                }
+                if (hostProjectile == null && !NPCSource)
+                {
+                    hostProjectile = Main.projectile[hostIndex];
+                    hostEntityType = hostProjectile.type;
+                }
+                initialized = true;
             }
 
-
-            if (hostEntity.active)
+            if (hostEntity != null && hostEntity.active)
             {
-                trailPositions.Add(hostEntity.Center);
+                Vector2 offset = hostEntity.velocity;
+                offset.Normalize();
+                offset *= trailYOffset;
+
+                Projectile.Center = hostEntity.Center;
+                trailPositions.Add(hostEntity.Center + offset);
                 trailRotations.Add(hostEntity.velocity.ToRotation());
 
                 if (trailPositions.Count > trailLength)
@@ -99,6 +108,8 @@ namespace tsorcRevamp.Projectiles.Trails
             }
             else
             {
+                hostNPC = null;
+                hostProjectile = null;
                 if (trailPositions.Count > 3)
                 {
                     trailPositions.RemoveAt(0);
@@ -111,12 +122,12 @@ namespace tsorcRevamp.Projectiles.Trails
             }
         }
 
-        float DefaultWidthFunction(float progress)
+        public float DefaultWidthFunction(float progress)
         {
-            return 30;
+            return trailWidth;
         }
 
-        Color DefaultColorFunction(float progress)
+        public Color DefaultColorFunction(float progress)
         {
             return Color.White;
             float timeFactor = (float)Math.Sin(Math.Abs(progress - Main.GlobalTimeWrappedHourly * 1));
@@ -172,9 +183,15 @@ namespace tsorcRevamp.Projectiles.Trails
         }
 
         int ꙮ;
+        
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
+            if(trailPositions == null)
+            {
+                return false;
+            }
+
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active && !Main.player[i].dead)

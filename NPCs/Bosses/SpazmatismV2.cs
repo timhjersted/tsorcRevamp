@@ -26,6 +26,8 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.knockBackResist = 0f;
             NPC.lavaImmune = true;
             NPC.boss = true;
+            NPC.width = 80;
+            NPC.height = 80;
 
             NPC.value = 600000;
             NPC.aiStyle = -1;
@@ -165,7 +167,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 25);
                 }
                 NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ProjectileID.EyeFire, EyeFireDamage, 0.5f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity / 10f, ProjectileID.EyeFire, EyeFireDamage, 0.5f, Main.myPlayer);
 
             }
             else

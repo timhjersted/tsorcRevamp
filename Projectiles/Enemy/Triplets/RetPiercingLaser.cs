@@ -47,10 +47,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             LaserTextureTail = new Rectangle(0, 58, 30, 24);
             LaserSound = SoundID.Item12 with { Volume = 0.5f };
 
-            LaserDebuffs = new List<int>(ModContent.BuffType<Buffs.ThermalRise>()); //Lasers inflict thermal rise on hit, to give people a chance to recover from running out of flight time
-            DebuffTimers = new List<int>(300);
+            LaserDebuffs = new List<int>(); 
+            DebuffTimers = new List<int>();
 
-            CastLight = false; //Literally the biggest performance hit of all of this lmfao
+            CastLight = false;
+
+            LaserDebuffs.Add(BuffID.OnFire);
+            DebuffTimers.Add(300);
 
             Additive = true;
         }

@@ -9,12 +9,12 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Trails
 {
-    class ScorchingPointTrail : DynamicTrail
+    class HomingStarTrail : DynamicTrail
     {
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Scorching Point Trail");
+            DisplayName.SetDefault("Illuminant Trail");
         }
         public override void SetDefaults()
         {
@@ -27,10 +27,13 @@ namespace tsorcRevamp.Projectiles.Trails
             Projectile.penetrate = -1;
             Projectile.hostile = true;
             Projectile.friendly = false;
-            trailWidth = 10;
-            trailLength = 10;
+            trailWidth = 35;
+            trailLength = 23;
             trailCollision = true;
             collisionFrequency = 5;
+            trailYOffset = 50;
+            widthFunction = HomingStarWidthFunction;
+            colorFunction = HomingStarColorFunction;
         }
 
 
@@ -54,11 +57,35 @@ namespace tsorcRevamp.Projectiles.Trails
 
             return result;
         }
+        Color HomingStarColorFunction(float progress)
+        {
+            float timeFactor = (float)Math.Sin(Math.Abs(progress - Main.GlobalTimeWrappedHourly * 1));
+            Color result = Color.Lerp(Color.Cyan, Color.DeepPink, (timeFactor + 1f) / 2f);
+            result.A = 0;
+
+            return result;
+        }
+
+
+
+        float HomingStarWidthFunction(float progress)
+        {
+
+            if (progress >= 0.85)
+            {
+                float scale = (1f - progress) / 0.15f;
+                return (float)Math.Pow(scale, 0.1) * (float)trailWidth;
+            }
+            else
+            {
+                return (float)Math.Pow(progress, 0.6f) * trailWidth;
+            }
+        }
 
         BasicEffect basicEffect;
         public override bool PreDraw(ref Color lightColor)
         {
-            if(trailPositions == null)
+            if (trailPositions == null)
             {
                 return false;
             }

@@ -1339,6 +1339,10 @@ namespace tsorcRevamp
         //stop sign text from drawing when the player is too far away / does not have line of sight to the sign
         internal static void SignTextPatch(On.Terraria.Player.orig_TileInteractionsCheckLongDistance orig, Player self, int myX, int myY)
         {
+            if(myX >= Main.tile.Width || myY >= Main.tile.Height || myX < 0 || myY < 0)
+            {
+                return;
+            }
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Main.tileSign[Main.tile[myX, myY].TileType])
             {
                 if (Main.tile[myX, myY] == null)
