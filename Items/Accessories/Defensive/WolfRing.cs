@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Tooltip.SetDefault("One of the rings worn by Artorias." +
                                 "\nImmunity to the on-fire and broken-armor debuffs." +
                                 "\n+18 defense within the Abyss, +6 defense otherwise." +
-                                "\nGrants Fire imbue effect" +
-                                "\nFire imbue effect can be toggled by hiding the accessory.");
+                                "\nGrants Acid Venom imbue effect" +
+                                "\nImbue effect can be toggled by hiding the accessory.");
         }
 
         public override void SetDefaults()
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             }
         }
         public override void UpdateAccessory(Player player, bool hideVisual) {
-            if (!hideVisual) player.AddBuff(BuffID.WeaponImbueFire, 60, false);
+            if (!hideVisual) player.AddBuff(BuffID.WeaponImbueVenom, 60, false);
         }
 
     }

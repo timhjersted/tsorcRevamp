@@ -12,9 +12,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Tooltip.SetDefault("One of the rings worn by Artorias." +
                                 "\nInherits Ring of Clarity effects" +
                                 "\n+22 defense within the Abyss, +10 defense otherwise" +
-                                "\nGrants Magma Stone and Fire Flask effect" +
+                                "\nGrants Magma Stone and Acid Venom imbue effect" +
                                 "\n+4 HP Regen. +120 Mana." +
-                                "\nFire imbue effect can be toggled by hiding the accessory.");
+                                "\nImbue effect can be toggled by hiding the accessory.");
         }
 
         public override void SetDefaults()
@@ -72,7 +72,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual) {
-            if (!hideVisual) player.AddBuff(BuffID.WeaponImbueFire, 60, false);
+            if (!hideVisual) player.AddBuff(BuffID.WeaponImbueVenom, 60, false);
         }
     }
 }
