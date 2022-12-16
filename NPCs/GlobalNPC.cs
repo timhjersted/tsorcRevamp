@@ -534,7 +534,7 @@ namespace tsorcRevamp.NPCs
                         debuffCounter++;
                     }
                 }
-                double scalar = Math.Pow(1.2, debuffCounter - 1);
+                double scalar = Math.Pow(1.1, debuffCounter - 1);
                 damage = (int)(damage * scalar);
             }
         }
