@@ -47,6 +47,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         ActiveSound laserSound;
         public override void AI()
         {
+            //Extra long boi for final stand
+            if (Projectile.ai[1] == 1)
+            {
+                Projectile.timeLeft = 900;
+                Projectile.ai[1] = 0;
+            }
+
             if(chargeProgress < firingTime)
             {
                 if (chargeProgress == 0)

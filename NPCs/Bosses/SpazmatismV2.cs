@@ -85,8 +85,8 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         int MoveTimer = 0;
+        int finalStandTimer = 0;
         NPCDespawnHandler despawnHandler;
-
         public override void AI()
         {
             if (NPC.realLife < 0)
@@ -116,6 +116,12 @@ namespace tsorcRevamp.NPCs.Bosses
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
 
+            if (NPC.Distance(target.Center) > 4000)
+            {
+                NPC.Center = target.Center + new Vector2(0, 1000);
+                UsefulFunctions.BroadcastText("Spazmatism Closes In...");
+            }
+
             if (testAttack != -1)
             {
                 MoveIndex = testAttack;
@@ -131,17 +137,35 @@ namespace tsorcRevamp.NPCs.Bosses
                 return;
             }
 
-            CurrentMove.Move();
-
-            if (MoveTimer >= 900)
+            //Switch into final stand if lower than 10% health
+            if (NPC.life < NPC.lifeMax / 10f)
             {
-                NextAttack();
+                finalStandTimer++;
+                if (finalStandTimer < 60)
+                {
+                    NPC.velocity *= 0.99f;
+                    //Activate auras
+                }
+                else
+                {
+                    FinalStand();
+                }
+
+                return;
             }
 
-            if (NPC.Distance(target.Center) > 4000)
+            if (MoveTimer < 900)
             {
-                NPC.Center = target.Center + new Vector2(0, 1000);
-                UsefulFunctions.BroadcastText("Spazmatism Closes In...");
+                CurrentMove.Move();
+            }
+            else if (MoveTimer < 960)
+            {
+                //Phase transition
+                NPC.velocity *= 0.99f;
+            }
+            else
+            {
+                NextAttack();
             }
         }
 
@@ -211,25 +235,32 @@ namespace tsorcRevamp.NPCs.Bosses
         //Spaz aims down and breathes cursed fire into the earth
         //It erupts in bursts of neon green flame
         //Phase 2: Geysers of continuous flame like kraken has
-        void CursedEruptions()
+        void IchorTrackers()
         {
             UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, 350), 0.5f, 20);
-            NPC.rotation = 0;
-
-
-
-            //Spawn cursed geysers
-            if (MoveTimer % 60 == 10 && Main.netMode != NetmodeID.MultiplayerClient)
+            
+            if (!PhaseTwo)
             {
-                Vector2 projectileSpawn = NPC.Center + new Vector2(Main.rand.NextFloat(-200, 200), 700);
-                //TODO: Add star blast projectile
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), projectileSpawn, UsefulFunctions.GenerateTargetingVector(projectileSpawn, target.Center, 7), ProjectileID.CursedFlameHostile, EyeFireDamage, 0.5f, Main.myPlayer);
+                if (MoveTimer % 120 == 10 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<Projectiles.Enemy.Triplets.IchorGlob>());
+                }
+            }
+            else
+            {
+                if (MoveTimer % 180 == 10 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<Projectiles.Enemy.Triplets.IchorMissile>());
+                }
             }
         }
 
-        void TBD()
+        void FinalStand()
         {
-            NextAttack();
+            if (MoveTimer % 70 == 10)
+            {
+                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 25);
+            }
         }
 
         private void NextAttack()
@@ -269,15 +300,14 @@ namespace tsorcRevamp.NPCs.Bosses
             MoveList = new List<SpazMove> {
                 new SpazMove(Charging, SpazMoveID.Charging, "Charging"),
                 new SpazMove(Firing, SpazMoveID.Firing, "Firing"),
-                new SpazMove(CursedEruptions, SpazMoveID.CursedEruptions, "Cursed Eruptions"),
-                new SpazMove(TBD, SpazMoveID.TBD, "TBD"),
+                new SpazMove(IchorTrackers, SpazMoveID.IchorTrackers, "Ichor Trackers"),
                 };
         }
 
         private class SpazMoveID
         {
             public const short Charging = 0;
-            public const short CursedEruptions = 1;
+            public const short IchorTrackers = 1;
             public const short Firing = 2;
             public const short TBD = 3;
         }

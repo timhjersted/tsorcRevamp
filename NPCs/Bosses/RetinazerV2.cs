@@ -53,12 +53,12 @@ namespace tsorcRevamp.NPCs.Bosses
         //If this is set to anything but -1, the boss will *only* use that attack ID
         int testAttack = -1;
         float transformationTimer;
-        CataMove CurrentMove
+        RetMove CurrentMove
         {
             get => MoveList[MoveIndex];
         }
 
-        List<CataMove> MoveList;
+        List<RetMove> MoveList;
 
         //Controls what move is currently being performed
         public int MoveIndex
@@ -84,8 +84,8 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         int MoveTimer = 0;
+        int finalStandTimer = 0;
         NPCDespawnHandler despawnHandler;
-
         float rotationTarget;
         float rotationSpeed;
         public override void AI()
@@ -109,11 +109,16 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.life = Main.npc[NPC.realLife].life;                
             }
 
-            //Main.NewText("Ret: " + CurrentMove.Name + " at " + MoveTimer);
             MoveTimer++;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 1f, 0.4f, 0.4f);
-            FindFrame(0); 
+            FindFrame(0);
+
+            if (NPC.Distance(target.Center) > 4000)
+            {
+                NPC.Center = Main.player[NPC.target].Center + new Vector2(-1000, 0);
+                UsefulFunctions.BroadcastText("Retinazer Closes In...");
+            }
 
             Vector2 targetRotation = rotationTarget.ToRotationVector2();
             Vector2 currentRotation = NPC.rotation.ToRotationVector2();
@@ -136,27 +141,42 @@ namespace tsorcRevamp.NPCs.Bosses
                 return;
             }
 
-            CurrentMove.Move();
+            //Switch into final stand if lower than 10% health
+            if (NPC.life < NPC.lifeMax / 10f)
+            {
+                finalStandTimer++;
+                if (finalStandTimer < 60)
+                {
+                    NPC.velocity *= 0.99f;
+                    //Activate auras
+                }
+                else
+                {
+                    FinalStand();
+                }
 
-            if (MoveTimer >= 900)
+                return;
+            }
+
+            if (MoveTimer < 900)
+            {
+                CurrentMove.Move();
+            }
+            else if (MoveTimer < 960)
+            {
+                //Phase transition
+                NPC.velocity *= 0.99f;
+            }
+            else
             {
                 NextAttack();
             }
-
-            if (NPC.Distance(target.Center) > 8000)
-            {
-                NPC.Center = Main.player[NPC.target].Center + new Vector2(-1000, 0);
-                UsefulFunctions.BroadcastText("Retinazer Closes In...");
-            }
         }
 
-        //Trails off behind the player, before firing a piercing laser repeatedly
-        //Phase 2: OHKO laser, too big to dodgeroll though but turns slow enough to avoid
-        int currentProjectile;
         bool aimingDown;
         int laserCountdown = 0;
         float spinDirection = 0;
-        void BigIron()
+        void FireSupport()
         {
             Vector2 targetPoint;
             if(NPC.Center.X < target.Center.X)
@@ -203,12 +223,6 @@ namespace tsorcRevamp.NPCs.Bosses
                         rotationOffset += MathHelper.PiOver4 / 2f;
                     }
                 }
-                if (MoveTimer % 20 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 offset = new Vector2(-100, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
-                    
-
-                }
             }
             else
             {
@@ -218,6 +232,11 @@ namespace tsorcRevamp.NPCs.Bosses
                     aimingDown = true;
                     rotationTarget = -MathHelper.PiOver4 - MathHelper.PiOver2;
                     NPC.rotation = -MathHelper.PiOver4 - MathHelper.PiOver2;
+                    if(NPC.Center.X > target.Center.X)
+                    {
+                        rotationTarget *= -1;
+                        NPC.rotation *= -1;
+                    }
                 }
                 float laserCooldown = 200;
 
@@ -234,6 +253,10 @@ namespace tsorcRevamp.NPCs.Bosses
                     else
                     {
                         rotationTarget = -MathHelper.PiOver4;
+                    }
+                    if(target.Center.X < NPC.Center.X)
+                    {
+                        rotationTarget *= -1;
                     }
                 }
                 if (MoveTimer % laserCooldown == 30 && MoveTimer < 750)
@@ -319,7 +342,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (MoveTimer == 1)
                 {
                     UsefulFunctions.BroadcastText("Scorching heat radiates from Retinazer's hull...", Color.OrangeRed);
-                    UsefulFunctions.BroadcastText("The Triad prepares to take you down with them...", Color.Cyan);
                 }
 
                 rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
@@ -329,7 +351,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     spinDirection = 0;
                     rotationSpeed = 0.2f;
-                    UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -400), 0.2f, 25);
+                    UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -400), 0.4f, 35);
                 }
                 else
                 {
@@ -421,10 +443,10 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.rotation = rotationTarget;
                 }
 
-                if (MoveTimer % 20 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (MoveTimer % 30 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 offset = new Vector2(-100, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
-                    if (MoveTimer % 120 == 0 && MoveTimer <= 800 && MoveTimer >= 100)
+                    if (MoveTimer % 180 == 0 && MoveTimer <= 800 && MoveTimer >= 100)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetPiercingLaser>(), DeathLaserDamage, 0.5f, Main.myPlayer, target.whoAmI + 1000, NPC.whoAmI);
                     }
@@ -434,9 +456,80 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
-        void TBD()
+        bool spawnedLaser;
+        int laserTimer;
+        void FinalStand()
         {
-            NextAttack();
+            rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+
+            //Normal movement when not charging laser
+            if (!spawnedLaser)
+            {
+                spinDirection = 0;
+                rotationSpeed = 0.2f;
+                UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -400), 0.5f, 45);
+                if(NPC.Distance(target.Center + new Vector2(0, -400)) < 100)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetOmegaLaser>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI, 1);
+                    }
+                    spawnedLaser = true;
+                }
+            }
+            else
+            {
+                laserTimer++;
+                Lighting.AddLight(NPC.Center / 16, Color.Red.ToVector3() * 10);
+                float spinVelocity = 0.015f;
+                rotationSpeed = 0;
+
+                //Spin slower while targeting
+                if (laserTimer < 216)
+                {
+                    spinVelocity /= 3f;
+                }
+
+                //Recoil
+                if (laserTimer == 216)
+                {
+                    NPC.velocity += new Vector2(7, 0).RotatedBy(NPC.rotation - MathHelper.PiOver2);
+                }
+
+                //Check if left or right is the closest
+                Vector2 offset = new Vector2(10, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2);
+
+                //If less than one turn unit from being aligned, just align it (stops weird vibration)
+                if (Math.Abs(NPC.rotation - rotationTarget) < (spinVelocity / 2f) || Math.Abs(Math.Abs(NPC.rotation - rotationTarget) - MathHelper.TwoPi) < (spinVelocity / 2f))
+                {
+                    NPC.rotation = rotationTarget;
+                }
+                else
+                {
+                    if (Vector2.Distance(NPC.Center + offset.RotatedBy(0.1), target.Center) < Vector2.Distance(NPC.Center + offset.RotatedBy(-0.1), target.Center))
+                    {
+                        spinDirection += 0.07f;
+                        if (spinDirection > 1)
+                        {
+                            spinDirection = 1;
+                        }
+                    }
+                    else
+                    {
+                        spinDirection -= 0.07f;
+                        if (spinDirection < -1)
+                        {
+                            spinDirection = -1;
+                        }
+                    }
+                    NPC.rotation += spinVelocity * spinDirection;
+                }
+
+                laserCountdown--;
+
+                //Slow down while charging/firing
+                NPC.velocity *= 0.95f;                
+            }
         }
 
         private void NextAttack()
@@ -473,28 +566,28 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         private void InitializeMoves(List<int> validMoves = null)
         {
-            MoveList = new List<CataMove> {
-                new CataMove(BigIron, CataMoveID.BigIron, "Big Iron"),
-                new CataMove(Charging, CataMoveID.Charging, "Charging"),
-                new CataMove(Firing, CataMoveID.Firing, "Firing"),
+            MoveList = new List<RetMove> {
+                new RetMove(FireSupport, RetMoveID.FireSupport, "Fire Support"),
+                new RetMove(Charging, RetMoveID.Charging, "Charging"),
+                new RetMove(Firing, RetMoveID.Firing, "Firing"),
                 };
         }
 
-        private class CataMoveID
+        private class RetMoveID
         {
-            public const short BigIron = 0;
+            public const short FireSupport = 0;
             public const short Firing = 1;
             public const short Charging = 2;
             public const short TBD = 3;
         }
-        private class CataMove
+        private class RetMove
         {
             public Action Move;
             public int ID;
             public Action<SpriteBatch, Color> Draw;
             public string Name;
 
-            public CataMove(Action MoveAction, int MoveID, string AttackName, Action<SpriteBatch, Color> DrawAction = null)
+            public RetMove(Action MoveAction, int MoveID, string AttackName, Action<SpriteBatch, Color> DrawAction = null)
             {
                 Move = MoveAction;
                 ID = MoveID;

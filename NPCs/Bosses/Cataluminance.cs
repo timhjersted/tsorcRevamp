@@ -87,8 +87,8 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         int MoveTimer = 0;
+        int finalStandTimer = 0;
         NPCDespawnHandler despawnHandler;
-
         public override void AI()
         {
             //Main.NewText("Cat: " + CurrentMove.Name + " at " + MoveTimer);
@@ -97,6 +97,13 @@ namespace tsorcRevamp.NPCs.Bosses
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
             NPC.rotation = (NPC.rotation + (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2) / 2f;
             FindFrame(0);
+
+            //Teleport if too far away
+            if (NPC.Distance(target.Center) > 4000)
+            {
+                NPC.Center = target.Center + new Vector2(0, -1000);
+                UsefulFunctions.BroadcastText("Cataluminance Closes In...");
+            }
 
             //This exists because I wanted to make the fight far faster paced than even supersonic wings 1 allows
             //Unfinished: It will be applied by grazing Cataluimance's illuminant projectiles later
@@ -113,6 +120,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 Transform();
                 return;
             }
+
             if (testAttack != -1)
             {
                 MoveIndex = testAttack;
@@ -122,17 +130,40 @@ namespace tsorcRevamp.NPCs.Bosses
                 InitializeMoves();
             }
 
-            CurrentMove.Move();
-
-            if (MoveTimer >= 900)
+            //Switch into final stand if lower than 10% health
+            if (NPC.life < NPC.lifeMax / 10f)
             {
-                NextAttack();
+                if(finalStandTimer == 0)
+                {
+                    UsefulFunctions.BroadcastText("The Triad prepares to take you down with them...", Color.Cyan);
+                }
+
+                finalStandTimer++;
+                if (finalStandTimer < 60)
+                {
+                    NPC.velocity *= 0.99f;
+                    //Activate auras
+                }
+                else
+                {
+                    FinalStand();
+                }
+
+                return;
             }
 
-            if (NPC.Distance(target.Center) > 4000)
+            if (MoveTimer < 900)
             {
-                NPC.Center = target.Center + new Vector2(0, -1000);
-                UsefulFunctions.BroadcastText("Cataluminance Closes In...");
+                CurrentMove.Move();
+            }
+            else if (MoveTimer < 960)
+            {
+                //Phase transition
+                NPC.velocity *= 0.99f;
+            }
+            else
+            {
+                NextAttack();
             }
         }
 
@@ -173,11 +204,6 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         //Chase the player rapidly and smoothly, leaving a damaging trail in its wake that obstructs movement
-        Vector2[] trailPositions;
-        float[] trailRotations; 
-        List<Vector2> oldTrailPositions;
-        List<float> oldTrailRotations;
-
         void Pursuit()
         {
             if (MoveTimer == 1)
@@ -221,7 +247,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //In phase 2 the stars leave damaging trails like EoL, but there are fewer of them
                 if (PhaseTwo)
                 {
-                    if (MoveTimer % 30 == 0)
+                    if (MoveTimer % 40 == 0)
                     {
                         //Stars fired upward for effect
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2, 1);
@@ -231,7 +257,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1, 1);
                     }
                 }
-                else if (MoveTimer % 20 == 0)
+                else if (MoveTimer % 30 == 0)
                 {
                     //Stars fired upward for effect
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
@@ -243,9 +269,19 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
-        void TBD()
+        void FinalStand()
         {
-            NextAttack();
+            if (MoveTimer % 30 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                //Change projectile behavior in phase 2
+                int phase = 0;
+                if (PhaseTwo)
+                {
+                    phase = 1;
+                }
+                //TODO: Add magic blast projectile
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, phase);
+            }
         }
 
         private void NextAttack()
@@ -267,11 +303,11 @@ namespace tsorcRevamp.NPCs.Bosses
             
             if(transformationTimer <= 60)
             {
-                rotationVelocity = transformationTimer / 60;
+                rotationVelocity = transformationTimer / 600;
             }
             else
             {
-                rotationVelocity = 1 - (transformationTimer / 60);
+                rotationVelocity = 1 - (transformationTimer / 600);
             }
 
             if (transformationTimer == 60 && !Main.dedServ)

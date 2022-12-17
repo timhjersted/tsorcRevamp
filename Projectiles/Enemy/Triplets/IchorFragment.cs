@@ -42,53 +42,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         bool spawnedTrail = false;
         public override void AI()
         {
-            Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
-            Projectile.rotation = Projectile.velocity.ToRotation();
-            if (!playedSound)
-            {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item43 with { Volume = 0.5f}, Projectile.Center);
 
-                if(Projectile.ai[1] == 1)
-                {
-                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.Trails.HomingStarTrail>(), Projectile.damage, 0, Main.myPlayer, 0, Projectile.whoAmI);
-                    Projectile.timeLeft = 400;
-                }
-                playedSound = true;
-            }
-
-            //Default homing strength
-            float homingAcceleration = 0.15f;
-
-            //Accelerate downwards, do not despawn until impact
-            if (Projectile.ai[0] == 1)
-            {
-                Projectile.timeLeft = 100;
-                if (Projectile.velocity.Y < 14f)
-                {
-                    Projectile.velocity.Y += 1f;
-                }
-                homingAcceleration = 0;
-                if(Projectile.Center.Y < target.Center.Y)
-                {
-                    Projectile.tileCollide = false;
-                }
-                else
-                {
-                    Projectile.tileCollide = true;
-                }
-            }
-            
-            //No homing
-            if (Projectile.ai[0] == 2)
-            {
-                homingAcceleration = 0;
-            }
-
-            //Perform homing
-            if (target != null)
-            {
-                UsefulFunctions.SmoothHoming(Projectile, target.Center, homingAcceleration, 30, target.velocity, false);
-            }
+            Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Ichor, Scale: 4).noGravity = true;
         }
 
         public override void Kill(int timeLeft)
@@ -124,40 +79,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         float starRotation;
         public override bool PreDraw(ref Color lightColor)
         {
-            if (Projectile.ai[1] == 1)
-            {
-                return false;
-            }
-            if (texture == null || texture.IsDisposed)
-            {
-                texture = (Texture2D)ModContent.Request<Texture2D>(Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            }
-            if (starTexture == null || starTexture.IsDisposed)
-            {
-                starTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            }
-
-            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
-            Rectangle starSourceRectangle = new Rectangle(0, 0, starTexture.Width, starTexture.Height);
-            Vector2 origin = sourceRectangle.Size() / 2f;
-            origin.Y += 20;
-            Vector2 starOrigin = starSourceRectangle.Size() / 2f;
-            DrawOriginOffsetY = 100;
-
-            Vector2 offset = Projectile.position - Projectile.Center;
-            //Draw shadow trails
-            for (float i = 5; i >= 0; i--)
-            {
-                Main.spriteBatch.Draw(texture, Projectile.oldPos[(int)i * 2] - Main.screenPosition - offset, sourceRectangle, Color.Cyan * ((6 - i) / 6), Projectile.oldRot[(int)i * 2] - MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
-            }
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation - MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
-            Vector2 starOffset = Projectile.velocity;
-            starOffset.Normalize();
-            if (Projectile.ai[1] != 1)
-            {
-                Main.spriteBatch.Draw(starTexture, Projectile.Center - Main.screenPosition, starSourceRectangle, Color.White, Projectile.rotation + starRotation, starOrigin, Projectile.scale * 0.75f, SpriteEffects.None, 0);
-            }
-            starRotation += 0.1f;
+            
             return false;
         }
     }
