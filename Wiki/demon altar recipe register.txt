@@ -6,6 +6,7 @@
 {{recipes/register
 |result=#Ancient Demon Shield|amount=1
 |station=Demon Altar
+|Obsidian Shield|1
 |#Spiked Iron Shield|1
 |#Dark Soul|4000
 }}
