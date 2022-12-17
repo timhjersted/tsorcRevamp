@@ -1,0 +1,26 @@
+{{mod sub-page}}<!--DO NOT REMOVE THIS LINE! It is required for Mod sub-pages to work properly.-->
+{{recipes registration subpage}}
+
+
+
+{{recipes/register
+|result=#Soul Coin|amount=1
+|station=By Hand
+|#Dark Soul|5
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Soul Coin|amount=10
+|station=By Hand
+|#Dark Soul|50
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Soul Coin|amount=100
+|station=By Hand
+|#Dark Soul|500
+}}
