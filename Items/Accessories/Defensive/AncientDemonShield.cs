@@ -29,18 +29,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.thorns += 1f;
             player.fireWalk = true;
             player.endurance += 0.05f;
-            player.moveSpeed *= 1f;
-        }
-
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
-            int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
-            if (ttindex != -1)
-            {// if we find one
-                //insert the extra tooltip line
-                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "RevampShieldDR", ""));
-            }
         }
 
         public override void AddRecipes()
