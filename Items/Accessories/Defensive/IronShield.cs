@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Tooltip.SetDefault("Reduces damage taken by 4% " +
                                 "\nbut also reduces movement speed by 10%" +
-                                "\nCan be upgraded with 2000 Dark Souls.");
+                                "\nCan be upgraded with 500 Dark Souls.");
         }
 
         public override void SetDefaults()
