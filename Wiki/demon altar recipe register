@@ -1,0 +1,736 @@
+{{mod sub-page}}<!--DO NOT REMOVE THIS LINE! It is required for Mod sub-pages to work properly.-->
+{{recipes registration subpage}}
+
+
+
+{{recipes/register
+|result=#Ancient Demon Shield|amount=1
+|station=Demon Altar
+|#Spiked Iron Shield|1
+|#Dark Soul|4000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Anger Talisman|amount=1
+|station=Demon Altar
+|Ranger Emblem|1
+|Sorcerer Emblem|1
+|Warrior Emblem|1
+|Summoner Emblem|1
+|Chlorophyte Bar|1
+|#Dark Soul|60000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Aquamarine Ring|amount=1
+|station=Demon Altar
+|Silver Bar|1
+|#Dark Soul|1800
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Archmen Emblem|amount=1
+|station=Demon Altar
+|Ranger Emblem|1
+|Hallowed Bar|1
+|#Dark Soul|9000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Band of Cosmic Power|amount=1
+|station=Demon Altar
+|Band of Regeneration|1
+|Band of Starpower|1
+|#Dark Soul|3000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Band of Cosmic Power|amount=1
+|station=Demon Altar
+|Mana Regeneration Band|1
+|#Dark Soul|3000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Band of Great Cosmic Power|amount=1
+|station=Demon Altar
+|#Band of Cosmic Power|1
+|#Dark Soul|10000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Band of Supreme Cosmic Power|amount=1
+|station=Demon Altar
+|#Band of Great Cosmic Power|1
+|Soul of Light|1
+|#Dark Soul|16000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Barrier Ring|amount=1
+|station=Demon Altar
+|Adamantite Bar|1
+|#Dark Soul|20000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Beholder Shield|amount=1
+|station=Demon Altar
+|#Gazing Shield|1
+|Soul of Might|10
+|#Dark Soul|30000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Beholder Shield 2|amount=1
+|station=Demon Altar
+|#Beholder Shield|1
+|#Guardian Soul|1
+|#Soul of Attraidies|1
+|#Dark Soul|60000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Berserker Emblem|amount=1
+|station=Demon Altar
+|Warrior Emblem|1
+|Hallowed Bar|1
+|#Dark Soul|9000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Bloodbite Ring|amount=1
+|station=Demon Altar
+|#Silver Ring|1
+|#Bloodred Moss Clump|10
+|#Dark Soul|2000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Blue Tearstone Ring 2|amount=1
+|station=Demon Altar
+|#Blue Tearstone Ring|1
+|#Blue Titanite|5
+|#Dragon Essence|10
+|#Dark Soul|60000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Bone Ring|amount=1
+|station=Demon Altar
+|Bone|3
+|#Dark Soul|8000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Boots of Haste|amount=1
+|station=Demon Altar
+|Hermes Boots|1
+|#Dark Soul|1000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Celestial Cloak|amount=1
+|station=Demon Altar
+|Celestial Cuffs|1
+|Mana Cloak|1
+|#Soul of Life|1
+|#Dark Soul|70000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Celestriad|amount=1
+|station=Demon Altar
+|#Mana Shield|1
+|#Essence of Mana|1
+|#Cursed Soul|30
+|#Soul of Artorias|1
+|#Dark Soul|200000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Chloranthy Ring 2|amount=1
+|station=Demon Altar
+|#Soul of Attraidies|1
+|#Chloranthy Ring|1
+|#Dark Soul|30000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Condition Overload|amount=1
+|station=Demon Altar
+|Cursed Flame|3
+|#Dark Soul|10000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Copper Ring|amount=1
+|station=Demon Altar
+|Copper Bar|1
+|#Dark Soul|300
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Cosmic Watch|amount=1
+|station=Demon Altar
+|Silver Watch|1
+|#Dark Soul|1
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Covenant of Artorias|amount=1
+|station=Demon Altar
+|#Soul of Attraidies|1
+|#Dark Soul|17000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Covetous Soul Serpent Ring|amount=1
+|station=Demon Altar
+|#Covetous Silver Serpent Ring|1
+|#Soul Reaper 2|1
+|#Dark Soul|20000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Cracked Dragon Stone|amount=1
+|station=Demon Altar
+|Cobalt Bar|1
+|#Dark Soul|9000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Dark Cloak|amount=1
+|station=Demon Altar
+|Soul of Night|1
+|#Dark Soul|15000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Darkmoon Cloak|amount=1
+|station=Demon Altar
+|Soul of Night|1
+|Star Cloak|1
+|#Dark Soul|25000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Dragoon Cloak|amount=1
+|station=Demon Altar
+|#Light Cloak|1
+|#Dark Cloak|1
+|#Darkmoon Cloak|1
+|Chlorophyte Bar|1
+|#Dark Soul|70000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Dragoon Gear|amount=1
+|station=Demon Altar
+|#Dragoon Boots|1
+|#Dragoon Horn|1
+|#Dark Soul|20000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Enchanted Beholder Shield 2|amount=1
+|station=Demon Altar
+|#Beholder Shield 2|1
+|#Guardian Soul|2
+|#Dark Soul|120000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Enchanted Moon Charm|amount=1
+|station=Demon Altar
+|Soul of Light|1
+|Moon Charm|1
+|#Dark Soul|1000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Enchanted Wizard's Hat|amount=1
+|station=Demon Altar
+|Sorcerer Emblem|1
+|Wizard Hat|1
+|Hallowed Bar|1
+|#Dark Soul|8000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Essence of Mana|amount=1
+|station=Demon Altar
+|Mana Crystal|1
+|#Dark Soul|10000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Eye of the Gods|amount=1
+|station=Demon Altar
+|Shine Potion|1
+|Spelunker Potion|1
+|#Dark Soul|6000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Frozen Starlight|amount=1
+|station=Demon Altar
+|Shadow Orb|1
+|#Dark Soul|1
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Gazing Shield|amount=1
+|station=Demon Altar
+|Mythril Bar|3
+|#Dark Soul|15000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Great Magic Mirror|amount=1
+|station=Demon Altar
+|Magic Mirror|1
+|#Dark Soul|1000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Grey Wolf Ring|amount=1
+|station=Demon Altar
+|#Wolf Ring|1
+|#Band of Supreme Cosmic Power|1
+|#Ring of Clarity|1
+|#Dark Soul|100000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Healing Dusk Crown Ring|amount=1
+|station=Demon Altar
+|#Dusk Crown Ring|1
+|#Humanity|5
+|#Blue Titanite|7
+|#Dark Soul|60000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Holy Necklace|amount=1
+|station=Demon Altar
+|#Frozen Starlight|1
+|Star Cloak|1
+|Cross Necklace|1
+|#Dark Soul|1000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Holy Necklace|amount=1
+|station=Demon Altar
+|#Frozen Starlight|1
+|Star Veil|1
+|#Dark Soul|1000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Improved Blizzard in a Balloon|amount=1
+|station=Demon Altar
+|Blizzard in a Balloon|1
+|Bone|20
+|#Dark Soul|900
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Improved Bundle of Balloons|amount=1
+|station=Demon Altar
+|Bundle of Balloons|1
+|Adamantite Bar|1
+|#Dark Soul|5000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Improved Bundle of Balloons|amount=1
+|station=Demon Altar
+|#Improved Cloud in a Balloon|1
+|#Improved Blizzard in a Balloon|1
+|#Improved Sandstorm in a Balloon|1
+|Adamantite Bar|1
+|#Dark Soul|1000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Improved Cloud in a Balloon|amount=1
+|station=Demon Altar
+|Cloud in a Balloon|1
+|#Dark Soul|1000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Improved Sandstorm in a Balloon|amount=1
+|station=Demon Altar
+|Sandstorm in a Balloon|1
+|Cobalt Bar|5
+|#Dark Soul|1500
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Improved Sharkron Balloon|amount=1
+|station=Demon Altar
+|Sharkron Balloon|1
+|Lucky Horseshoe|1
+|Crimtane Bar|5
+|Tissue Sample|5
+|#Dark Soul|2500
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Iron Shield|amount=1
+|station=Demon Altar
+|Iron Bar|1
+|#Dark Soul|500
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Light Cloak|amount=1
+|station=Demon Altar
+|Soul of Light|1
+|#Dark Soul|20000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Mana Shield|amount=1
+|station=Demon Altar
+|#Ephemeral Dust|1
+|#Dark Soul|8000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Molten Ring|amount=1
+|station=Demon Altar
+|Magma Stone|1
+|Hellstone Bar|1
+|#Dark Soul|5000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Mythril Glove|amount=1
+|station=Demon Altar
+|Titan Glove|1
+|#Guardian Soul|1
+|#Soul of Attraidies|1
+|#Dark Soul|50000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Poisonbite Ring|amount=1
+|station=Demon Altar
+|#Silver Ring|1
+|#Bloodred Moss Clump|10
+|#Dark Soul|2000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Poisonblood Ring|amount=1
+|station=Demon Altar
+|#Poisonbite Ring|1
+|#Bloodbite Ring|1
+|#Dark Soul|6000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Protect Ring|amount=1
+|station=Demon Altar
+|Adamantite Bar|1
+|#Flame of the Abyss|3
+|#Dark Soul|80000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Ring of Clarity|amount=1
+|station=Demon Altar
+|#Poisonblood Ring|1
+|#Cracked Dragon Stone|1
+|#Dark Soul|30000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Shaman Emblem|amount=1
+|station=Demon Altar
+|Summoner Emblem|1
+|Pygmy Necklace|1
+|Hallowed Bar|1
+|#Dark Soul|8000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Silver Ring|amount=1
+|station=Demon Altar
+|Silver Bar|1
+|#Dark Soul|400
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Soul Reaper|amount=1
+|station=Demon Altar
+|#Dark Soul|300
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Soul Reaper 2|amount=1
+|station=Demon Altar
+|#Soul Reaper|1
+|#Dark Soul|7000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Speed Talisman|amount=1
+|station=Demon Altar
+|Aglet|1
+|Anklet of the Wind|1
+|Feral Claws|1
+|#Dark Soul|3000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Spiked Buckler|amount=1
+|station=Demon Altar
+|Cobalt Shield|1
+|#Spiked Necklace|1
+|#Dark Soul|1000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Spiked Iron Shield|amount=1
+|station=Demon Altar
+|#Iron Shield|1
+|#Dark Soul|2000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Spiked Necklace|amount=1
+|station=Demon Altar
+|Iron Bar|1
+|#Dark Soul|2000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Supersonic Boots|amount=1
+|station=Demon Altar
+|Spectre Boots|1
+|#Dark Soul|7000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Supersonic Boots|amount=1
+|station=Demon Altar
+|Lightning Boots|1
+|#Dark Soul|4000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Supersonic Boots|amount=1
+|station=Demon Altar
+|Frostspark Boots|1
+|#Dark Soul|2000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Supersonic Wings|amount=1
+|station=Demon Altar
+|Angel Wings|1
+|#Supersonic Boots|1
+|#Dark Soul|25000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Supersonic Wings 2|amount=1
+|station=Demon Altar
+|#Supersonic Wings|1
+|#Soul of Attraidies|1
+|Soaring Insignia|1
+|#Improved Bundle of Balloons|1
+|#Dark Soul|10000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Supersonic Wings 2|amount=1
+|station=Demon Altar
+|#Supersonic Wings|1
+|#Soul of Attraidies|1
+|#Improved Bundle of Balloons|1
+|#Dark Soul|35000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Supersonic Wings 2|amount=1
+|station=Demon Altar
+|#Supersonic Wings|1
+|#Soul of Attraidies|1
+|Soaring Insignia|1
+|#Dark Soul|50000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Supersonic Wings 2|amount=1
+|station=Demon Altar
+|#Supersonic Wings|1
+|#Soul of Attraidies|1
+|#Dark Soul|80000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Undead Talisman|amount=1
+|station=Demon Altar
+|Bone|3
+|#Dark Soul|1000
+}}
+
+<!---->
+
+{{recipes/register
+|result=#Zircon Ring|amount=1
+|station=Demon Altar
+|Silver Bar|1
+|Soul of Night|1
+|#Dark Soul|9000
+}}
