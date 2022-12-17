@@ -895,14 +895,14 @@ namespace tsorcRevamp
                 {
                     NPC other = Main.npc[i];
 
-                    if (other.active & !other.friendly & other.Distance(Main.MouseWorld) <= 25 & other.Distance(owner.Center) <= 10000 & (Nightbringer.doublecritchance | PlasmaTempest.doublecritchance)& (Nightbringer.dashCD <= 0 | PlasmaTempest.dashCD <= 0))
+                    if (other.active & !other.friendly & other.Distance(Main.MouseWorld) <= 25 & other.Distance(owner.Center) <= 10000 & (Nightbringer.doublecritchance | PlasmaWhirlwind.doublecritchance)& (Nightbringer.dashCD <= 0 | PlasmaWhirlwind.dashCD <= 0))
                     {
-                        PlasmaTempest.dashTimer = 0.1f;
+                        PlasmaWhirlwind.dashTimer = 0.1f;
                         Nightbringer.dashTimer = 0.1f;
                         if (Main.GameUpdateCount % 1 == 0)
                         {
                             Nightbringer.dashCD = 30f;
-                            PlasmaTempest.dashCD = 30f;
+                            PlasmaWhirlwind.dashCD = 30f;
                         }
                     } else
                     if (other.active & !other.friendly & other.Distance(Main.MouseWorld) > 25 & Nightbringer.doublecritchance & (Nightbringer.dashTimer <= 0) & Nightbringer.wallCD <= 0)
@@ -1165,7 +1165,7 @@ namespace tsorcRevamp
         public void DoMultiCrits(ref int damage, float critType)
         {
             int critLevel = (int)(Math.Floor(critType / 100f));
-            if (SteelTempest.doublecritchance == true | PlasmaTempest.doublecritchance == true | Nightbringer.doublecritchance == true)
+            if (SteelTempest.doublecritchance == true | PlasmaWhirlwind.doublecritchance == true | Nightbringer.doublecritchance == true)
             { 
                 critLevel *= 2;
             }
@@ -1178,7 +1178,7 @@ namespace tsorcRevamp
                         damage *= 2;
                     }
                 }
-               if (SteelTempest.doublecritchance == true | PlasmaTempest.doublecritchance == true | Nightbringer.doublecritchance == true)
+               if (SteelTempest.doublecritchance == true | PlasmaWhirlwind.doublecritchance == true | Nightbringer.doublecritchance == true)
                 {
                     if (Main.rand.Next(1, 101) <= (critType * 2) - (100 * critLevel))
                     {

@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
-    public class PlasmaTempest: ModItem
+    public class PlasmaWhirlwind: ModItem
     {
         public float cooldown = 0;
         public static float dashCD = 0f;
@@ -17,10 +17,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public float invincibility = 0f;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Plasma Tempest");
+            DisplayName.SetDefault("Plasma Whirlwind");
             Tooltip.SetDefault("Doubled crit chance" +
                 "\nStabs on right click dealing 125% damage, with a 4 second cooldown, scaling down with attack speed" +
-                "\nGain a stack of Steel Tempest upon stabbing any enemy" +
+                "\nGain a stack upon stabbing any enemy" +
                 "\nUpon reaching 2 stacks, the next right click will release a plasma whirlwind dealing 175% damage" +
                 "\nHover your mouse over an enemy and press Q hotkey on a cd to dash through the enemy" +
                 "\nStabbing an enemy refunds some of this cooldown, the tornado refunds more");
@@ -58,15 +58,15 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
             doublecritchancetimer = 0.5f;
-            if (Main.mouseRight & !Main.mouseLeft & PlasmaTempestThrust.steeltempest2 == 2 & cooldown <= 0)
+            if (Main.mouseRight & !Main.mouseLeft & PlasmaWhirlwindThrust.steeltempest2 == 2 & cooldown <= 0)
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
-                Item.shoot = ModContent.ProjectileType<PlasmaTempestTornado>();
+                Item.shoot = ModContent.ProjectileType<PlasmaWhirlwindTornado>();
                 cooldown = ((3 / attackspeedscaling) + 1);
-                PlasmaTempestThrust.steeltempest2 = 0;
+                PlasmaWhirlwindThrust.steeltempest2 = 0;
             } else
             if (Main.mouseRight & !Main.mouseLeft)
             {
@@ -75,7 +75,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
                 cooldown = ((3 / attackspeedscaling) + 1);
-                Item.shoot = ModContent.ProjectileType<PlasmaTempestThrust>();
+                Item.shoot = ModContent.ProjectileType<PlasmaWhirlwindThrust>();
             }
             if (Main.mouseLeft)
             {

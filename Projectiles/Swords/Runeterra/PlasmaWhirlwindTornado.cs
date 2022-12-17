@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Swords.Runeterra
 {
-    public class PlasmaTempestTornado : ModProjectile
+    public class PlasmaWhirlwindTornado : ModProjectile
     {
         public int soundtimer = 0;
         public override void SetStaticDefaults()
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            //PlasmaTempest.dashCD -= 5f;
+            //PlasmaWhirlwind.dashCD -= 5f;
         }
         private void Visuals()
         {
