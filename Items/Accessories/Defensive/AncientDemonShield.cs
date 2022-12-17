@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Powerful Greatshield that reduces damage taken by 5%, inherits Obsidian Shields effects and gives thorns buff");
+            Tooltip.SetDefault("Powerful Greatshield that reduces damage taken by 5%, inherits Obsidian Shield's effects and gives thorns buff");
         }
 
         public override void SetDefaults()
