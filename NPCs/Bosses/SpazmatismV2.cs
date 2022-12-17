@@ -216,20 +216,27 @@ namespace tsorcRevamp.NPCs.Bosses
         //Phase 2: Flames leave a damaging trail, or maybe it fires 8 in all directions? Unsure
         void Firing()
         {
+
             UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(600, 300), 1f, 20);
             NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
 
-
-            if (MoveTimer % 90 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (PhaseTwo)
             {
-                Vector2 offset = new Vector2(-50, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
-                float angle = -MathHelper.Pi / 3;
-                for (int i = 0; i < 3; i++)
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 4).RotatedBy(angle), ProjectileID.CursedFlameHostile, EyeFireDamage, 0.5f, Main.myPlayer);
-                    angle += MathHelper.Pi / 3;
-                }
+
             }
+            else
+            {
+                if (MoveTimer % 90 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 offset = new Vector2(-50, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
+                    float angle = -MathHelper.Pi / 3;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 4).RotatedBy(angle), ProjectileID.CursedFlameHostile, EyeFireDamage, 0.5f, Main.myPlayer);
+                        angle += MathHelper.Pi / 3;
+                    }
+                }
+            }            
         }
 
         //Spaz aims down and breathes cursed fire into the earth

@@ -247,7 +247,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //In phase 2 the stars leave damaging trails like EoL, but there are fewer of them
                 if (PhaseTwo)
                 {
-                    if (MoveTimer % 40 == 0)
+                    if (MoveTimer % 35 == 0)
                     {
                         //Stars fired upward for effect
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2, 1);
@@ -257,7 +257,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1, 1);
                     }
                 }
-                else if (MoveTimer % 30 == 0)
+                else if (MoveTimer % 25 == 0)
                 {
                     //Stars fired upward for effect
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
