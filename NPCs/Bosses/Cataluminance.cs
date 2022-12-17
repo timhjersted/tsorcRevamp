@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             Main.npcFrameCount[NPC.type] = 6;
-            NPC.damage = 30;
+            NPC.damage = 50;
             NPC.defense = 25;
             AnimationType = -1;
             NPC.lifeMax = (int)(32500 * (1 + (0.25f * (Main.CurrentFrameFlags.ActivePlayersCount - 1))));
@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.buffImmune[BuffID.CursedInferno] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
 
-            despawnHandler = new NPCDespawnHandler("The Triplets return to the skies...", Color.Cyan, 180);
+            despawnHandler = new NPCDespawnHandler("The Triad returns to the skies...", Color.Cyan, 180);
             InitializeMoves();
         }
 
@@ -240,7 +240,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 angle = Main.rand.NextFloat(-MathHelper.PiOver4, MathHelper.PiOver4);
             }
 
-            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -350), 2f, 20);
+            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -350), 0.4f, 20);
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -271,7 +271,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         void FinalStand()
         {
-            if (MoveTimer % 30 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (MoveTimer % 50 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 //Change projectile behavior in phase 2
                 int phase = 0;
@@ -314,6 +314,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 //TODO spawn gore
             }
+            MoveTimer = 0;
             NPC.rotation += rotationVelocity;
             NPC.velocity *= 0.95f;
         }
@@ -432,6 +433,8 @@ namespace tsorcRevamp.NPCs.Bosses
         //TODO: Copy vanilla death effects
         public override void OnKill()
         {
+            UsefulFunctions.BroadcastText("Retinazer has been defeated!", Color.MediumPurple);
+            UsefulFunctions.BroadcastText("Spazmatism has been defeated!", Color.MediumPurple);
             if (!Main.dedServ)
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 1").Type, 1f);

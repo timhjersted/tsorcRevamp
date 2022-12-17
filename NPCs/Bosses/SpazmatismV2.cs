@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             Main.npcFrameCount[NPC.type] = 6;
-            NPC.damage = 30;
+            NPC.damage = 50;
             NPC.defense = 25;
             AnimationType = -1;
             NPC.lifeMax = (int)(32500 * (1 + (0.25f * (Main.CurrentFrameFlags.ActivePlayersCount - 1))));
@@ -37,7 +37,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.buffImmune[BuffID.CursedInferno] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
 
-            despawnHandler = new NPCDespawnHandler("", Color.Cyan, 180);
             InitializeMoves();
         }
 
@@ -107,13 +106,13 @@ namespace tsorcRevamp.NPCs.Bosses
             else
             {
                 NPC.life = Main.npc[NPC.realLife].life;
+                NPC.target = Main.npc[NPC.realLife].target;
             }
 
             FindFrame(0);
 
             //Main.NewText("Spaz: " + CurrentMove.Name + " at " + MoveTimer);
             MoveTimer++;
-            despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
 
             if (NPC.Distance(target.Center) > 4000)
@@ -174,23 +173,21 @@ namespace tsorcRevamp.NPCs.Bosses
         //Phase 2: Fire aura
         void Charging()
         {
-            //Telegraph for the first second before the starting charge
-            if(MoveTimer < 70)
-            {
-                NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-                UsefulFunctions.DustRing(NPC.Center, (70 - MoveTimer) * 30, DustID.CursedTorch, 100, 10);
-                return;
-            }
-
-            if (MoveTimer % 70 < 10)
-            {
-                NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-                UsefulFunctions.DustRing(NPC.Center, (10 - MoveTimer % 70) * 20, DustID.CursedTorch, 100, 10);
-            }
-            
             if (PhaseTwo)
             {
-                if (MoveTimer % 70 == 10)
+                //Telegraph for the first second before the starting charge
+                if (MoveTimer < 70)
+                {
+                    NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+                    UsefulFunctions.DustRing(NPC.Center, (70 - MoveTimer) * 30, DustID.CursedTorch, 100, 10);
+                    return;
+                }
+                if (MoveTimer % 70 < 30)
+                {
+                    NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+                    UsefulFunctions.DustRing(NPC.Center, (10 - MoveTimer % 70) * 20, DustID.CursedTorch, 100, 10);
+                }
+                if (MoveTimer % 70 == 30)
                 {
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 25);
                 }
@@ -201,7 +198,20 @@ namespace tsorcRevamp.NPCs.Bosses
             else
             {
                 UsefulFunctions.SmoothHoming(NPC, target.Center, 0.15f, 20, target.velocity, false);
-                if (MoveTimer % 70 == 10)
+
+                //Telegraph for the first second before the starting charge
+                if (MoveTimer < 90)
+                {
+                    NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+                    UsefulFunctions.DustRing(NPC.Center, (90 - MoveTimer) * 30, DustID.CursedTorch, 100, 10);
+                    return;
+                }
+                if (MoveTimer % 90 < 30)
+                {
+                    NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+                    UsefulFunctions.DustRing(NPC.Center, (90 - MoveTimer % 90) * 20, DustID.CursedTorch, 100, 10);
+                }
+                if (MoveTimer % 90 == 30)
                 {
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 18);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -244,6 +254,7 @@ namespace tsorcRevamp.NPCs.Bosses
         //Phase 2: Geysers of continuous flame like kraken has
         void IchorTrackers()
         {
+            NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
             UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, 350), 0.5f, 20);
             
             if (!PhaseTwo)
@@ -264,6 +275,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         void FinalStand()
         {
+            NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
             if (MoveTimer % 70 == 10)
             {
                 NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 25);
@@ -299,6 +311,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 //TODO spawn gore
             }
+            MoveTimer = 0;
             NPC.rotation += rotationVelocity;
             NPC.velocity *= 0.95f;
         }
@@ -388,7 +401,6 @@ namespace tsorcRevamp.NPCs.Bosses
         //TODO: Copy vanilla death effects
         public override void OnKill()
         {
-            UsefulFunctions.BroadcastText("Spazmatism has been defeated!", Color.MediumPurple);
             if (!Main.dedServ)
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 1").Type, 1f);

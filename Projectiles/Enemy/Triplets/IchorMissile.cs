@@ -24,10 +24,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             NPC.height = 40;
             NPC.scale = 1.1f;
             NPC.noTileCollide = true;
-            NPC.friendly = false;
+            NPC.friendly = false;            
             NPC.noGravity = true;
             NPC.aiStyle = -1;
-            NPC.lifeMax = 1;
+            NPC.lifeMax = 6;
             NPC.damage = 50;
             NPC.knockBackResist = 0;
         }

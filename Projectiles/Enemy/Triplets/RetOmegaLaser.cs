@@ -50,7 +50,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             //Extra long boi for final stand
             if (Projectile.ai[1] == 1)
             {
-                Projectile.timeLeft = 900;
+                Projectile.timeLeft = 90000;
                 Projectile.ai[1] = 0;
             }
 
@@ -256,7 +256,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
 
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             return false;
         }

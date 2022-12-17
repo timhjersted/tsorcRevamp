@@ -48,7 +48,7 @@ namespace tsorcRevamp.Projectiles.Trails
 
         Color HomingStarColorFunction(float progress)
         {
-            float timeFactor = (float)Math.Sin(Math.Abs(progress - Main.GlobalTimeWrappedHourly * 1));
+            float timeFactor = (float)Math.Sin(Math.Abs(progress + Main.GlobalTimeWrappedHourly));
             Color result = Color.Lerp(Color.Cyan, Color.DeepPink, (timeFactor + 1f) / 2f);
             result.A = 0;
 

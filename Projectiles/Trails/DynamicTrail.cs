@@ -88,17 +88,8 @@ namespace tsorcRevamp.Projectiles.Trails
                 trailPositions.Add(hostEntity.Center + offset);
                 trailRotations.Add(hostEntity.velocity.ToRotation());
 
-                if (trailPositions.Count > 1)
+                while(trailPositions.Count > trailLength || CalculateLength() > trailDistanceCap)
                 {
-                    trailDistance += Vector2.Distance(trailPositions[trailPositions.Count - 1], trailPositions[trailPositions.Count - 2]);
-                }
-
-                if (trailPositions.Count > trailLength || trailDistance > trailDistanceCap)
-                {
-                    if (trailPositions.Count > 1)
-                    {
-                        trailDistance -= Vector2.Distance(trailPositions[0], trailPositions[1]);
-                    }
                     trailPositions.RemoveAt(0);
                     trailRotations.RemoveAt(0);
                 }
@@ -109,10 +100,6 @@ namespace tsorcRevamp.Projectiles.Trails
                 hostProjectile = null;
                 if (trailPositions.Count > 3)
                 {
-                    if (trailPositions.Count > 1)
-                    {
-                        trailDistance -= Vector2.Distance(trailPositions[0], trailPositions[1]);
-                    }
                     trailPositions.RemoveAt(0);
                     trailRotations.RemoveAt(0);
                 }
@@ -121,6 +108,17 @@ namespace tsorcRevamp.Projectiles.Trails
                     Projectile.Kill();
                 }
             }
+        }
+
+        public float CalculateLength()
+        {
+            float calculatedLength = 0;
+            for (int i = 0; i < trailPositions.Count - 2; i++)
+            {
+                calculatedLength += Vector2.Distance(trailPositions[i], trailPositions[i + 1]);
+            }
+
+            return calculatedLength;
         }
 
         public bool HostEntityValid()

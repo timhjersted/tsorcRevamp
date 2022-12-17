@@ -61,10 +61,11 @@ namespace tsorcRevamp.Projectiles.Trails
             }
         }
 
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        {
+            behindProjectiles.Add(index);
+        }
         BasicEffect basicEffect;
-        Texture2D texture;
-        Texture2D starTexture;
-        float starRotation;
         public override bool PreDraw(ref Color lightColor)
         {
             //Trail

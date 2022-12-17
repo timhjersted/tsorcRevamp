@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             Main.npcFrameCount[NPC.type] = 6;
-            NPC.damage = 30;
+            NPC.damage = 50;
             NPC.defense = 25;
             AnimationType = -1;
             NPC.lifeMax = (int)(32500 * (1 + (0.25f * (Main.CurrentFrameFlags.ActivePlayersCount - 1))));
@@ -37,7 +37,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.buffImmune[BuffID.CursedInferno] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
 
-            despawnHandler = new NPCDespawnHandler("", Color.Cyan, 180);
             InitializeMoves();
         }
 
@@ -106,11 +105,11 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
-                NPC.life = Main.npc[NPC.realLife].life;                
+                NPC.life = Main.npc[NPC.realLife].life;
+                NPC.target = Main.npc[NPC.realLife].target;
             }
 
             MoveTimer++;
-            despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 1f, 0.4f, 0.4f);
             FindFrame(0);
 
@@ -561,6 +560,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 //TODO spawn gore
             }
+            MoveTimer = 0;
             NPC.rotation += rotationVelocity;
             NPC.velocity *= 0.95f;
         }
@@ -654,7 +654,6 @@ namespace tsorcRevamp.NPCs.Bosses
         //TODO: Copy vanilla death effects
         public override void OnKill()
         {
-            UsefulFunctions.BroadcastText("Spazmatism has been defeated!", Color.MediumPurple);
             if (!Main.dedServ)
             {
 

@@ -37,11 +37,11 @@ https://discord.gg/UGE6Mstrgz
 ⚠️ CROSS MOD COMPATIBILITY:
 ------------------------------------------
 Highly Recommended QoL mods:
-✅  Recipe Browser
-✅  Magic Storage
-✅  Terraria Ambience
 ✅  AutoTrash
 ✅  Lights and Shadow
+✅  Recipe Browser
+✅  Terraria Ambience
+✅  Magic Storage
 
 Additional Supported Mods:
 ⬆️  Auto Reforge
@@ -49,11 +49,18 @@ Additional Supported Mods:
 ⬆️  Generally any mod that only does visual or audio tweaks
 
 Unsupported Mods:
-⛔  Any large content mod like Calamity, The Stars Above, Spirit, etc
+⛔  Any large content mod. Examples are Calamity, The Stars Above, Spirit, etc
+⛔  Any mod that has QoL changes that we already include in our mod (Any accessory in vanity slots, max stack, permanent buffs, auto-use for all items, etc)
 ⛔  Balance-changing mods like LuiAFK, Fargos, AlchNPC, AntiSocial, WingSlot, etc
 ⛔  Any mod that changes vanilla boss AIs
 ⛔  Any mod that changes vanilla recipes or edits vanilla progression
 ⛔  Any mod that changes the behavior of respawning in multiplayer
+
+Some mods interfere with the Adventure Map, but may be used if you're playing on a vanilla world:
+⚠️ Basic Automated Mining
+⚠️ No Biome Spread
+⚠️ Ore Excavator
+⚠️ Veinminer
 
 
 ⚠️ GAME MANUAL:
