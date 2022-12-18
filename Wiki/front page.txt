@@ -1,0 +1,101 @@
+{{modname|mainpageset}}<!--
+-->{{#vardefine:listbox|padding:0.5em 0;}}<!--
+-->{{#vardefine:listcolumn|padding:0.5em 0;}}{{#vardefine:box|style="border: 1px solid #000000; border-radius: 5px; -moz-border-radius: 5px; padding: 7px;"}}
+{| width="100%"
+|- valign="top"
+|style="padding: 0px; margin: auto;" {{#var:box}}|<div id="mf-wikiheader"><div class="box"><span style="font-size: 140%">Welcome to the Official '''The Story of Red Cloud''' Wiki!</span><br><span style="font-size: 100%"></span>
+{| align=center width=100% class="linksbox"
+| width=100% | <span class="plainlinks">
+
+<!-- LINKS -->
+{| width=100% cellspacing=0 cellpadding=0
+| width=25% valign=top |
+[[File:Logo (The Story of Red Cloud).png|center|link=]]
+{{heading|[https://steamcommunity.com/sharedfiles/filedetails/?id{{=}}2824879484 Steam Workshop]}}
+{{heading|[https://discord.gg/UGE6Mstrgz Discord Server]}}
+{{heading|[https://github.com/Zeodexic/tsorcRevamp Github]}}
+|}</span></div>
+|-
+|}
+'''The Story of Red Cloud''' is a massive Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack. Your journey will span 17 dungeons spread across an expansive, hand-crafted open world, complete with over 600 items and 200 NPCs (including 22 new bosses!) to offer a 20 to 30+ hr experience for a first playthrough.
+
+This wiki details the modern edition of the mod for Terraria 1.4. For the tConfig version, see the [https://the-story-of-red-cloud.fandom.com/wiki/Welcome! Fandom wiki] instead.
+|}
+<!-- ===== -->
+{| width=100%
+|- valign=top
+
+<!-- ITEMS -->
+| {{#var:box}} | <div id="mf-items"> {{heading|Items}}
+
+{| width=100% cellspacing=3 cellpadding=3
+| width=25% valign=top |
+* {{Item|The Story of Red Cloud/Weapons|Weapons|image = PLACEHOLDER (The Story of Red Cloud).png}}
+* {{Item|The Story of Red Cloud/Armor|Armor|image = PLACEHOLDER (The Story of Red Cloud).png}}
+* {{Item|The Story of Red Cloud/Accessories|Accessories|image = PLACEHOLDER (The Story of Red Cloud).png}}
+<br>
+* {{Item|The Story of Red Cloud/Tools|Tools|image = PLACEHOLDER (The Story of Red Cloud).png}}
+* {{Item|The Story of Red Cloud/Crafting materials|Crafting materials|image = PLACEHOLDER (The Story of Red Cloud).png}}
+* {{Item|The Story of Red Cloud/Treasure Bags|Treasure Bags|image = PLACEHOLDER (The Story of Red Cloud).png}}
+|}
+
+<!-- MECHANICS -->
+| {{#var:box}} | <div id="mf-items"> {{heading|World and Mechanics}}
+
+{| width=100% cellspacing=2 cellpadding=2
+| width=25% valign=top |
+* {{Item|The Story of Red Cloud/Tiles|Tiles|image = PLACEHOLDER (The Story of Red Cloud).png}}
+'''Mechanics'''
+* {{Item|The Story of Red Cloud/Dodge Roll|Dodge Roll|image = PLACEHOLDER (The Story of Red Cloud).png}}
+* {{Item|The Story of Red Cloud/Adventure Mode|Adventure Mode|image = PLACEHOLDER (The Story of Red Cloud).png}}
+* {{Item|The Story of Red Cloud/Modifiers|Modifiers|image = Reforge.png}}
+* {{Item|The Story of Red Cloud/Vanilla changes|Vanilla changes|image = Red Wrench.png}}
+|}
+
+<!-- BOSSES -->
+| width=50% {{#var:box}} | <div id="mf-bosses"> {{heading|Bosses}}
+<div style="padding-left: 0.1em;">
+{| width=100% cellspacing=0 cellpadding=0 | width=100% valign=top |
+
+
+| valign="top" width="33%" |
+:'''Pre-Hardmode'''
+:* {{Item|The Story of Red Cloud/???|???|image = ??? Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/Slogra and Gaibon|Slogra and Gaibon|image = Gaibon Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/Ancient Jungle Wyvern|Ancient Jungle Wyvern|image = Ancient Jungle Wyvern Map Icon (The Story of Red Cloud).png}}
+
+| valign="top" width="33%" | 
+:'''Hardmode'''
+:* {{Item|The Story of Red Cloud/Wyvern Mage|Wyvern Mage|image = Wyvern Mage Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/The Rage|The Rage|image = The Rage Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/The Sorrow|The Sorrow|image = The Sorrow Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/The Hunter|The Hunter|image = The Hunter Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/The Triad|The Triad|image = The Triad Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/Death|Death|image = Death Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/Serris|Serris|image = Serris Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/Attraidies|Attraidies|image = Attraidies Map Icon (The Story of Red Cloud).png}}
+
+| valign="top" width="33%" | 
+:'''Super Hardmode'''
+:* {{Item|The Story of Red Cloud/Abysmal Oolacile Sorcerer|Abysmal Oolacile Sorcerer|image = Abysmal Oolacile Sorcerer Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/Hellkite Dragon|Hellkite Dragon|image = Hellkite Dragon Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/Artorias|Artorias|image = Artorias Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/Seath the Scaleless|Seath the Scaleless|image = Seath the Scaleless Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/Lich King|Lich King|image = Lich King Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/Kraken|Kraken|image = Kraken Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/Marilith|Marilith|image = Marilith Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/Blight|Blight|image = Blight Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/Chaos|Chaos|image = Chaos Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/Wyvern Mage Shadow|Wyvern Mage Shadow|image = Wyvern Mage Shadow Map Icon (The Story of Red Cloud).png}}
+:* {{Item|The Story of Red Cloud/Gwyn|Gwyn|image = Gwyn Map Icon (The Story of Red Cloud).png}}
+</div>
+
+|}
+|}
+
+
+
+
+''Note: the original Story of Red Cloud was created as a modpack-esque collaboration between many mods developed for tConfig. All assets were used with permission. Explicit permission has been granted for these assets to continue to be used in the present day. In other words, please don't take down our pages because there's Exxo Avalon/Omnir's/etc content on them!''
+
+[[Category:The Story of Red Cloud| ]]
