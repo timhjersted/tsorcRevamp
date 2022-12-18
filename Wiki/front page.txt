@@ -94,8 +94,16 @@ This wiki details the modern edition of the mod for Terraria 1.4. For the tConfi
 |}
 
 
+{| width=100%
+|- valign=top
 
+<!-- ITEMS -->
+| style="border: 0px solid #000000; border-radius: 0px; -moz-border-radius: 0px; padding: 0px; | <div id="mf-disclaimer">
 
+{| width=100% cellspacing=0 cellpadding=0
+| width=25% valign=top |
 ''Note: the original Story of Red Cloud was created as a modpack-esque collaboration between many mods developed for tConfig. All assets were used with permission. Explicit permission has been granted for these assets to continue to be used in the present day. In other words, please don't take down our pages because there's Exxo Avalon/Omnir's/etc content on them!''
+|}
+|}
 
 [[Category:The Story of Red Cloud| ]]
