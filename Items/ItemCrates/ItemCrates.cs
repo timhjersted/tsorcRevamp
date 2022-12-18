@@ -169,6 +169,8 @@ namespace tsorcRevamp.Items.ItemCrates
     [LegacyName("SilverSpear")]
     [LegacyName("SoulShekelCrate")]
     [LegacyName("AttractionPotion")]
+    [LegacyName("SpikedBuckler")]
+    [LegacyName("SpikedNecklace")]
     public class SoulCoinCrate : ItemCrates
     {
         public override void SetStaticDefaults()
