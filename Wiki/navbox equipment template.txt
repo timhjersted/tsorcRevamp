@@ -26,7 +26,7 @@
 |-
 
 !style="padding: 0.2em 0.5em" rowspan = 1 | Movement
-|style="padding: 0.2em 0.5em" | {{+|Boots of Haste}}{{•}}{{+|Improved Blizzard in a Balloon}}{{•}}{{+|Improved Bundle of Balloons}}{{•}}{{+|Improved Sharkron Balloon}}{{•}}{{+|Improved Blizzard in a Balloon}}{{•}}{{+|Improved Sandstorm in a Balloon}}{{•}}{{+|Supersonic Boots}}{{•}}{{+|Supersonic Wings}}{{•}}{{+|Supersonic Wings 2}}
+|style="padding: 0.2em 0.5em" | {{+|Boots of Haste}}{{•}}{{+|Improved Blizzard in a Balloon}}{{•}}{{+|Improved Bundle of Balloons}}{{•}}{{+|Improved Cloud in a Balloon}}{{•}}{{+|Improved Sandstorm in a Balloon}}{{•}}{{+|Improved Sharkron Balloon}}{{•}}{{+|Supersonic Boots}}{{•}}{{+|Supersonic Wings}}{{•}}{{+|Supersonic Wings 2}}
 |-
 
 !style="padding: 0.2em 0.5em" rowspan = 1 | Health and Mana
