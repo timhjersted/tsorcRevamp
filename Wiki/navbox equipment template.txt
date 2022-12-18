@@ -1,0 +1,73 @@
+{{mod sub-page}}<!--DO NOT REMOVE THIS LINE! It is required for Mod sub-pages to work properly.-->
+{|class="terraria mw-collapsible {{#ifeq: {{{show-main|}}} | yes | |mw-collapsed }}" style="width:80%; margin: auto"
+!style="font-size:120%" | {{navbar/left|The Story of Red Cloud/Navbox equipment}} <small>[[The Story of Red Cloud]]: Equippable items</small> {{navbar/right}}
+|-
+
+| 
+
+<!-------------------- ARMOR -------------------->
+{|class="plainlinks mw-collapsible {{#ifeq: {{{show-armor|}}} | yes | |mw-collapsed }}" style="width:100%; margin: auto"
+!style="padding: 0.2em; font-size:110%" colspan=3 | {{+|Armor}}
+|-
+
+!style="padding: 0.2em 0.5em" | [[Pre-Hardmode]]
+|style="padding: 0.2em 0.5em" | 
+|-
+!style="padding: 0.2em 0.5em" | [[Hardmode]]
+|style="padding: 0.2em 0.5em" | 
+|-
+!style="padding: 0.2em 0.5em" | {{+|Super Hardmode}}
+|style="padding: 0.2em 0.5em" | 
+|}
+
+<!-------------------- ACCESSORIES -------------------->
+{|class="plainlinks mw-collapsible {{#ifeq: {{{show-acc|}}} | yes | |mw-collapsed }}" style="width:100%; margin: auto"
+!style="padding: 0.2em; font-size:110%" colspan=3 | {{+|Accessories}}
+|-
+
+!style="padding: 0.2em 0.5em" rowspan = 1 | Movement
+|style="padding: 0.2em 0.5em" | {{+|Boots of Haste}}{{•}}{{+|Improved Blizzard in a Bottle}}{{•}}{{+|Improved Bundle of Balloons}}{{•}}{{+|Improved Sharkron Balloon}}{{•}}{{+|Improved Blizzard in a Balloon}}{{•}}{{+|Improved Sandstorm in a Balloon}}{{•}}{{+|Supersonic Boots}}{{•}}{{+|Supersonic Wings}}{{•}}{{+|Supersonic Wings 2}}
+|-
+
+!style="padding: 0.2em 0.5em" rowspan = 1 | Health and Mana
+|style="padding: 0.2em 0.5em" | {{+|Aquamarine Ring}}{{•}}{{+|Band of Cosmic Power}}{{•}}{{+|Band of Great Cosmic Power}}{{•}}{{+|Band of Supreme Cosmic Power}}{{•}}{{+|Essence of Mana}}
+|-
+
+!style="padding: 0.2em 0.5em" | Combat
+|style="padding: 0.2em 0.5em" | {{+|Ancient Demon Shield}}{{•}}{{+|Anger Talisman}}{{•}}{{+|Archmen Emblem}}{{•}}{{+|Barrier Ring}}{{•}}{{+|Beholder Shield}}{{•}}{{+|Beholder Shield 2}}{{•}}{{+|Berserker Emblem}}{{•}}{{+|Bloodbite Ring}}{{•}}{{+|Blue Tearstone Ring}}{{•}}{{+|Blue Tearstone Ring 2}}{{•}}{{+|Bone Ring}}{{•}}{{+|Celestial Cloak}}{{•}}{{+|Celestriad}}{{•}}{{+|Challenger's Glove}}{{•}}{{+|Condition Overload}}{{•}}{{+|Copper Ring}}{{•}}{{+|Covenant of Artorias}}{{•}}{{+|Dark Cloak}}{{•}}{{+|Darkmoon Cloak}}{{•}}{{+|Dragoon Cloak}}{{•}}{{+|Enchanted Beholder Shield 2}}{{•}}{{+|Enchanted Moon Charm}}{{•}}{{+|Enchanted Wizard's Hat}}{{•}}{{+|Gazing Shield}}{{•}}{{+|Gem Box}}{{•}}{{+|Grey Wolf Ring}}{{•}}{{+|Holy Necklace}}{{•}}{{+|Iron Shield}}{{•}}{{+|Light Cloak}}{{•}}{{+|Mana Shield}}{{•}}{{+|Molten Ring}}{{•}}{{+|Mythril Glove}}{{•}}{{+|Oxyale}}{{•}}{{+|Poisonbite Ring}}{{•}}{{+|Poisonblood Ring}}{{•}}{{+|Protect Ring}}{{•}}{{+|Ring of Clarity}}{{•}}{{+|Ring of the Blue Eye}}{{•}}{{+|Shaman Emblem}}{{•}}{{+|Silver Ring}}{{•}}{{+|Speed Talisman}}{{•}}{{+|Spiked Iron Shield}}{{•}}{{+|Undead Talisman}}{{•}}{{+|Wolf Ring}}{{•}}{{+|Zircon Ring}}
+|-
+
+!style="padding: 0.2em 0.5em" | Miscellaneous
+|style="padding: 0.2em 0.5em" colspan=2 | {{+|Eye of the Gods}}{{•}}{{+|Frozen Starlight}}{{•}}{{+|Soul Reaper}}{{•}}{{+|Soul Reaper 2}}
+|-
+
+!style="padding: 0.2em 0.5em" | [[Expert Mode]]
+|style="padding: 0.2em 0.5em" colspan=2 | {{+|Burning Aura}}{{•}}{{+|Burning Stone}}{{•}}{{+|Chloranthy Ring 1}}{{•}}{{+|Chloranthy Ring 2}}{{•}}{{+|Covetous Silver Serpent Ring}}{{•}}{{+|Covetous Soul Serpent Ring}}{{•}}{{+|Cracked Dragon Stone}}{{•}}{{+|Dragon Crest Shield}}{{•}}{{+|Dragon Stone}}{{•}}{{+|Dragon Wings}}{{•}}{{+|Dragoon Boots}}{{•}}{{+|Dragoon Gear}}{{•}}{{+|Dragoon Horn}}{{•}}{{+|Dusk Crown Ring}}{{•}}{{+|Golden Hairpin}}{{•}}{{+|Healing Dusk Crown Ring}}{{•}}{{+|Reflection Shift}}{{•}}{{+|Ring of Artorias}}{{•}}{{+|Ring of Power}}
+|}
+|}<noinclude>[[Category:Navigational templates]]
+
+== Usage ==
+Place the following at the end of a page:
+*<code><nowiki>{{The Story of Red Cloud/Navbox equipment}}</nowiki></code>
+
+The default behavior is for the entire template to remain collapsed. 
+
+'''To show all sub-sections in collapsed form,''' use this:
+
+ <nowiki>{{The Story of Red Cloud/Navbox equipment</nowiki>
+ | show-main = yes
+ }}
+
+'''To cause one or more sub-sections to appear expanded by default,''' add one of the following ("show-main = yes" must also be set) :
+* <code> | show-armor     = yes </code>
+* <code> | show-acc       = yes </code>
+* <code> | show-vanity    = yes </code>
+
+'''For example, to show the "armor" section expanded,''' use this:
+
+ <nowiki>{{The Story of Red Cloud/Navbox equipment</nowiki>
+ | show-main  = yes
+ | show-armor = yes
+ }}
+
+</noinclude>
