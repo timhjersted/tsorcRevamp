@@ -272,6 +272,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 4, 4));
             itemLoot.Add(ItemDropRule.Common(ItemID.LivingRainbowDye, 1, 5, 5));
             itemLoot.Add(ItemDropRule.Common(ItemID.MidnightRainbowDye, 1, 5, 5));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.HerosCrest>()));
         }
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Death>();
     }
