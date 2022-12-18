@@ -69,10 +69,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
 
             return result;
         }
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
-        {
-            behindProjectiles.Add(index);
-        }
 
         Texture2D texture;
         Texture2D starTexture;

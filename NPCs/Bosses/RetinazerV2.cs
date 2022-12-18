@@ -159,6 +159,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (MoveTimer < 900)
             {
+                MoveIndex = 1;
                 CurrentMove.Move();
             }
             else if (MoveTimer < 960)
@@ -416,7 +417,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetOmegaLaser>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.IncineratingGaze>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI);
                     }
                 }
             }
@@ -471,7 +472,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetOmegaLaser>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI, 1);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.IncineratingGaze>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI, 1);
                     }
                     spawnedLaser = true;
                 }

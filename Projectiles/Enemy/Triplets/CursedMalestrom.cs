@@ -1,0 +1,100 @@
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
+using Terraria;
+using Terraria.Graphics;
+using Terraria.Graphics.Shaders;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.Projectiles.Enemy.Triplets
+{
+    class CursedMalestrom : ModProjectile
+    {
+        
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Cursed Malestrom");
+        }
+        public override void SetDefaults()
+        {
+            Projectile.width = 20;
+            Projectile.height = 20;
+            Projectile.scale = 1.1f;
+            Projectile.timeLeft = 500;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.friendly = false;
+        }
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
+
+        int radius = 50;
+        float projRadius = 20;
+        public override void AI()
+        {
+            if(Projectile.timeLeft > 440)
+            {
+                Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
+                UsefulFunctions.SmoothHoming(Projectile, target.Center, 0.1f, 30, target.velocity, false);
+            }
+
+            if (projRadius < 150)
+            {
+                projRadius += 4f;
+            }
+        }
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            return Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2()) < projRadius;
+        }
+
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            target.AddBuff(BuffID.CursedInferno, 300);
+        }
+
+        ArmorShaderData data;
+        Texture2D noiseTexture;
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            if (noiseTexture == null || noiseTexture.IsDisposed)
+            {
+                noiseTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Marilith/CataclysmicFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            }
+
+            //Apply the shader, caching it as well
+            //if (data == null)
+            {
+                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CursedMalestrom", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "CursedMalestromPass");
+            }
+
+
+            Rectangle sourceRectangle = new Rectangle(0, 0, (int)projRadius * 4, (int)projRadius * 4);
+            Vector2 origin = sourceRectangle.Size() / 2f;
+
+            //Pass relevant data to the shader via these parameters
+            data.UseTargetPosition(sourceRectangle.Size());
+
+            //Apply the shader
+            data.Apply(null);
+
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (Projectile.spriteDirection == -1)
+            {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+            }
+
+            Main.EntitySpriteDraw(noiseTexture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.velocity.ToRotation() + MathHelper.Pi, origin, Projectile.scale, spriteEffects, 0);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            return false;
+        }
+    }
+}

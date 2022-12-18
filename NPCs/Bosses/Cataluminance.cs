@@ -154,6 +154,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (MoveTimer < 900)
             {
+                MoveIndex = 1;
                 CurrentMove.Move();
             }
             else if (MoveTimer < 960)
@@ -253,7 +254,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2, 1);
 
                         //Stars rain down
-                        Vector2 spawnPos = NPC.Center + new Vector2(Main.rand.NextFloat(-700, 700), -500);
+                        Vector2 spawnPos = NPC.Center + new Vector2(Main.rand.NextFloat(-700, 700), -700);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1, 1);
                     }
                 }
@@ -263,7 +264,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
 
                     //Stars rain down
-                    Vector2 spawnPos = NPC.Center + new Vector2(Main.rand.NextFloat(-700, 700), -500);
+                    Vector2 spawnPos = NPC.Center + new Vector2(Main.rand.NextFloat(-700, 700), -700);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1);
                 }
             }

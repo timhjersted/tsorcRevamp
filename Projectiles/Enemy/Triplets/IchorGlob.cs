@@ -30,6 +30,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             NPC.lifeMax = 6;
             NPC.damage = 50;
             NPC.knockBackResist = 0;
+            NPC.hide = true;
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
 
@@ -65,6 +66,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Normalize(NPC.velocity) * 10, ModContent.ProjectileType<Projectiles.Enemy.Triplets.IchorFragment>(), NPC.damage / 4, 1, Main.myPlayer);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Normalize(NPC.velocity).RotatedBy(2f * MathHelper.Pi / 3f) * 10, ModContent.ProjectileType<Projectiles.Enemy.Triplets.IchorFragment>(), NPC.damage / 4, 1, Main.myPlayer);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Normalize(NPC.velocity).RotatedBy(-2f * MathHelper.Pi / 3f) * 10, ModContent.ProjectileType<Projectiles.Enemy.Triplets.IchorFragment>(), NPC.damage / 4, 1, Main.myPlayer);
+        }
+        public override void DrawBehind(int index)
+        {
+            Main.instance.DrawCacheNPCsOverPlayers.Add(index);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

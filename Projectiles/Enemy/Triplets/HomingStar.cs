@@ -62,19 +62,16 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             if (Projectile.ai[0] == 1)
             {
                 Projectile.timeLeft = 100;
-                if (Projectile.velocity.Y < 14f)
+                float speedCap = 10;
+                if(Projectile.ai[1] == 1)
+                {
+                    speedCap = 8;
+                }
+                if (Projectile.velocity.Y < speedCap)
                 {
                     Projectile.velocity.Y += 1f;
                 }
                 homingAcceleration = 0;
-                if(Projectile.Center.Y < target.Center.Y)
-                {
-                    Projectile.tileCollide = false;
-                }
-                else
-                {
-                    Projectile.tileCollide = true;
-                }
             }
             
             //No homing

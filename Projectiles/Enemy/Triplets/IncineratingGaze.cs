@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.Triplets
 {
-    public class RetOmegaLaser : ModProjectile
+    public class IncineratingGaze : ModProjectile
     {
 
         public override void SetStaticDefaults()

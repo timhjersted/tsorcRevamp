@@ -155,6 +155,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (MoveTimer < 900)
             {
+                MoveIndex = 1;
                 CurrentMove.Move();
             }
             else if (MoveTimer < 960)
@@ -232,7 +233,11 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (PhaseTwo)
             {
-
+                if (MoveTimer % 120 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 offset = new Vector2(-50, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.CursedMalestrom>(), EyeFireDamage, 0.5f, Main.myPlayer);
+                }
             }
             else
             {
