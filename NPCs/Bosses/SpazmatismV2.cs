@@ -85,7 +85,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
         int MoveTimer = 0;
         int finalStandTimer = 0;
-        NPCDespawnHandler despawnHandler;
         public override void AI()
         {
             if (NPC.realLife < 0)
@@ -155,7 +154,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (MoveTimer < 900)
             {
-                MoveIndex = 1;
                 CurrentMove.Move();
             }
             else if (MoveTimer < 960)

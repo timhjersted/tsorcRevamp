@@ -154,7 +154,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (MoveTimer < 900)
             {
-                MoveIndex = 1;
                 CurrentMove.Move();
             }
             else if (MoveTimer < 960)
