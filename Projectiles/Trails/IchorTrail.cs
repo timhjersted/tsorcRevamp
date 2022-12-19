@@ -27,16 +27,27 @@ namespace tsorcRevamp.Projectiles.Trails
             Projectile.penetrate = -1;
             Projectile.hostile = true;
             Projectile.friendly = false;
-            trailWidth = 35;
+            trailWidth = 110;
             trailPointLimit = 50;
             trailCollision = false;
             trailYOffset = 50;
             trailMaxLength = 200;            
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/IchorTrackerShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         public override void SetEffectParameters(Effect effect)
         {
-            base.SetEffectParameters(effect);
+            if (hostEntityType == ModContent.ProjectileType<Projectiles.Enemy.Triplets.IchorFragment>())
+            {
+                trailWidth = 50;
+                trailMaxLength = 150;
+            }
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/IchorTrackerShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.noiseTexture);
+            effect.Parameters["fadeOut"].SetValue(fadeOut);
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            effect.Parameters["shaderColor"].SetValue(Color.Gold.ToVector4());
+            effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
     }
 }

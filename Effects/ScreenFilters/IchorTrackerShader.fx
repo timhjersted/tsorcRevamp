@@ -56,7 +56,9 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     //Make it fade out towards the end
     if (uv.x < inflectionPoint)
     {
-        intensity = lerp(0.0, intensity, pow(uv.x / inflectionPoint, 1));
+        //intensity = lerp(0.0, intensity, pow(uv.x / inflectionPoint, 1));
+        
+        //intensity *=  uv.x;
     }
     
     //Make it fade in towards the start
@@ -70,7 +72,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     
     //Zoom in on the noise texture, then shift it over time to make it appear to be flowing    
     samplePoint /= 20;
-    samplePoint.x = (samplePoint.x + time * 0.05) * 1;
+    samplePoint.x = (samplePoint.x + time * 0.05) * 0.5;
     
     //Compress it vertically
     samplePoint.y = samplePoint.y / 2;
@@ -85,7 +87,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     noiseColor.g = sampleIntensity * shaderColor.g;
 
     //Mix it with 'intensity' to make it more intense near the center
-    float4 effectColor = noiseColor * pow(intensity, 2) * 4.0;
+    float4 effectColor = pow(noiseColor, 2.5) * pow(intensity, 3) * 3 * uv.x * uv.x;
     
     //Looks cool as hell, but not the vibe i'm going for
     //float4 effectColor = noiseColor * noiseColor * pow(intensity, 2) * 8.0;

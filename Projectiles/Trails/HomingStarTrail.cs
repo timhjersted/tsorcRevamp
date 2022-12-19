@@ -54,7 +54,6 @@ namespace tsorcRevamp.Projectiles.Trails
         
         public override void SetEffectParameters(Effect effect)
         {
-            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.noiseTexture);
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);

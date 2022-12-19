@@ -42,8 +42,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         bool spawnedTrail = false;
         public override void AI()
         {
+            if (!spawnedTrail)
+            {
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.Trails.IchorTrail>(), 0, 0, Main.myPlayer, 0, Projectile.whoAmI);
 
-            Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Ichor, Scale: 4).noGravity = true;
+                spawnedTrail = true;
+            }
         }
 
         public override void Kill(int timeLeft)

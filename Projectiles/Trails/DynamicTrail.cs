@@ -295,6 +295,11 @@ namespace tsorcRevamp.Projectiles.Trails
         BasicEffect basicEffect;
         public override bool PreDraw(ref Color lightColor)
         {
+            if(trailPositions == null)
+            {
+                return false;
+            }
+
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -323,7 +328,6 @@ namespace tsorcRevamp.Projectiles.Trails
             VertexStrip vertexStrip = new VertexStrip();
             vertexStrip.PrepareStrip(trailPositions.ToArray(), trailRotations.ToArray(), ColorFunction, WidthFunction, -Main.screenPosition, includeBacksides: true);
             vertexStrip.DrawTrail();
-
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
