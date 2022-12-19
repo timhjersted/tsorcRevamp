@@ -32,30 +32,85 @@ namespace tsorcRevamp.Projectiles.Trails
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
 
-        public int trailLength = 60;
+        /// <summary>
+        /// The max number of points in the trail
+        /// </summary>
+        public int trailPointLimit = 60;
+        /// <summary>
+        /// The width of the trail
+        /// </summary>
         public int trailWidth = 30;
-        public float trailDistanceCap = 200;
-        private float trailDistance;
+        /// <summary>
+        /// The maximum length of the trail
+        /// </summary>
+        public float trailMaxLength = 200;
+        /// <summary>
+        /// The current length of the trail
+        /// </summary>
+        public float trailCurrentLength;
+        /// <summary>
+        /// Can the trail deal damage?
+        /// </summary>
         public bool trailCollision = false;
+        /// <summary>
+        /// Controls how fine-tuned the collision checking is
+        /// There is rarely a need to mess with this
+        /// </summary>
         public int collisionFrequency = 5;
+        /// <summary>
+        /// Shifts the trail
+        /// </summary>
         public float trailYOffset = 0;
+        /// <summary>
+        /// Stores the type field of the host entity, to prevent it from attaching to another
+        /// </summary>
         public int hostEntityType = -1;
+        /// <summary>
+        /// Allows you to make collision checking stop before the end of the trail
+        /// Used on trails where the last few pieces of them are not visible
+        /// </summary>
+        public int collisionPadding = 5;
+        /// <summary>
+        /// If this projectile is attached to an NPC it is stored here
+        /// </summary>
         public NPC hostNPC;
+        /// <summary>
+        /// If this projectile is attached to a Projectile it is stored here
+        /// </summary>
         public Projectile hostProjectile;
-
+        /// <summary>
+        /// The effect this trail uses.
+        /// Unimplemented, apply it in PreDraw for now.
+        /// </summary>
         public Effect customEffect;
+        /// <summary>
+        /// A function changing its color dynamically
+        /// </summary>
         public VertexStrip.StripColorFunction colorFunction;
+        /// <summary>
+        /// A function changing its width dynamically
+        /// </summary>
         public VertexStrip.StripHalfWidthFunction widthFunction;
 
+        /// <summary>
+        /// If Projectile.ai[0] is set to 1, then this projectile is attached to an NPC
+        /// Otherwise, it is attached to another Projectile
+        /// </summary>
         public bool NPCSource
         {
             get => Projectile.ai[0] == 1;
         }
+        /// <summary>
+        /// The index of the host in the NPC or Projectile array
+        /// </summary>
         public int hostIndex
         {
             get => (int)Projectile.ai[1];
         }
 
+        /// <summary>
+        /// A reference to the host entity
+        /// </summary>
         public Entity hostEntity
         {
             get
@@ -71,9 +126,25 @@ namespace tsorcRevamp.Projectiles.Trails
             }
         }
 
+        /// <summary>
+        /// The list storing all the points on the trail
+        /// </summary>
         public List<Vector2> trailPositions;
+        /// <summary>
+        /// The list storing all the rotations of each trail point
+        /// </summary>
         public List<float> trailRotations;
+        /// <summary>
+        /// Whether the trail has completed its initialization tasks or not
+        /// </summary>
         private bool initialized = false;
+        public float lengthPercent
+        {
+            get
+            {
+                return trailCurrentLength / trailMaxLength;
+            }
+        }
         public override void AI()
         {
             Initialize();
@@ -87,11 +158,13 @@ namespace tsorcRevamp.Projectiles.Trails
                 Projectile.Center = hostEntity.Center;
                 trailPositions.Add(hostEntity.Center + offset);
                 trailRotations.Add(hostEntity.velocity.ToRotation());
+                trailCurrentLength = CalculateLength();
 
-                while(trailPositions.Count > trailLength || CalculateLength() > trailDistanceCap)
+                while (trailPositions.Count > trailPointLimit || trailCurrentLength > trailMaxLength)
                 {
                     trailPositions.RemoveAt(0);
                     trailRotations.RemoveAt(0);
+                    trailCurrentLength = CalculateLength();
                 }
             }
             else
@@ -102,6 +175,7 @@ namespace tsorcRevamp.Projectiles.Trails
                 {
                     trailPositions.RemoveAt(0);
                     trailRotations.RemoveAt(0);
+                    trailCurrentLength = CalculateLength();
                 }
                 else
                 {
@@ -172,13 +246,51 @@ namespace tsorcRevamp.Projectiles.Trails
         public Color DefaultColorFunction(float progress)
         {
             return Color.White;
-            float timeFactor = (float)Math.Sin(Math.Abs(progress - Main.GlobalTimeWrappedHourly * 1));
-            Color result = Color.Lerp(Color.Cyan, Color.DeepPink, (timeFactor + 1f) / 2f);
-            result.A = 0;
 
-            return result;
+            //Shifting blue and pink
+            //Could be useful later
+            //float timeFactor = (float)Math.Sin(Math.Abs(progress - Main.GlobalTimeWrappedHourly * 1));
+            //Color result = Color.Lerp(Color.Cyan, Color.DeepPink, (timeFactor + 1f) / 2f);
+            //result.A = 0;
+
+            //return result;
+        }
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            if (trailPositions == null)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active && !Main.player[i].dead)
+                {
+                    Player player = Main.player[i];
+                    float discard = 0;
+
+                    //Draw a line between points 9 at a time to check for collision
+                    for (int j = 0; j < trailPositions.Count - collisionFrequency; j += collisionFrequency)
+                    {
+                        if (trailPositions.Count < j + collisionFrequency - 1 - collisionPadding)
+                        {
+                            break;
+                        }
+                        if (trailPositions[j + collisionFrequency - 1] == Vector2.Zero)
+                        {
+                            break;
+                        }
+                        if (Collision.CheckAABBvLineCollision(player.position, player.Size, trailPositions[j], trailPositions[j + collisionFrequency - 1], 2 * widthFunction(j / trailPositions.Count), ref discard))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
+        int ꙮ;
 
         BasicEffect basicEffect;
         public override bool PreDraw(ref Color lightColor)
@@ -213,44 +325,6 @@ namespace tsorcRevamp.Projectiles.Trails
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             return false;
-        }
-
-        int ꙮ;
-        
-
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            if(trailPositions == null)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < Main.maxPlayers; i++)
-            {
-                if (Main.player[i].active && !Main.player[i].dead)
-                {
-                    Player player = Main.player[i];
-                    float discard = 0;
-
-                    //Draw a line between points 9 at a time to check for collision
-                    for (int j = 0; j < trailPositions.Count - collisionFrequency; j += collisionFrequency)
-                    {
-                        if(trailPositions.Count < j + collisionFrequency - 1)
-                        {
-                            break;
-                        }
-                        if (trailPositions[j + collisionFrequency - 1] == Vector2.Zero)
-                        {
-                            break;
-                        }
-                        if (Collision.CheckAABBvLineCollision(player.position, player.Size, trailPositions[j], trailPositions[j + collisionFrequency - 1], 2 * widthFunction(j / trailPositions.Count), ref discard))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return base.Colliding(projHitbox, targetHitbox);
         }
     }
 }

@@ -30,34 +30,36 @@ namespace tsorcRevamp.Projectiles.Trails
             Projectile.hostile = true;
             Projectile.friendly = false;
             trailWidth = 35;
-            trailLength = 900;
+            trailPointLimit = 900;
             trailCollision = true;
             collisionFrequency = 5;
             trailYOffset = 50;
             widthFunction = HomingStarWidthFunction;
             colorFunction = HomingStarColorFunction;
-            trailDistanceCap = 500;
+            trailMaxLength = 500;
             
         }
 
+        float fadeOut = 1;
         public override void AI()
         {
             base.AI();
             Projectile.rotation = Projectile.velocity.ToRotation();
+
+            if(hostProjectile == null)
+            {
+                fadeOut++;
+            }
         }
 
         Color HomingStarColorFunction(float progress)
         {
-            float timeFactor = (float)Math.Sin(Math.Abs(progress + Main.GlobalTimeWrappedHourly));
-            Color result = Color.Lerp(Color.Cyan, Color.DeepPink, (timeFactor + 1f) / 2f);
-            result.A = 0;
-
-            return result;
+            return Color.White;
         }
 
         float HomingStarWidthFunction(float progress)
         {
-
+            return 50;
             if (progress >= 0.85)
             {
                 float scale = (1f - progress) / 0.15f;
@@ -69,44 +71,11 @@ namespace tsorcRevamp.Projectiles.Trails
             }
         }
 
-        BasicEffect basicEffect;
-        Texture2D texture;
-        Texture2D starTexture;
-        float starRotation;
+        
+
+        Texture2D noiseTexture;
         public override bool PreDraw(ref Color lightColor)
-        {
-            if (hostProjectile != null)
-            {
-                //Projectile core
-                if (texture == null || texture.IsDisposed)
-                {
-                    texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triplets/IlluminantHomingStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-                }
-                if (starTexture == null || starTexture.IsDisposed)
-                {
-                    starTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-                }
-
-
-                Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
-                Rectangle starSourceRectangle = new Rectangle(0, 0, starTexture.Width, starTexture.Height);
-                Vector2 origin = sourceRectangle.Size() / 2f;
-                origin.Y += 20;
-                Vector2 starOrigin = starSourceRectangle.Size() / 2f;
-                DrawOriginOffsetY = 100;
-
-                Vector2 offset = hostProjectile.position - hostProjectile.Center;
-                //Draw shadow trails
-                for (float i = 5; i >= 0; i--)
-                {
-                    Main.spriteBatch.Draw(texture, hostProjectile.oldPos[(int)i * 2] - Main.screenPosition - offset, sourceRectangle, Color.MediumPurple * ((6 - i) / 6), hostProjectile.oldRot[(int)i * 2] - MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
-                }
-                Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, hostProjectile.rotation - MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
-                Vector2 starOffset = Projectile.velocity;
-                starOffset.Normalize();
-                starRotation += 0.1f;
-            }
-
+        {           
             //Trail
             if (trailPositions == null)
             {
@@ -115,25 +84,23 @@ namespace tsorcRevamp.Projectiles.Trails
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-            //If no custom effect is specified, just use BasicEffect as a placeholder
-            if (customEffect == null)
+                        
+            if (noiseTexture == null || noiseTexture.IsDisposed)
             {
-                if (basicEffect == null)
-                {
-                    basicEffect = new BasicEffect(Main.graphics.GraphicsDevice);
-                    basicEffect.VertexColorEnabled = true;
-                    basicEffect.FogEnabled = false;
-                    basicEffect.View = Main.GameViewMatrix.TransformationMatrix;
-                    var viewport = Main.instance.GraphicsDevice.Viewport;
-                    basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, -1, 1);
-                }
-                basicEffect.World = Matrix.CreateTranslation(-new Vector3(Main.screenPosition.X, Main.screenPosition.Y, 0));
-
-                //Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-
-                basicEffect.CurrentTechnique.Passes[0].Apply();
+                noiseTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Marilith/CataclysmicFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
+            Effect trailEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+
+            trailEffect.Parameters["noiseTexture"].SetValue(noiseTexture);
+            trailEffect.Parameters["fadeOut"].SetValue(fadeOut);
+            trailEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            trailEffect.Parameters["shaderColor"].SetValue(new Color(1.0f, 0.4f, 0.8f, 1.0f).ToVector4());
+
+
+            Matrix view = Matrix.CreateLookAt(Vector3.Zero, Vector3.UnitZ, Vector3.Up) * Matrix.CreateTranslation(Main.graphics.GraphicsDevice.Viewport.Width / 2, Main.graphics.GraphicsDevice.Viewport.Height / -2, 0) * Matrix.CreateRotationZ(MathHelper.Pi) * Matrix.CreateScale(Main.GameViewMatrix.Zoom.X, Main.GameViewMatrix.Zoom.Y, 1f);
+            var projection = Matrix.CreateOrthographic(Main.graphics.GraphicsDevice.Viewport.Width, Main.graphics.GraphicsDevice.Viewport.Height, 0, 1000);
+            trailEffect.Parameters["WorldViewProjection"].SetValue(view * projection);
+            trailEffect.Techniques[0].Passes[0].Apply();
 
             if (widthFunction == null)
             {
@@ -145,7 +112,7 @@ namespace tsorcRevamp.Projectiles.Trails
             }
 
             VertexStrip vertexStrip = new VertexStrip();
-            vertexStrip.PrepareStrip(trailPositions.ToArray(), trailRotations.ToArray(), colorFunction, widthFunction, includeBacksides: true);
+            vertexStrip.PrepareStrip(trailPositions.ToArray(), trailRotations.ToArray(), colorFunction, widthFunction, -Main.screenPosition, includeBacksides: true);
             vertexStrip.DrawTrail();
 
 

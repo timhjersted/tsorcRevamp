@@ -188,7 +188,6 @@ namespace tsorcRevamp
             EmeraldHeraldUserInterface = new UserInterface();
 
 
-
             /*
             if (!Main.dedServ)
             {

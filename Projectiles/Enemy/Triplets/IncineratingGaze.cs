@@ -152,7 +152,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         public static Texture2D flameJetTexture;
         public static ArmorShaderData data;
         public static ArmorShaderData targetingData;
-        float modifiedTime;
         public override bool PreDraw(ref Color lightColor)
         {
             if (flameJetTexture == null || flameJetTexture.IsDisposed)

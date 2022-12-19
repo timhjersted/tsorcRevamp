@@ -89,7 +89,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
 
         public override void Kill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.5f}, Projectile.Center);
         }
 
         float Progress(float progress)
@@ -149,10 +148,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation - MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
             Vector2 starOffset = Projectile.velocity;
             starOffset.Normalize();
-            if (Projectile.ai[1] != 1)
-            {
-                Main.spriteBatch.Draw(starTexture, Projectile.Center - Main.screenPosition, starSourceRectangle, Color.White, Projectile.rotation + starRotation, starOrigin, Projectile.scale * 0.75f, SpriteEffects.None, 0);
-            }
+            Main.spriteBatch.Draw(starTexture, Projectile.Center - Main.screenPosition, starSourceRectangle, Color.White, Projectile.rotation + starRotation, starOrigin, Projectile.scale * 0.75f, SpriteEffects.None, 0);
             starRotation += 0.1f;
             return false;
         }

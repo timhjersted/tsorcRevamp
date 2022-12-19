@@ -28,12 +28,12 @@ namespace tsorcRevamp.Projectiles.Trails
             Projectile.hostile = true;
             Projectile.friendly = false;
             trailWidth = 35;
-            trailLength = 500;
+            trailPointLimit = 500;
             trailCollision = false;
             trailYOffset = 50;
             widthFunction = IchorTrailWidth;
             colorFunction = IchorTrailColor;
-            trailDistanceCap = 400;            
+            trailMaxLength = 400;            
         }
 
         public override void AI()

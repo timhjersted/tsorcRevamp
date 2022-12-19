@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Trails
             Projectile.hostile = true;
             Projectile.friendly = false;
             trailWidth = 10;
-            trailLength = 10;
+            trailPointLimit = 10;
             trailCollision = true;
             collisionFrequency = 5;
         }
