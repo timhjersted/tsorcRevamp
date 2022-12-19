@@ -149,15 +149,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             }
         }
 
-        public static Texture2D flameJetTexture;
         public static ArmorShaderData data;
         public static ArmorShaderData targetingData;
         public override bool PreDraw(ref Color lightColor)
         {
-            if (flameJetTexture == null || flameJetTexture.IsDisposed)
-            {
-                flameJetTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Marilith/CataclysmicFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            }
             if (chargeProgress < firingTime)
             {
                 Main.spriteBatch.End();
@@ -200,7 +195,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
 
                 Vector2 targetingOrigin = new Vector2(0, targetingSourceRectangle.Height / 2);
 
-                Main.EntitySpriteDraw(flameJetTexture, Projectile.Center - Main.screenPosition, targetingSourceRectangle, Color.White, Projectile.rotation, targetingOrigin, Projectile.scale, targetingSpriteEffects, 0);
+                Main.EntitySpriteDraw(tsorcRevamp.noiseTexture, Projectile.Center - Main.screenPosition, targetingSourceRectangle, Color.White, Projectile.rotation, targetingOrigin, Projectile.scale, targetingSpriteEffects, 0);
             }
 
             Main.spriteBatch.End();
@@ -251,7 +246,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
 
-            Main.EntitySpriteDraw(flameJetTexture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.noiseTexture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
 
 
             Main.spriteBatch.End();

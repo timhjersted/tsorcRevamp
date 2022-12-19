@@ -26,8 +26,6 @@ namespace tsorcRevamp.Projectiles.Trails
             Projectile.tileCollide = false;
             Projectile.timeLeft = 99999999;
             Projectile.penetrate = -1;
-            widthFunction = DefaultWidthFunction;
-            colorFunction = DefaultColorFunction;
         }
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
@@ -49,6 +47,10 @@ namespace tsorcRevamp.Projectiles.Trails
         /// </summary>
         public float trailCurrentLength;
         /// <summary>
+        /// Variable used to make the trail fade out once its host is inactive
+        /// </summary>
+        public float fadeOut = 1;
+        /// <summary>
         /// Can the trail deal damage?
         /// </summary>
         public bool trailCollision = false;
@@ -69,7 +71,7 @@ namespace tsorcRevamp.Projectiles.Trails
         /// Allows you to make collision checking stop before the end of the trail
         /// Used on trails where the last few pieces of them are not visible
         /// </summary>
-        public int collisionPadding = 5;
+        public int collisionPadding = 2;
         /// <summary>
         /// If this projectile is attached to an NPC it is stored here
         /// </summary>
@@ -80,17 +82,9 @@ namespace tsorcRevamp.Projectiles.Trails
         public Projectile hostProjectile;
         /// <summary>
         /// The effect this trail uses.
-        /// Unimplemented, apply it in PreDraw for now.
+        /// Set its parameters by overriding SetEffectParameters
         /// </summary>
         public Effect customEffect;
-        /// <summary>
-        /// A function changing its color dynamically
-        /// </summary>
-        public VertexStrip.StripColorFunction colorFunction;
-        /// <summary>
-        /// A function changing its width dynamically
-        /// </summary>
-        public VertexStrip.StripHalfWidthFunction widthFunction;
 
         /// <summary>
         /// If Projectile.ai[0] is set to 1, then this projectile is attached to an NPC
@@ -149,6 +143,8 @@ namespace tsorcRevamp.Projectiles.Trails
         {
             Initialize();
 
+            Projectile.rotation = Projectile.velocity.ToRotation();
+
             if (HostEntityValid())
             {
                 Vector2 offset = hostEntity.velocity;
@@ -169,6 +165,7 @@ namespace tsorcRevamp.Projectiles.Trails
             }
             else
             {
+                fadeOut++;
                 hostNPC = null;
                 hostProjectile = null;
                 if (trailPositions.Count > 3)
@@ -238,23 +235,20 @@ namespace tsorcRevamp.Projectiles.Trails
             }
         }
 
-        public float DefaultWidthFunction(float progress)
+        public virtual float WidthFunction(float progress)
         {
             return trailWidth;
         }
+        public virtual float CollisionWidthFunction(float progress)
+        {
+            return WidthFunction(progress);
+        }
 
-        public Color DefaultColorFunction(float progress)
+        public virtual Color ColorFunction(float progress)
         {
             return Color.White;
-
-            //Shifting blue and pink
-            //Could be useful later
-            //float timeFactor = (float)Math.Sin(Math.Abs(progress - Main.GlobalTimeWrappedHourly * 1));
-            //Color result = Color.Lerp(Color.Cyan, Color.DeepPink, (timeFactor + 1f) / 2f);
-            //result.A = 0;
-
-            //return result;
         }
+
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             if (trailPositions == null)
@@ -270,17 +264,13 @@ namespace tsorcRevamp.Projectiles.Trails
                     float discard = 0;
 
                     //Draw a line between points 9 at a time to check for collision
-                    for (int j = 0; j < trailPositions.Count - collisionFrequency; j += collisionFrequency)
+                    for (int j = collisionPadding; j < trailPositions.Count - collisionFrequency - 1; j += collisionFrequency)
                     {
-                        if (trailPositions.Count < j + collisionFrequency - 1 - collisionPadding)
-                        {
-                            break;
-                        }
                         if (trailPositions[j + collisionFrequency - 1] == Vector2.Zero)
                         {
                             break;
                         }
-                        if (Collision.CheckAABBvLineCollision(player.position, player.Size, trailPositions[j], trailPositions[j + collisionFrequency - 1], 2 * widthFunction(j / trailPositions.Count), ref discard))
+                        if (Collision.CheckAABBvLineCollision(player.position, player.Size, trailPositions[j], trailPositions[j + collisionFrequency - 1], 2 * CollisionWidthFunction(j / trailPositions.Count), ref discard))
                         {
                             return true;
                         }
@@ -291,6 +281,16 @@ namespace tsorcRevamp.Projectiles.Trails
         }
 
         int ꙮ;
+
+        public static Matrix GetWorldViewProjectionMatrix()
+        {
+            Matrix view = Matrix.CreateLookAt(Vector3.Zero, Vector3.UnitZ, Vector3.Up) * Matrix.CreateTranslation(Main.graphics.GraphicsDevice.Viewport.Width / 2, Main.graphics.GraphicsDevice.Viewport.Height / -2, 0) * Matrix.CreateRotationZ(MathHelper.Pi) * Matrix.CreateScale(Main.GameViewMatrix.Zoom.X, Main.GameViewMatrix.Zoom.Y, 1f);
+            Matrix projection = Matrix.CreateOrthographic(Main.graphics.GraphicsDevice.Viewport.Width, Main.graphics.GraphicsDevice.Viewport.Height, 0, 1000);
+
+            return view * projection;
+        }
+
+        public virtual void SetEffectParameters(Effect effect) { }
 
         BasicEffect basicEffect;
         public override bool PreDraw(ref Color lightColor)
@@ -310,15 +310,18 @@ namespace tsorcRevamp.Projectiles.Trails
                     var viewport = Main.instance.GraphicsDevice.Viewport;
                     basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, -1, 1);
                 }
+
                 basicEffect.World = Matrix.CreateTranslation(-new Vector3(Main.screenPosition.X, Main.screenPosition.Y, 0));
-
-                //Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-
                 basicEffect.CurrentTechnique.Passes[0].Apply();
+            }
+            else
+            {
+                SetEffectParameters(customEffect);
+                customEffect.CurrentTechnique.Passes[0].Apply();
             }
 
             VertexStrip vertexStrip = new VertexStrip();
-            vertexStrip.PrepareStrip(Projectile.oldPos, Projectile.oldRot, colorFunction, widthFunction, includeBacksides: true);
+            vertexStrip.PrepareStrip(trailPositions.ToArray(), trailRotations.ToArray(), ColorFunction, WidthFunction, -Main.screenPosition, includeBacksides: true);
             vertexStrip.DrawTrail();
 
 
@@ -326,5 +329,15 @@ namespace tsorcRevamp.Projectiles.Trails
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             return false;
         }
+
+
+
+        //Shifting blue and pink
+        //Could be useful later
+        //float timeFactor = (float)Math.Sin(Math.Abs(progress - Main.GlobalTimeWrappedHourly * 1));
+        //Color result = Color.Lerp(Color.Cyan, Color.DeepPink, (timeFactor + 1f) / 2f);
+        //result.A = 0;
+
+        //return result;
     }
 }

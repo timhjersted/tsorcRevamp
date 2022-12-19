@@ -93,7 +93,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         }
 
         
-        public static Texture2D texture;
         public static ArmorShaderData data;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)        
         {
@@ -106,11 +105,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/MarilithIntro", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "MarilithIntroPass");
             }
 
-            if (texture == null || texture.IsDisposed)
-            {
-                texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Marilith/CataclysmicFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            }
-
             //data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer);
 
             data.UseSaturation(progress);
@@ -118,10 +112,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             //Apply the shader
             data.Apply(null);
 
-            Rectangle recsize = new Rectangle(0, 0, texture.Width, texture.Height);
+            Rectangle recsize = new Rectangle(0, 0, tsorcRevamp.noiseTexture.Width, tsorcRevamp.noiseTexture.Height);
 
             //Draw the rendertarget with the shader
-            Main.spriteBatch.Draw(texture, NPC.Center - Main.screenPosition - new Vector2(recsize.Width, recsize.Height) / 2 * 2.5f, recsize, Color.White, 0, Vector2.Zero, 2.5f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tsorcRevamp.noiseTexture, NPC.Center - Main.screenPosition - new Vector2(recsize.Width, recsize.Height) / 2 * 2.5f, recsize, Color.White, 0, Vector2.Zero, 2.5f, SpriteEffects.None, 0);
 
             //Restart the spritebatch so the shader doesn't get applied to the rest of the game
             Main.spriteBatch.End();

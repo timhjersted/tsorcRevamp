@@ -61,64 +61,9 @@ namespace tsorcRevamp.Projectiles.Trails
             }
         }
 
-        float DefaultWidthFunction(float progress)
+        public override void SetEffectParameters(Effect effect)
         {
-            return 45;
-        }
-
-        Color DefaultColorFunction(float progress)
-        {
-            return Color.White;
-            float timeFactor = (float)Math.Sin(Math.Abs(progress - Main.GlobalTimeWrappedHourly * 1));
-            Color result = Color.Lerp(Color.Cyan, Color.DeepPink, (timeFactor + 1f) / 2f);
-            result.A = 0;
-
-            return result;
-        }
-
-
-        BasicEffect basicEffect;
-        public override bool PreDraw(ref Color lightColor)
-        {
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-            //If no custom effect is specified, just use BasicEffect as a placeholder
-            if (customEffect == null)
-            {
-                if (basicEffect == null)
-                {
-                    basicEffect = new BasicEffect(Main.graphics.GraphicsDevice);
-                    basicEffect.VertexColorEnabled = true;
-                    basicEffect.FogEnabled = false;
-                    basicEffect.View = Main.GameViewMatrix.TransformationMatrix;
-                    var viewport = Main.instance.GraphicsDevice.Viewport;
-                    basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, -1, 1);
-                }
-                basicEffect.World = Matrix.CreateTranslation(-new Vector3(Main.screenPosition.X, Main.screenPosition.Y, 0));
-
-                //Main.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-
-                basicEffect.CurrentTechnique.Passes[0].Apply();
-            }
-
-            if(widthFunction == null)
-            {
-                widthFunction = DefaultWidthFunction;
-            }
-            if (colorFunction == null)
-            { 
-                colorFunction = DefaultColorFunction;
-            }
-
-            VertexStrip vertexStrip = new VertexStrip();
-            vertexStrip.PrepareStrip(trailPositions.ToArray(), trailRotations.ToArray(), colorFunction, widthFunction, includeBacksides: true);
-            vertexStrip.DrawTrail();
-
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-            return false;
+            base.SetEffectParameters(effect);
         }
     }
 }

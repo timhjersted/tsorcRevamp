@@ -40,7 +40,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     float2 uv = input.TextureCoordinates;        
     
     //Calculate how close the current pixel is to the center line of the screen
-    float intensity = 1.0 - abs(uv.y - 0.5);
+    float intensity = 1.0 - abs(uv.y - 0.5);    
     
     //Raise it to a high exponent, resulting in sharply increased intensity at the center that trails off smoothly
     //Higher number = more narrow and compressed trail
@@ -87,15 +87,15 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     //Mix it with 'intensity' to make it more intense near the center
     float4 effectColor = noiseColor * pow(intensity, 2) * 4.0;
     
-    //Not the vibe i'm going for here, but looks cool as hell and will be useful later:
+    //Looks cool as hell, but not the vibe i'm going for
     //float4 effectColor = noiseColor * noiseColor * pow(intensity, 2) * 8.0;
     
     return effectColor / pow(fadeOut, 1);
 }
 
-technique HomingStarShader
+technique CataluminanceTrail
 {
-    pass HomingStarShaderPass
+    pass CataluminanceTrailPass
     {
         VertexShader = compile vs_2_0 MainVS();
         PixelShader = compile ps_2_0 MainPS();

@@ -99,7 +99,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             }
         }
 
-        public static Texture2D texture;
         public static ArmorShaderData data;
         public override bool PreDraw(ref Color lightColor)
         {
@@ -114,21 +113,16 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/FireWaveShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "FireWaveShaderPass");
             }
 
-            if(texture == null || texture.IsDisposed)
-            {
-                texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Marilith/CataclysmicFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            }
-
             //Pass the size parameter in through the "saturation" variable, because there isn't a "size" one
             data.UseSaturation(1.55f * size / maxSize);
 
             //Apply the shader
             data.Apply(null);
 
-            Rectangle recsize = new Rectangle(0, 0, texture.Width, texture.Height);
+            Rectangle recsize = new Rectangle(0, 0, tsorcRevamp.noiseTexture.Width, tsorcRevamp.noiseTexture.Height);
 
             //Draw the rendertarget with the shader
-            Main.spriteBatch.Draw(texture, truePosition - Main.screenPosition - new Vector2(recsize.Width, recsize.Height) / 2 * 2.5f, recsize, Color.White, 0, Vector2.Zero, 2.5f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tsorcRevamp.noiseTexture, truePosition - Main.screenPosition - new Vector2(recsize.Width, recsize.Height) / 2 * 2.5f, recsize, Color.White, 0, Vector2.Zero, 2.5f, SpriteEffects.None, 0);
 
             //Restart the spritebatch so the shader doesn't get applied to the rest of the game
             Main.spriteBatch.End();

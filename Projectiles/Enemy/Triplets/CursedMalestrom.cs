@@ -56,23 +56,16 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         }
 
         ArmorShaderData data;
-        Texture2D noiseTexture;
         public override bool PreDraw(ref Color lightColor)
         {
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-            if (noiseTexture == null || noiseTexture.IsDisposed)
-            {
-                noiseTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Marilith/CataclysmicFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            }
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);            
 
             //Apply the shader, caching it as well
-            //if (data == null)
+            if (data == null)
             {
                 data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CursedMalestrom", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "CursedMalestromPass");
             }
-
 
             Rectangle sourceRectangle = new Rectangle(0, 0, (int)projRadius * 4, (int)projRadius * 4);
             Vector2 origin = sourceRectangle.Size() / 2f;
@@ -89,7 +82,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
 
-            Main.EntitySpriteDraw(noiseTexture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.velocity.ToRotation() + MathHelper.Pi, origin, Projectile.scale, spriteEffects, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.noiseTexture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.velocity.ToRotation() + MathHelper.Pi, origin, Projectile.scale, spriteEffects, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);

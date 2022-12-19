@@ -165,7 +165,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             }
         }
 
-        public static Texture2D flameJetTexture;
         public static ArmorShaderData data;
         float modifiedTime;
         public override bool PreDraw(ref Color lightColor)
@@ -178,11 +177,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             if (data == null)
             {
                 data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/FireWallShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "FireWallShaderPass");
-            }
-
-            if (flameJetTexture == null || flameJetTexture.IsDisposed)
-            {
-                flameJetTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Marilith/CataclysmicFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
                         
             //Pass relevant data to the shader via these parameters
@@ -204,7 +198,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Rectangle sourceRectangle = new Rectangle(0, 0, Projectile.width, Projectile.height);
             Vector2 origin = sourceRectangle.Size() / 2f;
 
-            Main.EntitySpriteDraw(flameJetTexture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.noiseTexture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
             
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);

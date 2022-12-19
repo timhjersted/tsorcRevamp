@@ -124,7 +124,9 @@ namespace tsorcRevamp
 
         public static int MarkerSelected = -1;
 
-        public static SoapstoneTileEntity NearbySoapstone; 
+        public static SoapstoneTileEntity NearbySoapstone;
+
+        public static Texture2D noiseTexture;
 
         public override void Load()
         {
@@ -181,6 +183,7 @@ namespace tsorcRevamp
             TheAbyssEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TheAbyssShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
 
+            noiseTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Marilith/CataclysmicFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad);
 
             //AttraidiesEffect = Instance.GetEffect("Effects/ScreenFilters/AttraidiesShader");
             //Filters.Scene["tsorcRevamp:AttraidiesShader"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(AttraidiesEffect), "AttraidiesShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
@@ -898,6 +901,7 @@ namespace tsorcRevamp
             TextureAssets.Sun = ModContent.Request<Texture2D>("Terraria/Images/Sun", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             TextureAssets.Sun2 = ModContent.Request<Texture2D>("Terraria/Images/Sun2");
             TextureAssets.Sun3 = ModContent.Request<Texture2D>("Terraria/Images/Sun3");
+            noiseTexture = null;
 
             for (int i = 0; i < TextureAssets.Moon.Length; i++)
             {
