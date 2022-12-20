@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -102,6 +103,18 @@ namespace tsorcRevamp.Items.VanillaItems
                         break;
                 }
                 player.whipRangeMultiplier += scaleDelta;
+            }
+        }
+        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+        {
+            if (item.type == ItemID.MechanicalEye)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "RealBossName", "Summons The Triplets\nItem is non-consumable."));
+                }
             }
         }
     }
