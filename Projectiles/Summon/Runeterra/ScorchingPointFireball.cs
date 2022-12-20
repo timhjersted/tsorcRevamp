@@ -127,7 +127,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			Projectile.rotation = currentAngle * -1f;
 
-			float frameSpeed = 3f;
+			float frameSpeed = 4f;
 
 			Projectile.frameCounter++;
 
