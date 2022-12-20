@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
                 "\nInherits Searing Lash's effect at up to half of its strength" +
                 "\n1-4% summon tag critical strike chance" +
                 "\nGain 6-24% summon attack speed upon striking an enemy" +
-                "\nPerforms better against multiple targets than most whips" + //make this scale slightly too
+                "\nPerforms better against multiple targets than most whips" +
 				"\nYour summons will focus struck enemies");
 		}
 

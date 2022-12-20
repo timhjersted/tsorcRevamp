@@ -85,7 +85,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
                     tagbonusdamage += Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 5;
                 }
                 float searingdamagescaling = Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 2 * 0.01f;
-                int tagdamagescaling = Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 5;
+                int tagdamagescaling = Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 5;
                 damage += (int)((projectile.damage + tagbonusdamage) * searingdamagescaling * whipDamage * 0.01f);
                 damage += tagdamagescaling;
                 if (Main.rand.NextBool(100 / (Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 4)))

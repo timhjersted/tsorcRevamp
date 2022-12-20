@@ -124,13 +124,13 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-		{
-			Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerBuff>(), 240);
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.NightsCrackerDebuff>(), 240);
-			NightCharges = (int)ChargeTime / 40 + 1;
+        {
+            NightCharges = (int)ChargeTime / 40 + 1;
+            Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerBuff>(), NightCharges * 150);
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.NightsCrackerDebuff>(), NightCharges * 150);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
-			Projectile.damage = (int)(damage * 0.85f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
-		}
+            Projectile.damage = (int)(damage * ((float)NightCharges / 16 + 0.6f)); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
+        }
 
 		// This method draws a line between all points of the whip, in case there's empty space between the sprites.
 		private void DrawLine(List<Vector2> list)
