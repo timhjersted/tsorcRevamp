@@ -256,7 +256,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1, 1);
                     }
                 }
-                else if (MoveTimer % 8 == 0)
+                else if (MoveTimer % 12 == 0)
                 {
                     //Stars fired upward for effect
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);

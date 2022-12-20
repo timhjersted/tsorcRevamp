@@ -123,7 +123,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     {
                         Main.npcChatText = "Red, it is as I feared. By killing Attraidies, a portal from" +
                                         "\nthe Abyss was opened, unleashing even more oppressive forces upon the world." +
-                                        "\nThe ancenstors tell me that the portal can be closed, but" +
+                                        "\nThe ancestors tell me that the portal can be closed, but" +
                                         "\nyou must first defeat the 3 Elemental Fiends: one of" +
                                         "\n[c/2f8ee0:Water], one of [c/2d9e2b:Earth], and one of [c/f53d0a:Fire]." +
                                         "\nYou must also defeat 4 more lords of the Abyss:" +
@@ -135,7 +135,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     {
                         Main.npcChatText = "My heart despairs for you, Red. It will not be easy. But if you succeed, you will have the strength " +
                                         "to face the final lord, who has tended the flame of the Abyss since the world began." +
-                                        "\nTo the ancenstors, he was known as [c/ff6618:Gwyn, Lord of Cinder]. " +
+                                        "\nTo the ancestors, he was known as [c/ff6618:Gwyn, Lord of Cinder]. " +
                                         "\nGwyn's old tomb is buried somewhere beneath the Western sea, but he will surely kill you " +
                                         "if you have not yet gathered the strength obtained from the other lords of the Abyss.";
                         chatState = 2;

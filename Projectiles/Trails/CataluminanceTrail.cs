@@ -38,9 +38,16 @@ namespace tsorcRevamp.Projectiles.Trails
         }
 
         float timer = 0;
+        float transitionTimer = 0;
         public override void AI()
         {
+            if (hostNPC != null && hostNPC.active && hostNPC.life < hostNPC.lifeMax / 2f)
+            {
+                transitionTimer++;
+            }
+
             timer++;
+
             //A phase is 900 seconds long
             //Once that is over, stop adding new positions
             if (timer < 899)
@@ -83,9 +90,9 @@ namespace tsorcRevamp.Projectiles.Trails
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
             //I do it like this so it retains its color state even if the host NPC dies or despawns
-            if (hostNPC != null && hostNPC.active && hostNPC.life < hostNPC.lifeMax / 2f)
+            if (hostNPC != null && hostNPC.active && hostNPC.life < hostNPC.lifeMax / 2f && transitionTimer <= 120)
             {
-                trailColor = new Color(1f, 0.7f, 0.85f);
+                trailColor = Color.Lerp(new Color(0.2f, 0.7f, 1f), new Color(1f, 0.7f, 0.85f), transitionTimer / 120);
             }
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
