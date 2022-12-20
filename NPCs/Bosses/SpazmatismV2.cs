@@ -191,8 +191,10 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 25);
                 }
                 NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity / 10f, ProjectileID.EyeFire, EyeFireDamage, 0.5f, Main.myPlayer);
-
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity / 10f, ProjectileID.EyeFire, EyeFireDamage, 0.5f, Main.myPlayer);
+                }
             }
             else
             {

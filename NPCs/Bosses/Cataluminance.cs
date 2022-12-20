@@ -205,7 +205,7 @@ namespace tsorcRevamp.NPCs.Bosses
         //Chase the player rapidly and smoothly, leaving a damaging trail in its wake that obstructs movement
         void Pursuit()
         {
-            if (MoveTimer == 1)
+            if (MoveTimer == 1 && Main.netMode == NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Trails.CataluminanceTrail>(), 35, 0, Main.myPlayer, 1, NPC.whoAmI);
             }
