@@ -20,9 +20,13 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         }
         public override void SetDefaults()
         {
-            Projectile.width = 33;
-            Projectile.height = 14;
-            Projectile.tileCollide = false; // Makes the minion go through tiles freely
+            Projectile.netImportant = true;
+            Projectile.width = 10;
+            Projectile.height = 10;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft *= 5;
+            Projectile.manualDirectionChange = true;
             Projectile.damage = 115;
             Projectile.originalDamage = 115;
             // These below are needed for a minion weapon
@@ -33,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
 
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 15;
+            Projectile.localNPCHitCooldown = 10;
         }
         public override bool? CanCutTiles()
         {
@@ -71,16 +75,11 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
         private void AI_156_Think(List<int> blacklist)
         {
-            int num = 60;
-            int num12 = num - 1;
-            int num17 = num + 60;
-            int num18 = num17 - 1;
-            int num19 = num + 1;
-                num = 40;
-                num12 = num - 1;
-                num17 = num + 40;
-                num18 = num17 - 1;
-                num19 = num + 1;
+                int num = 40;
+                int num12 = num - 1;
+                int num17 = num + 40;
+                int num18 = num17 - 1;
+                int num19 = num + 1;
             Player player = Main.player[Projectile.owner];
             if (player.active && Vector2.Distance(player.Center, Projectile.Center) > 2000f)
             {
