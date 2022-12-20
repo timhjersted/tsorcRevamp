@@ -29,6 +29,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             NPC.lifeMax = 6;
             NPC.damage = 50;
             NPC.knockBackResist = 0;
+            NPC.scale = 1;
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
 
@@ -56,7 +57,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             else
             {
                 NPC.StrikeNPCNoInteraction(9999, 0, 0);
-            }            
+            }
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)

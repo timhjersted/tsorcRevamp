@@ -77,7 +77,7 @@ namespace tsorcRevamp.Projectiles.Trails
         Color trailColor = new Color(0.2f, 0.7f, 1f);
         public override void SetEffectParameters(Effect effect)
         {
-            visualizeTrail = true;
+            visualizeTrail = false;
             collisionPadding = 8;
             trailWidth = 100;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
