@@ -307,25 +307,25 @@ namespace tsorcRevamp.NPCs.Bosses
                 rotationSpeed = 0.2f;
 
                 //Telegraph before each charge
-                if (MoveTimer % 75 < 15)
+                if (MoveTimer % 90 < 15)
                 {
-                    UsefulFunctions.DustRing(NPC.Center, (15 - MoveTimer % 75) * 20, DustID.GemRuby, 100, 2);
+                    UsefulFunctions.DustRing(NPC.Center, (15 - MoveTimer % 90) * 20, DustID.GemRuby, 100, 2);
                 }
 
                 //Charge
-                if (MoveTimer % 75 == 15)
+                if (MoveTimer % 90 == 15)
                 {
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15);
                 }
 
                 //Fire
-                else if (MoveTimer % 75 > 15 && MoveTimer % 75 < 35)
+                else if (MoveTimer % 90 > 15 && MoveTimer % 90 < 35)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 projVector = (NPC.rotation + MathHelper.PiOver2).ToRotationVector2();
                         projVector.Normalize();
-                        projVector *= 11;
+                        projVector *= 10;
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVector, ProjectileID.DeathLaser, DeathLaserDamage, 0.5f, Main.myPlayer);
                     }
                 }

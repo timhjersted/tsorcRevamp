@@ -327,7 +327,7 @@ namespace tsorcRevamp
         ///<param name="point">The point to compare against</param>
         public static Player GetClosestPlayer(Vector2 point)
         {
-            int targetIndex = 0;
+            int targetIndex = -1;
             float targetDistance = float.MaxValue;
 
             for (int i = 0; i < Main.maxPlayers; i++)
@@ -338,7 +338,7 @@ namespace tsorcRevamp
 
                     if (distance < targetDistance)
                     {
-                        i = targetIndex;
+                        targetIndex = i;
                         targetDistance = distance;
 
                     }

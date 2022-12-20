@@ -42,7 +42,8 @@ namespace tsorcRevamp.Projectiles.Trails
                 trailWidth = 50;
                 trailMaxLength = 150;
             }
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.noiseTexture);
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/IchorTrackerShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture2);
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
             effect.Parameters["shaderColor"].SetValue(Color.Gold.ToVector4());

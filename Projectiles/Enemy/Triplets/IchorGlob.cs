@@ -35,6 +35,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         bool spawnedTrail = false;
         public override void AI()
         {
+            NPC.width = 60;
+            NPC.height = 60;
             if (!spawnedTrail)
             {
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Trails.IchorTrail>(), 0, 0, Main.myPlayer, 1, NPC.whoAmI);
@@ -51,7 +53,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             {
                 UsefulFunctions.SmoothHoming(NPC, target.Center, 0.25f, 30, target.velocity, false);
             }
-            
+            else
+            {
+                NPC.StrikeNPCNoInteraction(9999, 0, 0);
+            }            
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
@@ -67,7 +72,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         }
         public override void DrawBehind(int index)
         {
-            Main.instance.DrawCacheNPCsOverPlayers.Add(index);
+            //Main.instance.DrawCacheNPCsOverPlayers.Add(index);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

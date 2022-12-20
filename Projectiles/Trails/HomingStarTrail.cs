@@ -54,7 +54,7 @@ namespace tsorcRevamp.Projectiles.Trails
         
         public override void SetEffectParameters(Effect effect)
         {
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.noiseTexture);
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture1);
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
             effect.Parameters["shaderColor"].SetValue(new Color(1.0f, 0.4f, 0.8f, 1.0f).ToVector4());

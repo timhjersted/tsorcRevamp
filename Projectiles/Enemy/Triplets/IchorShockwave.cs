@@ -37,9 +37,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         }
 
 
-        float[] trailRotations = new float[6] { 0, 0, 0, 0, 0, 0 };
         bool playedSound = false;
-        bool spawnedTrail = false;
         public override void AI()
         {
             Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);

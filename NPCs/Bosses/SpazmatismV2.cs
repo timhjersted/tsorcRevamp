@@ -199,20 +199,20 @@ namespace tsorcRevamp.NPCs.Bosses
                 UsefulFunctions.SmoothHoming(NPC, target.Center, 0.15f, 20, target.velocity, false);
 
                 //Telegraph for the first second before the starting charge
-                if (MoveTimer < 90)
+                if (MoveTimer < 110)
                 {
                     NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-                    UsefulFunctions.DustRing(NPC.Center, (90 - MoveTimer) * 30, DustID.CursedTorch, 100, 10);
+                    UsefulFunctions.DustRing(NPC.Center, (110 - MoveTimer) * 30, DustID.CursedTorch, 100, 10);
                     return;
                 }
-                if (MoveTimer % 90 < 30)
+                if (MoveTimer % 110 < 30)
                 {
                     NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
                     UsefulFunctions.DustRing(NPC.Center, (90 - MoveTimer % 90) * 20, DustID.CursedTorch, 100, 10);
                 }
-                if (MoveTimer % 90 == 30)
+                if (MoveTimer % 110 == 30)
                 {
-                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 18);
+                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 5), ProjectileID.CursedFlameHostile, EyeFireDamage, 0.5f, Main.myPlayer);
@@ -258,7 +258,7 @@ namespace tsorcRevamp.NPCs.Bosses
         void IchorTrackers()
         {
             NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, 350), 0.5f, 20);
+            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(-550, 350), 0.5f, 20);
             
             if (!PhaseTwo)
             {

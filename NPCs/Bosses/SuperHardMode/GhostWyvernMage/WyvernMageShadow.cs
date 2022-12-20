@@ -53,8 +53,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         }
 
         //float customAi1;
-        bool OptionSpawned = false;
-        int OptionId = 0;
 
 
         #region AI

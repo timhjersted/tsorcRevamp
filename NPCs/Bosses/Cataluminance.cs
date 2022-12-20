@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.damage = 50;
             NPC.defense = 25;
             AnimationType = -1;
-            NPC.lifeMax = (int)(32500 * (1 + (0.25f * (Main.CurrentFrameFlags.ActivePlayersCount - 1))));
+            NPC.lifeMax = 60000;
             NPC.timeLeft = 22500;
             NPC.friendly = false;
             NPC.noTileCollide = true;
@@ -91,7 +91,6 @@ namespace tsorcRevamp.NPCs.Bosses
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
-            //Main.NewText("Cat: " + CurrentMove.Name + " at " + MoveTimer);
             MoveTimer++;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
@@ -240,30 +239,30 @@ namespace tsorcRevamp.NPCs.Bosses
                 angle = Main.rand.NextFloat(-MathHelper.PiOver4, MathHelper.PiOver4);
             }
 
-            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -350), 0.4f, 20);
+            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -350), 0.3f, 20);
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 //In phase 2 the stars leave damaging trails like EoL, but there are fewer of them
                 if (PhaseTwo)
                 {
-                    if (MoveTimer % 35 == 0)
+                    if (MoveTimer % 15 == 0)
                     {
                         //Stars fired upward for effect
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2, 1);
 
                         //Stars rain down
-                        Vector2 spawnPos = NPC.Center + new Vector2(Main.rand.NextFloat(-700, 700), -700);
+                        Vector2 spawnPos = target.Center + new Vector2(Main.rand.NextFloat(-2000, 2000), -700);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1, 1);
                     }
                 }
-                else if (MoveTimer % 25 == 0)
+                else if (MoveTimer % 8 == 0)
                 {
                     //Stars fired upward for effect
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
 
                     //Stars rain down
-                    Vector2 spawnPos = NPC.Center + new Vector2(Main.rand.NextFloat(-700, 700), -700);
+                    Vector2 spawnPos = target.Center + new Vector2(Main.rand.NextFloat(-2500, 2500), -700);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1);
                 }
             }
@@ -381,27 +380,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
         }
-        float WidthFunction(float progress)
-        {
-            return 50;
-            float percent = 1f;
-            float lerpValue = Utils.GetLerpValue(0f, 0.6f, progress, clamped: true);
-            percent *= 1f - (1f - lerpValue) * (1f - lerpValue);
-            return MathHelper.Lerp(0f, 30f, percent);
-        }
 
-        Color ColorFunction(float progress)
-        {
-            float timeFactor = (float)Math.Sin(Math.Abs(progress - Main.GlobalTimeWrappedHourly * 1));
-            Color result = Color.Lerp(Color.Cyan, Color.DeepPink, (timeFactor + 1f) / 2f);
-            //Main.NewText(timeFactor + 1);
-            //result = ;
-            result.A = 0;
-
-            return result;
-        }
-
-        BasicEffect effect;
         public static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {

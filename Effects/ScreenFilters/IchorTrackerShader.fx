@@ -38,6 +38,9 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 float4 MainPS(VertexShaderOutput input) : COLOR0
 {
     float2 uv = input.TextureCoordinates;        
+    //uv.x = uv.x % 0.5;
+    //uv.y = uv.y % 0.5;
+    //uv *= 2;
     
     //Calculate how close the current pixel is to the center line of the screen
     float intensity = 1.0 - abs(uv.y - 0.5);    
@@ -71,14 +74,14 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     float2 samplePoint = uv;
     
     //Zoom in on the noise texture, then shift it over time to make it appear to be flowing    
-    samplePoint /= 20;
-    samplePoint.x = (samplePoint.x + time * 0.05) * 0.5;
+    samplePoint *= 4;
+    samplePoint.x = (samplePoint.x + time * 2) * 0.5;
     
     //Compress it vertically
     samplePoint.y = samplePoint.y / 2;
 
     //Get the noise texture at that point
-    float sampleIntensity = tex2D(textureSampler, samplePoint).r;
+    float sampleIntensity = 1 - tex2D(textureSampler, samplePoint).r;
     
     //Mix it with the laser color
     float4 noiseColor = float4(1.0, 1.0, 1.0, 1.0);
@@ -87,7 +90,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     noiseColor.g = sampleIntensity * shaderColor.g;
 
     //Mix it with 'intensity' to make it more intense near the center
-    float4 effectColor = pow(noiseColor, 2.5) * pow(intensity, 3) * 3 * uv.x * uv.x;
+    float4 effectColor = pow(noiseColor, 2) * pow(intensity, 6) * 3 * uv.x * uv.x;
     
     //Looks cool as hell, but not the vibe i'm going for
     //float4 effectColor = noiseColor * noiseColor * pow(intensity, 2) * 8.0;

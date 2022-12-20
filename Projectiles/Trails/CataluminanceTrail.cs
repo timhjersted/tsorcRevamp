@@ -30,9 +30,11 @@ namespace tsorcRevamp.Projectiles.Trails
             trailWidth = 45;
             trailPointLimit = 900;
             trailMaxLength = 9999999;
+            Projectile.hide = true;
            
             trailCollision = true;
             collisionFrequency = 5;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         float timer = 0;
@@ -61,9 +63,37 @@ namespace tsorcRevamp.Projectiles.Trails
             }
         }
 
+        public override float CollisionWidthFunction(float progress)
+        {
+            return WidthFunction(progress) - 35;
+        }
+
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        {
+            behindNPCs.Add(index);
+        }
+
+        bool pinkTrail = false;
+        Color trailColor = new Color(0.2f, 0.7f, 1f);
         public override void SetEffectParameters(Effect effect)
         {
-            base.SetEffectParameters(effect);
+            visualizeTrail = true;
+            collisionPadding = 8;
+            trailWidth = 100;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+
+            //I do it like this so it retains its color state even if the host NPC dies or despawns
+            if (hostNPC != null && hostNPC.active && hostNPC.life < hostNPC.lifeMax / 2f)
+            {
+                trailColor = new Color(1f, 0.7f, 0.85f);
+            }
+
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
+            effect.Parameters["fadeOut"].SetValue(fadeOut);
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            effect.Parameters["shaderColor"].SetValue(trailColor.ToVector4());
+            effect.Parameters["length"].SetValue(trailCurrentLength);
+            effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
     }
 }

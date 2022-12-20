@@ -85,6 +85,10 @@ namespace tsorcRevamp.Projectiles.Trails
         /// Set its parameters by overriding SetEffectParameters
         /// </summary>
         public Effect customEffect;
+        /// <summary>
+        /// Turn this on for debugging, to see the trail hitbox with high precision
+        /// </summary>
+        public bool visualizeTrail = false;
 
         /// <summary>
         /// If Projectile.ai[0] is set to 1, then this projectile is attached to an NPC
@@ -139,6 +143,7 @@ namespace tsorcRevamp.Projectiles.Trails
                 return trailCurrentLength / trailMaxLength;
             }
         }
+
         public override void AI()
         {
             Initialize();
@@ -152,10 +157,23 @@ namespace tsorcRevamp.Projectiles.Trails
                 offset *= trailYOffset;
 
                 Projectile.Center = hostEntity.Center;
+
                 trailPositions.Add(hostEntity.Center + offset);
                 trailRotations.Add(hostEntity.velocity.ToRotation());
+
+                //Smoothing
+                if (trailPositions.Count > 3)
+                {
+                    for(int i = 3; i < trailPositions.Count - 2; i++)
+                    {
+                        trailPositions[i - 2] = (trailPositions[i - 3] + trailPositions[i - 1]) / 2f;
+                        trailRotations[i - 2] = (trailRotations[i - 3] + trailRotations[i - 1]) / 2f;
+                    }
+                }
+
                 trailCurrentLength = CalculateLength();
 
+                //This could be optimized to not require recomputing the length after each removal
                 while (trailPositions.Count > trailPointLimit || trailCurrentLength > trailMaxLength)
                 {
                     trailPositions.RemoveAt(0);
@@ -180,6 +198,28 @@ namespace tsorcRevamp.Projectiles.Trails
                 }
             }
         }
+
+        public int getNextPointAlongLine(int trailIndex, Vector2 position)
+        {
+            float distance = Vector2.DistanceSquared(trailPositions[trailIndex], position);
+            while (trailIndex < trailPositions.Count)
+            {
+                trailIndex++;
+                float nextDistance = Vector2.DistanceSquared(trailPositions[trailIndex], position);
+                if (nextDistance < distance)
+                {
+                    distance = nextDistance;
+                }
+                else
+                {
+                    return trailIndex;
+                }
+            }
+
+            //Failsafe for if trailIndex is already at the end of the trail
+            return trailIndex;
+        }
+
 
         public float CalculateLength()
         {
@@ -264,7 +304,7 @@ namespace tsorcRevamp.Projectiles.Trails
                     float discard = 0;
 
                     //Draw a line between points 9 at a time to check for collision
-                    for (int j = collisionPadding; j < trailPositions.Count - collisionFrequency - 1; j += collisionFrequency)
+                    for (int j = collisionPadding; j < trailPositions.Count - collisionFrequency - 1 - collisionPadding; j += collisionFrequency)
                     {
                         if (trailPositions[j + collisionFrequency - 1] == Vector2.Zero)
                         {
@@ -293,11 +333,29 @@ namespace tsorcRevamp.Projectiles.Trails
         public virtual void SetEffectParameters(Effect effect) { }
 
         BasicEffect basicEffect;
+        Texture2D starTexture;
         public override bool PreDraw(ref Color lightColor)
         {
             if(trailPositions == null)
             {
                 return false;
+            }
+
+            if (visualizeTrail)
+            {
+                if (starTexture == null || starTexture.IsDisposed)
+                {
+                    starTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+                }
+                Rectangle starSourceRectangle = new Rectangle(0, 0, starTexture.Width, starTexture.Height);
+                Vector2 starOrigin = starSourceRectangle.Size() / 2f;
+
+                for (int i = collisionPadding; i < trailPositions.Count - collisionPadding; i++)
+                {
+                    Main.spriteBatch.Draw(starTexture, trailPositions[i] - Main.screenPosition + new Vector2(CollisionWidthFunction(i / trailPositions.Count), 0).RotatedBy(trailRotations[i] + MathHelper.PiOver2), starSourceRectangle, Color.White, trailRotations[i], starOrigin, Projectile.scale * 0.75f, SpriteEffects.None, 0);
+                    Main.spriteBatch.Draw(starTexture, trailPositions[i] - Main.screenPosition, starSourceRectangle, Color.White, trailRotations[i], starOrigin, Projectile.scale * 0.75f, SpriteEffects.None, 0);
+                    Main.spriteBatch.Draw(starTexture, trailPositions[i] - Main.screenPosition - new Vector2(CollisionWidthFunction(i / trailPositions.Count), 0).RotatedBy(trailRotations[i] + MathHelper.PiOver2), starSourceRectangle, Color.White, trailRotations[i], starOrigin, Projectile.scale * 0.75f, SpriteEffects.None, 0);
+                }
             }
 
             Main.spriteBatch.End();
@@ -334,7 +392,7 @@ namespace tsorcRevamp.Projectiles.Trails
             return false;
         }
 
-
+        
 
         //Shifting blue and pink
         //Could be useful later
