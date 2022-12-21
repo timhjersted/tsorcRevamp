@@ -345,7 +345,7 @@ namespace tsorcRevamp.Projectiles.Summon
 		private void Visuals()
 		{
 			// So it will lean slightly towards the direction it's moving
-			Projectile.rotation = Projectile.velocity.X * 0.1f;
+			Projectile.rotation = Projectile.velocity.X * 0.15f;
 
 			// This is a simple "loop through all frames from top to bottom" animation
 			int frameSpeed = 5;
