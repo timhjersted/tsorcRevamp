@@ -347,6 +347,15 @@ namespace tsorcRevamp.Projectiles.Summon
 			// So it will lean slightly towards the direction it's moving
 			Projectile.rotation = Projectile.velocity.X * 0.15f;
 
+			if(Projectile.velocity.X > 0.05)
+			{
+				Projectile.spriteDirection = -1;
+			}
+			if (Projectile.velocity.X < -0.05)
+			{
+				Projectile.spriteDirection = 1;
+			}
+
 			// This is a simple "loop through all frames from top to bottom" animation
 			int frameSpeed = 5;
 

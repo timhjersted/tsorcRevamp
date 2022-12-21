@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			Tooltip.SetDefault("Summons a raging Phoenix to fight for you" +
+			Tooltip.SetDefault("Summons a raging Phoenix Juvenile to fight for you" +
                 "\nDeals extra damage after warming up, this scales well with crits" +
                 "\nUses 2 minion slots");
 
