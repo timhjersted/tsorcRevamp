@@ -113,7 +113,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "RealBossName", "Summons The Triplets\nItem is non-consumable."));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "RealBossName", "Summons The Triad\nItem is non-consumable."));
                 }
             }
         }
