@@ -19,7 +19,11 @@ Mddznyan / spriting
 Articulo / sprites from Dark Souls Vanity
 Maxisi / programmer
 qsab101 / Seath sprite
+JOI3 / Phoenix Juvenile minion and buff sprites
 Hugekraken / Detonation Signal sprite
+ヨーグルト / Interstellar Vessel sprite
+Julian/Jbug / Challenger's Glove sprite
+Indigo / Plasma Whirlwind item sprite
 
 ORIGINAL MOD (tConfig Edition)
 Tim Hjersted / Mod Director + Dark Souls concept + New content + Mod Remixing & Compiling
