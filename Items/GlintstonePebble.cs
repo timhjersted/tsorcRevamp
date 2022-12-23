@@ -30,6 +30,15 @@ namespace tsorcRevamp.Items
             Item.rare = ItemRarityID.Blue;
         }
 
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe(4);
+            recipe.AddIngredient(ItemID.ManaCrystal);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
+        }
+
 
         public override bool CanUseItem(Player player)
         {
@@ -104,7 +113,7 @@ namespace tsorcRevamp.Items
                     }
                 }
 
-                int damage = (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(24));
+                int damage = (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(48));
 
                 if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                 {
@@ -119,7 +128,7 @@ namespace tsorcRevamp.Items
 
                 //if (Main.mouseItem == null) // Not sure why but seems like it's not null if you're using something
                 //{
-
+                
                 if (Item.stack == 1) Item.TurnToAir();
                 else Item.stack--;
                 //}
