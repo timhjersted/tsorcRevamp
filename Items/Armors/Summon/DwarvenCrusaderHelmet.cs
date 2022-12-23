@@ -11,11 +11,10 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases minion damage by 9% and summon attack speed by 18%" +
+            Tooltip.SetDefault("Increases whip damage and summon attack speed by 18%" +
                 "\nSet Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active" +
                 "\nDefense, minion slots and whip range are not affected by this" +
-                "\nIncreases life regen by 4" +
-                "\nIncreases whip range by 30%");
+                "\nIncreases whip range by 30% and life regen by 4");
         }
 
         public override void SetDefaults()
@@ -32,12 +31,12 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.09f;
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.18f;
             player.GetAttackSpeed(DamageClass.Summon) += 0.18f;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.GetDamage(DamageClass.Summon) += 0.09f;
+                player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.18f;
                 player.GetAttackSpeed(DamageClass.Summon) += 0.18f;
             }
         }

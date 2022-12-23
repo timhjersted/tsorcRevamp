@@ -1,5 +1,4 @@
-﻿/*
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -11,13 +10,13 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("\nIncreases whip damage by 25%" +
-                "\nSet Bonus: Increases whip range by 30% and speed by 20%" +
+                "\nSet Bonus: Increases whip range by 30% and summon attack speed by 20%" +
                 "\nIncreases critical strike damage to 250%");
         }
         public override void SetDefaults()
         {
-            Item.width = 26;
-            Item.height = 20;
+            Item.width = 24;
+            Item.height = 24;
             Item.defense = 12;
             Item.rare = ItemRarityID.Pink;
             Item.value = PriceByRarity.fromItem(Item);
@@ -53,4 +52,4 @@ namespace tsorcRevamp.Items.Armors.Summon
             recipe2.Register();
         }
     }
-}*/
+}

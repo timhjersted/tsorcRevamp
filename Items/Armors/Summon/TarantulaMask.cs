@@ -1,5 +1,4 @@
-﻿/*
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -16,8 +15,8 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void SetDefaults()
         {
-            Item.width = 26;
-            Item.height = 20;
+            Item.width = 24;
+            Item.height = 24;
             Item.defense = 6;
             Item.rare = ItemRarityID.Pink;
             Item.value = PriceByRarity.fromItem(Item);
@@ -54,4 +53,4 @@ namespace tsorcRevamp.Items.Armors.Summon
             recipe2.Register();
         }
     }
-}*/
+}

@@ -1,5 +1,4 @@
-﻿/*
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -10,13 +9,12 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases minion damage by 10%" +
-                "\nIncreases your max number of minions by 1" +
+            Tooltip.SetDefault("Increases your max number of minions by 1" +
                 "\nIncreases movement speed by 22%");
         }
         public override void SetDefaults()
         {
-            Item.width = 18;
+            Item.width = 22;
             Item.height = 18;
             Item.defense = 9;
             Item.rare = ItemRarityID.Pink;
@@ -46,4 +44,4 @@ namespace tsorcRevamp.Items.Armors.Summon
             recipe2.Register();
         }
     }
-}*/
+}

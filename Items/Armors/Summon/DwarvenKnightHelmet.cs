@@ -11,8 +11,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases your max number of minions and turrets by 1" +
-                "\nIncreases minion damage by 5% and 3 flat" +
+            Tooltip.SetDefault("Increases minion damage by 5% and 3 flat" +
                 "\nSet Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active" +
                 "\nDefense, minion and turret slots are not affected by this" +
                 "\nIncreases your max number of minions and turrets by 1");
@@ -27,9 +26,6 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.maxMinions += 1;
-            player.maxTurrets += 1;
-
             player.GetDamage(DamageClass.Summon) += 0.05f;
             player.GetDamage(DamageClass.Summon).Flat += 3f;
 

@@ -27,8 +27,8 @@ namespace tsorcRevamp.Items.Accessories.Magic
         public override void SetDefaults()
         {
             Item.width = 10;
-            Item.accessory = true;
             Item.height = 12;
+            Item.accessory = true;
             Item.maxStack = 1;
             Item.value = PriceByRarity.Blue_1;
             Item.rare = ItemRarityID.Blue;
