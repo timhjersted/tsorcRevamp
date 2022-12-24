@@ -15,6 +15,8 @@ namespace tsorcRevamp.Items
         {
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
 
+            
+
             #region add s tier potion recipes
             PermaPotionRecipeS(mod, ModContent.ItemType<ArmorDrugPotion>(), ModContent.ItemType<PermanentArmorDrug>());
             PermaPotionRecipeS(mod, ModContent.ItemType<BattlefrontPotion>(), ModContent.ItemType<PermanentBattlefrontPotion>());
@@ -97,6 +99,8 @@ namespace tsorcRevamp.Items
             recipe.Register();*/
 
             
+
+
             recipe = Recipe.Create(ItemID.MagicMirror)
             .AddRecipeGroup(tsorcRevampSystems.UpgradedMirrors)
             .AddTile(TileID.DemonAltar)
