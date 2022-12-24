@@ -496,6 +496,14 @@ namespace tsorcRevamp.NPCs.Bosses
             //Normal movement when not charging laser
             if (!spawnedLaser)
             {
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetPiercingLaser>())
+                    {
+                        Main.projectile[i].Kill();
+                    }
+                }
+
                 spinDirection = 0;
                 rotationSpeed = 0.2f;
                 UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -400), 0.5f, 45);

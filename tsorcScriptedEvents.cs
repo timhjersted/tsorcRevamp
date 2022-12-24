@@ -1922,9 +1922,12 @@ namespace tsorcRevamp
             livingPlayers = null;
 
             eventTimer = 0;
-            for(int i = 0; i < eventNPCs.Count; i++)
+            if (!noNPCEvent)
             {
-                eventNPCs[i].killed = false;
+                for (int i = 0; i < eventNPCs.Count; i++)
+                {
+                    eventNPCs[i].killed = false;
+                }
             }
 
             finishedCustomAction = false;
