@@ -28,6 +28,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<PoisonbloodRing>());
+            recipe.AddIngredient(ItemID.HallowedBar, 5);
             recipe.AddIngredient(ModContent.ItemType<Items.Accessories.Defensive.CrackedDragonStone>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
             recipe.AddTile(TileID.DemonAltar);
