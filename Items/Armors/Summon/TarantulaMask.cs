@@ -24,7 +24,6 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void UpdateEquip(Player player)
         {
                 player.GetDamage(DamageClass.Summon) += 0.1f;
-                player.maxMinions += 1;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {

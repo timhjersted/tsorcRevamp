@@ -554,7 +554,7 @@ namespace tsorcRevamp
     {
         public override Position GetDefaultPosition()
         {
-            return new AfterParent(PlayerDrawLayers.Wings);
+            return new AfterParent(PlayerDrawLayers.Backpacks);
         }
 
         public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
@@ -568,7 +568,7 @@ namespace tsorcRevamp
                ((drawInfo.drawPlayer.armor[1].type == ModContent.ItemType<Items.Armors.Summon.TarantulaCarapace>() && drawInfo.drawPlayer.armor[11].type == 0) || 
                (drawInfo.drawPlayer.armor[11].type == ModContent.ItemType<Items.Armors.Summon.TarantulaCarapace>())
             {
-                Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Armors/Summon/TarantulaCarapace_Back");
+                Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Armors/Summon/TarantulaCarapace_Backpack");
                 Vector2 drawPos = drawInfo.Center - Main.screenPosition;
                 Vector2 drawOffset = new Vector2(0, 0);
                 Rectangle sourceRectangle = drawInfo.drawPlayer.bodyFrame;
