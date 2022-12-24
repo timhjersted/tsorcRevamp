@@ -54,35 +54,43 @@ namespace tsorcRevamp
         }
     }
 
-    class tsorcRevampPlayerHeldDrawLayers : PlayerDrawLayer {
-        public override Position GetDefaultPosition() {
+    class tsorcRevampPlayerHeldDrawLayers : PlayerDrawLayer
+    {
+        public override Position GetDefaultPosition()
+        {
             return new AfterParent(PlayerDrawLayers.HeldItem);
         }
 
-        public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
+        public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
+        {
             ModLoader.TryGetMod("tsorcRevamp", out Mod mod);
             if (drawInfo.drawPlayer.HeldItem.ModItem != null)
                 return drawInfo.drawPlayer.HeldItem.ModItem.Mod == mod;
             else if (drawInfo.drawPlayer.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking)
-                    return true;
+                return true;
             return false;
         }
 
-        protected override void Draw(ref PlayerDrawSet drawInfo) {
+        protected override void Draw(ref PlayerDrawSet drawInfo)
+        {
             tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
             Item thisItem = modPlayer.Player.HeldItem;
 
             #region Glaive Beam HeldItem glowmask and animation
             //If the player is holding the glaive beam
-            if (thisItem.type == ModContent.ItemType<Items.Weapons.Ranged.GlaiveBeam>()) {
+            if (thisItem.type == ModContent.ItemType<Items.Weapons.Ranged.GlaiveBeam>())
+            {
                 //And the projectile that creates the laser exists
-                if (modPlayer.Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.GlaiveBeamLaser>()] > 0) {
+                if (modPlayer.Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.GlaiveBeamLaser>()] > 0)
+                {
                     Projectiles.GlaiveBeamLaser heldBeam;
 
                     //Then find the laser in the projectile array
-                    for (int i = 0; i < Main.projectile.Length; i++) {
+                    for (int i = 0; i < Main.projectile.Length; i++)
+                    {
                         //If it found it, we're in business.
-                        if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.GlaiveBeamLaser>() && Main.projectile[i].owner == modPlayer.Player.whoAmI) {
+                        if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.GlaiveBeamLaser>() && Main.projectile[i].owner == modPlayer.Player.whoAmI)
+                        {
                             //Get the transparent texture
                             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.GlaiveBeamHeldGlowmask];
 
@@ -106,13 +114,14 @@ namespace tsorcRevamp
                             Vector2 origin = new Vector2(-originOffset.X, textureMidpoint);
 
                             //Shift everything if the player is facing the other way
-                            if (drawInfo.drawPlayer.direction == -1) {
+                            if (drawInfo.drawPlayer.direction == -1)
+                            {
                             }
 
                             float rotation = drawInfo.drawPlayer.itemRotation;
 
                             if (drawInfo.drawPlayer.direction == -1)
-                            {                             
+                            {
                                 rotation += MathHelper.Pi;
 
                                 //Don't ask me why this is necessary, or why these exact values work. I don't know. I don't think i'll ever know.
@@ -144,37 +153,48 @@ namespace tsorcRevamp
             #endregion
             //Make sure it's actually being displayed, not just selected
             #region other glowmasks
-            if (modPlayer.Player.itemAnimation > 0) {
+            if (modPlayer.Player.itemAnimation > 0)
+            {
                 //Make sure it's from our mod
-                if (thisItem.ModItem != null && thisItem.ModItem.Mod == ModLoader.GetMod("tsorcRevamp")) {
+                if (thisItem.ModItem != null && thisItem.ModItem.Mod == ModLoader.GetMod("tsorcRevamp"))
+                {
                     Texture2D texture = null;
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Pulsar>()) {
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Pulsar>())
+                    {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.PulsarGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.GWPulsar>()) {
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.GWPulsar>())
+                    {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.GWPulsarGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Polaris>()) {
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Polaris>())
+                    {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.PolarisGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.ToxicCatalyzer>()) {
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.ToxicCatalyzer>())
+                    {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ToxicCatalyzerGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.VirulentCatalyzer>()) {
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.VirulentCatalyzer>())
+                    {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.VirulentCatalyzerGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Biohazard>()) {
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Biohazard>())
+                    {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.BiohazardGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.MoonlightGreatsword >() && !Main.dayTime) {
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.MoonlightGreatsword>() && !Main.dayTime)
+                    {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.MoonlightGreatswordGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.UltimaWeapon>()) {
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.UltimaWeapon>())
+                    {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeaponGlowmask];
                     }
 
                     //If it's not on the list, don't bother.
-                    if (texture != null) {
+                    if (texture != null)
+                    {
                         #region animation
                         //These lines also can handle animation. Since this glowmask isn't animated a few of these lines are redundant, but they serve as an example for how it could be done.
                         //It's essentially the same to all other animation, you're just picking different parts of the texture to draw.
@@ -212,17 +232,19 @@ namespace tsorcRevamp
                         }
 
                         //Sword+stab support
-                        if (modPlayer.Player.HeldItem.useStyle == ItemUseStyleID.Swing || modPlayer.Player.HeldItem.useStyle == ItemUseStyleID.Thrust) {
+                        if (modPlayer.Player.HeldItem.useStyle == ItemUseStyleID.Swing || modPlayer.Player.HeldItem.useStyle == ItemUseStyleID.Thrust)
+                        {
                             drawPos -= new Vector2(modPlayer.Player.HeldItem.width / 2, modPlayer.Player.HeldItem.height / 2);
                             origin.Y = modPlayer.Player.HeldItem.height;
 
                             //Reversed grav fix support
-                            if (drawInfo.drawPlayer.gravDir != 1 && ModContent.GetInstance<tsorcRevampConfig>().GravityFix) {
+                            if (drawInfo.drawPlayer.gravDir != 1 && ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
+                            {
                                 origin.Y = 0;
                             }
 
                             //No clue why this it only needs to be rotated a quarter of a turn when facing left. It does, though.
-                            if(drawInfo.drawPlayer.direction == -1)
+                            if (drawInfo.drawPlayer.direction == -1)
                             {
                                 rotation += MathHelper.PiOver2;
                             }
@@ -255,7 +277,8 @@ namespace tsorcRevamp
 
             #region estus flask
             tsorcRevampEstusPlayer estusPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampEstusPlayer>();
-            if (!estusPlayer.Player.dead) {
+            if (!estusPlayer.Player.dead)
+            {
                 int estusFrameCount = 3;
                 float estusScale = 0.8f;
                 Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.EstusFlask];
@@ -280,7 +303,8 @@ namespace tsorcRevamp
 
                 Vector2 origin = sourceRectangle.Size() / 2f;
 
-                if (estusPlayer.estusDrinkTimer >= estusPlayer.estusDrinkTimerMax * 0.4f) {
+                if (estusPlayer.estusDrinkTimer >= estusPlayer.estusDrinkTimerMax * 0.4f)
+                {
                     //DrawData data = new DrawData(texture, new Vector2(drawX + (12 * drawInfo.drawPlayer.direction), drawY - 14), sourceRectangle, newColor, rotation, origin, estusScale, effects, 0);
                     //Main.playerDrawData.Add(data);
 
@@ -299,31 +323,39 @@ namespace tsorcRevamp
                 }
 
             }
-            else {
+            else
+            {
                 estusPlayer.isDrinking = false;
             }
             #endregion
         }
     }
 
-    class tsorcRevampPlayerConstantDrawLayers : PlayerDrawLayer {
+    class tsorcRevampPlayerConstantDrawLayers : PlayerDrawLayer
+    {
 
-        public override Position GetDefaultPosition() {
+        public override Position GetDefaultPosition()
+        {
             return new AfterParent(PlayerDrawLayers.HandOnAcc);
         }
 
-        public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
+        public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
+        {
             return true;
         }
 
-        protected override void Draw(ref PlayerDrawSet drawInfo) {
+        protected override void Draw(ref PlayerDrawSet drawInfo)
+        {
             tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
             Player drawPlayer = drawInfo.drawPlayer;
             #region mana shield
-            if (modPlayer.manaShield > 0 && !modPlayer.Player.dead) {
-                if (modPlayer.Player.statMana > Items.Accessories.Melee.ManaShield.manaCost) {
+            if (modPlayer.manaShield > 0 && !modPlayer.Player.dead)
+            {
+                if (modPlayer.Player.statMana > Items.Accessories.Melee.ManaShield.manaCost)
+                {
                     //If they didn't have enough mana for the shield last frame but do now, play a sound to let them know it's back up
-                    if (!modPlayer.shieldUp) {
+                    if (!modPlayer.shieldUp)
+                    {
                         //Soundtype Item SoundStyle 28 is powerful magic cast
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item28, modPlayer.Player.position);
                         modPlayer.shieldUp = true;
@@ -358,8 +390,10 @@ namespace tsorcRevamp
                             0 // 'Layer'. This is always 0 in Terraria.
                         ));
                 }
-                else {
-                    if (modPlayer.shieldUp) {
+                else
+                {
+                    if (modPlayer.shieldUp)
+                    {
                         //Soundtype Item SoundStyle 60 is the Terra Beam
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item60, modPlayer.Player.position);
                         modPlayer.shieldUp = false;
@@ -371,17 +405,20 @@ namespace tsorcRevamp
                     modPlayer.shieldUp = false;
                 }
             }
-            else {
+            else
+            {
                 modPlayer.shieldUp = false;
             }
             #endregion
 
             #region stamina bar
-            if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu) {
+            if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu)
+            {
                 float staminaCurrent = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
                 float staminaMax = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
                 float staminaPercentage = (float)staminaCurrent / staminaMax;
-                if (staminaPercentage < 1f && !drawPlayer.dead) {
+                if (staminaPercentage < 1f && !drawPlayer.dead)
+                {
                     float abovePlayer = 45f; //how far above the player should the bar be?
                     Texture2D barFill = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_full");
                     Texture2D barEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_empty");
@@ -409,7 +446,8 @@ namespace tsorcRevamp
             #endregion
 
             #region curse meter
-            if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu) {
+            if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu)
+            {
                 float curseCurrent = drawPlayer.GetModPlayer<tsorcRevampPlayer>().CurseLevel;
                 float powerfulCurseCurrent = drawPlayer.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel;
 
@@ -454,13 +492,13 @@ namespace tsorcRevamp
 
                 //2) Get the players hand position
                 Vector2 drawPosition = drawPlayer.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, drawPlayer.itemRotation);
-                
+
                 //3) Shift the draw position over a bit so it looks right. Feel free to tune this.
                 Vector2 handOffset = new Vector2(12, 2);
 
                 //Flip it if the player is facing left
                 SpriteEffects effect = SpriteEffects.None;
-                if(drawPlayer.direction == -1)
+                if (drawPlayer.direction == -1)
                 {
                     effect = SpriteEffects.FlipHorizontally;
                     handOffset.X *= -1;
@@ -509,6 +547,44 @@ namespace tsorcRevamp
                 drawInfo.DrawDataCache.Add(new DrawData(scorchingPointTexture, drawPosition - Main.screenPosition, sourceRectangle, Color.White, drawRotation, origin, 1, effect, 0));
             }
             #endregion
+        }
+    }
+
+    class tsorcRevampPlayerBackDrawLayers : PlayerDrawLayer
+    {
+        public override Position GetDefaultPosition()
+        {
+            return new AfterParent(PlayerDrawLayers.Wings);
+        }
+
+        public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
+        {
+            return true;
+        }
+
+        protected override void Draw(ref PlayerDrawSet drawInfo)
+        {
+            Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Armors/Summon/TarantulaCarapace_Back");
+            Vector2 drawPos = drawInfo.Center - Main.screenPosition;
+            Vector2 drawOffset = new Vector2(0, 0);
+            int frameHeight = texture.Height / 20;
+            int startY = frameHeight * 0;
+            Rectangle sourceRectangle = drawInfo.drawPlayer.bodyFrame;
+            sourceRectangle.Width = texture.Width;
+            Color newColor = Lighting.GetColor((int)((drawInfo.drawPlayer.position.X + drawInfo.drawPlayer.width / 2f) / 16f), (int)((drawInfo.drawPlayer.position.Y + drawInfo.drawPlayer.height / 2f) / 16f));
+            Vector2 origin = sourceRectangle.Size() / 2f;
+
+            drawInfo.DrawDataCache.Add(new DrawData(
+                    texture, // The texture to render.
+                    drawPos + drawOffset, // Position to render at.
+                    sourceRectangle, // Source rectangle.
+                    newColor, // Color.
+                    0f, // Rotation.
+                    origin, // Origin. Uses the texture's center.
+                    1f, // Scale.
+                    SpriteEffects.None, // SpriteEffects.
+                    0 // 'Layer'. This is always 0 in Terraria.
+                ));
         }
     }
 }
