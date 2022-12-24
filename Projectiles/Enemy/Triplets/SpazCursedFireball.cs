@@ -10,67 +10,52 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.Triplets
 {
-    class CursedMalestrom : ModProjectile
+    class SpazCursedFireball : ModProjectile
     {
-        
+
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cursed Malestrom");
+            DisplayName.SetDefault("Cursed Fireball");
         }
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
         public override void SetDefaults()
         {
             Projectile.width = 20;
             Projectile.height = 20;
-            Projectile.scale = 1.1f;
-            Projectile.timeLeft = 500;
+            Projectile.timeLeft = 600;
             Projectile.hostile = true;
-            Projectile.tileCollide = false;
             Projectile.friendly = false;
-        }
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
-
-        int radius = 50;
-        float projRadius = 20;
-        public override void AI()
-        {
-            if (Projectile.timeLeft > 440)
-            {
-                Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
-                if (target != null)
-                {
-                    UsefulFunctions.SmoothHoming(Projectile, target.Center, 0.1f, 30, target.velocity, false);
-                }
-            }
-
-            if (projRadius < 150)
-            {
-                projRadius += 4f;
-            }
+            Projectile.tileCollide = false;
         }
 
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            return Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2()) < projRadius;
-        }
-
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             target.AddBuff(BuffID.CursedInferno, 300);
+        }
+
+        bool playedSound = false;
+        public override void AI()
+        {
+            if (!playedSound)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item43 with { Volume = 0.5f }, Projectile.Center);
+                playedSound = true;
+            }
         }
 
         ArmorShaderData data;
         public override bool PreDraw(ref Color lightColor)
         {
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);            
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //Apply the shader, caching it as well
             if (data == null)
             {
-                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CursedMalestrom", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "CursedMalestromPass");
+                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CursedFireball", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "CursedFireballPass");
             }
 
-            Rectangle sourceRectangle = new Rectangle(0, 0, (int)projRadius * 4, (int)projRadius * 4);
+            Rectangle sourceRectangle = new Rectangle(0, 0, (int)Projectile.width * 4, (int)Projectile.height * 4);
             Vector2 origin = sourceRectangle.Size() / 2f;
 
             //Pass relevant data to the shader via these parameters

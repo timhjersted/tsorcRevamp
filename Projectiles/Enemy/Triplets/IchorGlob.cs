@@ -52,11 +52,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
 
             if (target != null)
             {
-                UsefulFunctions.SmoothHoming(NPC, target.Center, 0.25f, 30, target.velocity, false);
+                UsefulFunctions.SmoothHoming(NPC, target.Center, 1f, 12, target.velocity, false);
             }
-            else
+
+            if (target == null || NPC.Distance(target.Center) < 50)
             {
-                NPC.StrikeNPCNoInteraction(9999, 0, 0);
+                NPC.life = 0;
             }
         }
 

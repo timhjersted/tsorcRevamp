@@ -64,7 +64,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     }
     
     float start = 0.99;
-    float end = 0.1;
+    float end = 0.2;
     float yStart = 0.7;
     //Make it fade in towards the start
     if (uv.x > start)
@@ -73,7 +73,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     }
     if (uv.x < end)
     {
-        intensity = lerp(0.0, intensity, pow((uv.x) / (end), 3));
+        intensity = lerp(0.0, intensity, pow((uv.x) / (end), 4));
     }
     float yEnd = 1 - yStart;
     if (uv.y > yStart)

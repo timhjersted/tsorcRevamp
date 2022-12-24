@@ -56,7 +56,7 @@ namespace tsorcRevamp.Projectiles.Trails
             }
 
             //Once the boss is all the way back to that stage again, then start removing the old positions
-            if(timer > 2700)
+            if (timer > 2700 || !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()))
             {
                 if (trailPositions.Count > 3)
                 {

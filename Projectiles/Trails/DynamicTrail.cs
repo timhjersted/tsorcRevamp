@@ -19,6 +19,7 @@ namespace tsorcRevamp.Projectiles.Trails
 
         public override void SetDefaults()
         {
+            Projectile.tileCollide = false;
             Projectile.damage = 0;
             Projectile.width = 1;
             Projectile.height = 1;

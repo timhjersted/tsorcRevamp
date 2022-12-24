@@ -37,20 +37,17 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 
 float4 MainPS(VertexShaderOutput input) : COLOR0
 {
-    float2 uv = input.TextureCoordinates;        
-    //uv.x = uv.x % 0.5;
-    //uv.y = uv.y % 0.5;
-    //uv *= 2;
+    float2 uv = input.TextureCoordinates;
     
     //Calculate how close the current pixel is to the center line of the screen
-    float intensity = 1.0 - abs(uv.y - 0.5);    
+    float intensity = 1.0 - abs(uv.y - 0.5);
     
     //Raise it to a high exponent, resulting in sharply increased intensity at the center that trails off smoothly
     //Higher number = more narrow and compressed trail
     intensity = pow(intensity, 6.0);
     
     //Flat doubling to incrase the total intensity
-    intensity *= 2;        
+    intensity *= 2;
     
     //This controls where the front of the bolt starts to curve
     float inflectionPoint = 0.82;
@@ -59,9 +56,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     //Make it fade out towards the end
     if (uv.x < inflectionPoint)
     {
-        //intensity = lerp(0.0, intensity, pow(uv.x / inflectionPoint, 1));
-        
-        //intensity *=  uv.x;
+        intensity = lerp(0.0, intensity, pow(uv.x / inflectionPoint, 1));
     }
     
     //Make it fade in towards the start
@@ -74,44 +69,33 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     float2 samplePoint = uv;
     
     //Zoom in on the noise texture, then shift it over time to make it appear to be flowing    
-    samplePoint *= 0.75;
-    samplePoint.x = (samplePoint.x + time * 0.40) * 3;
+    samplePoint /= 20;
+    samplePoint.x = (samplePoint.x + time * 0.05) * 1;
     
     //Compress it vertically
     samplePoint.y = samplePoint.y / 2;
-    samplePoint.y += 0.1;
 
     //Get the noise texture at that point
-    float sampleIntensity = 1- tex2D(textureSampler, samplePoint).r;
+    float sampleIntensity = tex2D(textureSampler, samplePoint).r;
     
     //Mix it with the laser color
     float4 noiseColor = float4(1.0, 1.0, 1.0, 1.0);
     noiseColor.r = sampleIntensity * shaderColor.r;
     noiseColor.b = sampleIntensity * shaderColor.b;
     noiseColor.g = sampleIntensity * shaderColor.g;
-    
-    noiseColor = sampleIntensity * shaderColor;
 
     //Mix it with 'intensity' to make it more intense near the center
-    intensity = pow(intensity, 2);
-    if (intensity > 0.4)
-    {
-        intensity = 0.4;
-    }
+    float4 effectColor = noiseColor * pow(intensity, 2) * 4.0;
     
-    float4 effectColor = pow(noiseColor, 6) * intensity * 10 * pow(uv.x, 3);
-    effectColor *= 2;
-    return effectColor; //    input.Color;
-    
-    //Looks cool as hell, but not the vibe i'm going for
+    //Not the vibe i'm going for here, but looks cool as hell and will be useful later:
     //float4 effectColor = noiseColor * noiseColor * pow(intensity, 2) * 8.0;
     
     return effectColor / pow(fadeOut, 1);
 }
 
-technique IchorTrackerShader
+technique DeathLaser
 {
-    pass IchorTrackerShaderPass
+    pass DeathLaserPass
     {
         VertexShader = compile vs_2_0 MainVS();
         PixelShader = compile ps_2_0 MainPS();

@@ -1068,7 +1068,13 @@ namespace tsorcRevamp.NPCs
         public override void ScaleExpertStats(NPC npc, int numPlayers, float bossLifeScale)
         {
             if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp") && npc.boss)
-            {                
+            {
+                //Counter expert mode automatic scaling
+                npc.lifeMax = (int)Math.Round(npc.lifeMax / 2f);
+
+                //Add 70% to the boss's health per extra player
+                //npc.lifeMax = (int)Math.Round(npc.lifeMax * (1f + (0.7f * ((float)bossLifeScale - 1f))));
+
                 //Add our scaling
                 npc.lifeMax = (int)(npc.lifeMax * (1f + ((numPlayers - 1f) * .5f)));
                 return;

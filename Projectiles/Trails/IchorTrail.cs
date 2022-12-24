@@ -39,8 +39,8 @@ namespace tsorcRevamp.Projectiles.Trails
         {
             if (hostEntityType == ModContent.ProjectileType<Projectiles.Enemy.Triplets.IchorFragment>())
             {
-                trailWidth = 50;
-                trailMaxLength = 150;
+                trailWidth = 20;
+                trailMaxLength = 300;
             }
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/IchorTrackerShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture2);

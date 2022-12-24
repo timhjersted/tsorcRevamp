@@ -102,9 +102,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
                     Projectile.velocity = (Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2).ToRotationVector2() ;
                 }
 
-                LaserName = "Channeled Laser";
+                LaserName = "Piercing Gaze";
+
                 if (rapid)
                 {
+                    TelegraphTime = 60;
                     FiringDuration = 15;
                 }
                 else
@@ -142,7 +144,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         {
             if (Main.npc[(int)Projectile.ai[1]] != null && Main.npc[(int)Projectile.ai[1]].active && Main.npc[(int)Projectile.ai[1]].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>())
             {
-                return Main.npc[(int)Projectile.ai[1]].Center + new Vector2(65, 0).RotatedBy(Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2);
+                return Main.npc[(int)Projectile.ai[1]].Center + new Vector2(90, 0).RotatedBy(Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2);
             }
             else
             {

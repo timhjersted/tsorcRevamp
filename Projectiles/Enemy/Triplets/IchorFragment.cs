@@ -45,6 +45,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             }
         }
 
+        /*public override bool PreDraw(ref Color lightColor)
+        {
+            return false;
+        }*/
+
         public override void Kill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.5f}, Projectile.Center);

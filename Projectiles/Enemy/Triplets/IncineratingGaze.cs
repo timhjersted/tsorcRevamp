@@ -107,11 +107,22 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             Vector2 startPoint = Projectile.Center;
             Vector2 endpoint = Projectile.Center + Projectile.rotation.ToRotationVector2() * laserWidth;
             
-            if (chargeProgress < firingTime)
+            //Normal charging
+            if (chargeProgress < (firingTime - 30))
             {
-                colorVector *= chargeProgress / firingTime;
+                colorVector *= chargeProgress / (firingTime - 30);
                 endpoint = Projectile.Center + Projectile.rotation.ToRotationVector2() * 1000;
             }
+
+            //Fade out before blast
+            if (chargeProgress < firingTime && chargeProgress >= firingTime - 30)
+            {
+                float factor = (firingTime - chargeProgress) / 30f;
+                colorVector *= factor * factor;
+                endpoint = Projectile.Center + Projectile.rotation.ToRotationVector2() * 1000;
+            }
+
+            //Fade out at end
             if (Projectile.timeLeft < 130)
             {
                 colorVector *= Projectile.timeLeft / 130f;
@@ -134,13 +145,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
                         if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center,
                         Projectile.Center + Projectile.rotation.ToRotationVector2() * laserWidth, Projectile.height / 3f, ref point))
                         {
-                            for (int j = 0; j < 6; j++)
+                            if (Main.GameUpdateCount % 2 == 0)
                             {
                                 Rectangle randBox = Main.player[i].Hitbox;
                                 randBox.X += (int)Main.rand.NextFloat(-16, 16);
                                 randBox.Y += (int)Main.rand.NextFloat(-16, 16);
                                 CombatText.NewText(randBox, Color.OrangeRed, 999999999, true);
                             }
+                            Main.player[i].immune = false;
                             Main.player[i].statLife -= 999999999;
                             Main.player[i].KillMe(PlayerDeathReason.ByProjectile(999, Projectile.whoAmI), 999999999, 0);
                         }

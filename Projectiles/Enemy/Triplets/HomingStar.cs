@@ -18,27 +18,21 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             DisplayName.SetDefault("Seeking Star");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 60;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 3;
+
         }
         public override void SetDefaults()
         {
             Projectile.width = 20;
             Projectile.height = 20;
             Projectile.scale = 1.1f;
-            Projectile.timeLeft = 200;
+            Projectile.timeLeft = 1000;
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.friendly = false;
         }
-        
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
 
-        }
-
-
-        float[] trailRotations = new float[6] { 0, 0, 0, 0, 0, 0 };
         bool playedSound = false;
-        bool spawnedTrail = false;
+        float homingAcceleration = 0.15f;
         public override void AI()
         {
             Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
@@ -50,18 +44,27 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
                 if(Projectile.ai[1] == 1)
                 {
                     Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.Trails.HomingStarTrail>(), Projectile.damage, 0, Main.myPlayer, 0, Projectile.whoAmI);
-                    Projectile.timeLeft = 400;
+
+                    if (Projectile.ai[0] == 0)
+                    {
+                        homingAcceleration = 0.1f;
+                    }
                 }
+
+                //No homing
+                if (Projectile.ai[0] == 2)
+                {
+                    homingAcceleration = 0;
+                }
+
                 playedSound = true;
             }
 
-            //Default homing strength
-            float homingAcceleration = 0.15f;
-
+            
             //Accelerate downwards, do not despawn until impact
             if (Projectile.ai[0] == 1)
             {
-                Projectile.timeLeft = 100;
+                Projectile.timeLeft = 1000;
                 float speedCap = 10;
                 if(Projectile.ai[1] == 1)
                 {
@@ -73,9 +76,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
                 }
                 homingAcceleration = 0;
             }
-            
-            //No homing
-            if (Projectile.ai[0] == 2)
+
+            //Stop homing after a few seconds
+            if(Projectile.timeLeft < 800)
             {
                 homingAcceleration = 0;
             }
@@ -83,35 +86,16 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             //Perform homing
             if (target != null)
             {
-                UsefulFunctions.SmoothHoming(Projectile, target.Center, homingAcceleration, 30, target.velocity, false);
+                UsefulFunctions.SmoothHoming(Projectile, target.Center, homingAcceleration, 20, target.velocity, false);
             }
         }
 
         public override void Kill(int timeLeft)
         {
-        }
-
-        float Progress(float progress)
-        {
-            float percent = 1f;
-            float lerpValue = Utils.GetLerpValue(0f, 0.6f, progress, clamped: true);
-            percent *= 1f - (1f - lerpValue) * (1f - lerpValue);
-            return MathHelper.Lerp(0f, 30f, percent);
-        }
-
-        Color ColorValue(float progress)
-        {
-            float timeFactor = (float)Math.Sin(Math.Abs(progress - Main.GlobalTimeWrappedHourly * 3));
-            Color result = Color.Lerp(Color.Cyan, Color.DeepPink, (timeFactor + 1f) / 2f);
-            //Main.NewText(timeFactor + 1);
-            //result = ;
-            result.A = 0;
-
-            return result;
-        }
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
-        {
-            behindProjectiles.Add(index);
+            if (Projectile.ai[1] == 0)
+            {
+                //TODO: Explode into dust
+            }
         }
 
         Texture2D texture;

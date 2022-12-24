@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.damage = 50;
             NPC.defense = 25;
             AnimationType = -1;
-            NPC.lifeMax = (int)(32500 * (1 + (0.25f * (Main.CurrentFrameFlags.ActivePlayersCount - 1))));
+            NPC.lifeMax = 90000;
             NPC.timeLeft = 22500;
             NPC.friendly = false;
             NPC.noTileCollide = true;
@@ -75,6 +75,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public bool PhaseTwo
         {
+            //get => true;
             get => transformationTimer >= 120;
         }
 
@@ -181,6 +182,13 @@ namespace tsorcRevamp.NPCs.Bosses
                     UsefulFunctions.DustRing(NPC.Center, (70 - MoveTimer) * 30, DustID.CursedTorch, 100, 10);
                     return;
                 }
+
+                //Don't try to dash too close to the end
+                if(MoveTimer >= 840)
+                {
+                    UsefulFunctions.SmoothHoming(NPC, target.Center, 0.15f, 15, target.velocity, false);
+                    return;
+                }
                 if (MoveTimer % 70 < 30)
                 {
                     NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
@@ -188,17 +196,22 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 if (MoveTimer % 70 == 30)
                 {
-                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 25);
+                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 21);
                 }
                 NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-                if (Main.netMode == NetmodeID.MultiplayerClient)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity / 10f, ProjectileID.EyeFire, EyeFireDamage, 0.5f, Main.myPlayer);
                 }
             }
             else
             {
-                UsefulFunctions.SmoothHoming(NPC, target.Center, 0.15f, 20, target.velocity, false);
+                UsefulFunctions.SmoothHoming(NPC, target.Center, 0.05f, 15, target.velocity, false);
+
+                if(MoveTimer > 800)
+                {
+                    return;
+                }
 
                 //Telegraph for the first second before the starting charge
                 if (MoveTimer < 110)
@@ -233,7 +246,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (PhaseTwo)
             {
-                if (MoveTimer % 120 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (MoveTimer > 120 && MoveTimer % 120 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 offset = new Vector2(-50, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.CursedMalestrom>(), EyeFireDamage, 0.5f, Main.myPlayer);
@@ -243,11 +256,10 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (MoveTimer % 90 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 offset = new Vector2(-50, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
                     float angle = -MathHelper.Pi / 3;
                     for (int i = 0; i < 3; i++)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 4).RotatedBy(angle), ProjectileID.CursedFlameHostile, EyeFireDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 4).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.SpazCursedFireball>(), EyeFireDamage, 0.5f, Main.myPlayer);
                         angle += MathHelper.Pi / 3;
                     }
                 }
@@ -260,18 +272,23 @@ namespace tsorcRevamp.NPCs.Bosses
         void IchorTrackers()
         {
             NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(-550, 350), 0.5f, 20);
+            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(-750, 350), 0.5f, 20);
             
+            if(MoveTimer < 120)
+            {
+                return;
+            }
+
             if (!PhaseTwo)
             {
-                if (MoveTimer % 120 == 10 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (MoveTimer % 180 == 10 && MoveTimer > 60 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<Projectiles.Enemy.Triplets.IchorGlob>());
                 }
             }
             else
             {
-                if (MoveTimer % 180 == 10 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (MoveTimer % 240 == 10 && MoveTimer > 60 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<Projectiles.Enemy.Triplets.IchorMissile>());
                 }
