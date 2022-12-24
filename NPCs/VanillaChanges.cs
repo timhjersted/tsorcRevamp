@@ -5815,7 +5815,7 @@ namespace tsorcRevamp.NPCs
             }
             if (npc.type == NPCID.Golem && !Main.expertMode)
             {
-                if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+                if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                 {
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<BrokenPicksaw>());
                 }

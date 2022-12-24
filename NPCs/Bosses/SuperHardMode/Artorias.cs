@@ -709,7 +709,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.WolfRing>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulOfArtorias>(), 4);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>());
-                if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+                if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.LargeAmethyst);
                 }

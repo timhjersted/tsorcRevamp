@@ -117,7 +117,7 @@ namespace tsorcRevamp
 
 
             //If the player leaves the world or turns off their computer in the middle of the fight or whatever, this will de-actuate the pyramid for them next time they load
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 if (Main.tile[5810, 1670] != null)
                 {
@@ -771,12 +771,7 @@ namespace tsorcRevamp
                         UsefulFunctions.BroadcastText("Custom map detected. Adventure Mode auto-enabled.", Color.GreenYellow);
                         ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = true;
                     }
-                    if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-                    {
-                        UsefulFunctions.BroadcastText("Warning!! The setting 'Adventure Mode: Recipes and Items' is disabled!!", Color.OrangeRed);
-                        UsefulFunctions.BroadcastText("Having this off can break progression and parts of the map, please enable this setting and reload mods!", Color.OrangeRed);
-                    }
-                    if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+                    if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                     {
                         Tiles.SoulSkellyGeocache.InitializeSkellys();
                         CampfireToBonfire();
@@ -870,11 +865,6 @@ namespace tsorcRevamp
                     {
                         UsefulFunctions.BroadcastText("Randomly-generated map detected. Adventure Mode auto-disabled.", Color.GreenYellow);
                         ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = false;
-                    }
-                    if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-                    {
-                        UsefulFunctions.BroadcastText("Warning!! The setting 'Adventure Mode: Recipes and Items' is enabled!!", Color.OrangeRed);
-                        UsefulFunctions.BroadcastText("This is intended for the custom map and can break randomly generated worlds! To prevent issues, please disable this setting and reload mods!", Color.OrangeRed);
                     }
                 }
             }
@@ -1133,6 +1123,22 @@ namespace tsorcRevamp
         //Oolicale Sorcerer
         //Chaos
         //Dark Cloud
+
+        public static Recipe.Condition AdventureModeDisabled
+        {
+            get
+            {
+                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Only craftable outside of Adventure Mode"), r => ModContent.GetInstance<tsorcRevampConfig>().AdventureMode);
+            }
+        }
+        public static Recipe.Condition AdventureModeEnabled
+        {
+            get
+            {
+                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Only craftable outside of Adventure Mode"), r => !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode);
+            }
+        }
+
 
         public static Recipe.Condition SHM1Downed
         {

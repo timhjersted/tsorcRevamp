@@ -2136,7 +2136,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //Teleport itself and the player to the center of the pyramid
         public override bool PreKill()
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 Vector2 pyramidCenter = new Vector2(5828, 1750) * 16;
                 NPC.Center = pyramidCenter;
@@ -2231,7 +2231,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public static int[,] HarpyStatues = new int[2, 2] { { 5824, 1764 }, { 5831, 1764 } };
         public static void ActuatePyramid()
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
 
                 //Destroy Lanterns (doing it like this prevents tiles from doing annoying things like dropping an item or spawning a boss)

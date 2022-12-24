@@ -44,15 +44,13 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void AddRecipes()
         {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-            {
-                Recipe recipe = CreateRecipe();
-                recipe.AddIngredient(ItemID.CobaltBar, 10);
-                //recipe.AddIngredient(ItemID.ShadowScale, 1);
-                recipe.AddTile(TileID.DemonAltar);
-                
-                recipe.Register();
-            }
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.CobaltBar, 10);
+            recipe.AddIngredient(ItemID.ShadowScale, 1);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
+
+            recipe.Register();
         }
     }
 }

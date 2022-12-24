@@ -90,13 +90,13 @@ namespace tsorcRevamp {
     }
 
     public class AdventureModeRule : IItemDropRuleCondition, IProvideItemConditionDescription {
-        public bool CanDrop(DropAttemptInfo info) => ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems;
+        public bool CanDrop(DropAttemptInfo info) => ModContent.GetInstance<tsorcRevampConfig>().AdventureMode;
         public bool CanShowItemDropInUI() => true;
         public string GetConditionDescription() => "[c/ff9999:Only drops in Adventure Mode]";
     }
 
     public class NonAdventureModeRule : IItemDropRuleCondition, IProvideItemConditionDescription {
-        public bool CanDrop(DropAttemptInfo info) => !ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems;
+        public bool CanDrop(DropAttemptInfo info) => !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode;
         public bool CanShowItemDropInUI() => true;
         public string GetConditionDescription() => "[c/ff9999:Only drops in Non-Adventure Mode]";
     }

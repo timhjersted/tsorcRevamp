@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.BossItems
                 CanUse = true;
             }
 
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 if (!UsefulFunctions.IsPointWithinEllipse(player.Center, SoulOfCinder.ARENA_LOCATION_ADVENTURE, SoulOfCinder.ARENA_WIDTH, SoulOfCinder.ARENA_HEIGHT))
                 {

@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "chaos", "Used to craft the crystal that summons Chaos."));
             }

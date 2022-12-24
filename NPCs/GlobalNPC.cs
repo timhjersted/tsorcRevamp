@@ -552,7 +552,7 @@ namespace tsorcRevamp.NPCs
 
         public override void ModifyGlobalLoot(GlobalLoot globalLoot) {
 
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 List<IItemDropRule> ruleList = globalLoot.Get();
                 for (int i = 0; i < ruleList.Count; i++)

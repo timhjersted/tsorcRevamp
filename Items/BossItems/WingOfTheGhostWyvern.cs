@@ -52,16 +52,14 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void AddRecipes()
         {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-            {
-                Recipe recipe = CreateRecipe();
-                recipe.AddIngredient(ModContent.ItemType<WingOfTheFallen>());
-                recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 9);
-                recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
-                recipe.AddTile(TileID.DemonAltar);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<WingOfTheFallen>());
+            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
 
-                recipe.Register();
-            }
+            recipe.Register();
         }
     }
 }

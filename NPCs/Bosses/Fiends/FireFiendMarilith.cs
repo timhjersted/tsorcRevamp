@@ -603,7 +603,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 1);
-                if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+                if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.LargeSapphire);
                 }

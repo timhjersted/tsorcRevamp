@@ -23,22 +23,20 @@ namespace tsorcRevamp.Items.BossItems
         }
         public override void AddRecipes()
         {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-            {
-                Recipe recipe = CreateRecipe();
+            Recipe recipe = CreateRecipe();
 
-                recipe.AddIngredient(ItemID.MagicMirror);
-                recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 10);
-                recipe.AddIngredient(ItemID.SoulofNight, 8);
-                recipe.AddIngredient(ItemID.LunarBar, 5);
-                recipe.AddTile(TileID.DemonAltar);
+            recipe.AddIngredient(ItemID.MagicMirror);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 10);
+            recipe.AddIngredient(ItemID.SoulofNight, 8);
+            recipe.AddIngredient(ItemID.LunarBar, 5);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
 
-                recipe.Register();
-            }
+            recipe.Register();
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 tooltips.Add(new TooltipLine(Mod, "DarkMirrorAdventure",
                 "You look into the mirror and see your reflection looking back at you... \n" +

@@ -47,17 +47,14 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void AddRecipes()
         {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-            {
-                Recipe recipe = CreateRecipe();
-                recipe.AddIngredient(ItemID.SoulofFlight, 3);
-                recipe.AddIngredient(ItemID.Feather, 3);
-                //recipe.AddIngredient(ItemID.ShadowScale, 1);
-                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
-                recipe.AddTile(TileID.DemonAltar);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.SoulofFlight, 3);
+            recipe.AddIngredient(ItemID.Feather, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
 
-                recipe.Register();
-            }
+            recipe.Register();
         }
     }
 }

@@ -16,13 +16,6 @@ namespace tsorcRevamp
         [DefaultValue(true)]
         public bool AdventureMode { get; set; }
 
-        [Label("Adventure Mode: Recipes and Items")]
-        [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Disables or modifies certain recipes and \ndrops that interfere with the custom map. \nRequires a reload.\nLeave this enabled if you're playing with the custom map!")]
-        [ReloadRequired]
-        [DefaultValue(true)]
-        public bool AdventureModeItems { get; set; }
-
 
         [Header("Gameplay Changes")]
         [Label("Souls Drop on Death")]

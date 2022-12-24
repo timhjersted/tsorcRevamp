@@ -951,20 +951,34 @@ namespace tsorcRevamp
         }
         public override void AddRecipes()
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            foreach (var recipe in Main.recipe)
             {
-                foreach (var recipe in Main.recipe) {
-                    int itemID = recipe.createItem.type;
-                    // disable recipes
-                    if (DisabledRecipes.Contains(itemID)) {
-                        recipe.AddIngredient(ModContent.ItemType<Items.DisabledRecipe>());
+                int itemID = recipe.createItem.type;
+                // disable recipes
+                if (DisabledRecipes.Contains(itemID))
+                {
+                    recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
+                }
+
+                if (ModifiedRecipes.ContainsKey(itemID))
+                {
+                    //Split the recipe into two copies
+                    Recipe modifiedRecipe = recipe.Clone();
+
+                    //Give the unmodified one the AdventureModeDisabled condition
+                    recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
+
+                    //Give the modified one the AdventureModeEnabled condition
+                    modifiedRecipe.AddCondition(tsorcRevampWorld.AdventureModeEnabled);
+
+                    //Add the ingredients to the modified one
+                    foreach (var ingredient in ModifiedRecipes[itemID])
+                    {
+                        modifiedRecipe.AddIngredient(ingredient.ID, ingredient.Count);
                     }
-                    // extend existing recipes
-                    else if (ModifiedRecipes.ContainsKey(itemID)){
-                        foreach (var ingredient in ModifiedRecipes[itemID]) {
-                            recipe.AddIngredient(ingredient.ID, ingredient.Count);
-                        }
-                    }
+
+                    //Register it
+                    modifiedRecipe.Register();
                 }
             }
             // add new recipes
