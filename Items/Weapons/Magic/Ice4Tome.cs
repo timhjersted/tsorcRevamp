@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("Ice3Tome").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<Ice3Tome>());
             recipe.AddIngredient(ItemID.SoulofMight, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);

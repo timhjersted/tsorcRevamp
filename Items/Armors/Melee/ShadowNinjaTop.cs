@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BlackBeltGiTop>());
-            recipe.AddIngredient(ItemID.SoulofFright);
+            recipe.AddIngredient(ItemID.SoulofFright, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

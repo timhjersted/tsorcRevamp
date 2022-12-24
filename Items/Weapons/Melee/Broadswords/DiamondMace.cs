@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            //recipe.AddIngredient(ItemID.AdamantiteBar, 3);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 3);
             recipe.AddIngredient(ItemID.Diamond, 1);
             recipe.AddIngredient(ItemID.SoulofMight, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 44000);
