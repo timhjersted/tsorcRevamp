@@ -498,7 +498,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
-                    if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetPiercingLaser>())
+                    if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.Triplets.IncineratingGaze>())
                     {
                         Main.projectile[i].Kill();
                     }
