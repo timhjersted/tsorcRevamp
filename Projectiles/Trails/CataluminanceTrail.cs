@@ -31,6 +31,7 @@ namespace tsorcRevamp.Projectiles.Trails
             trailPointLimit = 900;
             trailMaxLength = 9999999;
             Projectile.hide = true;
+            collisionPadding = 50;
            
             trailCollision = true;
             collisionFrequency = 5;

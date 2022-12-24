@@ -566,7 +566,7 @@ namespace tsorcRevamp
         {
             if (!drawInfo.drawPlayer.dead &&
                ((drawInfo.drawPlayer.armor[1].type == ModContent.ItemType<Items.Armors.Summon.TarantulaCarapace>() && drawInfo.drawPlayer.armor[11].type == 0) || 
-               (drawInfo.drawPlayer.armor[11].type == ModContent.ItemType<Items.Armors.Summon.TarantulaCarapace>())
+               (drawInfo.drawPlayer.armor[11].type == ModContent.ItemType<Items.Armors.Summon.TarantulaCarapace>())))
             {
                 Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Armors/Summon/TarantulaCarapace_Backpack");
                 Vector2 drawPos = drawInfo.Center - Main.screenPosition;

@@ -482,11 +482,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 if (MoveTimer % 45 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    if (MoveTimer % 225 == 0 && MoveTimer <= 800 && MoveTimer >= 100)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetPiercingLaser>(), PiercingGazeDamage, 0.5f, Main.myPlayer, target.whoAmI + 1000, NPC.whoAmI);
-                    }
-
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 12), ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetDeathLaser>(), DeathLaserDamage, 0.5f, Main.myPlayer);
                 }
             }
