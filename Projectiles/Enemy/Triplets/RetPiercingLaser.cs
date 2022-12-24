@@ -106,7 +106,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
 
                 if (rapid)
                 {
-                    TelegraphTime = 60;
+                    TelegraphTime = 90;
                     FiringDuration = 15;
                 }
                 else

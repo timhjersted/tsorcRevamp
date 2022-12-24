@@ -584,6 +584,14 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             transformationTimer++;
 
+            for(int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.Triplets.RetPiercingLaser>())
+                {
+                    Main.projectile[i].Kill();
+                }
+            }
+
             if (transformationTimer <= 60)
             {
                 rotationVelocity = transformationTimer / 60;
