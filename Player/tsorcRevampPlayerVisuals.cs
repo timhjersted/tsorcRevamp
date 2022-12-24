@@ -564,27 +564,28 @@ namespace tsorcRevamp
 
         protected override void Draw(ref PlayerDrawSet drawInfo)
         {
-            Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Armors/Summon/TarantulaCarapace_Back");
-            Vector2 drawPos = drawInfo.Center - Main.screenPosition;
-            Vector2 drawOffset = new Vector2(0, 0);
-            int frameHeight = texture.Height / 20;
-            int startY = frameHeight * 0;
-            Rectangle sourceRectangle = drawInfo.drawPlayer.bodyFrame;
-            sourceRectangle.Width = texture.Width;
-            Color newColor = Lighting.GetColor((int)((drawInfo.drawPlayer.position.X + drawInfo.drawPlayer.width / 2f) / 16f), (int)((drawInfo.drawPlayer.position.Y + drawInfo.drawPlayer.height / 2f) / 16f));
-            Vector2 origin = sourceRectangle.Size() / 2f;
+            if (drawInfo.drawPlayer.armor[1].type == ModContent.ItemType<Items.Armors.Summon.TarantulaCarapace>() || drawInfo.drawPlayer.armor[11].type == ModContent.ItemType<Items.Armors.Summon.TarantulaCarapace>())
+            {
+                Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Armors/Summon/TarantulaCarapace_Back");
+                Vector2 drawPos = drawInfo.Center - Main.screenPosition;
+                Vector2 drawOffset = new Vector2(0, 0);
+                Rectangle sourceRectangle = drawInfo.drawPlayer.bodyFrame;
+                sourceRectangle.Width = texture.Width;
+                Color newColor = Lighting.GetColor((int)((drawInfo.drawPlayer.position.X + drawInfo.drawPlayer.width / 2f) / 16f), (int)((drawInfo.drawPlayer.position.Y + drawInfo.drawPlayer.height / 2f) / 16f));
+                Vector2 origin = sourceRectangle.Size() / 2f;
 
-            drawInfo.DrawDataCache.Add(new DrawData(
-                    texture, // The texture to render.
-                    drawPos + drawOffset, // Position to render at.
-                    sourceRectangle, // Source rectangle.
-                    newColor, // Color.
-                    0f, // Rotation.
-                    origin, // Origin. Uses the texture's center.
-                    1f, // Scale.
-                    SpriteEffects.None, // SpriteEffects.
-                    0 // 'Layer'. This is always 0 in Terraria.
-                ));
+                drawInfo.DrawDataCache.Add(new DrawData(
+                        texture, // The texture to render.
+                        drawPos + drawOffset, // Position to render at.
+                        sourceRectangle, // Source rectangle.
+                        newColor, // Color.
+                        0f, // Rotation.
+                        origin, // Origin. Uses the texture's center.
+                        1f, // Scale.
+                        SpriteEffects.None, // SpriteEffects.
+                        0 // 'Layer'. This is always 0 in Terraria.
+                    ));
+            }
         }
     }
 }
