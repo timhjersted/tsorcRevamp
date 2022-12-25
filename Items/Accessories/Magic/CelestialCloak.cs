@@ -5,7 +5,11 @@ using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.Items.Accessories.Magic
 {
-    [AutoloadEquip(EquipType.Back)]
+    [AutoloadEquip(new EquipType[]
+    {
+        EquipType.Back,
+        EquipType.Front
+    })]
     public class CelestialCloak : ModItem
     {
         public static int hitchances = 0;
