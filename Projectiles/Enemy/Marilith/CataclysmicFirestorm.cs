@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
         }
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
 
         float size = 0;
         int dustCount = 0;

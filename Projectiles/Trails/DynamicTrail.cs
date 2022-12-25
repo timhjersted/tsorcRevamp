@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Trails
             Projectile.penetrate = -1;
         }
 
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
 
         /// <summary>
         /// The max number of points in the trail
@@ -346,7 +346,7 @@ namespace tsorcRevamp.Projectiles.Trails
             {
                 if (starTexture == null || starTexture.IsDisposed)
                 {
-                    starTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+                    starTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
                 }
                 Rectangle starSourceRectangle = new Rectangle(0, 0, starTexture.Width, starTexture.Height);
                 Vector2 starOrigin = starSourceRectangle.Size() / 2f;

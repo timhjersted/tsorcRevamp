@@ -8,7 +8,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Triplets
+namespace tsorcRevamp.Projectiles.Enemy.Triad
 {
     class IchorGlob : ModNPC
     {
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             NPC.knockBackResist = 0;
             NPC.scale = 1;
         }
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
 
         bool spawnedTrail = false;
         public override void AI()
@@ -68,9 +68,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
 
         public override void OnKill()
         {
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Normalize(NPC.velocity) * -10, ModContent.ProjectileType<Projectiles.Enemy.Triplets.IchorFragment>(), NPC.damage / 4, 1, Main.myPlayer);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Normalize(NPC.velocity).RotatedBy(MathHelper.Pi / 3f) * 10, ModContent.ProjectileType<Projectiles.Enemy.Triplets.IchorFragment>(), NPC.damage / 4, 1, Main.myPlayer);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Normalize(NPC.velocity).RotatedBy(-MathHelper.Pi / 3f) * 10, ModContent.ProjectileType<Projectiles.Enemy.Triplets.IchorFragment>(), NPC.damage / 4, 1, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Normalize(NPC.velocity) * -10, ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorFragment>(), NPC.damage / 4, 1, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Normalize(NPC.velocity).RotatedBy(MathHelper.Pi / 3f) * 10, ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorFragment>(), NPC.damage / 4, 1, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Normalize(NPC.velocity).RotatedBy(-MathHelper.Pi / 3f) * 10, ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorFragment>(), NPC.damage / 4, 1, Main.myPlayer);
         }
         public override void DrawBehind(int index)
         {

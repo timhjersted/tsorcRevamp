@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Trails
 
         public override void SetEffectParameters(Effect effect)
         {
-            if (hostEntityType == ModContent.ProjectileType<Projectiles.Enemy.Triplets.IchorFragment>())
+            if (hostEntityType == ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorFragment>())
             {
                 trailWidth = 20;
                 trailMaxLength = 300;

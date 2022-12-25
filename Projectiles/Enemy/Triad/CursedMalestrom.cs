@@ -8,7 +8,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Triplets
+namespace tsorcRevamp.Projectiles.Enemy.Triad
 {
     class CursedMalestrom : ModProjectile
     {
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             Projectile.tileCollide = false;
             Projectile.friendly = false;
         }
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
 
         int radius = 50;
         float projRadius = 20;

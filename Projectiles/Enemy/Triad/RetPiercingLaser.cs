@@ -6,7 +6,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Triplets
+namespace tsorcRevamp.Projectiles.Enemy.Triad
 {
 
     public class RetPiercingLaser : EnemyGenericLaser

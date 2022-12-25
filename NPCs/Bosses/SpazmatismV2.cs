@@ -249,7 +249,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (MoveTimer > 120 && MoveTimer % 120 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 offset = new Vector2(-50, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.CursedMalestrom>(), EyeFireDamage, 0.5f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.CursedMalestrom>(), EyeFireDamage, 0.5f, Main.myPlayer);
                 }
             }
             else
@@ -259,7 +259,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     float angle = -MathHelper.Pi / 3;
                     for (int i = 0; i < 3; i++)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 4).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.SpazCursedFireball>(), EyeFireDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 4).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazCursedFireball>(), EyeFireDamage, 0.5f, Main.myPlayer);
                         angle += MathHelper.Pi / 3;
                     }
                 }
@@ -283,14 +283,14 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (MoveTimer % 180 == 10 && MoveTimer > 60 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<Projectiles.Enemy.Triplets.IchorGlob>());
+                    NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<Projectiles.Enemy.Triad.IchorGlob>());
                 }
             }
             else
             {
                 if (MoveTimer % 240 == 10 && MoveTimer > 60 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<Projectiles.Enemy.Triplets.IchorMissile>());
+                    NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<Projectiles.Enemy.Triad.IchorMissile>());
                 }
             }
         }

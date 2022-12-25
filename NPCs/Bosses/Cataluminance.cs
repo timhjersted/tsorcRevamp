@@ -179,14 +179,14 @@ namespace tsorcRevamp.NPCs.Bosses
                     //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(MathHelper.PiOver4 / 2f), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
                     //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(-MathHelper.PiOver4 / 2f), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
                     //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(-MathHelper.PiOver4), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
                 }
             }
             else
             {
                 if (MoveTimer % 60 == 0 && MoveTimer < 850 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 0);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 0);
                 }                
             }
 
@@ -195,7 +195,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
-                    if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>())
+                    if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>())
                     {
                         Main.projectile[i].Kill();
                     }
@@ -250,21 +250,21 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (MoveTimer % 15 == 0)
                     {
                         //Stars fired upward for effect
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2, 1);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2, 1);
 
                         //Stars rain down
                         Vector2 spawnPos = target.Center + new Vector2(Main.rand.NextFloat(-2000, 2000), -700);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1, 1);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1, 1);
                     }
                 }
                 else if (MoveTimer % 12 == 0)
                 {
                     //Stars fired upward for effect
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
 
                     //Stars rain down
                     Vector2 spawnPos = target.Center + new Vector2(Main.rand.NextFloat(-2500, 2500), -700);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1);
                 }
             }
         }
@@ -273,10 +273,10 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             if (MoveTimer % 90 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(MathHelper.PiOver2), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(MathHelper.PiOver4), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(-MathHelper.PiOver4), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(-MathHelper.PiOver2), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(MathHelper.PiOver2), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(MathHelper.PiOver4), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(-MathHelper.PiOver4), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(-MathHelper.PiOver2), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
             }
         }
 
@@ -403,7 +403,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TripletsBag>()));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TriadBag>()));
         }
 
         //TODO: Copy vanilla death effects

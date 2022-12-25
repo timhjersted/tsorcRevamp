@@ -8,7 +8,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Triplets
+namespace tsorcRevamp.Projectiles.Enemy.Triad
 {
     class RetDeathLaser : ModProjectile
     {
@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
         {
             DisplayName.SetDefault("Death Laser");
         }
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
         public override void SetDefaults()
         {
             Projectile.width = 20;

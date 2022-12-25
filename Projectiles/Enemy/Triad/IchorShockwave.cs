@@ -8,7 +8,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Triplets
+namespace tsorcRevamp.Projectiles.Enemy.Triad
 {
     class IchorShockwave : ModProjectile
     {
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             Projectile.tileCollide = false;
             Projectile.friendly = false;
         }
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar";
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
@@ -132,7 +132,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triplets
             }
             if (starTexture == null || starTexture.IsDisposed)
             {
-                starTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triplets/HomingStarStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+                starTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
 
             Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);

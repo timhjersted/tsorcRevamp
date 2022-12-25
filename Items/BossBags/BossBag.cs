@@ -211,11 +211,11 @@ namespace tsorcRevamp.Items.BossBags
     }
 
     //TODO: Add a shader to make it glow in three colors
-    public class TripletsBag : BossBag
+    public class TriadBag : BossBag
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Treasure Bag (The Triplets)");
+            DisplayName.SetDefault("Treasure Bag (The Triad)");
             Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
