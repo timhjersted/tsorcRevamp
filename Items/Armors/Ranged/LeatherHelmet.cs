@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Ranged) += 0.08f;
+            player.GetCritChance(DamageClass.Ranged) += 8f;
         }
         public override void AddRecipes()
         {

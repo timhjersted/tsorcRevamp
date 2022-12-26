@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += 0.14f;
+            player.GetCritChance(DamageClass.Melee) += 14f;
         }
         public override void SetDefaults()
         {
