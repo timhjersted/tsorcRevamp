@@ -454,7 +454,7 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.DragonWings>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.WingsOfSeath>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.BlueTearstoneRing>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 35, 40));

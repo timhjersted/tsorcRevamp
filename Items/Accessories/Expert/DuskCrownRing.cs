@@ -3,6 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Expert
 {
+    [AutoloadEquip(EquipType.HandsOn)]
     public class DuskCrownRing : ModItem
     {
         public override void SetStaticDefaults()
