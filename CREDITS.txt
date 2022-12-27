@@ -8,9 +8,10 @@ RecursiveCollapse / programmer
 Vibrent / programmer + sprite editer
 MarfMasterofDesaster / programmer + beta testing
 NephilimDeath / spriter
+JOI3 / spriter
+W1k / coding help and extensive content contributions
 RustySlave / programmer
 RAWTHORN / spriter
-W1k / coding help and extensive content contributions
 JayTeff / programmer
 Linklight2 / programmer
 Blasfah / spriting
@@ -19,7 +20,6 @@ Mddznyan / spriting
 Articulo / sprites from Dark Souls Vanity
 Maxisi / programmer
 qsab101 / Seath sprite
-JOI3 / Phoenix Juvenile minion and buff sprites
 Hugekraken / Detonation Signal sprite
 ヨーグルト / Interstellar Vessel sprite
 Julian/Jbug / Challenger's Glove sprite
