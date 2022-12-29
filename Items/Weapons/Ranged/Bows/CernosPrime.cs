@@ -21,8 +21,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.channel = true;
 
             Item.damage = 795;
-            Item.width = 24;
-            Item.height = 48;
+            Item.width = 58;
+            Item.height = 76;
             Item.useTime = 48;
             Item.useAnimation = 48;
             Item.reuseDelay = 4;

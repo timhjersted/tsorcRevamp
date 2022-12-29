@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors.Ranged
 {
     [AutoloadEquip(EquipType.Body)]
-    public class SmoughArmor : ModItem
+    public class TriceratopsBody : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return head.type == ModContent.ItemType<SmoughHelmet>() && legs.type == ModContent.ItemType<SmoughGreaves>();
+            return head.type == ModContent.ItemType<TriceratopsHead>() && legs.type == ModContent.ItemType<TriceratopsLegs>();
         }
 
         public override void UpdateArmorSet(Player player)

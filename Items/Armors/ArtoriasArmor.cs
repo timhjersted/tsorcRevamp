@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Armors
             DisplayName.SetDefault("Artorias' Armor");
             Tooltip.SetDefault("Enchanted armor of Artorias of the Abyss." +
                 "\nPossesses the same power as the Titan Glove." +
-                "\nSet Bonus: +21% damage and +24% attack speed, +50% move speed, -13% mana costs, +8 life regen" +
+                "\nSet Bonus: +21% damage and +24% attack speed(doubled for melee), +50% move speed, -13% mana costs, +8 life regen" +
                 "\nWater, Lava, Fire walking and immunity, increased breath, knockback and fall damage immunity, night vision");
         }
         public override void SetDefaults()
@@ -37,6 +37,7 @@ namespace tsorcRevamp.Items.Armors
         {
             player.GetDamage(DamageClass.Generic) += 0.21f;
             player.GetAttackSpeed(DamageClass.Generic) += 0.24f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.24f;
             player.moveSpeed += 0.5f;
             player.manaCost -= 0.13f;
             player.lifeRegen += 8;
@@ -63,7 +64,7 @@ namespace tsorcRevamp.Items.Armors
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);
 

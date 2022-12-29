@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors.Ranged
 {
     [AutoloadEquip(EquipType.Head)]
-    public class SmoughHelmet : ModItem 
+    public class TriceratopsHead : ModItem 
     {
         public override void SetStaticDefaults()
         {

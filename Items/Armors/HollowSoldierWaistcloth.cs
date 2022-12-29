@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace tsorcRevamp.Items.Armors
 {
@@ -11,12 +12,11 @@ namespace tsorcRevamp.Items.Armors
             Item.vanity = true;
             Item.width = 18;
             Item.height = 18;
-            //item.defense = 2;
             Item.rare = ItemRarityID.Blue;
             Item.value = PriceByRarity.fromItem(Item);
         }
 
-        /*public override void AddRecipes()
+        public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.IronGreaves, 1);
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddTile(TileID.DemonAltar);
             
             recipe.Register();
-        }*/
+        }
     }
 }
 

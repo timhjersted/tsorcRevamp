@@ -4,38 +4,41 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
 {
-    [AutoloadEquip(EquipType.Head)]
-    public class HollowSoldierHelmet : ModItem
+    [AutoloadEquip(EquipType.Body)]
+    public class SmoughArmor : ModItem
     {
         public override void SetStaticDefaults()
         {
-            ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
+            DisplayName.SetDefault("Smough's Armor");
+            Tooltip.SetDefault("");
         }
+
         public override void SetDefaults()
         {
+            Item.width = 18;
+            Item.height = 18;
+            Item.defense = 7;
             Item.vanity = true;
-            Item.width = 26;
-            Item.height = 20;
             Item.rare = ItemRarityID.Blue;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
+        public override void UpdateEquip(Player player)
+        {
+        }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == ModContent.ItemType<HollowSoldierBreastplate>() && legs.type == ModContent.ItemType<HollowSoldierWaistcloth>();
+            return head.type == ModContent.ItemType<SmoughHelmet>() && legs.type == ModContent.ItemType<SmoughGreaves>();
         }
 
         public override void UpdateArmorSet(Player player)
         {
         }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.IronHelmet);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 250);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }
