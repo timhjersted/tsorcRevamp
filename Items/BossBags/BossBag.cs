@@ -205,6 +205,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             //no expert-exclusive item yet
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfEarth>()));
+            itemLoot.Add(ItemDropRule.Common(ItemID.AngelWings));
             itemLoot.Add(ItemDropRule.Common(ItemID.Drax));
             itemLoot.Add(ItemDropRule.Common(ItemID.WaterWalkingBoots));
         }
