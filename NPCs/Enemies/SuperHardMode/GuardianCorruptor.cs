@@ -11,13 +11,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 3;
+            //Main.npcFrameCount[NPC.type] = 3;
         }
 
         public override void SetDefaults()
         {
-            NPC.width = 124;
-            NPC.height = 124;
+            NPC.width = 90;
+            NPC.height = 154;
             NPC.damage = 83;
             NPC.defense = 50;
             NPC.lifeMax = 9000;
@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.npcSlots = 3;
             NPC.value = 18750;
             NPC.knockBackResist = 0.01f;
-            NPC.scale = .9f;
+            NPC.scale = 1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.noGravity = true;
@@ -82,7 +82,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             target.AddBuff(BuffID.BrokenArmor, 180, true);
         }
 
-        public override void FindFrame(int frameHeight)
+        /*public override void FindFrame(int frameHeight)
         {
             NPC.frameCounter++;
             if (NPC.frameCounter < 10)
@@ -101,7 +101,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 NPC.frameCounter = 0;
             }
-        }
+        }*/
         public override void AI()
         {
 

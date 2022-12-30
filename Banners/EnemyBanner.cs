@@ -1641,11 +1641,8 @@ namespace tsorcRevamp.Banners
         }
     }
 
-    /*
     public class ArchdeaconBanner : EnemyBanner
     {
-
-        public override string Texture => "tsorcRevamp/Banners/placeholder";
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Nearby players get a bonus against: Archdeacon");
@@ -1655,7 +1652,7 @@ namespace tsorcRevamp.Banners
             base.SetDefaults();
             Item.placeStyle = 84; //change when texture added
         }
-    }*/
+    }
 
     #endregion
 
