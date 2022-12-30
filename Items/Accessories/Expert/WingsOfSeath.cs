@@ -31,16 +31,16 @@ namespace tsorcRevamp.Items.Accessories.Expert
         public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising,
                     ref float maxCanAscendMultiplier, ref float maxAscentMultiplier, ref float constantAscend)
         {
-            ascentWhenFalling = 1f;
-            ascentWhenRising = 0.3f;
-            maxCanAscendMultiplier = 1f;
+            ascentWhenFalling = 1.1f;
+            ascentWhenRising = 0.35f;
+            maxCanAscendMultiplier = 1.3f;
             maxAscentMultiplier = 3.6f;
             constantAscend = 0.2f;
         }
         public override void HorizontalWingSpeeds(Player player, ref float speed, ref float acceleration)
         {
-            speed = 10f;
-            acceleration = 0.4f;
+            speed = 13f;
+            acceleration = 0.45f;
         }
 
         public override void UpdateEquip(Player player)
