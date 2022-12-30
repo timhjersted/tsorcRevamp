@@ -7,7 +7,6 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Summon.Archer
 {
     internal class ArcherToken : ModProjectile {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Gwyn/Petal";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Archer");
             Main.projPet[Projectile.type] = true;
@@ -28,15 +27,15 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
         public override void AI() {
             Player player = Main.player[Projectile.owner];
             if (player.dead || !player.active) {
-                player.ClearBuff(ModContent.BuffType<Buffs.Summon.ArcherBuff>());
+                player.ClearBuff(ModContent.BuffType<Buffs.Summon.NondescriptOwlBuff>());
             }
 
-            if (player.HasBuff(ModContent.BuffType<Buffs.Summon.ArcherBuff>())) {
+            if (player.HasBuff(ModContent.BuffType<Buffs.Summon.NondescriptOwlBuff>())) {
                 Projectile.timeLeft = 2;
             }
 
             Projectile.Center = player.Center;
-            Main.NewText("token");
+            //Main.NewText("token");
         }
 
         public override bool? CanDamage() {

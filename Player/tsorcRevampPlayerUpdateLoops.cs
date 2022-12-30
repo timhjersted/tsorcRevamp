@@ -576,11 +576,11 @@ namespace tsorcRevamp
                 MaxAcquiredHP = Player.statLifeMax;
             }
 
-            if (Player.HasBuff(ModContent.BuffType<Buffs.Summon.ArcherBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Archer.ArcherMinion>()] == 0) {
+            if (Player.HasBuff(ModContent.BuffType<Buffs.Summon.NondescriptOwlBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Archer.NondescriptOwlProjectile>()] == 0) {
                 Item staff = new();
-                staff.SetDefaults(ModContent.ItemType<Items.Weapons.Summon.ArcherStaff>());
+                staff.SetDefaults(ModContent.ItemType<Items.Weapons.Summon.PeculiarSphere>());
                 int damage = staff.damage;
-                int p = Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Archer.ArcherMinion>(), damage, 0, Player.whoAmI);
+                int p = Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Archer.NondescriptOwlProjectile>(), damage, 0, Player.whoAmI);
                 Main.projectile[p].originalDamage = damage;
             }
 

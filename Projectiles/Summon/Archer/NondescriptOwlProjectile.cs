@@ -6,12 +6,11 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon.Archer
 {
-    public class ArcherMinion : ModProjectile
+    public class NondescriptOwlProjectile : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Gwyn/Petal";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Archer");
+            DisplayName.SetDefault("Owl Archer");
             Main.projFrames[Projectile.type] = 1; //4?
             Main.projPet[Projectile.type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
@@ -37,10 +36,10 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
             Player player = Main.player[Projectile.owner];
             if (player.dead || !player.active)
             {
-                player.ClearBuff(ModContent.BuffType<Buffs.Summon.ArcherBuff>());
+                player.ClearBuff(ModContent.BuffType<Buffs.Summon.NondescriptOwlBuff>());
             }
 
-            if (player.HasBuff(ModContent.BuffType<Buffs.Summon.ArcherBuff>()))
+            if (player.HasBuff(ModContent.BuffType<Buffs.Summon.NondescriptOwlBuff>()))
             {
                 Projectile.timeLeft = 2;
             }
@@ -262,7 +261,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
                                     speedNormalize = 18f / speedNormalize;
                                     speedX *= speedNormalize;
                                     speedMod *= speedNormalize;
-                                    int projectileType = ModContent.ProjectileType<APShot>();
+                                    int projectileType = ModContent.ProjectileType<OwlsArrow>();
                                     int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), origin.X, origin.Y, speedX, speedMod, projectileType, Projectile.damage, Projectile.knockBack, Main.myPlayer);
                                     Main.projectile[p].timeLeft = 300;
                                     Main.projectile[p].originalDamage = Projectile.damage;
