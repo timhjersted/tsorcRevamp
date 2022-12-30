@@ -30,6 +30,8 @@ namespace tsorcRevamp.Projectiles {
 
 		protected Vector2 aimVector;
 
+		protected Texture2D pointTexture;
+
 		protected int ammoType {
 			get {
 				return (int)Projectile.ai[0];
@@ -51,8 +53,9 @@ namespace tsorcRevamp.Projectiles {
 			Projectile.tileCollide = false;
 			Projectile.alpha = 0;
 			Projectile.timeLeft = 999999; //"ummm zeo if you hold left click for 4.6 irl hours the bow disappears!!!! please fix!!!" 
-			SetStats();
-		}
+            SetStats();
+            pointTexture = ModContent.Request<Texture2D>("tsorcRevamp/Textures/ChargePoint", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+        }
 
 		protected abstract void SetStats();
 
@@ -116,6 +119,7 @@ namespace tsorcRevamp.Projectiles {
 				}
 				Projectile.velocity = aimVector * holdoutOffset;
 			}
+			Projectile.spriteDirection = Projectile.direction;
 		}
         public override void PostDraw(Color lightColor) {
             DrawPoints();
@@ -127,15 +131,15 @@ namespace tsorcRevamp.Projectiles {
             //forces the projectile to be drawn after liquids, and incidentally wires
             if (!Main.instance.DrawCacheProjsOverWiresUI.Contains(Projectile.whoAmI)) Main.instance.DrawCacheProjsOverWiresUI.Add(Projectile.whoAmI);
 
-            int maxPoints = 90;
+            int maxPoints = 75;
             int points = (int)(charge * maxPoints) + 1;
             float opacity = (float)ModContent.GetInstance<tsorcRevampConfig>().ChargeCircleOpacity / 200;
-            Texture2D pointTexture = ModContent.Request<Texture2D>("tsorcRevamp/Textures/ChargePoint", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            if (pointTexture == null || pointTexture.IsDisposed) pointTexture = ModContent.Request<Texture2D>("tsorcRevamp/Textures/ChargePoint", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             Rectangle srect = new(0, 0, pointTexture.Width, pointTexture.Height);
             Vector2 origin = new(2, 2);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
-            for (int i = 0; i < points - 2; i++) {
+            for (int i = 0; i < points - 1; i++) {
                 Vector2 pos = (Main.MouseScreen + new Vector2(6, 6)) - (Vector2.UnitY * 24).RotatedBy(MathHelper.ToRadians((360 / maxPoints) * i));
                 Main.EntitySpriteDraw(pointTexture, pos, srect, Color.White * opacity, 0f, origin, 1f, SpriteEffects.None, 0);
             }

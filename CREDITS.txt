@@ -12,6 +12,7 @@ JOI3 / spriter
 W1k / coding help and extensive content contributions
 RustySlave / programmer
 RAWTHORN / spriter
+Logar / spriter
 JayTeff / programmer
 Linklight2 / programmer
 Blasfah / spriting
@@ -24,6 +25,8 @@ Hugekraken / Detonation Signal sprite
 ヨーグルト / Interstellar Vessel sprite
 Julian/Jbug / Challenger's Glove sprite
 Indigo / Plasma Whirlwind item sprite
+Zane Little / Theremin sound effects
+Anilmky -Juno- / Sunset Quasar sprite
 
 ORIGINAL MOD (tConfig Edition)
 Tim Hjersted / Mod Director + Dark Souls concept + New content + Mod Remixing & Compiling
