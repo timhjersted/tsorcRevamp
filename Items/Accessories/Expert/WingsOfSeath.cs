@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
                                "\nAllow for superior control of movement in the air, including hovering(hovering doesn't work funny tmod)" +
                                 "\nProvide immunity to all fire and lava damage, as well as perfect sight and hunting abilities." +
                                 "\nAlso provide immunity to knockback");
-            ArmorIDs.Wing.Sets.Stats[Item.wingSlot] = new WingStats(6000, 10f, 1.4f, true);
+            ArmorIDs.Wing.Sets.Stats[Item.wingSlot] = new WingStats(6000, 10f, 1.4f, true, 3, 3);
         }
 
         public override void SetDefaults()
@@ -26,6 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             Item.accessory = true;
             Item.value = PriceByRarity.Red_10;
             Item.expert = true;
+            
         }
 
         public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising,
@@ -36,6 +37,18 @@ namespace tsorcRevamp.Items.Accessories.Expert
             maxCanAscendMultiplier = 1.3f;
             maxAscentMultiplier = 3.6f;
             constantAscend = 0.2f;
+
+
+
+            if (player.TryingToHoverDown && player.controlJump && player.wingTime > 0f && !player.merman)
+            {
+                player.velocity.Y = 0;
+                ascentWhenFalling = 0;
+                ascentWhenRising = 0;
+                maxCanAscendMultiplier = 0;
+                maxAscentMultiplier = 0;
+                constantAscend = 0;
+            }
         }
         public override void HorizontalWingSpeeds(Player player, ref float speed, ref float acceleration)
         {
@@ -45,6 +58,11 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
         public override void UpdateEquip(Player player)
         {
+
+            if (player.TryingToHoverDown && player.controlJump && player.wingTime > 0f && !player.merman)
+            {
+                player.velocity.Y = 0.9f;
+            }
             //todo: make these wings alternative to supersonic that can hover
             player.jumpBoost = true;
             player.jumpSpeedBoost = 1.5f;
