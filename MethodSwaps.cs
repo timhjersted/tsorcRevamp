@@ -120,6 +120,25 @@ namespace tsorcRevamp
                                 lightning.CreateRenderTarget();
                             }
                         }
+
+                        //I really should just make one "Lightning" class that all these inherit from
+                        //But also ¯\_(ツ)_/¯
+                        if (Main.projectile[i].ModProjectile is JellyfishLightning)
+                        {
+                            JellyfishLightning lightning = (JellyfishLightning)Main.projectile[i].ModProjectile;
+                            if (lightning.lightningTarget == null)
+                            {
+                                lightning.CreateRenderTarget();
+                            }
+                        }
+                        if (Main.projectile[i].ModProjectile is JellyfishLightning)
+                        {
+                            JellyfishLightning lightning = (JellyfishLightning)Main.projectile[i].ModProjectile;
+                            if (lightning.lightningTarget == null)
+                            {
+                                lightning.CreateRenderTarget();
+                            }
+                        }
                     }
                 }
             }
@@ -556,7 +575,6 @@ namespace tsorcRevamp
             Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             List<EnemyGenericLaser> LaserList = new List<EnemyGenericLaser>();
-            List<Projectile> trailList = new List<Projectile>();
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 if (Main.projectile[i] != null && Main.projectile[i].active)

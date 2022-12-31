@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -30,9 +31,26 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.buffImmune[BuffID.Frozen] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.ManOfWarBanner>();
-            if (Main.hardMode) { NPC.lifeMax = 500; NPC.defense = 30; NPC.value = 550; }
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 500;
+                NPC.defense = 30;
+                NPC.value = 550;
+            }
         }
 
+        public override void AI()
+        {
+            DrawOffsetY = 20;
+            if (Main.GameUpdateCount % 60 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Player closestPlayer = UsefulFunctions.GetClosestPlayer(NPC.Center);
+                if (closestPlayer != null && Collision.CanHitLine(NPC.Center, NPC.width, NPC.height, closestPlayer.Center, closestPlayer.width, closestPlayer.height)) {
+                    Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, closestPlayer.Center, 1);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<Projectiles.Enemy.JellyfishLightning>(), 30, 1, Main.myPlayer, 0, NPC.whoAmI);
+                }
+            }
+        }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -42,7 +60,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-
             float chance = 0;
 
             if (Main.hardMode && spawnInfo.Water)
@@ -61,6 +78,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.PotionSickness, 3600); //evil! pure evil!
+                target.AddBuff(BuffID.Electrified, 300);
             }
         }
         public override void HitEffect(int hitDirection, double damage)
