@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Trails
             trailCollision = true;
             collisionFrequency = 5;
             trailYOffset = 50;
-            trailMaxLength = 500;
+            trailMaxLength = 750;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 

@@ -52,15 +52,15 @@ namespace tsorcRevamp.Items
             {
                 if(!Main.dayTime && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.RetinazerV2>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SpazmatismV2>()))
                 {
-                    //Triplets
-                    UsefulFunctions.BroadcastText("The Triplets have awoken!", Color.MediumPurple);
+                    //Triad
+                    UsefulFunctions.BroadcastText("The Triad has awoken!", Color.MediumPurple);
                     NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y - 800, ModContent.NPCType<NPCs.Bosses.Cataluminance>());
                     NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X - 1000, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
                     NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X + 1000, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
                 }
                 else
                 {
-                    UsefulFunctions.BroadcastText("The Triplets only awaken at night...", Color.MediumPurple);
+                    UsefulFunctions.BroadcastText("The Triad only awakens at night...", Color.MediumPurple);
                 }
                 return false;
             }

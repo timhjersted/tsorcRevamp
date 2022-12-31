@@ -297,6 +297,13 @@ namespace tsorcRevamp
         
         public override void PreUpdate()
         {
+            //Fixes bug where switching from a better to a worse pair of wings keeps the previous wing time cap
+            Main.NewText(Player.wingTime);
+            if(Player.wingTime > Player.wingTimeMax)
+            {
+                Player.wingTime = Player.wingTimeMax;
+            }
+
             //No more Distorted debuff
             Player.buffImmune[BuffID.VortexDebuff] = true;
 
