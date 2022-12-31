@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             tsorcRevampPlayer ModPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             ModPlayer.BurningStone = true;
             Lighting.AddLight(player.Center, Color.Orange.ToVector3());
-            if (ModPlayer.isDodging || player.timeSinceLastDashStarted < 20)
+            if (ModPlayer.isDodging)
             {
                 if (Main.GameUpdateCount % 5 == 0)
                 {
