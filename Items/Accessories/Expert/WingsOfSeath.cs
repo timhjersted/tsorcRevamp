@@ -54,6 +54,11 @@ namespace tsorcRevamp.Items.Accessories.Expert
         {
             speed = 13f;
             acceleration = 0.45f;
+            if (player.TryingToHoverDown && player.controlJump && player.wingTime > 0f && !player.merman)
+            {
+                speed = 14f;
+                acceleration = 1f;
+            }
         }
 
         public override void UpdateEquip(Player player)
@@ -61,9 +66,10 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
             if (player.TryingToHoverDown && player.controlJump && player.wingTime > 0f && !player.merman)
             {
-                player.velocity.Y = 0.9f;
+                player.velocity.Y = 1f;
             }
             //todo: make these wings alternative to supersonic that can hover
+            player.GetWingStats(22);
             player.jumpBoost = true;
             player.jumpSpeedBoost = 1.5f;
             player.lavaImmune = true;
