@@ -89,34 +89,13 @@ namespace tsorcRevamp.Projectiles
                 }
             }
 
-            if (Projectile.alpha > 70)
+            int? closestEnemy = UsefulFunctions.GetClosestEnemyNPC(Projectile.Center);
+            if (closestEnemy.HasValue && Projectile.timeLeft < 270)
             {
-                Projectile.alpha -= 3; //so that it doesnt start homing too early
-                if (Projectile.alpha < 70)
-                {
-                    Projectile.alpha = 70;
-                }
-            }
-
-            if (Projectile.alpha <= 70)
-            {
-                if (Projectile.localAI[0] == 0f)
-                {
-                    AdjustMagnitude(ref Projectile.velocity);
-                    Projectile.localAI[0] = 1f;
-                }
-                UsefulFunctions.HomeOnEnemy(Projectile, 120, 5.5f, true);
+                UsefulFunctions.SmoothHoming(Projectile, Main.npc[closestEnemy.Value].Center, 0.15f, 12, Main.npc[closestEnemy.Value].velocity, false);
             }
         }
 
-        private void AdjustMagnitude(ref Vector2 vector)
-        {
-            float magnitude = (float)Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-            if (magnitude > 5.5f)
-            {
-                vector *= 5.5f / magnitude; //speed once homing towards an enemy
-            }
-        }
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
