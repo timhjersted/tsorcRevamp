@@ -12,12 +12,11 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 	// Values chosen mostly correspond to Iron Shortword
 	public class SteelTempestThrust : ModProjectile
 	{
-		public static int steeltempest = 0;
-		public static int steeltempesthittimer = 0;
+		public int steeltempesthittimer = 0;
 		public const int FadeInDuration = 7;
 		public const int FadeOutDuration = 4;
 
-		public const int TotalDuration = 16;
+		public const int TotalDuration = 32;
 
 		// The "width" of the blade
 		public float CollisionWidth => 10f * Projectile.scale;
@@ -28,6 +27,12 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			set => Projectile.ai[0] = value;
 		}
 
+		public override void SetStaticDefaults()
+        {
+            Main.projFrames[Projectile.type] = 6;
+			DisplayName.SetDefault("Steel Tempest Thrust");
+        }
+
 
 		public override void SetDefaults()
 		{
@@ -36,9 +41,11 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 			Projectile.tileCollide = false;
-			Projectile.scale = 1f;
+			Projectile.scale = 0.7f;
 			Projectile.DamageType = DamageClass.Melee;
 			Projectile.ownerHitCheck = true; // Prevents hits through tiles. Most melee weapons that use projectiles have this
+			Projectile.usesLocalNPCImmunity = true;
+			Projectile.localNPCHitCooldown = 20;
 			Projectile.extraUpdates = 1; // Update 1+extraUpdates times per tick
 			Projectile.timeLeft = 360; // This value does not matter since we manually kill it earlier, it just has to be higher than the duration we use in AI
 			Projectile.hide = true; // Important when used alongside player.heldProj. "Hidden" projectiles have special draw conditions
@@ -81,13 +88,14 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 
 			// The code in this method is important to align the sprite with the hitbox how we want it to
 			SetVisualOffsets();
+			Visuals();
 		}
 
 		private void SetVisualOffsets()
 		{
 			// 32 is the sprite size (here both width and height equal)
-			const int HalfSpriteWidth = 54 / 2;
-			const int HalfSpriteHeight = 52 / 2;
+			const int HalfSpriteWidth = 110 / 2;
+			const int HalfSpriteHeight = 148 / 2;
 
 			int HalfProjWidth = Projectile.width / 2;
 			int HalfProjHeight = Projectile.height / 2;
@@ -138,8 +146,25 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         {
 			if (steeltempesthittimer == 0)
             {
-				steeltempest += 1;
+				Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().steeltempest += 1;
 				steeltempesthittimer = 1;
+            }
+        }
+        private void Visuals()
+        {
+            float frameSpeed = 5f;
+
+            Projectile.frameCounter++;
+
+            if (Projectile.frameCounter >= frameSpeed)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
+                {
+                    Projectile.frame = 0;
+                }
             }
         }
     }

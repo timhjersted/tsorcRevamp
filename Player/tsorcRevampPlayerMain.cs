@@ -890,27 +890,34 @@ namespace tsorcRevamp
             }
            if (tsorcRevamp.specialAbility.JustReleased)
             {
+                PlasmaWhirlwind thisPlasmaWhirlwind = Player.HeldItem.ModItem as PlasmaWhirlwind;
+                Nightbringer thisNightbringer = Player.HeldItem.ModItem as Nightbringer;
 
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC other = Main.npc[i];
 
-                    if (other.active & !other.friendly & other.Distance(Main.MouseWorld) <= 25 & other.Distance(owner.Center) <= 10000 & (Nightbringer.doublecritchance | PlasmaWhirlwind.doublecritchance)& (Nightbringer.dashCD <= 0 | PlasmaWhirlwind.dashCD <= 0))
+                    if (other.active && !other.friendly && other.Distance(Main.MouseWorld) <= 25 && other.Distance(owner.Center) <= 10000 && (Player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance) && (Player.GetModPlayer<tsorcRevampPlayer>().CanDash))
                     {
-                        PlasmaWhirlwind.dashTimer = 0.1f;
-                        Nightbringer.dashTimer = 0.1f;
-                        if (Main.GameUpdateCount % 1 == 0)
+                        if (thisPlasmaWhirlwind != null)
                         {
-                            Nightbringer.dashCD = 30f;
-                            PlasmaWhirlwind.dashCD = 30f;
+                            thisPlasmaWhirlwind.dashTimer = 0.1f;
                         }
-                    } else
-                    if (other.active & !other.friendly & other.Distance(Main.MouseWorld) > 25 & Nightbringer.doublecritchance & (Nightbringer.dashTimer <= 0) & Nightbringer.wallCD <= 0)
-                    {
-                        Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Center, unitVectorTowardsMouse * 10f, ModContent.ProjectileType<Projectiles.Swords.Runeterra.NightbringerWindWall>(), 0, 0, Main.myPlayer);
-                        if (Main.GameUpdateCount % 1 == 0)
+                        if (thisNightbringer != null)
                         {
-                            Nightbringer.wallCD = 90f;
+                            thisNightbringer.dashTimer = 0.1f;
+                        }
+                    }
+                    else
+                    {
+                        if (Player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance && Player.GetModPlayer<tsorcRevampPlayer>().CanWindwall && Player.HeldItem.ModItem is Nightbringer)
+                        {
+                            Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Center, unitVectorTowardsMouse * 10f, ModContent.ProjectileType<Projectiles.Swords.Runeterra.NightbringerWindWall>(), 0, 0, Main.myPlayer);
+                            if (thisNightbringer != null)
+                            {
+                                thisNightbringer.wallCD = 90f;
+                            }
+                            break;
                         }
                     }
                 }
@@ -1165,10 +1172,21 @@ namespace tsorcRevamp
         public void DoMultiCrits(ref int damage, float critType)
         {
             int critLevel = (int)(Math.Floor(critType / 100f));
-            if (SteelTempest.doublecritchance == true | PlasmaWhirlwind.doublecritchance == true | Nightbringer.doublecritchance == true)
-            { 
+            bool SwordBoost = false;
+
+            /*SteelTempest thisSteelTempest = Player.HeldItem.ModItem as SteelTempest;
+            if (thisSteelTempest != null && thisSteelTempest.doublecritchance)
+            {
                 critLevel *= 2;
+                swordboost = true;
+            }*/
+            
+            if(DoubleCritChance)
+            {
+                critLevel *= 2;
+                SwordBoost = true;
             }
+
             if (critLevel != 0)
             {
                 if (critLevel > 1)
@@ -1178,7 +1196,7 @@ namespace tsorcRevamp
                         damage *= 2;
                     }
                 }
-               if (SteelTempest.doublecritchance == true | PlasmaWhirlwind.doublecritchance == true | Nightbringer.doublecritchance == true)
+               if (SwordBoost)
                 {
                     if (Main.rand.Next(1, 101) <= (critType * 2) - (100 * critLevel))
                     {

@@ -70,7 +70,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
         public Color AI_156_GetColor()
         {
-            return Color.Transparent;
+            return Color.GreenYellow;
         }
 
         private void AI_156_Think(List<int> blacklist)

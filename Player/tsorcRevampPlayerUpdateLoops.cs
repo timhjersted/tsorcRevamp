@@ -68,6 +68,11 @@ namespace tsorcRevamp
 
         public bool CritDamage250 = false;
 
+        public int steeltempest = 0;
+        public bool DoubleCritChance = false;
+        public bool CanDash = false;
+        public bool CanWindwall = false;
+
         public bool WaspPower = false;
 
         public bool Miakoda = false;
@@ -232,13 +237,22 @@ namespace tsorcRevamp
             SilverSerpentRing = false;
             DragonStone = false;
             SoulReaper = 5;
+
             DragoonBoots = false;
             //player.eocDash = 0;
             Player.armorEffectDrawShadowEOCShield = false;
             UndeadTalisman = false;
+
             DuskCrownRing = false;
+
             CritDamage250 = false;
+
+            DoubleCritChance = false;
+            CanDash = false;
+            CanWindwall = false;
+
             Celestriad = false;
+
             DragoonBoots = false;
             GemBox = false;
             OldWeapon = false;

@@ -10,8 +10,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
     {
         public float cooldown = 0;
         public float attackspeedscaling;
-        public float doublecritchancetimer = 0;
-        public static bool doublecritchance = false;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Steel Tempest");
@@ -26,8 +24,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Item.value = Item.buyPrice(0, 10, 0, 0);
             Item.damage = 20;
             Item.crit = 4;
-            Item.width = 52;
-            Item.height = 54;
+            Item.width = 86;
+            Item.height = 82;
+            Item.scale = 0.7f;
             Item.knockBack = 1f;
             Item.autoReuse = true;
             Item.maxStack = 1;
@@ -40,36 +39,41 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Item.shootSpeed = 4.2f;
             Item.useTurn = false;
         }
-        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
-        {
-            attackspeedscaling = player.GetTotalAttackSpeed(DamageClass.Melee);
-        }
 
         public override void ModifyWeaponCrit(Player player, ref float crit)
         {
             crit = player.GetTotalCritChance(DamageClass.Melee) * 2;
         }
+        public override void HoldItem(Player player)
+        {
+            player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance = true;
+            if (player.GetTotalAttackSpeed(DamageClass.Melee) >= 4)
+            {
+                attackspeedscaling = 1;
+            }
+            else
+            {
+                attackspeedscaling = 4 / player.GetTotalAttackSpeed(DamageClass.Melee);
+            }
+        }
 
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
-            doublecritchancetimer = 0.5f;
-            if (Main.mouseRight & !Main.mouseLeft & SteelTempestThrust.steeltempest == 2 & cooldown <= 0)
+            if (Main.mouseRight & !Main.mouseLeft & player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2 & cooldown <= 0)
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Swing;
-                Item.noUseGraphic = true;
-                Item.noMelee = true;
                 Item.shoot = ModContent.ProjectileType<SteelTempestTornado>();
-                cooldown = ((3 / attackspeedscaling) + 1);
-                SteelTempestThrust.steeltempest = 0;
+                cooldown = attackspeedscaling;
+                player.GetModPlayer<tsorcRevampPlayer>().steeltempest = 0;
             } else
-            if (Main.mouseRight & !Main.mouseLeft)
+            if (Main.mouseRight & !Main.mouseLeft & player.altFunctionUse == 2)
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Rapier;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
-                cooldown = ((3 / attackspeedscaling) + 1);
+                cooldown = attackspeedscaling;
                 Item.shoot = ModContent.ProjectileType<SteelTempestThrust>();
             }
             if (Main.mouseLeft)
@@ -79,25 +83,16 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 Item.noUseGraphic = false;
                 Item.noMelee = false;
                 Item.useTurn = false;
+                Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             }
 
         }
-        public override void HoldItem(Player player)
-        {
-            doublecritchancetimer = 0.1f;
-            doublecritchance = true;
 
-        }
         public override void UpdateInventory(Player player)
         {   
             if (Main.GameUpdateCount % 1 == 0)
             {
                 cooldown -= 0.0167f;
-                doublecritchancetimer -= 0.0167f;
-            }
-            if (doublecritchancetimer <= 0)
-            {
-                doublecritchance = false;
             }
         }
 
@@ -113,30 +108,29 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             }
         }
 
-        public override bool CanShoot(Player player)
+        /*public override bool CanShoot(Player player)
         {
-            if (player.altFunctionUse == 2)
+            if (player.altFunctionUse == 2 &&  Main.mouseRight)
             {
                 return true;
             } return false;
-        }
+        }*/
 
         public override bool AltFunctionUse(Player player)
         {
                 return true;
         }
-        /*
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-            recipe.AddIngredient(ItemID.Katana, 1);
+            recipe.AddIngredient(ItemID.Katana);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
 
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }*/
+        }
     }
 }

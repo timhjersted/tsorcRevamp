@@ -12,12 +12,11 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 	// Values chosen mostly correspond to Iron Shortword
 	public class NightbringerThrust : ModProjectile
 	{
-		public static int steeltempest3 = 0;
-		public static int steeltempesthittimer3 = 0;
+		public int steeltempesthittimer3 = 0;
 		public const int FadeInDuration = 7;
 		public const int FadeOutDuration = 4;
 
-		public const int TotalDuration = 16;
+		public const int TotalDuration = 32;
 
 		// The "width" of the blade
 		public float CollisionWidth => 10f * Projectile.scale;
@@ -26,18 +25,25 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		{
 			get => (int)Projectile.ai[0];
 			set => Projectile.ai[0] = value;
-		}
+        }
+        public override void SetStaticDefaults()
+        {
+            //Main.projFrames[Projectile.type] = 6;
+            DisplayName.SetDefault("Nightbringer Thrust");
+        }
 
 
-		public override void SetDefaults()
+        public override void SetDefaults()
 		{
 			Projectile.Size = new Vector2(18); // This sets width and height to the same value (important when projectiles can rotate)
 			Projectile.aiStyle = -1; // Use our own AI to customize how it behaves, if you don't want that, keep this at ProjAIStyleID.ShortSword. You would still need to use the code in SetVisualOffsets() though
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 			Projectile.tileCollide = false;
-			Projectile.scale = 1f;
-			Projectile.DamageType = DamageClass.Melee;
+			Projectile.scale = 1f; 
+			Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 20;
+            Projectile.DamageType = DamageClass.Melee;
 			Projectile.ownerHitCheck = true; // Prevents hits through tiles. Most melee weapons that use projectiles have this
 			Projectile.extraUpdates = 1; // Update 1+extraUpdates times per tick
 			Projectile.timeLeft = 360; // This value does not matter since we manually kill it earlier, it just has to be higher than the duration we use in AI
@@ -81,12 +87,13 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 
 			// The code in this method is important to align the sprite with the hitbox how we want it to
 			SetVisualOffsets();
-		}
+            //Visuals();
+        }
 
 		private void SetVisualOffsets()
 		{
 			// 32 is the sprite size (here both width and height equal)
-			const int HalfSpriteWidth = 54 / 2;
+			const int HalfSpriteWidth = 54 / 2;//needs adjustments for sprite
 			const int HalfSpriteHeight = 52 / 2;
 
 			int HalfProjWidth = Projectile.width / 2;
@@ -138,11 +145,29 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         {
 			if (steeltempesthittimer3 == 0)
             {
-				//Nightbringer.dashCD -= 2f;
-				//Nightbringer.wallCD -= 2f;
-				steeltempest3 += 1;
+                //Nightbringer.dashCD -= 2f;
+                //Nightbringer.wallCD -= 2f;
+                Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().steeltempest += 1;
 				steeltempesthittimer3 = 1;
             }
+        }
+        private void Visuals()
+        {
+            float frameSpeed = 5f;
+
+            Projectile.frameCounter++;
+
+            if (Projectile.frameCounter >= frameSpeed)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
+                {
+                    Projectile.frame = 0;
+                }
+            }
+            Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
         }
     }
 }
