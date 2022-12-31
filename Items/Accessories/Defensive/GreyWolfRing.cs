@@ -6,7 +6,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class GreyWolfRing : ModItem
     {
-        public override string Texture => "tsorcRevamp/Items/Accessories/Defensive/WolfRing";
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("One of the rings worn by Artorias." +
