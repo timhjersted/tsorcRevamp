@@ -27,8 +27,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("BandOfGreatCosmicPower").Type, 1);
-            recipe.AddIngredient(ItemID.SoulofLight, 1);
+            recipe.AddIngredient(ModContent.ItemType<BandOfGreatCosmicPower>());
+            recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 16000);
             recipe.AddTile(TileID.DemonAltar);
 

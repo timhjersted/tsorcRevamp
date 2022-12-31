@@ -27,12 +27,20 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("BandOfCosmicPower").Type, 1);
-            //recipe.AddIngredient(ItemID.ShadowScale, 10);
+            recipe.AddIngredient(ModContent.ItemType<BandOfCosmicPower>());
+            recipe.AddIngredient(ItemID.ShadowScale, 4);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ModContent.ItemType<BandOfCosmicPower>());
+            recipe2.AddIngredient(ItemID.TissueSample, 4);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe2.AddTile(TileID.DemonAltar);
+
+            recipe2.Register();
         }
 
         public override void UpdateEquip(Player player)
