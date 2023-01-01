@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Nightbringer");
-            Tooltip.SetDefault("Doubled crit chance" +
+            Tooltip.SetDefault("Doubled crit chance scaling" +
                 "\nThrusts on right click dealing 125% damage, cooldown scales down with attack speed" +
                 "\nGain a stack of Steel Tempest upon thrusting any enemy" +
                 "\nUpon reaching 2 stacks, the next right click will release a chaotic tornado dealing double damage" +
