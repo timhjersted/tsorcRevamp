@@ -23,11 +23,10 @@ namespace tsorcRevamp.Items.Accessories.Ranged
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.RangerEmblem, 1);
-            //recipe.AddIngredient(ItemID.MagicQuiver, 1);
-            //recipe.AddIngredient(ItemID.SoulofLight, 5);
-            recipe.AddIngredient(ItemID.HallowedBar, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 9000);
+            recipe.AddIngredient(ItemID.RangerEmblem);
+            recipe.AddIngredient(ItemID.MagicQuiver);
+            recipe.AddIngredient(ItemID.HallowedBar, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

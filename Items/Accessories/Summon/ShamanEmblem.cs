@@ -23,11 +23,10 @@ namespace tsorcRevamp.Items.Accessories.Summon
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SummonerEmblem, 1);
-            recipe.AddIngredient(ItemID.PygmyNecklace, 1);
-            recipe.AddIngredient(ItemID.HallowedBar, 1);
-            //recipe.AddIngredient(ItemID.SoulofNight, 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
+            recipe.AddIngredient(ItemID.SummonerEmblem);
+            recipe.AddIngredient(ItemID.PygmyNecklace);
+            recipe.AddIngredient(ItemID.HallowedBar, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

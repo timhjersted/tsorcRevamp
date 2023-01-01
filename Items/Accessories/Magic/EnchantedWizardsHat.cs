@@ -27,11 +27,10 @@ namespace tsorcRevamp.Items.Accessories.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SorcererEmblem, 1);
-            recipe.AddIngredient(ItemID.WizardHat, 1);
-            //recipe.AddIngredient(ItemID.SoulofLight, 5);
-            recipe.AddIngredient(ItemID.HallowedBar, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
+            recipe.AddIngredient(ItemID.SorcererEmblem);
+            recipe.AddIngredient(ItemID.WizardHat);
+            recipe.AddIngredient(ItemID.HallowedBar, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -8,7 +8,6 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 {
     public class SteelTempestTornado : ModProjectile
     {
-        public int soundtimer = 0;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 8;
@@ -27,6 +26,8 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             SoundEngine.PlaySound(SoundID.DD2_BookStaffTwisterLoop, Projectile.Center);
+            Player owner = Main.player[Projectile.owner];
+            Projectile.damage *= 1 + (int)owner.GetTotalAttackSpeed(DamageClass.Melee);
         }
         public override void Kill(int timeLeft)
         {
@@ -35,8 +36,6 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         }
         public override void AI()
         {
-            Player owner = Main.player[Projectile.owner];
-            Projectile.damage = (int)(owner.GetWeaponDamage(owner.HeldItem) * 1.75f);
             Visuals();
         }
         private void Visuals()
@@ -44,7 +43,6 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
             // So it will lean slightly towards the direction it's moving
             Projectile.rotation = Projectile.velocity.X * 0.05f;
 
-            // This is a simple "loop through all frames from top to bottom" animation
             int frameSpeed = 5;
 
             Projectile.frameCounter++;
@@ -59,9 +57,6 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
                     Projectile.frame = 0;
                 }
             }
-
-            // Some visuals here
-            //Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
         }
     }
 }

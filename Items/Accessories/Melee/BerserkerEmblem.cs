@@ -23,11 +23,10 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.WarriorEmblem, 1);
-            //recipe.AddIngredient(ItemID.FeralClaws, 1);
-            recipe.AddIngredient(ItemID.HallowedBar, 1);
-            //recipe.AddIngredient(ItemID.SoulofNight, 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 9000);
+            recipe.AddIngredient(ItemID.WarriorEmblem);
+            recipe.AddIngredient(ItemID.EyeoftheGolem);
+            recipe.AddIngredient(ItemID.HallowedBar, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

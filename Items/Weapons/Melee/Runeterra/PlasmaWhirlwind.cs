@@ -1,34 +1,32 @@
-using tsorcRevamp.Projectiles.Swords.Runeterra;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Runeterra;
+using tsorcRevamp.Projectiles.Swords.Runeterra;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
-    public class PlasmaWhirlwind: ModItem
+    public class PlasmaWhirlwind : ModItem
     {
-        public float cooldown = 0f;
-        public float dashCD = 0f;
-        public float dashTimer = 0f;
-        public float attackspeedscaling;
-        public float invincibility = 0f;
+        public int AttackSpeedScalingDuration;
+        public float DashingTimer = 0f;
+        public float Invincibility = 0f;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Plasma Whirlwind");
             Tooltip.SetDefault("Doubled crit chance" +
-                "\nStabs on right click dealing 125% damage, with a 4 second cooldown, scaling down with attack speed" +
-                "\nGain a stack upon stabbing any enemy" +
-                "\nUpon reaching 2 stacks, the next right click will release a plasma whirlwind dealing 175% damage" +
-                "\nHover your mouse over an enemy and press Q hotkey on a cd to dash through the enemy" +
-                "\nStabbing an enemy refunds some of this cooldown, the tornado refunds more");
+                "\nThrusts on right click dealing 125% damage, cooldown scales down with attack speed" +
+                "\nGain a stack of Steel Tempest upon thrusting any enemy" +
+                "\nUpon reaching 2 stacks, the next right click will release a plasma whirlwind dealing double damage" +
+                "\nHover your mouse over an enemy and press Special Ability to dash through the enemy");
         }
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.LightPurple;
             Item.value = Item.buyPrice(0, 30, 0, 0);
             Item.damage = 60;
-            Item.crit = 4;
+            Item.crit = 6;
             Item.width = 52;
             Item.height = 54;
             Item.knockBack = 1f;
@@ -46,30 +44,27 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 
         public override void ModifyWeaponCrit(Player player, ref float crit)
         {
-            crit = player.GetTotalCritChance(DamageClass.Melee) * 2;
+            crit *= 2;
         }
         public override void HoldItem(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance = true;
-            if (player.GetTotalAttackSpeed(DamageClass.Melee) >= 4)
+            AttackSpeedScalingDuration = (int)(3 / player.GetTotalAttackSpeed(DamageClass.Melee) * 60); //3 seconds divided by player's melee speed
+            if (AttackSpeedScalingDuration <= 80)
             {
-                attackspeedscaling = 1;
-            }
-            else
-            {
-                attackspeedscaling = 4 / player.GetTotalAttackSpeed(DamageClass.Melee);
+                AttackSpeedScalingDuration = 80; //1.33 seconds minimum
             }
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC other = Main.npc[i];
 
-                if (other.active & !other.friendly & other.Distance(Main.MouseWorld) <= 25 & other.Distance(player.Center) <= 10000 & player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance & dashCD <= 0)
+                if (other.active & !other.friendly & other.Distance(Main.MouseWorld) <= 25 & other.Distance(player.Center) <= 10000 & player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance & !player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()))
                 {
-                    if (dashTimer > 0)
+                    if (DashingTimer > 0)
                     {
                         player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, other.Center, 15f);
-                        invincibility = 1f;
-                        dashCD = 30f;
+                        Invincibility = 1f;
+                        player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>(), 30 * 60);
                     }
                     break;
                 }
@@ -78,21 +73,22 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
-            if (Main.mouseRight & !Main.mouseLeft & player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2 & cooldown <= 0)
+            if (Main.mouseRight & !Main.mouseLeft & player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2 & !player.HasBuff(ModContent.BuffType<PlasmaWhirlwindThrustCooldown>()))
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.shoot = ModContent.ProjectileType<PlasmaWhirlwindTornado>();
-                cooldown = attackspeedscaling; 
+                player.AddBuff(ModContent.BuffType<PlasmaWhirlwindThrustCooldown>(), AttackSpeedScalingDuration);
                 player.GetModPlayer<tsorcRevampPlayer>().steeltempest = 0;
-            } else
-            if (Main.mouseRight & !Main.mouseLeft)
+            }
+            else
+            if (Main.mouseRight & !Main.mouseLeft & !player.HasBuff(ModContent.BuffType<SteelTempestThrustCooldown>()))
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Rapier;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
-                cooldown = attackspeedscaling;
+                player.AddBuff(ModContent.BuffType<PlasmaWhirlwindThrustCooldown>(), AttackSpeedScalingDuration);
                 Item.shoot = ModContent.ProjectileType<PlasmaWhirlwindThrust>();
             }
             if (Main.mouseLeft)
@@ -107,27 +103,21 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 
         }
         public override void UpdateInventory(Player player)
-        {   
-            if (invincibility > 0f)
+        {
+            if (Invincibility > 0f)
             {
                 player.immune = true;
             }
-            if (dashCD <= 0)
-            {
-                player.GetModPlayer<tsorcRevampPlayer>().CanDash = true;
-            }
             if (Main.GameUpdateCount % 1 == 0)
             {
-                cooldown -= 0.0167f;
-                dashCD -= 0.0167f;
-                dashTimer -= 0.0167f;
-                invincibility -= 0.0167f;
+                DashingTimer -= 0.0167f;
+                Invincibility -= 0.0167f;
             }
         }
 
         public override bool CanUseItem(Player player)
         {
-            if (player.altFunctionUse != 2 || cooldown <= 0)
+            if (player.altFunctionUse != 2 || !player.HasBuff(ModContent.BuffType<PlasmaWhirlwindThrustCooldown>()))
             {
                 return true;
             }
@@ -147,7 +137,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 
         public override bool AltFunctionUse(Player player)
         {
-                return true;
+            return true;
         }
         /*
         public override void AddRecipes()

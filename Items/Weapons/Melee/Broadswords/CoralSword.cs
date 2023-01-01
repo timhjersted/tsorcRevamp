@@ -14,8 +14,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Item.rare = ItemRarityID.Blue;
             Item.damage = 32;
-            Item.width = 36;
-            Item.height = 36;
+            Item.width = 50;
+            Item.height = 52;
             Item.knockBack = 5;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 23;

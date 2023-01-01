@@ -70,8 +70,6 @@ namespace tsorcRevamp
 
         public int steeltempest = 0;
         public bool DoubleCritChance = false;
-        public bool CanDash = false;
-        public bool CanWindwall = false;
 
         public bool WaspPower = false;
 
@@ -248,8 +246,6 @@ namespace tsorcRevamp
             CritDamage250 = false;
 
             DoubleCritChance = false;
-            CanDash = false;
-            CanWindwall = false;
 
             Celestriad = false;
 

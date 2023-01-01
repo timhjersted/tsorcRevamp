@@ -21,6 +21,7 @@ using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Buffs.Runeterra;
 
 namespace tsorcRevamp
 {
@@ -897,25 +898,25 @@ namespace tsorcRevamp
                 {
                     NPC other = Main.npc[i];
 
-                    if (other.active && !other.friendly && other.Distance(Main.MouseWorld) <= 25 && other.Distance(owner.Center) <= 10000 && (Player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance) && (Player.GetModPlayer<tsorcRevampPlayer>().CanDash))
+                    if (other.active && !other.friendly && other.Distance(Main.MouseWorld) <= 25 && other.Distance(owner.Center) <= 10000 && Player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance && (!Player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()) || !Player.HasBuff(ModContent.BuffType<NightbringerDashCooldown>())))
                     {
                         if (thisPlasmaWhirlwind != null)
                         {
-                            thisPlasmaWhirlwind.dashTimer = 0.1f;
+                            thisPlasmaWhirlwind.DashingTimer = 0.1f;
                         }
                         if (thisNightbringer != null)
                         {
-                            thisNightbringer.dashTimer = 0.1f;
+                            thisNightbringer.DashingTimer = 0.1f;
                         }
                     }
                     else
                     {
-                        if (Player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance && Player.GetModPlayer<tsorcRevampPlayer>().CanWindwall && Player.HeldItem.ModItem is Nightbringer)
+                        if (Player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance && !Player.HasBuff(ModContent.BuffType<NightbringerWindwallCooldown>()) && Player.HeldItem.ModItem is Nightbringer)
                         {
                             Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Center, unitVectorTowardsMouse * 10f, ModContent.ProjectileType<Projectiles.Swords.Runeterra.NightbringerWindWall>(), 0, 0, Main.myPlayer);
                             if (thisNightbringer != null)
                             {
-                                thisNightbringer.wallCD = 90f;
+                                Player.AddBuff(ModContent.BuffType<NightbringerWindwallCooldown>(), 90 * 60);
                             }
                             break;
                         }
@@ -1172,7 +1173,6 @@ namespace tsorcRevamp
         public void DoMultiCrits(ref int damage, float critType)
         {
             int critLevel = (int)(Math.Floor(critType / 100f));
-            bool SwordBoost = false;
 
             /*SteelTempest thisSteelTempest = Player.HeldItem.ModItem as SteelTempest;
             if (thisSteelTempest != null && thisSteelTempest.doublecritchance)
@@ -1183,8 +1183,7 @@ namespace tsorcRevamp
             
             if(DoubleCritChance)
             {
-                critLevel *= 2;
-                SwordBoost = true;
+               critLevel = (int)(Math.Floor(critType / 50f));
             }
 
             if (critLevel != 0)
@@ -1196,14 +1195,14 @@ namespace tsorcRevamp
                         damage *= 2;
                     }
                 }
-               if (SwordBoost)
+               if (DoubleCritChance)
                 {
                     if (Main.rand.Next(1, 101) <= (critType * 2) - (100 * critLevel))
                     {
                         damage *= 2;
                     }
-                } else
-                    if (Main.rand.Next(1, 101) <= critType - (100 * critLevel))
+                } 
+                else if (Main.rand.Next(1, 101) <= critType - (100 * critLevel))
                 {
                     damage *= 2;
                 }

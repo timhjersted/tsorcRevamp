@@ -3,27 +3,27 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Runeterra;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
     public class SteelTempest: ModItem
     {
-        public float cooldown = 0;
-        public float attackspeedscaling;
+        public int AttackSpeedScalingDuration;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Steel Tempest");
-            Tooltip.SetDefault("Doubled crit chance" +
-                "\nStabs on right click dealing 125% damage, with a 4 second cooldown, scaling down with attack speed" +
-                "\nGain a stack of Steel Tempest upon stabbing any enemy" +
-                "\nUpon reaching 2 stacks, the next right click will release a tornado dealing 175% damage");
+            Tooltip.SetDefault("Doubled crit chance scaling" +
+                "\nThrusts on right click dealing 125% damage, cooldown scales down with attack speed" +
+                "\nGain a stack of Steel Tempest upon thrusting any enemy" +
+                "\nUpon reaching 2 stacks, the next right click will release a tornado dealing double damage");
         }
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Green;
             Item.value = Item.buyPrice(0, 10, 0, 0);
             Item.damage = 20;
-            Item.crit = 4;
+            Item.crit = 6;
             Item.width = 86;
             Item.height = 82;
             Item.scale = 0.7f;
@@ -42,38 +42,35 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 
         public override void ModifyWeaponCrit(Player player, ref float crit)
         {
-            crit = player.GetTotalCritChance(DamageClass.Melee) * 2;
+            crit *= 2;
         }
         public override void HoldItem(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance = true;
-            if (player.GetTotalAttackSpeed(DamageClass.Melee) >= 4)
+            AttackSpeedScalingDuration = (int)(3 / player.GetTotalAttackSpeed(DamageClass.Melee) * 60); //3 seconds divided by player's melee speed
+            if (AttackSpeedScalingDuration <= 80)
             {
-                attackspeedscaling = 1;
-            }
-            else
-            {
-                attackspeedscaling = 4 / player.GetTotalAttackSpeed(DamageClass.Melee);
+                AttackSpeedScalingDuration = 80; //1.33 seconds minimum
             }
         }
 
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
-            if (Main.mouseRight & !Main.mouseLeft & player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2 & cooldown <= 0)
+            if (Main.mouseRight & !Main.mouseLeft & player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2 & !player.HasBuff(ModContent.BuffType<SteelTempestThrustCooldown>()))
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.shoot = ModContent.ProjectileType<SteelTempestTornado>();
-                cooldown = attackspeedscaling;
+                player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
                 player.GetModPlayer<tsorcRevampPlayer>().steeltempest = 0;
             } else
-            if (Main.mouseRight & !Main.mouseLeft & player.altFunctionUse == 2)
+            if (Main.mouseRight & !Main.mouseLeft & player.altFunctionUse == 2 & !player.HasBuff(ModContent.BuffType<SteelTempestThrustCooldown>()))
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Rapier;
                 Item.noUseGraphic = true;
-                Item.noMelee = true;
-                cooldown = attackspeedscaling;
+                Item.noMelee = true; 
+                player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
                 Item.shoot = ModContent.ProjectileType<SteelTempestThrust>();
             }
             if (Main.mouseLeft)
@@ -90,15 +87,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 
         public override void UpdateInventory(Player player)
         {   
-            if (Main.GameUpdateCount % 1 == 0)
-            {
-                cooldown -= 0.0167f;
-            }
         }
 
         public override bool CanUseItem(Player player)
         {
-            if (player.altFunctionUse != 2 || cooldown <= 0)
+            if (player.altFunctionUse != 2 || !player.HasBuff(ModContent.BuffType<SteelTempestThrustCooldown>()))
             {
                 return true;
             }

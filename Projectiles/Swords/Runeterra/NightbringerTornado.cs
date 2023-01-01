@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -8,7 +9,6 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 {
     public class NightbringerTornado : ModProjectile
     {
-        public int soundtimer = 0;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 8;
@@ -27,16 +27,13 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             SoundEngine.PlaySound(SoundID.DD2_BookStaffTwisterLoop, Projectile.Center);
+            Player owner = Main.player[Projectile.owner];
+            Projectile.damage *= 1 + (int)owner.GetTotalAttackSpeed(DamageClass.Melee);
         }
         public override void Kill(int timeLeft)
         {
             SoundEngine.FindActiveSound(SoundID.DD2_BookStaffTwisterLoop);
             SoundEngine.StopTrackedSounds();
-        }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
-            //Nightbringer.dashCD -= 5f;
-            //Nightbringer.wallCD -= 5f;
         }
         public override void AI()
         {
@@ -49,7 +46,6 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
             // So it will lean slightly towards the direction it's moving
             Projectile.rotation = Projectile.velocity.X * 0.05f;
 
-            // This is a simple "loop through all frames from top to bottom" animation
             int frameSpeed = 5;
 
             Projectile.frameCounter++;
@@ -64,9 +60,8 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
                     Projectile.frame = 0;
                 }
             }
-
-            // Some visuals here
-            //Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
+            
+            Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
         }
     }
 }
