@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Hammers
 {
@@ -28,11 +29,12 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.damage = 64;
             Item.knockBack = 15;
             Item.autoReuse = true;
-            Item.useTurn = true;
+            Item.useTurn = false;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Melee;
+            Item.shoot = ModContent.ProjectileType<Nothing>();
         }
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
         {

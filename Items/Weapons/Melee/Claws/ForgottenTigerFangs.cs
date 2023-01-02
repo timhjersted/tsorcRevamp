@@ -1,6 +1,7 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Claws
 {
@@ -14,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
         public override void SetDefaults()
         {
             Item.autoReuse = true;
-            Item.useTurn = true;
+            Item.useTurn = false;
             Item.rare = ItemRarityID.Cyan;
             Item.damage = 150;
             Item.width = 22;
@@ -26,12 +27,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Cyan_9;
+            Item.shoot = ModContent.ProjectileType<Nothing>();
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("ForgottenKaiserKnuckles").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<ForgottenKaiserKnuckles>());
+            recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);
 

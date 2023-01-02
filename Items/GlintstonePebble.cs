@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe(4);
+            Recipe recipe = CreateRecipe(8);
             recipe.AddIngredient(ItemID.ManaCrystal);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -137,6 +137,7 @@ namespace tsorcRevamp.Items
                 if (Main.mouseItem.stack == 1) Main.mouseItem.TurnToAir();
                 else Main.mouseItem.stack--;
                 //}
+                Item.stack--;
             }
         }
 

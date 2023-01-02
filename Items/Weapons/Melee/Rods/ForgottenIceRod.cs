@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Rods
 {
@@ -26,6 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Rods
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 21;
             Item.value = PriceByRarity.Blue_1;
+            Item.shoot = ModContent.ProjectileType<Nothing>();
         }
 
         public override bool? UseItem(Player player)

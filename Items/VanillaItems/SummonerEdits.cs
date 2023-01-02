@@ -11,29 +11,34 @@ namespace tsorcRevamp.Items.VanillaItems
 
         public override void SetDefaults(Item item)
         {
-            if (item.type == ItemID.RainbowWhip)
+            if (item.type == ItemID.RainbowWhip) //nerf
             {
                 item.damage = 100;
             }
-            if (item.type == ItemID.ScytheWhip)
+            if (item.type == ItemID.ScytheWhip) //nerf
             {
-                item.damage = 80;
+                item.damage = 90;
             }
-            if (item.type == ItemID.MaceWhip)
+            if (item.type == ItemID.MaceWhip) //nerf
             {
                 item.damage = 110;
             }
-            if (item.type == ItemID.BoneWhip)
+            if (item.type == ItemID.BoneWhip) //nerf
             {
                 item.damage = 24;
             }
-            if (item.type == ItemID.Smolstar)//Blade Staff
+            if (item.type == ItemID.Smolstar) //Blade Staff
             {
-                item.damage = 1;//Powerful tag whips were added
+                item.damage = 1;//Powerful tag whips were added, so nerf
+            }
+
+            if (item.type == ItemID.StaffoftheFrostHydra) //buff so it's an actually decent reward
+            {
+                item.damage = 160;
             }
 
             //Lunar items
-            if (item.type == ItemID.StardustDragonStaff)
+            if (item.type == ItemID.StardustDragonStaff) //holy the scaling on this weapon is insane, it needs a nerf
             {
                 item.damage = 35;
             }

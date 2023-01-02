@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Axes
 {
@@ -30,6 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.useTime = 25;
             Item.value = PriceByRarity.Green_2;
             Item.scale = 1.5f;
+            Item.shoot = ModContent.ProjectileType<Nothing>();
         }
 
         public override void AddRecipes()

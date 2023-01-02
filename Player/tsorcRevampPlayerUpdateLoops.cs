@@ -69,7 +69,6 @@ namespace tsorcRevamp
         public bool CritDamage250 = false;
 
         public int steeltempest = 0;
-        public bool DoubleCritChance = false;
 
         public bool WaspPower = false;
 
@@ -245,8 +244,6 @@ namespace tsorcRevamp
             DuskCrownRing = false;
 
             CritDamage250 = false;
-
-            DoubleCritChance = false;
 
             Celestriad = false;
 

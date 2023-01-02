@@ -34,6 +34,14 @@ namespace tsorcRevamp.Projectiles
                     projectile.timeLeft = 60;
                 }
 
+                if (projectile.type == ProjectileID.FrostBlastFriendly)
+                {
+                    projectile.penetrate = 6;
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = 10;
+                    projectile.extraUpdates = 3;
+                }
+
                 if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaCrescentBoost && !(projectile.type == (int)ModContent.ProjectileType<MiakodaCrescent>() || projectile.type == (int)ModContent.ProjectileType<ShulletBellDark>() || projectile.type == (int)ModContent.ProjectileType<ShulletBellLight>() || projectile.type == (int)ModContent.ProjectileType<Bloodsign>()))
                 {
                     if (Main.rand.NextBool(2))

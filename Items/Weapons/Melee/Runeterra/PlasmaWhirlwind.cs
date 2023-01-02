@@ -48,7 +48,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         }
         public override void HoldItem(Player player)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance = true;
             AttackSpeedScalingDuration = (int)(3 / player.GetTotalAttackSpeed(DamageClass.Melee) * 60); //3 seconds divided by player's melee speed
             if (AttackSpeedScalingDuration <= 80)
             {
@@ -58,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             {
                 NPC other = Main.npc[i];
 
-                if (other.active & !other.friendly & other.Distance(Main.MouseWorld) <= 25 & other.Distance(player.Center) <= 10000 & player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance & !player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()))
+                if (other.active & !other.friendly & other.Distance(Main.MouseWorld) <= 25 & other.Distance(player.Center) <= 10000 & !player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()))
                 {
                     if (DashingTimer > 0)
                     {

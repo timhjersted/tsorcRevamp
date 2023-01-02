@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.damage = 200;
             Item.knockBack = 3;
             Item.autoReuse = true;
-            Item.useTurn = true;
+            Item.useTurn = false;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Lime;
             Item.useStyle = ItemUseStyleID.Swing;

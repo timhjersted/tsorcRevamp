@@ -1,6 +1,7 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Hammers
 {
@@ -24,12 +25,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.knockBack = 9f;
             Item.maxStack = 1;
             Item.autoReuse = true;
-            Item.useTurn = true;
+            Item.useTurn = false;
             Item.useAnimation = 40;
             Item.useTime = 29;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Green_2;
+            Item.shoot = ModContent.ProjectileType<Nothing>();
         }
 
         public override void AddRecipes()

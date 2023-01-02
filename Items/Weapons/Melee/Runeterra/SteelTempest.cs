@@ -46,7 +46,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         }
         public override void HoldItem(Player player)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance = true;
             AttackSpeedScalingDuration = (int)(3 / player.GetTotalAttackSpeed(DamageClass.Melee) * 60); //3 seconds divided by player's melee speed
             if (AttackSpeedScalingDuration <= 80)
             {

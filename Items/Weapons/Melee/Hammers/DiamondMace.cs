@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
         public override void SetDefaults()
         {
             Item.autoReuse = true;
-            Item.useTurn = true;
+            Item.useTurn = false;
             Item.rare = ItemRarityID.Pink;
             Item.damage = 90;
             Item.crit += 46;

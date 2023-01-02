@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.maxStack = 1;
             Item.damage = 18;
             Item.knockBack = (float)5;
-            Item.useTurn = true;
+            Item.useTurn = false;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Blue;
             Item.value = PriceByRarity.Blue_1;

@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Item.useStyle = ItemUseStyleID.Swing;
             Item.autoReuse = true;
-            Item.useTurn = true;
+            Item.useTurn = false;
             Item.rare = ItemRarityID.Pink;
             Item.damage = 93;
             Item.width = 28;

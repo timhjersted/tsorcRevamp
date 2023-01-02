@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Cyan;
-            Item.useTurn = true;
+            Item.useTurn = false;
             Item.autoReuse = true;
             Item.damage = 170;
             Item.width = 62;

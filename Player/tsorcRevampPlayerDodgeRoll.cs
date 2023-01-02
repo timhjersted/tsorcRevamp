@@ -100,15 +100,13 @@ namespace tsorcRevamp
                     Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
                 }
 
-                // Stamina drain for most (hopefully) swords and spears
+                // Melee
                 if (item.DamageType == DamageClass.Melee && Player.itemAnimation == Player.itemAnimationMax - 1 && !(item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram
                     || item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc
                     || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>() || item.type == ItemID.FlyingKnife))
                 {
                     Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation / Player.GetAttackSpeed(DamageClass.Melee) * .8f);
                 }
-
-                // Stamina drain for boomerangs
                 if (item.DamageType == DamageClass.Melee && Player.itemAnimation == Player.itemAnimationMax - 1 && (item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram
                     || item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>() || item.type == ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>()))
                 {
@@ -119,47 +117,48 @@ namespace tsorcRevamp
                 // Ranged
                 if (item.DamageType == DamageClass.Ranged && Player.itemAnimation == Player.itemAnimationMax - 1 && !(item.type == ItemID.PiranhaGun))
                 {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
+                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation / Player.GetAttackSpeed(DamageClass.Ranged));
 
                 }
-
                 if (item.type == ItemID.CoinGun && Player.itemAnimation == Player.itemAnimationMax - 1) //doesn't seem to work at all D:
                 {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
+                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation / Player.GetAttackSpeed(DamageClass.Ranged));
+                }
+                if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.ArtemisBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.SagittariusBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>()))
+                {
+                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .5f;
+                }
+                if (item.type == ItemID.Harpoon && Player.itemAnimation == 1)
+                {
+                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 14f;
                 }
 
-                // Magic & Throwing
-                if (item.damage >= 1 && (item.CountsAsClass(DamageClass.Magic) || item.CountsAsClass(DamageClass.Throwing)) && Player.itemAnimation == Player.itemAnimationMax - 1)
+                // Magic
+                if (item.damage >= 1 && (item.CountsAsClass(DamageClass.Magic)) && Player.itemAnimation == Player.itemAnimationMax - 1)
                 {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
+                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation / Player.GetAttackSpeed(DamageClass.Magic));
+                }
+                if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
+                {
+                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .8f;
                 }
 
                 // Summoner
                 if (item.CountsAsClass(DamageClass.Summon) && Player.itemAnimation == Player.itemAnimationMax - 1)
                 {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
+                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation / Player.GetAttackSpeed(DamageClass.Summon));
+                }
+
+                // Throwing
+                if (item.damage >= 1 && (item.CountsAsClass(DamageClass.Throwing)) && Player.itemAnimation == Player.itemAnimationMax - 1)
+                {
+                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation / Player.GetAttackSpeed(DamageClass.Throwing));
                 }
 
                 // Classless? Just in case? 
                 if (item.damage >= 1 && (!item.CountsAsClass(DamageClass.Melee) && !item.CountsAsClass(DamageClass.Ranged) && !item.CountsAsClass(DamageClass.Magic) && !item.CountsAsClass(DamageClass.Summon) && !item.CountsAsClass(DamageClass.Throwing)) && Player.itemAnimation == Player.itemAnimationMax - 1)
                 {
                     Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
-                }
-
-                if (item.type == ItemID.Harpoon && Player.itemAnimation == 1)
-                {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 14f;
-                }
-
-                if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
-                {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .8f;
-                }
-
-
-                if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.ArtemisBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.SagittariusBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>()))
-                {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .5f;
                 }
             }
 

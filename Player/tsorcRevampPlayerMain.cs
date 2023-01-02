@@ -898,7 +898,7 @@ namespace tsorcRevamp
                 {
                     NPC other = Main.npc[i];
 
-                    if (other.active && !other.friendly && other.Distance(Main.MouseWorld) <= 25 && other.Distance(owner.Center) <= 10000 && Player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance && (!Player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()) || !Player.HasBuff(ModContent.BuffType<NightbringerDashCooldown>())))
+                    if (other.active && !other.friendly && other.Distance(Main.MouseWorld) <= 25 && other.Distance(owner.Center) <= 10000 && (!Player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()) || !Player.HasBuff(ModContent.BuffType<NightbringerDashCooldown>())))
                     {
                         if (thisPlasmaWhirlwind != null)
                         {
@@ -911,7 +911,7 @@ namespace tsorcRevamp
                     }
                     else
                     {
-                        if (Player.GetModPlayer<tsorcRevampPlayer>().DoubleCritChance && !Player.HasBuff(ModContent.BuffType<NightbringerWindwallCooldown>()) && Player.HeldItem.ModItem is Nightbringer)
+                        if (!Player.HasBuff(ModContent.BuffType<NightbringerWindwallCooldown>()) && Player.HeldItem.ModItem is Nightbringer)
                         {
                             Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Center, unitVectorTowardsMouse * 10f, ModContent.ProjectileType<Projectiles.Swords.Runeterra.NightbringerWindWall>(), 0, 0, Main.myPlayer);
                             if (thisNightbringer != null)

@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.knockBack = 9;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
-            Item.useTurn = true;
+            Item.useTurn = false;
             Item.useTime = 21;
             Item.useAnimation = 21;
             Item.value = PriceByRarity.LightRed_4;

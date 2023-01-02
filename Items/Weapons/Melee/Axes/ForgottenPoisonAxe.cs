@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Axes
 {
@@ -26,6 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 15;
             Item.value = PriceByRarity.Pink_5;
+            Item.shoot = ModContent.ProjectileType<Nothing>();
         }
 
         public override void OnHitNPC(Player player, NPC npc, int damage, float knockBack, bool crit)

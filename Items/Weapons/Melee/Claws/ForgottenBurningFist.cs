@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Claws
 {
@@ -25,6 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
             Item.useTime = 21;
             Item.value = PriceByRarity.LightRed_4;
             Item.rare = ItemRarityID.LightRed;
+            Item.shoot = ModContent.ProjectileType<Nothing>();
         }
 
         public override void AddRecipes()
