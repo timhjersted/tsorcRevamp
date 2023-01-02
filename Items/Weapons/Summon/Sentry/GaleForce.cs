@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
 		public override void SetStaticDefaults()
 		{
 			Tooltip.SetDefault("Summons a wind spirit which shoots a gust of wind towards your cursor");
-
+			SacrificeTotal = 1;
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
 			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
 			Item.UseSound = SoundID.Item44;
 			Item.sentry = true;
 
-
+			Item.UseSound = SoundID.DD2_DefenseTowerSpawn;
 			Item.noMelee = true;
 			Item.DamageType = DamageClass.Summon;
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Sentry.GaleForceProjectile>();
@@ -47,11 +47,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 		{
-			// Minions have to be spawned manually, then have originalDamage assigned to the damage of the summon item
 			var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
 			projectile.originalDamage = Item.damage;
+			player.UpdateMaxTurrets();
 
-			// Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
 			return false;
 		}
 	}

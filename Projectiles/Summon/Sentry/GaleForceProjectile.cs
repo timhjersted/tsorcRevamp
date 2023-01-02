@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
 		{
 
             //Main.projFrames[Projectile.type] = 7;
-
+			
             ProjectileID.Sets.IsADD2Turret[Projectile.type] = false;
             ProjectileID.Sets.TurretFeature[Projectile.type] = true;
 			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
@@ -29,8 +29,7 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
 			Projectile.friendly = true; 
 			Projectile.DamageType = DamageClass.Summon;
 			Projectile.penetrate = -1;
-			Projectile.usesLocalNPCImmunity = true;
-			Projectile.localNPCHitCooldown = 15;
+			Projectile.timeLeft = 36000;
 
             Projectile.sentry = true;
         }
