@@ -216,6 +216,7 @@ namespace tsorcRevamp
              "Progression clues can be found on unique items dropped by bosses",
              "If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction",
              "Signs offer many important hints",
+             "If you go above 100% crit chance, you have a chance to multicrit, allowing you to deal 4 times or even 8 times the damage if you have enough crit chance.",
              "Teal Pressure Pads can only be activated with ranged attacks",
              "Some vanilla recipes have been removed. You must find these items in the world by exploring",
              "Get a bad modifier on a weapon? Talk to Jade, the Emerald Herald. She can remove it with her Blessing",

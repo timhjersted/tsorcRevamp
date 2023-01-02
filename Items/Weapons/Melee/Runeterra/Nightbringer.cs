@@ -79,6 +79,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Swing;
+                Item.noUseGraphic = false;
+                Item.noMelee = false;
                 Item.shoot = ModContent.ProjectileType<NightbringerTornado>();
                 player.AddBuff(ModContent.BuffType<NightbringerThrustCooldown>(), AttackSpeedScalingDuration);
                 player.GetModPlayer<tsorcRevampPlayer>().steeltempest = 0;

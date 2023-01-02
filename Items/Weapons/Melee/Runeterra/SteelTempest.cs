@@ -60,6 +60,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Swing;
+                Item.noUseGraphic = false;
+                Item.noMelee = false;
                 Item.shoot = ModContent.ProjectileType<SteelTempestTornado>();
                 player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
                 player.GetModPlayer<tsorcRevampPlayer>().steeltempest = 0;
