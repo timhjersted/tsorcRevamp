@@ -1172,7 +1172,7 @@ namespace tsorcRevamp
 
         public void DoMultiCrits(ref int damage, float critType)
         {
-            int critLevel = (int)(Math.Floor(critType / 100f));
+            int critLevel = (int)(Math.Floor(Player.GetWeaponCrit(Player.HeldItem) / 100f));
 
             /*SteelTempest thisSteelTempest = Player.HeldItem.ModItem as SteelTempest;
             if (thisSteelTempest != null && thisSteelTempest.doublecritchance)
@@ -1181,10 +1181,10 @@ namespace tsorcRevamp
                 swordboost = true;
             }*/
             
-            if(DoubleCritChance)
+            /*if(DoubleCritChance)
             {
                critLevel = (int)(Math.Floor(critType / 50f));
-            }
+            }*/
 
             if (critLevel != 0)
             {
@@ -1195,14 +1195,15 @@ namespace tsorcRevamp
                         damage *= 2;
                     }
                 }
-               if (DoubleCritChance)
+               /*if (DoubleCritChance)
                 {
                     if (Main.rand.Next(1, 101) <= (critType * 2) - (100 * critLevel))
                     {
                         damage *= 2;
                     }
-                } 
-                else if (Main.rand.Next(1, 101) <= critType - (100 * critLevel))
+                } */
+                //else
+                if (Main.rand.Next(1, 101) <= (float)Player.GetWeaponCrit(Player.HeldItem) - (100 * critLevel))
                 {
                     damage *= 2;
                 }

@@ -12,7 +12,9 @@ namespace tsorcRevamp.Items.Weapons.Summon
 		public override void SetStaticDefaults()
 		{
 			Tooltip.SetDefault("Summons a raging Phoenix Juvenile to fight for you" +
-                "\nDeals extra damage after warming up, this scales well with crits" +
+                "\nWarms up by dealing damage to enemies, speeding up its movements" +
+                "\nDeals increased damage after warming up sufficiently" +
+                "\nAlso benefits more from summon tag bonuses" +
                 "\nUses 2 minion slots");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;

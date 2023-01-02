@@ -194,6 +194,7 @@ namespace tsorcRevamp.Projectiles.Summon
 				// and then set netUpdate to true
 				Projectile.position = idlePosition;
 				Projectile.velocity *= 0.1f;
+				Dust.NewDustPerfect(Projectile.Center, DustID.SolarFlare, null, 0, Color.DarkOrange, 1);
 				Projectile.netUpdate = true;
 			}
 
@@ -301,9 +302,9 @@ namespace tsorcRevamp.Projectiles.Summon
 					direction.Normalize();
 					direction *= speed;
 
-					if (Main.GameUpdateCount % 30 == 0)
+					if (Main.GameUpdateCount % (30 / (1 + ragestacks / 10)) == 0)
 					{
-						Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, targetCenter, speed * 1.3f);
+						Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, targetCenter, speed * (1.3f + ((float)ragestacks / 80)));
 					}
 					//Projectile.velocity = (Projectile.velocity * (inertia - 1) + direction) / inertia;
 				}
@@ -345,7 +346,7 @@ namespace tsorcRevamp.Projectiles.Summon
 		private void Visuals()
 		{
 			// So it will lean slightly towards the direction it's moving
-			Projectile.rotation = Projectile.velocity.X * 0.15f;
+			Projectile.rotation = Projectile.velocity.X * 0.1f;
 
 			if(Projectile.velocity.X > 0.05)
 			{

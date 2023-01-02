@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
+namespace tsorcRevamp.Items.Weapons.Melee.Hammers
 {
     [LegacyName("ForgottenDiamondMace")]
     class DiamondMace : ModItem
