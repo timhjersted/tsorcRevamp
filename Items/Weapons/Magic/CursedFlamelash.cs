@@ -7,6 +7,13 @@ namespace tsorcRevamp.Items.Weapons.Magic
     class CursedFlamelash : ModItem
     {
 
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Cursed Tormentor");
+            Tooltip.SetDefault("Summons a lash of cursed flame to blight your foes" +
+                "\nDeals more damage the faster it is moving when it strikes an enemy");
+        }
+
         public override void SetDefaults()
         {
             Item.width = 26;
@@ -20,13 +27,21 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.UseSound = SoundID.Item20;
             Item.rare = ItemRarityID.LightRed;
             Item.crit = 4;
-            Item.mana = 17;
+            Item.mana = 150;
             Item.noMelee = true;
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.CursedFlamelash>();
         }
+        public override bool CanUseItem(Player player)
+        {
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.CursedFlamelash>()] > 0)
+            {
+                return false;
+            }
 
+            return true;
+        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

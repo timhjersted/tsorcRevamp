@@ -261,6 +261,8 @@ namespace tsorcRevamp.Projectiles.Ranged
 
         public override bool PreDraw(ref Color lightColor)
         {
+            base.PreDraw(ref lightColor);
+            return false;
             DrawCrystalLaser(TransparentTextureHandler.TransparentTextures[LaserTexture], GetOrigin(),
                     Projectile.velocity, LaserTextureHead, LaserTextureBody, LaserTextureTail, -1.57f, LaserSize, LaserColor);
             return false;

@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons
         {
             Main.NewText(player.position / 16);
             NPC.NewNPCDirect(source, position, ModContent.NPCType<Projectiles.Enemy.Triad.IchorGlob>());
-            //Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center + new Vector2(10, 0), speed, ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), damage, knockBack, Main.myPlayer, 0, 1);
+            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedLaser>(), damage, knockBack, Main.myPlayer, 0, 1);
 
             //Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyLightningStrike>(), damage, knockBack, Main.myPlayer);
             //NPC.NewNPC(source, 707 * 16, 1194 * 16, ModContent.NPCType<NPCs.Special.GwynBossVision>());

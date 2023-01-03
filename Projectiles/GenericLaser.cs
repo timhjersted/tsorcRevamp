@@ -43,8 +43,14 @@ namespace tsorcRevamp.Projectiles
         //Should the laser be offset from the center of its source? If so, how much?
         public Vector2 LaserOffset = new Vector2(0, 0);
 
-        //What color is the laser? Leave this blank if it has a custom texture
-        public Color LaserColor = Color.White;
+        //What color is the laser?
+        public Color LaserColor = Color.Red;
+
+        //What color is the lasers core?
+        public Color LaserSecondaryColor = Color.White;
+
+        //How much should the color vary over time?
+        public float colorVariance = 0.03f;
 
         //How long should it telegraph its path with a targeting laser? This can be set to 0 for instant hits
         public int TelegraphTime = 60;
@@ -228,24 +234,83 @@ namespace tsorcRevamp.Projectiles
             behindNPCs.Add(index);
         }
 
+        public static Effect laserShaderData;
+        float timeFactor = 0;
+        float fadeOut = 0;
         public override bool PreDraw(ref Color lightColor)
         {
-            if (!customContext)
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            //Apply the shader, caching it as well
+            //if (laserShaderData == null)
             {
-                return false;
+                laserShaderData = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/GenericLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
-  
-            //LaserTextureBody.Height * LaserSize
+
+            Texture2D texture = tsorcRevamp.tNoiseTexture1;
+
+            timeFactor++;
+            laserShaderData.Parameters["Time"].SetValue(timeFactor);
+
+            Vector3 hslColor = Main.rgbToHsl(LaserColor);
+            hslColor.X += 0.03f * (float)Math.Cos(timeFactor / 50f);
+            Color rgbColor = Main.hslToRgb(hslColor);
+            laserShaderData.Parameters["Color"].SetValue(rgbColor.ToVector3());
+
+            float modifiedSize = LaserSize * 200;
             if ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2))
             {
-                DrawLaser(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], GetOrigin(),
-                    Projectile.velocity, LaserTextureBody.Height * LaserSize, -1.57f, LaserSize, LaserLength, LaserColor, (int)MOVE_DISTANCE);
+                if (FiringTimeLeft < 20)
+                {
+                    fadeOut = FiringTimeLeft / 20f;
+                }
+                else
+                {
+                    if (fadeOut < 1)
+                    {
+                        fadeOut += 0.05f;
+                    }
+                    if (fadeOut > 1)
+                    {
+                        fadeOut = 1;
+                    }
+                }
             }
             else if (TelegraphTime + Charge >= MaxCharge || TargetingMode == 1)
             {
-                DrawLaser(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
-                    Projectile.velocity, LaserTextureBody.Height * LaserSize / 2f, -1.57f, LaserSize / 2, LaserLength, LaserColor, (int)MOVE_DISTANCE);
+                modifiedSize /= 2;
+                fadeOut = (float)Math.Cos(timeFactor / 30f);
+                fadeOut = Math.Abs(fadeOut) * 0.2f;
+                fadeOut += 0.2f;
             }
+            else
+            {
+                fadeOut = 0;
+            }
+
+            laserShaderData.Parameters["FadeOut"].SetValue(fadeOut);
+            laserShaderData.Parameters["SecondaryColor"].SetValue(Color.White.ToVector3());
+            laserShaderData.Parameters["ProjectileSize"].SetValue(new Vector2(Distance, modifiedSize));
+            laserShaderData.Parameters["TextureSize"].SetValue(texture.Width);
+
+
+            Rectangle sourceRectangle = new Rectangle(0, 0, (int)Distance, (int)(modifiedSize));
+            Vector2 origin = new Vector2(0, sourceRectangle.Height / 2f);
+
+            //Apply the shader
+            laserShaderData.CurrentTechnique.Passes[0].Apply();
+
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (Projectile.spriteDirection == -1)
+            {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+            }
+
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.velocity.ToRotation(), origin, Projectile.scale, spriteEffects, 0);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             return false;
         }
 

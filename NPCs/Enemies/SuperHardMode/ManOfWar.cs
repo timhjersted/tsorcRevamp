@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (Main.GameUpdateCount % 60 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Player closestPlayer = UsefulFunctions.GetClosestPlayer(NPC.Center);
-                if (closestPlayer != null && Collision.CanHitLine(NPC.Center, NPC.width, NPC.height, closestPlayer.Center, closestPlayer.width, closestPlayer.height)) {
+                if (closestPlayer != null && Collision.CanHit(NPC, closestPlayer)) {
                     Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, closestPlayer.Center, 1);
                     Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<Projectiles.Enemy.JellyfishLightning>(), 30, 1, Main.myPlayer, 0, NPC.whoAmI);
                 }

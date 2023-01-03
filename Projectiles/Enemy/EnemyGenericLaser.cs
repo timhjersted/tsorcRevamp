@@ -15,82 +15,136 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy
 {
 
+    ///<summary>
+    ///Lets you easily create lasers of any size and color, and give them a variety of behaviors
+    ///</summary>
     public class EnemyGenericLaser : ModProjectile
     {
 
-        //Generic laser class
-        //Lets you easily create lasers of any size and color, and give them a variety of behaviors
 
-        //Set to true if the laser originates from a projectile instead of an NPC
+        /// <summary>
+        ///Set to true if the laser originates from a projectile instead of an NPC
+        /// </summary>
         public bool ProjectileSource = false;
 
-        //The name the laser will display if it kills the player
+        /// <summary>
+        ///The name the laser will display if it kills the player
+        /// </summary>
         public string LaserName = "DefaultLaserName";
 
-        //The source position of the laser. If FOLLOW_SOURCE is set to true, this will be ignored.
+        ///The source position of the laser. If FOLLOW_SOURCE is set to true, this will be ignored.
         public Vector2 LaserOrigin = new Vector2(0, 0);
 
-        //Should it stick to the center of the NPC or Projectile that spawned it, or just where it is spawned?
+        /// <summary>
+        /// Should it stick to the center of the NPC or Projectile that spawned it, or just where it is spawned?
+        /// </summary>
         public bool FollowHost = false;
 
-        //Set to 0 for normal behavior
-        //Set to 1 to only display the transparent 'targeting' beam
-        //Set to 2 to draw in full, but still do no damage
+        /// <summary>
+        ///Set to 0 for normal behavior
+        ///Set to 1 to only display the transparent 'targeting' beam
+        /// Set to 2 to draw in full, but still do no damage
+        /// </summary>
         public int TargetingMode = 0;
 
-        //Should it pierce through all NPCs? If not it will stop at the first one it hits
+        /// <summary>
+        /// Should it pierce through all NPCs? If not it will stop at the first one it hits
+        /// </summary>
         public bool pierceNPCs = true;
 
-        //Should the laser be offset from the center of its source? If so, how much?
+        /// <summary>
+        /// Should the laser be offset from the center of its source? If so, how much?
+        /// </summary>
         public Vector2 LaserOffset = new Vector2(0, 0);
 
-        //What color is the laser? Leave this blank if it has a custom texture
+        /// <summary>
+        /// What color is the laser? Leave this blank if it has a custom texture
+        /// </summary>
         public Color LaserColor = Color.White;
 
-        //How long should it telegraph its path with a targeting laser? This can be set to 0 for instant hits
+        /// <summary>
+        /// How long should it telegraph its path with a targeting laser? This can be set to 0 for instant hits
+        /// </summary>
         public int TelegraphTime = 60;
 
-        //What dust should it spawn?
+        /// <summary>
+        /// How fast should it fade in when firing?
+        /// </summary>
+        public float fadeInSpeed = 0.10f;
+
+        /// <summary>
+        /// How many frames before despawning should it start fading out
+        /// </summary>
+        public int fadeOutFrames = 10;
+
+        /// <summary>
+        /// What dust should it spawn?
+        /// </summary>
         public int LaserDust = 0;
 
-        //Should it create a line of dust along its length?
+        /// <summary>
+        /// Should it create a line of dust along its length?
+        /// </summary>
         public bool LineDust = false;
 
-        //How much dust?
+        /// <summary>
+        /// How much dust?
+        /// </summary>
         public int DustAmount = 100;
 
-        //Scales the size of the laser
+        /// <summary>
+        /// Scales the size of the laser
+        /// </summary>
         public float LaserSize = 0.4f;
 
-        //Should it stop when it hits tiles?
+        /// <summary>
+        /// Should it stop when it hits tiles?
+        /// </summary>
         public bool TileCollide = true;
 
-        //How long should the laser be?
-        //Defaults to 5000, max of 20000
+        /// <summary>
+        /// How long should the laser be? Max is 20000 units
+        /// </summary>
         public int LaserLength = 5000;
 
-        //Lighting is computationally expensive. Set this to false to improve performance dramatically when many lasers are on the screen.
+        /// <summary>
+        /// Lighting is computationally expensive. Set this to false to improve performance dramatically when many lasers are on the screen.
+        /// </summary>
         public bool CastLight = true;
 
-        //Should it have a light color different than 'LaserColor'?
+        /// <summary>
+        /// Should it have a light color different than 'LaserColor'?
+        /// </summary>
         public Color? lightColor = null;
 
-        //Should this laser be drawn with additive blending instead of normal?
+        /// <summary>
+        /// Should this laser be drawn with additive blending instead of normal?
+        /// </summary>
         public bool Additive = false;
 
-        //What transparency should it be drawn with? 0 > 1
+        /// <summary>
+        /// What transparency should it be drawn with? 0 > 1
+        /// </summary>
         public float LaserAlpha = 1;
 
-        //Should it be drawn with a shader?
-        public ArmorShaderData shader;
+        /// <summary>
+        /// Should it be drawn with a custom shader? If not set it will default to the GenericLaser shader
+        /// </summary>
+        public Effect LaserShader;
 
-        //Should it play a sound? Set to 'null' to disable
+        /// <summary>
+        /// Should it play a sound? Set to 'null' to disable
+        /// </summary>
         public SoundStyle? LaserSound = SoundID.Item12 with { Volume = 0.5f };
 
-        //Does it have a custom texture?
+        /// <summary>
+        /// Does it have a custom texture?
+        /// </summary>
         public TransparentTextureHandler.TransparentTextureType LaserTexture = TransparentTextureHandler.TransparentTextureType.GenericLaser;
 
-        //What about for its targeting beam?
+        /// <summary>
+        /// What about for its targeting beam?
+        /// </summary>
         public TransparentTextureHandler.TransparentTextureType LaserTargetingTexture = TransparentTextureHandler.TransparentTextureType.GenericLaserTargeting;
 
         public Rectangle LaserTextureBody = new Rectangle(0, 0, 46, 28);
@@ -101,71 +155,94 @@ namespace tsorcRevamp.Projectiles.Enemy
         public Rectangle LaserTargetingTail = new Rectangle(0, 30, 46, 28);
         public Rectangle LaserTargetingHead = new Rectangle(0, 60, 46, 28);
 
-        //If it's animated, how many frames does it have?
+        /// <summary>
+        /// If it's animated, how many frames does it have?
+        /// </summary>
         public int frameCount = 1;
 
-        //How many ticks per frame?
+        /// <summary>
+        /// How many ticks per frame?
+        /// </summary>
         public int frameDuration = 0;
 
         public int currentFrame = 0;
         public int frameCounter = 0;
 
-        //What debuffs should it inflict?
+        /// <summary>
+        /// What debuffs should it inflict?
+        /// </summary>
         public List<int> LaserDebuffs = new List<int>();
-        //How long should those debuffs last?
+        /// <summary>
+        /// How long should those debuffs last?
+        /// </summary>
         public List<int> DebuffTimers = new List<int>();
 
-        //Has it already been initialized on the client it's running on? If so, re-setting all its basic values is unnecessary.
+        /// <summary>
+        /// Has it already been initialized on the client it's running on? If so, re-setting all its basic values is unnecessary.
+        /// </summary>
         public bool initialized = false;
 
-        //How long (in frames) does it have to charge before firing?
-        //If this is 0, the charge mechanic will simply be disabled
+        /// <summary>
+        /// How long (in frames) does it have to charge before firing?
+        ///If this is 0, the charge mechanic will simply be disabled
+        /// </summary>
         public float MaxCharge = 120;
-        //How long (in frames) should the laser fire once it is charged? Defaults to 2 seconds
+
+        /// <summary>
+        /// How long (in frames) should the laser fire once it is charged? Defaults to 2 seconds
+        /// </summary>
         public int FiringDuration = 120;
 
-        //Flag used when drawing it to inform the laser it's being drawn in a context where the spritebatch is in Additive mode. Not really intended to be messed with lol
+        /// <summary>
+        /// Flag used when drawing it to inform the laser it's being drawn in a context where the spritebatch is in Additive mode. Not really intended to be messed with lol
+        /// </summary>
         public bool AdditiveContext = false;
 
-        //How long should each "segment" of the laser be? This value should pretty much be fine
+        /// <summary>
+        /// How long should each "segment" of the laser be? This value should pretty much be fine
+        /// </summary>
         private const float MOVE_DISTANCE = 20f;
         public float internalDistance;
+
+        /// <summary>
+        /// The current length of the laser
+        /// </summary>
         public float Distance
         {
             get => internalDistance;
             set => internalDistance = value;
         }
 
-        /*{
-            get => projectile.ai[0];
-            set => projectile.ai[0] = value;
-        }*/
-
-        //Allows the projectile to be tagged with an ID upon creation, so that it can be identified across clients
-        //Projectile id's aren't synced, so we have to do it ourself like this
-        //Messing with this is only necessary if you need to change a laser *after* it has been created (ex: to make it move)
+        /// <summary>
+        /// Contains the ID of the player, projectile, or NPC that this laser is attached to (if any).
+        /// Note: Projectile.ai[0] is unused, feel free to use it for custom behavior
+        /// </summary>
         
-        /*public float NetworkID
-        {
-            get => Projectile.ai[0];
-            set => Projectile.ai[0] = value;
-        }*/
-
         public int HostIdentifier
         {
             get => (int)Projectile.ai[1];
             set => Projectile.ai[1] = value;
         }
 
+        /// <summary>
+        /// This variable counts up by one each frame until it reaches MaxCharge, and then fires
+        /// </summary>
         public float Charge
         {
             get => Projectile.localAI[0];
             set => Projectile.localAI[0] = value;
         }
 
+        /// <summary>
+        /// Is the laser fully charged?
+        /// </summary>
         public bool IsAtMaxCharge => (Charge == MaxCharge || MaxCharge == 0 || MaxCharge == -1);
 
+        /// <summary>
+        /// How much remaining time will it fire for?
+        /// </summary>
         public int FiringTimeLeft = 0;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("DefaultLaserName");
@@ -192,53 +269,79 @@ namespace tsorcRevamp.Projectiles.Enemy
             behindNPCs.Add(index);
         }
 
+        float timeFactor = 0;
+        float fadePercent;
         public override bool PreDraw(ref Color lightColor)
         {
-            if ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2))
-            { 
-                //Additive lasers get drawn on their own outside the predraw hook in a specific context
-                if (Additive && !AdditiveContext)
-                {
-                    return false;
-                }
-                Color color;
+            //Restart the spritebatch to avoid contaminating the main one with new shader data
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-                if (LaserTexture == TransparentTextureHandler.TransparentTextureType.GenericLaser)
+            //If no custom shader has been given then load the generic one
+            //if (LaserShader == null)
+            {
+                LaserShader = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/GenericLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            //Gives the laser its 'flowing' effect
+            timeFactor++;
+            LaserShader.Parameters["Time"].SetValue(timeFactor);
+
+            //Shifts its color slightly over time
+            Vector3 hslColor = Main.rgbToHsl(LaserColor);
+            hslColor.X += 0.03f * (float)Math.Cos(timeFactor / 50f);
+            Color rgbColor = Main.hslToRgb(hslColor);
+            LaserShader.Parameters["Color"].SetValue(rgbColor.ToVector3());
+
+            float modifiedSize = LaserSize * 200;
+
+            //Fade in and out, and pulse while targeting
+            if ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2))
+            {
+                if (FiringTimeLeft < fadeOutFrames)
                 {
-                    color = LaserColor;
+                    fadePercent = FiringTimeLeft / fadeOutFrames;
                 }
                 else
                 {
-                    color = Color.White;
+                    fadePercent += fadeInSpeed;
+                    if(fadePercent > 1)
+                    {
+                        fadePercent = 1;
+                    }
                 }
-
-                if (FiringTimeLeft <= 10)
-                {
-                    color *= FiringTimeLeft / 10f;
-                }
-
-
-                DrawLaser(TransparentTextureHandler.TransparentTextures[LaserTexture], GetOrigin(),
-                    Projectile.velocity, LaserTextureHead, LaserTextureBody, LaserTextureTail, -1.57f, LaserSize, color);
             }
             else if (TelegraphTime + Charge >= MaxCharge || TargetingMode == 1)
             {
-                Color color;
-                if (LaserTargetingTexture == TransparentTextureHandler.TransparentTextureType.GenericLaserTargeting)
-                {
-                    color = LaserColor;
-                }
-                else
-                {
-                    color = Color.White;
-                }
-
-                color *= 0.65f + 0.35f * (float)(Math.Sin(Main.GameUpdateCount / 5f));
-
-                DrawLaser(TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
-                        Projectile.velocity, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, color);
+                modifiedSize /= 2;
+                fadePercent = (float)Math.Cos(timeFactor / 30f);
+                fadePercent = Math.Abs(fadePercent) * 0.2f;
+                fadePercent += 0.2f;
+            }
+            else
+            {
+                fadePercent = 0;
             }
 
+            //Apply the rest of the parameters it needs
+            LaserShader.Parameters["FadeOut"].SetValue(fadePercent);
+            LaserShader.Parameters["SecondaryColor"].SetValue(Color.White.ToVector3());
+            LaserShader.Parameters["ProjectileSize"].SetValue(new Vector2(Distance, modifiedSize));
+            LaserShader.Parameters["TextureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+
+            //Calculate where to draw it
+            Rectangle sourceRectangle = new Rectangle(0, 0, (int)Distance, (int)(modifiedSize));
+            Vector2 origin = new Vector2(0, sourceRectangle.Height / 2f);
+
+            //Apply the shader
+            LaserShader.CurrentTechnique.Passes[0].Apply();
+
+            //Draw the laser
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.velocity.ToRotation(), origin, Projectile.scale, SpriteEffects.None, 0);
+
+            //Restart the spritebatch with the vanilla parameters
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             return false;
         }
 
