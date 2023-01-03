@@ -15,8 +15,9 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		public static float angularSpeed = 0.03f;
 		public static float circleRad = 50f;
 		public float currentAngle = 0;
+        bool spawnedTrail = false;
 
-		public override void SetStaticDefaults()
+        public override void SetStaticDefaults()
 		{
 			Main.projFrames[Projectile.type] = 8;
 			Main.projPet[Projectile.type] = true; // Denotes that this projectile is a pet or minion
@@ -56,7 +57,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			ScorchingPoint.projectiles.Remove(this);
 		}
 
-		bool spawnedTrail = false;
 		public override void AI()
 		{
 			Player owner = Main.player[Projectile.owner];
@@ -75,11 +75,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Projectile.position = visualplayercenter + offset;
 			Projectile.velocity = Projectile.rotation.ToRotationVector2();
 
-            if (!spawnedTrail)
+            /*if (!spawnedTrail)
 			{
 				Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<ScorchingPointTrail>(), 0, 0, Projectile.owner, 0, Projectile.whoAmI);
 				spawnedTrail = true;
-			}
+			}*/
 
 
 
