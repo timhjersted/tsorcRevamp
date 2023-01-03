@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Item.knockBack = 1f;
             Item.autoReuse = true;
             Item.maxStack = 1;
-            Item.scale = 2f;
+            Item.scale = 0.9f;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 14;
             Item.useTime = 14;

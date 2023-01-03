@@ -75,14 +75,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Projectile.position = visualplayercenter + offset;
 			Projectile.velocity = Projectile.rotation.ToRotationVector2();
 
-            /*if (!spawnedTrail)
+            if (!spawnedTrail)
 			{
 				Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<ScorchingPointTrail>(), 0, 0, Projectile.owner, 0, Projectile.whoAmI);
 				spawnedTrail = true;
-			}*/
-
-
-
+			}
 
 			Visuals();
 		}

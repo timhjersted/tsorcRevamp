@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra;
+using tsorcRevamp.Projectiles.Trails;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
@@ -15,6 +16,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		public static float circleRad2 = 50f;
 		public float currentAngle2 = 0;
         public static int timer2 = 0;
+		bool spawnedTrail = false;
 
         public override void SetStaticDefaults()
 		{
@@ -24,8 +26,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		}
 		public sealed override void SetDefaults()
 		{
-			Projectile.width = 66;
-			Projectile.height = 28;
+			Projectile.width = 98;
+			Projectile.height = 54;
 			Projectile.tileCollide = false; // Makes the minion go through tiles freely
 
 			// These below are needed for a minion weapon
@@ -93,23 +95,28 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			Vector2 offset = new Vector2(MathF.Sin(currentAngle2), MathF.Cos(currentAngle2)) * circleRad2;
 
-			Projectile.position = visualplayercenter + offset;
+			Projectile.position = visualplayercenter + offset;            
+			if (!spawnedTrail)
+			{
+				Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<InterstellarVesselTrail>(), 0, 0, Projectile.owner, 0, Projectile.whoAmI);
+				spawnedTrail = true;
+			}
 
-      Visuals();
+            Visuals();
 		}
-    public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-    {
-      float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
+		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+		{
+			float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
 			if (distance < Projectile.height * 1.2f && distance > Projectile.height * 1.2f - 32)
 			{
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-    }
-    private bool CheckActive(Player owner)
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		private bool CheckActive(Player owner)
 		{
 			if (owner.dead || !owner.active)
 			{
@@ -119,11 +126,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			}
 
 			if (!owner.HasBuff(ModContent.BuffType<InterstellarCommander>()))
-      {
+			{
 				circleRad2 = 50f;
 				currentAngle2 = 0;
 				InterstellarVesselControls.projectiles.Clear();
-      }
+			}
 
 			if (owner.HasBuff(ModContent.BuffType<InterstellarCommander>()))
 			{
@@ -135,25 +142,25 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		private void Visuals()
 		{
 
-      Projectile.rotation = currentAngle2 * -1f;
+		Projectile.rotation = currentAngle2 * -1f;
 
-      //float frameSpeed = 3f;
+		//float frameSpeed = 3f;
 
-			//Projectile.frameCounter++;
+		//Projectile.frameCounter++;
 
-			/*if (Projectile.frameCounter >= frameSpeed)
+		/*if (Projectile.frameCounter >= frameSpeed)
+		{
+			Projectile.frameCounter = 0;
+			Projectile.frame++;
+
+			if (Projectile.frame >= Main.projFrames[Projectile.type])
 			{
-				Projectile.frameCounter = 0;
-				Projectile.frame++;
-
-				if (Projectile.frame >= Main.projFrames[Projectile.type])
-				{
 					Projectile.frame = 0;
-				}
-			}*/
+			}
+		}*/
 
-			// Some visuals here
-			Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
+		// Some visuals here
+		Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
 		}
 	}
 }

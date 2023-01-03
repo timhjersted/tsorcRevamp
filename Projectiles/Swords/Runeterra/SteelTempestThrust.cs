@@ -120,7 +120,12 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         }
         private void Visuals()
         {
-            float frameSpeed = 5f;
+			Projectile.frame = (int)((Timer / 28f) * 6f);
+			if (Timer > 28f)
+			{
+				Projectile.frame = 0;
+			}
+            /*float frameSpeed = 7f;
 
             Projectile.frameCounter++;
 
@@ -133,7 +138,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
                 {
                     Projectile.frame = 0;
                 }
-            }
+            }*/
         }
     }
 }
