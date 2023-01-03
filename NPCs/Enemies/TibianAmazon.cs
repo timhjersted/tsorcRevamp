@@ -37,6 +37,11 @@ namespace tsorcRevamp.NPCs.Enemies
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TibianAmazonBanner>();
 
+            if (!NPC.downedBoss1)
+            {
+                throwingKnifeDamage /= 2;
+            }
+
             if (Main.hardMode)
             {
                 NPC.lifeMax = 180;
