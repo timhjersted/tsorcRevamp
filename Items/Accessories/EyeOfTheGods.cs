@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Eye of the Gods");
-            Tooltip.SetDefault("Lights up your cursor when equipped");
+            Tooltip.SetDefault("Lights up your cursor when equipped" +
+                "\nAlso works in vanity slots");
 
         }
 
@@ -22,8 +23,20 @@ namespace tsorcRevamp.Items.Accessories
             Item.rare = ItemRarityID.Green;
             Item.accessory = true;
             Item.value = PriceByRarity.Green_2;
+            Item.vanity = true;
         }
-
+        public override void UpdateEquip(Player player)
+        {
+            int cursorX = (int)((Main.mouseX + Main.screenPosition.X) / 16);
+            int cursorY = (int)((Main.mouseY + Main.screenPosition.Y) / 16);
+            Lighting.AddLight(cursorX, cursorY, 2.5f, 2.5f, 2.5f);
+        }
+        public override void UpdateVanity(Player player)
+        {
+            int cursorX = (int)((Main.mouseX + Main.screenPosition.X) / 16);
+            int cursorY = (int)((Main.mouseY + Main.screenPosition.Y) / 16);
+            Lighting.AddLight(cursorX, cursorY, 2.5f, 2.5f, 2.5f);
+        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
@@ -34,13 +47,5 @@ namespace tsorcRevamp.Items.Accessories
 
             recipe.Register();
         }
-
-        public override void UpdateEquip(Player player)
-        {
-            int cursorX = (int)((Main.mouseX + Main.screenPosition.X) / 16);
-            int cursorY = (int)((Main.mouseY + Main.screenPosition.Y) / 16);
-            Lighting.AddLight(cursorX, cursorY, 2.5f, 2.5f, 2.5f);
-        }
-
     }
 }

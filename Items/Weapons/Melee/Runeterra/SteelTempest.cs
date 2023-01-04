@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
@@ -36,8 +37,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Item.noUseGraphic = false;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.shootSpeed = 4.2f;
+            Item.shootSpeed = 5f;
             Item.useTurn = false;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
         public override void ModifyWeaponCrit(Player player, ref float crit)
@@ -51,11 +53,58 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             {
                 AttackSpeedScalingDuration = 80; //1.33 seconds minimum
             }
+            if (Main.mouseLeft)
+            {
+                //player.altFunctionUse = 1;
+                Item.useStyle = ItemUseStyleID.Swing;
+                Item.noUseGraphic = false;
+                Item.noMelee = false;
+                //Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            }
         }
 
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
-            if (Main.mouseRight & !Main.mouseLeft & player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2 & !player.HasBuff(ModContent.BuffType<SteelTempestThrustCooldown>()))
+            if (player.altFunctionUse == 2 && player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2)
+            {
+                Item.useStyle = ItemUseStyleID.Swing;
+                Item.noUseGraphic = false;
+                Item.noMelee = false;
+                //Item.shoot = ModContent.ProjectileType<SteelTempestTornado>();
+                player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
+                //player.GetModPlayer<tsorcRevampPlayer>().steeltempest = 0;
+                //player.altFunctionUse = 1;
+            } else
+            if (player.altFunctionUse == 2 && player.GetModPlayer<tsorcRevampPlayer>().steeltempest < 2)
+            {
+
+                Item.useStyle = ItemUseStyleID.Rapier;
+                Item.noUseGraphic = true;
+                Item.noMelee = true; 
+                player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
+                //Item.shoot = ModContent.ProjectileType<SteelTempestThrust>();
+                //player.altFunctionUse = 1;
+            }
+        }
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            if (player.altFunctionUse != 2) //shoot Nothing
+            {
+                return true;
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().steeltempest < 2)
+            {
+                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<SteelTempestThrust>(), damage, knockback, player.whoAmI);
+            }
+            else if (player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2)
+            {
+                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<SteelTempestTornado>(), damage, knockback, player.whoAmI);
+                player.GetModPlayer<tsorcRevampPlayer>().steeltempest = 0;
+            }
+            return false;
+
+            /*if (Main.mouseRight & !Main.mouseLeft & player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2 & !player.HasBuff(ModContent.BuffType<SteelTempestThrustCooldown>()))
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Swing;
@@ -64,13 +113,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 Item.shoot = ModContent.ProjectileType<SteelTempestTornado>();
                 player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
                 player.GetModPlayer<tsorcRevampPlayer>().steeltempest = 0;
-            } else
+            }
+            else
             if (Main.mouseRight & !Main.mouseLeft & player.altFunctionUse == 2 & !player.HasBuff(ModContent.BuffType<SteelTempestThrustCooldown>()))
             {
                 player.altFunctionUse = 2;
                 Item.useStyle = ItemUseStyleID.Rapier;
                 Item.noUseGraphic = true;
-                Item.noMelee = true; 
+                Item.noMelee = true;
                 player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
                 Item.shoot = ModContent.ProjectileType<SteelTempestThrust>();
             }
@@ -82,15 +132,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 Item.noMelee = false;
                 Item.useTurn = false;
                 Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
-            }
-
+            }*/
         }
 
         public override void UpdateInventory(Player player)
         {   
         }
 
-        public override bool CanUseItem(Player player)
+        /*public override bool CanUseItem(Player player)
         {
             if (player.altFunctionUse != 2 || !player.HasBuff(ModContent.BuffType<SteelTempestThrustCooldown>()))
             {
@@ -102,7 +151,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             }
         }
 
-        /*public override bool CanShoot(Player player)
+        public override bool CanShoot(Player player)
         {
             if (player.altFunctionUse == 2 &&  Main.mouseRight)
             {
@@ -112,7 +161,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 
         public override bool AltFunctionUse(Player player)
         {
+            if (!player.HasBuff(ModContent.BuffType<SteelTempestThrustCooldown>()))
                 return true;
+            else
+            {
+                player.altFunctionUse = 1;
+                return false;
+            }
         }
         public override void AddRecipes()
         {
