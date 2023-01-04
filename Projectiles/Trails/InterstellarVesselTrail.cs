@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Trails
             Projectile.penetrate = -1;
             trailWidth = 45;
             trailPointLimit = 900;
-            trailMaxLength = 999;
+            trailMaxLength = 333;
             Projectile.hide = true;
             collisionPadding = 50;
            
@@ -80,7 +80,7 @@ namespace tsorcRevamp.Projectiles.Trails
         }
 
         bool pinkTrail = false;
-        Color trailColor = new Color(2.57f, 0.55f, 0.24f);
+        Color trailColor = new Color(2.42f, 1.25f, 0.12f);
         public override void SetEffectParameters(Effect effect)
         {
             visualizeTrail = false;

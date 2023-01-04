@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Trails
             Projectile.penetrate = -1;
             trailWidth = 45;
             trailPointLimit = 900;
-            trailMaxLength = 999;
+            trailMaxLength = 111;
             Projectile.hide = true;
             collisionPadding = 50;
            
