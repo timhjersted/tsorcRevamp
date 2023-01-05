@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (!NPC.downedBoss1)
             {
-                throwingKnifeDamage /= 2;
+                throwingKnifeDamage = 6;
             }
 
             if (Main.hardMode)

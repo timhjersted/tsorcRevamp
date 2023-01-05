@@ -159,6 +159,12 @@ namespace tsorcRevamp.UI
                 valid = false;
             }
 
+            //These *must* be used manually, so putting them in the bag automatically is annoying
+            if (item.type == ItemID.PotionOfReturn)
+            {
+                valid = false;
+            }
+
             return valid;
         }
 

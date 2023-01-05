@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs.Enemies
             int damage = 10;
             if (!NPC.downedBoss1)
             {
-                damage /= 2;
+                damage = 7;
             }
             tsorcRevampAIs.SimpleProjectile(NPC, ref spearTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), damage, 8, Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0), shootSound: SoundID.Item17);
 

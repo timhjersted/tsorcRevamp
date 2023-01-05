@@ -1528,6 +1528,12 @@ namespace tsorcRevamp
                 }
                 else
                 {
+                    if(eventNPCs == null || eventNPCs.Count == 0)
+                    {
+                        checkedBossResult = false;
+                        return false;
+                    }
+
                     for (int i = 0; i < eventNPCs.Count; i++)
                     {
                         NPC npc = new NPC();
@@ -1780,54 +1786,59 @@ namespace tsorcRevamp
             //Updates timer *after* running actions
             eventTimer++;
 
-            if (!bossEvent)
+            //Only perform these checks if an event has NPCs
+            //No NPC events must be ended by their actions
+            if (!noNPCEvent)
             {
-                //Check if every player on the livingPlayers list is still alive
-                for (int i = livingPlayers.Count - 1; i >= 0; i--)
+                if (!bossEvent)
                 {
-                    //If any player is alive, do nothing
-                    if (Main.player[livingPlayers[i]].active && Main.player[livingPlayers[i]].dead)
+                    //Check if every player on the livingPlayers list is still alive
+                    for (int i = livingPlayers.Count - 1; i >= 0; i--)
                     {
-                        livingPlayers.RemoveAt(i);
+                        //If any player is alive, do nothing
+                        if (Main.player[livingPlayers[i]].active && Main.player[livingPlayers[i]].dead)
+                        {
+                            livingPlayers.RemoveAt(i);
+                        }
                     }
-                }
 
-                //If none are, then the event is failed.
-                if (livingPlayers.Count == 0)
-                {
-                    EndEvent(false);
-                    return;
-                }
-            }
-
-            //If the NPC is dead or if the custom action set endEvent to true, remove it from active events
-            //If so, and this is marked as an event that should be saved, then do so by getting the key for this event and marking it as finished in ScriptedEventValues
-            //Otherwise add it back to InactiveEvents
-            bool oneAlive = false;
-            for (int i = 0; i < eventNPCs.Count; i++)
-            {
-                if (eventNPCs[i].killed == false)
-                {
-                    //If it's not marked as killed by a player, is indeed alive, and is the proper type then the event isn't over
-                    //(The type check is to ensure the index of the NPC was not replaced with another)
-                    if (eventNPCs[i].npc.active && eventNPCs[i].npc.type == eventNPCs[i].type)
+                    //If none are, then the event is failed.
+                    if (livingPlayers.Count == 0)
                     {
-                        oneAlive = true;
-                    }
-                    else
-                    {
-                        //If they aren't marked as killed by a player, but also are dead or the wrong type, then they despawned. End the event as failed.
                         EndEvent(false);
                         return;
                     }
                 }
-            }
 
-            //If none are alive, and none despawned, then they have all been killed by the player. End the event as a success.
-            if (!oneAlive)
-            {
-                EndEvent(true);
-            }
+                //If the NPC is dead or if the custom action set endEvent to true, remove it from active events
+                //If so, and this is marked as an event that should be saved, then do so by getting the key for this event and marking it as finished in ScriptedEventValues
+                //Otherwise add it back to InactiveEvents
+                bool oneAlive = false;
+                for (int i = 0; i < eventNPCs.Count; i++)
+                {
+                    if (eventNPCs[i].killed == false)
+                    {
+                        //If it's not marked as killed by a player, is indeed alive, and is the proper type then the event isn't over
+                        //(The type check is to ensure the index of the NPC was not replaced with another)
+                        if (eventNPCs[i].npc.active && eventNPCs[i].npc.type == eventNPCs[i].type)
+                        {
+                            oneAlive = true;
+                        }
+                        else
+                        {
+                            //If they aren't marked as killed by a player, but also are dead or the wrong type, then they despawned. End the event as failed.
+                            EndEvent(false);
+                            return;
+                        }
+                    }
+                }
+
+                //If none are alive, and none despawned, then they have all been killed by the player. End the event as a success.
+                if (!oneAlive)
+                {
+                    EndEvent(true);
+                }
+            }            
         }
 
         public void SpawnNPCs()
