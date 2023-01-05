@@ -728,6 +728,7 @@ namespace tsorcRevamp
                 #region Vanilla
                 {   ItemID.KingSlimeBossBag         ,   new List<IItemDropRule>()   {
                                                             ItemDropRule.Common(ItemID.SlimySaddle),
+                                                            ItemDropRule.Common(ItemID.Katana)
                                                         }                                                          },
                 {   ItemID.EyeOfCthulhuBossBag      ,   new List<IItemDropRule>()                           
                                                         {
