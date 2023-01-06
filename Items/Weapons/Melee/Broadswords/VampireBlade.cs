@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("5% lifesteal");
+            Tooltip.SetDefault("Heals 2 hp on hit");
         }
         public override void SetDefaults()
         {
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
         {
-            player.statLife += damage / 20;
+            player.statLife += 2;
             if (player.statLife > player.statLifeMax2)
             {
                 player.statLife = player.statLifeMax2;
@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void OnHitPvp(Player player, Player target, int damage, bool crit)
         {
-            player.statLife += damage / 20;
+            player.statLife += 2;
             if (player.statLife > player.statLifeMax2)
             {
                 player.statLife = player.statLifeMax2;
