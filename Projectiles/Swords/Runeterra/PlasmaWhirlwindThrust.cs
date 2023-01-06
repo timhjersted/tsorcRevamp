@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 {
 	public class PlasmaWhirlwindThrust : ModProjectile
 	{
-		public int steeltempesthittimer2 = 0;
+		public int steeltempesthittimer = 0;
 		public const int FadeInDuration = 7;
 		public const int FadeOutDuration = 4;
 
@@ -20,44 +20,46 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		{
 			get => (int)Projectile.ai[0];
 			set => Projectile.ai[0] = value;
-        }
-        public override void SetStaticDefaults()
+		}
+		public override void SetStaticDefaults()
         {
-            //Main.projFrames[Projectile.type] = 6;
-            DisplayName.SetDefault("Plasma Whirlwind Thrust");
+            Main.projFrames[Projectile.type] = 6;
+			DisplayName.SetDefault("Plasma Whirlwind Thrust");
         }
 
 
-        public override void SetDefaults()
+		public override void SetDefaults()
 		{
-			Projectile.Size = new Vector2(18); 
-			Projectile.aiStyle = -1;
+			Projectile.Size = new Vector2(100); 
+			Projectile.aiStyle = -1; 
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 			Projectile.tileCollide = false;
-			Projectile.scale = 1f;
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 20;
-            Projectile.DamageType = DamageClass.Melee;
+			Projectile.scale = 0.85f;
+			Projectile.DamageType = DamageClass.Melee;
 			Projectile.ownerHitCheck = true;
-			Projectile.extraUpdates = 1;
+			Projectile.usesLocalNPCImmunity = true;
+			Projectile.localNPCHitCooldown = 20;
+			Projectile.extraUpdates = 1; 
 			Projectile.timeLeft = 360;
 			Projectile.hide = true;
-		}
-        public override void OnSpawn(IEntitySource source)
+            Projectile.width = 140;
+            Projectile.height = 136;
+        }
+		public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
             Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 1.25f);
         }
-        public override void AI()
-		{
-			Player player = Main.player[Projectile.owner];
+		public override void AI()
+        {
+            Player player = Main.player[Projectile.owner];
 
-			Timer += 1;
+            Timer += 1;
 			if (Timer >= TotalDuration)
 			{
 				Projectile.Kill();
-				steeltempesthittimer2 = 0;
+				steeltempesthittimer = 0;
 				return;
 			}
 			else
@@ -74,13 +76,13 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 - MathHelper.PiOver4 * Projectile.spriteDirection;
 
 			SetVisualOffsets();
-            //Visuals();
-        }
+			Visuals();
+		}
 
 		private void SetVisualOffsets()
 		{
-			const int HalfSpriteWidth = 85 / 2;//needs adjustments for sprite
-			const int HalfSpriteHeight = 82 / 2;
+			const int HalfSpriteWidth = 164 / 2;
+			const int HalfSpriteHeight = 160 / 2;
 
 			int HalfProjWidth = Projectile.width / 2;
 			int HalfProjHeight = Projectile.height / 2;
@@ -106,22 +108,26 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 		{
 			Vector2 start = Projectile.Center;
-			Vector2 end = start + Projectile.velocity * 18f;
+			Vector2 end = start + Projectile.velocity * 6f;
 			float collisionPoint = 0f;
 			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
 		}
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-
-			if (steeltempesthittimer2 == 0)
+			if (steeltempesthittimer == 0)
             {
-                Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().steeltempest += 1;
-				steeltempesthittimer2 = 1;
+				Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().steeltempest += 1;
+				steeltempesthittimer = 1;
             }
         }
         private void Visuals()
         {
-            float frameSpeed = 5f;
+			Projectile.frame = (int)((Timer / 28f) * 6f);
+			if (Timer > 28f)
+			{
+				Projectile.frame = 0;
+			}
+            /*float frameSpeed = 7f;
 
             Projectile.frameCounter++;
 
@@ -134,8 +140,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
                 {
                     Projectile.frame = 0;
                 }
-            }
-            Lighting.AddLight(Projectile.Center, Color.LimeGreen.ToVector3() * 0.78f);
+            }*/
         }
     }
 }

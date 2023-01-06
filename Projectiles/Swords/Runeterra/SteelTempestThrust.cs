@@ -43,6 +43,8 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			Projectile.extraUpdates = 1; 
 			Projectile.timeLeft = 360;
 			Projectile.hide = true;
+			Projectile.width = 110;
+			Projectile.height = 104;
 		}
 		public override void OnSpawn(IEntitySource source)
         {
@@ -79,7 +81,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 
 		private void SetVisualOffsets()
 		{
-			const int HalfSpriteWidth = 110 / 2;
+			const int HalfSpriteWidth = 158 / 2;
 			const int HalfSpriteHeight = 148 / 2;
 
 			int HalfProjWidth = Projectile.width / 2;
