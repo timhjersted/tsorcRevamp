@@ -992,6 +992,12 @@ namespace tsorcRevamp
         public static EventActionStatus TwinEoWAction(ScriptedEvent thisEvent)
         {
             bool validPlayer = false;
+
+            if(thisEvent.eventTimer == 0)
+            {
+                NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)thisEvent.centerpoint.X - 100, (int)thisEvent.centerpoint.Y, NPCID.EaterofWorldsHead);
+                NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)thisEvent.centerpoint.X + 100, (int)thisEvent.centerpoint.Y, NPCID.EaterofWorldsHead);
+            }
             for(int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].ZoneCorrupt && !Main.player[i].dead)
@@ -1910,19 +1916,22 @@ namespace tsorcRevamp
             else
             {
                 tsorcScriptedEvents.QueuedEvents.Add(this);
-                if (eventNPCs.Count > 0)
+                if (!noNPCEvent)
                 {
-                    foreach (EventNPC thisEventNPC in eventNPCs)
+                    if (eventNPCs.Count > 0)
                     {
-                        NPC thisNPC = thisEventNPC.npc;
-                        if (thisNPC.active && thisNPC.type == thisEventNPC.type && !thisNPC.boss)
+                        foreach (EventNPC thisEventNPC in eventNPCs)
                         {
-                            UsefulFunctions.BroadcastText("Despawning NPC");
-                            thisNPC.active = false;
-                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, thisNPC.whoAmI);
-                            for (int i = 0; i < 60; i++)
+                            NPC thisNPC = thisEventNPC.npc;
+                            if (thisNPC.active && thisNPC.type == thisEventNPC.type && !thisNPC.boss)
                             {
-                                Dust.NewDustDirect(thisNPC.position, thisNPC.width, thisNPC.height, dustID, Main.rand.Next(-5, 5), Main.rand.Next(-12, 12), 150, default, 3f).noGravity = true;
+                                UsefulFunctions.BroadcastText("Despawning NPC");
+                                thisNPC.active = false;
+                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, thisNPC.whoAmI);
+                                for (int i = 0; i < 60; i++)
+                                {
+                                    Dust.NewDustDirect(thisNPC.position, thisNPC.width, thisNPC.height, dustID, Main.rand.Next(-5, 5), Main.rand.Next(-12, 12), 150, default, 3f).noGravity = true;
+                                }
                             }
                         }
                     }
