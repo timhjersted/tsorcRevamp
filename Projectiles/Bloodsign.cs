@@ -34,9 +34,12 @@ namespace tsorcRevamp.Projectiles
 
             var player = Main.player[Projectile.owner];
 
-            if ((Main.player[Projectile.owner].Distance(Projectile.Center) < 360f) && !player.dead) //kill when player returns.
+            if ((player.Distance(Projectile.Center) < 360f) && !player.dead) //kill when player returns.
             {
                 playerReturned = true;
+                if (player.HasBuff(ModContent.BuffType<Buffs.Hollowed>())) {
+                    player.ClearBuff(ModContent.BuffType<Buffs.Hollowed>());
+                }
             }
 
             if (playerReturned)

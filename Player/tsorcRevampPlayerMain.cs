@@ -288,25 +288,6 @@ namespace tsorcRevamp
             Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/you-died") with { Volume = 0.4f });
             
 
-            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.statLifeMax > 215)
-            {
-                Player.statLifeMax -= 20;
-            }
-            else if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.statLifeMax == 215)
-            {
-                Player.statLifeMax -= 15;
-            }
-            else if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.statLifeMax == 210)
-            {
-                Player.statLifeMax -= 10;
-            }
-            else if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.statLifeMax == 205)
-            {
-                Player.statLifeMax -= 5;
-            }
-
-
-
             bool onePlayerAlive = false;
             for (int i = 0; i < Main.maxPlayers; i++)
             {
@@ -1023,6 +1004,7 @@ namespace tsorcRevamp
         public override void OnRespawn(Player player)
         {
             player.statLife = player.statLifeMax2;
+            if (BearerOfTheCurse) player.AddBuff(ModContent.BuffType<Hollowed>(), 2);
             player.AddBuff(ModContent.BuffType<Invincible>(), 360);
             DeathText = PickDeathText();
         }
