@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 14, 0f, 0f, 170, default, 1f);
             }
             Projectile.alpha += 5;
-            if (Projectile.alpha > 210)
+            if (Projectile.alpha > 170)
             { //this isnt necessary, but ive found that getting hit by a fireball you thought disappeared is really annoying
                 Projectile.damage = 0;
             }
