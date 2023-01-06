@@ -1030,206 +1030,190 @@ namespace tsorcRevamp
         */
         public override void HandlePacket(BinaryReader reader, int whoAmI)
         {
-            int message = reader.ReadByte(); //(byte) 1;
-
-            //Sync Soul Slot
-            if (message == tsorcPacketID.SyncSoulSlot)
-            {
-                byte player = reader.ReadByte(); //player.whoAmI;
-                tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
-                modPlayer.SoulSlot.Item = ItemIO.Receive(reader);
-                if (Main.netMode == NetmodeID.Server)
-                {
-                    modPlayer.SendSingleItemPacket(1, modPlayer.SoulSlot.Item, -1, whoAmI);
+            int message = reader.ReadByte();
+            switch (message) {
+                case tsorcPacketID.SyncSoulSlot: {
+                    byte player = reader.ReadByte(); //player.whoAmI;
+                    tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
+                    modPlayer.SoulSlot.Item = ItemIO.Receive(reader);
+                    if (Main.netMode == NetmodeID.Server) {
+                        modPlayer.SendSingleItemPacket(1, modPlayer.SoulSlot.Item, -1, whoAmI);
+                    }
+                    break;
                 }
-            }
+                case tsorcPacketID.SyncEventDust: {
+                    if (Main.netMode != NetmodeID.Server) {
+                        tsorcScriptedEvents.NetworkEvents = new List<NetworkEvent>();
 
-            //Sync Event Dust
-            else if (message == tsorcPacketID.SyncEventDust)
-            {
-                if (Main.netMode != NetmodeID.Server)
-                {
-                    tsorcScriptedEvents.NetworkEvents = new List<NetworkEvent>();
+                        int count = reader.ReadInt32();
+                        /*
+                         * 
+                        eventPacket.WriteVector2(thisEvent.centerpoint);
+                        eventPacket.Write(thisEvent.radius);
+                        eventPacket.Write(thisEvent.dustID);
+                        eventPacket.Write(thisEvent.square);
+                        eventPacket.Write(thisEvent.queued);
+                         */
+                        for (int i = 0; i < count; i++) {
+                            Main.NewText("Recieved event:");
+                            Vector2 center = reader.ReadVector2();
+                            Main.NewText("center: " + center);
+                            float radius = reader.ReadSingle();
+                            Main.NewText("radius: " + radius);
+                            int dustID = reader.ReadInt32();
+                            Main.NewText("DustID: " + dustID);
+                            bool square = reader.ReadBoolean();
+                            Main.NewText("Square: " + square);
+                            bool queued = reader.ReadBoolean();
+                            Main.NewText("Queued: " + queued);
 
+                            if (queued) {
+                                Main.NewText("Recieved queued event");
+                            }
+                            if (center.Y < 2000) {
+                                Main.NewText("Recieved broken centerpoint " + center.Y);
+                            }
+
+                            tsorcScriptedEvents.NetworkEvents.Add(new NetworkEvent(center, radius, dustID, square, queued));
+                        }
+                    }
+                    break;
+                }
+
+                //Sync time change
+                case tsorcPacketID.SyncTimeChange: {
+                    if (Main.netMode == NetmodeID.Server) {
+                        Main.dayTime = reader.ReadBoolean();
+                        Main.time = reader.ReadInt32();
+
+                        if (Main.dayTime) {
+                            UsefulFunctions.BroadcastText("You shift time forward and a new day begins...", Color.Orange);
+                        }
+                        else {
+                            UsefulFunctions.BroadcastText("You shift time forward and a new night begins...", new Color(175, 75, 255));
+                        }
+
+                        //Sync it to clients
+                        NetMessage.SendData(MessageID.WorldData);
+                    }
+                    break;
+                }
+
+                case tsorcPacketID.DispelShadow: {
+                    int npcID = reader.ReadInt32();
+                    Main.npc[npcID].AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
+                    break;
+                }
+
+                case tsorcPacketID.DropSouls: {
+                    Vector2 position = reader.ReadVector2();
                     int count = reader.ReadInt32();
-                    /*
-                     * 
-                eventPacket.WriteVector2(thisEvent.centerpoint);
-                eventPacket.Write(thisEvent.radius);
-                eventPacket.Write(thisEvent.dustID);
-                eventPacket.Write(thisEvent.square);
-                eventPacket.Write(thisEvent.queued);
-                     */
-                    for (int i = 0; i < count; i++)
-                    {
-                        Main.NewText("Recieved event:");
-                        Vector2 center = reader.ReadVector2();
-                        Main.NewText("center: " + center);
-                        float radius = reader.ReadSingle();
-                        Main.NewText("radius: " + radius);
-                        int dustID = reader.ReadInt32();
-                        Main.NewText("DustID: " + dustID);
-                        bool square = reader.ReadBoolean();
-                        Main.NewText("Square: " + square);
-                        bool queued = reader.ReadBoolean();
-                        Main.NewText("Queued: " + queued);
-
-                        if (queued)
-                        {
-                            Main.NewText("Recieved queued event");
-                        }
-                        if (center.Y < 2000)
-                        {
-                            Main.NewText("Recieved broken centerpoint " + center.Y);
+                    if (Main.netMode == NetmodeID.Server) {
+                        UsefulFunctions.BroadcastText("Dropping " + count + "souls");
+                        //You can not drop items in a stack larger than 32766 in multiplayer, because the stack size gets converted to a short when syncing
+                        while (count > 32000) {
+                            //UsefulFunctions.ServerText("Dropping " + 32000 + "souls");
+                            Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position + Main.rand.NextVector2Circular(10, 10), ModContent.ItemType<Items.DarkSoul>(), 32000);
+                            count -= 32000;
                         }
 
-                        tsorcScriptedEvents.NetworkEvents.Add(new NetworkEvent(center, radius, dustID, square, queued));
+                        Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position, ModContent.ItemType<Items.DarkSoul>(), count);
+                        //UsefulFunctions.NewItemInstanced(position, new Vector2(1, 1), ModContent.ItemType<Items.DarkSoul>(), count);
                     }
+                    break;
                 }
-            }
 
-            //Sync time change
-            else if (message == tsorcPacketID.SyncTimeChange)
-            {
-                if (Main.netMode == NetmodeID.Server)
-                {
-                    Main.dayTime = reader.ReadBoolean();
-                    Main.time = reader.ReadInt32();
+                case tsorcPacketID.SyncPlayerDodgeroll: {
+                    //First, check whether this is a new packet originating from a client who just rolled, or a packet that has been bounced by the server to the other clients
+                    bool bounced = reader.ReadBoolean();
+                    byte who = reader.ReadByte();
 
-                    if (Main.dayTime)
-                    {
-                        UsefulFunctions.BroadcastText("You shift time forward and a new day begins...", Color.Orange);
-                    }
-                    else
-                    {
-                        UsefulFunctions.BroadcastText("You shift time forward and a new night begins...", new Color(175, 75, 255));
-                    }
+                    //If we're a client, go ahead and sync based on it. If we're the server, only sync and bounce it if this is a new packet
+                    if (Main.netMode == NetmodeID.MultiplayerClient || !bounced) {
+                        //Sync everything
+                        Player player = Main.player[who];
+                        tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                        modPlayer.forceDodgeroll = true;
+                        modPlayer.wantedDodgerollDir = reader.ReadSByte();
+                        player.velocity = reader.ReadVector2();
 
-                    //Sync it to clients
-                    NetMessage.SendData(MessageID.WorldData);
-                }
-            }
+                        //If we're the server in specific, bounce it to the other clients, passing "true" as the bounced flag to ensure this only happens once
+                        if (Main.netMode == NetmodeID.Server) {
+                            ModPacket rollPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                            rollPacket.Write(tsorcPacketID.SyncPlayerDodgeroll);
+                            rollPacket.Write(true);
+                            rollPacket.Write((byte)player.whoAmI);
+                            rollPacket.Write(modPlayer.wantedDodgerollDir);
+                            rollPacket.WriteVector2(player.velocity);
 
-            else if (message == tsorcPacketID.DispelShadow)
-            {
-                int npcID = reader.ReadInt32();
-                Main.npc[npcID].AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
-            }
-
-            else if (message == tsorcPacketID.DropSouls)
-            {
-                Vector2 position = reader.ReadVector2();
-                int count = reader.ReadInt32();
-                if (Main.netMode == NetmodeID.Server)
-                {
-                    UsefulFunctions.BroadcastText("Dropping " + count + "souls");
-                    //You can not drop items in a stack larger than 32766 in multiplayer, because the stack size gets converted to a short when syncing
-                    while (count > 32000)
-                    {
-                        //UsefulFunctions.ServerText("Dropping " + 32000 + "souls");
-                        Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position + Main.rand.NextVector2Circular(10, 10), ModContent.ItemType<Items.DarkSoul>(), 32000);
-                        count -= 32000;
-                    }
-
-                    Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position, ModContent.ItemType<Items.DarkSoul>(), count);
-                    //UsefulFunctions.NewItemInstanced(position, new Vector2(1, 1), ModContent.ItemType<Items.DarkSoul>(), count);
-                }
-            }
-
-            else if (message == tsorcPacketID.SyncPlayerDodgeroll)
-            {
-                //First, check whether this is a new packet originating from a client who just rolled, or a packet that has been bounced by the server to the other clients
-                bool bounced = reader.ReadBoolean();
-                byte who = reader.ReadByte();
-
-                //If we're a client, go ahead and sync based on it. If we're the server, only sync and bounce it if this is a new packet
-                if (Main.netMode == NetmodeID.MultiplayerClient || !bounced)
-                {
-                    //Sync everything
-                    Player player = Main.player[who];
-                    tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-                    modPlayer.forceDodgeroll = true;
-                    modPlayer.wantedDodgerollDir = reader.ReadSByte();
-                    player.velocity = reader.ReadVector2();
-
-                    //If we're the server in specific, bounce it to the other clients, passing "true" as the bounced flag to ensure this only happens once
-                    if (Main.netMode == NetmodeID.Server)
-                    {
-                        ModPacket rollPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                        rollPacket.Write(tsorcPacketID.SyncPlayerDodgeroll);
-                        rollPacket.Write(true);
-                        rollPacket.Write((byte)player.whoAmI);
-                        rollPacket.Write(modPlayer.wantedDodgerollDir);
-                        rollPacket.WriteVector2(player.velocity);
-
-                        //Iterate through all active clients and send it specifically to them
-                        for (int i = 0; i < Main.maxPlayers; i++)
-                        {
-                            if (Main.player[i].active && i != player.whoAmI)
-                            {
-                                rollPacket.Send(i);
+                            //Iterate through all active clients and send it specifically to them
+                            for (int i = 0; i < Main.maxPlayers; i++) {
+                                if (Main.player[i].active && i != player.whoAmI) {
+                                    rollPacket.Send(i);
+                                }
                             }
                         }
                     }
+                    break;
+                }
+                case tsorcPacketID.SyncBonfire: {
+                    if (tsorcRevampWorld.LitBonfireList == null) {
+                        tsorcRevampWorld.LitBonfireList = new List<Vector2>();
+                    }
+
+                    Vector2 bonfireLocation = reader.ReadVector2();
+                    if (!tsorcRevampWorld.LitBonfireList.Contains(bonfireLocation)) {
+                        tsorcRevampWorld.LitBonfireList.Add(bonfireLocation);
+                    }
+
+                    if (Main.netMode == NetmodeID.Server) {
+                        NetMessage.SendData(MessageID.WorldData);
+                    }
+                    break;
+                }
+                case tsorcPacketID.SpawnNPC: {
+                    int npcID = reader.ReadInt32();
+                    Vector2 npcLocation = reader.ReadVector2();
+
+                    int Spawned = NPC.NewNPC(null, (int)npcLocation.X, (int)npcLocation.Y, npcID, 0);
+                    if (Main.netMode == NetmodeID.Server) {
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
+                    }
+                    break;
+                }
+                case tsorcPacketID.SyncNPCExtras: {
+                    int npcIndex = reader.ReadInt32();
+                    Main.npc[npcIndex].lifeMax = reader.ReadInt32();
+                    Main.npc[npcIndex].defense = reader.ReadInt32();
+                    Main.npc[npcIndex].damage = reader.ReadInt32();
+                    Main.npc[npcIndex].value = reader.ReadInt32();
+                    break;
+                }
+                /**
+                //For synced random
+                //Recieves the seed from the server, and passes it off to UsefulFunctions.RecieveRandPacket which uses it to instantiate the new random generator
+                switch tsorcPacketID.SyncRandom:
+                {
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                    {
+                        byte seed = reader.ReadByte();
+                        Main.NewText("Client recieved seed:" + seed);
+                        UsefulFunctions.RecieveRandPacket(seed);
+                    }
+                }**/
+
+                default: {
+                    Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
+                    break;
                 }
             }
-            else if (message == tsorcPacketID.SyncBonfire)
-            {
-                if (tsorcRevampWorld.LitBonfireList == null)
-                {
-                    tsorcRevampWorld.LitBonfireList = new List<Vector2>();
-                }
-
-                Vector2 bonfireLocation = reader.ReadVector2();
-                if (!tsorcRevampWorld.LitBonfireList.Contains(bonfireLocation))
-                {
-                    tsorcRevampWorld.LitBonfireList.Add(bonfireLocation);
-                }
-
-                if (Main.netMode == NetmodeID.Server)
-                {
-                    NetMessage.SendData(MessageID.WorldData);
-                }
-
-            }
-            else if (message == tsorcPacketID.SpawnNPC)
-            {
-                int npcID = reader.ReadInt32();
-                Vector2 npcLocation = reader.ReadVector2();
-
-                int Spawned = NPC.NewNPC(null, (int)npcLocation.X, (int)npcLocation.Y, npcID, 0);
-                if (Main.netMode == NetmodeID.Server)
-                {
-                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-                }
-            }
-            else if (message == tsorcPacketID.SyncNPCExtras)
-            {
-                int npcIndex = reader.ReadInt32();
-                Main.npc[npcIndex].lifeMax = reader.ReadInt32();
-                Main.npc[npcIndex].defense = reader.ReadInt32();
-                Main.npc[npcIndex].damage = reader.ReadInt32();
-                Main.npc[npcIndex].value = reader.ReadInt32();
-            }
 
 
-            /**
-            //For synced random
-            //Recieves the seed from the server, and passes it off to UsefulFunctions.RecieveRandPacket which uses it to instantiate the new random generator
-            else if (message == tsorcPacketID.SyncRandom)
-            {
-                if (Main.netMode == NetmodeID.MultiplayerClient)
-                {
-                    byte seed = reader.ReadByte();
-                    Main.NewText("Client recieved seed:" + seed);
-                    UsefulFunctions.RecieveRandPacket(seed);
-                }
-            }**/
+            
 
-            else
-            {
-                Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
-            }
+
+
+
         }
 
         public override object Call(params object[] args)
@@ -2204,6 +2188,7 @@ namespace tsorcRevamp
         public const byte SyncBonfire = 7;
         public const byte SpawnNPC = 8;
         public const byte SyncNPCExtras = 9;
+        public const byte SyncMasterScroll = 10;
     }
 
     //config moved to separate file
