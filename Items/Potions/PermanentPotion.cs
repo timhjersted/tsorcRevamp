@@ -963,6 +963,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.statDefense += (int)ApplyScaling(15);
             player.GetDamage(DamageClass.Generic) += ApplyScaling(0.1f);
             player.GetAttackSpeed(DamageClass.Generic) += ApplyScaling(0.15f);
+            player.GetAttackSpeed(DamageClass.Melee) += ApplyScaling(0.15f);
         }
     }
 
@@ -972,6 +973,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int PermanentID => 52;
         public override int BuffType => ModContent.BuffType<SoulSiphon>();
         public override bool CanScale => true;
+        public override int ScalingFactor => 15;
 
         public override void SetStaticDefaults()
         {
@@ -1024,7 +1026,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => BuffID.WellFed;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetWellFed;
         public override bool CanScale => true;
-        public override int ScalingFactor => 120; //Tea is made of 1 water bottle and you get a lot of it in the map
         public override float EffectPotency {
             get {
                 float potency = (float)ConsumedAmount / (float)ScalingFactor;

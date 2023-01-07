@@ -26,8 +26,8 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             SoundEngine.PlaySound(SoundID.DD2_BookStaffTwisterLoop, Projectile.Center);
-            Player owner = Main.player[Projectile.owner];
-            Projectile.damage *= 1 + (int)owner.GetTotalAttackSpeed(DamageClass.Melee);
+            Player player = Main.player[Projectile.owner];
+            Projectile.damage *= (int)(player.GetWeaponDamage(player.HeldItem) * (1.5f + player.GetTotalAttackSpeed(DamageClass.Melee))); //scales with attack speed since higher melee speed increases the travelling speed, therefore giving it less time to get hits off
         }
         public override void Kill(int timeLeft)
         {

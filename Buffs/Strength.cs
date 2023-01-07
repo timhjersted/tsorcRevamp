@@ -18,6 +18,7 @@ namespace tsorcRevamp.Buffs
             player.statDefense += 15;
             player.GetDamage(DamageClass.Generic) += 0.1f;
             player.GetAttackSpeed(DamageClass.Generic) += 0.15f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.15f;
         }
     }
 }

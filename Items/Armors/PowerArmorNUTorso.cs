@@ -10,7 +10,8 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("17% Increased Ranged & Magic Damage" +
+            Tooltip.SetDefault("17% increased ranged damage" +
+                "\n9% increased magic damage" +
                 "\n+80 mana, -10% mana cost" +
                 "\nA powerful armor forged by the god of chaos." +
                 "\nSet Bonus: +20% attack speed, +10 life regen/20 in water");
@@ -29,7 +30,7 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.GetDamage(DamageClass.Ranged) += 0.17f;
-            player.GetDamage(DamageClass.Magic) += 0.17f;
+            player.GetDamage(DamageClass.Magic) += 0.09f;
             player.manaCost -= 0.1f;
             player.statManaMax2 += 80;
         }

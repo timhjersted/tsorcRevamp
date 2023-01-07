@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Potions
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Increases damage by 10%," +
-                             "\ndefense by 15, and all attack speed by 15%" +
+                             "\ndefense by 15, and all attack speed by 15%(doubled for melee)" +
                              "\nDoes not stack with Demon Drug, Armor Drug, or Battlefront Potions.");
         }
 

@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 
 		public override void SetDefaults()
 		{
-			Projectile.Size = new Vector2(100); 
+			Projectile.Size = new Vector2(18); 
 			Projectile.aiStyle = -1; 
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
@@ -49,7 +49,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 1.25f);
+            Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 1.5f);
         }
 		public override void AI()
         {
@@ -108,7 +108,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 		{
 			Vector2 start = Projectile.Center;
-			Vector2 end = start + Projectile.velocity * 6f;
+			Vector2 end = start + Projectile.velocity * 12f;
 			float collisionPoint = 0f;
 			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
 		}

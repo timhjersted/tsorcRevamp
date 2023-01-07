@@ -15,15 +15,15 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         {
             DisplayName.SetDefault("Steel Tempest");
             Tooltip.SetDefault("Doubled crit chance scaling" +
-                "\nThrusts on right click dealing 125% damage, cooldown scales down with attack speed" +
+                "\nThrusts on right click dealing 150% damage, cooldown scales down with attack speed" +
                 "\nGain a stack of Steel Tempest upon thrusting any enemy" +
-                "\nUpon reaching 2 stacks, the next right click will release a tornado dealing double damage");
+                "\nUpon reaching 2 stacks, the next right click will release a tornado dealing 250% damage");
         }
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Green;
             Item.value = Item.buyPrice(0, 10, 0, 0);
-            Item.damage = 20;
+            Item.damage = 18;
             Item.crit = 6;
             Item.width = 86;
             Item.height = 82;

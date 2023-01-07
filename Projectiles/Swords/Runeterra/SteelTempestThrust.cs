@@ -49,7 +49,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 1.25f);
+            Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 1.5f);
         }
 		public override void AI()
         {
