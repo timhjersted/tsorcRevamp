@@ -34,8 +34,7 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateArmorSet(Player player)
         {
             player.endurance += 0.1f;
-            player.hasPaladinShield = true;
-            player.AddBuff(BuffID.PaladinsShield, 2);
+            player.defendedByPaladin = true;
         }
                 public override void AddRecipes()
                 {
