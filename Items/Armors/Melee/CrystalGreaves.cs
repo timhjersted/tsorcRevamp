@@ -10,12 +10,12 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Dazzling armor cut from crystal." +
-                "\nIncreases movement speed by 28%");
+                "\nIncreases movement speed by 21%");
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.28f;
+            player.moveSpeed += 0.21f;
         }
 
         public override void SetDefaults()

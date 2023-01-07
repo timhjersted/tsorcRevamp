@@ -35,13 +35,14 @@ namespace tsorcRevamp.Items.Armors
         {
             player.endurance += 0.1f;
             player.hasPaladinShield = true;
+            player.AddBuff(BuffID.PaladinsShield, 2);
         }
                 public override void AddRecipes()
                 {
                     Recipe recipe = CreateRecipe();
                     recipe.AddIngredient(ItemID.PlatinumChainmail, 1);
                     recipe.AddIngredient(ItemID.BeeWax, 3);
-                     recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
+                    recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
                     recipe.AddTile(TileID.DemonAltar);
 
                     recipe.Register();

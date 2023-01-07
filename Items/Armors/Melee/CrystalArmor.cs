@@ -10,11 +10,11 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Crystal armor vibrates with a mysterious energy" + 
-                "\nIncreases melee critical strike chance by 29%");
+                "\nIncreases melee critical strike chance by 26%");
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += 29f;
+            player.GetCritChance(DamageClass.Melee) += 26f;
         }
         public override void SetDefaults()
         {
