@@ -1289,26 +1289,26 @@ namespace tsorcRevamp
             int i = 0;
             foreach (NetworkEvent thisEvent in NetworkEvents)
             {
-                UsefulFunctions.BroadcastText("Sending event:");
+                //UsefulFunctions.BroadcastText("Sending event:");
                 i++;
                 eventPacket.WriteVector2(thisEvent.centerpoint);
-                UsefulFunctions.BroadcastText("Centerpoint: " + thisEvent.centerpoint);
+                //UsefulFunctions.BroadcastText("Centerpoint: " + thisEvent.centerpoint);
                 eventPacket.Write((float)thisEvent.radius);
-                UsefulFunctions.BroadcastText("Radius: " + thisEvent.radius);
+                //UsefulFunctions.BroadcastText("Radius: " + thisEvent.radius);
                 eventPacket.Write((int)thisEvent.dustID);
-                UsefulFunctions.BroadcastText("DustID:" + thisEvent.dustID);
+                //UsefulFunctions.BroadcastText("DustID:" + thisEvent.dustID);
                 eventPacket.Write(thisEvent.square);
                 //UsefulFunctions.BroadcastText("Square:" + thisEvent.square);
                 eventPacket.Write(thisEvent.queued);
-                UsefulFunctions.BroadcastText("Queued:" + thisEvent.queued);
+                //UsefulFunctions.BroadcastText("Queued:" + thisEvent.queued);
 
                 if (thisEvent.queued)
                 {
-                    UsefulFunctions.BroadcastText("Sending queued event");
+                    //UsefulFunctions.BroadcastText("Sending queued event");
                 }
                 if (thisEvent.centerpoint.Y < 2000)
                 {
-                    UsefulFunctions.BroadcastText("Sending broken centerpoint y " + thisEvent.centerpoint.Y);
+                    //UsefulFunctions.BroadcastText("Sending broken centerpoint y " + thisEvent.centerpoint.Y);
                 }
             }
 

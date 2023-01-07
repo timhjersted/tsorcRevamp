@@ -1055,23 +1055,23 @@ namespace tsorcRevamp
                         eventPacket.Write(thisEvent.queued);
                          */
                         for (int i = 0; i < count; i++) {
-                            Main.NewText("Recieved event:");
+                            //Main.NewText("Recieved event:");
                             Vector2 center = reader.ReadVector2();
-                            Main.NewText("center: " + center);
+                            //Main.NewText("center: " + center);
                             float radius = reader.ReadSingle();
-                            Main.NewText("radius: " + radius);
+                            //Main.NewText("radius: " + radius);
                             int dustID = reader.ReadInt32();
-                            Main.NewText("DustID: " + dustID);
+                            //Main.NewText("DustID: " + dustID);
                             bool square = reader.ReadBoolean();
-                            Main.NewText("Square: " + square);
+                            //Main.NewText("Square: " + square);
                             bool queued = reader.ReadBoolean();
-                            Main.NewText("Queued: " + queued);
+                            //Main.NewText("Queued: " + queued);
 
                             if (queued) {
-                                Main.NewText("Recieved queued event");
+                               //Main.NewText("Recieved queued event");
                             }
                             if (center.Y < 2000) {
-                                Main.NewText("Recieved broken centerpoint " + center.Y);
+                                //Main.NewText("Recieved broken centerpoint " + center.Y);
                             }
 
                             tsorcScriptedEvents.NetworkEvents.Add(new NetworkEvent(center, radius, dustID, square, queued));
