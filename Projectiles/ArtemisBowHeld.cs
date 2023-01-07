@@ -18,7 +18,8 @@ namespace tsorcRevamp.Projectiles
             minVelocity = bow.shootSpeed / 10;
             maxVelocity = bow.shootSpeed;
             chargeRate = (1f / bow.useTime);
-            holdoutOffset = 20;
+            DrawOffsetX = -50;
+            DrawOriginOffsetY = -35;
             Main.projFrames[Projectile.type] = 7;
         }
 

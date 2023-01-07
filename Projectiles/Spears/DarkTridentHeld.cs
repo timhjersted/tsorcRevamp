@@ -21,7 +21,6 @@ namespace tsorcRevamp.Projectiles.Spears
             minVelocity = bow.shootSpeed / 10;
             maxVelocity = bow.shootSpeed;
             chargeRate = (1f / 48f);
-            holdoutOffset = 1;
             Main.projFrames[Projectile.type] = 1;
             soundtype = SoundID.Item1;
         }
@@ -159,7 +158,7 @@ namespace tsorcRevamp.Projectiles.Spears
                 cropped, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
-            //DrawPoints();
+            DrawPoints();
         }
     }
 }

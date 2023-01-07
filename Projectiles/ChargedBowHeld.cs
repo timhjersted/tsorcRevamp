@@ -103,7 +103,7 @@ namespace tsorcRevamp.Projectiles {
 			Projectile.timeLeft = 2;
 			Player player = Main.player[Projectile.owner];
 			Vector2 playerHandPos = player.RotatedRelativePoint(player.MountedCenter);
-			Projectile.Center = new Vector2(playerHandPos.X - player.width, playerHandPos.Y);
+			Projectile.Center = new Vector2(playerHandPos.X, playerHandPos.Y);
 			Projectile.rotation = Projectile.velocity.ToRotation() + (float)Math.PI / 2f;
 			player.heldProj = Projectile.whoAmI;
 			player.itemRotation = (Projectile.velocity * Projectile.direction).ToRotation();
@@ -117,7 +117,7 @@ namespace tsorcRevamp.Projectiles {
 				if (aimVector != Projectile.velocity) {
 					Projectile.netUpdate = true; //update the bow visually to other players when we change aim
 				}
-				Projectile.velocity = aimVector * holdoutOffset;
+				Projectile.velocity = aimVector;
 			}
 			Projectile.spriteDirection = Projectile.direction;
 		}
@@ -131,7 +131,7 @@ namespace tsorcRevamp.Projectiles {
             //forces the projectile to be drawn after liquids, and incidentally wires
             if (!Main.instance.DrawCacheProjsOverWiresUI.Contains(Projectile.whoAmI)) Main.instance.DrawCacheProjsOverWiresUI.Add(Projectile.whoAmI);
 
-            int maxPoints = 75;
+            int maxPoints = 72;
             int points = (int)(charge * maxPoints) + 1;
             float opacity = (float)ModContent.GetInstance<tsorcRevampConfig>().ChargeCircleOpacity / 200;
             if (pointTexture == null || pointTexture.IsDisposed) pointTexture = ModContent.Request<Texture2D>("tsorcRevamp/Textures/ChargePoint", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
