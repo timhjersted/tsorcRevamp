@@ -23,12 +23,12 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         {
             Item.rare = ItemRarityID.Green;
             Item.value = Item.buyPrice(0, 10, 0, 0);
-            Item.damage = 18;
+            Item.damage = 20;
             Item.crit = 6;
             Item.width = 86;
             Item.height = 82;
             Item.scale = 0.7f;
-            Item.knockBack = 1f;
+            Item.knockBack = 3.5f;
             Item.autoReuse = true;
             Item.maxStack = 1;
             Item.DamageType = DamageClass.Melee;
@@ -95,11 +95,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 
             if (player.GetModPlayer<tsorcRevampPlayer>().steeltempest < 2)
             {
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<SteelTempestThrust>(), damage, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<SteelTempestThrust>(), damage, 7, player.whoAmI);
             }
             else if (player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2)
             {
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<SteelTempestTornado>(), damage, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<SteelTempestTornado>(), damage, 7, player.whoAmI);
                 player.GetModPlayer<tsorcRevampPlayer>().steeltempest = 0;
             }
             return false;

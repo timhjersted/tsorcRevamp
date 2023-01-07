@@ -700,8 +700,7 @@ namespace tsorcRevamp
                 {   ItemID.SkeletronBossBag         ,   new List<int>()                     },
                 {   ItemID.WallOfFleshBossBag       ,   new List<int>()
                                                         {
-                                                            ItemID.FireWhip,
-                                                            ItemID.Pwnhammer
+                                                            ItemID.FireWhip
                                                         }                                   },
                 {   ItemID.DestroyerBossBag         ,   new List<int>()                     },
                 {   ItemID.TwinsBossBag             ,   new List<int>()                     },

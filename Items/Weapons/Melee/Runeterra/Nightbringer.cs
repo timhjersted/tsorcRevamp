@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Item.crit = 6;
             Item.width = 52;
             Item.height = 54;
-            Item.knockBack = 1f;
+            Item.knockBack = 5f;
             Item.autoReuse = true;
             Item.maxStack = 1;
             Item.scale = 0.9f;
@@ -115,11 +115,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 
             if (player.GetModPlayer<tsorcRevampPlayer>().steeltempest < 2)
             {
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<NightbringerThrust>(), damage, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<NightbringerThrust>(), damage, 10, player.whoAmI);
             }
             else if (player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2)
             {
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<NightbringerTornado>(), damage, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<NightbringerTornado>(), damage, 10, player.whoAmI);
                 player.GetModPlayer<tsorcRevampPlayer>().steeltempest = 0;
             }
             return false;

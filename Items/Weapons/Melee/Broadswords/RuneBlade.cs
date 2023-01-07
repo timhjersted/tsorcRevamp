@@ -34,26 +34,17 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             Item.shootSpeed = 7.5f;
         }
-
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-            switch (shootstacks) {
-                case < 3: {
-                    type = ModContent.ProjectileType<Projectiles.Nothing>();
-                    break;
-                }
-                default: {
-                    type = ProjectileID.DD2SquireSonicBoom;
-                    shootstacks = 0;
-                    break;
-                }
+        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        {
+            shootstacks += 1;
+            if (shootstacks >= 3)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Main.MouseWorld - player.Center, ProjectileID.DD2SquireSonicBoom, damage * 3, knockBack, Main.myPlayer);
+                shootstacks = 0;
             }
-            Projectile.NewProjectile(source, position, velocity, type, damage, knockback);
-            return false;
         }
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
         {
-            shootstacks += 1;
-            //todo add mod NPCs to this list
             if (target.type == NPCID.DarkCaster
                 || target.type == NPCID.GoblinSorcerer
                 || target.type == ModContent.NPCType<UndeadCaster>()
