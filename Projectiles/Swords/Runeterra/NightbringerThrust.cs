@@ -81,8 +81,8 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 
 		private void SetVisualOffsets()
 		{
-			const int HalfSpriteWidth = 54 / 2;//needs adjustments for sprite
-			const int HalfSpriteHeight = 52 / 2;
+			const int HalfSpriteWidth = 94 / 2;//needs adjustments for sprite
+			const int HalfSpriteHeight = 110 / 2;
 
 			int HalfProjWidth = Projectile.width / 2;
 			int HalfProjHeight = Projectile.height / 2;

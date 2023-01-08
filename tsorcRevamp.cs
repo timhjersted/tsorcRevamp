@@ -231,7 +231,7 @@ namespace tsorcRevamp
                 213, 214, 353, 365, 366, //all ropes and chain
                 48, 232, 210, 484, //spikes, jungle spikes, land mines, rolling cactus
                 105, 337, 531, 137, 138, 141, 216, 411, 441, 468, //all statues, traps, boulders, explosives, party rockets, detonator, trapped chests
-                130, 131, 379, 546, 557, //toggled stone blocks, bubbles, grates open and closed
+                130, 131, 379, 546, 557, 408, //toggled stone blocks, bubbles, grates open and closed, Luminite
                 132, 135, 136, 143, 144, 419, 420, 421, 422, 423, 424, 425, 428, 429, 440, 442, // ALL (other) WIRING
                 ItemID.RedLight, ItemID.GreenLight,
             };
@@ -251,7 +251,7 @@ namespace tsorcRevamp
                 33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
                 128, 269, 470, 378, 240, 560, //all mannequins, target dummy, trophies
-                162, 320, 380, 624, //thin ice (breakable kind), seaweed/herb planters, abigail's flower
+                162, 127, 320, 380, 624, //thin ice (breakable kind), Ice Rod's ice, seaweed/herb planters, abigail's flower
                 27, 28, 51, 52, 62, 115, 205, 382, 528, //sunflower, pots, cobwebs, all cuttable vines
                 31, 32, 69, 352, 53, 112, 116, 234, //orbs/hearts, all thorns, all sands
                 165, 178, 185, 186, 187, 233, 530, 2311, 238, //all ambient objects (background breakables), QB Larva, Plantera Bulb
