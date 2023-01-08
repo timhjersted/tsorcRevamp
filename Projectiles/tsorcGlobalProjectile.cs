@@ -36,6 +36,7 @@ namespace tsorcRevamp.Projectiles
 
                 if (projectile.type == ProjectileID.FrostBlastFriendly)
                 {
+                    
                     projectile.penetrate = 6;
                     projectile.usesLocalNPCImmunity = true;
                     projectile.localNPCHitCooldown = 10;
@@ -141,7 +142,10 @@ namespace tsorcRevamp.Projectiles
                 }
                 if (projectile.type == ProjectileID.PinkLaser)
                 {
-                    Projectile.NewProjectile(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -2, projectile.owner);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -2, projectile.owner);
+                    }
                     projectile.Kill();
                 }
             }

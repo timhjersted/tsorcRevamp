@@ -49,15 +49,15 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            ShadowOrbDamage = ShadowOrbDamage / 2;
-            CrystalShardsDamage = CrystalShardsDamage / 2;
-            DeathBallDamage = DeathBallDamage / 2;
-            BlackFireDamage = BlackFireDamage / 2;
-            StardustLaserDamage = StardustLaserDamage / 2;
-            AntiMatterBlastDamage = AntiMatterBlastDamage / 2;
-            SolarDetonationDamage = SolarDetonationDamage / 2;
-            LightningStrikeDamage = LightningStrikeDamage / 2;
-            DarkLaserDamage = DarkLaserDamage / 2;
+            ShadowOrbDamage /= 2;
+            CrystalShardsDamage /= 2;
+            DeathBallDamage /= 2;
+            BlackFireDamage /= 2;
+            StardustLaserDamage /= 2;
+            AntiMatterBlastDamage /= 2;
+            SolarDetonationDamage /= 2;
+            LightningStrikeDamage /= 2;
+            DarkLaserDamage /= 2;
         }        
 
         public float AttackMode

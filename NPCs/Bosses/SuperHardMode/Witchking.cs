@@ -17,7 +17,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     {
         float customAi1;
         float customspawn1;
-        int chargeDamage = 0;
         bool chargeDamageFlag = false;
 
         public override void SetDefaults()

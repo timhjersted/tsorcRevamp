@@ -245,7 +245,7 @@ namespace tsorcRevamp.Projectiles
             //Apply the shader, caching it as well
             //if (laserShaderData == null)
             {
-                laserShaderData = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/GenericLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                laserShaderData = ModContent.Request<Effect>("tsorcRevamp/Effects/GenericLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
             Texture2D texture = tsorcRevamp.tNoiseTexture1;

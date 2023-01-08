@@ -44,7 +44,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             DisplayName.SetDefault("Wyvern Mage");
         }
 
-        bool OptionSpawned = false;
         int frozenSawDamage = 60;
         int lightningDamage = 80;
        

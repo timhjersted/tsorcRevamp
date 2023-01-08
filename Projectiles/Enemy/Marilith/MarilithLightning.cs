@@ -111,7 +111,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                                 {
 
                                     Vector2 diff = branches[i][j + 1] - branches[i][j];
-                                    diff = diff / dustCount;
+                                    diff /= dustCount;
                                     float lerpPercent = 0.8f * ((float)j / ((float)branches[i].Count - 1f));
 
                                     float scale = 1.7f;
@@ -360,7 +360,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             //Apply the shader, caching it as well
             if(data == null)
             {
-                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/LightningShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "LightningShaderPass");
+                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/LightningShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "LightningShaderPass");
             }
 
             //The shader uses "saturation" variable to tell what percent of the lightning to draw, from 0 to 1

@@ -32,12 +32,12 @@ namespace tsorcRevamp.Projectiles.Trails
             trailCollision = false;
             trailYOffset = 50;
             trailMaxLength = 400;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/IchorMissileExhaust", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/IchorMissileExhaust", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         public override void SetEffectParameters(Effect effect)
         {
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/IchorMissileExhaust", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/IchorMissileExhaust", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture1);
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);

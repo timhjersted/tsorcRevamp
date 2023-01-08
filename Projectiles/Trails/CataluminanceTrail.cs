@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Trails
            
             trailCollision = true;
             collisionFrequency = 5;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         float timer = 0;
@@ -83,12 +83,13 @@ namespace tsorcRevamp.Projectiles.Trails
 
         bool pinkTrail = false;
         Color trailColor = new Color(0.2f, 0.7f, 1f);
+        float timeFactor = 0;
         public override void SetEffectParameters(Effect effect)
         {
             visualizeTrail = false;
             collisionPadding = 8;
             trailWidth = 100;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
             //I do it like this so it retains its color state even if the host NPC dies or despawns
             if (hostNPC != null && hostNPC.active && hostNPC.life < hostNPC.lifeMax / 2f && transitionTimer <= 120)
@@ -96,10 +97,17 @@ namespace tsorcRevamp.Projectiles.Trails
                 trailColor = Color.Lerp(new Color(0.2f, 0.7f, 1f), new Color(1f, 0.7f, 0.85f), transitionTimer / 120);
             }
 
+            timeFactor++;
+
+            //Shifts its color slightly over time
+            Vector3 hslColor = Main.rgbToHsl(trailColor);
+            hslColor.X += 0.03f * (float)Math.Cos(timeFactor / 25f);
+            Color rgbColor = Main.hslToRgb(hslColor);
+
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-            effect.Parameters["shaderColor"].SetValue(trailColor.ToVector4());
+            effect.Parameters["shaderColor"].SetValue(rgbColor.ToVector4());
             effect.Parameters["length"].SetValue(trailCurrentLength);
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }

@@ -55,11 +55,6 @@ namespace tsorcRevamp.Projectiles
             result.A = 0;
 
             return result;
-            //Color value = Main.hslToRgb((progress * 1.6f - Main.GlobalTimeWrappedHourly) % 1f, 1f, 0.5f);
-            //Color result = Color.Lerp(Color.White, value, Utils.GetLerpValue(-0.2f, 0.5f, progress, clamped: true)) * (1f - Utils.GetLerpValue(0f, 0.98f, progress));
-
-            result.A = 0;
-            return result;
         }
 
         public override bool PreDraw(ref Color lightColor)

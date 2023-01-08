@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles.Trails
            
             trailCollision = true;
             collisionFrequency = 5;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         float timer = 0;
@@ -86,7 +86,7 @@ namespace tsorcRevamp.Projectiles.Trails
             visualizeTrail = false;
             collisionPadding = 8;
             trailWidth = 20;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
             //I do it like this so it retains its color state even if the host NPC dies or despawns
             if (hostNPC != null && hostNPC.active && hostNPC.life < hostNPC.lifeMax / 2f && transitionTimer <= 120)

@@ -66,8 +66,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 int DustType = 5;
                 int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustType);
                 Dust dust = Main.dust[dustIndex];
-                dust.velocity.X = dust.velocity.X + Main.rand.Next(-50, 51) * 0.04f;
-                dust.velocity.Y = dust.velocity.Y + Main.rand.Next(-50, 51) * 0.04f;
+                dust.velocity.X += Main.rand.Next(-50, 51) * 0.04f;
+                dust.velocity.Y += Main.rand.Next(-50, 51) * 0.04f;
                 dust.scale *= .8f + Main.rand.Next(-30, 31) * 0.01f;
                 dust.noGravity = true;
             }
@@ -416,14 +416,14 @@ namespace tsorcRevamp.NPCs.Enemies
                     int num9 = Dust.NewDust(NPC.position, NPC.width, NPC.height, 6, num6, num7, 200, default(Color), 2f);
                     Main.dust[num9].noGravity = true; // floating
                     Dust expr_19EE_cp_0 = Main.dust[num9]; // make a dust handle?
-                    expr_19EE_cp_0.velocity.X = expr_19EE_cp_0.velocity.X * 2f; // faster in x direction
+                    expr_19EE_cp_0.velocity.X *= 2f; // faster in x direction
                 }
                 for (int k = 0; k < 20; k++) // more dust effects at old position
                 {
                     int num10 = Dust.NewDust(NPC.oldPos[2], NPC.width, NPC.height, 6, -num6, -num7, 200, default(Color), 2f);
                     Main.dust[num10].noGravity = true;
                     Dust expr_1A6F_cp_0 = Main.dust[num10];
-                    expr_1A6F_cp_0.velocity.X = expr_1A6F_cp_0.velocity.X * 2f;
+                    expr_1A6F_cp_0.velocity.X *= 2f;
                 }
             }
 

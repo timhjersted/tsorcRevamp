@@ -67,7 +67,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         //Used by moves to keep track of how long they've been going for
-        public int MoveCounter
+        public int MoveTimer
         {
             get => (int)NPC.ai[1];
             set => NPC.ai[1] = value;
@@ -84,10 +84,14 @@ namespace tsorcRevamp.NPCs.Bosses
             get => Main.player[NPC.target];
         }
 
-        int MoveTimer = 0;
         int finalStandTimer = 0;
         public override void AI()
         {
+            if (Main.netMode == NetmodeID.Server && Main.GameUpdateCount % 30 == 2)
+            {
+                //NPC.netUpdate = true;
+            }
+
             if (NPC.realLife < 0)
             {
                 int? catID = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Cataluminance>());
@@ -95,6 +99,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (catID != null)
                 {
                     NPC.realLife = catID.Value;
+                    NPC.netUpdate = true;
                 }
             }
 
@@ -118,6 +123,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (NPC.Distance(target.Center) > 4000)
             {
                 NPC.Center = target.Center + new Vector2(0, 1000);
+                NPC.netUpdate = true;
                 UsefulFunctions.BroadcastText("Spazmatism Closes In...");
             }
 
@@ -197,6 +203,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (MoveTimer % 70 == 30)
                 {
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 21);
+                    NPC.netUpdate = true;
                 }
                 NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -208,7 +215,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 UsefulFunctions.SmoothHoming(NPC, target.Center, 0.05f, 15, target.velocity, false);
 
-                if(MoveTimer > 800)
+                if (MoveTimer > 800)
                 {
                     return;
                 }
@@ -223,13 +230,19 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (MoveTimer % 110 < 30)
                 {
                     NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-                    UsefulFunctions.DustRing(NPC.Center, (90 - MoveTimer % 90) * 20, DustID.CursedTorch, 100, 10);
+                    UsefulFunctions.DustRing(NPC.Center, (110 - MoveTimer % 110) * 20, DustID.CursedTorch, 100, 10);
                 }
                 if (MoveTimer % 110 == 30)
                 {
+                    if(Main.netMode == NetmodeID.MultiplayerClient)
+                    {
+                        Main.NewText("Client: Charging");
+                    }
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15);
+                    NPC.netUpdate = true;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
+                        UsefulFunctions.BroadcastText("Server: Charging");
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 5), ProjectileID.CursedFlameHostile, EyeFireDamage, 0.5f, Main.myPlayer);
                     }
                 }
@@ -313,7 +326,6 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             MoveTimer = 0;
-            MoveCounter = 0;
         }
         float rotationVelocity;
         void Transform()

@@ -61,7 +61,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         int CrystalFireDamage = 35;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            CrystalFireDamage = CrystalFireDamage / 2;
+            CrystalFireDamage /= 2;
         }
 
         public override void AI()

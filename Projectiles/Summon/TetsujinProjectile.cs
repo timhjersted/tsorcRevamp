@@ -258,7 +258,7 @@ namespace tsorcRevamp.Projectiles.Summon
 				angle = (Main.GameUpdateCount / 120f) + (int)(Main.GameUpdateCount / 480f) + MathHelper.TwoPi * (Projectile.ai[0] / owner.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.TetsujinProjectile>()]);
 
 			}
-			targetCenter = targetCenter + new Vector2(300, 0).RotatedBy(angle);
+			targetCenter += new Vector2(300, 0).RotatedBy(angle);
 
 			// friendly needs to be set to true so the minion can deal contact damage
 			// friendly needs to be set to false so it doesn't damage things like target dummies while idling

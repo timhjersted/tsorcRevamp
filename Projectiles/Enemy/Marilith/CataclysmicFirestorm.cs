@@ -111,7 +111,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             //Apply the shader, caching it as well
             //if (data == null)
             {
-                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/FireWaveShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "FireWaveShaderPass");
+                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/FireWaveShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "FireWaveShaderPass");
             }
 
             //Pass the size parameter in through the "saturation" variable, because there isn't a "size" one

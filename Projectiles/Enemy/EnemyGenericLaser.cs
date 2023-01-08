@@ -280,7 +280,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             //If no custom shader has been given then load the generic one
             //if (LaserShader == null)
             {
-                LaserShader = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/GenericLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                LaserShader = ModContent.Request<Effect>("tsorcRevamp/Effects/GenericLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
             //Gives the laser its 'flowing' effect
@@ -419,7 +419,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             //Laser tail
             i -= (LaserTextureBody.Height) * scale;
             i += (LaserTextureTail.Height + 3) * scale; //Slightly fudged, need to find out why the laser tail is still misaligned for certain texture sizes
-            startPos = startPos + i * unit;
+            startPos += i * unit;
 
             if (FastContainsPoint(screenRect, startPos))
             {

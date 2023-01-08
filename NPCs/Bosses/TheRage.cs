@@ -75,25 +75,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public Player Target
         {
             get => Main.player[NPC.target];
-        }
-        Vector2 acceleration = Vector2.Zero;
-        float accelerationMagnitude = 5f / 60f; //Jerk is change in acceleration
-        float topSpeed = 10;
-        float flyingTime = 0;
-
-        Vector2 targetPointValue;
-        Vector2 targetPoint
-        {
-            get
-            {
-                return targetPointValue;
-            }
-            set
-            {
-                flyingTime = 0;
-                targetPointValue = value;
-            }
-        }
+        }        
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -280,8 +262,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             //GAIBON FIRE BOMBS!     
             Timer++;
-            topSpeed = Vector2.Distance(NPC.Center, Target.Center) / 50f;
-            targetPoint = Target.Center;
+
             //1st phase frequency
             if (Main.rand.NextBool(300) && (player.position.Y + 30 >= NPC.position.Y) && NPC.life > NPC.lifeMax / 2)
             {

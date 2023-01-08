@@ -33,10 +33,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-
-            int expertScale = 1;
-            if (Main.expertMode) expertScale = 2;
-
             target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
         }
 

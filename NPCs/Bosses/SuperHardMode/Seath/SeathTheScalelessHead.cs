@@ -77,9 +77,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         float customspawn1;
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-
-            int expertScale = 1;
-            if (Main.expertMode) expertScale = 2;
             target.AddBuff(ModContent.BuffType<Buffs.Chilled>(), 60, false);
             target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
             target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
@@ -92,16 +89,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             Player P = spawnInfo.Player;
 
             bool Sky = spawnInfo.SpawnTileY <= (Main.rockLayer * 4);
-            bool Meteor = P.ZoneMeteor;
-            bool Jungle = P.ZoneJungle;
-            bool Dungeon = P.ZoneDungeon;
-            bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-            bool Hallow = P.ZoneHallow;
             bool AboveEarth = spawnInfo.SpawnTileY < Main.worldSurface;
-            bool InBrownLayer = spawnInfo.SpawnTileY >= Main.worldSurface && spawnInfo.SpawnTileY < Main.rockLayer;
-            bool InGrayLayer = spawnInfo.SpawnTileY >= Main.rockLayer && spawnInfo.SpawnTileY < (Main.maxTilesY - 200) * 16;
-            bool InHell = spawnInfo.SpawnTileY >= (Main.maxTilesY - 200) * 16;
-            bool Ocean = spawnInfo.SpawnTileX < 3600 || spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
             bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
 
 

@@ -102,7 +102,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             //Apply the shader, caching it as well
             if (data == null)
             {
-                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/MarilithIntro", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "MarilithIntroPass");
+                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/MarilithIntro", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "MarilithIntroPass");
             }
 
             //data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer);

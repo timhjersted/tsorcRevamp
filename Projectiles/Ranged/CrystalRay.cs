@@ -263,9 +263,6 @@ namespace tsorcRevamp.Projectiles.Ranged
         {
             base.PreDraw(ref lightColor);
             return false;
-            DrawCrystalLaser(TransparentTextureHandler.TransparentTextures[LaserTexture], GetOrigin(),
-                    Projectile.velocity, LaserTextureHead, LaserTextureBody, LaserTextureTail, -1.57f, LaserSize, LaserColor);
-            return false;
         }
         public void DrawCrystalLaser(Texture2D texture, Vector2 start, Vector2 unit, Rectangle headRect, Rectangle bodyRect, Rectangle tailRect, float rotation = 0f, float scale = 1f, Color color = default)
         {
@@ -307,7 +304,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             //Laser tail
             i = end;
             i += (LaserTextureTail.Height + 3) * scale; //Slightly fudged, need to find out why the laser tail is still misaligned for certain texture sizes
-            startPos = startPos + i * unit;
+            startPos += i * unit;
 
             if (FastContainsPoint(screenRect, startPos))
             {

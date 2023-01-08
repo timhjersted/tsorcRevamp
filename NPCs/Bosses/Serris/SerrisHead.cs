@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
         {
             NPC.damage = (int)(NPC.damage * 1.3 / 2);
             NPC.defense = NPC.defense += 12;
-            distortionDamage = distortionDamage / 2;
+            distortionDamage /= 2;
         }
 
 

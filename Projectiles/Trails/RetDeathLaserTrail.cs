@@ -18,13 +18,13 @@ namespace tsorcRevamp.Projectiles.Trails
             trailPointLimit = 150;
             trailYOffset = 50;
             trailMaxLength = 150;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
         
         public override void SetEffectParameters(Effect effect)
         {
             trailYOffset = 30;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture1);
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);

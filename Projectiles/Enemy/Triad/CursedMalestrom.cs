@@ -67,7 +67,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             //Apply the shader, caching it as well
             if (data == null)
             {
-                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CursedMalestrom", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "CursedMalestromPass");
+                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/CursedMalestrom", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "CursedMalestromPass");
             }
 
             Rectangle sourceRectangle = new Rectangle(0, 0, (int)projRadius * 4, (int)projRadius * 4);

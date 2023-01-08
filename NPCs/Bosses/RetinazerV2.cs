@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
@@ -69,7 +70,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         //Used by moves to keep track of how long they've been going for
-        public int MoveCounter
+        public int MoveTimer
         {
             get => (int)NPC.ai[1];
             set => NPC.ai[1] = value;
@@ -85,18 +86,23 @@ namespace tsorcRevamp.NPCs.Bosses
             get => Main.player[NPC.target];
         }
 
-        int MoveTimer = 0;
         int finalStandTimer = 0;
         float rotationTarget;
         float rotationSpeed;
         public override void AI()
         {
+            if (Main.netMode == NetmodeID.Server && Main.GameUpdateCount % 30 == 1)
+            {
+                //NPC.netUpdate = true;
+            }
+
             if (NPC.realLife < 0)
             {
                 int? catID = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Cataluminance>());
 
                 if (catID != null) {
                     NPC.realLife = catID.Value;
+                    NPC.netUpdate = true;
                 }
             }
 
@@ -118,6 +124,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (NPC.Distance(target.Center) > 4000)
             {
                 NPC.Center = Main.player[NPC.target].Center + new Vector2(-1000, 0);
+                NPC.netUpdate = true;
                 UsefulFunctions.BroadcastText("Retinazer Closes In...");
             }
 
@@ -172,6 +179,18 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 NextAttack();
             }
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(NPC.rotation);
+            writer.Write(rotationTarget);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            NPC.rotation = reader.ReadSingle();
+            rotationTarget = reader.ReadSingle();
         }
 
         bool aimingDown;
@@ -366,7 +385,16 @@ namespace tsorcRevamp.NPCs.Bosses
                 //Charge
                 if (MoveTimer % 90 == 15)
                 {
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                    {
+                        Main.NewText("Client: Charging");
+                    }
+                    else
+                    {
+                        UsefulFunctions.BroadcastText("Server: Charging");
+                    }
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15);
+                    NPC.netUpdate = true;
                 }
 
                 //Fire
@@ -580,7 +608,6 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             MoveTimer = 0;
-            MoveCounter = 0;
         }
         float rotationVelocity;
         void Transform()

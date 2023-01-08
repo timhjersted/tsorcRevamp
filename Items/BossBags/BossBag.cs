@@ -275,7 +275,6 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ItemID.MidnightRainbowDye, 1, 5, 5));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.HerosCrest>()));
         }
-        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Death>();
     }
     public class MindflayerIllusionBag : BossBag
     {

@@ -94,7 +94,27 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         {
             if (Projectile.ai[1] == 0)
             {
-                //TODO: Explode into dust
+                for (int i = 0; i < 40; i++)
+                {
+                    Vector2 dustVel = Main.rand.NextVector2Circular(5, 5);
+                    dustVel += Projectile.velocity / 3f;
+
+                    switch (i % 4)
+                    {
+                        case 0:
+                            Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.FireworkFountain_Blue, dustVel.X, dustVel.Y);
+                            break;
+                        case 1:
+                            Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.BlueFairy, dustVel.X, dustVel.Y);
+                            break;
+                        case 2:
+                            Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.PinkFairy, dustVel.X, dustVel.Y);
+                            break;
+                        case 3:
+                            Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.BlueCrystalShard, dustVel.X, dustVel.Y);
+                            break;
+                    }
+                }
             }
         }
 

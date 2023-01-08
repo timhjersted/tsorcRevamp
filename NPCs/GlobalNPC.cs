@@ -1495,30 +1495,30 @@ namespace tsorcRevamp.NPCs
                 offsetX *= dist;
                 offsetY *= dist;
                 npc.velocity = default(Vector2);
-                npc.position.X = npc.position.X + offsetX;
-                npc.position.Y = npc.position.Y + offsetY;
+                npc.position.X += offsetX;
+                npc.position.Y += offsetY;
             }
             else
             {
                 if (!canMove)
                 {
-                    npc.velocity.Y = npc.velocity.Y + 0.11f;
+                    npc.velocity.Y += 0.11f;
                     if (npc.velocity.Y > maxSpeed) { npc.velocity.Y = maxSpeed; }
                     if ((double)(Math.Abs(npc.velocity.X) + Math.Abs(npc.velocity.Y)) < (double)maxSpeed * 0.4)
                     {
-                        if (npc.velocity.X < 0f) { npc.velocity.X = npc.velocity.X - gravityResist * 1.1f; } else { npc.velocity.X = npc.velocity.X + gravityResist * 1.1f; }
+                        if (npc.velocity.X < 0f) { npc.velocity.X -= gravityResist * 1.1f; } else { npc.velocity.X += gravityResist * 1.1f; }
                     }
                     else
                     if (npc.velocity.Y == maxSpeed)
                     {
-                        if (npc.velocity.X < playerCenterX) { npc.velocity.X = npc.velocity.X + gravityResist; }
+                        if (npc.velocity.X < playerCenterX) { npc.velocity.X += gravityResist; }
                         else
-                        if (npc.velocity.X > playerCenterX) { npc.velocity.X = npc.velocity.X - gravityResist; }
+                        if (npc.velocity.X > playerCenterX) { npc.velocity.X -= gravityResist; }
                     }
                     else
                     if (npc.velocity.Y > 4f)
                     {
-                        if (npc.velocity.X < 0f) { npc.velocity.X = npc.velocity.X + gravityResist * 0.9f; } else { npc.velocity.X = npc.velocity.X - gravityResist * 0.9f; }
+                        if (npc.velocity.X < 0f) { npc.velocity.X += gravityResist * 0.9f; } else { npc.velocity.X -= gravityResist * 0.9f; }
                     }
                 }
                 else
@@ -1550,41 +1550,41 @@ namespace tsorcRevamp.NPCs
                     {
                         if ((npc.velocity.X > 0f && playerCenterX > 0f) || (npc.velocity.X < 0f && playerCenterX < 0f) || (npc.velocity.Y > 0f && playerCenterY > 0f) || (npc.velocity.Y < 0f && playerCenterY < 0f))
                         {
-                            if (npc.velocity.X < playerCenterX) { npc.velocity.X = npc.velocity.X + gravityResist; }
+                            if (npc.velocity.X < playerCenterX) { npc.velocity.X += gravityResist; }
                             else
-                            if (npc.velocity.X > playerCenterX) { npc.velocity.X = npc.velocity.X - gravityResist; }
-                            if (npc.velocity.Y < playerCenterY) { npc.velocity.Y = npc.velocity.Y + gravityResist; }
+                            if (npc.velocity.X > playerCenterX) { npc.velocity.X -= gravityResist; }
+                            if (npc.velocity.Y < playerCenterY) { npc.velocity.Y += gravityResist; }
                             else
-                            if (npc.velocity.Y > playerCenterY) { npc.velocity.Y = npc.velocity.Y - gravityResist; }
+                            if (npc.velocity.Y > playerCenterY) { npc.velocity.Y -= gravityResist; }
                             if ((double)Math.Abs(playerCenterY) < (double)maxSpeed * 0.2 && ((npc.velocity.X > 0f && playerCenterX < 0f) || (npc.velocity.X < 0f && playerCenterX > 0f)))
                             {
-                                if (npc.velocity.Y > 0f) { npc.velocity.Y = npc.velocity.Y + gravityResist * 2f; } else { npc.velocity.Y = npc.velocity.Y - gravityResist * 2f; }
+                                if (npc.velocity.Y > 0f) { npc.velocity.Y += gravityResist * 2f; } else { npc.velocity.Y -= gravityResist * 2f; }
                             }
                             if ((double)Math.Abs(playerCenterX) < (double)maxSpeed * 0.2 && ((npc.velocity.Y > 0f && playerCenterY < 0f) || (npc.velocity.Y < 0f && playerCenterY > 0f)))
                             {
-                                if (npc.velocity.X > 0f) { npc.velocity.X = npc.velocity.X + gravityResist * 2f; } else { npc.velocity.X = npc.velocity.X - gravityResist * 2f; }
+                                if (npc.velocity.X > 0f) { npc.velocity.X += gravityResist * 2f; } else { npc.velocity.X -= gravityResist * 2f; }
                             }
                         }
                         else
                         if (absPlayerCenterX > absPlayerCenterY)
                         {
-                            if (npc.velocity.X < playerCenterX) { npc.velocity.X = npc.velocity.X + gravityResist * 1.1f; }
+                            if (npc.velocity.X < playerCenterX) { npc.velocity.X += gravityResist * 1.1f; }
                             else
-                            if (npc.velocity.X > playerCenterX) { npc.velocity.X = npc.velocity.X - gravityResist * 1.1f; }
+                            if (npc.velocity.X > playerCenterX) { npc.velocity.X -= gravityResist * 1.1f; }
 
                             if ((double)(Math.Abs(npc.velocity.X) + Math.Abs(npc.velocity.Y)) < (double)maxSpeed * 0.5)
                             {
-                                if (npc.velocity.Y > 0f) { npc.velocity.Y = npc.velocity.Y + gravityResist; } else { npc.velocity.Y = npc.velocity.Y - gravityResist; }
+                                if (npc.velocity.Y > 0f) { npc.velocity.Y += gravityResist; } else { npc.velocity.Y -= gravityResist; }
                             }
                         }
                         else
                         {
-                            if (npc.velocity.Y < playerCenterY) { npc.velocity.Y = npc.velocity.Y + gravityResist * 1.1f; }
+                            if (npc.velocity.Y < playerCenterY) { npc.velocity.Y += gravityResist * 1.1f; }
                             else
-                            if (npc.velocity.Y > playerCenterY) { npc.velocity.Y = npc.velocity.Y - gravityResist * 1.1f; }
+                            if (npc.velocity.Y > playerCenterY) { npc.velocity.Y -= gravityResist * 1.1f; }
                             if ((double)(Math.Abs(npc.velocity.X) + Math.Abs(npc.velocity.Y)) < (double)maxSpeed * 0.5)
                             {
-                                if (npc.velocity.X > 0f) { npc.velocity.X = npc.velocity.X + gravityResist; } else { npc.velocity.X = npc.velocity.X - gravityResist; }
+                                if (npc.velocity.X > 0f) { npc.velocity.X += gravityResist; } else { npc.velocity.X -= gravityResist; }
                             }
                         }
                     }
@@ -1851,12 +1851,12 @@ namespace tsorcRevamp.NPCs
                     if (npc.ai[2] == 0)
                     {
                         //Aim at them, and start the shot cooldown
-                        npc.velocity.X = npc.velocity.X * 0.5f;
+                        npc.velocity.X *= 0.5f;
                         npc.ai[2] = 3f;
                         npc.ai[1] = projectileCooldown;
                     }
 
-                    npc.velocity.X = npc.velocity.X * 0.9f; // decelerate to stop & shoot
+                    npc.velocity.X *= 0.9f; // decelerate to stop & shoot
                     npc.spriteDirection = npc.direction; // match animation to facing
 
                     //Fire at halfway through: first half of delay is aim, 2nd half is cooldown
@@ -2020,7 +2020,7 @@ namespace tsorcRevamp.NPCs
             {
                 if (npc.velocity.X < topSpeed && npc.direction == 1)
                 {
-                    npc.velocity.X = npc.velocity.X + acceleration;
+                    npc.velocity.X += acceleration;
                     if (npc.velocity.X > topSpeed)
                     {
                         npc.velocity.X = topSpeed;
@@ -2030,7 +2030,7 @@ namespace tsorcRevamp.NPCs
                 {
                     if (npc.velocity.X > -topSpeed && npc.direction == -1)
                     {
-                        npc.velocity.X = npc.velocity.X - acceleration;
+                        npc.velocity.X -= acceleration;
                         if (npc.velocity.X < -topSpeed)
                         {
                             npc.velocity.X = -topSpeed;
@@ -2472,10 +2472,10 @@ namespace tsorcRevamp.NPCs
 
                     npc.ai[0] = 0f;
                     npc.velocity.Y = -5f;
-                    npc.velocity.X = npc.velocity.X * 4f; // burst forward
+                    npc.velocity.X *= 4f; // burst forward
                     npc.TargetClosest(true);
                     
-                    npc.velocity.X = npc.velocity.X + (float)npc.direction * 5f;  //  accellerate fwd; can happen midair
+                    npc.velocity.X += (float)npc.direction * 5f;  //  accellerate fwd; can happen midair
                     if ((float)npc.direction * npc.velocity.X > 5)
                     {
                         npc.velocity.X = (float)npc.direction * 5;  //  but cap at top speed

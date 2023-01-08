@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Trails
             collisionFrequency = 5;
             trailYOffset = 50;
             trailMaxLength = 750;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         public override float CollisionWidthFunction(float progress)

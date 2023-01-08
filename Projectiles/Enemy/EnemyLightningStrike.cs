@@ -92,7 +92,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                             for (int j = 0; j < branches[i].Count - 1; j++)
                             {
                                 Vector2 diff = branches[i][j + 1] - branches[i][j];
-                                diff = diff / dustCount;
+                                diff /= dustCount;
                                 float lerpPercent = 0.8f * ((float)j / ((float)branches[i].Count - 1f));
 
                                 float scale = 1.7f;
@@ -104,12 +104,12 @@ namespace tsorcRevamp.Projectiles.Enemy
 
                                 for (int k = 0; k < dustCount; k++)
                                 {
-                                    /*
+                                    
                                     Dust thisDust = Dust.NewDustPerfect(branches[i][j] + diff * k, DustID.AncientLight, Scale: scale);
                                     thisDust.noGravity = true;
                                     thisDust.velocity = Vector2.Zero;
                                     thisDust.rotation = Main.rand.NextFloatDirection();
-                                    thisDust.color = Color.Lerp(Color.White, Color.DarkBlue, lerpPercent);*/
+                                    thisDust.color = Color.Lerp(Color.White, Color.DarkBlue, lerpPercent);
                                 }
                             }
                         }

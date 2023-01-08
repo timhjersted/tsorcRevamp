@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             NPC.damage = (int)(NPC.damage * 1.3 / tsorcRevampGlobalNPC.expertScale);
-            plasmaOrbDamage = plasmaOrbDamage / 2;
+            plasmaOrbDamage /= 2;
         }
 
         bool immuneFlash = true;

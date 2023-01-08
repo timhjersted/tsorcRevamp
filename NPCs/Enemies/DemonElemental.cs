@@ -163,7 +163,6 @@ namespace tsorcRevamp.NPCs.Enemies
                             num51 = num48 / num51;
                             speedX *= num51;
                             speedY *= num51;
-                            int damage = 59;//(int) (14f * npc.scale);
                             int type = ModContent.ProjectileType<Projectiles.Enemy.CrystalFire>();//44;//0x37; //14; was purple crush
                             int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, crystalFireDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 150;

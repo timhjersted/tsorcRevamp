@@ -70,7 +70,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         //Used by moves to keep track of how long they've been going for
-        public int MoveCounter
+        public int MoveTimer
         {
             get => (int)NPC.ai[1];
             set => NPC.ai[1] = value;
@@ -86,21 +86,43 @@ namespace tsorcRevamp.NPCs.Bosses
             get => Main.player[NPC.target];
         }
 
-        int MoveTimer = 0;
         int finalStandTimer = 0;
+        float rotationTarget = 0;
+        float rotationSpeed = 0.05f;
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+            //Prevents time from flowing past midnight while the boss is alive
+            Main.dayTime = false;
+            if(Main.time > 16240.0)
+            {
+                Main.time = 16240.0;
+            }
+
+            //Periodically sync
+            if (Main.netMode == NetmodeID.Server && Main.GameUpdateCount % 30 == 0)
+            {
+                NPC.netUpdate = true;
+            }
+
             MoveTimer++;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
-            NPC.rotation = (NPC.rotation + (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2) / 2f;
+
+            //Smart rotation
+            //The conversions are necessary to avoid some XNA rotation bullshit
+            Vector2 targetRotation = rotationTarget.ToRotationVector2();
+            Vector2 currentRotation = NPC.rotation.ToRotationVector2();
+            Vector2 nextRotationVector = Vector2.Lerp(currentRotation, targetRotation, rotationSpeed);
+            NPC.rotation = nextRotationVector.ToRotation();
+
             FindFrame(0);
 
             //Teleport if too far away
             if (NPC.Distance(target.Center) > 4000)
             {
                 NPC.Center = target.Center + new Vector2(0, -1000);
+                NPC.netUpdate = true;
                 UsefulFunctions.BroadcastText("Cataluminance Closes In...");
             }
 
@@ -169,6 +191,8 @@ namespace tsorcRevamp.NPCs.Bosses
         //Hover to the upper right of the screen and spam homing blasts that chase the player
         void StarBlasts()
         {
+            rotationTarget = Vector2.Normalize(NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+            rotationSpeed = 0.05f;
             UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(750, -350), 0.5f, 20, target.velocity);
 
             if (PhaseTwo)
@@ -206,6 +230,9 @@ namespace tsorcRevamp.NPCs.Bosses
         //Chase the player rapidly and smoothly, leaving a damaging trail in its wake that obstructs movement
         void Pursuit()
         {
+            rotationTarget = NPC.velocity.ToRotation() - MathHelper.PiOver2;
+            rotationSpeed = 0.1f;
+
             if (MoveTimer == 1 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Trails.CataluminanceTrail>(), 35, 0, Main.myPlayer, 1, NPC.whoAmI);
@@ -223,6 +250,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (MoveTimer % 150 == 30 && MoveTimer > 76)
                     {
                         NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15);
+                        NPC.netUpdate = true;
                     }
                 }
             }
@@ -233,9 +261,10 @@ namespace tsorcRevamp.NPCs.Bosses
         float angle = 0;
         void Starstorm()
         {
-            NPC.rotation = MathHelper.Pi;
+            rotationTarget = MathHelper.Pi;
+            rotationSpeed = 0.1f;
 
-            if(MoveTimer == 0)
+            if (MoveTimer == 0)
             {
                 angle = Main.rand.NextFloat(-MathHelper.PiOver4, MathHelper.PiOver4);
             }
@@ -250,7 +279,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (MoveTimer % 15 == 0)
                     {
                         //Stars fired upward for effect
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2, 1);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -60), new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2, 1);
 
                         //Stars rain down
                         Vector2 spawnPos = target.Center + new Vector2(Main.rand.NextFloat(-2000, 2000), -700);
@@ -260,7 +289,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 else if (MoveTimer % 12 == 0)
                 {
                     //Stars fired upward for effect
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -60), new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
 
                     //Stars rain down
                     Vector2 spawnPos = target.Center + new Vector2(Main.rand.NextFloat(-2500, 2500), -700);
@@ -289,7 +318,6 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             MoveTimer = 0;
-            MoveCounter = 0;
         }
 
         float rotationVelocity;

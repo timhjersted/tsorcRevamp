@@ -1,3 +1,5 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics;
 using Terraria;
@@ -97,6 +99,11 @@ namespace tsorcRevamp.NPCs.Bosses
             watchTimer = 120;
             damageCounter += damage;
             lastTimer = (float)thisWatch.Elapsed.TotalSeconds;
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            return true;
         }
     }
 }

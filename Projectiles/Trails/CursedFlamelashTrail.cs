@@ -37,38 +37,25 @@ namespace tsorcRevamp.Projectiles.Trails
             collisionPadding = 0;
             trailYOffset = 50;
             trailMaxLength = 350;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         public override float CollisionWidthFunction(float progress)
         {
-
-
             if(progress > 0.9)
             {
                 return ((1 - progress) / 0.1f) * trailWidth;
             }
             
             return trailWidth * progress;
-
-            if (progress >= 0.85)
-            {
-                float scale = (1f - progress) / 0.15f;
-                return (float)Math.Pow(scale, 0.1) * (float)trailWidth;
-            }
-            else
-            {
-                return trailWidth;
-                return (float)Math.Pow(progress, 0.6f) * (float)trailWidth;
-            }
         }
 
         Vector2 samplePointOffset1;
         Vector2 samplePointOffset2;
         public override void SetEffectParameters(Effect effect)
         {
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
             effect.Parameters["length"].SetValue(trailCurrentLength);
@@ -89,10 +76,10 @@ namespace tsorcRevamp.Projectiles.Trails
             samplePointOffset2.Y += (0.001f);
 
             samplePointOffset1.X += modifiedTime;
-            samplePointOffset1.X = samplePointOffset1.X % 1;
-            samplePointOffset1.Y = samplePointOffset1.Y % 1;
-            samplePointOffset2.X = samplePointOffset2.X % 1;
-            samplePointOffset2.Y = samplePointOffset2.Y % 1;
+            samplePointOffset1.X %= 1;
+            samplePointOffset1.Y %= 1;
+            samplePointOffset2.X %= 1;
+            samplePointOffset2.Y %= 1;
             collisionEndPadding = trailPositions.Count / 2;
 
             effect.Parameters["samplePointOffset1"].SetValue(samplePointOffset1);

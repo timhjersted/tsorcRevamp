@@ -58,15 +58,15 @@ namespace tsorcRevamp.Projectiles.Enemy
                         int num43 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 54, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 2f);
                         Main.dust[num43].noGravity = true;
                         Dust expr_225D_cp_0 = Main.dust[num43];
-                        expr_225D_cp_0.velocity.X = expr_225D_cp_0.velocity.X * 0.3f;
+                        expr_225D_cp_0.velocity.X *= 0.3f;
                         Dust expr_227B_cp_0 = Main.dust[num43];
-                        expr_227B_cp_0.velocity.Y = expr_227B_cp_0.velocity.Y * 0.3f;
+                        expr_227B_cp_0.velocity.Y *= 0.3f;
                         int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 58, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 2f);
                         Main.dust[dust].noGravity = true;
                         Dust dusty = Main.dust[dust];
-                        dusty.velocity.X = dusty.velocity.X * 0.3f;
+                        dusty.velocity.X *= 0.3f;
                         Dust dusty2 = Main.dust[dust];
-                        dusty2.velocity.Y = dusty2.velocity.Y * 0.3f;
+                        dusty2.velocity.Y *= 0.3f;
                     }
                 }
             }

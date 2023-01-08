@@ -172,7 +172,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
                 //if (targetingData == null)
                 {
-                    targetingData = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/IncineratingGazeTargeting", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "IncineratingGazeTargetingPass");
+                    targetingData = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/IncineratingGazeTargeting", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "IncineratingGazeTargetingPass");
                 }
 
                 Rectangle targetingSourceRectangle = new Rectangle(0, 0, (int)10000, Projectile.height);
@@ -216,7 +216,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             //Apply the shader, caching it as well
             //if (data == null)
             {
-                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/IncineratingGaze", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "IncineratingGazePass");
+                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/IncineratingGaze", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "IncineratingGazePass");
             }
 
             

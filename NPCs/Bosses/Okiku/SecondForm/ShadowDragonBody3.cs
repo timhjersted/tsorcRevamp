@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
         }
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            ObscureSawDamage = ObscureSawDamage / 2;
+            ObscureSawDamage /= 2;
         }
 
         public override void AI()

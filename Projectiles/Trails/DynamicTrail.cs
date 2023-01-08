@@ -224,7 +224,7 @@ namespace tsorcRevamp.Projectiles.Trails
                 {
                     for(int i = 3; i < trailPositions.Count - 1; i++)
                     {
-                        //trailPositions[i - 2] = (trailPositions[i - 3] + trailPositions[i - 1]) / 2f;
+                        trailPositions[i - 2] = (trailPositions[i - 3] + trailPositions[i - 1]) / 2f;
                         trailRotations[i - 2] = (trailPositions[i - 3] - trailPositions[i - 2]).ToRotation();
                     }
                 }
