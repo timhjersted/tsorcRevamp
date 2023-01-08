@@ -13,9 +13,9 @@ namespace tsorcRevamp.Items.Armors
         {
             DisplayName.SetDefault("Artorias' Armor");
             Tooltip.SetDefault("Enchanted armor of Artorias of the Abyss." +
-                "\nPossesses the same power as the Titan Glove." +
-                "\nSet Bonus: +21% damage and +24% attack speed(doubled for melee), +50% move speed, -13% mana costs, +8 life regen" +
-                "\nWater, Lava, Fire walking and immunity, increased breath, knockback and fall damage immunity, night vision");
+                "\nIncreases your damage dealt by 21% and life regeneration by 8" +
+                "\nGrants knockback and fall damage immunity" +
+                "\nSet Bonus: Increases maximum stamina and it's regeneration by 20%");
         }
         public override void SetDefaults()
         {
@@ -27,7 +27,10 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.kbGlove = true;
+            player.GetDamage(DamageClass.Generic) += 0.21f;
+            player.lifeRegen += 8;
+            player.noKnockback = true;
+            player.noFallDmg = true;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -35,19 +38,8 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetDamage(DamageClass.Generic) += 0.21f;
-            player.GetAttackSpeed(DamageClass.Generic) += 0.24f;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.24f;
-            player.moveSpeed += 0.5f;
-            player.manaCost -= 0.13f;
-            player.lifeRegen += 8;
-            player.waterWalk = true;
-            player.fireWalk = true;
-            player.lavaImmune = true;
-            player.breath = 9999999;
-            player.noKnockback = true;
-            player.nightVision = true;
-            player.noFallDmg = true;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1.2f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1.2f;
 
             int dust = Dust.NewDust(new Vector2((float)player.position.X - 5, (float)player.position.Y), player.width + 10, player.height, 77, player.velocity.X, -2, 180, default, 1.25f);
             Main.dust[dust].noGravity = true;

@@ -12,7 +12,9 @@ namespace tsorcRevamp.Items.Armors
         {
             DisplayName.SetDefault("Artorias' Helmet");
             Tooltip.SetDefault("Enchanted helmet of Artorias." +
-                "\nLonger invincibility when hit plus 30% critical chance.");
+                "\nGrants the effect of the Cross Necklace" +
+                "\nIncreases your critical strike chance by 30%" +
+                "\nDecreases mana costs by 13%");
         }
         public override void SetDefaults()
         {
@@ -26,6 +28,7 @@ namespace tsorcRevamp.Items.Armors
         {
             player.longInvince = true;
             player.GetCritChance(DamageClass.Generic) += 30;
+            player.manaCost -= 0.13f;
         }
         public override void AddRecipes()
         {

@@ -12,7 +12,9 @@ namespace tsorcRevamp.Items.Armors
         {
             DisplayName.SetDefault("Artorias' Greaves");
             Tooltip.SetDefault("Enchanted armor of Artorias." +
-                "\n+100 Max Mana");
+                "\nIncreases maximum mana by 100" +
+                "\nIncreases your movement speed by 50%" +
+                "\nIncreases your attack speed by 24%(doubled for melee)");
         }
         public override void SetDefaults()
         {
@@ -25,6 +27,9 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.statManaMax2 += 100;
+            player.moveSpeed += 0.5f;
+            player.GetAttackSpeed(DamageClass.Generic) += 0.24f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.24f;
         }
         public override void AddRecipes()
         {
