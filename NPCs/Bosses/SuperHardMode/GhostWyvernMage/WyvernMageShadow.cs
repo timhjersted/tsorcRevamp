@@ -306,7 +306,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.MageShadowBag>(), 1, 1, 1, new GhostWyvernMageDropCondition()));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.WyvernMageShadowBag>(), 1, 1, 1, new GhostWyvernMageDropCondition()));
         }
 
         #region Gore

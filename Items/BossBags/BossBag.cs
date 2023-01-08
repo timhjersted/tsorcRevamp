@@ -151,7 +151,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.BarrierRing>(), 1));
         }
     }
-    public class LumeliaBag : BossBag
+    public class HeroOfLumeliaBag : BossBag
     {
         public override void SetStaticDefaults()
         {
@@ -384,7 +384,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfChaos>(), 1, 3, 3));
         }
     }
-    public class MageShadowBag : BossBag
+    public class WyvernMageShadowBag : BossBag
     {
         public override void SetStaticDefaults()
         {
