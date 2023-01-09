@@ -35,6 +35,8 @@ using tsorcRevamp.Items.Potions.PermanentPotions;
 using Terraria.ModLoader.Core;
 using System.Security.Cryptography;
 using tsorcRevamp.Tiles;
+using tsorcRevamp.Tiles.Trophies;
+using tsorcRevamp.Banners;
 
 namespace tsorcRevamp
 {
@@ -250,7 +252,7 @@ namespace tsorcRevamp
                 21, 467, 29, 97, 463, 91, 287, 354, 377, 506, 621, //chests, piggy bank, safe, defenders forge, banners, buff stations
                 33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
-                128, 269, 470, 378, 240, 560, //all mannequins, target dummy, trophies
+                128, 269, 470, 378, 240, 560, ModContent.TileType<EmptyTrophyTile>(), //all mannequins, target dummy, trophies
                 162, 127, 320, 380, 624, //thin ice (breakable kind), Ice Rod's ice, seaweed/herb planters, abigail's flower
                 27, 28, 51, 52, 62, 115, 205, 382, 528, //sunflower, pots, cobwebs, all cuttable vines
                 31, 32, 69, 352, 53, 112, 116, 234, //orbs/hearts, all thorns, all sands
@@ -269,7 +271,7 @@ namespace tsorcRevamp
                 21, 467, 29, 97, 463, 91, 287, 354, 377, 506, 621, //chests, piggy bank, safe, defenders forge, banners, buff stations
                 33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
-                128, 269, 470, 378, 240, 560, //all mannequins, target dummy, trophies
+                128, 269, 470, 378, 240, 560, ModContent.TileType<EmptyTrophyTile>(), //all mannequins, target dummy, trophies
                 320, 380, 27, //thin ice (breakable kind), seaweed/herb planters, sunflower, all sands
             };
             #endregion
@@ -332,7 +334,7 @@ namespace tsorcRevamp
             #region PlaceAllowedModTiles list
             PlaceAllowedModTiles = new List<int>()
             {
-                Find<ModTile>("EnemyBannerTile").Type,
+                ModContent.TileType<EnemyBannerTile>(),
 
             };
             #endregion

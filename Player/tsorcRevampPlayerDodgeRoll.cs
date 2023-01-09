@@ -429,7 +429,7 @@ namespace tsorcRevamp
                     dodgeCooldown = 12;
                     if (onGround)
                     {
-                        decelerationRate = 1f;
+                        decelerationRate = 0.9f;
                         DodgeImmuneTime = 23;
                         dodgeCooldown = 8;
                     }
