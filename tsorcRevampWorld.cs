@@ -248,7 +248,7 @@ namespace tsorcRevamp
 
         #region CampfireToBonfire (Is also Skelly Loot Cache replacement code)
 
-        public static void CampfireToBonfire()
+        public static void PlaceModdedTiles()
         {
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
             for (int x = 0; x < Main.maxTilesX - 2; x++)
@@ -773,13 +773,7 @@ namespace tsorcRevamp
                     }
                     if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                     {
-                        Tiles.SoulSkellyGeocache.InitializeSkellys();
-                        CampfireToBonfire();
-
-                        //ideally we only need to run this once ever, but for testing just run it every time
-                        //todo come up with a better way to do this?
-                        
-                        
+                        Tiles.SoulSkellyGeocache.InitializeSkellys();                   
                     }
 
                     //Stuff that should only be done by either a solo player or the server
@@ -789,6 +783,7 @@ namespace tsorcRevamp
                         if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID)
                         {
                             Main.worldID = Main.rand.Next(9999999);
+                            PlaceModdedTiles();
                         }
 
                         //Spawn in NPCs
@@ -972,9 +967,9 @@ namespace tsorcRevamp
         public override void PostUpdateEverything()
         {
             if (JustPressed(Keys.Home) && JustPressed(Keys.NumPad0)) //they have to be pressed *on the same tick*. you can't hold one and then press the other.
-                CampfireToBonfire();
+                PlaceModdedTiles();
 
-            HandleDevKeys();
+            //HandleDevKeys();
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
