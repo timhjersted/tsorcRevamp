@@ -75,7 +75,6 @@ namespace tsorcRevamp.Items.Accessories.Expert
                 staminaCost = 40;
                 player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.15f;
             }
-            Main.NewText(player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent);
 
         }
 
