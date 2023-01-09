@@ -92,6 +92,34 @@ namespace tsorcRevamp.NPCs.Bosses
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+            if (ringCollapse < 0.1f)
+            {
+                fadePercent += fadeSpeed;
+            }
+            else
+            {
+                ringCollapse /= collapseSpeed;
+            }
+
+            float intensityMinimum = 0.60f;
+            float radiusMinimum = 0.2f;
+            if (baseFade < intensityMinimum)
+            {
+                baseFade += 0.02f;
+            }
+            if (baseFade > intensityMinimum)
+            {
+                baseFade = intensityMinimum;
+            }
+            if (baseRadius > radiusMinimum)
+            {
+                baseRadius -= 0.01f;
+            }
+            if (baseRadius < radiusMinimum)
+            {
+                baseRadius = radiusMinimum;
+            }
+
             //Prevents time from flowing past midnight while the boss is alive
             Main.dayTime = false;
             if(Main.time > 16240.0)
@@ -180,6 +208,10 @@ namespace tsorcRevamp.NPCs.Bosses
             else if (MoveTimer < 960)
             {
                 //Phase transition
+                if (MoveTimer == 901)
+                {
+                    StartAura(800, 1.08f, 0.07f);
+                }
                 NPC.velocity *= 0.99f;
             }
             else
@@ -197,21 +229,31 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (PhaseTwo)
             {
-                if (MoveTimer % 90 == 0 && MoveTimer < 850 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (MoveTimer % 90 == 0 && MoveTimer < 850)
                 {
+                    baseFade = 0.2f;
+                    baseRadius = .3f;
                     //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(MathHelper.PiOver4), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
                     //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(MathHelper.PiOver4 / 2f), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
                     //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(-MathHelper.PiOver4 / 2f), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
                     //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(-MathHelper.PiOver4), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
+                    }
                 }
             }
             else
             {
                 if (MoveTimer % 60 == 0 && MoveTimer < 850 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 0);
-                }                
+                    baseFade = 0.2f;
+                    baseRadius = .3f;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(100, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 0);
+                    }
+                }
             }
 
             //Clear all homing stars when attack is over
@@ -230,6 +272,8 @@ namespace tsorcRevamp.NPCs.Bosses
         //Chase the player rapidly and smoothly, leaving a damaging trail in its wake that obstructs movement
         void Pursuit()
         {
+            baseFade = 0.0f;
+            baseRadius = .5f;
             rotationTarget = NPC.velocity.ToRotation() - MathHelper.PiOver2;
             rotationSpeed = 0.1f;
 
@@ -271,12 +315,15 @@ namespace tsorcRevamp.NPCs.Bosses
 
             UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -350), 0.6f, 15);
 
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+
+            //In phase 2 the stars leave damaging trails like EoL, but there are fewer of them
+            if (PhaseTwo)
             {
-                //In phase 2 the stars leave damaging trails like EoL, but there are fewer of them
-                if (PhaseTwo)
+                if (MoveTimer % 15 == 0)
                 {
-                    if (MoveTimer % 15 == 0)
+                    baseFade = 0.5f;
+                    baseRadius = .3f;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         //Stars fired upward for effect
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -60), new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2, 1);
@@ -286,7 +333,12 @@ namespace tsorcRevamp.NPCs.Bosses
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1, 1);
                     }
                 }
-                else if (MoveTimer % 12 == 0)
+            }
+            else if (MoveTimer % 12 == 0)
+            {
+                baseFade = 0.5f;
+                baseRadius = .3f;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     //Stars fired upward for effect
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -60), new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
@@ -295,7 +347,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     Vector2 spawnPos = target.Center + new Vector2(Main.rand.NextFloat(-2500, 2500), -700);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1);
                 }
-            }
+            }            
         }
 
         void FinalStand()
@@ -407,18 +459,100 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         public static Texture2D texture;
+        public Effect effect;
+        float effectTimer;
+        float ringCollapse;
+        float fadePercent;
+        float effectRadius = 650;
+        float fadeSpeed = 0.05f;
+        float collapseSpeed = 1.05f;
+        float baseFade = 0.77f;
+        float baseRadius = 0.25f;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            //Apply the shader, caching it as well
+            //if (effect == null)
+            {
+                effect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            Rectangle sourceRectangle = new Rectangle(0, 0, (int)(effectRadius / 0.7f), (int)(effectRadius / 0.7f));
+            Vector2 origin = sourceRectangle.Size() / 2f;
+
+            Vector3 hslColor = Main.rgbToHsl(new Color(0.1f, 0.5f, 1f));
+            if (PhaseTwo)
+            {
+                hslColor = Main.rgbToHsl(new Color(1f, 0.3f, 0.85f));
+            }
+            hslColor.X += 0.03f * (float)Math.Cos(effectTimer / 25f);
+            effectTimer++;
+            Color rgbColor = Main.hslToRgb(hslColor);
+
+            //Pass relevant data to the shader via these parameters
+            effect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            effect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
+            effect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
+            effect.Parameters["ringProgress"].SetValue(ringCollapse);
+            effect.Parameters["fadePercent"].SetValue(fadePercent);
+            float timeFactor = 1;
+            if (PhaseTwo)
+            {
+                timeFactor = 2.5f;
+            }
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * timeFactor);
+
+            //Apply the shader
+            effect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, NPC.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, NPC.scale, SpriteEffects.None, 0);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            Rectangle baseRectangle = new Rectangle(0, 0, 500, 500);
+            Vector2 baseOrigin = baseRectangle.Size() / 2f;
+            
+
+            //Pass relevant data to the shader via these parameters
+            effect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            effect.Parameters["effectSize"].SetValue(baseRectangle.Size());
+            effect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
+            effect.Parameters["ringProgress"].SetValue(baseRadius);
+            effect.Parameters["fadePercent"].SetValue(baseFade);
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * timeFactor);
+
+            //Apply the shader
+            effect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, NPC.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.PiOver2, baseOrigin, NPC.scale, SpriteEffects.None, 0);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+
+
             if (texture == null || texture.IsDisposed)
             {
                 texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
             }
 
-            Rectangle sourceRectangle = NPC.frame;
-            Vector2 origin = sourceRectangle.Size() / 2f;
-            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, origin, 1, SpriteEffects.None, 0f);
-
+            Color lightingColor = Color.Lerp(Color.White, rgbColor, 0.5f);
+            lightingColor = Color.Lerp(drawColor, lightingColor, 0.5f);
+            Rectangle sourceRectangle2 = NPC.frame;
+            Vector2 origin2 = sourceRectangle2.Size() / 2f;
+            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle2, lightingColor, NPC.rotation, origin2, 1, SpriteEffects.None, 0f);
             return false;
+        }
+        public void StartAura(float radius, float ringSpeed = 1.05f, float fadeOutSpeed = 0.05f)
+        {
+            effectRadius = radius;
+            collapseSpeed = ringSpeed;
+            fadeSpeed = fadeOutSpeed;
+            fadePercent = 0;
+            ringCollapse = 1;
         }
 
         public override bool CheckActive()

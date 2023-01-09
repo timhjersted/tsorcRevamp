@@ -54,9 +54,9 @@ namespace tsorcRevamp.Items
                 {
                     //Triad
                     UsefulFunctions.BroadcastText("The Triad has awoken!", Color.MediumPurple);
-                    NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y - 800, ModContent.NPCType<NPCs.Bosses.Cataluminance>());
-                    NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X - 1000, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
-                    NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X + 1000, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
+                    NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y - 1000, ModContent.NPCType<NPCs.Bosses.Cataluminance>());
+                    NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X - 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
+                    NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X + 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
                 }
                 else
                 {

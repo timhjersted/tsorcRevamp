@@ -1678,52 +1678,51 @@ namespace tsorcRevamp.NPCs
                     }
                     hasTargeted = true;
                 }
-                else
+
+
+                //Go through the target list. If everyone has died once, despawn. Else, target the closest one that has not yet died.
+                //It's important that it only targets players who haven't died, because otherwise one living player could hide far away while the other repeatedly respawned and fought the boss.
+                //With this, it will intentionally seek out those it has not yet killed instead.
+                bool viableTarget = false;
+                float closestPlayerDistance = float.MaxValue;
+                float oldTarget = Main.npc[npcID].target;
+                //Iterate through all tracked players in the array
+                for (int i = 0; i < targetCount; i++)
                 {
-                    //Go through the target list. If everyone has died once, despawn. Else, target the closest one that has not yet died.
-                    //It's important that it only targets players who haven't died, because otherwise one living player could hide far away while the other repeatedly respawned and fought the boss.
-                    //With this, it will intentionally seek out those it has not yet killed instead.
-                    bool viableTarget = false;
-                    float closestPlayerDistance = float.MaxValue;
-                    float oldTarget = Main.npc[npcID].target;
-                    //Iterate through all tracked players in the array
-                    for (int i = 0; i < targetCount; i++)
+                    //For each of them, check if they're dead. If so, mark it down in targetAlive.
+                    if (Main.player[targetIDs[i]].dead && targetAlive[i])
                     {
-                        //For each of them, check if they're dead. If so, mark it down in targetAlive.
-                        if (Main.player[targetIDs[i]].dead && targetAlive[i])
+                        targetAlive[i] = false;
+                    }
+                    else if (targetAlive[i] && Main.player[targetIDs[i]].active)
+                    {
+                        //If it found a player that hasn't been killed yet, then don't despawn
+                        viableTarget = true;
+                        //Check if they're the closest one, and if so target them
+                        float distance = Vector2.DistanceSquared(Main.player[targetIDs[i]].position, Main.npc[npcID].position);
+                        if (distance < closestPlayerDistance)
                         {
-                            targetAlive[i] = false;
-                        }
-                        else if (targetAlive[i] && Main.player[targetIDs[i]].active)
-                        {
-                            //If it found a player that hasn't been killed yet, then don't despawn
-                            viableTarget = true;
-                            //Check if they're the closest one, and if so target them
-                            float distance = Vector2.DistanceSquared(Main.player[targetIDs[i]].position, Main.npc[npcID].position);
-                            if (distance < closestPlayerDistance)
-                            {
-                                closestPlayerDistance = distance;
-                                Main.npc[npcID].target = targetIDs[i];
-                            }
+                            closestPlayerDistance = distance;
+                            Main.npc[npcID].target = targetIDs[i];
                         }
                     }
+                }
 
-                    //If a npc changes targets, sync it
-                    if(oldTarget != Main.npc[npcID].target)
-                    {
-                        Main.npc[npcID].netUpdate = true;
-                    }
+                //If a npc changes targets, sync it
+                if (oldTarget != Main.npc[npcID].target)
+                {
+                    Main.npc[npcID].netUpdate = true;
+                }
 
-                    //If there's no player that has not yet died, then despawn.
-                    if (!viableTarget)
+                //If there's no player that has not yet died, then despawn.
+                if (!viableTarget)
+                {
+                    if (despawnText != null)
                     {
-                        if (despawnText != null)
-                        {
-                            UsefulFunctions.BroadcastText("All players have been defeated at least once!", Color.Yellow);
-                            UsefulFunctions.BroadcastText(despawnText, despawnTextColor);
-                        }
-                        despawnTime = 240;
+                        UsefulFunctions.BroadcastText("All players have been defeated at least once!", Color.Yellow);
+                        UsefulFunctions.BroadcastText(despawnText, despawnTextColor);
                     }
+                    despawnTime = 240;
                 }
             }
             else
