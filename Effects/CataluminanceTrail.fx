@@ -64,7 +64,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     }
     
     float start = 0.99;
-    float end = 0.2;
+    float end = 0.05;
     float yStart = 0.7;
     //Make it fade in towards the start
     if (uv.x > start)
