@@ -9,9 +9,10 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+20% Melee Speed, +40% move speed" +
-                "\nSkills: Water Walk, Fire Walk, No knockback, Double Jump, Jump Boost");
             DisplayName.SetDefault("Power Armor NU Greaves");
+            Tooltip.SetDefault("Increases movement speed by 40%" +
+                "\nAllows you to walk on liquids, adds an extra jump and jump boost" +
+                "\nAlso grants immunity to knockback");
         }
         public override void SetDefaults()
         {
@@ -21,17 +22,14 @@ namespace tsorcRevamp.Items.Armors
             Item.rare = ItemRarityID.Lime;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += 0.4f;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.2f;
             player.waterWalk = true;
             player.noKnockback = true;
             player.hasJumpOption_Santank = true;
             player.jumpBoost = true;
         }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

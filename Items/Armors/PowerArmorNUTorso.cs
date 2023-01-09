@@ -10,14 +10,13 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("17% increased ranged damage" +
-                "\n9% increased magic damage" +
-                "\n+80 mana, -10% mana cost" +
-                "\nA powerful armor forged by the god of chaos." +
-                "\nSet Bonus: +20% attack speed, +10 life regen/20 in water");
             DisplayName.SetDefault("Power Armor NU Torso");
+            Tooltip.SetDefault("A powerful armor forged by the god of chaos." +
+                "\nIncreases ranged damage by 17% and magic damage by 9%" +
+                "\nReduces chance of consuming ammo by 20%, increases max mana by 80 and decreases mana costs by 10%" +
+                "\nSet Bonus: +20% attack speed(doubled for melee), +10 life regen/20 in water" +
+                "\nIncreases maximum stamina and stamina regen by 15%");
         }
-
         public override void SetDefaults()
         {
             Item.width = 18;
@@ -26,11 +25,11 @@ namespace tsorcRevamp.Items.Armors
             Item.rare = ItemRarityID.Lime;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
         public override void UpdateEquip(Player player)
         {
             player.GetDamage(DamageClass.Ranged) += 0.17f;
             player.GetDamage(DamageClass.Magic) += 0.09f;
+            player.ammoCost80 = true;
             player.manaCost -= 0.1f;
             player.statManaMax2 += 80;
         }
@@ -41,19 +40,21 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateArmorSet(Player player)
         {
             player.GetAttackSpeed(DamageClass.Generic) += 0.2f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.2f;
 
             player.lifeRegen += 10;
+
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1.15f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1.15f;
 
             if (player.wet)
             {
                 player.lifeRegen += 10;
-                player.nightVision = true;
             }
             int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 39, (player.velocity.X) + (player.direction * 2), player.velocity.Y, 100, Color.SpringGreen, 1.0f);
             Main.dust[dust].noGravity = true;
             Main.dust[dust].noLight = false;
         }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

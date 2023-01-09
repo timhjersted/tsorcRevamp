@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("20% Increased Melee Damage" +
-                "\n+17% crit chance for all classes" +
-                "\nLonger Breath");
             DisplayName.SetDefault("Power Armor NU Helmet");
+            Tooltip.SetDefault("20% Increased Melee Damage" +
+                "\nIncreases critical strike chance by 17%" +
+                "\nLonger Breath");
         }
         public override void SetDefaults()
         {

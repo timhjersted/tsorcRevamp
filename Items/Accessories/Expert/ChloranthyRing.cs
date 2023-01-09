@@ -35,6 +35,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.15f;
             player.GetModPlayer<tsorcRevampPlayer>().StaminaReaper = 4;
             player.statDefense += 2;
+            player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1 = true;
         }
 
         public override bool CanEquipAccessory(Player player, int slot, bool modded)

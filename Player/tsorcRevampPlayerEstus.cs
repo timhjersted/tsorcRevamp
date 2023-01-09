@@ -62,6 +62,10 @@ namespace tsorcRevamp
         public override void OnRespawn(Player player) //When a player respawns, restore charges
         {
             estusChargesCurrent = estusChargesMax;
+            if (Player.GetModPlayer<tsorcRevampPlayer>().HollowSoldierEstusBenefits)
+            {
+                estusChargesCurrent = estusChargesMax + 2;
+            }
         }
 
         public override void PostUpdateBuffs()
@@ -70,6 +74,10 @@ namespace tsorcRevamp
                 && estusChargesCurrent != estusChargesMax && Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) //When the player visits a bonfire, restore charges
             {
                 estusChargesCurrent = estusChargesMax;
+                if (Player.GetModPlayer<tsorcRevampPlayer>().HollowSoldierEstusBenefits)
+                {
+                    estusChargesCurrent = estusChargesMax + 2;
+                }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f }, Player.position);
 
                 for (int i = 0; i <= 15; i++)
@@ -195,7 +203,10 @@ namespace tsorcRevamp
                 {
 
                     estusHealthPerTick += estusHealthGain / estusHealingTimerMax; //Heal this much each tick
-
+                    if (Player.GetModPlayer<tsorcRevampPlayer>().HollowSoldierEstusBenefits)
+                    {
+                        estusHealthPerTick += (estusHealthGain + 30) / estusHealingTimerMax;
+                    }
                     if (estusHealthPerTick > (int)estusHealthPerTick)
                     {
                         Player.statLife += (int)estusHealthPerTick;

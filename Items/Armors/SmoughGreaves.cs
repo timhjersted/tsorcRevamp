@@ -10,24 +10,25 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Smough's Greaves");
-            Tooltip.SetDefault("");
+            Tooltip.SetDefault("Decreases dodgeroll agility");
         }
         public override void SetDefaults()
         {
             Item.width = 18;
             Item.height = 18;
-            Item.vanity = true;
+            Item.defense = 10;
             Item.rare = ItemRarityID.Blue;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
         public override void UpdateEquip(Player player)
         {
+            player.GetModPlayer<tsorcRevampPlayer>().BurdenOfSmough = true;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 250);
+            recipe.AddIngredient(ItemID.CopperGreaves);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

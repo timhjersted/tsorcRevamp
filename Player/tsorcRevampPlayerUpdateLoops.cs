@@ -49,6 +49,9 @@ namespace tsorcRevamp
         public int curseDecayTimer = 0;
         public int powerfulCurseDecayTimer = 0;
 
+        public bool ChloranthyRing1 = false;
+        public bool ChloranthyRing2 = false;
+
         public bool DarkInferno = false;
         public bool CrimsonDrain = false;
         public bool PhazonCorruption = false;
@@ -72,6 +75,12 @@ namespace tsorcRevamp
 
         public bool WaspPower = false;
 
+        public bool HollowSoldierAgility = false;
+        public bool HollowSoldierEstusBenefits = false;
+        public bool SmoughShieldSkills = false;
+        public bool BurdenOfSmough = false;
+        public bool SmoughAttackSpeedReduction = false;
+
         public bool Miakoda = false;
         public bool RTQ2 = false;
 
@@ -93,6 +102,7 @@ namespace tsorcRevamp
         public int manaShield = 0;
 
         public int staminaShield = 0;
+        public bool DragonCrestShieldEquipped = false;
 
         //How many more frames the Mana Shield is disabled after using a mana potion
         public int manaShieldCooldown = 0;
@@ -243,6 +253,9 @@ namespace tsorcRevamp
 
             DuskCrownRing = false;
 
+            ChloranthyRing1 = false;
+            ChloranthyRing2 = false;
+
             CritDamage250 = false;
 
             Celestriad = false;
@@ -251,39 +264,56 @@ namespace tsorcRevamp
             GemBox = false;
             OldWeapon = false;
             Miakoda = false;
+
             WaspPower = false;
+
+            HollowSoldierAgility = false;
+            HollowSoldierEstusBenefits = false;
+            SmoughShieldSkills = false;
+            BurdenOfSmough = false;
+            SmoughAttackSpeedReduction = false;
+
             RTQ2 = false;
             DarkInferno = false;
             BoneRevenge = false;
             SoulSiphon = false;
+
             CrimsonDrain = false;
             Shockwave = false;
             SOADrain = false;
             MiakodaFull = false;
+
             MiakodaFullHeal1 = false;
             MiakodaCrescent = false;
             MiakodaCrescentDust1 = false;
+
             MiakodaNew = false;
             MiakodaNewDust1 = false;
             GiveBossZen = false;
+
             BossZenBuff = false;
             MagicWeapon = false;
             GreatMagicWeapon = false;
             CrystalMagicWeapon = false;
+
             DarkmoonCloak = false;
             manaShield = 0;
             staminaShield = 0;
+
             ConditionOverload = false;
             supersonicLevel = 0;
             ConsSoulChanceMult = 0;
             SoulSickle = false;
             TornWings = false;
+
             Crippled = false;
             ShadowWeight = false;
             ReflectionShiftEnabled = false;
+
             PhazonCorruption = false;
             LifegemHealing = false;
             RadiantLifegemHealing = false;
+
             PowerWithin = false;
             BurningAura = false;
             BurningStone = false;
@@ -291,6 +321,7 @@ namespace tsorcRevamp
 
             ActivePermanentPotions = new List<int>();
             CowardsAffliction = false;
+            DragonCrestShieldEquipped = false;
 
             if (!HasFracturingArmor)
             {
@@ -1332,6 +1363,14 @@ namespace tsorcRevamp
                 if (Main.rand.NextBool(100))
                 {
                     text = "Get Good :)";
+                }
+            }
+
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BurdenOfSmough)
+            {
+                if (Main.rand.NextBool(10))
+                {
+                    text = "Heavy roll you got there!";
                 }
             }
 

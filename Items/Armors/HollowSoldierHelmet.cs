@@ -10,30 +10,28 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
+            Tooltip.SetDefault("Nullifies the negative stamina regen of the Dragon Crest Shield");
         }
         public override void SetDefaults()
         {
-            Item.vanity = true;
             Item.width = 26;
             Item.height = 20;
+            Item.defense = 2;
             Item.rare = ItemRarityID.Blue;
             Item.value = PriceByRarity.fromItem(Item);
         }
-
-        public override bool IsArmorSet(Item head, Item body, Item legs)
+        public override void UpdateEquip(Player player)
         {
-            return body.type == ModContent.ItemType<HollowSoldierBreastplate>() && legs.type == ModContent.ItemType<HollowSoldierWaistcloth>();
+            if (player.GetModPlayer<tsorcRevampPlayer>().DragonCrestShieldEquipped)
+            {
+                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.15f;
+            }
         }
-
-        public override void UpdateArmorSet(Player player)
-        {
-        }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.IronHelmet);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 750);
             recipe.AddTile(TileID.DemonAltar);
             
             recipe.Register();

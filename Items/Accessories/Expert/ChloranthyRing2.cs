@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             DisplayName.SetDefault("Chloranthy Ring II");
             Tooltip.SetDefault("Increases Stamina recovery speed by 25%" +
                                "\n[c/ffbf00:Further enhances your agility and evasiveness when dodge rolling]" +
-                               "\n[c/ffbf00:Grants a 10% chance to evade attacks when hit & superior mid-air dexterity]" +
+                               "\n[c/ffbf00:Grants the Black Belt's effect & superior mid-air dexterity]" +
                                "\nThis ring is named for its decorative green" +
                                "\nblossom. Its luster has now been fully restored." +
                                "\n+4 defense");
@@ -30,8 +30,8 @@ namespace tsorcRevamp.Items.Accessories.Expert
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
-            recipe.AddIngredient(ModContent.ItemType<ChloranthyRing>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<ChloranthyRing>());
+            recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -43,6 +43,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             player.GetModPlayer<tsorcRevampPlayer>().StaminaReaper = 6;
             player.statDefense += 4;
             player.blackBelt = true;
+            player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2 = true;
         }
 
         public override bool CanEquipAccessory(Player player, int slot, bool modded)

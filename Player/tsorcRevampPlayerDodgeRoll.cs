@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -110,7 +111,7 @@ namespace tsorcRevamp
                 if (item.DamageType == DamageClass.Melee && Player.itemAnimation == Player.itemAnimationMax - 1 && (item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram
                     || item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>() || item.type == ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>()))
                 {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation / Player.GetAttackSpeed(DamageClass.Melee) * 1f);
+                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation / Player.GetAttackSpeed(DamageClass.Melee));
                 }
 
 
@@ -337,7 +338,7 @@ namespace tsorcRevamp
             {
                 return;
             }
-
+            /*
             bool chloranthyRing = false;
             for (int i = 3; i <= (8 + Player.extraAccessorySlots); i++) {
                 if (Player.armor[i].type == ModContent.ItemType<Items.Accessories.Expert.ChloranthyRing>()) {
@@ -352,7 +353,7 @@ namespace tsorcRevamp
                     chloranthyRing2 = true;
                     break;
                 }
-            }
+            }*/
 
             //Apply velocity
             if (dodgeTime < DodgeTimeMax * 0.5f)
@@ -362,7 +363,14 @@ namespace tsorcRevamp
                 if (onGround)
                     dodgeSpeed = 12f;
 
-                if (chloranthyRing)
+                if (Player.GetModPlayer<tsorcRevampPlayer>().HollowSoldierAgility)
+                {
+                    dodgeSpeed = 10f;
+
+                    if (onGround)
+                        dodgeSpeed = 15f;
+                }
+                if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1)
                 {
                     dodgeSpeed = 11f;
 
@@ -370,13 +378,21 @@ namespace tsorcRevamp
                         dodgeSpeed = 13f;
                 }
 
-                if (chloranthyRing2)
+                if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2)
                 {
                     dodgeSpeed = 14f;
 
                     if (onGround)
                         dodgeSpeed = 14f;
                 }
+                if (Player.GetModPlayer<tsorcRevampPlayer>().BurdenOfSmough)
+                {
+                    dodgeSpeed = 5.5f;
+
+                    if (onGround)
+                        dodgeSpeed = 8f;
+                }
+
 
 
                 dodgeSpeed *= dodgeDirection;
@@ -405,18 +421,38 @@ namespace tsorcRevamp
             if (dodgeTime >= DodgeTimeMax * 0.6f)
             {
                 //chloranthy ring effect
-                float decelerationRate = 0.85f; 
-                if (chloranthyRing) {
+                float decelerationRate = 0.85f;
+                if (Player.GetModPlayer<tsorcRevampPlayer>().HollowSoldierAgility)
+                {
+                    decelerationRate = 0.85f;
+                    DodgeImmuneTime = 20;
+                    dodgeCooldown = 12;
+                    if (onGround)
+                    {
+                        decelerationRate = 1f;
+                        DodgeImmuneTime = 23;
+                        dodgeCooldown = 8;
+                    }
+                        DodgeImmuneTime = 21;
+                    dodgeCooldown = 10;
+                }
+                if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1) {
                     decelerationRate = 0.88f;       
                     DodgeImmuneTime = 21;
                     dodgeCooldown = 10;
                 }
                 
                 //chloranthy ring II effect
-                if (chloranthyRing2) {
+                if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2) {
                     decelerationRate = 0.91f;
                     DodgeImmuneTime = 24;
                     dodgeCooldown = 0;
+                }
+                if (Player.GetModPlayer<tsorcRevampPlayer>().BurdenOfSmough)
+                {
+                    decelerationRate = 0.6f;
+                    DodgeImmuneTime = 14;
+                    dodgeCooldown = 25;
                 }
 
 

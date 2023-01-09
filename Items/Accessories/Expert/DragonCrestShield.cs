@@ -43,6 +43,9 @@ namespace tsorcRevamp.Items.Accessories.Expert
         public override void UpdateEquip(Player player)
         {
             base.UpdateEquip(player);
+
+            player.GetModPlayer<tsorcRevampPlayer>().DragonCrestShieldEquipped = true;
+
             player.GetModPlayer<tsorcRevampPlayer>().staminaShield = 1;
 
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult -= 0.15f;
@@ -66,6 +69,13 @@ namespace tsorcRevamp.Items.Accessories.Expert
                 
             }
             else player.noKnockback = true;
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().SmoughShieldSkills)
+            {
+                staminaCost = 40;
+                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.15f;
+            }
+            Main.NewText(player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent);
 
         }
 

@@ -969,7 +969,7 @@ namespace tsorcRevamp
                     Player.manaRegenDelay = Items.Accessories.Celestriad.regenDelay;
                 }
             }
-            // statmina shield code
+            // stamina shield code
             if (staminaShield == 1)
             {
                 if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 75)
