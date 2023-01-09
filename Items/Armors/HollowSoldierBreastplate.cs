@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Increases damage dealt by 10% multiplicatively" +
-                "\nSet Bonus: Nullifies life regen, increases the effectiveness of the Estus Flask" +
+                "\nSet Bonus: Nullifies life regen, increases the effectiveness of the Estus Flask(bugged)" +
                 "\nIncreases maximum stamina and stamina regen by 10%");
         }
         public override void SetDefaults()
@@ -35,7 +35,6 @@ namespace tsorcRevamp.Items.Armors
             player.GetModPlayer<tsorcRevampPlayer>().HollowSoldierEstusBenefits = true;
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1.1f;
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1.1f;
-            Main.NewText(player.GetModPlayer<tsorcRevampPlayer>().HollowSoldierEstusBenefits);
         }
         public override void AddRecipes()
         {
