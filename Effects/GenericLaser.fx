@@ -1,5 +1,6 @@
 sampler uImage0 : register(s0);
 sampler uImage1 : register(s1);
+
 float3 Color;
 float3 SecondaryColor;
 float FadeOut;
@@ -50,9 +51,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     if (FadeOut < 1)
     {
         intensity *= 0.9;
-    }
-
-    
+    }    
 
     //Make the laser trail off at the start
     if (uv.x < startPercent)

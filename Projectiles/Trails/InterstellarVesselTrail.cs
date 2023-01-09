@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Summon.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Trails
 {
@@ -38,36 +39,22 @@ namespace tsorcRevamp.Projectiles.Trails
 
         float timer = 0;
         float transitionTimer = 0;
-        /*public override void AI()
+        public override void AI()
         {
-            if (hostNPC != null && hostNPC.active && hostNPC.life < hostNPC.lifeMax / 2f)
+            base.AI();
+            if (hostProjectile != null)
             {
-                transitionTimer++;
-            }
-
-            timer++;
-
-            //A phase is 900 seconds long
-            //Once that is over, stop adding new positions
-            if (timer < 899)
-            {
-                base.AI();
-            }
-
-            //Once the boss is all the way back to that stage again, then start removing the old positions
-            if (timer > 2700 || !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()))
-            {
-                if (trailPositions.Count > 3)
+                if (((InterstellarVesselShip)hostProjectile.ModProjectile).angularSpeed2 > 0.03f)
                 {
-                    trailPositions.RemoveAt(0);
-                    trailRotations.RemoveAt(0);
-                }
-                else
-                {
-                    Projectile.Kill();
+                    trailIntensity = 2;
                 }
             }
-        }*/
+
+            if(trailIntensity > 1)
+            {
+                trailIntensity -= 0.05f;
+            }
+        }
 
         public override float CollisionWidthFunction(float progress)
         {
@@ -81,25 +68,50 @@ namespace tsorcRevamp.Projectiles.Trails
 
         bool pinkTrail = false;
         Color trailColor = new Color(2.42f, 1.25f, 0.12f);
+        Vector2 samplePointOffset1;
+        Vector2 samplePointOffset2;
+        float trailIntensity = 1;
         public override void SetEffectParameters(Effect effect)
         {
-            visualizeTrail = false;
-            collisionPadding = 8;
-            trailWidth = 20;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-
-            //I do it like this so it retains its color state even if the host NPC dies or despawns
-            if (hostNPC != null && hostNPC.active && hostNPC.life < hostNPC.lifeMax / 2f && transitionTimer <= 120)
-            {
-                trailColor = Color.Lerp(new Color(2.51f, 1.83f, 0.65f), new Color(2.51f, 1.83f, 0.65f), transitionTimer / 120);
-            }
+            trailWidth = 45;
+            trailMaxLength = 500;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/InterstellarVessel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/InterstellarVessel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
-            effect.Parameters["fadeOut"].SetValue(fadeOut);
-            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-            effect.Parameters["shaderColor"].SetValue(trailColor.ToVector4());
             effect.Parameters["length"].SetValue(trailCurrentLength);
+            float hostVel = 0;
+            if (hostProjectile != null)
+            {
+                hostVel = hostProjectile.velocity.Length();
+            }
+            float modifiedTime = 0.001f * hostVel;
+
+            if (Main.gamePaused)
+            {
+                modifiedTime = 0;
+            }
+            samplePointOffset1.X += (modifiedTime * 2);
+            samplePointOffset1.Y -= (0.001f);
+            samplePointOffset2.X += (modifiedTime * 3.01f);
+            samplePointOffset2.Y += (0.001f);
+
+            samplePointOffset1.X += modifiedTime;
+            samplePointOffset1.X %= 1;
+            samplePointOffset1.Y %= 1;
+            samplePointOffset2.X %= 1;
+            samplePointOffset2.Y %= 1;
+            collisionEndPadding = trailPositions.Count / 2;
+
+            effect.Parameters["samplePointOffset1"].SetValue(samplePointOffset1);
+            effect.Parameters["samplePointOffset2"].SetValue(samplePointOffset2);
+            effect.Parameters["fadeOut"].SetValue(trailIntensity);
+            effect.Parameters["speed"].SetValue(hostVel);
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            effect.Parameters["shaderColor"].SetValue(new Color(0.8f, 0.6f, 0.2f).ToVector4());
+            effect.Parameters["secondaryColor"].SetValue(new Color(0.005f, 0.05f, 1f).ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
+            return;
         }
     }
 }

@@ -81,25 +81,64 @@ namespace tsorcRevamp.Projectiles.Trails
 
         bool pinkTrail = false;
         Color trailColor = new Color(2.57f, 0.55f, 0.24f);
+        Vector2 samplePointOffset1;
+        Vector2 samplePointOffset2;
         public override void SetEffectParameters(Effect effect)
         {
-            visualizeTrail = false;
-            collisionPadding = 8;
-            trailWidth = 20;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-
-            //I do it like this so it retains its color state even if the host NPC dies or despawns
-            if (hostNPC != null && hostNPC.active && hostNPC.life < hostNPC.lifeMax / 2f && transitionTimer <= 120)
-            {
-                trailColor = Color.Lerp(new Color(2.51f, 1.83f, 0.65f), new Color(2.51f, 1.83f, 0.65f), transitionTimer / 120);
-            }
+            trailWidth = 30;
+            trailMaxLength = 200;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
-            effect.Parameters["fadeOut"].SetValue(fadeOut);
-            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-            effect.Parameters["shaderColor"].SetValue(trailColor.ToVector4());
             effect.Parameters["length"].SetValue(trailCurrentLength);
+            float hostVel = 0;
+            if (hostProjectile != null)
+            {
+                hostVel = hostProjectile.velocity.Length();
+            }
+            float modifiedTime = 0.001f * hostVel;
+
+            if (Main.gamePaused)
+            {
+                modifiedTime = 0;
+            }
+            samplePointOffset1.X += (modifiedTime);
+            samplePointOffset1.Y -= (0.001f);
+            samplePointOffset2.X += (modifiedTime * 3.01f);
+            samplePointOffset2.Y += (0.001f);
+
+            samplePointOffset1.X += modifiedTime;
+            samplePointOffset1.X %= 1;
+            samplePointOffset1.Y %= 1;
+            samplePointOffset2.X %= 1;
+            samplePointOffset2.Y %= 1;
+            collisionEndPadding = trailPositions.Count / 2;
+
+            effect.Parameters["samplePointOffset1"].SetValue(samplePointOffset1);
+            effect.Parameters["samplePointOffset2"].SetValue(samplePointOffset2);
+            effect.Parameters["fadeOut"].SetValue(fadeOut);
+            effect.Parameters["speed"].SetValue(hostVel);
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            effect.Parameters["shaderColor"].SetValue(Color.Orange.ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
+            return;
+
+            /*
+             * 
+float3 Color;
+float3 SecondaryColor;
+float FadeOut;
+float Time;
+float2 ProjectileSize;
+float TextureSize;
+             * */
+            effect.Parameters["TextureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            effect.Parameters["FadeOut"].SetValue(fadeOut);
+            effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
+            effect.Parameters["Color"].SetValue(Color.Blue.ToVector4());
+            effect.Parameters["SecondaryColor"].SetValue(Color.White.ToVector4());
+            effect.Parameters["ProjectileSize"].SetValue(200);
         }
     }
 }

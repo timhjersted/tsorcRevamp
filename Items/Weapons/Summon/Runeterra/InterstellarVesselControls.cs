@@ -64,6 +64,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 
 			// Minions have to be spawned manually, then have originalDamage assigned to the damage of the summon item
 			var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
+			projectiles.Add((InterstellarVesselShip)projectile.ModProjectile);
 			projectile.originalDamage = Item.damage;
 
 			// Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
@@ -78,9 +79,18 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public static void ReposeProjectiles(Player player) 
 		{
 			// repose projectiles relatively to the first one so they are evenly spread on the radial circumference
+			List<InterstellarVesselShip> projectileList = new List<InterstellarVesselShip>(); 
 			processedProjectilesCount = player.ownedProjectileCounts[ModContent.ProjectileType<InterstellarVesselShip>()];
+			for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].type == ModContent.ProjectileType<InterstellarVesselShip>() && Main.projectile[i].owner == player.whoAmI)
+                {
+					projectileList.Add((InterstellarVesselShip)Main.projectile[i].ModProjectile);
+				}
+            }
+
 			for (int i = 1; i < processedProjectilesCount; ++i) {
-				projectiles[i].currentAngle2 = projectiles[i - 1].currentAngle2 + 2f * (float)Math.PI / processedProjectilesCount;
+				projectileList[i].currentAngle2 = projectileList[i - 1].currentAngle2 + 2f * (float)Math.PI / processedProjectilesCount;
 			}
 		}
 		/*public override void AddRecipes()

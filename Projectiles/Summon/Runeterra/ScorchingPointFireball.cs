@@ -146,5 +146,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		{
 			target.AddBuff(BuffID.OnFire, 120);
 		}
-	}
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+			return false;
+        }
+    }
 }

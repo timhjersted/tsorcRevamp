@@ -306,7 +306,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (MoveTimer == 300)
                 {
                     laserCountdown = 616;
-                    StartAura(1100, 1.007f, 0.00f);
+                    StartAura(650, 1.007f, 0.00f);
                 }
 
                 //Fire laser
@@ -747,6 +747,7 @@ namespace tsorcRevamp.NPCs.Bosses
         float baseRadius = 0.25f;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            effectRadius = 650;
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 

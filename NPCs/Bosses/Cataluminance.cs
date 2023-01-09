@@ -287,9 +287,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 homingStrength = 0.10f;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    if (MoveTimer % 150 < 30)
+                    if (MoveTimer % 150 == 0)
                     {
-                        UsefulFunctions.DustRing(NPC.Center, (30 - MoveTimer % 75) * 15, DustID.GemSapphire, 150, 2);
+                        StartAura(800);
                     }
                     if (MoveTimer % 150 == 30 && MoveTimer > 76)
                     {

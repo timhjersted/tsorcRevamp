@@ -7,12 +7,13 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra;
 using tsorcRevamp.Projectiles.Trails;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
 	public class InterstellarVesselShip : ModProjectile
 	{
-		public static float angularSpeed2 = 0.03f;
+		public float angularSpeed2 = 0.03f;
 		public static float circleRad2 = 50f;
 		public float currentAngle2 = 0;
         public static int timer2 = 0;
@@ -71,6 +72,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		{
 			InterstellarVesselControls.projectiles.Remove(this);
 		}
+		Vector2 lastPos;
+		InterstellarVesselTrail trail;
 		public override void AI()
 		{
 			Player owner = Main.player[Projectile.owner];
@@ -98,7 +101,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Projectile.position = visualplayercenter + offset;            
 			if (!spawnedTrail)
 			{
-				Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<InterstellarVesselTrail>(), 0, 0, Projectile.owner, 0, Projectile.whoAmI);
+				trail = (InterstellarVesselTrail)Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<InterstellarVesselTrail>(), 0, 0, Projectile.owner, 0, Projectile.whoAmI).ModProjectile;
 				spawnedTrail = true;
 			}
 
@@ -162,5 +165,28 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		// Some visuals here
 		Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
 		}
-	}
+
+		public static Texture2D texture;
+		public static Texture2D glowTexture;
+		public override bool PreDraw(ref Color lightColor)
+        {
+			//if (texture == null || texture.IsDisposed)
+			{
+				texture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
+			}
+			//if (glowTexture == null || glowTexture.IsDisposed)
+			{
+				glowTexture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+			}
+
+			Rectangle sourceRectangle = new Rectangle(0,0, texture.Width, texture.Height);
+			Vector2 origin = sourceRectangle.Size() / 2f;
+
+			Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.Lerp(lightColor, Color.Orange, 0.25f), Projectile.rotation, origin, 1, SpriteEffects.None, 0f);
+
+			Main.spriteBatch.Draw(glowTexture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, 1, SpriteEffects.None, 0f);
+
+			return false;
+		}
+    }	
 }
