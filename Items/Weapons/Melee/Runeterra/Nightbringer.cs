@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Item.noUseGraphic = false;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.shootSpeed = 4.2f;
+            Item.shootSpeed = 5f;
             Item.useTurn = false;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
