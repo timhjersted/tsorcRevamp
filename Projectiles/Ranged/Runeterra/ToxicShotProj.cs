@@ -41,5 +41,9 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         {
 			target.AddBuff(BuffID.Venom, 120);
         }
-    }
+		public override bool PreDraw(ref Color lightColor)
+		{
+			return false;
+		}
+	}
 }

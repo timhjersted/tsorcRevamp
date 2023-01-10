@@ -63,12 +63,13 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 			// This is needed so the buff that keeps your minion alive and allows you to despawn it properly applies
 			player.AddBuff(Item.buffType, 2);
 
-			// Minions have to be spawned manually, then have originalDamage assigned to the damage of the summon item
-			var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
-			projectile.originalDamage = Item.damage;
+            // Minions have to be spawned manually, then have originalDamage assigned to the damage of the summon item
+            var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
+            projectiles.Add((ScorchingPointFireball)projectile.ModProjectile);
+            projectile.originalDamage = Item.damage;
 
-			// Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
-			return false;
+            // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
+            return false;
 		}
 
         public override void HoldItem(Player player)
@@ -78,12 +79,22 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 
         public static void ReposeProjectiles(Player player) 
 		{
-			// repose projectiles relatively to the first one so they are evenly spread on the radial circumference
-			processedProjectilesCount = player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointFireball>()];
-			for (int i = 1; i < processedProjectilesCount; ++i) {
-				projectiles[i].currentAngle = projectiles[i - 1].currentAngle + 2f * (float)Math.PI / processedProjectilesCount;
-			}
-		}
+            // repose projectiles relatively to the first one so they are evenly spread on the radial circumference
+            List<ScorchingPointFireball> projectileList = new List<ScorchingPointFireball>();
+            processedProjectilesCount = player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointFireball>()];
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].type == ModContent.ProjectileType<InterstellarVesselShip>() && Main.projectile[i].owner == player.whoAmI)
+                {
+                    projectileList.Add((ScorchingPointFireball)Main.projectile[i].ModProjectile);
+                }
+            }
+
+            for (int i = 1; i < processedProjectilesCount; ++i)
+            {
+                projectileList[i].currentAngle = projectileList[i - 1].currentAngle + 2f * (float)Math.PI / processedProjectilesCount;
+            }
+        }
 		public override void AddRecipes()
 		{
 			Recipe recipe = CreateRecipe();

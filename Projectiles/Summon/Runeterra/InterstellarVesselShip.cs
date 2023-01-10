@@ -8,6 +8,7 @@ using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra;
 using tsorcRevamp.Projectiles.Trails;
 using Microsoft.Xna.Framework.Graphics;
+using static Humanizer.In;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
@@ -51,7 +52,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         }
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (timer2 > 0)
+            Player owner = Main.player[Projectile.owner];
+            if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
                 damage += (Projectile.damage / 4);
             }
@@ -85,13 +87,16 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 				return;
             }
 
-            if (timer2 > 0)
+            if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
                 angularSpeed2 = 0.075f;
+				owner.statMana -= 1;
+				owner.manaRegenDelay = 10;
             }
-            else
+            if (!owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost || (owner.statMana <= 0) || owner.HasBuff(BuffID.ManaSickness))
             {
                 angularSpeed2 = 0.03f;
+				owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = false;
             }
 
             currentAngle2 += (angularSpeed2 / (circleRad2 * 0.001f + 1f)); 

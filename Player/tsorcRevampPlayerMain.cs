@@ -875,6 +875,14 @@ namespace tsorcRevamp
                 PlasmaWhirlwind thisPlasmaWhirlwind = Player.HeldItem.ModItem as PlasmaWhirlwind;
                 Nightbringer thisNightbringer = Player.HeldItem.ModItem as Nightbringer;
 
+                if (!(Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>()) && Player.HasBuff(ModContent.BuffType<InterstellarCommander>()))
+                {
+                    owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
+                }
+
+
+
+
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC other = Main.npc[i];

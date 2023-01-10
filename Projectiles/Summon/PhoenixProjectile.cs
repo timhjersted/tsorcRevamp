@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
 
 			Projectile.usesLocalNPCImmunity = true;
-			Projectile.localNPCHitCooldown = 15;
+			Projectile.localNPCHitCooldown = 20;
 		}
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)

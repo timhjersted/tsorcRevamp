@@ -73,6 +73,8 @@ namespace tsorcRevamp
 
         public int steeltempest = 0;
 
+        public bool InterstellarBoost = false;
+
         public bool WaspPower = false;
 
         public bool HollowSoldierAgility = false;

@@ -22,7 +22,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 			Tooltip.SetDefault("Summons spaceships to rotate around you and damage enemies in their way" +
 								"\nIncrease their radius by holding the Special Ability hotkey" +
                                 "\nHold Shift + Special Ability to shrink their radius" +
-								"\nSpaceships will activate a shield, giving them a movement speed and damage boost on crit for 3 seconds");
+								"\nPress Special Ability while not holding the remote to activate Turboboost" +
+                                "\nThis increases the spaceships damage and movement speed" +
+                                "\nTurboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness");
 
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
