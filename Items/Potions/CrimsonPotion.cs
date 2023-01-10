@@ -6,12 +6,10 @@ namespace tsorcRevamp.Items.Potions
 {
     public class CrimsonPotion : ModItem
     {
-
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Enemies within a ten tile radius are inflicted with \nCrimson Burn, which quickly drains life");
         }
-
         public override void SetDefaults()
         {
             Item.width = 14;
