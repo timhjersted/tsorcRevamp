@@ -45,9 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cataluminance");
-            NPCID.Sets.TrailCacheLength[NPC.type] = 50;
-            NPCID.Sets.TrailingMode[NPC.type] = 2;
+            DisplayName.SetDefault("Cataluminance v1.07");
         }
 
         int StarBlastDamage = 25;
@@ -229,10 +227,10 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (PhaseTwo)
             {
-                if (MoveTimer % 90 == 0 && MoveTimer < 850)
+                if (MoveTimer % 110 == 0 && MoveTimer < 850)
                 {
-                    baseFade = 0.2f;
-                    baseRadius = .3f;
+                    baseFade = 0.1f;
+                    baseRadius = .4f;
                     //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(MathHelper.PiOver4), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
                     //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(MathHelper.PiOver4 / 2f), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
                     //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(-MathHelper.PiOver4 / 2f), ModContent.ProjectileType<Projectiles.Enemy.Triplets.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);

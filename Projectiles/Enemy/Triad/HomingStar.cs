@@ -47,7 +47,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
                     if (Projectile.ai[0] == 0)
                     {
-                        homingAcceleration = 0.1f;
+                        homingAcceleration = 0.05f;
                     }
                 }
 

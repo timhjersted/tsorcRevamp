@@ -42,9 +42,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spazmatism");
-            NPCID.Sets.TrailCacheLength[NPC.type] = 50;
-            NPCID.Sets.TrailingMode[NPC.type] = 2;
+            DisplayName.SetDefault("Spazmatism v2.13");
         }
 
         int EyeFireDamage = 25;

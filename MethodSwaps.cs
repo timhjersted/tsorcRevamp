@@ -785,6 +785,16 @@ namespace tsorcRevamp
                 return;
             }
             Item selectedItem = player.QuickMana_GetItemToUse();
+            if (player.HasItem(ModContent.ItemType<Items.Potions.SupremeManaPotion>()))
+            {                
+                for(int i = 0; i < player.inventory.Length; i++)
+                {
+                    if (player.inventory[i] != null && player.inventory[i].type == ModContent.ItemType<Items.Potions.SupremeManaPotion>())
+                    {
+                        selectedItem = player.inventory[i];
+                    }
+                }
+            }
             if (selectedItem == null)
             {
                 selectedItem = new Item();
@@ -795,14 +805,13 @@ namespace tsorcRevamp
 
             for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
             {
-                if (PotionBagItems[i] != null && PotionBagItems[i].type != 0 && (player.potionDelay == 0 || !PotionBagItems[i].potion) && ItemLoader.CanUseItem(PotionBagItems[i], player) && player.GetHealMana(PotionBagItems[i], true) > player.GetHealMana(selectedItem, true))
+                if (PotionBagItems[i] != null && PotionBagItems[i].type != 0 && (player.potionDelay == 0 || !PotionBagItems[i].potion) && ItemLoader.CanUseItem(PotionBagItems[i], player) && (player.GetHealMana(PotionBagItems[i], true) > player.GetHealMana(selectedItem, true)) || PotionBagItems[i].type == ModContent.ItemType<Items.Potions.SupremeManaPotion>())
                 {
                     selectedItem = PotionBagItems[i];
                 }
             }
 
             UsePotion(selectedItem, player);
-
         }
 
         private static void CustomQuickHeal(On.Terraria.Player.orig_QuickHeal orig, Player player)
@@ -888,6 +897,12 @@ namespace tsorcRevamp
                 player.AddBuff(BuffID.ManaSickness, 300);
                 if (Main.myPlayer == player.whoAmI)
                     player.ManaEffect(healMana);
+            }
+            if(item.type == ModContent.ItemType<Items.Potions.SupremeManaPotion>())
+            {
+                player.AddBuff(BuffID.ManaSickness, 180);
+                if (Main.myPlayer == player.whoAmI)
+                    player.ManaEffect(400);
             }
 
             if (item.buffType > 0)

@@ -44,9 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Retinazer");
-            NPCID.Sets.TrailCacheLength[NPC.type] = 50;
-            NPCID.Sets.TrailingMode[NPC.type] = 2;
+            DisplayName.SetDefault("Retinazer v2.01");
         }
 
         int DeathLaserDamage = 20;
@@ -91,7 +89,6 @@ namespace tsorcRevamp.NPCs.Bosses
         float rotationSpeed;
         public override void AI()
         {
-            MoveIndex = 0;
             if (ringCollapse < 0.1f)
             {
                 fadePercentage += fadeSpeed;

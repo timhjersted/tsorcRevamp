@@ -58,7 +58,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             {
                 if (chargeProgress == 0)
                 {
-                    soundSlotID = Terraria.Audio.SoundEngine.PlaySound(LaserSoundStyle, Main.LocalPlayer.Center);                    
+                    soundSlotID = Terraria.Audio.SoundEngine.PlaySound(LaserSoundStyle with { Volume = 0.5f }, Main.LocalPlayer.Center);                    
                 }
                 chargeProgress++;
             }
@@ -97,6 +97,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             {
                 if(Projectile.timeLeft > 130)
                 {
+                    laserSound.Stop();
                     Projectile.timeLeft = 130;
                 }
             }
