@@ -1,23 +1,25 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Design;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
+using static Humanizer.In;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
 	public class DetonationSignalProjectile : ModProjectile
 	{
-
 		public override void SetStaticDefaults()
 		{
 			// This makes the projectile use whip collision detection and allows flasks to be applied to it.
 			ProjectileID.Sets.IsAWhip[Type] = true;
 		}
-
 		public override void SetDefaults()
 		{
 			Projectile.width = 12;
@@ -125,16 +127,28 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 		}
 
 
-		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-		{
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.DetonationSignalDebuff>(), 240);
-			target.AddBuff(BuffID.OnFire3, 240);
-			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
-			Projectile.damage = (int)(damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
-		}
 
-		// This method draws a line between all points of the whip, in case there's empty space between the sprites.
-		private void DrawLine(List<Vector2> list)
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+		{
+            Vector2 WhipTip = new Vector2(18, 24) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
+            List<Vector2> points = Projectile.WhipPointsForCollision;
+            if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
+			{
+				crit = true;
+			}
+        }
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.DetonationSignalDebuff>(), 240);
+            target.AddBuff(BuffID.OnFire3, 240);
+            Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
+            Projectile.damage = (int)(damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
+
+        }
+
+
+        // This method draws a line between all points of the whip, in case there's empty space between the sprites.
+        private void DrawLine(List<Vector2> list)
 		{
 			Texture2D texture = TextureAssets.FishingLine.Value;
 			Rectangle frame = texture.Frame();

@@ -39,9 +39,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = 20;
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
-        }
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             Player owner = Main.player[Projectile.owner];
@@ -139,25 +136,20 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			return true;
 		}
-		private void Visuals()
-		{
-
-		Projectile.rotation = currentAngle2 * -1f;
-
-		//float frameSpeed = 3f;
-
-		//Projectile.frameCounter++;
-
-		/*if (Projectile.frameCounter >= frameSpeed)
-		{
-			Projectile.frameCounter = 0;
-			Projectile.frame++;
-
-			if (Projectile.frame >= Main.projFrames[Projectile.type])
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+			if (crit)
 			{
-					Projectile.frame = 0;
+				target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 80);
 			}
-		}*/
+			else
+			{
+				target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 40);
+			}
+        }
+        private void Visuals()
+		{
+		Projectile.rotation = currentAngle2 * -1f;
 
 		Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
 		}

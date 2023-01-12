@@ -52,15 +52,14 @@ namespace tsorcRevamp.Projectiles.Trails
         {
             behindProjectiles.Add(index);
         }
-
         bool pinkTrail = false;
         Color trailColor = new Color(2.57f, 0.55f, 0.24f);
         Vector2 samplePointOffset1;
         Vector2 samplePointOffset2;
         public override void SetEffectParameters(Effect effect)
         {
-            trailWidth = 30;
-            trailMaxLength = 200;
+            trailWidth = 45;
+            trailMaxLength = 400;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             effect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 

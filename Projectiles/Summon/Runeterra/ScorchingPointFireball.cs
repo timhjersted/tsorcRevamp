@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra;
 using tsorcRevamp.Projectiles.Trails;
+using tsorcRevamp.Buffs.Summon.WhipDebuffs;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
@@ -142,7 +143,14 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		}
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-			target.AddBuff(BuffID.OnFire, 120);
+			if (crit)
+			{
+                target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 80);
+            }
+			else
+			{
+                target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 40);
+            }
 		}
 
         public override bool PreDraw(ref Color lightColor)

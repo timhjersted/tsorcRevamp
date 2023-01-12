@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -33,7 +32,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = -1;
 			Projectile.WhipSettings.Segments = 20;
-			Projectile.WhipSettings.RangeMultiplier = 2.4f; //only thing affecting the actual whip range
+			Projectile.WhipSettings.RangeMultiplier = 2f; //only thing affecting the actual whip range
 		}
 
 		private float Timer
@@ -83,13 +82,14 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			{
 				SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Item/SummonerWhipcrack") with { Volume = 0.6f, PitchVariance = 0.3f }, points[points.Count - 1]);
 			}
-		}
+        }
 
-		// This method handles a charging mechanic.
-		// If you remove this, also remove Item.channel = true from the item's SetDefaults.
-		// Returns true if fully charged
-		//Causes sound error if removed idk why
-		private bool Charge(Player owner)
+
+        // This method handles a charging mechanic.
+        // If you remove this, also remove Item.channel = true from the item's SetDefaults.
+        // Returns true if fully charged
+        //Causes sound error if removed idk why
+        private bool Charge(Player owner)
 		{
 			// Like other whips, this whip updates twice per frame (Projectile.extraUpdates = 1), so 120 is equal to 1 second.
 			if (!owner.channel || ChargeTime >= 120)
@@ -99,10 +99,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 			ChargeTime++;
 
-			if (ChargeTime % 12 == 0) // 1 segment per 12 ticks of charge.
+			if (ChargeTime % 24 == 0) // 1 segment per 12 ticks of charge.
 			{
 				Projectile.WhipSettings.Segments++;
-				Projectile.WhipSettings.RangeMultiplier += 0.05f;
+				Projectile.WhipSettings.RangeMultiplier += 0.005f;
 			}
 			if (ChargeTime % 30 == 0) // Add 20% of projectiles damage every 30 ticks of charge
 			{
@@ -125,8 +125,16 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			return false; // still charging
 		}
 
-
-		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            Vector2 WhipTip = new Vector2(11, 14) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
+            List<Vector2> points = Projectile.WhipPointsForCollision;
+            if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
+            {
+                crit = true;
+            }
+        }
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
             TerraCharges = (int)ChargeTime / 40 + 1;
             Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.TerraFallBuff>(), TerraCharges * 150);

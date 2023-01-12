@@ -42,13 +42,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 20;
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
-            if (crit)
-            {
-                Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().CritCounter += 1;
-            }
-        }
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             Player owner = Main.player[Projectile.owner];
@@ -145,6 +138,18 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             }
 
             return true;
+        }
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            if (crit)
+            {
+                Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().CritCounter += 1;
+                target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 80);
+            }
+            else
+            {
+                target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 40);
+            }
         }
         private void Visuals()
         {

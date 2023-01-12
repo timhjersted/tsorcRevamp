@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
@@ -34,6 +35,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 0.4f, PitchVariance = 0.1f });
             Dust.NewDust(target.Center, 100, 100, DustID.MagicMirror, 0f, 0f, 250, Color.DarkRed, 2.5f);
+            if (crit)
+            {
+                target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 600);
+            }
+            target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 300);
         }
         private void Visuals()
         {

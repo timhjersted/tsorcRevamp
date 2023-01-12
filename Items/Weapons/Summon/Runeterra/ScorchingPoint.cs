@@ -23,6 +23,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 			Tooltip.SetDefault("Summons fireballs to rotate around you and damage enemies in their way" +
 								"\nIncrease their radius by holding the Special Ability hotkey" +
 								"\nHold Shift + Special Ability to shrink their radius" +
+                                "\nApplies the Scorching debuff, which grants minions crit chance based on a fraction of your critical strike chance" +
+                                "\nDebuff damage also scales with minion damage" +
                 				"\n'By the Ashen Lord of Runeterra!'");
 
 
@@ -32,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 		{
 			projectiles = new List<ScorchingPointFireball>(){};
 
-			Item.damage = 22;
+			Item.damage = 20;
 			Item.knockBack = 3f;
 			Item.mana = 10;
 			Item.width = 32;
@@ -84,7 +86,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             processedProjectilesCount = player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointFireball>()];
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].type == ModContent.ProjectileType<InterstellarVesselShip>() && Main.projectile[i].owner == player.whoAmI)
+                if (Main.projectile[i].type == ModContent.ProjectileType<ScorchingPointFireball>() && Main.projectile[i].owner == player.whoAmI)
                 {
                     projectileList.Add((ScorchingPointFireball)Main.projectile[i].ModProjectile);
                 }

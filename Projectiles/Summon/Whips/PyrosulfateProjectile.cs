@@ -109,10 +109,19 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			owner.itemTime = owner.itemTimeMax;
 
 			return false; // still charging
-		}
+        }
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            Vector2 WhipTip = new Vector2(10, 12) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
+            List<Vector2> points = Projectile.WhipPointsForCollision;
+            if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
+            {
+                crit = true;
+            }
+        }
 
 
-		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
 			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.PyrosulfateDebuff>(), 240);
 			target.AddBuff(BuffID.CursedInferno, 240);
