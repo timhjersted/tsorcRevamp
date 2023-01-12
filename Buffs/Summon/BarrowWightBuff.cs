@@ -8,12 +8,12 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Summon
 {
-	public class PhoenixBuff : ModBuff
+	public class BarrowWightBuff : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Phoenix Juvenile");
-			Description.SetDefault("The Phoenix Juvenile will fight for you");
+			DisplayName.SetDefault("Barrow Wight");
+			Description.SetDefault("The Barrow Wight will fight for you");
 
 			Main.buffNoSave[Type] = true; // This buff won't save when you exit the world
 			Main.buffNoTimeDisplay[Type] = true; // The time remaining won't display on this buff
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Buffs.Summon
 		public override void Update(Player player, ref int buffIndex)
 		{
 			// If the minions exist reset the buff time, otherwise remove the buff from the player
-			if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.PhoenixProjectile>()] > 0)
+			if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.SpiritBell.BarrowWightMinion>()] > 0)
 			{
 				player.buffTime[buffIndex] = 18000;
 			}

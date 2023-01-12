@@ -37,6 +37,15 @@ using System.Security.Cryptography;
 using tsorcRevamp.Tiles;
 using tsorcRevamp.Tiles.Trophies;
 using tsorcRevamp.Banners;
+using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.Buffs.Summon;
+using tsorcRevamp.Projectiles.Summon;
+using tsorcRevamp.Projectiles.Summon.SunsetQuasar;
+using tsorcRevamp.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Buffs.Runeterra;
+using tsorcRevamp.Projectiles.Summon.Runeterra;
+using tsorcRevamp.Projectiles.Summon.Archer;
+using tsorcRevamp.Projectiles.Summon.SpiritBell;
 
 namespace tsorcRevamp
 {
@@ -1228,6 +1237,65 @@ namespace tsorcRevamp
         }
         public override void PostSetupContent()
         {
+            #region Summoners Association Compatibility
+
+            if (ModLoader.TryGetMod("SummonersAssociation", out Mod summonersAssociation))
+            {
+                summonersAssociation.Call(
+                    "AddMinionInfo",
+                    ModContent.ItemType<PhoenixEgg>(),
+                    ModContent.BuffType<PhoenixBuff>(),
+                    ModContent.ProjectileType<PhoenixProjectile>(),
+                    2f                    
+                    );
+                summonersAssociation.Call(
+                    "AddMinionInfo",
+                    ModContent.ItemType<SunsetQuasar>(),
+                    ModContent.BuffType<SunsetQuasarBuff>(),
+                    ModContent.ProjectileType<SunsetQuasarMinion>(),
+                    1f
+                    );
+                summonersAssociation.Call(
+                    "AddMinionInfo",
+                    ModContent.ItemType<ScorchingPoint>(),
+                    ModContent.BuffType<CenterOfTheHeat>(),
+                    ModContent.ProjectileType<ScorchingPointFireball>()
+                    );
+                summonersAssociation.Call(
+                    "AddMinionInfo",
+                    ModContent.ItemType<TetsujinRemote>(),
+                    ModContent.BuffType<TetsujinBuff>(),
+                    ModContent.ProjectileType<TetsujinProjectile>(),
+                    2f
+                    );
+                summonersAssociation.Call(
+                    "AddMinionInfo",
+                    ModContent.ItemType<NullSpriteStaff>(),
+                    ModContent.BuffType<NullSpriteBuff>(),
+                    ModContent.ProjectileType<NullSprite>()
+                    );
+                summonersAssociation.Call(
+                    "AddMinionInfo",
+                    ModContent.ItemType<Wakizashi>(),
+                    ModContent.BuffType<SamuraiBeetleBuff>(),
+                    ModContent.ProjectileType<SamuraiBeetle>()
+                    );
+                summonersAssociation.Call(
+                    "AddMinionInfo",
+                    ModContent.ItemType<PeculiarSphere>(),
+                    ModContent.BuffType<NondescriptOwlBuff>(),
+                    ModContent.ProjectileType<NondescriptOwlProjectile>()
+                    );
+                summonersAssociation.Call(
+                    "AddMinionInfo",
+                    ModContent.ItemType<SpiritBell>(),
+                    ModContent.BuffType<BarrowWightBuff>(),
+                    ModContent.ProjectileType<BarrowWightMinion>()
+                    );
+            }
+
+            #endregion
+
             #region Boss Checklist Compatibility
             Mod bossChecklist;
             if (ModLoader.TryGetMod("BossChecklist", out bossChecklist))

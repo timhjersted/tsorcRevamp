@@ -7,22 +7,18 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-	public class PhoenixEgg : ModItem
+	public class Wakizashi : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Phoenix Egg");
-			Tooltip.SetDefault("Summons a raging Phoenix Juvenile to fight for you" +
-                "\nWarms up by dealing damage to enemies, speeding up its movements" +
-                "\nDeals increased damage after warming up sufficiently" +
-                "\nAlso benefits more from summon tag bonuses" +
-                "\nUses 2 minion slots");
+			DisplayName.SetDefault("Wakizashi");
+			Tooltip.SetDefault("Summons a Samurai Beetle to fight for you");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
 			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-			ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 2;
-		}
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
+        }
 		public override void SetDefaults()
 		{
 			Item.damage = 20;
@@ -34,15 +30,14 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			Item.useAnimation = 30;
 			Item.useStyle = ItemUseStyleID.Swing;
 			Item.value = Item.buyPrice(0, 50, 0, 0);
-			Item.rare = ItemRarityID.Expert;
-			Item.expert = true;
 			Item.UseSound = SoundID.Item44;
+			Item.rare = ItemRarityID.Purple;
 
 
 			Item.noMelee = true;
 			Item.DamageType = DamageClass.Summon;
-			Item.buffType = ModContent.BuffType<Buffs.Summon.PhoenixBuff>();
-			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.PhoenixProjectile>();
+			Item.buffType = ModContent.BuffType<Buffs.Summon.SamuraiBeetleBuff>();
+			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.SamuraiBeetle>();
 		}
 
 		public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)

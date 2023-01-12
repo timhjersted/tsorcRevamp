@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -7,13 +8,16 @@ namespace tsorcRevamp.Items.Weapons.Summon
 {
     public class PeculiarSphere : ModItem 
     {
-        //public override bool IsLoadingEnabled(Mod mod) => false;
         public override void SetStaticDefaults() 
         {
             DisplayName.SetDefault("Peculiar Sphere");
             Tooltip.SetDefault("Summons a friendly Owl Archer to fight for you.");
-        }
 
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
+            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
+            ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
+            ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
+        }
         public override void SetDefaults() 
         {
             Item.damage = 100;
@@ -31,7 +35,6 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.buffType = ModContent.BuffType<Buffs.Summon.NondescriptOwlBuff>();
             Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Archer.ArcherToken>();
         }
-
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) 
         {
             player.AddBuff(Item.buffType, 2);
