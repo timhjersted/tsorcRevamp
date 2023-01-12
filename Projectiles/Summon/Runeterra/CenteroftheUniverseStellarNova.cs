@@ -1,11 +1,11 @@
-/*using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
+namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
-    public class CotUEStar : ModProjectile
+    public class CenterOfTheUniverseStellarNova : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -52,9 +52,8 @@ namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
                 }
             }
 
-            // Some visuals here
             Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
             Dust.NewDust(Projectile.Center, 20, 20, DustID.MagicMirror);
         }
     }
-}*/
+}

@@ -879,6 +879,10 @@ namespace tsorcRevamp
                 {
                     owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
                 }
+                if (!(Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>()) && Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>()))
+                {
+                    owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
+                }
 
 
 
@@ -951,6 +955,22 @@ namespace tsorcRevamp
                     Projectiles.Summon.Runeterra.InterstellarVesselShip.circleRad2 += 1.5f;
                 }
                 Dust.NewDustDirect(Player.Center, 10, 10, DustID.FlameBurst, 0.5f, 0.5f, 0, Color.Firebrick, 0.5f);
+            }
+            if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>())
+            {
+                if (Main.keyState.IsKeyDown(Keys.LeftShift))
+                {
+                    Projectiles.Summon.Runeterra.CenterOfTheUniverseStar.circleRad3 -= 1.5f;
+                    if (Projectiles.Summon.Runeterra.CenterOfTheUniverseStar.circleRad3 < 50)
+                    {
+                        Projectiles.Summon.Runeterra.CenterOfTheUniverseStar.circleRad3 = 50;
+                    }
+                }
+                else
+                {
+                    Projectiles.Summon.Runeterra.CenterOfTheUniverseStar.circleRad3 += 1.5f;
+                }
+                Dust.NewDustDirect(Player.Center, 10, 10, DustID.MagicMirror, 0.5f, 0.5f, 0, Color.Magenta, 0.5f);
             }
         }
 

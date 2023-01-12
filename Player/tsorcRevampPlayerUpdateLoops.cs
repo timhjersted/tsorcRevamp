@@ -72,6 +72,7 @@ namespace tsorcRevamp
         public bool CritDamage250 = false;
 
         public int steeltempest = 0;
+        public int CritCounter = 0;
 
         public bool InterstellarBoost = false;
 

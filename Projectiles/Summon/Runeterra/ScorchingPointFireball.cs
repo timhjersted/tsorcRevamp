@@ -20,21 +20,20 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         public override void SetStaticDefaults()
 		{
 			Main.projFrames[Projectile.type] = 8;
-			Main.projPet[Projectile.type] = true; // Denotes that this projectile is a pet or minion
-			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; // This is needed so your minion can properly spawn when summoned and replaced when other minions are summoned
+			Main.projPet[Projectile.type] = true;
+			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
 		}
 		public sealed override void SetDefaults()
 		{
 			Projectile.width = 66;
 			Projectile.height = 28;
-			Projectile.tileCollide = false; // Makes the minion go through tiles freely
+			Projectile.tileCollide = false;
 
-			// These below are needed for a minion weapon
-			Projectile.friendly = true; // Only controls if it deals damage to enemies on contact (more on that later)
-			Projectile.minion = true; // Declares this as a minion (has many effects)
-			Projectile.DamageType = DamageClass.Summon; // Declares the damage type (needed for it to deal damage)
-			Projectile.minionSlots = 1f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
-			Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
+			Projectile.friendly = true; 
+			Projectile.minion = true;
+			Projectile.DamageType = DamageClass.Summon;
+			Projectile.minionSlots = 1f;
+			Projectile.penetrate = -1;
 			Projectile.extraUpdates = 1;
 
 			Projectile.usesLocalNPCImmunity = true;
@@ -139,7 +138,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 				}
 			}
 
-			// Some visuals here
 			Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
 		}
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)

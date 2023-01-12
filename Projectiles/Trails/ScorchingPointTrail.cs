@@ -38,36 +38,10 @@ namespace tsorcRevamp.Projectiles.Trails
 
         float timer = 0;
         float transitionTimer = 0;
-        /*public override void AI()
+        public override bool? CanCutTiles()
         {
-            if (hostNPC != null && hostNPC.active && hostNPC.life < hostNPC.lifeMax / 2f)
-            {
-                transitionTimer++;
-            }
-
-            timer++;
-
-            //A phase is 900 seconds long
-            //Once that is over, stop adding new positions
-            if (timer < 899)
-            {
-                base.AI();
-            }
-
-            //Once the boss is all the way back to that stage again, then start removing the old positions
-            if (timer > 2700 || !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()))
-            {
-                if (trailPositions.Count > 3)
-                {
-                    trailPositions.RemoveAt(0);
-                    trailRotations.RemoveAt(0);
-                }
-                else
-                {
-                    Projectile.Kill();
-                }
-            }
-        }*/
+            return false;
+        }
 
         public override float CollisionWidthFunction(float progress)
         {

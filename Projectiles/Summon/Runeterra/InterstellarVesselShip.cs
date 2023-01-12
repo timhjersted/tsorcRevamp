@@ -8,7 +8,6 @@ using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra;
 using tsorcRevamp.Projectiles.Trails;
 using Microsoft.Xna.Framework.Graphics;
-using static Humanizer.In;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
@@ -17,27 +16,24 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		public float angularSpeed2 = 0.03f;
 		public static float circleRad2 = 50f;
 		public float currentAngle2 = 0;
-        public static int timer2 = 0;
 		bool spawnedTrail = false;
 
         public override void SetStaticDefaults()
 		{
-			//Main.projFrames[Projectile.type] = 5;
-			Main.projPet[Projectile.type] = true; // Denotes that this projectile is a pet or minion
-			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; // This is needed so your minion can properly spawn when summoned and replaced when other minions are summoned
+			Main.projPet[Projectile.type] = true; 
+			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; 
 		}
 		public sealed override void SetDefaults()
 		{
 			Projectile.width = 98;
 			Projectile.height = 54;
-			Projectile.tileCollide = false; // Makes the minion go through tiles freely
+			Projectile.tileCollide = false;
 
-			// These below are needed for a minion weapon
-			Projectile.friendly = true; // Only controls if it deals damage to enemies on contact (more on that later)
-			Projectile.minion = true; // Declares this as a minion (has many effects)
-			Projectile.DamageType = DamageClass.Summon; // Declares the damage type (needed for it to deal damage)
-			Projectile.minionSlots = 1f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
-			Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
+			Projectile.friendly = true; 
+			Projectile.minion = true;
+			Projectile.DamageType = DamageClass.Summon; 
+			Projectile.minionSlots = 1f; 
+			Projectile.penetrate = -1;
 			Projectile.extraUpdates = 1;
 
 			Projectile.usesLocalNPCImmunity = true;
@@ -45,10 +41,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (crit)
-            {
-                InterstellarCommander.hascrit2 = true;
-            }
         }
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
@@ -167,7 +159,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			}
 		}*/
 
-		// Some visuals here
 		Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
 		}
 

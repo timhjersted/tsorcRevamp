@@ -10,12 +10,12 @@ using tsorcRevamp.Projectiles.Summon.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Trails
 {
-    class InterstellarVesselTrail : DynamicTrail
+    class CenterOfTheUniverseTrail : DynamicTrail
     {
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Interstellar Trail");
+            DisplayName.SetDefault("Universal Trail");
         }
         public override void SetDefaults()
         {
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles.Trails
             base.AI();
             if (hostProjectile != null)
             {
-                if (((InterstellarVesselShip)hostProjectile.ModProjectile).angularSpeed2 > 0.03f)
+                if (((CenterOfTheUniverseStar)hostProjectile.ModProjectile).angularSpeed3 > 0.03f)
                 {
                     trailIntensity = 2;
                 }
@@ -59,7 +59,6 @@ namespace tsorcRevamp.Projectiles.Trails
         {
             return false;
         }
-
         public override float CollisionWidthFunction(float progress)
         {
             return WidthFunction(progress) - 35;

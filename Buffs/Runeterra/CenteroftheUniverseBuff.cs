@@ -1,53 +1,40 @@
-/*using Terraria;
-using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
-using Terraria.ID;
+using Terraria;
+using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Projectiles.Summon.Runeterra;
 
-namespace tsorcRevamp.Items.Weapons.Runeterra.Summon
+namespace tsorcRevamp.Buffs.Runeterra
 {
-	public class CotUBuff3 : ModBuff
-	{
-		public static bool hascrit3 = false;
-		public static int critcounter = 0;
-		public override void SetStaticDefaults()
-		{
-			DisplayName.SetDefault("Center of the Universe");
-			Description.SetDefault("You are the Center of the Universe");
+    public class CenterOfTheUniverseBuff : ModBuff
+    {
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Center of the Universe");
+            Description.SetDefault("You're the center of the Universe!");
 
-			Main.buffNoSave[Type] = true;
-			Main.buffNoTimeDisplay[Type] = true;
-		}
-		public override void Update(Player player, ref int buffIndex)
-		{
-			int dmg = (int)(player.GetTotalDamage(DamageClass.Summon).ApplyTo(150)); //150 is the base damage of CotU
-
-			if (Main.GameUpdateCount % 60 == 0)
-			{
-				CotUStar3.timer3--;
-			}
-			if (hascrit3)
-			{
-				CotUStar3.timer3 = 3;
-				hascrit3 = false;
-			}
-			if (critcounter == 3)
-			{
-				Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.One, ModContent.ProjectileType<CotUEStar>(), dmg, 1f, Main.myPlayer);
-				if (Main.GameUpdateCount % 1 == 0)
-				{
-					critcounter -= 3;
-				}
-			}
-			// If the minions exist reset the buff time, otherwise remove the buff from the player
-			if (player.ownedProjectileCounts[ModContent.ProjectileType<CotUStar3>()] > 0)
-			{
-				player.buffTime[buffIndex] = 18000;
-			}
-			else
-			{
-				player.DelBuff(buffIndex);
-				buffIndex--;
-			}
-		}
-	}
-}*/
+            Main.buffNoSave[Type] = true;
+            Main.buffNoTimeDisplay[Type] = true;
+        }
+        public override void Update(Player player, ref int buffIndex)
+        {
+            // If the minions exist reset the buff time, otherwise remove the buff from the player
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<CenterOfTheUniverseStar>()] > 0)
+            {
+                // update projectiles
+                CenterOfTheUniverse.ReposeProjectiles(player);
+                player.buffTime[buffIndex] = 18000;
+            }
+            else
+            {
+                player.DelBuff(buffIndex);
+                buffIndex--;
+            }
+            if (player.GetModPlayer<tsorcRevampPlayer>().CritCounter == 3)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.One, ModContent.ProjectileType<CenterOfTheUniverseStellarNova>(), 100, 1f, Main.myPlayer);
+                player.GetModPlayer<tsorcRevampPlayer>().CritCounter = 0;
+            }
+        }
+    }
+}
