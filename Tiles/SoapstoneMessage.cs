@@ -46,10 +46,8 @@ namespace tsorcRevamp.Tiles {
                          "Using potions during normal combat is often necessary to survive",
                          "Losing souls on death can be disabled in the config",
                          "Enemies in certain dark areas drop Humanity, which can restore HP lost to curses",
-                         "Item tooltips often have information vital to your survival...",
-                         
-                         "Progression clues can be found on unique items dropped by bosses",
-                         "If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction",
+                         "Item tooltips often have information vital to your survival...",                        
+                         "Progression clues can be found on unique items dropped by bosses",                        
                          "Signs offer many important hints",
                          "Teal Pressure Pads can only be activated with ranged attacks",
                          "Some vanilla recipes have been removed. You must find these items in the world by exploring",

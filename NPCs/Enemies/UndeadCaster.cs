@@ -22,11 +22,11 @@ namespace tsorcRevamp.NPCs.Enemies
             Main.npcFrameCount[NPC.type] = 2;
             AIType = NPCID.GoblinSorcerer;
             NPC.lifeMax = 30;
-            NPC.damage = 15;
+            NPC.damage = 12;
             NPC.scale = 1f;
             NPC.knockBackResist = 0.1f;
-            NPC.value = 650;
-            NPC.defense = 10;
+            NPC.value = 400;
+            NPC.defense = 6;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.UndeadCasterBanner>();
             NPC.height = 44;
@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.lifeMax = 50;
                 NPC.defense = 12;
                 NPC.value = 750;
-                NPC.damage = 25;
+                NPC.damage = 20;
             }
 
             if (NPC.downedBoss3)
@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.lifeMax = 110;
                 NPC.defense = 15;
                 NPC.value = 950;
-                NPC.damage = 42;  
+                NPC.damage = 32;  
             }
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -95,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
             //and this literally *cant* be bestiary'd 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.NextBool(8)) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.NextBool(4)) {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
             }
         }

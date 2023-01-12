@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = .5f;
-            NPC.value = 250;
+            NPC.value = 500;
             NPC.defense = 4;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TibianValkyrieBanner>();
@@ -96,7 +96,18 @@ namespace tsorcRevamp.NPCs.Enemies
 
             bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
 
-            
+            //IMMINENT ATTACK TELEGRAPH - PINK DUST 
+            if (spearTimer >= 150)
+            {
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                if (Main.rand.NextBool(2))
+                {
+                    int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.2f);
+
+                    Main.dust[pink].noGravity = true;
+                }
+            }
+
             //If the enemy doesn't have line of sight for a good while, teleport far away from the player and try again. Then much later, they get one more chance to teleport.
             //Since this is an early enemy, the distance and time is not very aggressive.
             if (!clearLineofSight)
@@ -136,16 +147,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (projectile.DamageType == DamageClass.Melee)
             {
-                if (Main.rand.NextBool(3))
-                {
+                
                     spearTimer = 0;
-                }
+                
             }
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (spearTimer >= 150)
+            if (spearTimer >= 120)
             {
                 Texture2D spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/TibianValkyrie_Spear");
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

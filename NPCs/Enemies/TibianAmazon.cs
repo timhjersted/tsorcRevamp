@@ -32,7 +32,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = .6f;
-            NPC.value = 250;
+            NPC.value = 400;
             NPC.defense = 2;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TibianAmazonBanner>();
@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.lifeMax = 180;
                 NPC.defense = 16;
-                NPC.value = 620;
+                NPC.value = 650;
                 NPC.damage = 50;
                 throwingKnifeDamage = 20;
             }
@@ -97,19 +97,46 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 1.8f, 0.15f, enragePercent: 0.2f, enrageTopSpeed: 2.2f);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref knifeTimer, 90, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref knifeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17);
+
+            //IMMINENT ATTACK TELEGRAPH - PINK DUST 
+            if (knifeTimer >= 90)
+            {
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                if (Main.rand.NextBool(2))
+                {
+                    int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1f);
+
+                    Main.dust[pink].noGravity = true;
+                }
+            }
+
+
+
         }
+
 
         public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
         {
-            knifeTimer = 0;
+            tsorcRevampAIs.RedKnightOnHit(NPC, true);
+            if (Main.rand.NextBool(3))
+            {
+                knifeTimer = 0;
+            }
         }
 
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
+            //if (projectile.DamageType == DamageClass.Melee)
+            //{
+            //    knifeTimer = 0;
+            //}
+
+            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+
             if (projectile.DamageType == DamageClass.Melee)
-            {
-                knifeTimer = 0;
+            {   
+                    knifeTimer = 0;
             }
         }
 

@@ -495,7 +495,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 NPC currentNPC = Main.npc[i];
                 if (currentNPC.type == ModContent.NPCType<SeathTheScalelessHead>() || currentNPC.type == ModContent.NPCType<SeathTheScalelessBody>() || currentNPC.type == ModContent.NPCType<SeathTheScalelessBody2>() || currentNPC.type == ModContent.NPCType<SeathTheScalelessBody3>() || currentNPC.type == ModContent.NPCType<SeathTheScalelessLegs>() || currentNPC.type == ModContent.NPCType<SeathTheScalelessTail>())
                 {
-                    currentNPC.immune[projectile.owner] = 5;//was 10
+                    currentNPC.immune[projectile.owner] = 1;//was 10
                 }
             }
         }
