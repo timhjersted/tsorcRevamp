@@ -872,6 +872,20 @@ namespace tsorcRevamp
 
         public override void PostUpdateEquips()
         {
+            Player.GetDamage(DamageClass.Summon) -= 0.25f;
+
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                Player.GetDamage(DamageClass.Melee) *= 1.2f;
+                Player.GetDamage(DamageClass.Ranged) *= 1.2f;
+                Player.GetDamage(DamageClass.Magic) *= 1.2f;
+                Player.GetDamage(DamageClass.SummonMeleeSpeed) *= 1.2f;
+
+                if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().minionStaminaCap)
+                {
+                    Player.lifeRegen /= 2;
+                }
+            }
             if (manaShield > 0)
             {
                 Player.manaRegenBuff = false;
@@ -1496,7 +1510,8 @@ namespace tsorcRevamp
             }
         }
 
-        public override void PostUpdateMiscEffects() {
+        public override void PostUpdateMiscEffects() 
+        {
             if (GravityField) {
                 if (InSpace(Player)) {
                     Player.gravity = Player.defaultGravity;
@@ -1550,20 +1565,6 @@ namespace tsorcRevamp
             TryForceFrame(ref Player.headFrame, ref forcedHeadFrame);
             TryForceFrame(ref Player.bodyFrame, ref forcedBodyFrame);
             TryForceFrame(ref Player.legFrame, ref forcedLegFrame);
-
-
-            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {
-                Player.GetDamage(DamageClass.Melee) *= 1.2f;
-                Player.GetDamage(DamageClass.Ranged) *= 1.2f;
-                Player.GetDamage(DamageClass.Magic) *= 1.2f;
-                Player.GetDamage(DamageClass.SummonMeleeSpeed) *= 1.2f;
-
-                if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().minionStaminaCap)
-                {
-                    Player.lifeRegen /= 2;
-                }
-            }
 
             if (CurseLevel > 0)
             {

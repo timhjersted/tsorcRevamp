@@ -30,6 +30,7 @@ namespace tsorcRevamp.Projectiles.Summon
             Projectile.height = 26;
             Projectile.penetrate = -1;
             Projectile.netImportant = true;
+            Projectile.DamageType = DamageClass.Summon;
             Projectile.timeLeft *= 5;
             Projectile.minion = true;
             Projectile.minionSlots = 1f;

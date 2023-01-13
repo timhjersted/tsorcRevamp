@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -15,14 +16,14 @@ namespace tsorcRevamp.Projectiles
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().WaspPower & projectile.type == ProjectileID.HornetStinger)
+                if (modPlayer.WaspPower & projectile.type == ProjectileID.HornetStinger)
                 {
                     projectile.penetrate = 6;
                     projectile.usesLocalNPCImmunity = true;
                     projectile.localNPCHitCooldown = 10;
                     projectile.extraUpdates = 5;
                 } 
-                else if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().WaspPower & projectile.type == ProjectileID.HornetStinger)
+                else if (!modPlayer.WaspPower & projectile.type == ProjectileID.HornetStinger)
                 {
                     projectile.penetrate = 1;
                     projectile.usesLocalNPCImmunity = false;
@@ -192,6 +193,83 @@ namespace tsorcRevamp.Projectiles
             }
 
             base.OnHitPlayer(projectile, target, damage, crit);
+        }
+        public override void ModifyHitNPC(Projectile projectile, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            Player player = Main.player[projectile.owner];
+            Vector2 LeatherTip = new Vector2(10, 18) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier;
+            Vector2 SnapTip = new Vector2(22, 26) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier;
+            Vector2 SpinalTip = new Vector2(14, 18) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier;
+            Vector2 CoolTip = new Vector2(14, 24) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier;
+            Vector2 FireTip = new Vector2(18, 26) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier;
+            Vector2 DurenTip = new Vector2(10, 16) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier;
+            Vector2 MorningTip = new Vector2(14, 14) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier;
+            Vector2 DarkTip = new Vector2(28, 20) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier;
+            Vector2 KaleidoTip = new Vector2(14, 30) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier;
+            List<Vector2> points = projectile.WhipPointsForCollision;
+            if (projectile.type == ProjectileID.BlandWhip)
+            {
+                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], LeatherTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], LeatherTip).Intersects(target.Hitbox))
+                {
+                    crit = true;
+                }
+            }
+            if (projectile.type == ProjectileID.ThornWhip)
+            {
+                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], SnapTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], SnapTip).Intersects(target.Hitbox))
+                {
+                    crit = true;
+                }
+            }
+            if (projectile.type == ProjectileID.BoneWhip)
+            {
+                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], SpinalTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], SpinalTip).Intersects(target.Hitbox))
+                {
+                    crit = true;
+                }
+            }
+            if (projectile.type == ProjectileID.CoolWhip)
+            {
+                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], CoolTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], CoolTip).Intersects(target.Hitbox))
+                {
+                    crit = true;
+                }
+            }
+            if (projectile.type == ProjectileID.FireWhip)
+            {
+                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], FireTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], FireTip).Intersects(target.Hitbox))
+                {
+                    crit = true;
+                }
+            }
+            if (projectile.type == ProjectileID.SwordWhip)
+            {
+                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], DurenTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], DurenTip).Intersects(target.Hitbox))
+                {
+                    crit = true;
+                }
+            }
+            if (projectile.type == ProjectileID.MaceWhip)
+            {
+                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], MorningTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], MorningTip).Intersects(target.Hitbox))
+                {
+                    crit = true;
+                }
+            }
+            if (projectile.type == ProjectileID.ScytheWhip)
+            {
+                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], DarkTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], DarkTip).Intersects(target.Hitbox))
+                {
+                    crit = true;
+                }
+            }
+            if (projectile.type == ProjectileID.RainbowWhip)
+            {
+                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], KaleidoTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], KaleidoTip).Intersects(target.Hitbox))
+                {
+                    crit = true;
+                }
+            }
         }
 
         public override bool PreKill(Projectile projectile, int timeLeft)

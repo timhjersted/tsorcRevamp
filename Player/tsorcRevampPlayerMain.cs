@@ -619,6 +619,10 @@ namespace tsorcRevamp
 
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
+            if (proj.DamageType == DamageClass.Summon || proj.DamageType == DamageClass.SummonMeleeSpeed)
+            {
+                damage -= 4;
+            }
             if (BurningAura || BurningStone)
             {
                 damage = (int)(damage * 1.05f);
