@@ -11,7 +11,8 @@ namespace tsorcRevamp.Items.Accessories
         {
             Tooltip.SetDefault("Enemies take exponentially increasing" +
                                 "\nbonus damage for every debuff affecting them." +
-                                "\n\"H Deimos CO farm 3/4 LF despoil\"");
+                                "\n\"H Deimos CO farm 3/4 LF despoil\"" +
+                                "\nDebuffs inflicted by whips excluded.");
         }
 
         public override void SetDefaults()

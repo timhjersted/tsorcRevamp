@@ -704,7 +704,11 @@ namespace tsorcRevamp
                                                         {
                                                             ItemID.SlimySaddle
                                                         }                                   },
-                {   ItemID.EyeOfCthulhuBossBag      ,   new List<int>()                     },
+                {   ItemID.EyeOfCthulhuBossBag      ,   new List<int>()
+                                                        {
+                                                            ItemID.CorruptSeeds
+                                                        }
+                                                                                            },
                 {   ItemID.EaterOfWorldsBossBag     ,   new List<int>()                     },
                 {   ItemID.BrainOfCthulhuBossBag    ,   new List<int>()                     },
                 {   ItemID.QueenBeeBossBag          ,   new List<int>()                     },

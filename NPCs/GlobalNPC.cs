@@ -522,12 +522,12 @@ namespace tsorcRevamp.NPCs
                 foreach (int buffType in npc.buffType)
                 {
 
-                    if (Main.debuff[buffType])
+                    if (Main.debuff[buffType] && !(BuffID.Sets.IsAnNPCWhipDebuff[buffType]))
                     {
                         debuffCounter++;
                     }
                 }
-                double scalar = Math.Pow(1.1, debuffCounter - 1);
+                double scalar = Math.Pow(1.15, debuffCounter - 1); //was 1.2 before, then 1.1
                 damage = (int)(damage * scalar);
             }
         }
@@ -540,12 +540,12 @@ namespace tsorcRevamp.NPCs
                 foreach (int buffType in npc.buffType)
                 {
 
-                    if (Main.debuff[buffType])
+                    if (Main.debuff[buffType] && !(BuffID.Sets.IsAnNPCWhipDebuff[buffType]))
                     {
                         debuffCounter++;
                     }
                 }
-                double scalar = Math.Pow(1.1, debuffCounter - 1); //was 1.2 before
+                double scalar = Math.Pow(1.15, debuffCounter - 1); //was 1.2 before, then 1.1
                 damage = (int)(damage * scalar);
             }
         }
