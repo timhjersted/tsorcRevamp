@@ -21,6 +21,7 @@ namespace tsorcRevamp.Projectiles.Summon.SummonProjectiles
             Projectile.timeLeft = 180;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
+            Projectile.DamageType = DamageClass.Summon;
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
@@ -49,12 +50,16 @@ namespace tsorcRevamp.Projectiles.Summon.SummonProjectiles
             Projectile.timeLeft = 180;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
-            Projectile.CritChance = 100;
+            Projectile.DamageType = DamageClass.Summon;
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 0.4f, PitchVariance = 0.1f });
                 Dust.NewDust(target.Center, 100, 100, DustID.FlameBurst, 0f, 0f, 250, Color.DarkRed, 2.5f);
+        }
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            crit = true;
         }
     }
 }
