@@ -15,8 +15,12 @@ namespace tsorcRevamp.Buffs.Runeterra
 		public override void Update(NPC npc, ref int buffIndex)
 		{
 			Player player = Main.player[Main.myPlayer];
-			npc.GetGlobalNPC<ShockedDebuffNPC>().Shocked = true;
-		}
+			npc.GetGlobalNPC<ShockedDebuffNPC>().Shocked = true; 
+			if (Main.GameUpdateCount % 5 == 0)
+            {
+                Dust.NewDust(npc.Center, 10, 10, DustID.Electric);
+            }
+        }
 	}
 
 	public class ShockedDebuffNPC : GlobalNPC
@@ -34,7 +38,7 @@ namespace tsorcRevamp.Buffs.Runeterra
             Player player = Main.player[Main.myPlayer];
 			if (Shocked)
 			{
-				npc.lifeRegen -= (int)player.GetDamage(DamageClass.Summon).ApplyTo(40);
+				npc.lifeRegen -= (int)player.GetDamage(DamageClass.Summon).ApplyTo(55);
 			}
         }
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)

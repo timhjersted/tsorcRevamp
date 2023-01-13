@@ -16,7 +16,11 @@ namespace tsorcRevamp.Buffs.Runeterra
 		{
 			Player player = Main.player[Main.myPlayer];
 			npc.GetGlobalNPC<SunburnDebuffNPC>().Sunburnt = true;
-		}
+            if (Main.GameUpdateCount % 5 == 0)
+            {
+                Dust.NewDust(npc.Center, 20, 20, DustID.FlameBurst);
+            }
+        }
 	}
 
 	public class SunburnDebuffNPC : GlobalNPC
@@ -34,7 +38,7 @@ namespace tsorcRevamp.Buffs.Runeterra
             Player player = Main.player[Main.myPlayer];
 			if (Sunburnt)
 			{
-				npc.lifeRegen -= (int)player.GetDamage(DamageClass.Summon).ApplyTo(60);
+				npc.lifeRegen -= (int)player.GetDamage(DamageClass.Summon).ApplyTo(112);
 			}
         }
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)

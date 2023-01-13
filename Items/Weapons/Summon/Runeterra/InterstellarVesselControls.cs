@@ -24,7 +24,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
                                 "\nHold Shift + Special Ability to shrink their radius" +
 								"\nPress Special Ability while not holding the remote to activate Turboboost" +
                                 "\nThis increases the spaceships damage and movement speed" +
-                                "\nTurboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness");
+                                "\nTurboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness" +                           
+								"\nApplies the Shocked debuff, which grants minions crit chance based on a fraction of your critical strike chance" +
+                                "\nDebuff damage also scales with minion damage");
 
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
@@ -33,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 		{
 			projectiles = new List<InterstellarVesselShip>(){};
 
-			Item.damage = 62;
+			Item.damage = 55;
 			Item.knockBack = 3f;
 			Item.mana = 10;
 			Item.width = 32;

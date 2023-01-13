@@ -16,6 +16,10 @@ namespace tsorcRevamp.Buffs.Runeterra
 		{
 			Player player = Main.player[Main.myPlayer];
 			npc.GetGlobalNPC<ScorchingDebuffNPC>().Scorched = true;
+			if (Main.GameUpdateCount % 5 == 0)
+			{
+				Dust.NewDust(npc.Center, 10, 10, DustID.FlameBurst);
+			}
 		}
 	}
 

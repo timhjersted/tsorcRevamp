@@ -25,7 +25,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
                                 "\nPress Special Ability while not holding the remote to activate Turboboost" +
                                 "\nThis increases the stars damage and movement speed" +
                                 "\nTurboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness" +
-                                "\nEvery third critical hit will spawn an Arcanum");
+                                "\nEvery third critical hit will spawn an Arcanum" +
+                                "\nApplies the Sunburn debuff, which grants minions crit chance based on a fraction of your critical strike chance" +
+                                "\nDebuff damage also scales with minion damage");
 
 
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
@@ -34,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         {
             projectiles = new List<CenterOfTheUniverseStar>() { };
 
-            Item.damage = 62;
+            Item.damage = 112;
             Item.knockBack = 3f;
             Item.mana = 10;
             Item.width = 32;
