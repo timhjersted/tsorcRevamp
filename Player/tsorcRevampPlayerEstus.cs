@@ -61,13 +61,7 @@ namespace tsorcRevamp
 
         public override void OnRespawn(Player player) //When a player respawns, restore charges
         {
-            if (Player.GetModPlayer<tsorcRevampPlayer>().HollowSoldierEstusBenefits)
-            {
-                estusChargesCurrent = estusChargesMax + 2;
-            } else
-            {
-                estusChargesCurrent = estusChargesMax;
-            }
+            estusChargesCurrent = estusChargesMax;
         }
 
         public override void PostUpdateBuffs()
@@ -75,13 +69,7 @@ namespace tsorcRevamp
             if (Player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && !Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200])
                 && estusChargesCurrent != estusChargesMax && Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) //When the player visits a bonfire, restore charges
             {
-                if (Player.GetModPlayer<tsorcRevampPlayer>().HollowSoldierEstusBenefits)
-                {
-                    estusChargesCurrent = estusChargesMax + 2;
-                } else
-                {
-                    estusChargesCurrent = estusChargesMax;
-                }
+                estusChargesCurrent = estusChargesMax;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f }, Player.position);
 
                 for (int i = 0; i <= 15; i++)
@@ -146,14 +134,7 @@ namespace tsorcRevamp
 
         public void UpdateDrinkingEstus()
         {
-            if (Player.GetModPlayer<tsorcRevampPlayer>().HollowSoldierEstusBenefits)
-            {
-                estusHealthPerTick += (estusHealthGain + 30) / estusHealingTimerMax;
-            }
-            else
-            {
-                estusHealthPerTick += estusHealthGain / estusHealingTimerMax; //Heal this much each tick
-            }
+            estusHealthPerTick += estusHealthGain / estusHealingTimerMax; //Heal this much each tick
             //Attempt to drink if the player isn't already
             if (!isDrinking /*&& !TryDrinkEstus()*/)
             {
@@ -214,14 +195,8 @@ namespace tsorcRevamp
                 if (estusHealingTimer <= estusHealingTimerMax && Player.statLife < Player.statLifeMax2) //If the timer is less or equal to timer max and player hp is not at max
                 {
 
-                    if (Player.GetModPlayer<tsorcRevampPlayer>().HollowSoldierEstusBenefits)
-                    {
-                        estusHealthPerTick += (estusHealthGain + 30) / estusHealingTimerMax;
-                    }
-                    else
-                    {
-                        estusHealthPerTick += estusHealthGain / estusHealingTimerMax; //Heal this much each tick
-                    }
+                    estusHealthPerTick += estusHealthGain / estusHealingTimerMax; //Heal this much each tick
+
                     if (estusHealthPerTick > (int)estusHealthPerTick)
                     {
                         Player.statLife += (int)estusHealthPerTick;
