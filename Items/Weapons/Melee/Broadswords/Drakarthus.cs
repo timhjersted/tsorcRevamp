@@ -71,7 +71,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords {
                         Vector2 dustPos = proj.Center + dir;
                         Dust.NewDustPerfect(dustPos, DustID.GemRuby, Vector2.Zero, 200).noGravity = true;
                     }
-                    if (!WorldGen.SolidTile(player.Center.ToTileCoordinates())) {
+                    Point tpDestination = (proj.Center + teleportOffset).ToTileCoordinates();
+                    if (!WorldGen.SolidTile(tpDestination) && (Collision.CanHit(proj.Center, 1, 1, proj.Center + teleportOffset, 1, 1) || Collision.CanHitLine(proj.Center, 1, 1, proj.Center + teleportOffset, 1, 1) )) {
                         player.SafeTeleport(proj.Center + teleportOffset);
                     }
                     float randOffset = Main.rand.NextVector2CircularEdge(4, 4).ToRotation();

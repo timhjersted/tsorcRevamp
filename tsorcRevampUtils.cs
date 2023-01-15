@@ -867,8 +867,8 @@ namespace tsorcRevamp
         /// </summary>
         public static void SafeTeleport(this Player player, Vector2 destination)
         {
-            player.position.X = destination.X;
-            player.position.Y = destination.Y;
+            player.position.X = destination.X - player.width / 2;
+            player.position.Y = destination.Y - player.height / 2;
             player.gravDir = 1;
             player.velocity.X = 0f;
             player.velocity.Y = 0f;
