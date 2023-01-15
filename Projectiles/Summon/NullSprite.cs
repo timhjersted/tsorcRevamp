@@ -47,6 +47,7 @@ namespace tsorcRevamp.Projectiles.Summon
         }
 
         private void AI_062() {
+            int attackInterval = 60;
             Projectile.tileCollide = true;
             float idleSpeed = 0.6f;
             for (int i = 0; i < Main.maxProjectiles; i++) {
@@ -173,7 +174,7 @@ namespace tsorcRevamp.Projectiles.Summon
                 dust.noGravity = true;
                 dust.noLight = true;
             }
-            if (Projectile.ai[1] < 60f) {
+            if (Projectile.ai[1] < attackInterval) {
                 Projectile.ai[1] += 1;
             }
 
@@ -181,7 +182,7 @@ namespace tsorcRevamp.Projectiles.Summon
                 return;
             int shotType = ModContent.ProjectileType<SummonProjectiles.NullSpriteBeam>();
             float shotSpeed = 3f;
-            if (Projectile.ai[1] >= 60f) {
+            if (Projectile.ai[1] >= attackInterval) {
                 Projectile.ai[1] = 0f;
                 Vector2 shotVector = targetLocation - Projectile.Center;
                 shotVector.Normalize();

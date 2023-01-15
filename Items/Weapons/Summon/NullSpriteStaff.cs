@@ -12,6 +12,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
         {
             DisplayName.SetDefault("Null Sprite Staff");
             Tooltip.SetDefault("Summons a null sprite to fight for you" +
+                "\nNull sprites apply a permanent stacking debuff" +
+                "\nthat increases damage taken from all sources" +
                 "\nTakes 3/4th of a minion slot");
 
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
@@ -21,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         }
         public override void SetDefaults()
         {
-            Item.damage = 115;
+            Item.damage = 86;
             Item.knockBack = 1f;
             Item.width = 44;
             Item.height = 50;

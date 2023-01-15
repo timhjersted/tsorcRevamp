@@ -45,5 +45,8 @@ namespace tsorcRevamp.Projectiles.Summon.SummonProjectiles
                 }
             }
         }
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) {
+            target.AddBuff(ModContent.BuffType<Buffs.Dissolving>(), 2);
+        }
     }
 }

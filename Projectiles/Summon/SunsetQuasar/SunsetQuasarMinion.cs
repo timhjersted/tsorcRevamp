@@ -53,8 +53,8 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
             int tokenCount = player.ownedProjectileCounts[ModContent.ProjectileType<SunsetQuasarToken>()];
 
             float tokenMod = SCALING_PER_SLOT * (tokenCount - 1);
-            if (Main.hardMode) tokenMod *= 2; //nothing to see here
-            if (tsorcRevampWorld.SuperHardMode) tokenMod *= 2.5f; //not me obviously biased in favor of this weapon or anything
+            if (Main.hardMode) tokenMod *= 1.8f; //nothing to see here
+            if (tsorcRevampWorld.SuperHardMode) tokenMod *= 2.3f; //not me obviously biased in favor of this weapon or anything
             //i think its cute and want people to use it. sue me.
             float finalDamage = damage * (1.0f + tokenMod);
             Projectile.damage = (int)finalDamage;
