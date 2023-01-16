@@ -1,4 +1,4 @@
-/*using Terraria;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -30,6 +30,7 @@ namespace tsorcRevamp.Buffs.Summon
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
 			if (markedByMorningStar && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
+				damage -= 4;
 				if(crit)
 				{
 					if (Main.rand.NextBool(2))
@@ -41,4 +42,3 @@ namespace tsorcRevamp.Buffs.Summon
 		}
 	}
 }
-*/

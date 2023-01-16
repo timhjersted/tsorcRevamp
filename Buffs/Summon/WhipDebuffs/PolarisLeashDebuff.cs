@@ -35,7 +35,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 		// TODO: Inconsistent with vanilla, increasing damage AFTER it is randomised, not before. Change to a different hook in the future.
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
-			int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(30)); //30 is half of the base dmg of Polaris Leash
+			int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo((int)(66f * 0.5f))); //66 is the base dmg of Polaris Leash
             Vector2 starvector1 = new Vector2(-640, -800) + npc.Center;
             Vector2 starvector2 = new Vector2(640, -800) + npc.Center;
             Vector2 starvector3 = new Vector2(0, -800) + npc.Center;

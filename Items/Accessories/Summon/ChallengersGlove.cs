@@ -12,9 +12,9 @@ namespace tsorcRevamp.Items.Accessories.Summon
             DisplayName.SetDefault("Challenger's Glove");
             Tooltip.SetDefault("Increases whip knockback" +
                 "\n12% increased whip damage and speed" +
-                "\nEnables autoswing for melee weapons and whips" +
                 "\nIncreases the size of whips by 10%" +
-                "\nEnemies are more likely to target you");
+                "\nEnemies are more likely to target you" +
+                "\nIncreases the damage of whip crits by 25%");
         }
         public override void SetDefaults()
         {
@@ -30,9 +30,9 @@ namespace tsorcRevamp.Items.Accessories.Summon
             player.GetKnockback(DamageClass.SummonMeleeSpeed) += 2f;
             player.GetAttackSpeed(DamageClass.Summon) += 0.12f;
             player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.12f;
-            player.autoReuseGlove = true;
             player.whipRangeMultiplier += 0.1f;
             player.aggro += 400;
+            player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250 = true;
         }
         public override void AddRecipes()
         {

@@ -3,38 +3,101 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Prefixes
 {
-	public class Commanding : ModPrefix
-	{
-		public override PrefixCategory Category => PrefixCategory.AnyWeapon;
-		public override float RollChance(Item item) 
-		{
-			return 0.3f;
-		}
-		public override bool CanRoll(Item item) {
-			if (item.DamageType == DamageClass.SummonMeleeSpeed)
-				return true;
-			else return false;
-		}
-		public override void SetStats(ref float damageMult, ref float knockbackMult, ref float useTimeMult, ref float scaleMult, ref float shootSpeedMult, ref float manaMult, ref int critBonus) {
-			damageMult *= 1f + 0.18f;
-			useTimeMult *= 1f - 0.12f;
-			knockbackMult *= 1f + 0.15f;
-		}
+    public class Commanding : ModPrefix
+    {
+        public override PrefixCategory Category => PrefixCategory.AnyWeapon;
+        public override float RollChance(Item item)
+        {
+            return 1f;
+        }
+        public override bool CanRoll(Item item)
+        {
+            if (item.DamageType == DamageClass.SummonMeleeSpeed)
+                return true;
+            else return false;
+        }
+        public override void SetStats(ref float damageMult, ref float knockbackMult, ref float useTimeMult, ref float scaleMult, ref float shootSpeedMult, ref float manaMult, ref int critBonus)
+        {
+            damageMult *= 1f + 0.2f;
+            useTimeMult *= 1f - 0.12f;
+            knockbackMult *= 1f + 0.15f;
+        }
 
-		public override void ModifyValue(ref float valueMult) {
-			valueMult = 2.0985f;
-		}
+        public override void ModifyValue(ref float valueMult)
+        {
+            valueMult = 2.0985f;
+        }
 
-		public override void Apply(Item item) 
-		{
-		}
-	}
-	public class Sadistic : ModPrefix
+        public override void Apply(Item item)
+        {
+        }
+    }
+    public class Brave : ModPrefix
+    {
+        public override PrefixCategory Category => PrefixCategory.AnyWeapon;
+        public override float RollChance(Item item)
+        {
+            return 2.25f;
+        }
+        public override bool CanRoll(Item item)
+        {
+            if (item.DamageType == DamageClass.SummonMeleeSpeed)
+                return true;
+            else return false;
+        }
+        public override void SetStats(ref float damageMult, ref float knockbackMult, ref float useTimeMult, ref float scaleMult, ref float shootSpeedMult, ref float manaMult, ref int critBonus)
+        {
+            damageMult *= 1f + 0.22f;
+            useTimeMult *= 1f - 0.15f;
+			scaleMult *= 1f - 0.1f;
+            knockbackMult *= 1f - 0.15f;
+        }
+
+        public override void ModifyValue(ref float valueMult)
+        {
+            valueMult = 1.2497f;
+        }
+
+        public override void Apply(Item item)
+        {
+        }
+    }
+    public class Reckless : ModPrefix
+    {
+        public override PrefixCategory Category => PrefixCategory.AnyWeapon;
+        public override float RollChance(Item item)
+        {
+            return 1.5f;
+        }
+        public override bool CanRoll(Item item)
+        {
+            if (item.DamageType == DamageClass.SummonMeleeSpeed)
+                return true;
+            else return false;
+        }
+        public override void SetStats(ref float damageMult, ref float knockbackMult, ref float useTimeMult, ref float scaleMult, ref float shootSpeedMult, ref float manaMult, ref int critBonus)
+        {
+            damageMult *= 1f + 0.25f;
+            useTimeMult *= 1f - 0.2f;
+            scaleMult *= 1f - 0.2f;
+            knockbackMult *= 1f - 0.2f;
+        }
+
+        public override void ModifyValue(ref float valueMult)
+        {
+            valueMult = 2.0985f;
+        }
+
+        public override void Apply(Item item)
+        {
+        }
+    }
+    public class Sadistic : ModPrefix
 	{
 		public override PrefixCategory Category => PrefixCategory.AnyWeapon;
 		public override float RollChance(Item item)
 		{
-			return 0.8f;
+			return 3f;
 		}
 		public override bool CanRoll(Item item)
 		{
@@ -62,7 +125,7 @@ namespace tsorcRevamp.Prefixes
 		public override PrefixCategory Category => PrefixCategory.AnyWeapon;
 		public override float RollChance(Item item)
 		{
-			return 1.5f;
+			return 2.5f;
 		}
 		public override bool CanRoll(Item item)
 		{
@@ -89,7 +152,7 @@ namespace tsorcRevamp.Prefixes
 		public override PrefixCategory Category => PrefixCategory.AnyWeapon;
 		public override float RollChance(Item item)
 		{
-			return 1f;
+			return 4f;
 		}
 		public override bool CanRoll(Item item)
 		{
@@ -116,7 +179,7 @@ namespace tsorcRevamp.Prefixes
 		public override PrefixCategory Category => PrefixCategory.AnyWeapon;
 		public override float RollChance(Item item)
 		{
-			return 0.3f;
+			return 1.3f;
 		}
 		public override bool CanRoll(Item item)
 		{
@@ -144,7 +207,7 @@ namespace tsorcRevamp.Prefixes
 		public override PrefixCategory Category => PrefixCategory.AnyWeapon;
 		public override float RollChance(Item item)
 		{
-			return 1f;
+			return 4f;
 		}
 		public override bool CanRoll(Item item)
 		{
@@ -171,7 +234,7 @@ namespace tsorcRevamp.Prefixes
 		public override PrefixCategory Category => PrefixCategory.AnyWeapon;
 		public override float RollChance(Item item)
 		{
-			return 1.5f;
+			return 3f;
 		}
 		public override bool CanRoll(Item item)
 		{
@@ -181,7 +244,7 @@ namespace tsorcRevamp.Prefixes
 		}
 		public override void SetStats(ref float damageMult, ref float knockbackMult, ref float useTimeMult, ref float scaleMult, ref float shootSpeedMult, ref float manaMult, ref int critBonus)
 		{
-			useTimeMult *= 1f - 0.5f;
+			useTimeMult *= 1f - 0.3f;
 		}
 
 		public override void ModifyValue(ref float valueMult)

@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             Tooltip.SetDefault("Increases minion damage by 10%" +
                 "\nSet Bonus: Increases your max number of minions and turrets by 1" +
-                "\nIncreases critical strike damage to 250%");
+                "\nIncreases critical strike damage by 25%");
         }
         public override void SetDefaults()
         {

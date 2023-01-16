@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Armors.Summon;
+using tsorcRevamp.Prefixes;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
@@ -17,11 +18,11 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.ScytheWhip) //nerf
             {
-                item.damage = 90;
+                item.damage = 85;
             }
             if (item.type == ItemID.MaceWhip) //nerf
             {
-                item.damage = 110;
+                item.damage = 95;
             }
             if (item.type == ItemID.BoneWhip) //nerf
             {
@@ -40,7 +41,7 @@ namespace tsorcRevamp.Items.VanillaItems
             //Lunar items
             if (item.type == ItemID.StardustDragonStaff) //holy the scaling on this weapon is insane, it needs a nerf
             {
-                item.damage = 35;
+                item.damage = 30;
             }
         }
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
@@ -60,15 +61,21 @@ namespace tsorcRevamp.Items.VanillaItems
                     tooltips.Insert(ttindex2, new TooltipLine(Mod, "TagCritNerfed", "5% summon tag critical strike chance"));
                 }
             }
-            /*if (item.type == ItemID.MaceWhip)
+            if (item.type == ItemID.MaceWhip)
             {
-                int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
+                int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip0");
                 if (ttindex1 != -1)
                 {
                     tooltips.RemoveAt(ttindex1);
-                    tooltips.Insert(ttindex1, new TooltipLine(Mod, "TagCritNerfed", "4% summon tag critical strike chance"));
+                    tooltips.Insert(ttindex1, new TooltipLine(Mod, "TagNerfed", "4 summon tag damage"));
                 }
-            }*/
+                int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip1");
+                if (ttindex2 != -1)
+                {
+                    tooltips.RemoveAt(ttindex2);
+                    tooltips.Insert(ttindex2, new TooltipLine(Mod, "TagCritNerfed", "6% summon tag critical strike chance"));
+                }
+            }
             if (item.type == ItemID.EmpressBlade && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))
             {
                 int ttindex2 = tooltips.FindLastIndex(t => t.Name == "Tooltip0");
@@ -88,7 +95,6 @@ namespace tsorcRevamp.Items.VanillaItems
         }
         public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)
         {
-            base.ModifyWeaponDamage(item, player, ref damage);
             if (tsorcRevampWorld.Slain != null)
             {
                 if (item.type == ItemID.EmpressBlade & !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))
@@ -99,6 +105,80 @@ namespace tsorcRevamp.Items.VanillaItems
                 {
                     damage *= 0.88f;
                 }
+            }
+        }
+        public override void HoldItem(Item item, Player player)
+        {
+            float scaleDelta;
+            if (item.DamageType == DamageClass.SummonMeleeSpeed)
+            {
+                if (item.prefix == ModContent.PrefixType<Brave>())
+                {
+                    scaleDelta = -0.1f;
+                }
+                else if (item.prefix == ModContent.PrefixType<Reckless>())
+                {
+                    scaleDelta = -0.2f;
+                }
+                else
+                    switch (item.prefix)
+                {
+
+                    case PrefixID.Large:
+
+                        scaleDelta = 0.12f;
+                        break;
+
+                    case PrefixID.Massive:
+
+                        scaleDelta = 0.18f;
+                        break;
+
+                    case PrefixID.Dangerous:
+
+                        scaleDelta = 0.06f;
+                        break;
+
+                    case PrefixID.Tiny:
+
+                        scaleDelta = -0.18f;
+                        break;
+
+                    case PrefixID.Terrible:
+
+                        scaleDelta = -0.14f;
+                        break;
+
+                    case PrefixID.Small:
+
+                        scaleDelta = -0.1f;
+                        break;
+
+                    case PrefixID.Unhappy:
+
+                        scaleDelta = -0.1f;
+                        break;
+
+                    case PrefixID.Bulky:
+
+                        scaleDelta = 0.1f;
+                        break;
+
+                    case PrefixID.Shameful:
+
+                        scaleDelta = 0.1f;
+                        break;
+
+                    case PrefixID.Legendary:
+
+                        scaleDelta = 0.1f;
+                        break;
+
+                    default:
+                        scaleDelta = 0;
+                        break;
+                }
+                player.whipRangeMultiplier += scaleDelta;
             }
         }
         public override string IsArmorSet(Item head, Item body, Item legs)

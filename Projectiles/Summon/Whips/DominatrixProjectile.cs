@@ -114,11 +114,17 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
+            Player player = Main.player[Main.myPlayer];
             Vector2 WhipTip = new Vector2(16, 20) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
             List<Vector2> points = Projectile.WhipPointsForCollision;
             if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
             {
                 crit = true;
+                if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
+                {
+                    damage *= 5;
+                    damage /= 4;
+                }
             }
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)

@@ -70,6 +70,7 @@ namespace tsorcRevamp
         public bool OldWeapon = false;
 
         public bool CritDamage250 = false;
+        public bool WhipCritDamage250 = false;
 
         public int steeltempest = 0;
         public int CritCounter = 0;
@@ -259,7 +260,8 @@ namespace tsorcRevamp
             ChloranthyRing1 = false;
             ChloranthyRing2 = false;
 
-            CritDamage250 = false;
+            CritDamage250 = false; 
+            WhipCritDamage250 = false;
 
             Celestriad = false;
 
@@ -878,6 +880,10 @@ namespace tsorcRevamp
             } else
             {
                 Player.GetDamage(DamageClass.Summon) -= 0.25f;
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                Player.GetDamage(DamageClass.Summon) -= 0.15f;
             }
 
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)

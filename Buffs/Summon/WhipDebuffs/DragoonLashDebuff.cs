@@ -37,9 +37,9 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
             var owner = Main.player[projectile.owner];
-            int whipDamage = (int)owner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(56);
+            int whipDamage = (int)owner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(90); //90 is the bsae damage of the Dragoon Lash
             // Only player attacks should benefit from this buff, hence the NPC and trap checks.
-            if (markedByDragoonLash && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
+            if (markedByDragoonLash && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type] || ProjectileID.Sets.IsAWhip[projectile.type]))
 			{
 				if (fireBreathTimer >= 1)
 				{
