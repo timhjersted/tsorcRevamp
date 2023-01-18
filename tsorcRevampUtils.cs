@@ -131,9 +131,9 @@ namespace tsorcRevamp
     public static class VariousConstants
     {
         public const int CUSTOM_MAP_WORLD_ID = 44874972;
-        public const string MUSIC_MOD_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4/tsorcMusic.tmod";
+        public const string MUSIC_MOD_URL = "https://github.com/timhjersted/tsorcDownload/raw/c2eafdc531d7ebc84562c9b8026c49edc6a8a98b/tsorcMusic.tmod";
         public const string MAP_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4/the-story-of-red-cloud.wld";
-        public const string CHANGELOG_URL = "https://raw.githubusercontent.com/timhjersted/tsorcDownload/1.4/changelog.txt";
+        public const string CHANGELOG_URL = "https://github.com/timhjersted/tsorcDownload/raw/92cec8298c2c3d3f6c9563fbfe12de5a5d3f5ca8/changelog.txt";
     }
 
     public static class PriceByRarity
