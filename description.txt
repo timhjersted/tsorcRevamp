@@ -1,4 +1,4 @@
-The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack. Your 1-4 player journey will span 17 dungeons spread across an expansive, hand-crafted open world, offering a 20 to 30+ hr experience for a first playthrough.
+The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack. Your 1-4 player journey will span 18 dungeons spread across an expansive, hand-crafted open world, offering a 20 to 30+ hr experience for a first playthrough.
 
 ✅ The Custom Map will load automatically when you reach the Select World screen. To create a fresh or updated map, click New on the World screen.
 
@@ -73,7 +73,7 @@ Some mods interfere with the Adventure Map, but may be used if you're playing on
 
 *On death, you will drop all your Dark Souls and have one chance to recover them. For a more forgiving experience, you can turn this off in the mod's Config options.
 
-*The new dodge roll action with i-frames is an essential part of TSORC. It can be bound to any key in TModLoader's controller settings, under the mod section. (Left Alt by default. Left Shift also recommended.)
+*The new dodge roll action with i-frames is an essential part of TSORC. It can be bound to any key in TModLoader's controller settings, under the mod section. (Left Alt by default. Left Shift is also recommended, with Auto Select bound to Left Alt.)
 
 *Adventure Mode should stay checked in the TSORC mod config options to play with the custom map.
 
