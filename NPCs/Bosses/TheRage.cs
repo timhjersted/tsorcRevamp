@@ -264,7 +264,7 @@ namespace tsorcRevamp.NPCs.Bosses
             Timer++;
 
             //1st phase frequency
-            if (Main.rand.NextBool(300) && (player.position.Y + 30 >= NPC.position.Y) && NPC.life > NPC.lifeMax / 2)
+            if (Main.rand.NextBool(350) && (player.position.Y + 30 >= NPC.position.Y) && NPC.life > NPC.lifeMax / 2)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -285,7 +285,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
             //2nd phase frequency
-            if (Main.rand.NextBool(80) && (player.position.Y + 30 >= NPC.position.Y) && NPC.life < NPC.lifeMax / 2)
+            if (Main.rand.NextBool(130) && (player.position.Y + 30 >= NPC.position.Y) && NPC.life < NPC.lifeMax / 2)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -305,8 +305,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
 
-            //FIRE LURKER SHOOT
-            if (NPC.Distance(player.Center) > 300)
+            //ANTI-GRAVITY BLAST SHOOT
+            if (NPC.Distance(player.Center) > 320)
             { 
                 bool lineOfSight = Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
                 tsorcRevampAIs.SimpleProjectile(NPC, ref lostSoulTimer, 1100, ModContent.ProjectileType<Projectiles.Enemy.AntiGravityBlast>(), fireTrailsDamage, 1, lineOfSight, true, SoundID.Item79 with { Volume = 0.5f, PitchVariance = 2f }, 0); //ProjectileID.LostSoulHostile
@@ -316,7 +316,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
             //SPAWN METEOR HELL
-            if (Main.rand.NextBool(80) && NPC.Distance(player.Center) > 100 && NPC.life <= 3200 )
+            if (Main.rand.NextBool(80) && NPC.Distance(player.Center) > 100 && NPC.life <= 2720 )
             {
 
                 if (player.position.Y + 50 >= NPC.position.Y)
