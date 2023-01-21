@@ -221,10 +221,11 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                 Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Serris Gore 1").Type, 1f);
             }
         }
-        public override void BossLoot(ref string name, ref int potionType)
+
+        public override bool PreKill()
         {
-            potionType = 0;
-            name = "";
+            NPC.boss = false;
+            return base.PreKill();
         }
         public override void FindFrame(int currentFrame)
         {
