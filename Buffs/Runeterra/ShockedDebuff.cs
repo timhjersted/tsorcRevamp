@@ -44,9 +44,9 @@ namespace tsorcRevamp.Buffs.Runeterra
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
 			if (Shocked && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type] || ProjectileID.Sets.IsAWhip[projectile.type]))
-			{
-				if (Main.rand.NextBool((int)MathF.Round(Main.player[Main.myPlayer].GetTotalCritChance(DamageClass.Generic) / 5f)))
-                    {
+            {
+                if (Main.rand.NextBool(100 / (int)MathF.Round(Main.player[Main.myPlayer].GetTotalCritChance(DamageClass.Generic) / 5f)))
+                {
 					crit = true;
 				}
 			}

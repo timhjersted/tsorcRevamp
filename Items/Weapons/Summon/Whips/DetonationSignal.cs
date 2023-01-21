@@ -13,8 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Tooltip.SetDefault("Enemies struck by this whip will explode once on minion hit" +
                 "\nScales with double the minion damage" +
                 "\nInflicts Hellfire" +
-                "\nYour minions will focus struck enemies" +
-                "\nThis whip swings faster than most whips");
+                "\nYour minions will focus struck enemies");
 		}
 
 		public override void SetDefaults()

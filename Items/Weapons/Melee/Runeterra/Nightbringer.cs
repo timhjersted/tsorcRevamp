@@ -197,7 +197,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 return false;
             }
         }
-        public override void AddRecipes()
+        /*public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
 
@@ -208,6 +208,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }
+        }*/
     }
 }

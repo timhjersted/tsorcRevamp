@@ -20,17 +20,19 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         {
             DisplayName.SetDefault("Center of the Universe");
             Tooltip.SetDefault("Summons stars to rotate around you and damage enemies in their way" +
-                                "\nIncrease their radius by holding the Special Ability hotkey" +
-                                "\nHold Shift + Special Ability to shrink their radius" +
+                                "\nUses half a minion slot" +
+                                "\nWhile holding this item, increase their radius by holding the Special Ability hotkey" +
+                                "\nOr hold Shift + Special Ability to shrink their radius" +
                                 "\nPress Special Ability while not holding the remote to activate Turboboost" +
                                 "\nThis increases the stars damage and movement speed" +
                                 "\nTurboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness" +
                                 "\nEvery third critical hit will spawn an Arcanum" +
                                 "\nApplies the Sunburn debuff, which grants minions crit chance based on a fraction of your critical strike chance" +
-                                "\nDebuff damage also scales with minion damage");
+                                "\n'Leave them in awe at the sight of the Star Forger'");
 
 
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
         }
         public override void SetDefaults()
         {
@@ -99,7 +101,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
                 projectileList[i].currentAngle3 = projectileList[i - 1].currentAngle3 + 2f * (float)Math.PI / processedProjectilesCount;
             }
         }
-        public override void AddRecipes()
+        /*public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
 
@@ -110,6 +112,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }
+        }*/
     }
 }

@@ -13,10 +13,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			DisplayName.SetDefault("Dragoon Lash");
 			Tooltip.SetDefault("Breathe fire at enemies struck by this whip and a minion on a cooldown" +
                 "\nRefresh the cooldown by whipping an enemy" +
-                "\nFire breath scales with this whips base damage" +
-                "\nStriking Enemies with this whip increases your summon attack speed drastically" +
-				"\nYour summons will focus struck enemies" +
-                "\nThis whip swings faster than most whips");
+                "\nStrike enemies to gain attack speed" +
+				"\nYour summons will focus struck enemies");
 		}
 
 		public override void SetDefaults()

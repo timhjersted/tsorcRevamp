@@ -20,17 +20,19 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 		{
 			DisplayName.SetDefault("Interstellar Vessel Controls");
 			Tooltip.SetDefault("Summons spaceships to rotate around you and damage enemies in their way" +
-								"\nIncrease their radius by holding the Special Ability hotkey" +
-                                "\nHold Shift + Special Ability to shrink their radius" +
-								"\nPress Special Ability while not holding the remote to activate Turboboost" +
+                                "\nUses half a minion slot" +
+                                "\nWhile holding this item, increase their radius by holding the Special Ability hotkey" +
+                                "\nOr hold Shift + Special Ability to shrink their radius" +
+                                "\nPress Special Ability while not holding the remote to activate Turboboost" +
                                 "\nThis increases the spaceships damage and movement speed" +
                                 "\nTurboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness" +                           
 								"\nApplies the Shocked debuff, which grants minions crit chance based on a fraction of your critical strike chance" +
-                                "\nDebuff damage also scales with minion damage");
+								"\n'Adjusting trajectory for ASOL-13!'");
 
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-		}
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
+        }
     public override void SetDefaults()
 		{
 			projectiles = new List<InterstellarVesselShip>(){};
@@ -78,7 +80,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public override void HoldItem(Player player)
         {
 			Lighting.AddLight(player.Center, new Vector3(0.1f, 0.08f, 0.05f));
-		}
+        }
 
         public static void ReposeProjectiles(Player player) 
 		{
@@ -102,7 +104,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 			Recipe recipe = CreateRecipe();
 
 			recipe.AddIngredient(ModContent.ItemType<ScorchingPoint>());
-			recipe.AddIngredient(ItemID.HallowedBar, 3);
+			recipe.AddIngredient(ItemID.HallowedBar, 12);
 			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
 
 			recipe.AddTile(TileID.DemonAltar);

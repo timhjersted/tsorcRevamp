@@ -7,17 +7,17 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-	public class Wakizashi : ModItem
+	public class BeetleIdol : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Wakizashi");
+			DisplayName.SetDefault("Beetle Idol");
 			Tooltip.SetDefault("Summons a Samurai Beetle to fight for you");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
 			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 4;
         }
 		public override void SetDefaults()
 		{
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			Item.useTime = 30;
 			Item.useAnimation = 30;
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.value = Item.buyPrice(0, 50, 0, 0);
+			Item.value = Item.buyPrice(0, 40, 0, 0);
 			Item.UseSound = SoundID.Item44;
 			Item.rare = ItemRarityID.Purple;
 

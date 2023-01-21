@@ -1275,7 +1275,22 @@ namespace tsorcRevamp
                     "AddMinionInfo",
                     ModContent.ItemType<ScorchingPoint>(),
                     ModContent.BuffType<CenterOfTheHeat>(),
-                    ModContent.ProjectileType<ScorchingPointFireball>()
+                    ModContent.ProjectileType<ScorchingPointFireball>(),
+                    0.5f
+                    );
+                summonersAssociation.Call(
+                    "AddMinionInfo",
+                    ModContent.ItemType<InterstellarVesselControls>(),
+                    ModContent.BuffType<InterstellarCommander>(),
+                    ModContent.ProjectileType<InterstellarVesselShip>(),
+                    0.5f
+                    );
+                summonersAssociation.Call(
+                    "AddMinionInfo",
+                    ModContent.ItemType<CenterOfTheUniverse>(),
+                    ModContent.BuffType<CenterOfTheUniverseBuff>(),
+                    ModContent.ProjectileType<CenterOfTheUniverseStar>(),
+                    0.5f
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
@@ -1288,13 +1303,15 @@ namespace tsorcRevamp
                     "AddMinionInfo",
                     ModContent.ItemType<NullSpriteStaff>(),
                     ModContent.BuffType<NullSpriteBuff>(),
-                    ModContent.ProjectileType<NullSprite>()
+                    ModContent.ProjectileType<NullSprite>(),
+                    0.75f
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
-                    ModContent.ItemType<Wakizashi>(),
+                    ModContent.ItemType<BeetleIdol>(),
                     ModContent.BuffType<SamuraiBeetleBuff>(),
-                    ModContent.ProjectileType<SamuraiBeetle>()
+                    ModContent.ProjectileType<SamuraiBeetle>(),
+                    4f
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",

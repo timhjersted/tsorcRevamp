@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Projectile.friendly = true; 
 			Projectile.minion = true;
 			Projectile.DamageType = DamageClass.Summon;
-			Projectile.minionSlots = 1f;
+			Projectile.minionSlots = 0.5f;
 			Projectile.penetrate = -1;
 			Projectile.extraUpdates = 1;
 

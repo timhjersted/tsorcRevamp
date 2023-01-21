@@ -18,7 +18,7 @@ namespace tsorcRevamp.Buffs.Runeterra
 			npc.GetGlobalNPC<ScorchingDebuffNPC>().Scorched = true;
 			if (Main.GameUpdateCount % 5 == 0)
 			{
-				Dust.NewDust(npc.Center, 10, 10, DustID.FlameBurst);
+				Dust.NewDust(npc.Top, 10, 10, DustID.GoldFlame);
 			}
 		}
 	}
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Buffs.Runeterra
 		{
 			if (Scorched && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type] || ProjectileID.Sets.IsAWhip[projectile.type]))
 			{
-				if (Main.rand.NextBool((int)MathF.Round(Main.player[Main.myPlayer].GetTotalCritChance(DamageClass.Generic) / 5f)))
+				if (Main.rand.NextBool(100 / (int)MathF.Round(Main.player[Main.myPlayer].GetTotalCritChance(DamageClass.Generic) / 5f)))
 				{
 					crit = true;
 				}

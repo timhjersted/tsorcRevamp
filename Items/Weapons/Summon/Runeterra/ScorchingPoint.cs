@@ -21,15 +21,16 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 		{
 			DisplayName.SetDefault("Scorching Point");
 			Tooltip.SetDefault("Summons fireballs to rotate around you and damage enemies in their way" +
-								"\nIncrease their radius by holding the Special Ability hotkey" +
-								"\nHold Shift + Special Ability to shrink their radius" +
+								"\nUses half a minion slot" +
+								"\nWhile holding this item, increase their radius by holding the Special Ability hotkey" +
+								"\nOr hold Shift + Special Ability to shrink their radius" +
                                 "\nApplies the Scorching debuff, which grants minions crit chance based on a fraction of your critical strike chance" +
-                                "\nDebuff damage also scales with minion damage" +
                 				"\n'By the Ashen Lord of Runeterra!'");
 
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-		}
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
+        }
     public override void SetDefaults()
 		{
 			projectiles = new List<ScorchingPointFireball>(){};
