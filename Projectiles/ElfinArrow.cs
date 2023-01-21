@@ -49,17 +49,7 @@ namespace tsorcRevamp.Projectiles
                 Projectile target = Main.projectile[(int)Projectile.ai[0]];
                 if (target != null && target.active && target.type == ModContent.ProjectileType<ElfinTargeting>())
                 {
-                    Vector2 homingDirection = Vector2.Normalize(target.Center - Projectile.Center);
-                    Projectile.velocity = (Projectile.velocity * (30 / homingStrength) + homingDirection * 14) / ((30 / homingStrength) + 1);
-
-                    if (Projectile.velocity.Length() < topSpeed)
-                    {
-                        Projectile.velocity *= topSpeed / Projectile.velocity.Length();
-                    }
-                    if (Projectile.velocity.Length() > topSpeed)
-                    {
-                        Projectile.velocity *= topSpeed / Projectile.velocity.Length();
-                    }
+                    UsefulFunctions.SmoothHoming(Projectile, target.Center, 0.3f, 20, bufferZone: false);
                 }
                 else
                 {

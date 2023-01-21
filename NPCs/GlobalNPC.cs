@@ -317,7 +317,7 @@ namespace tsorcRevamp.NPCs
         {
             if(npc.type == NPCID.Golem && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                UsefulFunctions.BroadcastText("Somewhere in the sky, a forcefield collapses...", Color.Cyan);
+                UsefulFunctions.BroadcastText("Somewhere in the sky a forcefield collapses...", Color.Cyan);
             }
             if (npc.boss)
             {

@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         }
 
         bool playedSound = false;
-        float homingAcceleration = 0.15f;
+        float homingAcceleration = 0.12f;
         float rotationProgress = 0;
         VFX.HomingStarTrail trail;
         Vector2 initialVelocity;
@@ -46,6 +46,16 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item43 with { Volume = 0.5f }, Projectile.Center);
 
                 trail = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.VFX.HomingStarTrail>(), Projectile.damage, 0, Main.myPlayer, Projectile.ai[1], Projectile.whoAmI).ModProjectile as VFX.HomingStarTrail;
+
+                //Basic, fired from the boss right at the player
+                if (Projectile.ai[0] == 0)
+                {
+                    homingAcceleration = 0.12f;
+                    if(Projectile.ai[1] == 0)
+                    {
+                        trail.trailMaxLength = 400;
+                    }
+                }
 
                 //Accelerate downwards, do not despawn until impact
                 if (Projectile.ai[0] == 1)
@@ -172,6 +182,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                     UsefulFunctions.SmoothHoming(Projectile, target.Center, homingAcceleration, 20, target.velocity, false);
                 }
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            return false;
         }
     }
 }

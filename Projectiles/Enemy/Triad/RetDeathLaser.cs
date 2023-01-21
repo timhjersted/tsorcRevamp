@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(BuffID.OnFire, 300);
+            target.AddBuff(BuffID.OnFire, 100);
         }
 
         bool playedSound = false;

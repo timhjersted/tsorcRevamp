@@ -254,7 +254,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
              
             bool tooEarly = !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Artorias>()) || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Seath.SeathTheScalelessHead>()) || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<EarthFiendLich>()) || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<FireFiendMarilith>()) || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<WaterFiendKraken>()) || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Blight>()) || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<GhostWyvernMage.WyvernMageShadow>());
-            tooEarly = false;
+            
             if (tooEarly)
             {
                 

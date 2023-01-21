@@ -46,9 +46,14 @@ namespace tsorcRevamp.Items.VanillaItems
             //SimpleModTooltip(mod, item, tooltips, ItemID., "a");
             //SimpleModTooltip(mod, item, tooltips, ItemID., "a", "b");
             //SimpleModTooltip(mod, item, tooltips, ItemID.FlaskofFire, "Adds 10% melee damage");  don't do this. flask of fire's tooltip goes at a specific index, not the end
+            
+            if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheHunter>()))
+            {
+                SimpleModTooltip(Mod, item, tooltips, ItemID.AngelWings, "[c/ffbf00:You will discover these in time...]", "Can be upgraded with Supersonic Boots");
+            }
+
             SimpleModTooltip(Mod, item, tooltips, ItemID.AdamantiteBreastplate, "Set can be upgraded in 3 ways with Dark Souls");
-            SimpleModTooltip(Mod, item, tooltips, ItemID.AdamantiteDrill, "Use this to open the Adamantite gates in the", "Corruption Temple to the west of the village");
-            SimpleModTooltip(Mod, item, tooltips, ItemID.AngelWings, "[c/ffbf00:You will discover these in time...]", "Can be upgraded with Supersonic Boots");
+            SimpleModTooltip(Mod, item, tooltips, ItemID.AdamantiteDrill, "Use this to open the Adamantite gates in the", "Corruption Temple to the west of the village");            
             SimpleModTooltip(Mod, item, tooltips, ItemID.BandofRegeneration, "Can be upgraded with the Band of Starpower and Dark Souls");
             SimpleModTooltip(Mod, item, tooltips, ItemID.BandofStarpower, "Can be upgraded with the Band of Regeneration and Dark Souls");
             SimpleModTooltip(Mod, item, tooltips, ItemID.CobaltDrill, "[c/ffbf00:Use this to gain entry to the Wyvern Mage's]", "[c/ffbf00:Fortress above the hallowed caverns to the East]");

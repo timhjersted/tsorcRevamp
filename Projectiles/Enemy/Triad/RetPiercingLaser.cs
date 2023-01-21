@@ -75,17 +75,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             if (FiringTimeLeft > 0)
             {
                 Vector2 origin = GetOrigin();
-                for (int i = 0; i < Main.maxPlayers; i++)
-                {
-                    if (Main.player[i].active && !Main.player[i].dead)
-                    {
-                        float point = 0;
-                        if (Collision.CheckAABBvLineCollision(Main.player[i].Hitbox.TopLeft(), Main.player[i].Hitbox.Size(), origin, origin + Projectile.velocity * Distance, 120, ref point))
-                        {
-                            Main.player[i].AddBuff(ModContent.BuffType<Buffs.ThermalRise>(), 220);
-                        }
-                    }
-                }
             }
 
             if (Main.player[(int)Projectile.ai[0]] != null && Main.player[(int)Projectile.ai[0]].active)

@@ -286,7 +286,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)NPC.Center.X - 800 + Main.rand.Next(1600), (float)NPC.Center.Y - 300f, (float)(-40 + Main.rand.Next(80)) / 10, 2.5f, ModContent.ProjectileType<IceSpirit>(), waterTrailsDamage, 2f, Main.myPlayer); //ProjectileID.CultistBossFireBallClone
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)Target.Center.X - 800 + Main.rand.Next(1600), (float)Target.Center.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 2.5f, ModContent.ProjectileType<IceSpirit>(), waterTrailsDamage, 2f, Main.myPlayer); //ProjectileID.CultistBossFireBallClone
                 }
 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit5 with { Volume = 0.3f, PitchVariance = 2f }, NPC.Center);

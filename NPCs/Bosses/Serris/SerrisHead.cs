@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             NPC.behindTiles = true;
             NPC.boss = true;
             Music = 12;
-            NPC.value = 300000;
+            NPC.value = 0;
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
@@ -220,6 +220,11 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             {
                 Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Serris Gore 1").Type, 1f);
             }
+        }
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            potionType = 0;
+            name = "";
         }
         public override void FindFrame(int currentFrame)
         {

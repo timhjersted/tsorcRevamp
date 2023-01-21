@@ -13,7 +13,7 @@ namespace tsorcRevamp.Buffs
             Description.SetDefault("Latent illuminant energy lets you defy gravity!");
 
             Main.debuff[Type] = false;
-            Main.buffNoTimeDisplay[Type] = false;
+            Main.buffNoTimeDisplay[Type] = true;
         }
 
         //Gives infinite flight while active
