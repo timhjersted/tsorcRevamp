@@ -10,6 +10,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Graphics.Effects;
+using Terraria.Audio;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -582,7 +583,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     opacity = animTime / transformationTimer;
                 }
                 float distancePercent = 1 - (transformationTimer / animTime);
-                Filters.Scene["tsorcRevamp:RetShockwave"].GetShader().UseTargetPosition(NPC.Center).UseProgress((float)Math.Pow(distancePercent, 3f)).UseOpacity(opacity * opacity);
+                Filters.Scene["tsorcRevamp:RetShockwave"].GetShader().UseTargetPosition(NPC.Center).UseProgress((float)Math.Pow(distancePercent, 3f)).UseOpacity(opacity * opacity).UseIntensity(0.1f);
             }
 
             float lightTimer = (240 - transformationTimer) / 20;
@@ -740,6 +741,11 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.dontTakeDamage = true;
             NPC.velocity *= 0.95f;
 
+            if (deathTimer == 30)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashPre") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
+            }
+
             if (Main.netMode != NetmodeID.Server && !Filters.Scene["tsorcRevamp:RetShockwave"].IsActive())
             {
                 Filters.Scene.Activate("tsorcRevamp:RetShockwave", NPC.Center).GetShader().UseTargetPosition(NPC.Center);
@@ -781,7 +787,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.LightRay>());
                 deathTimer = 0;
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Red));
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 1, UsefulFunctions.ColorToFloat(Color.Red));
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashCut") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
 
                 OnKill();
                 NPC.active = false;
@@ -946,9 +953,76 @@ namespace tsorcRevamp.NPCs.Bosses
             spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle2, lightingColor, NPC.rotation, origin2, 1, SpriteEffects.None, 0f);
 
             DrawTransformation();
+            DrawDeathEffect();
             return false;
         }
 
+        public void DrawDeathEffect()
+        {
+
+            Vector3 hslColor1 = Main.rgbToHsl(Color.Red);
+            Vector3 hslColor2 = Main.rgbToHsl(Color.White);
+            hslColor1.X += 0.03f * (float)Math.Cos(effectTimer / 25f);
+            hslColor2.X += 0.03f * (float)Math.Cos(effectTimer / 25f);
+            effectTimer++;
+            Color rgbColor1 = Main.hslToRgb(hslColor1);
+            Color rgbColor2 = Main.hslToRgb(hslColor2);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            //Apply the shader, caching it as well
+            //if (effect == null)
+            {
+                TransformationEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatFinalStandAttack", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            starRotation += 0.02f;
+            Rectangle starRectangle = new Rectangle(0, 0, 8, 8);
+            float attackFadePercent = (float)Math.Pow(1 - (deathTimer / 60f), 2);
+            if (deathTimer > 60)
+            {
+                attackFadePercent = 0;
+            }
+            starRectangle.Width = (int)(starRectangle.Width * deathTimer);
+            starRectangle.Height = (int)(starRectangle.Height * deathTimer);
+
+            Vector2 starOrigin = starRectangle.Size() / 2f;
+
+            //Pass relevant data to the shader via these parameters
+            TransformationEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            TransformationEffect.Parameters["effectSize"].SetValue(starRectangle.Size());
+            TransformationEffect.Parameters["effectColor"].SetValue(rgbColor1.ToVector4());
+            TransformationEffect.Parameters["ringProgress"].SetValue(0.5f);
+            TransformationEffect.Parameters["fadePercent"].SetValue(attackFadePercent);
+            TransformationEffect.Parameters["time"].SetValue(-Main.GlobalTimeWrappedHourly * 3f);
+
+            //Apply the shader
+            TransformationEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, NPC.Center - Main.screenPosition, starRectangle, Color.White, starRotation, starOrigin, NPC.scale, SpriteEffects.None, 0);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            //Pass relevant data to the shader via these parameters
+            TransformationEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            TransformationEffect.Parameters["effectSize"].SetValue(starRectangle.Size());
+            TransformationEffect.Parameters["effectColor"].SetValue(rgbColor2.ToVector4());
+            TransformationEffect.Parameters["ringProgress"].SetValue(0.5f);
+            TransformationEffect.Parameters["fadePercent"].SetValue(attackFadePercent);
+            TransformationEffect.Parameters["time"].SetValue(-Main.GlobalTimeWrappedHourly * 3f);
+
+            //Apply the shader
+            TransformationEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, NPC.Center - Main.screenPosition, starRectangle, Color.White, -starRotation, starOrigin, NPC.scale, SpriteEffects.None, 0);
+
+
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+        }
         Effect TransformationEffect;
         float starRotation;
         public void DrawTransformation()

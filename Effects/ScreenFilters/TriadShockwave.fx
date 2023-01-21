@@ -31,8 +31,8 @@ float4 PixelShaderFunction(float4 position : SV_POSITION, float2 coords : TEXCOO
     float4 pixelColor = float4(1, 1, 1, 1);
     float2 currentPixel = coords * uScreenResolution;    
     float2 focusPoint = uTargetPosition - uScreenPosition;
-    float baseRadius = 0.1;
-    if (uIntensity != 0)
+    float baseRadius = 0.0;
+    if (uIntensity != 1)
     {
         baseRadius = uIntensity;
     }

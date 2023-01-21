@@ -10,6 +10,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.VFX;
 using Terraria.Graphics.Effects;
+using Terraria.Audio;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -481,6 +482,8 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (!clearedTrails)
             {
+                fireRotationRotation = 0;
+                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>());
                 UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.CataluminanceTrail>());
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -502,10 +505,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
 
-            if (finalStandTimer == 61)
+            if(finalStandTimer < 180)
             {
-                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>());
-                fireRotationRotation = 0;
+                UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -300), 0.5f, 20);
+                return;
             }
 
             NPC.velocity *= 0.95f;
@@ -579,6 +582,10 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.dontTakeDamage = true;
             NPC.velocity *= 0.95f;
+            if(deathTimer == 30)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashPre") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
+            }
 
             if (Main.netMode != NetmodeID.Server && !Filters.Scene["tsorcRevamp:CatShockwave"].IsActive())
             {
@@ -622,6 +629,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.LightRay>());
                 deathTimer = 0;
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.HotPink));
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashCut") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
 
                 OnKill();
                 NPC.life = 0;
@@ -675,7 +683,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     opacity = animTime / transformationTimer;
                 }
                 float distancePercent = 1 - (transformationTimer / animTime);
-                Filters.Scene["tsorcRevamp:CatShockwave"].GetShader().UseTargetPosition(NPC.Center).UseProgress((float)Math.Pow(distancePercent, 3f)).UseOpacity(opacity * opacity);
+                Filters.Scene["tsorcRevamp:CatShockwave"].GetShader().UseTargetPosition(NPC.Center).UseProgress((float)Math.Pow(distancePercent, 3f)).UseOpacity(opacity * opacity).UseIntensity(0.1f);
             }
 
             float lightTimer = (240 - transformationTimer) / 20;

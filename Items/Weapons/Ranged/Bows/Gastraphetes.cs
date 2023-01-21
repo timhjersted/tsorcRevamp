@@ -16,11 +16,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ProjectileID.PurificationPowder;
 
-            Item.damage = 50;
+            Item.damage = 25;
             Item.width = 50;
             Item.height = 18;
-            Item.useTime = 16;
-            Item.useAnimation = 16;
+            Item.useTime = 8;
+            Item.useAnimation = 8;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 3;

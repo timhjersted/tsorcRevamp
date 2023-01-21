@@ -8,6 +8,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Graphics.Effects;
+using Terraria.Audio;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -413,7 +414,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     opacity = animTime / transformationTimer;
                 }
                 float distancePercent = 1 - (transformationTimer / animTime);
-                Filters.Scene["tsorcRevamp:SpazShockwave"].GetShader().UseTargetPosition(NPC.Center).UseProgress((float)Math.Pow(distancePercent, 3f)).UseOpacity(opacity * opacity);
+                Filters.Scene["tsorcRevamp:SpazShockwave"].GetShader().UseTargetPosition(NPC.Center).UseProgress((float)Math.Pow(distancePercent, 3f)).UseOpacity(opacity * opacity).UseIntensity(0.1f);
             }
 
             if (!transformed)
@@ -573,6 +574,12 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.dontTakeDamage = true;
             NPC.velocity *= 0.95f;
 
+            if (deathTimer == 30)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashPre") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
+            }
+
+
             if (Main.netMode != NetmodeID.Server && !Filters.Scene["tsorcRevamp:SpazShockwave"].IsActive())
             {
                 Filters.Scene.Activate("tsorcRevamp:SpazShockwave", NPC.Center).GetShader().UseTargetPosition(NPC.Center);
@@ -614,6 +621,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.LightRay>());
                 deathTimer = 0;
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.GreenYellow));
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashCut") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
 
                 OnKill();
                 NPC.active = false;

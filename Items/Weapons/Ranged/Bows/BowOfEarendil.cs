@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MoltenFury, 1);
-            recipe.AddIngredient(ItemID.SoulofSight, 10);
+            recipe.AddIngredient(ItemID.SoulofMight, 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);
 

@@ -48,7 +48,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             effectTimer++;
 
             //Faster if the 'startup' VFX
-            if (Projectile.ai[0] == 1)
+            if (Projectile.ai[0] == 0)
             {
                 effectTimer += 3;
             }
@@ -72,7 +72,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 }
                 float progress = effectTimer / 100f;
 
-                if (Projectile.ai[0] == 1)
+                if (Projectile.ai[0] == 0)
                 {
                     progress /= 3f;
                 }
@@ -98,7 +98,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         public static Effect AuraEffect;
         public void DrawAura()
         {
-            if (Projectile.ai[0] == 1)
+            if (Projectile.ai[0] == 0)
             {
                 return;
             }
@@ -106,19 +106,19 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //Apply the shader, caching it as well
-            //if (effect == null)
+            if (AuraEffect == null)
             {
                 if (Projectile.ai[0] == 1)
+                {
+                    AuraEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/RetAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                }
+                if (Projectile.ai[0] == 3)
                 {
                     AuraEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/SpazAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
                 }
                 if (Projectile.ai[0] == 2)
                 {
                     AuraEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-                }
-                if (Projectile.ai[0] == 3)
-                {
-                    AuraEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/RetAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
                 }
             }
 
