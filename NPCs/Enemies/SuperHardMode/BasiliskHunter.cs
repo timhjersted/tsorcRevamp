@@ -120,8 +120,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         //float breathTimer = 0;
         //float projTimer = 0;
         //float disruptTimer = 0;
-        bool chargeDamageFlag;
-        int chargeDamage;
+        //bool chargeDamageFlag;
+        //int chargeDamage;
         bool breath;
         int breathCD = 120;
 
@@ -239,16 +239,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Blue, 1f);
                     Main.dust[dust2].noGravity = true;
 
-                    chargeDamageFlag = true;
+                    //chargeDamageFlag = true;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(3f, 2f);
                     NPC.velocity.Y = (float)(Math.Sin(rotation) * 10) * -1;
                     NPC.ai[1] = 1f;
                     NPC.netUpdate = true;
-                    chargeDamageFlag = false;
+                    //chargeDamageFlag = false;
                     NPC.damage = 80;
-                    chargeDamage = 0;
+                    //chargeDamage = 0;
                     NPC.localAI[1] = 1f;
                 }
 

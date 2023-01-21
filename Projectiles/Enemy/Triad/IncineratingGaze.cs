@@ -17,7 +17,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
-            DisplayName.SetDefault("Incinerating Gaze");
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
 
@@ -42,23 +41,18 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         //Sound Effect by Adam Wilson
         //https://www.youtube.com/watch?v=q_41f7Xp9_A
         SlotId soundSlotID;
-        SoundStyle LaserSoundStyle = new SoundStyle("tsorcRevamp/Sounds/Custom/ChargeBeam") with { PlayOnlyIfFocused = false };
+        SoundStyle LaserSoundStyle = new SoundStyle("tsorcRevamp/Sounds/Custom/ChargeBeam") with { PlayOnlyIfFocused = false, MaxInstances = 0 };
         bool soundPaused;
         ActiveSound laserSound;
         public override void AI()
         {
-            //Extra long boi for final stand
-            if (Projectile.ai[1] == 1)
-            {
-                Projectile.timeLeft = 90000;
-                Projectile.ai[1] = 0;
-            }
+            Projectile.Name = "aaa";
 
             if(chargeProgress < firingTime)
             {
                 if (chargeProgress == 0)
                 {
-                    soundSlotID = Terraria.Audio.SoundEngine.PlaySound(LaserSoundStyle with { Volume = 0.5f }, Main.LocalPlayer.Center);                    
+                    soundSlotID = SoundEngine.PlaySound(LaserSoundStyle, Projectile.Center);
                 }
                 chargeProgress++;
             }
@@ -67,6 +61,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 laserWidth += 60;
             }
 
+            
             if (laserSound == null)
             {
                 SoundEngine.TryGetActiveSound(soundSlotID, out laserSound);
@@ -86,8 +81,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 laserSound.Position = Main.LocalPlayer.Center;
             }
 
-            //Stick to retinazer and rotate to face wherever it is looking            
-            if (Main.npc[(int)Projectile.ai[0]] != null && Main.npc[(int)Projectile.ai[0]].active && Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>())
+            //Stick to retinazer and rotate to face wherever it is looking            \
+            bool validBoss = Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>() || Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.SpazmatismV2>() || Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.Cataluminance>();
+            if (Main.npc[(int)Projectile.ai[0]] != null && Main.npc[(int)Projectile.ai[0]].active && validBoss)
             {
                 Projectile.rotation = Main.npc[(int)Projectile.ai[0]].rotation + MathHelper.PiOver2;
                 Projectile.Center = Main.npc[(int)Projectile.ai[0]].Center + new Vector2(40, 0).RotatedBy(Projectile.rotation);
@@ -97,7 +93,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             {
                 if(Projectile.timeLeft > 130)
                 {
-                    laserSound.Stop();
+                    if (laserSound != null)
+                    {
+                        laserSound.Stop();
+                    }
                     Projectile.timeLeft = 130;
                 }
             }
@@ -166,6 +165,18 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         public static ArmorShaderData targetingData;
         public override bool PreDraw(ref Color lightColor)
         {
+            Color laserColor = new Color(1.0f, 0.1f, 0.1f);
+
+            if (Projectile.ai[1] == 1)
+            {
+                laserColor = Color.GreenYellow;
+            }
+            
+            if (Projectile.ai[1] == 2)
+            {
+                laserColor = new Color(0.1f, 0.5f, 1f);
+            }
+
             if (chargeProgress < firingTime)
             {
                 Main.spriteBatch.End();
@@ -196,7 +207,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
                 targetingData.UseSaturation((targetingScaleUp / 1.2f));
                 targetingData.UseOpacity(1);
-
+                targetingData.UseColor(laserColor);
                 //Apply the shader
                 targetingData.Apply(null);
 
@@ -246,6 +257,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             }
 
             data.UseOpacity(scaleDown);
+            data.UseColor(laserColor);
             //data.UseSecondaryColor(1, 1, Main.time);
 
             //Apply the shader
@@ -268,4 +280,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             return false;
         }
     }
+
+    public class MaliciousGaze : IncineratingGaze {}
+    public class BlindingGaze : IncineratingGaze {}
 }

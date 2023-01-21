@@ -29,7 +29,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
 
-        int radius = 50;
         float projRadius = 20;
         public override void AI()
         {

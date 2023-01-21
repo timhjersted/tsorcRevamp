@@ -7,7 +7,7 @@ using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Trails
+namespace tsorcRevamp.Projectiles.VFX
 {
     class DynamicTrail : ModProjectile
     {
@@ -101,10 +101,8 @@ namespace tsorcRevamp.Projectiles.Trails
         /// If Projectile.ai[0] is set to 1, then this projectile is attached to an NPC
         /// Otherwise, it is attached to another Projectile
         /// </summary>
-        public bool NPCSource
-        {
-            get => Projectile.ai[0] == 1;
-        }
+        public bool NPCSource;
+
         /// <summary>
         /// The index of the host in the NPC or Projectile array
         /// </summary>
@@ -152,13 +150,12 @@ namespace tsorcRevamp.Projectiles.Trails
         }
 
         Vector2 lastPosition = Vector2.Zero;
-        int maxPositions;
         float maxLength;
         public override void AI()
         {
             if (!initialized)
             {
-                Initialize();
+                 Initialize();
             }
 
             if (HostEntityValid())
@@ -396,7 +393,7 @@ namespace tsorcRevamp.Projectiles.Trails
            
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //If no custom effect is specified, just use BasicEffect as a placeholder
             if (customEffect == null)

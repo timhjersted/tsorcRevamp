@@ -7,7 +7,7 @@ using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Trails
+namespace tsorcRevamp.Projectiles.VFX
 {
     class CursedFlamelashTrail : DynamicTrail
     {
@@ -37,6 +37,7 @@ namespace tsorcRevamp.Projectiles.Trails
             collisionPadding = 0;
             trailYOffset = 50;
             trailMaxLength = 350;
+            NPCSource = false;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 

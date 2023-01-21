@@ -2,6 +2,8 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Graphics.Effects;
+using System;
 
 namespace tsorcRevamp.Items.Weapons
 {
@@ -11,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons
         {
             Tooltip.SetDefault("You should not have this" +
                 "\nDev item used for testing purposes only" +
-                "\nUsing this may cause irreversible effects on your world");
+                "\nUsing this may have irreversible effects on your world");
         }
 
         public override void SetDefaults()
@@ -38,8 +40,7 @@ namespace tsorcRevamp.Items.Weapons
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             Main.NewText(player.position / 16);
-            NPC.NewNPCDirect(source, position, ModContent.NPCType<Projectiles.Enemy.Triad.IchorGlob>());
-            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedLaser>(), damage, knockBack, Main.myPlayer, 0, 1);
+            Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, player.whoAmI, 0, UsefulFunctions.ColorToFloat(Main.DiscoColor));
 
             //Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyLightningStrike>(), damage, knockBack, Main.myPlayer);
             //NPC.NewNPC(source, 707 * 16, 1194 * 16, ModContent.NPCType<NPCs.Special.GwynBossVision>());
@@ -77,6 +78,7 @@ namespace tsorcRevamp.Items.Weapons
         //For multiplayer testing, because I only have enough hands for one keyboard. Makes the player holding it float vaguely near the next other player.
         public override void UpdateInventory(Player player)
         {
+
             if (player.name == "MPTestDummy")
             {
                 if (player.whoAmI == 0)

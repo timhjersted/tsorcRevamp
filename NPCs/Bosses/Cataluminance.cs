@@ -8,6 +8,8 @@ using Terraria.Graphics;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.VFX;
+using Terraria.Graphics.Effects;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -20,7 +22,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.damage = 50;
             NPC.defense = 25;
             AnimationType = -1;
-            NPC.lifeMax = 90000;
+            NPC.lifeMax = 120000;
             NPC.timeLeft = 22500;
             NPC.friendly = false;
             NPC.noTileCollide = true;
@@ -76,7 +78,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public bool PhaseTwo
         {
-            get => transformationTimer >= 120;
+            get => transformed;
         }
 
         public Player target
@@ -84,39 +86,22 @@ namespace tsorcRevamp.NPCs.Bosses
             get => Main.player[NPC.target];
         }
 
+        int finalStandLevel = 0;
         int finalStandTimer = 0;
+        int finalStandDelay = 0;
         float rotationTarget = 0;
         float rotationSpeed = 0.05f;
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
-            if (ringCollapse < 0.1f)
-            {
-                fadePercent += fadeSpeed;
-            }
-            else
-            {
-                ringCollapse /= collapseSpeed;
-            }
+            MoveTimer++;
+            HandleAura();
+            FindFrame(0);
+            despawnHandler.TargetAndDespawn(NPC.whoAmI);
+            Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
 
-            float intensityMinimum = 0.60f;
-            float radiusMinimum = 0.2f;
-            if (baseFade < intensityMinimum)
-            {
-                baseFade += 0.02f;
-            }
-            if (baseFade > intensityMinimum)
-            {
-                baseFade = intensityMinimum;
-            }
-            if (baseRadius > radiusMinimum)
-            {
-                baseRadius -= 0.01f;
-            }
-            if (baseRadius < radiusMinimum)
-            {
-                baseRadius = radiusMinimum;
-            }
+            //This will be changed by other attacks
+            NPC.damage = 0;
 
             //Prevents time from flowing past midnight while the boss is alive
             Main.dayTime = false;
@@ -131,10 +116,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.netUpdate = true;
             }
 
-            MoveTimer++;
-            despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
-
             //Smart rotation
             //The conversions are necessary to avoid some XNA rotation bullshit
             Vector2 targetRotation = rotationTarget.ToRotationVector2();
@@ -142,18 +123,7 @@ namespace tsorcRevamp.NPCs.Bosses
             Vector2 nextRotationVector = Vector2.Lerp(currentRotation, targetRotation, rotationSpeed);
             NPC.rotation = nextRotationVector.ToRotation();
 
-            FindFrame(0);
-
-            //Teleport if too far away
-            if (NPC.Distance(target.Center) > 4000)
-            {
-                NPC.Center = target.Center + new Vector2(0, -1000);
-                NPC.netUpdate = true;
-                UsefulFunctions.BroadcastText("Cataluminance Closes In...");
-            }
-
             //This exists because I wanted to make the fight far faster paced than even supersonic wings 1 allows
-            //Unfinished: It will be applied by grazing Cataluimance's illuminant projectiles later
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active && !Main.player[i].dead)
@@ -162,10 +132,17 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
 
-            if (NPC.life < NPC.lifeMax / 2 && transformationTimer < 120)
+            if (!HandleRealLife())
             {
-                Transform();
                 return;
+            }
+
+            //Teleport if too far away
+            if (NPC.Distance(target.Center) > 4000 && finalStandTimer == 0)
+            {
+                NPC.Center = target.Center + new Vector2(0, -1000);
+                NPC.netUpdate = true;
+                UsefulFunctions.BroadcastText("Cataluminance Closes In...");
             }
 
             if (testAttack != -1)
@@ -175,29 +152,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (MoveList == null)
             {
                 InitializeMoves();
-            }
-
-            //Switch into final stand if lower than 10% health
-            if (NPC.life < NPC.lifeMax / 10f)
-            {
-                if(finalStandTimer == 0)
-                {
-                    UsefulFunctions.BroadcastText("The Triad prepares to take you down with them...", Color.Cyan);
-                }
-
-                finalStandTimer++;
-                if (finalStandTimer < 60)
-                {
-                    NPC.velocity *= 0.99f;
-                    //Activate auras
-                }
-                else
-                {
-                    FinalStand();
-                }
-
-                return;
-            }
+            }            
 
             if (MoveTimer < 900)
             {
@@ -216,6 +171,88 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 NextAttack();
             }
+        }
+
+        bool transformed;
+        bool HandleRealLife()
+        {
+            if (transformationTimer <= 0)
+            {
+                NPC.dontTakeDamage = false;
+            }
+            else
+            {
+                NPC.dontTakeDamage = true;
+            }
+
+            //Handle phase change and transformation
+            if (NPC.life < NPC.lifeMax * 2f / 3f && (!transformed || transformationTimer > 0))
+            {
+                Transform();
+                return false;
+            }
+
+            //Switch into final stand
+            if (NPC.life < NPC.lifeMax / 4f)
+            //if(true)
+            {
+                if (finalStandTimer == 0 && finalStandLevel == 0)
+                {
+                    UsefulFunctions.BroadcastText("The Triad prepares to take you down with them...", Color.Cyan);
+                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<CataluminanceTrail>());
+                }
+
+                if (finalStandLevel == 0 && !NPC.AnyNPCs(ModContent.NPCType<RetinazerV2>()))
+                {
+                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.IncineratingGaze>());
+                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.MaliciousGaze>());
+                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.BlindingGaze>());
+                    finalStandDelay = 0;
+                    finalStandTimer = 0;
+                    finalStandLevel = 1;
+                }
+                if (finalStandLevel == 1 && !NPC.AnyNPCs(ModContent.NPCType<SpazmatismV2>()))
+                {
+                    NPC.dontTakeDamage = true;
+                    StartAura(800);
+                    finalStandDelay = -60;
+                    finalStandTimer = 0;
+                    finalStandLevel = 2;
+                    UsefulFunctions.BroadcastText("Hallowed light begins to rip through the air...", Color.DeepPink);
+                }
+
+                finalStandTimer++;
+
+                //Stunned for a second
+                if (finalStandDelay < 60)
+                {
+                    NPC.dontTakeDamage = true;
+                    finalStandDelay++;
+                    NPC.velocity *= 0.99f;
+                    MoveTimer = 0;
+                }
+                else
+                {
+                    if (finalStandLevel == 0)
+                    {
+                        NPC.dontTakeDamage = false;
+                        FinalStand();
+                    }
+                    else if (finalStandLevel == 1)
+                    {
+                        NPC.dontTakeDamage = false;
+                        FinalFinalStand();
+                    }
+                    else
+                    {
+                        FinalFinalFinalStand();
+                    }
+                }
+
+                return false;
+            }
+
+            return true;
         }
 
         //Hover to the upper right of the screen and spam homing blasts that chase the player
@@ -270,6 +307,7 @@ namespace tsorcRevamp.NPCs.Bosses
         //Chase the player rapidly and smoothly, leaving a damaging trail in its wake that obstructs movement
         void Pursuit()
         {
+            NPC.damage = 60;
             baseFade = 0.0f;
             baseRadius = .5f;
             rotationTarget = NPC.velocity.ToRotation() - MathHelper.PiOver2;
@@ -277,7 +315,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (MoveTimer == 1 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Trails.CataluminanceTrail>(), 35, 0, Main.myPlayer, 1, NPC.whoAmI);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.CataluminanceTrail>(), 35, 0, Main.myPlayer, 1, NPC.whoAmI);
             }
             float homingStrength = 0.17f;
             if (PhaseTwo)
@@ -297,7 +335,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
 
-            UsefulFunctions.SmoothHoming(NPC, target.Center, homingStrength, 12, target.velocity, false);
+            UsefulFunctions.SmoothHoming(NPC, target.Center, homingStrength, 15, target.velocity, false);
         }
 
         float angle = 0;
@@ -324,7 +362,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         //Stars fired upward for effect
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -60), new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2, 1);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -60), new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 3, 1);
 
                         //Stars rain down
                         Vector2 spawnPos = target.Center + new Vector2(Main.rand.NextFloat(-2000, 2000), -700);
@@ -348,14 +386,257 @@ namespace tsorcRevamp.NPCs.Bosses
             }            
         }
 
+        float targetAngle;
+        float laserCountdown;
         void FinalStand()
         {
+            rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+
+            if (laserCountdown == 0)
+            {
+                rotationSpeed = 0.4f;
+                if (MoveTimer < 400)
+                {
+                    UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -700).RotatedBy(targetAngle + (MathHelper.Pi * 4f / 3f)), 1f, 45);
+                    return;
+                }
+                laserCountdown = 616;
+                StartAura(650, 1.004f, 0.00f);
+                targetAngle += MathHelper.Pi * 5f / 3f;
+                
+            }
+            else
+            {
+                if(laserCountdown > 516)
+                {
+                    UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -700).RotatedBy(targetAngle + (MathHelper.Pi * 4f / 3f)), 1f, 45);
+                }
+                laserCountdown--;
+                NPC.velocity *= 0.95f;
+
+                //Start reducing turn speed
+                if (laserCountdown > 386)
+                {
+                    rotationSpeed = 0.4f;
+                }
+                else
+                {
+                    rotationSpeed = 0.03f;
+                }
+
+                //Start the countdown 30 frames early to make the boss prematurely slow down
+                if (laserCountdown == 586)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.BlindingGaze>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI, 2);
+                    }
+                }
+
+                //Recoil
+                if (laserCountdown == 376)
+                {
+                    NPC.velocity += new Vector2(7, 0).RotatedBy(NPC.rotation - MathHelper.PiOver2);
+                }
+            }
+
+            return;
+            /*
             if (MoveTimer % 90 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(MathHelper.PiOver2), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(MathHelper.PiOver4), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(-MathHelper.PiOver4), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 6).RotatedBy(-MathHelper.PiOver2), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0, 1);
+            }*/
+        }
+
+        public void FinalFinalStand()
+        {
+            NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+
+            if (finalStandTimer == 61 && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.CataluminanceTrail>(), 35, 0, Main.myPlayer, 2, NPC.whoAmI);
+            }
+
+
+            UsefulFunctions.SmoothHoming(NPC, target.Center, 0.2f, 20, bufferZone: false);
+
+            if (finalStandTimer == 900)
+            {
+                finalStandTimer = 0;
+            }
+        }
+
+        bool clearedTrails = false;
+        float fireRotation = MathHelper.PiOver4;
+        float fireRotationRotation = MathHelper.PiOver4 / 4f;
+        int finalStandStarDamage = 30;
+        public void FinalFinalFinalStand()
+        {
+            NPC.dontTakeDamage = true;
+            rotationTarget = MathHelper.Pi;
+            baseRadius = 0.7f;
+
+            if (!clearedTrails)
+            {
+                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.CataluminanceTrail>());
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.CataluminanceTrail>(), 35, 0, Main.myPlayer, 5);
+                }
+
+                clearedTrails = true;
+            }
+
+            //Limit player radius
+            for(int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active && !Main.player[i].dead)
+                {
+                    if(Vector2.Distance(NPC.Center, Main.player[i].Center) > 1350)
+                    {
+                        Main.player[i].velocity = UsefulFunctions.GenerateTargetingVector(Main.player[i].Center, NPC.Center, 6);
+                    }
+                }
+            }
+
+            if (finalStandTimer == 61)
+            {
+                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>());
+                fireRotationRotation = 0;
+            }
+
+            NPC.velocity *= 0.95f;
+
+            if (finalStandTimer > 2360f)
+            {
+                deathTimer++;
+                HandleDeath();
+                return;
+            }
+
+            if (finalStandTimer < 1300)
+            {
+                if (fireRotationRotation < 0.15)
+                {
+                    fireRotationRotation += 0.15f / 300f;
+                }
+                if (finalStandTimer % 20 == 0)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            Vector2 firingVector = new Vector2(6, 0).RotatedBy(fireRotation + (MathHelper.PiOver2 * i));
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), finalStandStarDamage, 0, Main.myPlayer, 2, 150);
+                        }
+                    }
+                    baseFade = 0f;
+                    fireRotation += fireRotationRotation;
+                }
+                if (finalStandTimer > 300 && finalStandTimer % 20 == 0)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            Vector2 firingVector = new Vector2(6, 0).RotatedBy(-fireRotation + (MathHelper.PiOver2 * i));
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), finalStandStarDamage, 0, Main.myPlayer, 2, 3);
+                        }
+                    }
+                    baseFade = 0f;
+                }
+            }
+            else
+            {
+                int period = 45 - (int)((finalStandTimer / 2600f) * 20f);
+                if (finalStandTimer % period == 0)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 firingVector = new Vector2(6, 0).RotatedBy(MathHelper.PiOver2 * Math.Sin(fireRotation));
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), finalStandStarDamage, 0, Main.myPlayer, 5, 150);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), finalStandStarDamage, 0, Main.myPlayer, 6, 3);
+                        firingVector.X *= -1;
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), finalStandStarDamage, 0, Main.myPlayer, 5, 150);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), finalStandStarDamage, 0, Main.myPlayer, 6, 3);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, -firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), finalStandStarDamage, 0, Main.myPlayer, 5, 150);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, -firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), finalStandStarDamage, 0, Main.myPlayer, 6, 3);
+                        firingVector.Y *= -1;
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), finalStandStarDamage, 0, Main.myPlayer, 5, 150);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), finalStandStarDamage, 0, Main.myPlayer, 6, 3);
+                    }
+                    baseFade = 0f;
+                    fireRotation += 0.5f;
+                }
+            }
+        }
+
+        float deathTimer = 0;
+        void HandleDeath()
+        {
+            NPC.dontTakeDamage = true;
+            NPC.velocity *= 0.95f;
+
+            if (Main.netMode != NetmodeID.Server && !Filters.Scene["tsorcRevamp:CatShockwave"].IsActive())
+            {
+                Filters.Scene.Activate("tsorcRevamp:CatShockwave", NPC.Center).GetShader().UseTargetPosition(NPC.Center);
+            }
+
+            float animTime = 180f;
+
+            if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:CatShockwave"].IsActive())
+            {
+                float opacity = deathTimer / (animTime / 2);
+                if (opacity > 1)
+                {
+                    opacity = 1;
+                }
+
+                float distancePercent = 1 - (deathTimer / animTime);
+                Filters.Scene["tsorcRevamp:CatShockwave"].GetShader().UseTargetPosition(NPC.Center).UseProgress((float)Math.Pow(distancePercent, 3f)).UseOpacity(opacity).UseIntensity(0.2f);
+            }
+
+            float lightTimer = 20;
+            if (deathTimer > 130)
+            {
+                lightTimer = 8;
+            }
+            lightCooldown--;
+            if (lightCooldown <= 0)
+            {
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(NPC.Hitbox), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.HotPink));
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(NPC.Hitbox), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Cyan));
+                lightCooldown = lightTimer;
+            }
+
+            //"Die." - Minos Prime, 2022
+            if (deathTimer > 240)
+            {
+                if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:CatShockwave"].IsActive())
+                {
+                    Filters.Scene["tsorcRevamp:CatShockwave"].Deactivate();
+                }
+                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.LightRay>());
+                deathTimer = 0;
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.HotPink));
+
+                OnKill();
+                NPC.life = 0;
+            }
+        }
+        public override bool CheckDead()
+        {
+            if (finalStandLevel == 2 && finalStandTimer > 61)
+            {
+                return true;
+            }
+            else
+            {
+                NPC.life = 1000;
+                return false;
             }
         }
 
@@ -370,27 +651,106 @@ namespace tsorcRevamp.NPCs.Bosses
             MoveTimer = 0;
         }
 
-        float rotationVelocity;
+        float lightCooldown;
         void Transform()
         {
-            transformationTimer++;
-            
-            if(transformationTimer <= 60)
+            MoveTimer = 0;
+            NPC.velocity *= 0.95f;
+            if (Main.netMode != NetmodeID.Server && !Filters.Scene["tsorcRevamp:CatShockwave"].IsActive())
             {
-                rotationVelocity = transformationTimer / 600;
+                Filters.Scene.Activate("tsorcRevamp:CatShockwave", NPC.Center).GetShader().UseTargetPosition(NPC.Center);
+            }
+
+            float animTime = 180f;
+
+            if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:CatShockwave"].IsActive())
+            {
+                float opacity = transformationTimer / (animTime / 2);
+                if (opacity > 1)
+                {
+                    opacity = 1;
+                }
+                if (transformationTimer > animTime)
+                {
+                    opacity = animTime / transformationTimer;
+                }
+                float distancePercent = 1 - (transformationTimer / animTime);
+                Filters.Scene["tsorcRevamp:CatShockwave"].GetShader().UseTargetPosition(NPC.Center).UseProgress((float)Math.Pow(distancePercent, 3f)).UseOpacity(opacity * opacity);
+            }
+
+            float lightTimer = (240 - transformationTimer) / 20;
+            lightCooldown--;
+            if (lightCooldown <= 0 && transformationTimer < 200 && transformationTimer > 80)
+            {
+                //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(NPC.Hitbox), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Red));
+                lightCooldown = lightTimer;
+            }
+
+            if (!transformed)
+            {
+                transformationTimer += 2;
             }
             else
             {
-                rotationVelocity = 1 - (transformationTimer / 600);
+                transformationTimer -= 2;
+                if (transformationTimer <= 0)
+                {
+                    if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:CatShockwave"].IsActive())
+                    {
+                        Filters.Scene["tsorcRevamp:CatShockwave"].Deactivate();
+                    }
+                }
             }
 
-            if (transformationTimer == 60 && !Main.dedServ)
+            if (transformationTimer > 240)
             {
-                //TODO spawn gore
+                transformed = true;
             }
-            MoveTimer = 0;
-            NPC.rotation += rotationVelocity;
-            NPC.velocity *= 0.95f;
+        }
+
+        float fadeInPercent;
+        void HandleAura()
+        {
+            if(fadeInPercent < 1)
+            {
+                fadeInPercent += 1f / 30f;
+            }
+
+            if (ringCollapse < 0.1f)
+            {
+                fadePercent += fadeSpeed;
+            }
+            else
+            {
+                ringCollapse /= collapseSpeed;
+            }
+
+            float intensityMinimum = 0.77f;
+            float radiusMinimum = 0.25f;
+
+
+            if(finalStandTimer > 0)
+            {
+                intensityMinimum = 0.45f;
+                radiusMinimum = 0.4f;
+            }
+
+            if (baseFade < intensityMinimum)
+            {
+                baseFade += 0.02f;
+            }
+            if (baseFade > intensityMinimum)
+            {
+                baseFade = intensityMinimum;
+            }
+            if (baseRadius > radiusMinimum)
+            {
+                baseRadius -= 0.01f;
+            }
+            if (baseRadius < radiusMinimum)
+            {
+                baseRadius = radiusMinimum;
+            }
         }
 
         private void InitializeMoves(List<int> validMoves = null)
@@ -440,7 +800,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.frameCounter = 0.0;
             }
 
-            if (transformationTimer < 60)
+            if (!transformed)
             {
                 if (NPC.frame.Y >= frameSize * Main.npcFrameCount[NPC.type] / 2f)
                 {
@@ -468,6 +828,47 @@ namespace tsorcRevamp.NPCs.Bosses
         float baseRadius = 0.25f;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            Vector3 hslColor = Main.rgbToHsl(new Color(0.1f, 0.5f, 1f));
+            if (PhaseTwo)
+            {
+                hslColor = Main.rgbToHsl(new Color(1f, 0.3f, 0.85f));
+            }
+            if(finalStandLevel == 1)
+            {
+                hslColor = Main.rgbToHsl(Color.GreenYellow);
+            }
+            hslColor.X += 0.03f * (float)Math.Cos(effectTimer / 25f);
+            effectTimer++;
+            Color rgbColor = Main.hslToRgb(hslColor);
+
+            DrawAura(rgbColor);
+
+            if(finalStandLevel == 2)
+            {
+                DrawFinalStandAttack();
+
+                if(finalStandTimer > 2420f)
+                {
+                    DrawExplosion();
+                }
+            }
+
+            if (texture == null || texture.IsDisposed)
+            {
+                texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
+            }
+
+            Color lightingColor = Color.Lerp(Color.White, rgbColor, 0.5f);
+            lightingColor = Color.Lerp(drawColor, lightingColor, 0.5f);
+            Rectangle sourceRectangle = NPC.frame;
+            Vector2 origin = sourceRectangle.Size() / 2f;
+            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle, lightingColor, NPC.rotation, origin, 1, SpriteEffects.None, 0f);
+            DrawTransformationEffect();
+            return false;
+        }
+
+        public void DrawAura(Color rgbColor)
+        {
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -480,21 +881,14 @@ namespace tsorcRevamp.NPCs.Bosses
             Rectangle sourceRectangle = new Rectangle(0, 0, (int)(effectRadius / 0.7f), (int)(effectRadius / 0.7f));
             Vector2 origin = sourceRectangle.Size() / 2f;
 
-            Vector3 hslColor = Main.rgbToHsl(new Color(0.1f, 0.5f, 1f));
-            if (PhaseTwo)
-            {
-                hslColor = Main.rgbToHsl(new Color(1f, 0.3f, 0.85f));
-            }
-            hslColor.X += 0.03f * (float)Math.Cos(effectTimer / 25f);
-            effectTimer++;
-            Color rgbColor = Main.hslToRgb(hslColor);
+            
 
             //Pass relevant data to the shader via these parameters
             effect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
             effect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
             effect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
             effect.Parameters["ringProgress"].SetValue(ringCollapse);
-            effect.Parameters["fadePercent"].SetValue(fadePercent);
+            effect.Parameters["fadePercent"].SetValue(fadePercent + (1 - fadeInPercent));
             float timeFactor = 1;
             if (PhaseTwo)
             {
@@ -512,7 +906,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             Rectangle baseRectangle = new Rectangle(0, 0, 500, 500);
             Vector2 baseOrigin = baseRectangle.Size() / 2f;
-            
+
 
             //Pass relevant data to the shader via these parameters
             effect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
@@ -528,22 +922,184 @@ namespace tsorcRevamp.NPCs.Bosses
             Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, NPC.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.PiOver2, baseOrigin, NPC.scale, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+        }
 
+        Effect FinalStandAttack;
+        float starRotation;
+        public void DrawFinalStandAttack()
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-
-            if (texture == null || texture.IsDisposed)
+            //Apply the shader, caching it as well
+            //if (effect == null)
             {
-                texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
+                effect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
-            Color lightingColor = Color.Lerp(Color.White, rgbColor, 0.5f);
-            lightingColor = Color.Lerp(drawColor, lightingColor, 0.5f);
-            Rectangle sourceRectangle2 = NPC.frame;
-            Vector2 origin2 = sourceRectangle2.Size() / 2f;
-            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle2, lightingColor, NPC.rotation, origin2, 1, SpriteEffects.None, 0f);
-            return false;
+            Vector3 hslColor1 = Main.rgbToHsl(new Color(0.1f, 0.5f, 1f));
+            Vector3 hslColor2 = Main.rgbToHsl(new Color(1f, 0.3f, 0.85f));
+            hslColor1.X += 0.03f * (float)Math.Cos(effectTimer / 25f);
+            hslColor2.X += 0.03f * (float)Math.Cos(effectTimer / 25f);
+            effectTimer++;
+            Color rgbColor1 = Main.hslToRgb(hslColor1);
+            Color rgbColor2 = Main.hslToRgb(hslColor2);
+
+            Rectangle baseRectangle = new Rectangle(0, 0, 500, 500);
+            Vector2 baseOrigin = baseRectangle.Size() / 2f;
+
+
+            //Pass relevant data to the shader via these parameters
+            effect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            effect.Parameters["effectSize"].SetValue(baseRectangle.Size());
+            effect.Parameters["effectColor"].SetValue(rgbColor2.ToVector4());
+            effect.Parameters["ringProgress"].SetValue(0.5f);
+            effect.Parameters["fadePercent"].SetValue(0);
+            effect.Parameters["time"].SetValue(-Main.GlobalTimeWrappedHourly * 3f);
+
+            //Apply the shader
+            effect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, NPC.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.PiOver2, baseOrigin, NPC.scale, SpriteEffects.None, 0);
+
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            //Apply the shader, caching it as well
+            //if (effect == null)
+            {
+                FinalStandAttack = ModContent.Request<Effect>("tsorcRevamp/Effects/CatFinalStandAttack", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            starRotation += 0.02f;
+            Rectangle starRectangle = new Rectangle(0, 0, 300, 300);
+            float attackFadePercent = 0;
+            if(finalStandTimer < 60)
+            {
+                attackFadePercent = (float)Math.Pow(1 - (finalStandTimer / 60f), 2);
+                starRectangle.Width = (int)(starRectangle.Width * (1 - attackFadePercent));
+                starRectangle.Height = (int)(starRectangle.Height * (1 - attackFadePercent));
+            }
+
+            if(finalStandTimer > 2420)
+            {
+                //starRectangle.Width *= 2 * (int)((finalStandTimer - 2360) / 60f);
+                //starRectangle.Height *= 2 * (int)((finalStandTimer - 2360) / 60f);
+            }
+
+            Vector2 starOrigin = starRectangle.Size() / 2f;
+
+            //Pass relevant data to the shader via these parameters
+            FinalStandAttack.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            FinalStandAttack.Parameters["effectSize"].SetValue(starRectangle.Size());
+            FinalStandAttack.Parameters["effectColor"].SetValue(rgbColor1.ToVector4());
+            FinalStandAttack.Parameters["ringProgress"].SetValue(0.5f);
+            FinalStandAttack.Parameters["fadePercent"].SetValue(attackFadePercent);
+            FinalStandAttack.Parameters["time"].SetValue(-Main.GlobalTimeWrappedHourly * 3f);
+
+            //Apply the shader
+            FinalStandAttack.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, NPC.Center - Main.screenPosition, starRectangle, Color.White, starRotation, starOrigin, NPC.scale, SpriteEffects.None, 0);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            
+            //Pass relevant data to the shader via these parameters
+            FinalStandAttack.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            FinalStandAttack.Parameters["effectSize"].SetValue(starRectangle.Size());
+            FinalStandAttack.Parameters["effectColor"].SetValue(rgbColor2.ToVector4());
+            FinalStandAttack.Parameters["ringProgress"].SetValue(0.5f);
+            FinalStandAttack.Parameters["fadePercent"].SetValue(attackFadePercent);
+            FinalStandAttack.Parameters["time"].SetValue(-Main.GlobalTimeWrappedHourly * 3f);
+
+            //Apply the shader
+            FinalStandAttack.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, NPC.Center - Main.screenPosition, starRectangle, Color.White, -starRotation, starOrigin, NPC.scale, SpriteEffects.None, 0);
+
+
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
         }
+
+        Effect TransformationEffect;
+        float transStarRotation;
+        public void DrawTransformationEffect()
+        {
+
+            Vector3 hslColor1 = Main.rgbToHsl(new Color(0.1f, 0.5f, 1f));
+            Vector3 hslColor2 = Main.rgbToHsl(new Color(1f, 0.3f, 0.85f));
+            hslColor1.X += 0.03f * (float)Math.Cos(effectTimer / 25f);
+            hslColor2.X += 0.03f * (float)Math.Cos(effectTimer / 25f);
+            effectTimer++;
+            Color rgbColor1 = Main.hslToRgb(hslColor1);
+            Color rgbColor2 = Main.hslToRgb(hslColor2);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            //Apply the shader, caching it as well
+            //if (effect == null)
+            {
+                TransformationEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatFinalStandAttack", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            transStarRotation += 0.02f;
+            Rectangle starRectangle = new Rectangle(0, 0, 4, 4);
+            float attackFadePercent = (float)Math.Pow(1 - (transformationTimer / 60f), 2);
+            if (transformationTimer > 60)
+            {
+                attackFadePercent = 0;
+            }
+            starRectangle.Width = (int)(starRectangle.Width * transformationTimer);
+            starRectangle.Height = (int)(starRectangle.Height * transformationTimer);
+
+            Vector2 starOrigin = starRectangle.Size() / 2f;
+
+            //Pass relevant data to the shader via these parameters
+            TransformationEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            TransformationEffect.Parameters["effectSize"].SetValue(starRectangle.Size());
+            TransformationEffect.Parameters["effectColor"].SetValue(rgbColor1.ToVector4());
+            TransformationEffect.Parameters["ringProgress"].SetValue(0.5f);
+            TransformationEffect.Parameters["fadePercent"].SetValue(attackFadePercent);
+            TransformationEffect.Parameters["time"].SetValue(-Main.GlobalTimeWrappedHourly * 3f);
+
+            //Apply the shader
+            TransformationEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, NPC.Center - Main.screenPosition, starRectangle, Color.White, transStarRotation, starOrigin, NPC.scale, SpriteEffects.None, 0);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            //Pass relevant data to the shader via these parameters
+            TransformationEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            TransformationEffect.Parameters["effectSize"].SetValue(starRectangle.Size());
+            TransformationEffect.Parameters["effectColor"].SetValue(rgbColor2.ToVector4());
+            TransformationEffect.Parameters["ringProgress"].SetValue(0.5f);
+            TransformationEffect.Parameters["fadePercent"].SetValue(attackFadePercent);
+            TransformationEffect.Parameters["time"].SetValue(-Main.GlobalTimeWrappedHourly * 3f);
+
+            //Apply the shader
+            TransformationEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, NPC.Center - Main.screenPosition, starRectangle, Color.White, -transStarRotation, starOrigin, NPC.scale, SpriteEffects.None, 0);
+
+
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+        }
+        public void DrawExplosion()
+        {
+            //Terraria.Graphics.Effects.Filters.Scene.a
+            //Terraria.Graphics.Effects.Filters.Scene.Activate("Shockwave", NPC.Center).GetShader().UseColor(5, rippleSize, rippleSpeed).UseTargetPosition(NPC.Center);
+        }
+
         public void StartAura(float radius, float ringSpeed = 1.05f, float fadeOutSpeed = 0.05f)
         {
             effectRadius = radius;
@@ -551,6 +1107,7 @@ namespace tsorcRevamp.NPCs.Bosses
             fadeSpeed = fadeOutSpeed;
             fadePercent = 0;
             ringCollapse = 1;
+            fadeInPercent = 0;
         }
 
         public override bool CheckActive()
@@ -562,15 +1119,13 @@ namespace tsorcRevamp.NPCs.Bosses
             potionType = ItemID.SuperHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot) { 
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TriadBag>()));
         }
 
         //TODO: Copy vanilla death effects
         public override void OnKill()
         {
-            UsefulFunctions.BroadcastText("Retinazer has been defeated!", Color.MediumPurple);
-            UsefulFunctions.BroadcastText("Spazmatism has been defeated!", Color.MediumPurple);
             if (!Main.dedServ)
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 1").Type, 1f);

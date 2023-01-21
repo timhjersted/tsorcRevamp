@@ -50,13 +50,22 @@ namespace tsorcRevamp.Items
 
             if (item.type == ItemID.MechanicalEye)
             {
-                if(!Main.dayTime && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.RetinazerV2>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SpazmatismV2>()))
+                if (!Main.dayTime)
                 {
-                    //Triad
-                    UsefulFunctions.BroadcastText("The Triad has awoken!", Color.MediumPurple);
-                    NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y - 1000, ModContent.NPCType<NPCs.Bosses.Cataluminance>());
-                    NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X - 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
-                    NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X + 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
+                    if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.RetinazerV2>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SpazmatismV2>()))
+                    {
+                        //Triad
+                        UsefulFunctions.BroadcastText("The Triad has spotted you", Color.MediumPurple);
+                        NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y - 1000, ModContent.NPCType<NPCs.Bosses.Cataluminance>());
+                        NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X - 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
+                        NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X + 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
+                        Projectile.NewProjectileDirect(player.GetSource_ItemUse(item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, player.whoAmI, 1, UsefulFunctions.ColorToFloat(Color.White));
+
+                    }
+                    else
+                    {
+                        UsefulFunctions.BroadcastText("The Triad already has you in their sights...", Color.MediumPurple);
+                    }
                 }
                 else
                 {
@@ -124,8 +133,8 @@ namespace tsorcRevamp.Items
             {
                 if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheHunter>()))
                 {
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "These wings have been [c/383838:cursed] by a ferocious [c/949494:Hunter]"));
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "They are now heavier than steel, and can not be used until it is defeated"));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "These wings have been [c/383838:cursed] by a ferocious [c/009400:Hunter]"));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "They can not be used until it is defeated"));
                 }
             }
             
@@ -176,8 +185,8 @@ namespace tsorcRevamp.Items
                 }
                 if (item.type == ItemID.QueenSlimeMountSaddle && !NPC.downedMechBoss3)
                 {
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] by a fierce [c/949494:Machine]"));
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "It is now heavier than steel, and can not be used until it is defeated"));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] by a ferocious [c/009400:Hunter]"));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "It can not be used until it is defeated"));
                 }
             }
         }

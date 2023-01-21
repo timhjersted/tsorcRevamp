@@ -38,7 +38,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         {
             if (!spawnedTrail)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Trails.IchorMissileTrail>(), 0, 0, Main.myPlayer, 1, NPC.whoAmI);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.IchorMissileTrail>(), 0, 0, Main.myPlayer, 1, NPC.whoAmI);
 
                 spawnedTrail = true;
             }

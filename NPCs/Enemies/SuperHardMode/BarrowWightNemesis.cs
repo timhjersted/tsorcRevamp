@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int breathCD = 45;
         //int previous = 0;
         bool breath = false;
-        int chargeDamage = 0;
+        //int chargeDamage = 0;
         bool chargeDamageFlag = false;
         int chargeTelegraphTimer = 0;
 

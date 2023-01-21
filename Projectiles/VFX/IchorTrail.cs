@@ -7,9 +7,9 @@ using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Trails
+namespace tsorcRevamp.Projectiles.VFX
 {
-    class IchorMissileTrail : DynamicTrail
+    class IchorTrail : DynamicTrail
     {
         public override void SetStaticDefaults()
         {
@@ -27,18 +27,24 @@ namespace tsorcRevamp.Projectiles.Trails
             Projectile.penetrate = -1;
             Projectile.hostile = true;
             Projectile.friendly = false;
-            trailWidth = 35;
-            trailPointLimit = 500;
+            trailWidth = 110;
+            trailPointLimit = 50;
             trailCollision = false;
+            NPCSource = true;
             trailYOffset = 50;
-            trailMaxLength = 400;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/IchorMissileExhaust", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            trailMaxLength = 200;            
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/IchorTrackerShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         public override void SetEffectParameters(Effect effect)
         {
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/IchorMissileExhaust", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture1);
+            if (hostEntityType == ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorFragment>())
+            {
+                trailWidth = 20;
+                trailMaxLength = 300;
+            }
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/IchorTrackerShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture2);
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
             effect.Parameters["shaderColor"].SetValue(Color.Gold.ToVector4());

@@ -1116,7 +1116,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.ArmoredViking):
                     {
                         npc.npcSlots = 4;
-                        npc.lifeMax = 3000;
+                        npc.lifeMax = 500;
                         npc.damage = 66;
                         npc.knockBackResist = 0f;
                         npc.defense = 20;

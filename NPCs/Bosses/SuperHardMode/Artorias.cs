@@ -133,7 +133,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 poisonTimer = 30f;
             }
         }
-        public static Texture2D spearTexture;
+        //public static Texture2D spearTexture;
         public static Texture2D texture;
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {

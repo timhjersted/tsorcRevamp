@@ -67,9 +67,9 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
 }
 
 
-technique RetAura
+technique TriadDeath
 {
-    pass RetAuraPass
+    pass TriadDeathPass
     {
         PixelShader = compile ps_2_0 PixelShaderFunction();
     }

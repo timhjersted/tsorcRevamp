@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles
             {                
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Trails.CursedFlamelashTrail>(), Projectile.damage, 0, Main.myPlayer, 0, Projectile.whoAmI);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.CursedFlamelashTrail>(), Projectile.damage, 0, Main.myPlayer, 0, Projectile.whoAmI);
                 }
                 Projectile.damage = 0;
                 spawnedTrail = true;

@@ -30,7 +30,8 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     //Define the laser effect and center color (these can be tuned to produce any color laser)
     float4 laserColor = float4(1.0, 0.1, 0.1, 1.0);
     float4 white = float4(1.0,1.0,1.0,1.0);
-
+    laserColor.rgb = uColor;
+    
     float textureSize = 4096;
     float projectileWidth = 1200;
     float projectileHeight = 250;

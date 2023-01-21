@@ -115,6 +115,9 @@ namespace tsorcRevamp
         public static FieldInfo TrackedSoundsInfo;
 
         public static Effect TheAbyssEffect;
+        public static Effect RetShockwaveEffect;
+        public static Effect SpazShockwaveEffect;
+        public static Effect CatShockwaveEffect;
         //public static Effect AttraidiesEffect;
 
         public static bool MusicNeedsUpdate = false;
@@ -195,6 +198,15 @@ namespace tsorcRevamp
 
             TheAbyssEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TheAbyssShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
+
+            
+            RetShockwaveEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TriadShockwave", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            Filters.Scene["tsorcRevamp:RetShockwave"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(RetShockwaveEffect), "TriadShockwavePass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
+            SpazShockwaveEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TriadShockwave", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            Filters.Scene["tsorcRevamp:SpazShockwave"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(SpazShockwaveEffect), "TriadShockwavePass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
+            CatShockwaveEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TriadShockwave", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            Filters.Scene["tsorcRevamp:CatShockwave"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(CatShockwaveEffect), "TriadShockwavePass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
+            
 
             tNoiseTexture1 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/TurbulentNoise1", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             tNoiseTexture2 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/TurbulentNoise2", ReLogic.Content.AssetRequestMode.ImmediateLoad);

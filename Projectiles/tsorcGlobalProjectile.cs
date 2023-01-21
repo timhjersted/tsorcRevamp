@@ -323,7 +323,6 @@ namespace tsorcRevamp.Projectiles
             {
                 return false;
             }
-
             else
             {
                 return true;

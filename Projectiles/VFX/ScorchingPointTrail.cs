@@ -7,7 +7,7 @@ using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Trails
+namespace tsorcRevamp.Projectiles.VFX
 {
     class ScorchingPointTrail : DynamicTrail
     {
@@ -30,7 +30,8 @@ namespace tsorcRevamp.Projectiles.Trails
             trailMaxLength = 111;
             Projectile.hide = true;
             collisionPadding = 50;
-           
+            NPCSource = false;
+
             trailCollision = true;
             collisionFrequency = 5;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;

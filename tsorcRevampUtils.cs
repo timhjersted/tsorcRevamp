@@ -373,6 +373,30 @@ namespace tsorcRevamp
         }
 
         ///<summary> 
+        ///Converts a Color to a floating point number
+        ///Useful for passing one into places that require a float, such as a projectile ai array
+        ///It must be unconverted before it can be used
+        ///</summary>         
+        ///<param name="color">The color to be converted</param>
+        public static float ColorToFloat(Color color)
+        {
+            return BitConverter.UInt32BitsToSingle(color.PackedValue);
+        }
+
+        ///<summary> 
+        ///Converts a Color to a floating point number
+        ///Useful for passing one into places that require a float, such as a projectile ai array
+        ///It must be unconverted before it can be used
+        ///</summary>         
+        ///<param name="color">The color to be converted</param>
+        public static Color ColorFromFloat(float color)
+        {
+            Color outColor = new();
+            outColor.PackedValue = BitConverter.SingleToUInt32Bits(color);
+            return outColor;
+        }
+
+        ///<summary> 
         ///Returns a vector that indicates a true ballistic trajectory from a source to a target
         ///</summary>         
         ///<param name="source">The start point of the vector</param>
@@ -707,6 +731,23 @@ namespace tsorcRevamp
             }
 
             return false;
+        }
+
+        ///<summary> 
+        ///Clears all projectiles that match the given type
+        ///</summary>
+        ///<param name="type">The type of projectile to clear</param>
+        public static void ClearProjectileType(int type)
+        {
+            for(int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].type == type)
+                {
+                    Main.projectile[i].Kill();
+                }
+            }
+
+            return;
         }
 
         ///<summary> 

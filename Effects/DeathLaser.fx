@@ -85,12 +85,12 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     noiseColor.g = sampleIntensity * shaderColor.g;
 
     //Mix it with 'intensity' to make it more intense near the center
-    float4 effectColor = noiseColor * pow(intensity, 2) * 4.0;
+    float4 effectColor = noiseColor * pow(intensity, 1) * 2;
     
     //Not the vibe i'm going for here, but looks cool as hell and will be useful later:
     //float4 effectColor = noiseColor * noiseColor * pow(intensity, 2) * 8.0;
     
-    return effectColor / pow(fadeOut, 1);
+    return effectColor * fadeOut;
 }
 
 technique DeathLaser

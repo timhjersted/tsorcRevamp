@@ -229,7 +229,7 @@ namespace tsorcRevamp
              "Progression clues can be found on unique items dropped by bosses",
              "If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction",
              "Signs offer many important hints",
-             "If you go above 100% crit chance, you have a chance to multicrit, allowing you to deal 4 times or even 8 times the damage if you have enough crit chance.",
+             "If you go above 100% crit chance, you have a chance to multicrit, allowing you to deal 4 or more times the damage.",
              "Teal Pressure Pads can only be activated with ranged attacks",
              "Some vanilla recipes have been removed. You must find these items in the world by exploring",
              "Get a bad modifier on a weapon? Talk to Jade, the Emerald Herald. She can remove it with her Blessing",
@@ -239,7 +239,7 @@ namespace tsorcRevamp
              "Welcome to the Dark Souls of Terraria",
              "The Chloranthy Ring massively improves your dodgeroll, allowing superior evasion...",
              "Teal pressure plates must be hit with a ranged weapon to activate",
-             "Use the Recipe Browser mod to see what can be crafted with Dark Souls. Anything that says it's a Dark Souls crafting material should be investigated.",
+             "Use a Recipe Browser mod to investigate any item that says it's a \"Dark Souls recipe material\".",
              "Remember to dodgeroll",
              "I am so fucking mad"
             };
@@ -1420,9 +1420,11 @@ namespace tsorcRevamp
                 {
                     text = "Don't give up! Some bosses might take several tries to defeat";
                 }
-                else if (Main.rand.NextBool() && (Main.npc[currentBoss].type == NPCID.Retinazer || Main.npc[currentBoss].type == NPCID.Spazmatism
+                else if (Main.rand.NextBool() && (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>() || 
+                    Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.SpazmatismV2>() || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Cataluminance>()
                     || Main.npc[currentBoss].type == NPCID.Plantera || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Death>()
-                    || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()))
+                    || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()
+                    || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>()))
                 {
                     text = "Certain bosses can be fought earlier than necessary. If you're struggling, try waiting until you're more powerful.";
                 }

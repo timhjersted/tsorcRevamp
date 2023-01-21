@@ -60,14 +60,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
 
 
-        Vector2 target;
-        Vector2 initialTarget;
-        Vector2 initialPosition;
         Player targetPlayer;
-        bool aimLeft = false;
-        Vector2 simulatedVelocity;
-
-        float rotDirection;
 
         bool rapid = false;
         public override void AI()
@@ -118,7 +111,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 if (targetPlayer == null)
                 {
                     targetPlayer = Main.player[(int)Projectile.ai[0]];
-                    target = Main.player[(int)Projectile.ai[0]].Center;
                 }
             }
             else

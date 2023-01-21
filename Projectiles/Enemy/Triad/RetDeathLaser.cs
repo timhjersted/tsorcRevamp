@@ -36,10 +36,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         bool playedSound = false;
         public override void AI()
         {
+            Lighting.AddLight(Projectile.Center, Color.Red.ToVector3());
             if (!playedSound)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item33 with { Volume = 0.5f}, Projectile.Center); 
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.Trails.RetDeathLaserTrail>(), 0, 0, Main.myPlayer, 0, Projectile.whoAmI);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.VFX.RetDeathLaserTrail>(), 0, 0, Main.myPlayer, 0, Projectile.whoAmI);
                 playedSound = true;
             }
         }

@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             NPC.height = 60;
             if (!spawnedTrail)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Trails.IchorTrail>(), 0, 0, Main.myPlayer, 1, NPC.whoAmI);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.IchorTrail>(), 0, 0, Main.myPlayer, 0, NPC.whoAmI);
 
                 spawnedTrail = true;
             }

@@ -6,7 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra;
-using tsorcRevamp.Projectiles.Trails;
+using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Buffs.Summon.WhipDebuffs;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra

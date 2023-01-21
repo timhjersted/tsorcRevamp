@@ -25,33 +25,27 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     uv.x = uv.x / effectSize.x;
     uv.y = uv.y / effectSize.y;
     
+    float2 centeredCoords = uv - float2(0.5, 0.5);
+    centeredCoords *= 5;
+    
+    float intensity = pow(centeredCoords.x, 2.0 / 3.0) + pow(centeredCoords.y, 2.0 / 3.0);
+    intensity = 1 / pow(intensity, 1.5);
+    //return effectColor * intensity;
+    
+    //Compress it so it doesn't bump into the edges of the drawing area
+    
     //Calculate how close the current pixel is to the center line of the screen
     float distanceIntensity = distance(uv, float2(0.5, 0.5)) * 2;
     
-    //Calculate how close the current pixel is from a ring of radius 'ringProgress'
-    float ringDistance = 1 - abs(ringProgress - distanceIntensity);
-    
-    
-    //Check whether the pixel is inside or outside the ring
-    if (distanceIntensity < ringProgress)
-    {
-        //If inside, fade out quickly with distance
-        ringDistance = pow(ringDistance, 16);
-    }
-    else
-    {
-        //If outside, trail off slower
-        ringDistance = pow(ringDistance, 6);
-    }
     
     //Convert uv from rectangular to polar coordinates
     float2 dir = uv - float2(0.5, 0.5);
     float angle = atan2(dir.y, dir.x) / (3.141592 * 2);
-    float2 samplePoint = float2(distanceIntensity, angle);
+    float2 samplePoint = float2(intensity, angle);
     
     //Stretch it so it looks good
-    samplePoint = samplePoint * scale * 50 / effectSize;
-    samplePoint.y = samplePoint.y * 3;
+    samplePoint = samplePoint * scale * (50 / 3) / effectSize;
+    samplePoint.y = samplePoint.y * 1;
     
     //Offset it based on time to create the flowing effect
     samplePoint.x = samplePoint.x - (time * 0.05);
@@ -59,17 +53,13 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     //Get the noise texture at that point
     float sampleIntensity = tex2D(noiseTexture, samplePoint).r;
     
-    //Intensify it
-    sampleIntensity = pow(sampleIntensity, 2);
-    
-    //Mix it all together and output it
-    return effectColor * fade * sampleIntensity * 2.75 * ringDistance / distanceIntensity;
+    return sampleIntensity * intensity * intensity * effectColor * 2 * fade;
 }
 
 
-technique RetAura
+technique CatFinalStandAttack
 {
-    pass RetAuraPass
+    pass CatFinalStandAttack
     {
         PixelShader = compile ps_2_0 PixelShaderFunction();
     }

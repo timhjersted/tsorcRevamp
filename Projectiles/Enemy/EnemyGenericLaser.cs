@@ -300,7 +300,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 if (FiringTimeLeft < fadeOutFrames)
                 {
-                    fadePercent = FiringTimeLeft / fadeOutFrames;
+                    fadePercent = (float)FiringTimeLeft / (float)fadeOutFrames;
                 }
                 else
                 {

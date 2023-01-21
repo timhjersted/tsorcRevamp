@@ -7,7 +7,7 @@ using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Trails
+namespace tsorcRevamp.Projectiles.VFX
 {
     class RetDeathLaserTrail : DynamicTrail
     {
@@ -18,6 +18,7 @@ namespace tsorcRevamp.Projectiles.Trails
             trailPointLimit = 150;
             trailYOffset = 50;
             trailMaxLength = 150;
+            NPCSource = false;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
         
