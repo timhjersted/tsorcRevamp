@@ -524,6 +524,12 @@ namespace tsorcRevamp.NPCs
 
                 # region Others
 
+                case (NPCID.Dandelion):
+                    {
+                        npc.value = 160;
+                        break;
+                    }
+
                 case (NPCID.Gnome):
                     {
                         npc.value = 150;
@@ -2134,11 +2140,11 @@ namespace tsorcRevamp.NPCs
                 #endregion
 
                 #region Plantera
-                case (NPCID.Plantera):
+                case (NPCID.Plantera): //Planteras defense values are hardcoded, no point in changing them here
                     {
+                        npc.lifeMax = 35000; //base 30k
                         npc.damage = 93; //base 70
                         npc.value = 295930;
-                        npc.lifeMax = 35000;
                         break;
                     }
 
@@ -2151,14 +2157,15 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.PlanterasHook):
                     {
-                        npc.damage = 93; //base 70
-                        npc.value = 1490;
+                        npc.damage = 0; //base 70, it's hooks are bs
+                        npc.value = 1490; //not sure if this even allows it to drop souls but whatever
                         break;
                     }
 
                 case (NPCID.Spore):
                     {
-                        npc.damage = 89; //base 70 (ie 140)
+                        npc.lifeMax = 500; //base 0
+                        npc.damage = 60; //base 70 (ie 140)
                         npc.value = 130;
                         break;
                     }
@@ -2187,18 +2194,27 @@ namespace tsorcRevamp.NPCs
                 #region Golem
                 case (NPCID.Golem): //35k souls total
                     {
+                        npc.life = 25000; //base 15k
+                        npc.defense = 50; //base 26
+                        npc.damage = 100; //base 72
                         npc.value = 293650;
                         break;
                     }
 
                 case (NPCID.GolemHead):
                     {
+                        npc.life = 15000; //base 25k
+                        npc.defense = 25; //base 20
+                        //npc.damage = 64; //base 64, 80 when freed
                         npc.value = 24500;
                         break;
                     }
 
                 case int golemfists when (golemfists == NPCID.GolemFistLeft || golemfists == NPCID.GolemFistRight):
                     {
+                        npc.lifeMax = 12500; //base 10k
+                        npc.defense = 100; //base 28
+                        npc.damage = 75; //base 59
                         npc.value = 16980;
                         break;
                     }
