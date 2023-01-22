@@ -2187,24 +2187,18 @@ namespace tsorcRevamp.NPCs
                 #region Golem
                 case (NPCID.Golem): //35k souls total
                     {
-                        npc.lifeMax = 30000;
-                        npc.damage = 155;
                         npc.value = 293650;
                         break;
                     }
 
                 case (NPCID.GolemHead):
                     {
-                        npc.lifeMax = 16000;    
-                        npc.damage = 80;
                         npc.value = 24500;
                         break;
                     }
 
                 case int golemfists when (golemfists == NPCID.GolemFistLeft || golemfists == NPCID.GolemFistRight):
                     {
-                        npc.lifeMax = 12500;
-                        npc.damage = 115;
                         npc.value = 16980;
                         break;
                     }
