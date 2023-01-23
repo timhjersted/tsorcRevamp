@@ -54,10 +54,22 @@ namespace tsorcRevamp.NPCs.Bosses
         float transformationTimer;
         SpazMove CurrentMove
         {
-            get => MoveList[MoveIndex];
+            get
+            {
+                //Its moves have a different order in phase 2
+                if (PhaseTwo)
+                {
+                    return Phase2MoveList[MoveIndex];
+                }
+                else
+                {
+                    return MoveList[MoveIndex];
+                }
+            }
         }
 
         List<SpazMove> MoveList;
+        List<SpazMove> Phase2MoveList;
 
         //Controls what move is currently being performed
         public int MoveIndex
@@ -90,11 +102,9 @@ namespace tsorcRevamp.NPCs.Bosses
         int deathTimer;
         public override void AI()
         {
-            NPC.target = 0;
             MoveTimer++;
             HandleAura();
             FindFrame(0);
-            Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
 
             //This will be changed by other attacks
             NPC.damage = 0;
@@ -164,14 +174,16 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.damage = 100;
             if (PhaseTwo)
             {
+                rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
+                rotationSpeed = 0.1f;
                 //Don't try to dash too close to the start or end
-                if(MoveTimer >= 840 || MoveTimer < 70)
+                if (MoveTimer >= 840 || MoveTimer < 70)
                 {
                     UsefulFunctions.SmoothHoming(NPC, target.Center, 0.15f, 15, target.velocity, false);
                     return;
                 }
 
-                if (MoveTimer % 70 == 0)
+                if (MoveTimer % 70 == 0 && MoveTimer >= 70)
                 {
                     StartAura(500);
                 }
@@ -180,14 +192,11 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 21);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>(), EyeFireDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
+                    }
                     NPC.netUpdate = true;
-                }
-
-                NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity / 10f, ProjectileID.EyeFire, EyeFireDamage, 0.5f, Main.myPlayer);
                 }
             }
             else
@@ -200,20 +209,16 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
 
                 //Telegraph for the first second before the starting charge
-                if (MoveTimer % 110 == 0 && MoveTimer > 111)
+                if (MoveTimer % 70 == 0 && MoveTimer > 71)
                 {
                     NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
                     StartAura(400);
                 }
-                if (MoveTimer % 110 == 30 && MoveTimer > 111)
+                if (MoveTimer % 70 == 30 && MoveTimer > 71)
                 {
                     NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15);
                     NPC.netUpdate = true;
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 5), ProjectileID.CursedFlameHostile, EyeFireDamage, 0.5f, Main.myPlayer);
-                    }
                 }
             }
         }
@@ -648,6 +653,11 @@ namespace tsorcRevamp.NPCs.Bosses
                 new SpazMove(Firing, SpazMoveID.Firing, "Firing"),
                 new SpazMove(IchorTrackers, SpazMoveID.IchorTrackers, "Ichor Trackers"),
                 };
+            Phase2MoveList = new List<SpazMove> {
+                new SpazMove(IchorTrackers, SpazMoveID.IchorTrackers, "Ichor Trackers"),
+                new SpazMove(Firing, SpazMoveID.Firing, "Firing"),
+                new SpazMove(Charging, SpazMoveID.Charging, "Charging"),
+                };
         }
 
         private class SpazMoveID
@@ -721,6 +731,7 @@ namespace tsorcRevamp.NPCs.Bosses
         float baseRadius = 0.25f;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 

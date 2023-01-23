@@ -638,6 +638,20 @@ namespace tsorcRevamp
         }
 
         ///<summary> 
+        ///Shifts a color back and forth by a certain percent over time
+        ///Useful for making things seem shimmery or less flat
+        ///</summary>
+        ///<param name="originalColor">The original color to be shifted</param>
+        ///<param name="timeFactor">Increment this to control how fast it shifts</param>
+        ///<param name="percent">The intensity of the shift</param>
+        public static Color ShiftColor(Color originalColor, float timeFactor, float percent = 0.03f)
+        {
+            Vector3 hslColor = Main.rgbToHsl(originalColor);
+            hslColor.X += percent * (float)Math.Cos(timeFactor / 25f);
+            return Main.hslToRgb(hslColor);
+        }
+
+        ///<summary> 
         ///Accelerates an entity toward a target in a smooth way
         ///Returns a Vector2 with length 'acceleration' that points in the optimal direction to accelerate the NPC toward the target
         ///If the target is moving, then it accounts for that

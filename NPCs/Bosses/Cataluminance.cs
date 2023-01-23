@@ -99,7 +99,6 @@ namespace tsorcRevamp.NPCs.Bosses
             HandleAura();
             FindFrame(0);
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
 
             //This will be changed by other attacks
             NPC.damage = 0;
@@ -485,10 +484,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 fireRotationRotation = 0;
                 UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>());
                 UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.CataluminanceTrail>());
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.CataluminanceTrail>(), 35, 0, Main.myPlayer, 5);
-                }
 
                 clearedTrails = true;
             }
@@ -509,6 +504,13 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -300), 0.5f, 20);
                 return;
+            }
+            if (finalStandTimer == 190)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.CataluminanceTrail>(), 35, 0, Main.myPlayer, 5);
+                }
             }
 
             NPC.velocity *= 0.95f;
@@ -631,8 +633,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.HotPink));
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashCut") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
 
-                OnKill();
-                NPC.life = 0;
+                NPC.dontTakeDamage = false;
+                NPC.HitEffect(0, 9999999);
             }
         }
         public override bool CheckDead()
@@ -686,14 +688,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 Filters.Scene["tsorcRevamp:CatShockwave"].GetShader().UseTargetPosition(NPC.Center).UseProgress((float)Math.Pow(distancePercent, 3f)).UseOpacity(opacity * opacity).UseIntensity(0.1f);
             }
 
-            float lightTimer = (240 - transformationTimer) / 20;
-            lightCooldown--;
-            if (lightCooldown <= 0 && transformationTimer < 200 && transformationTimer > 80)
-            {
-                //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(NPC.Hitbox), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Red));
-                lightCooldown = lightTimer;
-            }
-
             if (!transformed)
             {
                 transformationTimer += 2;
@@ -712,6 +706,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (transformationTimer > 240)
             {
+                UsefulFunctions.BroadcastText("The Triad has transformed...", Color.DeepPink);
                 transformed = true;
             }
         }
@@ -836,6 +831,7 @@ namespace tsorcRevamp.NPCs.Bosses
         float baseRadius = 0.25f;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0f, 0.4f, 0.8f);
             Vector3 hslColor = Main.rgbToHsl(new Color(0.1f, 0.5f, 1f));
             if (PhaseTwo)
             {

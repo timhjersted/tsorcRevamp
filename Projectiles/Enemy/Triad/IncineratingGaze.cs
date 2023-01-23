@@ -46,7 +46,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         ActiveSound laserSound;
         public override void AI()
         {
-            Projectile.Name = "aaa";
 
             if(chargeProgress < firingTime)
             {

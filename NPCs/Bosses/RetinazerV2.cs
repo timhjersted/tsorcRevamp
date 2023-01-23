@@ -98,7 +98,6 @@ namespace tsorcRevamp.NPCs.Bosses
             MoveTimer++;
             HandleAura();
             FindFrame(0);
-            Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 1f, 0.4f, 0.4f);
 
             //This will be changed by other attacks
             NPC.damage = 0;
@@ -586,14 +585,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 Filters.Scene["tsorcRevamp:RetShockwave"].GetShader().UseTargetPosition(NPC.Center).UseProgress((float)Math.Pow(distancePercent, 3f)).UseOpacity(opacity * opacity).UseIntensity(0.1f);
             }
 
-            float lightTimer = (240 - transformationTimer) / 20;
-            lightCooldown--;
-            if (lightCooldown <= 0 && transformationTimer < 200 && transformationTimer > 80)
-            {
-                //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(NPC.Hitbox), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Red));
-                lightCooldown = lightTimer;
-            }
-
             if (!transformed)
             {
                 transformationTimer += 2;
@@ -883,6 +874,7 @@ namespace tsorcRevamp.NPCs.Bosses
         float baseRadius = 0.25f;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 1f, 0.4f, 0.4f);
             effectRadius = 650;
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);

@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.UseSound = SoundID.Item5;
             Item.autoReuse = true;
 
-            Item.shootSpeed = 12f;
+            Item.shootSpeed = 13f;
             Item.useAmmo = AmmoID.Arrow;
         }
 

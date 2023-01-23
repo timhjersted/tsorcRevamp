@@ -94,6 +94,7 @@ namespace tsorcRevamp.Projectiles.VFX
         int ꙮ; //Note: ​​̵̲̹̞͘​̶̝̥̰̓͐̽​̶̛͍͌̑​̴̜͉̀​̵̨̦̜̈́̕​̴̞̰̖̆​̸̒͜​̸͚̖͌̎​̸̝̊͠​̵̩̒͗͝​̵̟̩͐
         public override void SetEffectParameters(Effect effect)
         {
+            float intensity = 0.07f;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             float trueFadeOut = fadeOut;
             Color shaderColor = new Color(0.1f, 0.5f, 1f);
@@ -104,23 +105,25 @@ namespace tsorcRevamp.Projectiles.VFX
             else if (PreSetColor)
             {
                 shaderColor = new Color(1f, 0.3f, 0.85f) * 0.5f;
+                intensity = 0.1f;
             }
             else if (Projectile.ai[0] != 1 && transitionTimer <= 120)
             {
                 shaderColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), transitionTimer / 120);
                 trueFadeOut += trueFadeOut * (transitionTimer / 120);
+                intensity = 0.07f + 0.03f * (transitionTimer / 120);
             }
+            ꙮ += 1;
             //collisionPadding = (int)trailMaxLength / 10;
             collisionEndPadding = (int)trailCurrentLength / 30;
             visualizeTrail = false;
+
             //Shifts its color slightly over time
-            Vector3 hslColor = Main.rgbToHsl(shaderColor);
-            hslColor.X += 0.03f * (float)Math.Cos(timeFactor / 25f);
-            Color rgbColor = Main.hslToRgb(hslColor);
+            Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, ꙮ, intensity);
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture1);
             effect.Parameters["fadeOut"].SetValue(trueFadeOut);
-            effect.Parameters["time"].SetValue(timeFactor);
+            effect.Parameters["time"].SetValue(timeFactor / 100f);
             effect.Parameters["shaderColor"].SetValue(rgbColor.ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
