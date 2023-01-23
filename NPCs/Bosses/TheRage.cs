@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 13600;
+            NPC.lifeMax = 15000;
             NPC.damage = 110; 
             NPC.defense = 22;
             NPC.knockBackResist = 0f;
@@ -316,7 +316,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
             //SPAWN METEOR HELL
-            if (Main.rand.NextBool(80) && NPC.Distance(player.Center) > 100 && NPC.life <= 2720 )
+            if (Main.rand.NextBool(80) && NPC.Distance(player.Center) > 100 && NPC.life <= 2750 )
             {
 
                 if (player.position.Y + 50 >= NPC.position.Y)
@@ -347,6 +347,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (NPC.ai[3] == 0)
             {
                 NPC.alpha = 0;
+                NPC.damage = 110;
                 //NPC.dontTakeDamage = false;
                 NPC.defense = 22;
 
@@ -430,8 +431,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 //invisibility phase
                 
                 NPC.ai[3]++;
-                NPC.alpha = 220;
+                NPC.alpha = 210;
                 NPC.defense = 32;
+                NPC.damage = 130;
                 //NPC.dontTakeDamage = true;
 
                 //FlameShotCounter2 = 0;
@@ -458,7 +460,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
 
                     float num48 = 7f;//8 WAS 9
-                    float invulnDamageMult = 1.24f;
+                    float invulnDamageMult = 1.44f;
                     int type = ModContent.ProjectileType<FireTrails>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);
                     float rotation = (float)Math.Atan2(vector8.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
@@ -482,9 +484,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[3] == 100)
                 {
                     NPC.ai[3] = 1;
-                    if (NPC.life < NPC.lifeMax / 2)
+                    //if (NPC.life < NPC.lifeMax / 2)
+                    if (NPC.life > 500)
                     {
-                        NPC.life += 400;
+                        NPC.life -= 450; //amount boss takes damage when enraged
                     }
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }

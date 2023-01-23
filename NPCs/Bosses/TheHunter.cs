@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 20800;
+            NPC.lifeMax = 21000;
             NPC.damage = 130;
             NPC.defense = 26;
             NPC.knockBackResist = 0f;
@@ -362,6 +362,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.ai[3]++;
                 NPC.alpha = 225;
                 NPC.defense = 56;
+                NPC.damage = 160;
                 //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].position.X < NPC.Center.X)
                 {
@@ -384,7 +385,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                 {
                     float num48 = 11f;//22
-                    float invulnDamageMult = 1.5f;
+                    float invulnDamageMult = 1.52f;
                     int type = ModContent.ProjectileType<MiracleSprouter>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     float rotation = (float)Math.Atan2(NPC.Center.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
@@ -411,9 +412,10 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
 
                     //if (NPC.life > (NPC.lifeMax / 2) + 100 || NPC.life < (NPC.lifeMax / 2) - 1100)
-                    //{
-                    NPC.life -= 500;
-                    //}
+                    if (NPC.life > 600)
+                    {
+                        NPC.life -= 550; //boss takes burst damage when enraged
+                    }
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }
                 if (NPC.ai[1] >= 0)

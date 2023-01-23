@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 18200;
+            NPC.lifeMax = 18000;
             NPC.damage = 120;
             NPC.defense = 24;
             NPC.knockBackResist = 0f;
@@ -322,6 +322,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //normal
                 NPC.alpha = 0;
                 NPC.defense = 24;
+                NPC.damage = 120;
                 //NPC.dontTakeDamage = false;
                 if (NPC.ai[2] < 600)
                 {
@@ -422,9 +423,10 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 //invisibility mode
                 NPC.ai[3]++;
-                NPC.alpha = 230;
+                NPC.alpha = 220;
                 NPC.defense = 44;
-            
+                NPC.damage = 150;
+
                 //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].Center.X < NPC.Center.X)
                 {
@@ -447,7 +449,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                 {
                     float num48 = 13f;
-                    float invulnDamageMult = 1.27f;
+                    float invulnDamageMult = 1.48f;
                     int type = ModContent.ProjectileType<WaterTrail>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.SplashWeak, NPC.Center);
                     float rotation = (float)Math.Atan2(NPC.Center.Y - 80 - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
@@ -472,9 +474,10 @@ namespace tsorcRevamp.NPCs.Bosses
                     iceSpiritTimer = 900;
                     turtleTimer += 2600;
                     NPC.ai[3] = 1;
-                    if (NPC.life > (NPC.lifeMax / 2) + 100 || NPC.life < (NPC.lifeMax / 2) - 950)
+                    //if (NPC.life > (NPC.lifeMax / 2) + 100 || NPC.life < (NPC.lifeMax / 2) - 950)
+                    if (NPC.life > 550)
                     {
-                        NPC.life += 700; //amount boss heals when going invisible
+                        NPC.life -= 500; //amount boss takes damage when becoming enraged
                     }
                         
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;

@@ -853,7 +853,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.IlluminantSlime):
                     {
-                        npc.scale = 1.5f;
+                        npc.scale = 1.2f;
                         npc.value = 600;
                         break;
                     }
@@ -933,14 +933,14 @@ namespace tsorcRevamp.NPCs
                         ):
                     {
                         {
-                            npc.lifeMax = 600; //400, 1900
+                            npc.lifeMax = 400; //400, 1900, 600
                             npc.scale = 0.9f;
                             npc.value = 2260;
                         }
                         if (npc.type == NPCID.DiggerHead)
                         {
                             npc.damage = 84; //90, 60
-                            npc.defense = 5; //10, 15
+                            npc.defense = 4; //10, 15
                         }
                         if (npc.type == NPCID.DiggerBody)
                         {
@@ -1301,7 +1301,7 @@ namespace tsorcRevamp.NPCs
                             npc.damage = 150; //15,000 lmao(small typo but I'll leave it for funsies)
                             //actually "something mundane happened and i died instantly" is kinda silly
                             npc.defense = 70;
-                            npc.lifeMax = 6000;
+                            npc.lifeMax = 3000;//was 6k, 3k still 2650 higher than vanilla
                             npc.value = 5510;
                         }
                         break;
