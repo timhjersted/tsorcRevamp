@@ -19,9 +19,9 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 7300;
+            NPC.lifeMax = 7500;
             NPC.damage = 105;
-            NPC.defense = 36;
+            NPC.defense = 26;
             NPC.knockBackResist = 0f;
             NPC.scale = 0.7f;
             NPC.value = 31500;
@@ -109,7 +109,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 //NPC.alpha = 200;
                 //NPC.dontTakeDamage = false;
-                NPC.defense = 36;
+                NPC.defense = 26;
                 if (NPC.ai[2] < 600)
                 {
                     if (Main.player[NPC.target].position.X < vector8.X)
@@ -176,8 +176,8 @@ namespace tsorcRevamp.NPCs.Bosses
             else
             {
                 NPC.ai[3]++;
-                NPC.alpha = 210;
-                NPC.defense = 100;
+                //NPC.alpha = 210;
+                NPC.defense = 36;
                 //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].position.X < vector8.X)
                 {
@@ -200,7 +200,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                 {
                     float num48 = 15f;//was 22
-                    float invulnDamageMult = 1.3f;
+                    float invulnDamageMult = 1.6f; //was 1.3
                     int type = ModContent.ProjectileType<MiracleSprouter>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);
                     float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
@@ -221,7 +221,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 
                     
                     NPC.ai[3] = 1;
-                    NPC.life += 500;
+                    NPC.life -= 500;
+                    //loses health on enrage now, as an inversion of usual mechanic, but enraged miracle sprouter attack has a higher damage multiplier to add a risk/reward element
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }
                 if (NPC.ai[1] >= 0)
