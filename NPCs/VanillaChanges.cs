@@ -1273,7 +1273,7 @@ namespace tsorcRevamp.NPCs
                             npc.knockBackResist = 0f;
                             npc.damage = 130;
                             npc.defense = 50;
-                            npc.lifeMax = 2000;
+                            npc.lifeMax = 850;
                             npc.value = 1750;
                         }
                         break;
@@ -1298,7 +1298,8 @@ namespace tsorcRevamp.NPCs
                         if (npc.type == NPCID.DesertGhoulCrimson)
                         {
                             npc.knockBackResist = 0f;
-                            npc.damage = 15000; //15,000 lmao(small typo but I'll leave it for funsies)
+                            npc.damage = 150; //15,000 lmao(small typo but I'll leave it for funsies)
+                            //actually "something mundane happened and i died instantly" is kinda silly
                             npc.defense = 70;
                             npc.lifeMax = 6000;
                             npc.value = 5510;
