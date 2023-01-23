@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void SetDefaults()
         {
             NPC.width = 90;
-            NPC.height = 154;
+            NPC.height = 164;
             NPC.damage = 83;
             NPC.defense = 50;
             NPC.lifeMax = 9000;
