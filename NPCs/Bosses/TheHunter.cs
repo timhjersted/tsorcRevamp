@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         int hitTime = 0;
         int sproutDamage = 65;
-        int cursedBreathDamage = 25;
+        int cursedBreathDamage = 30;
         public float flapWings;
 
         //oolicile sorcerer
@@ -187,6 +187,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (NPC.ai[3] == 0)
             {
+                NPC.damage = 130;
                 NPC.alpha = 0;
                 //NPC.dontTakeDamage = false;
                 NPC.defense = 26;
@@ -357,6 +358,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
+                NPC.damage = 160;
                 NPC.ai[3]++;
                 NPC.alpha = 225;
                 NPC.defense = 56;
@@ -382,7 +384,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                 {
                     float num48 = 11f;//22
-                    float invulnDamageMult = 1.3f;
+                    float invulnDamageMult = 1.5f;
                     int type = ModContent.ProjectileType<MiracleSprouter>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     float rotation = (float)Math.Atan2(NPC.Center.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
@@ -400,13 +402,18 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[3] == 100)
                 {
                     if (NPC.ai[3] == 100)
-                
-                    //FrogSpawnCounter = 0;
+   
                     NPC.ai[3] = 1;
-                    if (NPC.life > (NPC.lifeMax / 2) + 100 || NPC.life < (NPC.lifeMax / 2) - 1100)
+
+                    if (NPC.life > (NPC.lifeMax / 2))
                     {
-                        NPC.life += 1000;
+                        FrogSpawnCounter = 0;
                     }
+
+                    //if (NPC.life > (NPC.lifeMax / 2) + 100 || NPC.life < (NPC.lifeMax / 2) - 1100)
+                    //{
+                    NPC.life -= 500;
+                    //}
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }
                 if (NPC.ai[1] >= 0)
