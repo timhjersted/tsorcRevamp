@@ -626,7 +626,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (deathTimer > 240)
             {
-                UsefulFunctions.BroadcastText("Spazmatism has been defeated!", Color.GreenYellow);
+                UsefulFunctions.BroadcastText("Spazmatism v2.13 has been defeated!", Color.GreenYellow);
                 if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:SpazShockwave"].IsActive())
                 {
                     Filters.Scene["tsorcRevamp:SpazShockwave"].Deactivate();
@@ -637,7 +637,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashCut") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
 
                 OnKill();
-                NPC.active = false;
+                NPC.dontTakeDamage = false;
+                NPC.StrikeNPC(999999, 0, 0);
             }
         }
 

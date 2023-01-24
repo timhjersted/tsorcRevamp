@@ -645,6 +645,9 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 NPC.dontTakeDamage = false;
                 NPC.StrikeNPC(999999, 0, 0);
+                NPC.downedMechBoss2 = true;
+                tsorcRevampWorld.Slain.Add(NPCID.Spazmatism, 1);
+                tsorcRevampWorld.Slain.Add(NPCID.Retinazer, 1);
             }
         }
         public override bool CheckDead()

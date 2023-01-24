@@ -769,7 +769,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //"Die." - Minos Prime, 2022
             if (deathTimer > 240)
             {
-                UsefulFunctions.BroadcastText("Retinazer has been defeated!", Color.Red);
+                UsefulFunctions.BroadcastText("Retinazer v2.04 has been defeated!", Color.Red);
                 if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:RetShockwave"].IsActive())
                 {
                     Filters.Scene["tsorcRevamp:RetShockwave"].Deactivate();
@@ -780,7 +780,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashCut") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
 
                 OnKill();
-                NPC.active = false;
+                NPC.dontTakeDamage = false;
+                NPC.StrikeNPC(999999, 0, 0);
             }
         }
         
