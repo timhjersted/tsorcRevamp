@@ -12,6 +12,7 @@ using Terraria.Audio;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
+    [AutoloadBossHead]
     class SpazmatismV2 : ModNPC
     {
         public override void SetDefaults()
@@ -38,6 +39,9 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
+            //Terraria.GameContent.UI.BigProgressBar.IBigProgressBar bossBar;
+            //Main.BigBossProgressBar.TryGetSpecialVanillaBossBar(NPC.netID, out bossBar);
+            //bossBar.Draw();
 
             InitializeMoves();
         }
@@ -70,6 +74,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         List<SpazMove> MoveList;
         List<SpazMove> Phase2MoveList;
+        public static int secondStageHeadSlot = -1;
 
         //Controls what move is currently being performed
         public int MoveIndex
@@ -177,18 +182,18 @@ namespace tsorcRevamp.NPCs.Bosses
                 rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
                 rotationSpeed = 0.1f;
                 //Don't try to dash too close to the start or end
-                if (MoveTimer >= 840 || MoveTimer < 70)
+                if (MoveTimer >= 840 || MoveTimer < 90)
                 {
                     UsefulFunctions.SmoothHoming(NPC, target.Center, 0.15f, 15, target.velocity, false);
                     return;
                 }
 
-                if (MoveTimer % 70 == 0 && MoveTimer >= 70)
+                if (MoveTimer % 90 == 0 && MoveTimer >= 90)
                 {
                     StartAura(500);
                 }
 
-                if (MoveTimer % 70 == 30)
+                if (MoveTimer % 90 == 30)
                 {
                     NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 21);
@@ -692,6 +697,13 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.GreaterHealingPotion;
+        }
+        public override void BossHeadSlot(ref int index)
+        {
+            if (PhaseTwo)
+            {
+                index = secondStageHeadSlot;
+            }
         }
         public override void FindFrame(int frameHeight)
         {

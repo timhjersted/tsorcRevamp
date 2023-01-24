@@ -62,6 +62,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         List<CataMove> MoveList;
+        public static int secondStageHeadSlot = -1;
 
         //Controls what move is currently being performed
         public int MoveIndex
@@ -794,6 +795,13 @@ namespace tsorcRevamp.NPCs.Bosses
                 ID = MoveID;
                 Draw = DrawAction;
                 Name = AttackName;
+            }
+        }
+        public override void BossHeadSlot(ref int index)
+        {
+            if (PhaseTwo)
+            {
+                index = secondStageHeadSlot;
             }
         }
 

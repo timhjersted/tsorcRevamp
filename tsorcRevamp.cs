@@ -195,6 +195,10 @@ namespace tsorcRevamp
             Main.QueueMainThreadAction(TransparentTextureHandler.TransparentTextureFix);
 
             tsorcRevamp Instance = this;
+            
+            SpazmatismV2.secondStageHeadSlot = AddBossHeadTexture("tsorcRevamp/NPCs/Bosses/SpazmatismV2_Head_Boss_2", -1);
+            RetinazerV2.secondStageHeadSlot = AddBossHeadTexture("tsorcRevamp/NPCs/Bosses/RetinazerV2_Head_Boss_2", -1);
+            Cataluminance.secondStageHeadSlot = AddBossHeadTexture("tsorcRevamp/NPCs/Bosses/Cataluminance_Head_Boss_2", -1);
 
             TheAbyssEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TheAbyssShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);

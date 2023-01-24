@@ -14,6 +14,7 @@ using Terraria.Audio;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
+    [AutoloadBossHead]
     class RetinazerV2 : ModNPC
     {
         public override void SetDefaults()
@@ -61,6 +62,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         List<RetMove> MoveList;
+        public static int secondStageHeadSlot = -1;
 
         //Controls what move is currently being performed
         public int MoveIndex
@@ -826,7 +828,14 @@ namespace tsorcRevamp.NPCs.Bosses
                 Name = AttackName;
             }
         }
-        
+
+        public override void BossHeadSlot(ref int index)
+        {
+            if (PhaseTwo)
+            {
+                index = secondStageHeadSlot;
+            }
+        }
 
         public override void FindFrame(int frameHeight)
         {
