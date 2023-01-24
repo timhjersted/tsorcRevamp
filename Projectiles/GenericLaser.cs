@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+﻿/*using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -126,7 +126,7 @@ namespace tsorcRevamp.Projectiles
         /*{
             get => projectile.ai[0];
             set => projectile.ai[0] = value;
-        }*/
+        }
 
         //Allows the projectile to be tagged with an ID upon creation, so that it can be identified across clients
         //Projectile id's aren't synced, so we have to do it ourself like this
@@ -619,3 +619,5 @@ namespace tsorcRevamp.Projectiles
         }
     }
 }
+
+*/

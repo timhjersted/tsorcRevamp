@@ -11,13 +11,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 
     public class EnemyLingeringLaser : EnemyGenericLaser
     {
-
-
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Laser");
-        }
-
         public override string Texture => base.Texture;
 
         public override void SetDefaults()
@@ -312,29 +305,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 base.PreDraw(ref lightColor);
             }
-
-            return false;
-        }
-
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            if (FiringTimeLeft <= 0 || !IsAtMaxCharge || TargetingMode != 0)
-            {
-                return false;
-            }
-
-            float point = 0f;
-            Vector2 origin = GetOrigin();
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), origin,
-                origin + Projectile.velocity * Distance, 22, ref point);
-        }
-
-        public override bool CanHitPlayer(Player target)
-        {
-
-            string deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(-1, Projectile.whoAmI).GetDeathText(target.name).ToString();
-            deathMessage = deathMessage.Replace("Laser", LaserName);
-            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), Projectile.damage * 4, 1);
 
             return false;
         }

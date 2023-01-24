@@ -54,18 +54,20 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             {
                 UsefulFunctions.SmoothHoming(NPC, target.Center, 1f, 12, target.velocity, false);
             }
-
-            if (target == null || NPC.Distance(target.Center) < 50)
-            {
-                NPC.life = 0;
-            }
         }
-
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitPlayer(Player target, int damage, bool crit)
         {
+            NPC.life = 0;
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Normalize(NPC.velocity) * -10, ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorFragment>(), NPC.damage / 4, 1, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Normalize(NPC.velocity).RotatedBy(MathHelper.Pi / 3f) * 10, ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorFragment>(), NPC.damage / 4, 1, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Normalize(NPC.velocity).RotatedBy(-MathHelper.Pi / 3f) * 10, ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorFragment>(), NPC.damage / 4, 1, Main.myPlayer);
             target.AddBuff(BuffID.Ichor, 300);
         }
 
+        public override void ModifyHoverBoundingBox(ref Rectangle boundingBox)
+        {
+            boundingBox = NPC.Hitbox;
+        }
         public override void OnKill()
         {
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Normalize(NPC.velocity) * -10, ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorFragment>(), NPC.damage / 4, 1, Main.myPlayer);

@@ -41,7 +41,6 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 
 float4 MainPS(VertexShaderOutput input) : COLOR0
 {
-    //return float4(0.8, 1, 0.4, 1);
     float2 uv = input.TextureCoordinates;
     //float pixelSize = 0.0005;
     //uv.x = uv.x - fmod(uv.x, pixelSize);
@@ -97,7 +96,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     sampleIntensity *= tex2D(textureSampler, samplePoint2).r;
     
     //Mix it with the laser color
-    float4 noiseColor = 1 - float4(1.0, 1.0, 1.0, 1.0);
+    float4 noiseColor = float4(1.0, 1.0, 1.0, 1.0);
     noiseColor.r = sampleIntensity * shaderColor.r;
     noiseColor.b = sampleIntensity * shaderColor.b;
     noiseColor.g = sampleIntensity * shaderColor.g;
@@ -113,7 +112,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
         intensity = 1;
     }
     
-    return pow(noiseColor, 1) * 13.0 * intensity * pow(shaderColor, 2.5);
+    return pow(noiseColor, 1) * 13.0 * intensity ;
 }
 
 

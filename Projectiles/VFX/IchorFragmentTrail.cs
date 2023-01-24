@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.VFX
 {
-    class IchorTrail : DynamicTrail
+    class IchorFragmentTrail : DynamicTrail
     {
         public override void SetStaticDefaults()
         {
@@ -27,10 +27,10 @@ namespace tsorcRevamp.Projectiles.VFX
             Projectile.penetrate = -1;
             Projectile.hostile = true;
             Projectile.friendly = false;
-            trailWidth = 110;
+            trailWidth = 20;
             trailPointLimit = 50;
             trailCollision = false;
-            NPCSource = true;
+            NPCSource = false;
             trailYOffset = 50;
             trailMaxLength = 200;            
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/IchorTrackerShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
@@ -38,12 +38,6 @@ namespace tsorcRevamp.Projectiles.VFX
 
         public override void SetEffectParameters(Effect effect)
         {
-            trailWidth = 50;
-            if (hostEntityType == ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorFragment>())
-            {
-                trailWidth = 20;
-                trailMaxLength = 300;
-            }
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/IchorTrackerShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture2);
             effect.Parameters["fadeOut"].SetValue(fadeOut);

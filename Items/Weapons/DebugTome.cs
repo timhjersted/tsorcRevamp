@@ -40,37 +40,7 @@ namespace tsorcRevamp.Items.Weapons
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             Main.NewText(player.position / 16);
-            Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>(), 0, 0, player.whoAmI, 0, 0);
-
-            //Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyLightningStrike>(), damage, knockBack, Main.myPlayer);
-            //NPC.NewNPC(source, 707 * 16, 1194 * 16, ModContent.NPCType<NPCs.Special.GwynBossVision>());
-            //Terraria.Audio.SoundEngine.PlaySound(SoundID.Thunder with { Volume = 0.4f, Pitch = 0.0f });
-            //Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
-            //speed.Normalize();
-            //Main.NewText(Projectiles.Enemy.EnemyGenericLaser.Intersections(screenRect, position, speed));
-
-
-            /*
-			 tsorcRevampWorld.SuperHardMode = true;
-
-			int projType = ModContent.ProjectileType<Projectiles.IdealArrow>();
-			for (float i = 0.1f; i < 19; i *= 1.01f)
-			{
-				Vector2 trajectory = UsefulFunctions.BallisticTrajectory(player.Center, Main.MouseWorld, i, 0.07f, false, false);
-				if (trajectory != Vector2.Zero)
-				{
-					trajectory += player.velocity;
-					 Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, trajectory, projType, damage, knockBack, Main.myPlayer);
-					i++; //Just to keep this from getting out of hand
-				}
-				trajectory = UsefulFunctions.BallisticTrajectory(player.Center, Main.MouseWorld, i, 0.07f, true, false);
-				if (trajectory != Vector2.Zero)
-				{
-					trajectory += player.velocity;
-					 Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, trajectory, projType, damage, knockBack, Main.myPlayer);
-					i++;
-				}
-			}*/
+            Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), position, new Vector2(10, 0), ModContent.ProjectileType<Projectiles.Enemy.Okiku.StardustShot>(), 10, 0, player.whoAmI, 0, 300);
 
             return false;
         }

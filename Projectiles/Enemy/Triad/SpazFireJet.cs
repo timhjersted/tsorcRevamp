@@ -53,6 +53,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         List<float> lastRotations;
         public override void AI()
         {
+            if(Main.GameUpdateCount % 8 == 0)
+            {
+            }
             Projectile.Center = Main.LocalPlayer.Center;
             Projectile.rotation = MathHelper.Pi + (Main.LocalPlayer.Center - Main.MouseWorld).ToRotation();
 
@@ -65,6 +68,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
             if (!initialized)
             {
+                SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, Projectile.Center);
                 initialTimeLeft = Projectile.timeLeft;
                 initialized = true;
                 lastPositions = new List<Vector2>();
@@ -108,7 +112,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         {
             float point = 0;
             if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center,
-                    Projectile.Center + Projectile.rotation.ToRotationVector2() * laserWidth, Projectile.height / 3f, ref point))
+                    Projectile.Center + Projectile.rotation.ToRotationVector2() * laserWidth * 0.8f, Projectile.height / 3f, ref point))
             {
                 return true;
             }

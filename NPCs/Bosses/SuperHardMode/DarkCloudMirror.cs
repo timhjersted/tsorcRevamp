@@ -109,9 +109,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (AttackModeCounter == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), 0, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
+                //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), 0, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
             }
-
+            /*
             List<GenericLaser> laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
             if (laserList.Count > 0)
             {
@@ -137,7 +137,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 offset *= ((300 - AttackModeCounter) / 300);
                 offset = offset.RotatedBy(MathHelper.ToRadians(AttackModeCounter + (120)));
                 thisLaser.LaserTarget = Target.Center + offset;
-            }
+            }*/
         }
         #endregion
 

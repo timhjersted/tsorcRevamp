@@ -71,6 +71,7 @@ namespace tsorcRevamp.Projectiles.VFX
             {
                 modifiedTime = 0;
             }
+
             samplePointOffset1.X += (modifiedTime);
             samplePointOffset1.Y -= (0.001f);
             samplePointOffset2.X += (modifiedTime * 3.01f);

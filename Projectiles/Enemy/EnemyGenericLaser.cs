@@ -246,6 +246,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("DefaultLaserName");
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
 
         }
         public override void SetDefaults()
@@ -278,7 +279,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //If no custom shader has been given then load the generic one
-            //if (LaserShader == null)
+            if (LaserShader == null)
             {
                 LaserShader = ModContent.Request<Effect>("tsorcRevamp/Effects/GenericLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }

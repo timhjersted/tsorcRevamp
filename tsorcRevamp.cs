@@ -299,7 +299,7 @@ namespace tsorcRevamp
             //--------
             #region IgnoredTiles list
             IgnoredTiles = new List<int>() {
-                4, 12, 236, 91, // torches, Heart crystal, life fruit, banners
+                TileID.Torches, TileID.Heart, TileID.LifeFruit, TileID.Banners,
                 5, 20, 72, 323, 571, 583, 584, 585, 586, 587, 588, 589, 590, 595, 596, 615, 616, // all trees and saplings
                 129, 324, 162, 624, //crystal/gelatin shards, seashells, thin ice (breakable kind), abigail's flower
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
@@ -307,7 +307,7 @@ namespace tsorcRevamp
                 31, 32, 69, 352, 210, 484, //orbs/hearts, all thorns, land mines, rolling cactus
                 165, 178, 185, 186, 187, 233, 530, 2311, 238, //all ambient objects (background breakables), QB Larva, Plantera Bulb
                 3, 24, 61, 73, 74, 110, 113, 184, 201, 518, 519, 529, 549, //cuttable plants - all biomes
-                132, 135, 136, 143, 144, 419, 420, 421, 422, 423, 424, 425, 428, 429, 440, 442, //wiring, incl pressure plates
+                132, 135, 136, 143, 144, 419, 420, 421, 422, 423, 424, 425, 428, 429, 440, 442, TileID.WoodenBeam//wiring, incl pressure plates
             };
             #endregion
             //--------
@@ -1215,6 +1215,13 @@ namespace tsorcRevamp
                     Main.npc[npcIndex].value = reader.ReadInt32();
                     break;
                 }
+
+                case tsorcPacketID.SyncMasterScroll:
+                    {
+                        Main.GameMode = reader.ReadInt32();
+                        NetMessage.SendData(MessageID.WorldData);
+                        break;
+                    }
                 /**
                 //For synced random
                 //Recieves the seed from the server, and passes it off to UsefulFunctions.RecieveRandPacket which uses it to instantiate the new random generator

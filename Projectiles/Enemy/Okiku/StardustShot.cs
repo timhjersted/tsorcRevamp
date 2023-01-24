@@ -16,13 +16,38 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             Projectile.tileCollide = false;
             Projectile.width = 16;
             Projectile.hostile = false;
+            Projectile.timeLeft = 300;
         }
 
-        Projectiles.GenericLaser laser = null;
 
+        bool initialized = false;
+        float timer = 60;
         public override void AI()
         {
+            timer--;
+            if (!initialized && timer <= 0)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.player[(int)Projectile.ai[0]].Center, 5) + Main.rand.NextVector2Circular(5, 5);
+                    targetVector.Normalize();
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, targetVector, ModContent.ProjectileType<StardustBeam>(), Projectile.damage, 0, Main.myPlayer, Projectile.ai[1], Projectile.whoAmI);
+                }
+                Projectile.timeLeft = (int)Projectile.ai[1] + 160;
+                initialized = true;
+            }
+
+            if (Main.rand.NextBool(2))
+            {
+                int dust = Dust.NewDust(new Vector2((float)Projectile.Center.X, (float)Projectile.Center.Y), Projectile.width, Projectile.height, 234, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.White, 2.0f);
+                Main.dust[dust].noGravity = true;
+            }
+
+            Projectile.velocity.X *= .95f;
+            Projectile.velocity.Y *= .95f;
             Projectile.rotation++;
+
+            /*
 
             if (laser == null)
             {
@@ -36,23 +61,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 laser.TileCollide = false;
                 laser.CastLight = false;
                 laser.LaserDust = 234;
-                laser.MaxCharge = Projectile.ai[1];
-                Projectile.timeLeft = (int)Projectile.ai[1] + 130;
+                laser.MaxCharge = ;
             }
             else
             {
                 laser.LaserOrigin = Projectile.Center;
                 laser.LaserTarget = Vector2.Lerp(laser.LaserTarget, Main.player[(int)Projectile.ai[0]].position, 0.02f);
             }
-
-            if (Main.rand.NextBool(2))
-            {
-                int dust = Dust.NewDust(new Vector2((float)Projectile.Center.X, (float)Projectile.Center.Y), Projectile.width, Projectile.height, 234, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.White, 2.0f);
-                Main.dust[dust].noGravity = true;
-            }
-
-            Projectile.velocity.X *= .95f;
-            Projectile.velocity.Y *= .95f;
+            */
         }
         static Texture2D texture;
         public override bool PreDraw(ref Color lightColor)

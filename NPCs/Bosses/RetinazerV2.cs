@@ -496,13 +496,9 @@ namespace tsorcRevamp.NPCs.Bosses
             //Clean up
             if (finalStandTimer == 1)
             {
-                for (int i = 0; i < Main.maxProjectiles; i++)
-                {
-                    if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.IncineratingGaze>())
-                    {
-                        Main.projectile[i].Kill();
-                    }
-                }
+                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.IncineratingGaze>());
+                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.MaliciousGaze>());
+                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.BlindingGaze>());
             }
 
             if (laserCountdown == 0)
@@ -830,6 +826,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 Name = AttackName;
             }
         }
+        
 
         public override void FindFrame(int frameHeight)
         {
@@ -860,6 +857,11 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.frame.Y = frameSize * Main.npcFrameCount[NPC.type] / 2;
                 }
             }
+        }
+
+        public override void ModifyHoverBoundingBox(ref Rectangle boundingBox)
+        {
+            boundingBox = NPC.Hitbox;
         }
 
         public static Texture2D texture;
@@ -1100,7 +1102,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void BossLoot(ref string name, ref int potionType)
         {
-            potionType = ItemID.SuperHealingPotion;
+            potionType = ItemID.GreaterHealingPotion;
         }
 
         //TODO: Copy vanilla death effects

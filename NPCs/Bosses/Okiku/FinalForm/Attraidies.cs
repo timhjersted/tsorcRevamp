@@ -586,7 +586,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         void AttraidiesTeleport()
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
-            for (int num36 = 0; num36 < 10; num36++)
+            Vector2 oldPosition = NPC.Center;
+            
+            for (int i = 0; i < 10; i++)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);
                 Main.dust[dust].noGravity = false;
@@ -619,7 +621,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             }
             NPC.position = Pt.position + Diff;
 
-            Vector2 NC = NPC.position + new Vector2(NPC.width / 2, NPC.height / 2);
+            UsefulFunctions.TeleportEffects(oldPosition, NPC.Center, NPC, DustID.ShadowbeamStaff);
+            Vector2 NC = NPC.Center;
 
             float rotation = (float)Math.Atan2(NC.Y - PtC.Y, NC.X - PtC.X);
             NPC.velocity.X = (float)(Math.Cos(rotation) * 20) * -1;

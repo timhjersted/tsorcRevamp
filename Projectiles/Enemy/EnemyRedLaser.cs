@@ -8,13 +8,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 
     public class EnemyRedLaser : EnemyGenericLaser
     {
-
-
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Laser");
-        }
-
         public override string Texture => base.Texture;
 
         public override void SetDefaults()

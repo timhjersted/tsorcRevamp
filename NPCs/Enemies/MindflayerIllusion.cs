@@ -148,7 +148,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 else
                 {
-
+                    Vector2 oldPosition = NPC.Center;
 
 
 
@@ -193,6 +193,7 @@ namespace tsorcRevamp.NPCs.Enemies
                                     NPC.TargetClosest(true);
                                     NPC.position.X = (float)(tp_x_target * 16 - NPC.width / 2); // center x at target
                                     NPC.position.Y = (float)(m * 16 - NPC.height); // y so block is under feet
+                                    UsefulFunctions.TeleportEffects(oldPosition, NPC.Center, NPC);
                                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                                     NPC.velocity.X = (float)(Math.Cos(rotation) * 10) * -1;

@@ -6,12 +6,19 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Triad
+namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 {
 
-    public class RetPiercingLaser : EnemyGenericLaser
+    public class DarkBeam : EnemyGenericLaser
     {
+
+
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Okiku/PoisonSmog";
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Laser");
+        }
+
 
         public override void SetDefaults()
         {
@@ -53,7 +60,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
 
 
+        Vector2 target;
+        Vector2 initialTarget;
+        Vector2 initialPosition;
         Player targetPlayer;
+        bool aimLeft = false;
+        Vector2 simulatedVelocity;
+
+        float rotDirection;
 
         bool rapid = false;
         public override void AI()
@@ -68,6 +82,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             if (FiringTimeLeft > 0)
             {
                 Vector2 origin = GetOrigin();
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    if (Main.player[i].active && !Main.player[i].dead)
+                    {
+                        float point = 0;
+                        if (Collision.CheckAABBvLineCollision(Main.player[i].Hitbox.TopLeft(), Main.player[i].Hitbox.Size(), origin, origin + Projectile.velocity * Distance, 120, ref point))
+                        {
+                            Main.player[i].AddBuff(ModContent.BuffType<Buffs.ThermalRise>(), 220);
+                        }
+                    }
+                }
             }
 
             if (Main.player[(int)Projectile.ai[0]] != null && Main.player[(int)Projectile.ai[0]].active)
@@ -93,6 +118,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 if (targetPlayer == null)
                 {
                     targetPlayer = Main.player[(int)Projectile.ai[0]];
+                    target = Main.player[(int)Projectile.ai[0]].Center;
                 }
             }
             else
@@ -151,6 +177,29 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             {
                 base.PreDraw(ref lightColor);
             }
+
+            return false;
+        }
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            if (FiringTimeLeft <= 0 || !IsAtMaxCharge || TargetingMode != 0)
+            {
+                return false;
+            }
+
+            float point = 0f;
+            Vector2 origin = GetOrigin();
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), origin,
+                origin + Projectile.velocity * Distance, 22, ref point);
+        }
+
+        public override bool CanHitPlayer(Player target)
+        {
+
+            string deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(-1, Projectile.whoAmI).GetDeathText(target.name).ToString();
+            deathMessage = deathMessage.Replace("Laser", LaserName);
+            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), Projectile.damage * 4, 1);
 
             return false;
         }

@@ -238,6 +238,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 if (MoveTimer > 120 && MoveTimer % 120 == 0)
                 {
+                    SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient) {
                         Vector2 offset = new Vector2(-50, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.CursedMalestrom>(), EyeFireDamage, 0.5f, Main.myPlayer);
@@ -248,6 +249,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (MoveTimer % 90 == 0)
                 {
+                    SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Volume= 0.5f, Pitch = 0.9f }, NPC.Center);
                     baseFade = 0.3f;
                     baseRadius = 0.4f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -255,7 +257,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         float angle = -MathHelper.Pi / 3;
                         for (int i = 0; i < 3; i++)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 4).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazCursedFireball>(), EyeFireDamage, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 4).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazCursedFireball>(), EyeFireDamage, 0.5f, Main.myPlayer);
                             angle += MathHelper.Pi / 3;
                         }
                     }
@@ -362,11 +364,8 @@ namespace tsorcRevamp.NPCs.Bosses
 
         void FinalFinalStand()
         {
-            NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-            if(finalStandTimer == 1)
-            {
-                //Spawn flamethrower
-            }
+            rotationSpeed = 0.2f;
+            rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
             if (finalStandTimer % 80 == 0)
             {
                 StartAura(800);
@@ -374,6 +373,10 @@ namespace tsorcRevamp.NPCs.Bosses
             if (finalStandTimer % 80 == 59)
             {
                 NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 25);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>(), EyeFireDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
+                }
                 NPC.netUpdate = true;
             }
 
@@ -688,7 +691,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void BossLoot(ref string name, ref int potionType)
         {
-            potionType = ItemID.SuperHealingPotion;
+            potionType = ItemID.GreaterHealingPotion;
         }
         public override void FindFrame(int frameHeight)
         {
@@ -719,6 +722,11 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
         }
+        public override void ModifyHoverBoundingBox(ref Rectangle boundingBox)
+        {
+            boundingBox = NPC.Hitbox;
+        }
+
         public static Texture2D texture;
         public Effect effect;
         float effectTimer;

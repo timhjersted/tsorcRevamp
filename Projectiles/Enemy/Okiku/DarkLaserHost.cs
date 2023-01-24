@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.Okiku
@@ -20,49 +21,33 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         }
 
         bool instantiated = false;
-        GenericLaser[] DarkLasers;
         float RotationProgress;
 
         public override void AI()
         {
-
+            Projectile.Center = Main.npc[(int)Projectile.ai[0]].Center;
+            RotationProgress += 0.005f;
             if (!instantiated)
             {
-                InstantiateLaser();
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Okiku.DarkLaser>(), Projectile.damage, 0, Main.myPlayer, i, Projectile.whoAmI);
+                    }
+                }
                 instantiated = true;
             }
-            Projectile.Center = Main.npc[(int)Projectile.ai[0]].Center;
+            
 
-            RotationProgress += 0.005f;
-            for (int i = 0; i < DarkLasers.Length; i++)
+            for (int i = 0; i < 5; i++)
             {
                 Dust.NewDustPerfect(Projectile.Center, 54, new Vector2(8, 0).RotatedBy(RotationProgress + (i * 2 * Math.PI / 5))).noGravity = true;
-                DarkLasers[i].LaserOrigin = Projectile.Center;
-                DarkLasers[i].LaserTarget = Projectile.Center + new Vector2(1, 0).RotatedBy(RotationProgress + (i * 2 * Math.PI / 5));
-            }
-
+            }            
         }
 
         void InstantiateLaser()
         {
-            DarkLasers = new GenericLaser[5];
-
-            for (int i = 0; i < DarkLasers.Length; i++)
-            {
-                if (DarkLasers[i] == null)
-                {
-                    DarkLasers[i] = (Projectiles.GenericLaser)Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(0, 5), ModContent.ProjectileType<Projectiles.GenericLaser>(), Projectile.damage, .5f, Main.myPlayer).ModProjectile;
-                    DarkLasers[i].LaserOrigin = Projectile.Center;
-                    DarkLasers[i].LaserTarget = Projectile.Center + new Vector2(1, 0).RotatedBy(RotationProgress + (i * 2 * Math.PI / 5));
-                    DarkLasers[i].TelegraphTime = 300;
-                    DarkLasers[i].MaxCharge = 240;
-                    DarkLasers[i].FiringDuration = 940;
-                    DarkLasers[i].LaserLength = 10000;
-                    DarkLasers[i].LaserColor = Color.Purple;
-                    DarkLasers[i].TileCollide = false;
-                    DarkLasers[i].CastLight = true;
-                }
-            }
         }
 
         public override bool PreDraw(ref Color lightColor)

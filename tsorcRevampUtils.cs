@@ -355,8 +355,42 @@ namespace tsorcRevamp
             }
         }
 
+        ///<summary> 
+        ///Returns the closest living player to a point
+        ///</summary>         
+        ///<param name="point">The point to compare against</param>
+        public static void TeleportEffects(Vector2 oldPosition, Vector2 newPosition, NPC npc, int DustID = DustID.FireworkFountain_Pink)
+        {
+            Vector2 diff = newPosition - oldPosition;
+            float length = diff.Length();
+            diff.Normalize();
+            Vector2 offset = Vector2.Zero;
 
+            for (int i = 0; i < length; i++)
+            {
+                offset += diff;
+                if (Main.rand.NextBool(2))
+                {
+                    Vector2 dustPoint = offset;
+                    dustPoint.X += Main.rand.NextFloat(-npc.width / 2, npc.width / 2);
+                    dustPoint.Y += Main.rand.NextFloat(-npc.height / 2, npc.height / 2);
+                    if (Main.rand.NextBool())
+                    {
+                        Dust.NewDustPerfect(oldPosition + dustPoint, 71, diff * 5, 200, default, 0.8f).noGravity = true;
+                    }
+                    else
+                    {
+                        Dust.NewDustPerfect(oldPosition + dustPoint, DustID, diff * 5, 200, default, 0.8f).noGravity = true;
+                    }
+                }
+            }
+        }
 
+        /*
+         * Vector2 newPosition = NPC.Center;
+
+            
+        */
         ///<summary> 
         ///Returns a vector pointing from a source, to a target, with a speed.
         ///Simplifies basic projectile, enemy dash, etc aiming calculations to a single call.

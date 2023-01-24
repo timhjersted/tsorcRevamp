@@ -35,9 +35,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 spawnedLasers = true;
                 for (int i = 0; i < LASER_COUNT; i++)
                 {
-                    GenericLaser SolarLaser = (GenericLaser)Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.position, new Vector2(0, 5), ModContent.ProjectileType<GenericLaser>(), Projectile.damage, .5f).ModProjectile;
-                    SolarLaser.LaserOrigin = Projectile.Center;
-
                     bool repeat;
                     int direction;
 
@@ -57,49 +54,47 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
                     pickedDirections[i] = direction;
 
+                    Vector2 fireDirection = Vector2.Zero;
+
                     switch (direction)
                     {
                         case 0:
-                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(0, 1);
+                            fireDirection = new Vector2(0, 1);
                             break;
 
                         case 1:
-                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(1, 0);
+                            fireDirection = new Vector2(1, 0);
                             break;
 
                         case 2:
-                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(0, -1);
+                            fireDirection = new Vector2(0, -1);
                             break;
 
                         case 3:
-                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(-1, 0);
+                            fireDirection = new Vector2(-1, 0);
                             break;
 
                         case 4:
-                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(1, 1);
+                            fireDirection = new Vector2(1, 1);
                             break;
 
                         case 5:
-                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(1, -1);
+                            fireDirection = new Vector2(1, -1);
                             break;
 
                         case 6:
-                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(-1, 1);
+                            fireDirection = new Vector2(-1, 1);
                             break;
 
                         case 7:
-                            SolarLaser.LaserTarget = Projectile.Center + new Vector2(-1, -1);
+                            fireDirection = new Vector2(-1, -1);
                             break;
                     }
 
-                    SolarLaser.TelegraphTime = 60;
-                    SolarLaser.FiringDuration = 20;
-                    SolarLaser.LaserLength = 4000;
-                    SolarLaser.LaserColor = Color.OrangeRed;
-                    SolarLaser.TileCollide = false;
-                    SolarLaser.CastLight = false;
-                    SolarLaser.LaserDust = 127;
-                    SolarLaser.MaxCharge = DetonationTime;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.position, fireDirection, ModContent.ProjectileType<Projectiles.Enemy.Okiku.SolarBeam>(), Projectile.damage, .5f, Main.myPlayer, DetonationTime, Projectile.whoAmI);
+                    }
                 }
             }
 

@@ -120,7 +120,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     
     sampleIntensity = sampleIntensity;
     //Mix it with the laser color
-    float4 noiseColor = 1 - float4(1.0, 1.0, 1.0, 1.0);
+    float4 noiseColor = float4(1.0, 1.0, 1.0, 1.0);
     noiseColor.r = sampleIntensity * trailColor.r;
     noiseColor.b = sampleIntensity * trailColor.b;
     noiseColor.g = sampleIntensity * trailColor.g;

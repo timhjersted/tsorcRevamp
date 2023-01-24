@@ -32,16 +32,30 @@ namespace tsorcRevamp.Items
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
-            if (Main.GameMode == 1)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Main.GameMode = 2;
-                Main.NewText("Master Mode has been enabled, enjoy your extra accessory slot!\nIt has not been tested thoroughly yet, so expect the unexpected!", Color.DarkRed);
+                if (Main.GameMode == 1)
+                {
+                    Main.GameMode = 2;
+                    Main.NewText("Master Mode has been enabled, enjoy your extra accessory slot!\nIt has not been tested thoroughly yet, so expect the unexpected!", Color.DarkRed);
+                }
+                else
+                {
+                    Main.GameMode = 1;
+                    Main.NewText("Master Mode has been disabled, the cost was simply too great....\nCoward! Your resolve must be lacking.", Color.DarkRed);
+                }
             }
             else
             {
-                Main.GameMode = 1;
-                Main.NewText("Master Mode has been disabled, the cost was simply too great....\nCoward! Your resolve must be lacking.", Color.DarkRed);
+                if (player.whoAmI == Main.LocalPlayer.whoAmI)
+                {
+                    ModPacket timePacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                    timePacket.Write(tsorcPacketID.SyncMasterScroll);
+                    timePacket.Write(Main.GameMode);
+                    timePacket.Send();
+                }
             }
+
             return false;
         }
     }

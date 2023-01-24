@@ -36,30 +36,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
         public override void AI()
         {
-            float accel = 0.03f;
             Projectile.rotation += 0.5f;
-            if (Main.player[(int)Projectile.ai[0]].position.X < Projectile.position.X)
-            {
-                if (Projectile.velocity.X > -10) Projectile.velocity.X -= accel;
-            }
 
-            if (Main.player[(int)Projectile.ai[0]].position.X > Projectile.position.X)
-            {
-                if (Projectile.velocity.X < 10) Projectile.velocity.X += accel;
-            }
-
-            if (Main.player[(int)Projectile.ai[0]].position.Y < Projectile.position.Y)
-            {
-                if (Projectile.velocity.Y > -10) Projectile.velocity.Y -= accel;
-            }
-
-            if (Main.player[(int)Projectile.ai[0]].position.Y > Projectile.position.Y)
-            {
-                if (Projectile.velocity.Y < 10) Projectile.velocity.Y += accel;
-            }
-
-            float maxSpeed = 8;
-            Projectile.velocity = Vector2.Clamp(Projectile.velocity, new Vector2(-maxSpeed, -maxSpeed), new Vector2(maxSpeed, maxSpeed));
+            Player closestPlayer = UsefulFunctions.GetClosestPlayer(Projectile.Center);
+            UsefulFunctions.SmoothHoming(Projectile, closestPlayer.Center, 0.05f, 10, bufferZone: false);
 
             if (Main.rand.NextBool(12))
             {
@@ -67,9 +47,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 Main.dust[dust].noGravity = true;
             }
         }
-
-
-
 
         public override bool PreDraw(ref Color lightColor)
         {

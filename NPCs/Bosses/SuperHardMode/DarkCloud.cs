@@ -159,7 +159,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
-                    if (Main.projectile[i].type == ModContent.ProjectileType<GenericLaser>())
+                    if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.EnemyGenericLaser>())
                     {
                         Main.projectile[i].Kill();
                     }
@@ -453,6 +453,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
 
+            /*
             if (AttackModeCounter % turnLength == 0)
             {
                 //Clean up the old targeting lasers
@@ -502,7 +503,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 nextWarpPoint = DivineSparkTeleport();
                 DarkCloudParticleEffect(6);
             }
-
+            */
             if (AttackModeCounter % turnLength <= 15)
             {
                 initialTargetRotation = (Target.Center - NPC.Center).ToRotation();
@@ -543,16 +544,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Spawn the targeting lasers one by one
                 if ((AttackModeCounter % turnLength) % Math.Round((chargeTime * 0.8) / 5) == 0 && AttackModeCounter % turnLength <= (chargeTime * 0.8))
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSparkTargeting, NPC.whoAmI);
+                    //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSparkTargeting, NPC.whoAmI);
                 }
 
                 //Spawn the big laser
                 if (AttackModeCounter % turnLength == chargeTime)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSpark, NPC.whoAmI);
+                    //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSpark, NPC.whoAmI);
                 }
             }
 
+            /*
 
             //This part of the code initializes and manages the lasers.
             //It HAS to run both client side and server side, hence why this code is all in Move instead of Attack.
@@ -636,7 +638,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         laserList[i].LaserTarget = NPC.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation + MathHelper.ToRadians((arcLength / 2) * i));
                     }
                 }
-            }
+            }*/
 
             if (AttackModeCounter == turnLength * 5)
             {
@@ -1456,10 +1458,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), 0, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
+                    //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), 0, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
                 }
             }
-
+            /*
             List<GenericLaser> laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
             for (int i = 0; i < laserList.Count; i++)
             {
@@ -1490,7 +1492,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 offset *= ((300 - (AttackModeCounter % 300)) / 300);
                 offset = offset.RotatedBy(MathHelper.ToRadians((AttackModeCounter % 300) + (120 * i)));
                 laserList[i].LaserTarget = Target.Center + offset;
-            }
+            }*/
 
 
             if (AttackModeCounter == 1200)
@@ -2185,7 +2187,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Clean up projectiles
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].type == ModContent.ProjectileType<GenericLaser>() 
+                if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.EnemyGenericLaser>() 
                     || Main.projectile[i].type == ModContent.ProjectileType<DarkFlow>() 
                     || Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>() 
                     || Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkFreezeBolt>())
