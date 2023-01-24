@@ -58,7 +58,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 }
             }
 
-            if (EnemyGenericLaser.FastContainsPoint(screenRect, Projectile.Center))
+            if (GenericLaser.FastContainsPoint(screenRect, Projectile.Center))
             {
                 for (int j = 0; j < dustCount; j++)
                 {

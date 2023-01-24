@@ -7,7 +7,7 @@ using tsorcRevamp.Projectiles.Enemy;
 namespace tsorcRevamp.Projectiles.Summon
 {
 
-    public class FriendlyRedLaser : EnemyGenericLaser
+    public class FriendlyRedLaser : GenericLaser
     {
         public override void SetStaticDefaults()
         {

@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy
 {
 
-    public class EnemyLingeringLaser : EnemyGenericLaser
+    public class EnemyLingeringLaser : GenericLaser
     {
         public override string Texture => base.Texture;
 

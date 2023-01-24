@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 {
 
-    public class DarkBeam : EnemyGenericLaser
+    public class DarkBeam : GenericLaser
     {
 
 

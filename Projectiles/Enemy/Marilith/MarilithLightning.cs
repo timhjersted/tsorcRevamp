@@ -14,7 +14,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy.Marilith
 {
 
-    public class MarilithLightning : EnemyGenericLaser
+    public class MarilithLightning : GenericLaser
     {
 
         //Titled "EnemyLightningStrike", but could also be used for player projectiles (and indeed is right now).

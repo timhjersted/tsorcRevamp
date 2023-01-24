@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy
 {
 
-    public class EnemyLightningStrike : EnemyGenericLaser
+    public class EnemyLightningStrike : GenericLaser
     {
 
         //Titled "EnemyLightningStrike", but could also be used for player projectiles (and indeed is right now).

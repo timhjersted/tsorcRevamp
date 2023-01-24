@@ -159,7 +159,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
-                    if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.EnemyGenericLaser>())
+                    if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.GenericLaser>())
                     {
                         Main.projectile[i].Kill();
                     }
@@ -2187,7 +2187,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Clean up projectiles
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.EnemyGenericLaser>() 
+                if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.GenericLaser>() 
                     || Main.projectile[i].type == ModContent.ProjectileType<DarkFlow>() 
                     || Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>() 
                     || Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkFreezeBolt>())

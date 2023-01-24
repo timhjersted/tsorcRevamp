@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Magic
 {
-    class LightrifleFire : Enemy.EnemyGenericLaser
+    class LightrifleFire : GenericLaser
     {
 
         public override void SetStaticDefaults()

@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Ranged
 {
-    class CrystalRay : Enemy.EnemyGenericLaser
+    class CrystalRay : GenericLaser
     {
 
         public override void SetStaticDefaults()

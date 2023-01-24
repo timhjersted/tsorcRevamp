@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy
 {
 
-    public class EnemyRedLaser : EnemyGenericLaser
+    public class EnemyRedLaser : GenericLaser
     {
         public override string Texture => base.Texture;
 

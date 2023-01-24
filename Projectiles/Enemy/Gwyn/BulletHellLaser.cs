@@ -41,7 +41,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn
         }
     }
 
-    class BulletHellLaser : EnemyGenericLaser
+    class BulletHellLaser : GenericLaser
     {
 
         public override void SetDefaults()

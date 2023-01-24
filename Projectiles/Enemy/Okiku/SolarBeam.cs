@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy.Okiku
 {
 
-    public class SolarBeam : EnemyGenericLaser
+    public class SolarBeam : GenericLaser
     {
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Okiku/PoisonSmog";
 
