@@ -725,7 +725,7 @@ namespace tsorcRevamp
 
             if (thisEvent.eventTimer > 900)
             {
-                UsefulFunctions.BroadcastText("The example scripted event ends...", Color.Green);
+                //UsefulFunctions.BroadcastText("The example scripted event ends...", Color.Green);
                 return EventActionStatus.CompletedEvent;
             }
             return EventActionStatus.Continue;
@@ -738,7 +738,7 @@ namespace tsorcRevamp
             //Spawning meteors:
             if (Main.rand.NextBool(200))
             {
-                UsefulFunctions.BroadcastText("Artorias rains fire from the Abyss...", Color.Gold);
+                //UsefulFunctions.BroadcastText("Artorias rains fire from the Abyss...", Color.Gold);
                 for (int i = 0; i < Main.maxPlayers; i++)
                 {
                     for (int j = 0; j < 10; j++)
@@ -774,7 +774,7 @@ namespace tsorcRevamp
 
         public static EventActionStatus SetNightCustomAction(ScriptedEvent thisEvent)
         {
-            UsefulFunctions.BroadcastText("Time shifts forward...", Color.Purple);
+            //UsefulFunctions.BroadcastText("Time shifts forward...", Color.Purple);
             Main.dayTime = false;
             Main.time = 0;
             if (Main.netMode == NetmodeID.Server)
@@ -1211,7 +1211,7 @@ namespace tsorcRevamp
                         {
                             if (QueuedEvents[i].centerpoint.Y < 2000)
                             {
-                                UsefulFunctions.BroadcastText("Adding broken centerpoint");
+                                UsefulFunctions.BroadcastText("[DEBUG] Adding broken centerpoint");
                             }
 
                             bool duplicate = false;
@@ -1270,7 +1270,7 @@ namespace tsorcRevamp
                     }
                     else
                     {
-                        UsefulFunctions.BroadcastText("Resetting event");
+                        //UsefulFunctions.BroadcastText("Resetting event");
                         QueuedEvents[i].eventCooldownTimer = 300;
                         EnabledEvents.Add(QueuedEvents[i]);
                         QueuedEvents.Remove(QueuedEvents[i]);
@@ -1893,7 +1893,7 @@ namespace tsorcRevamp
         public void EndEvent(bool eventCompleted)
         {
 
-            UsefulFunctions.BroadcastText("Ending event with status " + eventCompleted);
+            //UsefulFunctions.BroadcastText("Ending event with status " + eventCompleted);
             //Save the event if it's marked as a saved event and it is 'completed' (either by a customaction forcibly ending it, or by all the NPC's being killed)
             if (eventCompleted)
             {
@@ -1925,7 +1925,7 @@ namespace tsorcRevamp
                             NPC thisNPC = thisEventNPC.npc;
                             if (thisNPC.active && thisNPC.type == thisEventNPC.type && !thisNPC.boss)
                             {
-                                UsefulFunctions.BroadcastText("Despawning NPC");
+                                //UsefulFunctions.BroadcastText("[DEBUG] Event failed, despawning NPC");
                                 thisNPC.active = false;
                                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, thisNPC.whoAmI);
                                 for (int i = 0; i < 60; i++)
