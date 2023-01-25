@@ -84,7 +84,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (MirrorAttackType == DarkCloud.DarkCloudAttackID.AntiMat)
             {
-                AntiMatMove();
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     AntiMatAttack();
@@ -103,48 +102,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         }
 
-        //These describe how the boss should move, and other things that should be done on every client to keep it deterministic
-        #region Movements
-        void AntiMatMove()
-        {
-            if (AttackModeCounter == 0 && Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), 0, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
-            }
-            /*
-            List<GenericLaser> laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
-            if (laserList.Count > 0)
-            {
-                GenericLaser thisLaser = laserList[0];
-                if (!thisLaser.initialized)
-                {
-                    thisLaser.LaserOrigin = NPC.Center;
-
-                    thisLaser.TelegraphTime = 99999;
-                    thisLaser.LaserLength = 4000;
-                    thisLaser.LaserColor = Color.Red;
-                    thisLaser.TargetingMode = 1;
-                    thisLaser.lightColor = Color.OrangeRed;
-                    thisLaser.TileCollide = false;
-                    thisLaser.CastLight = false;
-                    thisLaser.MaxCharge = 5;
-                    thisLaser.FiringDuration = (int)AttackModeLimit + 1;
-                    thisLaser.LaserVolume = 0;
-                }
-
-                Vector2 offset;
-                offset = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 128).RotatedBy(MathHelper.ToRadians(90));
-                offset *= ((300 - AttackModeCounter) / 300);
-                offset = offset.RotatedBy(MathHelper.ToRadians(AttackModeCounter + (120)));
-                thisLaser.LaserTarget = Target.Center + offset;
-            }*/
-        }
-        #endregion
-
         //These describe projectiles the boss should shoot, and other things that should *not* be done for every multiplayer client
         #region Attacks
         void AntiMatAttack()
         {
+            if (AttackModeCounter == 0)
+            {
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<AntimatTargeting>(), 0, 0.5f, Main.myPlayer, AttackModeLimit + 1, NPC.whoAmI);
+            }
             if (AttackModeCounter == AttackModeLimit)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 7), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage / 2, 0.5f, Main.myPlayer);

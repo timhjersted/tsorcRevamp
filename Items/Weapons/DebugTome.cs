@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             Main.NewText(player.position / 16);
-            Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), position, new Vector2(10, 0), ModContent.ProjectileType<Projectiles.Enemy.Okiku.StardustShot>(), 10, 0, player.whoAmI, 0, 300);
+            Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), position, new Vector2(10, 0), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkDivineSpark>(), 10, 0, player.whoAmI, 0, 300);
 
             return false;
         }

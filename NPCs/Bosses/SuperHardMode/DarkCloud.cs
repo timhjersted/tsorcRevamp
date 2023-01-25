@@ -524,87 +524,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
 
-            //Temp laser handling code, aka hell, begins here:
-
-
-            //If we're not a multiplayer client, spawn the lasers at the proper times.
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                //Spawn the targeting lasers one by one
-                if ((AttackModeCounter % turnLength) % Math.Round((chargeTime * 0.8) / 5) == 0 && AttackModeCounter % turnLength <= (chargeTime * 0.8))
-                {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<DarkDivineSpark>(), 0, 0.5f, Main.myPlayer, (int)(turnLength - (AttackModeCounter % turnLength)), NPC.whoAmI);
-                }
-
-                //Spawn the big laser
-                if (AttackModeCounter % turnLength == chargeTime)
-                {
-                    int direction = 0;
-                    if (counterClockwise)
-                    {
-                        direction = 1;
-                    }
-                    else
-                    {
-                        direction = -1;
-                    }
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, new Vector2(1, 0).RotatedBy(initialTargetRotation), ModContent.ProjectileType<DarkDivineSpark>(), divineSparkDamage, 0.5f, Main.myPlayer, direction, NPC.whoAmI);
-                }
-            }
-
-            /*
-
-            //This part of the code initializes and manages the lasers.
-            //It HAS to run both client side and server side, hence why this code is all in Move instead of Attack.
-            //1) Get all lasers with that ID. The GetLasersByID returns all lasers with that ID which are active.
-            List<GenericLaser> laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.DarkDivineSpark, NPC.whoAmI);
-            if (laserList.Count > 0)
-            {
-                //2) Store it in an object. There can only be one here, so as soon as one exists grab it.
-                GenericLaser DarkDivineSparkBeam = laserList[0];
-
-
-                //3) Check if it's been initialized on this client already, and if not then set all its values.
-                if (!DarkDivineSparkBeam.initialized)
-                {
-                    DarkDivineSparkBeam.
-                }
-
-                //4) Either way this laser is a moving one, so move its current target according to the formula and play its unique sound.
-                if (counterClockwise)
-                {
-                    DarkDivineSparkBeam.LaserOrigin = NPC.Center;
-                    DarkDivineSparkBeam.LaserTarget = NPC.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation - MathHelper.ToRadians(4 * (int)((AttackModeCounter % turnLength) - chargeTime)));
-                }
-                else
-                {
-                    DarkDivineSparkBeam.LaserOrigin = NPC.Center;
-                    DarkDivineSparkBeam.LaserTarget = NPC.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation + MathHelper.ToRadians(4 * (int)((AttackModeCounter % turnLength) - chargeTime)));
-                }
-                if (Main.GameUpdateCount % 8 == 0)
-                {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/MasterBuster"), NPC.Center);
-                }
-            }
-
-            //Do the same stuff again, but for each of the targeting lasers.
-            //They don't move, so once they're initialized we never need to mess with them again.
-            laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.DarkDivineSparkTargeting, NPC.whoAmI);
-            for (int i = 0; i < laserList.Count; i++)
-            {
-                if (!laserList[i].initialized)
-                {
-
-                    if (counterClockwise)
-                    {
-                        laserList[i].LaserTarget = NPC.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation - MathHelper.ToRadians((arcLength / 2) * i));
-                    }
-                    else
-                    {
-                        laserList[i].LaserTarget = NPC.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation + MathHelper.ToRadians((arcLength / 2) * i));
-                    }
-                }
-            }*/
 
             if (AttackModeCounter == turnLength * 5)
             {
@@ -1420,47 +1339,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 DarkCloudParticleEffect(6);
             }
 
-            if (AttackModeCounter % 300 == 15 && Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), 0, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
-                }
-            }
-            /*
-            List<GenericLaser> laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
-            for (int i = 0; i < laserList.Count; i++)
-            {
-                if (!laserList[i].initialized)
-                {
-                    laserList[i].LaserOrigin = NPC.Center;
-                    laserList[i].TelegraphTime = 99999;
-                    laserList[i].LaserLength = 4000;
-                    //Forbidden secret color "half red"
-                    laserList[i].LaserColor = Color.Red * 0.5f;// * 2f;
-                    laserList[i].lightColor = Color.OrangeRed;
-                    laserList[i].TileCollide = false;
-                    laserList[i].CastLight = true;
-                    laserList[i].MaxCharge = 5;
-                    laserList[i].FiringDuration = 285;
-                    laserList[i].LaserVolume = 0;
-                    //Deals no damage, it simply exists to telegraph dark cloud's shot
-                    laserList[i].TargetingMode = 2;
-
-                    laserList[i].initialized = true;
-                }
-
-                //Get a vector of length 128 pointing from dark cloud to the player, then rotate it by 90 degrees
-                Vector2 offset = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 128).RotatedBy(MathHelper.ToRadians(90));
-                //Multiply it by ((300 - AttackModeCounter) / 300), meaning as AttackModeCounter increases and approaches 0, the offset distance shrinks down
-                //Then multiply it by Math.Sin, using AttackModeCounter as the parameter because it changes smoothly. Then add 120 * i, so each laser is offset by 120 degrees
-                //offset *= ((300 - AttackModeCounter) / 300) * (float)Math.Sin(MathHelper.ToRadians(2 * AttackModeCounter + (120 * i)));
-                offset *= ((300 - (AttackModeCounter % 300)) / 300);
-                offset = offset.RotatedBy(MathHelper.ToRadians((AttackModeCounter % 300) + (120 * i)));
-                laserList[i].LaserTarget = Target.Center + offset;
-            }*/
-
-
             if (AttackModeCounter == 1200)
             {
                 ChangeAttacks();
@@ -1552,7 +1430,41 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         void DivineSparkAttack()
         {
-            //Since most laser code has to be run both client and server side, this is just a placeholder.
+            //Spawn the targeting lasers one by one
+            if ((AttackModeCounter % turnLength) % Math.Round((chargeTime * 0.8) / 5) == 0 && AttackModeCounter % turnLength <= (chargeTime * 0.8))
+            {
+                Vector2 laserVector;
+                if (counterClockwise)
+                {
+                    laserVector = new Vector2(1, 0).RotatedBy(initialTargetRotation - MathHelper.ToRadians(arcLength * (AttackModeCounter % turnLength) / (turnLength / 4f)));
+                }
+                else
+                {
+                    laserVector = new Vector2(1, 0).RotatedBy(initialTargetRotation + MathHelper.ToRadians(arcLength * (AttackModeCounter % turnLength) / (turnLength / 4f)));
+                }
+
+                float telegraphTimer = (int)(turnLength - (AttackModeCounter % turnLength));
+                if (AttackModeCounter < turnLength)
+                {
+                    telegraphTimer += 200;
+                }
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, laserVector, ModContent.ProjectileType<DarkDivineSpark>(), 0, 0.5f, Main.myPlayer, telegraphTimer, NPC.whoAmI);
+            }
+
+            //Spawn the big laser
+            if (AttackModeCounter % turnLength == chargeTime)
+            {
+                int direction = 0;
+                if (counterClockwise)
+                {
+                    direction = 1;
+                }
+                else
+                {
+                    direction = -1;
+                }
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, new Vector2(1, 0).RotatedBy(initialTargetRotation), ModContent.ProjectileType<DarkDivineSpark>(), divineSparkDamage, 0.5f, Main.myPlayer, direction * 999, NPC.whoAmI);
+            }
         }
 
         int darkFlowRadius = 2500;
@@ -1733,6 +1645,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     Vector2 pos = Main.rand.NextVector2CircularEdge(700, 700) + Target.Center;
                     NPC.NewNPC(NPC.GetSource_FromAI(), (int)pos.X, (int)pos.Y, ModContent.NPCType<DarkCloudMirror>(), 0, DarkCloudAttackID.AntiMat, 60 + Main.rand.NextFloat(150));
+                }
+            }
+
+
+            if (AttackModeCounter % 300 == 15)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.AntimatTargeting>(), 0, 0.5f, Main.myPlayer, i, NPC.whoAmI);
                 }
             }
 

@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             DustAmount = 20;
             MaxCharge = 0;
             FiringDuration = 60;
-            pierceNPCs = false;
+            PierceNPCs = false;
             Projectile.penetrate = 999;
             LaserSound = null;
             //Each projectile can hit an NPC once and only once
@@ -132,12 +132,12 @@ namespace tsorcRevamp.Projectiles.Ranged
             }
 
             CastLight = true;
-            lightColor = LaserColor;
+            LightColor = LaserColor;
 
             
             if (Projectile.ai[0] == ProjectileID.MeteorShot || Projectile.ai[0] == ProjectileID.MoonlordBullet)
             {
-                pierceNPCs = true;
+                PierceNPCs = true;
             }
 
             base.AI();

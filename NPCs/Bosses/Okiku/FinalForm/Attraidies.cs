@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             NPC.width = 28;
             NPC.timeLeft = 22500;
             Music = 12;
-            NPC.lifeMax = 95000;
+            NPC.lifeMax = 120000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.noGravity = false;

@@ -20,8 +20,6 @@ namespace tsorcRevamp.Projectiles
     ///</summary>
     public class GenericLaser : ModProjectile
     {
-
-
         /// <summary>
         ///Set to true if the laser originates from a projectile instead of an NPC
         /// </summary>
@@ -36,7 +34,8 @@ namespace tsorcRevamp.Projectiles
         public Vector2 LaserOrigin = new Vector2(0, 0);
 
         /// <summary>
-        /// Should it stick to the center of the NPC or Projectile that spawned it, or just where it is spawned?
+        /// Should it stick to the center of the NPC or Projectile that spawned it?
+        /// If not it will stay where it was spawned
         /// </summary>
         public bool FollowHost = false;
 
@@ -50,7 +49,7 @@ namespace tsorcRevamp.Projectiles
         /// <summary>
         /// Should it pierce through all NPCs? If not it will stop at the first one it hits
         /// </summary>
-        public bool pierceNPCs = true;
+        public bool PierceNPCs = true;
 
         /// <summary>
         /// Should the laser be offset from the center of its source? If so, how much?
@@ -70,12 +69,12 @@ namespace tsorcRevamp.Projectiles
         /// <summary>
         /// How fast should it fade in when firing?
         /// </summary>
-        public float fadeInSpeed = 0.10f;
+        public float FadeInSpeed = 0.10f;
 
         /// <summary>
         /// How many frames before despawning should it start fading out
         /// </summary>
-        public int fadeOutFrames = 10;
+        public int FadeOutFrames = 10;
 
         /// <summary>
         /// What dust should it spawn?
@@ -115,12 +114,13 @@ namespace tsorcRevamp.Projectiles
         /// <summary>
         /// Should it have a light color different than 'LaserColor'?
         /// </summary>
-        public Color? lightColor = null;
+        public Color? LightColor = null;
 
         /// <summary>
         /// Should this laser be drawn with additive blending instead of normal?
+        /// Currently does nothing, will be re-enabled in the future
         /// </summary>
-        public bool Additive = false;
+        public bool Additive = true;
 
         /// <summary>
         /// What transparency should it be drawn with? 0 > 1
@@ -299,13 +299,13 @@ namespace tsorcRevamp.Projectiles
             //Fade in and out, and pulse while targeting
             if ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2))
             {
-                if (FiringTimeLeft < fadeOutFrames)
+                if (FiringTimeLeft < FadeOutFrames)
                 {
-                    fadePercent = (float)FiringTimeLeft / (float)fadeOutFrames;
+                    fadePercent = (float)FiringTimeLeft / (float)FadeOutFrames;
                 }
                 else
                 {
-                    fadePercent += fadeInSpeed;
+                    fadePercent += FadeInSpeed;
                     if(fadePercent > 1)
                     {
                         fadePercent = 1;
@@ -658,7 +658,7 @@ namespace tsorcRevamp.Projectiles
                 return;
             }
 
-            Vector2? collision = UsefulFunctions.GetFirstCollision(GetOrigin(), Projectile.velocity, LaserLength, true, pierceNPCs);
+            Vector2? collision = UsefulFunctions.GetFirstCollision(GetOrigin(), Projectile.velocity, LaserLength, true, PierceNPCs);
 
             if(collision != null)
             {
@@ -727,13 +727,13 @@ namespace tsorcRevamp.Projectiles
         {
             // Cast a light along the line of the laser
             Color currentColor;
-            if (lightColor == null)
+            if (LightColor == null)
             {
                 currentColor = LaserColor;
             }
             else
             {
-                currentColor = lightColor.Value;
+                currentColor = LightColor.Value;
             }
             Vector3 colorVector = currentColor.ToVector3();
             if (!IsAtMaxCharge)

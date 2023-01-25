@@ -58,17 +58,29 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
         float rotDirection;
 
         bool rapid = false;
+        bool initialized = false;
+        bool initializedParameters = false;
+        int direction = 0;
         public override void AI()
         {
-            if (Math.Abs(Projectile.ai[0]) == 1)
+            base.AI();
+            if (Math.Abs(Projectile.ai[0]) == 999)
             {
-                SetBigLaserParameters();
-                Projectile.velocity = Projectile.velocity.RotatedBy(0.05f * Projectile.ai[0]);
+                if (!initializedParameters)
+                {
+                    SetBigLaserParameters();
+                    initializedParameters = true;
+                }
+                Projectile.velocity = Projectile.velocity.RotatedBy(-0.05f * direction);
             }
             else
             {
                 //Targeting mode
-                SetTargetingLaserParameters();
+                if (!initializedParameters)
+                {
+                    SetTargetingLaserParameters();
+                    initializedParameters = true;
+                }
             }
         }
 
@@ -80,7 +92,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             TileCollide = false;
             CastLight = true;
             LaserDust = 234;
-            lightColor = Color.Indigo;
+            LightColor = Color.Indigo;
             MaxCharge = 0; //It fires instantly upon creation
             FiringDuration = 35;
             LaserSize = 3.5f;
@@ -91,19 +103,28 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             LineDust = true;
             frameCount = 15;
             LaserSound = null;
+            LaserColor = Color.Cyan;
             LaserName = "Dark Divine Spark";
+
+            if (Projectile.ai[0] > 0)
+            {
+                direction = 1;
+            }
+            else
+            {
+                direction = -1;
+            }
         }
 
         public void SetTargetingLaserParameters()
         {
-            TelegraphTime = 99999;
+            TelegraphTime = (int)Projectile.ai[0];
             LaserLength = 8000;
             LaserColor = Color.Blue * 0.8f;
             TileCollide = false;
             CastLight = true;
             LaserDust = 234;
             MaxCharge = 0; //It will never fire, and is purely for telegraphing Dark Cloud's shot
-            FiringDuration = (int)Projectile.ai[0]; //Set its duration to however long is left in this turn
             LaserSound = null;
             TargetingMode = 1;
         }
