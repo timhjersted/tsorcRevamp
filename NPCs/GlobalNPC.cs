@@ -508,6 +508,23 @@ namespace tsorcRevamp.NPCs
                         Item.NewItem(npc.GetSource_Loot(), npc.Center, ScriptedEventOwner.eventNPCs[ScriptedEventIndex].extraLootItems[i], ScriptedEventOwner.eventNPCs[ScriptedEventIndex].extraLootAmounts[i]);
                     }
                 }
+
+                bool oneAlive = false;
+                foreach(EventNPC eventNPC in ScriptedEventOwner.eventNPCs)
+                {
+                    if (!eventNPC.killed)
+                    {
+                        oneAlive = true;
+                    }
+                }
+
+                if (!oneAlive)
+                {
+                    for (int i = 0; i < ScriptedEventOwner.FinalNPCCustomDrops.Count; i++)
+                    {
+                        Item.NewItem(npc.GetSource_Loot(), npc.Center, ScriptedEventOwner.FinalNPCCustomDrops[i], ScriptedEventOwner.FinalNPCDropAmounts[i]);
+                    }
+                }
             }
             #endregion
         }
