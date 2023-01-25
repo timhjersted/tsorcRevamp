@@ -39,8 +39,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             Projectile.rotation += 0.5f;
 
             Player closestPlayer = UsefulFunctions.GetClosestPlayer(Projectile.Center);
-            UsefulFunctions.SmoothHoming(Projectile, closestPlayer.Center, 0.05f, 10, bufferZone: false);
-
+            if (closestPlayer != null)
+            {
+                UsefulFunctions.SmoothHoming(Projectile, closestPlayer.Center, 0.05f, 10, bufferZone: false);
+            }
             if (Main.rand.NextBool(12))
             {
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X + 10, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.Torch, 0, 0, 200, Color.Red, 1f);
