@@ -424,7 +424,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //Length in degrees of the arc on either side of the player
         const int arcLength = 60;
 
-        const int firingDuration = 35;
 
         void DivineSparkMove()
         {
@@ -453,19 +452,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
 
-            /*
+            
             if (AttackModeCounter % turnLength == 0)
             {
-                //Clean up the old targeting lasers
-                List<GenericLaser> targetingList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.DarkDivineSparkTargeting, NPC.whoAmI);
-                if (targetingList != null && targetingList.Count > 0)
-                {
-                    foreach (GenericLaser thisLaser in targetingList)
-                    {
-                        thisLaser.Projectile.Kill();
-                    }
-                }
-
                 DarkCloudParticleEffect(-2);
                 if (AttackModeCounter > 70)
                 {
@@ -503,7 +492,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 nextWarpPoint = DivineSparkTeleport();
                 DarkCloudParticleEffect(6);
             }
-            */
+            
             if (AttackModeCounter % turnLength <= 15)
             {
                 initialTargetRotation = (Target.Center - NPC.Center).ToRotation();
@@ -544,13 +533,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Spawn the targeting lasers one by one
                 if ((AttackModeCounter % turnLength) % Math.Round((chargeTime * 0.8) / 5) == 0 && AttackModeCounter % turnLength <= (chargeTime * 0.8))
                 {
-                    //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSparkTargeting, NPC.whoAmI);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<DarkDivineSpark>(), 0, 0.5f, Main.myPlayer, (int)(turnLength - (AttackModeCounter % turnLength)), NPC.whoAmI);
                 }
 
                 //Spawn the big laser
                 if (AttackModeCounter % turnLength == chargeTime)
                 {
-                    //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSpark, NPC.whoAmI);
+                    int direction = 0;
+                    if (counterClockwise)
+                    {
+                        direction = 1;
+                    }
+                    else
+                    {
+                        direction = -1;
+                    }
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, new Vector2(1, 0).RotatedBy(initialTargetRotation), ModContent.ProjectileType<DarkDivineSpark>(), divineSparkDamage, 0.5f, Main.myPlayer, direction, NPC.whoAmI);
                 }
             }
 
@@ -569,27 +567,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //3) Check if it's been initialized on this client already, and if not then set all its values.
                 if (!DarkDivineSparkBeam.initialized)
                 {
-                    DarkDivineSparkBeam.LaserOrigin = NPC.Center;
-                    DarkDivineSparkBeam.LaserTarget = NPC.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation);
-                    DarkDivineSparkBeam.TelegraphTime = 0;
-                    DarkDivineSparkBeam.LaserLength = 8000;
-                    DarkDivineSparkBeam.LaserTexture = TransparentTextureHandler.TransparentTextureType.DarkDivineSpark;
-                    DarkDivineSparkBeam.TileCollide = false;
-                    DarkDivineSparkBeam.CastLight = true;
-                    DarkDivineSparkBeam.LaserDust = 234;
-                    DarkDivineSparkBeam.lightColor = Color.Indigo;
-                    DarkDivineSparkBeam.MaxCharge = 0; //It fires instantly upon creation
-                    DarkDivineSparkBeam.FiringDuration = firingDuration;
-                    DarkDivineSparkBeam.LaserSize = 3.5f;
-                    DarkDivineSparkBeam.LaserTextureBody = new Rectangle(0, 24, 26, 30);
-                    DarkDivineSparkBeam.LaserTextureHead = new Rectangle(0, 0, 26, 22);
-                    DarkDivineSparkBeam.LaserTextureTail = new Rectangle(0, 56, 26, 22);
-                    DarkDivineSparkBeam.LaserDust = 45;
-                    DarkDivineSparkBeam.LineDust = true;
-                    DarkDivineSparkBeam.frameCount = 15;
-                    DarkDivineSparkBeam.LaserVolume = 0;
-                    DarkDivineSparkBeam.LaserName = "Dark Divine Spark";
-                    DarkDivineSparkBeam.initialized = true;
+                    DarkDivineSparkBeam.
                 }
 
                 //4) Either way this laser is a moving one, so move its current target according to the formula and play its unique sound.
@@ -616,18 +594,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 if (!laserList[i].initialized)
                 {
-                    laserList[i].LaserOrigin = NPC.Center;
-                    laserList[i].TelegraphTime = 99999;
-                    laserList[i].LaserLength = 8000;
-                    laserList[i].LaserColor = Color.Blue * 0.8f;
-                    laserList[i].TileCollide = false;
-                    laserList[i].CastLight = true;
-                    laserList[i].LaserDust = 234;
-                    laserList[i].MaxCharge = 0; //It will never fire, and is purely for telegraphing Dark Cloud's shot
-                    laserList[i].FiringDuration = (int)(turnLength - (AttackModeCounter % turnLength)); //Set its duration to however long is left in this turn
-                    laserList[i].LaserVolume = 0;
-                    laserList[i].TargetingMode = 1;
-                    laserList[i].initialized = true;
 
                     if (counterClockwise)
                     {
@@ -1957,7 +1923,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (Main.netMode == NetmodeID.Server)
             {
-                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, this.NPC.whoAmI);
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, NPC.whoAmI);
             }
         }
 

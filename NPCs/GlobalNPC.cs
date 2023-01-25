@@ -520,9 +520,12 @@ namespace tsorcRevamp.NPCs
 
                 if (!oneAlive)
                 {
-                    for (int i = 0; i < ScriptedEventOwner.FinalNPCCustomDrops.Count; i++)
+                    if (ScriptedEventOwner.FinalNPCCustomDrops != null)
                     {
-                        Item.NewItem(npc.GetSource_Loot(), npc.Center, ScriptedEventOwner.FinalNPCCustomDrops[i], ScriptedEventOwner.FinalNPCDropAmounts[i]);
+                        for (int i = 0; i < ScriptedEventOwner.FinalNPCCustomDrops.Count; i++)
+                        {
+                            Item.NewItem(npc.GetSource_Loot(), npc.Center, ScriptedEventOwner.FinalNPCCustomDrops[i], ScriptedEventOwner.FinalNPCDropAmounts[i]);
+                        }
                     }
                 }
             }
