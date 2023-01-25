@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.npcSlots = 5;
             Main.npcFrameCount[NPC.type] = 2;
             NPC.width = 70;
-            NPC.height = 70;
+            NPC.height = 100;
             NPC.scale = 0.6f;
             DrawOffsetY = 20;
             //It genuinely had none in the original.
