@@ -290,13 +290,34 @@ namespace tsorcRevamp
 
                     Color textColor = new(1, 1, 1, alpha);
                     DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, text, textPosition, textColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+
+                    //recycle the rect for the show button
+                    textPosition.Y = drect.Y + height + 8;
+                    drect.Y = drect.Y + height + 4;
+
+                    drect.Width = 112; //manually measured
+                    //"but zeo! magic numbers" fight me
+                    drect.Height = FontAssets.ItemStack.Value.LineSpacing + 8;
+
+
+                    Main.spriteBatch.Draw(boxTexture, drect, bgColor);
+                    //the leading space is not a typo. WrapString prepends a space and is always called on normal text, but not buttons
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, " Click to Hide", textPosition, textColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                    Point scaledMouseScreen = (Main.MouseScreen * Main.UIScale).ToPoint();
                     Main.spriteBatch.End();
                     Main.spriteBatch.Begin();
+                    if (drect.Contains(scaledMouseScreen)) {
+                        Main.LocalPlayer.mouseInterface = true;
+                        if (Main.mouseLeft && Main.mouseLeftRelease) {
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
+                            soapstone.show = false;
+                            soapstone.timer = 0;
+                        }
+                    }
                 }
                 else {
                     if (!soapstone.nearPlayer) return;
-                    Dust.NewDust(Main.MouseScreen, 4, 4, DustID.Clentaminator_Purple);
-                    int textWidth = 38;
+                    int textWidth = 112;
                     Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition) - new Vector2((textWidth / 2) - 4, 64);
 
                     Main.spriteBatch.End();
@@ -305,15 +326,14 @@ namespace tsorcRevamp
                     Texture2D boxTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/blackpixel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
                     Rectangle drect = new((int)textPosition.X - 4, (int)textPosition.Y - 4, textWidth + 8, 28);
-                    Main.spriteBatch.Draw(boxTexture, drect, new(0, 0, 0, 153));
+                    Main.spriteBatch.Draw(boxTexture, drect, new(0, 0, 0, 113));
 
-                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, "Show", textPosition, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, " Click to Show", textPosition, new(255, 255, 255, 170), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
                     Main.spriteBatch.End();
                     Main.spriteBatch.Begin();
                     Point scaledMouseScreen = (Main.MouseScreen * Main.UIScale).ToPoint();
                     if (drect.Contains(scaledMouseScreen)) {
-                        Main.LocalPlayer.mouseInterface = true;
-                        if (Main.mouseLeft) {
+                        if (Main.mouseLeft && Main.mouseLeftRelease) {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
                             soapstone.timer = 1;
                         }

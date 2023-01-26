@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -29,8 +30,8 @@ namespace tsorcRevamp
         public static bool TheEnd;
         public static bool CustomMap;
 
-        public static Dictionary<int, int> Slain; 
-        
+        public static Dictionary<int, int> Slain;
+
         public static List<int> PairedBosses;
 
         public static List<Vector2> LitBonfireList;
@@ -128,10 +129,12 @@ namespace tsorcRevamp
                 }
             }
 
-            if (tag.ContainsKey("MapMarkerKeys")) {
+            if (tag.ContainsKey("MapMarkerKeys"))
+            {
                 List<Vector2> markerKeys = (List<Vector2>)tag.GetList<Vector2>("MapMarkerKeys");
                 List<int> markerValues = (List<int>)tag.GetList<int>("MapMarkerValues");
-                for (int i = 0; i < markerKeys.Count; i++) {
+                for (int i = 0; i < markerKeys.Count; i++)
+                {
                     MapMarkers.Add(markerKeys[i], markerValues[i]);
                 }
 
@@ -140,7 +143,7 @@ namespace tsorcRevamp
 
         private void SaveSlain(TagCompound tag)
         {
-            if(Slain == null)
+            if (Slain == null)
             {
                 Slain = new Dictionary<int, int>();
             }
@@ -186,7 +189,8 @@ namespace tsorcRevamp
                 }
                 int markerSize = MapMarkers.Count;
                 writer.Write(markerSize);
-                foreach (KeyValuePair<Vector2, int> marker in MapMarkers) {
+                foreach (KeyValuePair<Vector2, int> marker in MapMarkers)
+                {
                     writer.WriteVector2(marker.Key);
                     writer.Write(marker.Value);
                 }
@@ -231,10 +235,12 @@ namespace tsorcRevamp
             int markerSize = reader.ReadInt32();
 
             MapMarkers ??= new();
-            for (int i = 0; i < markerSize; i++) {
+            for (int i = 0; i < markerSize; i++)
+            {
                 Vector2 markerKey = reader.ReadVector2();
                 int markerValue = reader.ReadInt32();
-                if (!MapMarkers.ContainsKey(markerKey)) {
+                if (!MapMarkers.ContainsKey(markerKey))
+                {
                     MapMarkers.Add(markerKey, markerValue);
                 }
             }
@@ -696,6 +702,105 @@ namespace tsorcRevamp
             }
         }
 
+        public static void BuildSoapstones()
+        {
+            char separator = Path.DirectorySeparatorChar;
+            string jsonPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcSoapstones.json";
+            tsorcRevamp mod = ModContent.GetInstance<tsorcRevamp>();
+
+            if (!(File.Exists(jsonPath)))
+            {
+                mod.Logger.Info("Attempting to write soapstone JSON");
+                for (int x = 0; x < Main.maxTilesX - 2; x++)
+                {
+                    for (int y = 0; y < Main.maxTilesY - 2; y++)
+                    {
+                        Tile worldTile = Framing.GetTileSafely(x, y);
+                        if (worldTile.HasTile && worldTile.TileType == TileID.Signs)
+                        {
+                            string h = Main.sign[Sign.ReadSign(x, y, false)].text;
+                            string result = Regex.Replace(h, @"\r\n?|\n", " --NEWLINE ");
+
+                            SignJSONSerializable signJson = new();
+                            signJson.text = result;
+                            signJson.tileX = x;
+                            signJson.tileY = y;
+                            signJson.textWidth = SoapstoneMessage.DEFAULT_WIDTH;
+                            signJson.style = SoapstoneMessage.DEFAULT_STYLE;
+
+                            JsonSerializerOptions opt = new JsonSerializerOptions { WriteIndented = true };
+                            string rawJson = JsonSerializer.Serialize(signJson, opt);
+                            List<string> asList = new() { rawJson };
+                            File.AppendAllLines(jsonPath, asList);
+                            for (int q = x; q < x + 2; q++)
+                            {
+                                for (int w = y; w < y + 2; w++)
+                                {
+                                    WorldGen.KillTile(q, w);
+                                }
+                            }
+                        }
+                    }
+                }
+                for (int i = 0; i < 400; i++)
+                {
+                    if (Main.item[i].type == ItemID.Sign && Main.item[i].active)
+                    {
+                        Main.item[i].active = false; //delete ground items (in this case campfires)
+                    }
+                }
+            }
+            else
+            {
+                mod.Logger.Info("Soapstone JSON present. Skipping write.");
+            }
+            bool skipRead = false;
+
+            foreach (KeyValuePair<int, TileEntity> entity in TileEntity.ByID)
+            {
+                if (entity.Value.type == ModContent.TileEntityType<SoapstoneTileEntity>())
+                    skipRead = true;
+                break;
+            }
+            if (!skipRead)
+            {
+                mod.Logger.Info("Attempting to read soapstone JSON");
+                string bigJson = File.ReadAllText(jsonPath);
+                List<SignJSONSerializable> texts = UsefulFunctions.DeserializeMultiple<SignJSONSerializable>(bigJson).ToList();
+                foreach (SignJSONSerializable sign in texts)
+                {
+                    int locX = sign.tileX;
+                    int locY = sign.tileY;
+                    Dust.QuickBox(new Vector2(locX, locY) * 16, new Vector2(locX + 1, locY + 1) * 16, 2, Color.YellowGreen, null);
+
+
+                    Tile tile = Framing.GetTileSafely(locX, locY);
+                    if (tile.TileType != ModContent.TileType<SoapstoneTile>())
+                    {
+
+                        //tip: i am so fucking mad
+                        if (!tile.HasTile) tile.HasTile = true;
+                        tile.TileType = (ushort)ModContent.TileType<SoapstoneTile>();
+                        tile.TileFrameX = 0;
+                        tile.TileFrameY = 0;
+                        tile.TileFrameNumber = 0;
+
+                        ModContent.GetInstance<SoapstoneTileEntity>().Place(locX, locY);
+                        if (TileUtils.TryGetTileEntityAs(locX, locY, out SoapstoneTileEntity entity))
+                        {
+                            entity.text = sign.text;
+                            entity.textWidth = sign.textWidth;
+                            entity.style = sign.style;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                mod.Logger.Info("Soapstones present. Skipping JSON read.");
+            }
+        }
+
         #endregion
         public static List<Vector2> GetActiveBonfires()
         {
@@ -784,6 +889,7 @@ namespace tsorcRevamp
                         {
                             Main.worldID = Main.rand.Next(9999999);
                             PlaceModdedTiles();
+                            BuildSoapstones();
                         }
 
                         //Spawn in NPCs
@@ -876,16 +982,18 @@ namespace tsorcRevamp
 
 
             //kill signs and rebuild json. if youre making manual edits to the json you probably dont need this any more
-            if (JustPressed(Keys.NumPad7) && JustPressed(Keys.Home)) {
+            if (JustPressed(Keys.NumPad7) && JustPressed(Keys.Home))
+            {
 
                 for (int x = 0; x < Main.maxTilesX - 2; x++) {
                     for (int y = 0; y < Main.maxTilesY - 2; y++) {
                         Tile worldTile = Framing.GetTileSafely(x, y);
                         if (worldTile.HasTile && worldTile.TileType == TileID.Signs) {
                             string h = Main.sign[Sign.ReadSign(x, y, false)].text;
+                            string result = Regex.Replace(h, @"\r\n?|\n", " --NEWLINE ");
 
                             SignJSONSerializable signJson = new();
-                            signJson.text = h;
+                            signJson.text = result;
                             signJson.tileX = x;
                             signJson.tileY = y;
                             signJson.textWidth = SoapstoneMessage.DEFAULT_WIDTH;

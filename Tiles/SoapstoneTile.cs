@@ -88,7 +88,7 @@ namespace tsorcRevamp.Tiles {
 
                 Vector2 textureSize = texture.Size();
 
-                Vector2 position = new(i * 16 - ((int)Main.screenPosition.X + textureSize.X / 2) + 16, j * 16 - (int)Main.screenPosition.Y - (textureSize.Y / 2));
+                Vector2 position = new(i * 16 - ((int)Main.screenPosition.X + textureSize.X / 2) + 16, j * 16 - (int)Main.screenPosition.Y);
 
                 Color ShimmerColor;
                 switch (entity.style) {
@@ -103,9 +103,9 @@ namespace tsorcRevamp.Tiles {
                 }
 
                 if (entity.read) {
-                    ShimmerColor.R /= 2;
-                    ShimmerColor.G /= 2;
-                    ShimmerColor.B /= 2;
+                    ShimmerColor.R /= 4;
+                    ShimmerColor.G /= 4;
+                    ShimmerColor.B /= 3;
                 }
 
                 spriteBatch.Draw(texture, position + zero, new Rectangle(0, 0, (int)textureSize.X, (int)textureSize.Y), ShimmerColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
@@ -155,7 +155,7 @@ namespace tsorcRevamp.Tiles {
             nearPlayer = false;
             for (int i = 0; i < Main.maxPlayers; i++) {
                 Player p = Main.player[i];
-                if (Vector2.Distance(p.Center, Position.ToVector2() * 16) <= 64) {
+                if (Vector2.Distance(p.Center, Position.ToVector2() * 16) <= 96 && Collision.CanHitLine(p.Center, 1, 1, Position.ToWorldCoordinates(), 1, 1)) {
                     nearPlayer = true;
                     read = true;
                     if (text == null) {

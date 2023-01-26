@@ -1939,7 +1939,9 @@ namespace tsorcRevamp
         {
             char separator = Path.DirectorySeparatorChar;
             string filePath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcBaseMapDownload.wld";
-                        
+            string jsonPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcSoapstones.json";
+            if (File.Exists(jsonPath)) File.Delete(jsonPath);
+
             Logger.Info("Attempting to download updated world template.");
             try
             {
