@@ -12,6 +12,7 @@ using Terraria.Chat;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp
 {
@@ -386,11 +387,7 @@ namespace tsorcRevamp
             }
         }
 
-        /*
-         * Vector2 newPosition = NPC.Center;
 
-            
-        */
         ///<summary> 
         ///Returns a vector pointing from a source, to a target, with a speed.
         ///Simplifies basic projectile, enemy dash, etc aiming calculations to a single call.
@@ -405,6 +402,80 @@ namespace tsorcRevamp
             distance.Normalize();
             return distance * speed;
         }
+
+        ///<summary> 
+        ///Returns a vector pointing from a source, to a target, with a speed.
+        ///Simplifies basic projectile, enemy dash, etc aiming calculations to a single call.
+        ///If "ballistic" is true it adjusts for gravity. Default is 0.1f, may be stronger or weaker for some projectiles though.
+        ///</summary>         
+        ///<param name="identity">The identity of the projectile</param>
+        ///<param name="owner">The owner of the projectile</param>
+        public static int GetLocalWhoAmIFromIdentity(int identity, int owner)
+        {
+            for(int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].identity == identity && Main.projectile[i].owner == owner && Main.projectile[i].active)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        public static int DecodeID(float encodedIdentity)
+        {
+            int encodedInt = (int)encodedIdentity;
+            int owner = encodedInt / 1000;
+            int identity = encodedInt % 1000;
+            return GetLocalWhoAmIFromIdentity(identity, owner);
+        }
+        
+        public static float EncodeID(Projectile proj)
+        {
+            return EncodeID(proj.identity, proj.owner);
+        }
+
+        public static float EncodeID(int identity, int owner)
+        {
+            return (1000 * owner) + identity;
+        }
+
+        /*
+        public static float CreateUniqueIdentifier()
+        {
+            float newIdentifier = Main.rand.NextFloat(float.MinValue, float.MaxValue);
+            bool failed = false;
+            do
+            {
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i].GetGlobalProjectile<tsorcGlobalProjectile>().UniqueIdentifier == newIdentifier)
+                    {
+                        newIdentifier = Main.rand.NextFloat(float.MinValue, float.MaxValue);
+                        failed = true;
+                        break;
+                    }
+                }
+            } while (failed);
+
+            return newIdentifier;
+        }
+        
+
+        public static int GetProjectileIndexFromIdentifier(float identifier)
+        {
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].GetGlobalProjectile<tsorcGlobalProjectile>().UniqueIdentifier == identifier)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }*/
+
 
         ///<summary> 
         ///Converts a Color to a floating point number

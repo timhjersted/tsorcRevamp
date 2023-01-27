@@ -98,7 +98,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             Projectile.position = visualplayercenter + offset;
             if (!spawnedTrail)
             {
-                trail = (CenterOfTheUniverseTrail)Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<CenterOfTheUniverseTrail>(), 0, 0, Projectile.owner, 0, Projectile.whoAmI).ModProjectile;
+                trail = (CenterOfTheUniverseTrail)Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<CenterOfTheUniverseTrail>(), 0, 0, Projectile.owner, 0, UsefulFunctions.EncodeID(Projectile)).ModProjectile;
                 spawnedTrail = true;
             }
 

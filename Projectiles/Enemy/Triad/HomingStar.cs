@@ -32,150 +32,161 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         }
 
         bool playedSound = false;
-        float homingAcceleration = 0.12f;
+        float homingAcceleration = 0;
         float rotationProgress = 0;
-        VFX.HomingStarTrail trail;
-        Vector2 initialVelocity;
+        float speedCap = 999;
         public override void AI()
         {
-            Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (!playedSound)
             {
-                initialVelocity = Projectile.velocity;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item43 with { Volume = 0.5f }, Projectile.Center);
 
-                trail = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.VFX.HomingStarTrail>(), Projectile.damage, 0, Main.myPlayer, Projectile.ai[1], Projectile.whoAmI).ModProjectile as VFX.HomingStarTrail;
-
-                //Basic, fired from the boss right at the player
-                if (Projectile.ai[0] == 0)
+                bool forceBlue = false;
+                float length = 700;
+                switch (Projectile.ai[0])
                 {
-                    homingAcceleration = 0.12f;
-                    if(Projectile.ai[1] == 0)
-                    {
-                        trail.trailMaxLength = 400;
-                    }
-                }
+                    //Default phase 1 firing
+                    case 0:
+                        homingAcceleration = 0.12f;
+                        length = 400;
+                        break;
 
-                //Accelerate downwards, do not despawn until impact
-                if (Projectile.ai[0] == 1)
-                {
-                    Projectile.timeLeft = 1000;
-                    float speedCap = 8;
-                    if (Projectile.velocity.Y < speedCap)
-                    {
-                        Projectile.velocity.Y += 1f;
-                    }
-                    homingAcceleration = 0;
+                    //Default phase 2 firing
+                    case 1:
+                        homingAcceleration = 0.12f;
+                        break;
+
+                    //Phase 1 starfall falling
+                    case 2:
+                        speedCap = 8;
+                        break;
+
+                    //Phase 1 starfall firing up
+                    case 3:
+                        speedCap = 8;
+                        break;
+
+                    //Phase 2 starfall falling
+                    case 4:
+                        speedCap = 8;
+                        break;
+
+                    //Phase 2 starfall firing up
+                    case 5:
+                        speedCap = 8;
+                        break;
+
+                    //Small blue ones in final stand part 1
+                    case 6:
+                        length = 150;
+                        forceBlue = true;
+                        break;
+
+                    //Bigger pink ones in final stand part 1
+                    case 7:
+                        length = 400;
+                        break;
+
+                    //Large blue ones in final stand part 2
+                    case 8:
+                        forceBlue = true;
+                        Projectile.timeLeft = 600;
+                        break;
+
+                    //Large pink ones in final stand part 2
+                    case 9:
+                        Projectile.timeLeft = 600;
+                        break;
                 }
 
                 //No homing for certain attacks
-                if (Projectile.ai[0] == 2)
+                if (forceBlue)
                 {
-                    homingAcceleration = 0;
-                    Projectile.timeLeft = 400;
+                    length *= -1;
                 }
 
-                //Lower homing in phase 2
-                if (Projectile.ai[0] == 3)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    homingAcceleration = 0.05f;
-                }
-                //Lower homing in finale
-                if (Projectile.ai[0] == 3)
-                {
-                    homingAcceleration = 0.09f;
+                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.VFX.HomingStarTrail>(), Projectile.damage, 0, Main.myPlayer, length, UsefulFunctions.EncodeID(Projectile));
                 }
 
                 playedSound = true;
             }
 
-            if (Projectile.ai[0] == 2)
+            if (Projectile.ai[0] == 2 || Projectile.ai[0] == 4)
             {
-                if (Projectile.ai[1] == 3)
+                if (Projectile.velocity.Y < speedCap)
                 {
-                    Projectile.velocity = Projectile.velocity.RotatedBy(0.0055f);
-                    trail.trailMaxLength = 400;
-                    if (Projectile.timeLeft < 155 && Projectile.ai[0] == 2)
-                    {
-
-
-                        float rotationSpeed = 0.05f;
-                        if (rotationProgress <= MathHelper.PiOver4)
-                        {
-                            Projectile.velocity = Projectile.velocity.RotatedBy(rotationSpeed);
-                            rotationProgress += rotationSpeed;
-                        }
-                        else
-                        {
-                            Projectile.velocity = Projectile.velocity.RotatedBy(0.0035f);
-                            if (trail != null)
-                            {
-                                trail.trailMaxLength = 700;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    Projectile.velocity = Projectile.velocity.RotatedBy(-0.0035f);
-                    if (Projectile.timeLeft < 190 && Projectile.ai[0] == 2)
-                    {
-
-
-                        float rotationSpeed = 0.05f;
-                        if (rotationProgress <= MathHelper.PiOver2 + MathHelper.PiOver4)
-                        {
-                            Projectile.velocity = Projectile.velocity.RotatedBy(rotationSpeed);
-                            rotationProgress += rotationSpeed;
-                        }
-                        else
-                        {
-                            Projectile.velocity = Projectile.velocity.RotatedBy(0.0035f);
-                            if (trail != null)
-                            {
-                                trail.trailMaxLength = 700;
-                            }
-                        }
-                    }
+                    Projectile.velocity.Y += 1f;
                 }
             }
 
-            //Curve counter-clockwise
-            if (Projectile.ai[0] == 4)
-            {
-                Projectile.velocity = Projectile.velocity.RotatedBy(0.0015f);
-            }
 
-            //Curve counter-clockwise
-            if (Projectile.ai[0] == 5)
-            {
-                homingAcceleration = 0;
-                Projectile.velocity = Projectile.velocity.RotatedBy(0.0085f);
-                trail.trailMaxLength = 700;
-                if (Projectile.timeLeft > 600)
-                {
-                    Projectile.timeLeft = 600;
-                }
-            }
+            
 
-            //Curve clockwise
+            //Small blue ones in final stand part 1
             if (Projectile.ai[0] == 6)
             {
-                homingAcceleration = 0;
-                Projectile.velocity = Projectile.velocity.RotatedBy(-0.0085f);
-                trail.trailMaxLength = 700;
-                if (Projectile.timeLeft > 600)
+                Main.NewText(Projectile.timeLeft);
+                Projectile.velocity = Projectile.velocity.RotatedBy(-0.0055f);
+                if (Projectile.timeLeft < 750)
                 {
-                    Projectile.timeLeft = 600;
+                    float rotationSpeed = -0.05f;
+                    if (rotationProgress <= MathHelper.PiOver2 + MathHelper.PiOver4)
+                    {
+                        Projectile.velocity = Projectile.velocity.RotatedBy(rotationSpeed);
+                        rotationProgress += rotationSpeed;
+                    }
+                    else
+                    {
+                        Projectile.velocity = Projectile.velocity.RotatedBy(-0.0035f);
+                    }
                 }
             }
 
+            //Bigger pink ones in final stand part 1
+            if (Projectile.ai[0] == 7)
+            {
+                Projectile.velocity = Projectile.velocity.RotatedBy(0.0055f);
+                return;
+                if (Projectile.timeLeft < 155)
+                {
+                    float rotationSpeed = 0.05f;
+                    if (rotationProgress <= MathHelper.PiOver4)
+                    {
+                        Projectile.velocity = Projectile.velocity.RotatedBy(rotationSpeed);
+                        rotationProgress += rotationSpeed;
+                    }
+                    else
+                    {
+                        Projectile.velocity = Projectile.velocity.RotatedBy(0.0035f);
+                    }
+                }
+            }
 
+            //Curve counter-clockwise (final stand part 1)
+            if (Projectile.ai[0] == 4)
+            {
+                //Projectile.velocity = Projectile.velocity.RotatedBy(0.0015f);
+            }
+
+            //Curve counter-clockwise (final stand part 2)
+            if (Projectile.ai[0] == 8)
+            {
+                Projectile.velocity = Projectile.velocity.RotatedBy(0.0085f);
+            }
+
+            //Curve clockwise (final stand part 2)
+            if (Projectile.ai[0] == 9)
+            {
+                Projectile.velocity = Projectile.velocity.RotatedBy(-0.0085f);
+            }
 
             //Stop homing after a few seconds
             if (Projectile.timeLeft > 800)
             {
+                Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
                 if (target != null)
                 {
                     //Perform homing

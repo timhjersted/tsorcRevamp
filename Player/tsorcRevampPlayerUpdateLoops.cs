@@ -1518,9 +1518,9 @@ namespace tsorcRevamp
                 estusPlayer.estusDrinkTimer = 0;
             }
 
-            if(Player.respawnTimer > 600 && !tsorcRevampWorld.BossAlive)
-            {
-                Player.respawnTimer = 600;
+            if(Player.respawnTimer > 240 && !tsorcRevampWorld.BossAlive)
+            {  
+                Player.respawnTimer = 240;
             }
         }
 

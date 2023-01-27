@@ -9,7 +9,7 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Faster Than Signt");
+            DisplayName.SetDefault("Faster Than Sight");
             Description.SetDefault("Latent illuminant energy lets you defy gravity!");
 
             Main.debuff[Type] = false;

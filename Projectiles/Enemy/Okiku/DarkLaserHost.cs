@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 {
                     for (int i = 0; i < 5; i++)
                     {
-                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Okiku.DarkLaser>(), Projectile.damage, 0, Main.myPlayer, i, Projectile.whoAmI);
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Okiku.DarkLaser>(), Projectile.damage, 0, Main.myPlayer, i, UsefulFunctions.EncodeID(Projectile));
                     }
                 }
                 instantiated = true;

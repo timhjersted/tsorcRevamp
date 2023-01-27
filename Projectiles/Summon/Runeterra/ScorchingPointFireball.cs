@@ -77,7 +77,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
             if (!spawnedTrail)
 			{
-				Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<ScorchingPointTrail>(), 0, 0, Projectile.owner, 0, Projectile.whoAmI);
+				Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<ScorchingPointTrail>(), 0, 0, Projectile.owner, 0, UsefulFunctions.EncodeID(Projectile));
 				spawnedTrail = true;
 			}
 

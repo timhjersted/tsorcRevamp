@@ -21,26 +21,36 @@ namespace tsorcRevamp.Projectiles
         }
 
         bool spawnedTrail;
-        float rotationProgress = 0;
         public override void AI()
         {
-            base.AI();
             Lighting.AddLight(Projectile.Center, TorchID.Cursed);
 
             Main.player[Projectile.owner].manaRegenDelay = 10;
 
             if (!spawnedTrail)
-            {                
+            {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.CursedFlamelashTrail>(), Projectile.damage, 0, Main.myPlayer, 0, Projectile.whoAmI);
+                    float encodedIdentity = UsefulFunctions.EncodeID(Projectile.identity, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.CursedFlamelashTrail>(), Projectile.damage, 0, Main.myPlayer, 0, encodedIdentity);
                 }
                 Projectile.damage = 0;
                 spawnedTrail = true;
                 Projectile.netUpdate = true;
             }
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                //Main.NewText("Client Host HostProjectile whoami: " + Projectile.whoAmI + " identity: " + Projectile.identity + " type: " + Projectile.type);
+            }
+            else
+            {
+                //UsefulFunctions.BroadcastText("Server Host HostProjectile whoami: " + Projectile.whoAmI + " identity: " + Projectile.identity + " type: " + Projectile.type);
+            }
 
-            UsefulFunctions.SmoothHoming(Projectile, Main.MouseWorld, 1f, 20, null, true, 0.2f);
+            if (Projectile.owner == Main.myPlayer)
+            {
+                UsefulFunctions.SmoothHoming(Projectile, Main.MouseWorld, 1f, 20, null, true, 0.2f);
+            }
         }
 
 

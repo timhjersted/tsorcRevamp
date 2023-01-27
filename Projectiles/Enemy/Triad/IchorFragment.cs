@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         {
             if (!spawnedTrail)
             {
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.VFX.IchorFragmentTrail>(), 0, 0, Main.myPlayer, 0, Projectile.whoAmI);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.VFX.IchorFragmentTrail>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.EncodeID(Projectile));
                 spawnedTrail = true;
             }
         }

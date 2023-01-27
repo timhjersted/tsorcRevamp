@@ -1112,20 +1112,19 @@ namespace tsorcRevamp
 
                 //Sync time change
                 case tsorcPacketID.SyncTimeChange: {
-                    if (Main.netMode == NetmodeID.Server) {
-                        Main.dayTime = reader.ReadBoolean();
-                        Main.time = reader.ReadInt32();
+                    Main.dayTime = reader.ReadBoolean();
+                    Main.time = reader.ReadInt32();
 
-                        if (Main.dayTime) {
-                            UsefulFunctions.BroadcastText("You shift time forward and a new day begins...", Color.Orange);
-                        }
-                        else {
-                            UsefulFunctions.BroadcastText("You shift time forward and a new night begins...", new Color(175, 75, 255));
-                        }
-
-                        //Sync it to clients
-                        NetMessage.SendData(MessageID.WorldData);
+                    if (Main.dayTime) {
+                        UsefulFunctions.BroadcastText("You shift time forward and a new day begins...", Color.Orange);
                     }
+                    else {
+                        UsefulFunctions.BroadcastText("You shift time forward and a new night begins...", new Color(175, 75, 255));
+                    }
+
+                    //Sync it to clients
+                    NetMessage.SendData(MessageID.WorldData);
+                    
                     break;
                 }
 

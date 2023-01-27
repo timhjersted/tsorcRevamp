@@ -261,7 +261,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.damage = 25;
             Projectile.hide = true;
 
-            LaserOrigin = ProjectileSource ? Main.projectile[HostIdentifier].position : Main.npc[HostIdentifier].position;
+            LaserOrigin = ProjectileSource ? Main.projectile[UsefulFunctions.DecodeID(HostIdentifier)].position : Main.npc[HostIdentifier].position;
         }
 
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
@@ -576,7 +576,7 @@ namespace tsorcRevamp.Projectiles
             }
             else
             {
-                if (!Main.projectile[HostIdentifier].active)
+                if (!Main.projectile[UsefulFunctions.DecodeID(HostIdentifier)].active)
                 {
                     Projectile.active = false;
                 }
@@ -773,7 +773,7 @@ namespace tsorcRevamp.Projectiles
             {
                 if (ProjectileSource)
                 {
-                    return Main.projectile[HostIdentifier].Center + LaserOffset;
+                    return Main.projectile[UsefulFunctions.DecodeID(HostIdentifier)].Center + LaserOffset;
                 }
                 else
                 {

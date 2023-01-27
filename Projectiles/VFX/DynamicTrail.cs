@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Graphics;
 using Terraria.ID;
@@ -86,7 +87,30 @@ namespace tsorcRevamp.Projectiles.VFX
         /// <summary>
         /// If this projectile is attached to a Projectile it is stored here
         /// </summary>
-        public Projectile hostProjectile;
+         
+        private int hostProjectileInternal = -1;
+        public Projectile hostProjectile
+        {
+            get
+            {
+                //This means it does not need to re-decode this every time this variable is used
+                if(hostProjectileInternal != -1)
+                {
+                    return Main.projectile[hostProjectileInternal];
+                }
+
+                int localWhoAmI = UsefulFunctions.DecodeID(HostIdentifier);
+                if (localWhoAmI == -1)
+                {
+                    return null;
+                }
+                else
+                {
+                    hostProjectileInternal = localWhoAmI;
+                    return Main.projectile[hostProjectileInternal];
+                }
+            }
+        }
         /// <summary>
         /// The effect this trail uses.
         /// Set its parameters by overriding SetEffectParameters
@@ -104,17 +128,17 @@ namespace tsorcRevamp.Projectiles.VFX
         public bool NPCSource;
 
         /// <summary>
-        /// The index of the host in the NPC or Projectile array
+        /// The unique identifier of the host projectile (or whoAmI of the host NPC)
         /// </summary>
-        public int hostIndex
+        public float HostIdentifier
         {
-            get => (int)Projectile.ai[1];
+            get => Projectile.ai[1];
         }
 
         /// <summary>
         /// A reference to the host entity
         /// </summary>
-        public Entity hostEntity
+        public Entity HostEntity
         {
             get
             {
@@ -153,6 +177,7 @@ namespace tsorcRevamp.Projectiles.VFX
         float maxLength;
         public override void AI()
         {
+            
             if (!initialized)
             {
                  Initialize();
@@ -160,21 +185,32 @@ namespace tsorcRevamp.Projectiles.VFX
 
             if (HostEntityValid())
             {
-                Projectile.Center = hostEntity.Center;
+                if (!NPCSource)
+                {
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                    {
+                        //Main.NewText("Client Trail HostProjectile whoami: " + hostProjectile.whoAmI + " identity: " + hostProjectile.identity + " type: " + hostProjectile.type + " Host Center:" + HostEntity.Center + " trail center: " + Projectile.Center);
+                    }
+                    else
+                    {
+                        //UsefulFunctions.BroadcastText("Server Trail HostProjectile whoami: " + hostProjectile.whoAmI + " identity: " + hostProjectile.identity + " type: " + hostProjectile.type + " Host Center:" + HostEntity.Center + " trail center: " + Projectile.Center);
+                    }
+                }
+                Projectile.Center = HostEntity.Center;
 
                 //Don't add new trail segments if it has not travelled far enough
-                if (Vector2.Distance(lastPosition, hostEntity.Center) > 1f)
+                if (Vector2.Distance(lastPosition, HostEntity.Center) > 1f)
                 {
-                    lastPosition = hostEntity.Center;
-                    trailPositions.Add(hostEntity.Center);
-                    trailRotations.Add(hostEntity.velocity.ToRotation());
+                    lastPosition = HostEntity.Center;
+                    trailPositions.Add(HostEntity.Center);
+                    trailRotations.Add(HostEntity.velocity.ToRotation());
 
                 }
 
                 if (trailPositions.Count > 2)
                 {
-                    trailPositions[trailPositions.Count - 1] = hostEntity.Center;
-                    trailRotations[trailRotations.Count - 1] = hostEntity.velocity.ToRotation();
+                    trailPositions[trailPositions.Count - 1] = HostEntity.Center;
+                    trailRotations[trailRotations.Count - 1] = HostEntity.velocity.ToRotation();
 
                     trailCurrentLength = CalculateLength();
 
@@ -239,7 +275,9 @@ namespace tsorcRevamp.Projectiles.VFX
             {
                 fadeOut = trailCurrentLength / (float)maxLength;
                 hostNPC = null;
-                hostProjectile = null;
+                Projectile.ai[1] = -1;
+                hostProjectileInternal = -1;
+
                 if (trailPositions.Count > 3)
                 {
                     trailPositions.RemoveAt(0);
@@ -277,22 +315,47 @@ namespace tsorcRevamp.Projectiles.VFX
 
         public float CalculateLength()
         {
+            bool invalidPosition = false;
             float calculatedLength = 0;
             for (int i = 0; i < trailPositions.Count - 1; i++)
             {
-                calculatedLength += Vector2.Distance(trailPositions[i], trailPositions[i + 1]);
+                float extraDistance = Vector2.Distance(trailPositions[i], trailPositions[i + 1]);
+                if(extraDistance > 30)
+                {
+                    hostNPC = null;
+                    Projectile.ai[1] = -1;
+                    hostProjectileInternal = -1;
+                    invalidPosition = true;
+                    ModContent.GetInstance<tsorcRevamp>().Logger.Warn("Fuckery is afoot. A trail probably changed hosts (Bad!!)");
+                    //throw new Exception("Fuckery is afoot. A trail probably changed hosts (Bad!!)");
+                }
+                calculatedLength += extraDistance;
             }
 
+            //If it found an invalid position then remove it and recalculate length
+            if (invalidPosition)
+            {
+                if (trailPositions.Count > 3)
+                {
+                    trailPositions.RemoveAt(0);
+                    trailRotations.RemoveAt(0);
+                    calculatedLength = CalculateLength();
+                }
+                else
+                {
+                    Projectile.Kill();
+                }
+            }
             return calculatedLength;
         }
 
         public bool HostEntityValid()
         {
-            if (hostEntity == null)
+            if (HostEntity == null)
             {
                 return false;
             }
-            if (!hostEntity.active)
+            if (!HostEntity.active)
             {
                 return false;
             }
@@ -319,17 +382,23 @@ namespace tsorcRevamp.Projectiles.VFX
 
             if (hostNPC == null && NPCSource)
             {
-                hostNPC = Main.npc[hostIndex];
+                hostNPC = Main.npc[(int)HostIdentifier];
                 hostEntityType = hostNPC.type;
             }
-            if (hostProjectile == null && !NPCSource)
+            if (!NPCSource)
             {
-                hostProjectile = Main.projectile[hostIndex];
-                hostEntityType = hostProjectile.type;
+                if (hostProjectile != null)
+                {
+                    hostEntityType = hostProjectile.type;
+                }
+                else
+                {
+                    hostEntityType = -1;
+                }
             }
             initialized = true;            
         }
-
+               
         public virtual float WidthFunction(float progress)
         {
             return trailWidth;

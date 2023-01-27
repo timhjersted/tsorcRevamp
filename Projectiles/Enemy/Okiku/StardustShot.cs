@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 {
                     Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.player[(int)Projectile.ai[0]].Center, 5) + Main.rand.NextVector2Circular(5, 5);
                     targetVector.Normalize();
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, targetVector, ModContent.ProjectileType<StardustBeam>(), Projectile.damage, 0, Main.myPlayer, Projectile.ai[1], Projectile.whoAmI);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, targetVector, ModContent.ProjectileType<StardustBeam>(), Projectile.damage, 0, Main.myPlayer, Projectile.ai[1], UsefulFunctions.EncodeID(Projectile));
                 }
                 Projectile.timeLeft = (int)Projectile.ai[1] + 160;
                 initialized = true;

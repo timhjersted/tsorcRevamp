@@ -93,7 +93,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.position, fireDirection, ModContent.ProjectileType<Projectiles.Enemy.Okiku.SolarBeam>(), Projectile.damage, .5f, Main.myPlayer, DetonationTime, Projectile.whoAmI);
+                        Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.position, fireDirection, ModContent.ProjectileType<Projectiles.Enemy.Okiku.SolarBeam>(), Projectile.damage, .5f, Main.myPlayer, DetonationTime, UsefulFunctions.EncodeID(Projectile));
                     }
                 }
             }

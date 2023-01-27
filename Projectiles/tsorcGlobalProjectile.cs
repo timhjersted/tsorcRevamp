@@ -1,14 +1,59 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 using tsorcRevamp.Projectiles.Pets;
+using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles
 {
     class tsorcGlobalProjectile : GlobalProjectile
     {
+        /*
+        public override bool InstancePerEntity => true;
+        public float UniqueIdentifier = -1;
+
+        public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter binaryWriter)
+        {
+            binaryWriter.Write(UniqueIdentifier);
+            base.SendExtraAI(projectile, bitWriter, binaryWriter);
+        }
+        public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader)
+        {
+            UniqueIdentifier = binaryReader.ReadSingle();
+            base.ReceiveExtraAI(projectile, bitReader, binaryReader);
+        }
+        public override void SetDefaults(Projectile projectile)
+        {
+            if(Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                UniqueIdentifier = UsefulFunctions.CreateUniqueIdentifier();
+            }
+            base.SetDefaults(projectile);
+        }
+
+        public override void OnSpawn(Projectile projectile, IEntitySource source)
+        {
+            if (projectile.ModProjectile is DynamicTrail) {
+                if (source is EntitySource_Parent { Entity: Projectile } projParent)
+                {
+                    projectile.ai[1] = ((Projectile)projParent.Entity).GetGlobalProjectile<tsorcGlobalProjectile>().UniqueIdentifier;
+                    projectile.netUpdate = true;
+                }
+                else if (source is EntitySource_Parent { Entity: NPC } NPCparent)
+                {
+                    projectile.ai[1] = NPCparent.Entity.whoAmI;
+                    projectile.netUpdate = true;
+                }
+            }
+
+            base.OnSpawn(projectile, source);
+        }*/
+
         public override bool PreAI(Projectile projectile)
         {
             if (projectile.owner < Main.maxPlayers && Main.player[projectile.owner].active)

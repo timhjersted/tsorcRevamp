@@ -35,45 +35,41 @@ namespace tsorcRevamp.Projectiles.VFX
             NPCSource = false;
             collisionFrequency = 5;
             trailYOffset = 50;
-            trailMaxLength = 750;
+            trailMaxLength = 700;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         float transitionTimer;
-        bool PreSetColor = false;
-        bool ColorOverride = false;
+        bool ForcedPink = false;
+        bool ForcedBlue = false;
         public override void AI()
         {
+
             base.AI();
             timeFactor++;
-            int? catIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Cataluminance>());
-            if(catIndex != null)
+
+            if (Projectile.ai[0] < 0)
             {
-                if (Main.npc[catIndex.Value].life < Main.npc[catIndex.Value].lifeMax / 2f)
+                ForcedBlue = true;
+            }
+
+            trailMaxLength = Math.Abs(Projectile.ai[0]);
+
+
+            int? catIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Cataluminance>());
+            if (catIndex != null)
+            {
+                if (Main.npc[catIndex.Value].life < Main.npc[catIndex.Value].lifeMax * 2f / 3f)
                 {
                     if (Projectile.timeLeft == 99999999)
                     {
-                        PreSetColor = true;
+                        ForcedPink = true;
                     }
                     else
                     {
                         transitionTimer++;
                     }
                 }
-            }
-            if (Projectile.ai[0] == 1)
-            {
-                PreSetColor = true;
-            }
-            if (Projectile.ai[0] == 2)
-            {
-                trailMaxLength = 200;
-                ColorOverride = true;
-            }
-            if (Projectile.ai[0] > 3)
-            {
-                ColorOverride = true;
-                trailMaxLength = Projectile.ai[0];
             }
         }
 
@@ -94,27 +90,34 @@ namespace tsorcRevamp.Projectiles.VFX
         int ꙮ; //Note: ​​̵̲̹̞͘​̶̝̥̰̓͐̽​̶̛͍͌̑​̴̜͉̀​̵̨̦̜̈́̕​̴̞̰̖̆​̸̒͜​̸͚̖͌̎​̸̝̊͠​̵̩̒͗͝​̵̟̩͐
         public override void SetEffectParameters(Effect effect)
         {
+
+
             float intensity = 0.07f;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             float trueFadeOut = fadeOut;
             Color shaderColor = new Color(0.1f, 0.5f, 1f);
-            if (ColorOverride)
+            if (ForcedBlue)
             {
                 shaderColor = new Color(0.1f, 0.5f, 1f);
             }
-            else if (PreSetColor)
+            else if (ForcedPink)
             {
                 shaderColor = new Color(1f, 0.3f, 0.85f) * 0.5f;
                 intensity = 0.1f;
             }
-            else if (Projectile.ai[0] != 1 && transitionTimer <= 120)
+            else if (transitionTimer <= 120)
             {
                 shaderColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), transitionTimer / 120);
                 trueFadeOut += trueFadeOut * (transitionTimer / 120);
                 intensity = 0.07f + 0.03f * (transitionTimer / 120);
             }
+            else
+            {
+                shaderColor = new Color(1f, 0.3f, 0.85f);
+            }
+
             ꙮ += 1;
-            //collisionPadding = (int)trailMaxLength / 10;
+
             collisionEndPadding = (int)trailCurrentLength / 30;
             visualizeTrail = false;
 
