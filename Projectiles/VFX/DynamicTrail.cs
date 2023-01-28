@@ -122,6 +122,12 @@ namespace tsorcRevamp.Projectiles.VFX
         public bool visualizeTrail = false;
 
         /// <summary>
+        /// Enable this to make the projectile draw behind NPCs
+        /// </summary>
+        public bool drawBehindNPCs = false;
+
+
+        /// <summary>
         /// If Projectile.ai[0] is set to 1, then this projectile is attached to an NPC
         /// Otherwise, it is attached to another Projectile
         /// </summary>
@@ -320,7 +326,7 @@ namespace tsorcRevamp.Projectiles.VFX
             for (int i = 0; i < trailPositions.Count - 1; i++)
             {
                 float extraDistance = Vector2.Distance(trailPositions[i], trailPositions[i + 1]);
-                if(extraDistance > 30)
+                if(extraDistance > 60)
                 {
                     hostNPC = null;
                     Projectile.ai[1] = -1;
@@ -452,6 +458,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
         BasicEffect basicEffect;
         Texture2D starTexture;
+        public bool additiveContext = false;
         public override bool PreDraw(ref Color lightColor)
         {
             if(trailPositions == null)
@@ -459,10 +466,19 @@ namespace tsorcRevamp.Projectiles.VFX
                 return false;
             }
 
-           
+            if (!additiveContext)
+            {
+                return false;
+            }
 
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            if (drawBehindNPCs)
+            {
+                if(Main.spriteBatch.Name != null)
+                {
+                    Main.spriteBatch.End();
+                }
+            }
+
 
             //If no custom effect is specified, just use BasicEffect as a placeholder
             if (customEffect == null)
@@ -490,11 +506,13 @@ namespace tsorcRevamp.Projectiles.VFX
             vertexStrip.PrepareStrip(trailPositions.ToArray(), trailRotations.ToArray(), ColorFunction, WidthFunction, -Main.screenPosition, includeBacksides: true);
             vertexStrip.DrawTrail();
 
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
+            
             if (visualizeTrail)
             {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
                 if (starTexture == null || starTexture.IsDisposed)
                 {
                     starTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
@@ -513,6 +531,8 @@ namespace tsorcRevamp.Projectiles.VFX
                     Main.spriteBatch.Draw(starTexture, trailPositions[i] - Main.screenPosition, starSourceRectangle, Color.White, trailRotations[i], starOrigin, Projectile.scale * 0.75f, SpriteEffects.None, 0);
                     Main.spriteBatch.Draw(starTexture, trailPositions[i] - Main.screenPosition - new Vector2(CollisionWidthFunction((float)i / (float)trailPositions.Count), 0).RotatedBy(trailRotations[i] + MathHelper.PiOver2), starSourceRectangle, Color.White, trailRotations[i], starOrigin, Projectile.scale * scaleFactor, SpriteEffects.None, 0);
                 }
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             }
 
             return false;

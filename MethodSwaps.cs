@@ -22,6 +22,7 @@ using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.UI;
 using Terraria.DataStructures;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
+using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp
 {
@@ -87,13 +88,93 @@ namespace tsorcRevamp
             On.Terraria.Player.VanillaPreUpdateInventory += Player_VanillaPreUpdateInventory;
 
             On.Terraria.Main.Draw += Main_Draw;
+
+            On.Terraria.Main.DrawProjectiles += Main_DrawProjectiles;
+
+            On.Terraria.Main.DrawCachedProjs += Main_DrawCachedProjs;
         }
 
-        
+        public static bool hasDrawnBehindProjTrails = false;
+        public static bool hasDrawnBehindNPCs = false;
+
+        private static void Main_DrawCachedProjs(On.Terraria.Main.orig_DrawCachedProjs orig, Main self, List<int> projCache, bool startSpriteBatch)
+        {
+            orig(self, projCache, startSpriteBatch);
+
+            if (!hasDrawnBehindNPCs)
+            {
+                hasDrawnBehindNPCs = true;
+                return;
+            }
+
+            if (Main.IsGraphicsDeviceAvailable && !hasDrawnBehindProjTrails)
+            {
+                if(startSpriteBatch == false)
+                {
+                    Main.spriteBatch.End();
+                }
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i] != null && Main.projectile[i].active)
+                    {
+                        if (Main.projectile[i].ModProjectile is DynamicTrail)
+                        {
+                            DynamicTrail trail = (DynamicTrail)Main.projectile[i].ModProjectile;
+                            if (trail.drawBehindNPCs)
+                            {
+                                trail.additiveContext = true;
+                                Color color = Color.White;
+                                trail.PreDraw(ref color);
+                                trail.additiveContext = false;
+                            }
+                        }
+                    }
+                }
+                Main.spriteBatch.End();
+                if(startSpriteBatch == false)
+                {
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
+                }
+                hasDrawnBehindProjTrails = true;
+            }
+        }
+
+        private static void Main_DrawProjectiles(On.Terraria.Main.orig_DrawProjectiles orig, Main self)
+        {
+            orig(self);
+
+            if (Main.IsGraphicsDeviceAvailable)
+            {
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i] != null && Main.projectile[i].active)
+                    {
+                        if (Main.projectile[i].ModProjectile is DynamicTrail)
+                        {
+                            DynamicTrail trail = (DynamicTrail)Main.projectile[i].ModProjectile;
+                            if (!trail.drawBehindNPCs)
+                            {
+                                trail.additiveContext = true;
+                                Color color = Color.White;
+                                trail.PreDraw(ref color);
+                                trail.additiveContext = false;
+                            }
+                        }
+                    }
+                }
+                Main.spriteBatch.End();
+            }
+        }
+
+
         //Changing the rendertarget destroys everything currently in it
         //So we have to do it here, before the game draws anything else
         private static void Main_Draw(On.Terraria.Main.orig_Draw orig, Main self, GameTime gameTime)
         {
+            hasDrawnBehindProjTrails = false;
+            hasDrawnBehindNPCs = false;
             if (Main.IsGraphicsDeviceAvailable)
             {
                 for (int i = 0; i < Main.maxProjectiles; i++)
@@ -137,6 +218,8 @@ namespace tsorcRevamp
                                 lightning.CreateRenderTarget();
                             }
                         }
+
+
                     }
                 }
             }

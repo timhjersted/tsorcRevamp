@@ -27,16 +27,17 @@ namespace tsorcRevamp.Projectiles.VFX
             Projectile.penetrate = -1;
             Projectile.hostile = true;
             Projectile.friendly = false;
+
             trailWidth = 45;
             trailPointLimit = 900;
             trailMaxLength = 9999999;
             Projectile.hide = true;
             collisionPadding = 50;
-            NPCSource = true;
-           
+            NPCSource = true;           
             trailCollision = true;
             collisionFrequency = 5;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            drawBehindNPCs = true;
         }
 
         float timer = 0;
@@ -129,11 +130,6 @@ namespace tsorcRevamp.Projectiles.VFX
         public override float CollisionWidthFunction(float progress)
         {
             return WidthFunction(progress) - 55;
-        }
-
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
-        {
-            behindNPCs.Add(index);
         }
 
         bool PreSetTrail = false;
