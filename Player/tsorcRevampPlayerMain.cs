@@ -883,10 +883,10 @@ namespace tsorcRevamp
                 {
                     owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
                 }
-                if (!(Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>()) && Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>()))
+                /*if (!(Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>()) && Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>()))
                 {
                     owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
-                }
+                }*/
 
 
 
@@ -960,7 +960,7 @@ namespace tsorcRevamp
                 }
                 Dust.NewDustDirect(Player.Center, 10, 10, DustID.FlameBurst, 0.5f, 0.5f, 0, Color.Firebrick, 0.5f);
             }
-            if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>())
+            /*if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>())
             {
                 if (Main.keyState.IsKeyDown(Keys.LeftShift))
                 {
@@ -975,7 +975,7 @@ namespace tsorcRevamp
                     Projectiles.Summon.Runeterra.CenterOfTheUniverseStar.circleRad3 += 1.5f;
                 }
                 Dust.NewDustDirect(Player.Center, 10, 10, DustID.MagicMirror, 0.5f, 0.5f, 0, Color.Magenta, 0.5f);
-            }
+            }*/
         }
 
         //On hit, subtract the mana cost and disable natural mana regen for a short period

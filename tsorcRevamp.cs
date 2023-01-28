@@ -1295,13 +1295,13 @@ namespace tsorcRevamp
                     ModContent.ProjectileType<InterstellarVesselShip>(),
                     0.5f
                     );
-                summonersAssociation.Call(
+                /*summonersAssociation.Call(
                     "AddMinionInfo",
                     ModContent.ItemType<CenterOfTheUniverse>(),
                     ModContent.BuffType<CenterOfTheUniverseBuff>(),
                     ModContent.ProjectileType<CenterOfTheUniverseStar>(),
                     0.5f
-                    );
+                    );*/
                 summonersAssociation.Call(
                     "AddMinionInfo",
                     ModContent.ItemType<TetsujinRemote>(),
