@@ -261,7 +261,13 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             rotationTarget = Vector2.Normalize(NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
             rotationSpeed = 0.05f;
-            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(750, -350), 0.5f, 20, target.velocity);
+
+            Vector2 homingTarget = new Vector2(750, -350);
+            if(NPC.Center.X < target.Center.X)
+            {
+                homingTarget.X *= -1;
+            }
+            UsefulFunctions.SmoothHoming(NPC, target.Center + homingTarget, 0.5f, 20, target.velocity);
 
             if (PhaseTwo)
             {

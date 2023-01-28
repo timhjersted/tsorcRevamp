@@ -232,7 +232,12 @@ namespace tsorcRevamp.NPCs.Bosses
         //Phase 2: Flames leave a damaging trail, or maybe it fires 8 in all directions? Unsure
         void Firing()
         {
-            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(600, 300), 1f, 20);
+            Vector2 homingTarget = new Vector2(600, 300);
+            if (NPC.Center.X < target.Center.X)
+            {
+                homingTarget.X *= -1;
+            }
+            UsefulFunctions.SmoothHoming(NPC, target.Center + homingTarget, 1f, 20);
             NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
 
             if (PhaseTwo)
@@ -276,7 +281,14 @@ namespace tsorcRevamp.NPCs.Bosses
         void IchorTrackers()
         {
             NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-            UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(-750, 350), 0.5f, 20);
+
+
+            Vector2 homingTarget = new Vector2(750, 350);
+            if (NPC.Center.X < target.Center.X)
+            {
+                homingTarget.X *= -1;
+            }
+            UsefulFunctions.SmoothHoming(NPC, target.Center + homingTarget, 0.5f, 20);
             
             if(MoveTimer < 120)
             {
