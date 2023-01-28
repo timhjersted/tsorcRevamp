@@ -90,10 +90,7 @@ namespace tsorcRevamp.Projectiles.VFX
         int ꙮ; //Note: ​​̵̲̹̞͘​̶̝̥̰̓͐̽​̶̛͍͌̑​̴̜͉̀​̵̨̦̜̈́̕​̴̞̰̖̆​̸̒͜​̸͚̖͌̎​̸̝̊͠​̵̩̒͗͝​̵̟̩͐
         public override void SetEffectParameters(Effect effect)
         {
-
-
             float intensity = 0.07f;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             float trueFadeOut = fadeOut;
             Color shaderColor = new Color(0.1f, 0.5f, 1f);
             if (ForcedBlue)

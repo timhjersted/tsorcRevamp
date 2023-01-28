@@ -128,7 +128,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             //Small blue ones in final stand part 1
             if (Projectile.ai[0] == 6)
             {
-                Main.NewText(Projectile.timeLeft);
                 Projectile.velocity = Projectile.velocity.RotatedBy(-0.0055f);
                 if (Projectile.timeLeft < 750)
                 {
@@ -150,25 +149,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             {
                 Projectile.velocity = Projectile.velocity.RotatedBy(0.0055f);
                 return;
-                if (Projectile.timeLeft < 155)
-                {
-                    float rotationSpeed = 0.05f;
-                    if (rotationProgress <= MathHelper.PiOver4)
-                    {
-                        Projectile.velocity = Projectile.velocity.RotatedBy(rotationSpeed);
-                        rotationProgress += rotationSpeed;
-                    }
-                    else
-                    {
-                        Projectile.velocity = Projectile.velocity.RotatedBy(0.0035f);
-                    }
-                }
-            }
-
-            //Curve counter-clockwise (final stand part 1)
-            if (Projectile.ai[0] == 4)
-            {
-                //Projectile.velocity = Projectile.velocity.RotatedBy(0.0015f);
             }
 
             //Curve counter-clockwise (final stand part 2)

@@ -55,11 +55,6 @@ namespace tsorcRevamp.Projectiles.VFX
         Vector2 samplePointOffset2;
         public override void SetEffectParameters(Effect effect)
         {
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
-            effect.Parameters["length"].SetValue(trailCurrentLength);
             float hostVel = 0;
             if (hostProjectile != null)
             {
@@ -84,6 +79,8 @@ namespace tsorcRevamp.Projectiles.VFX
             samplePointOffset2.Y %= 1;
             collisionEndPadding = trailPositions.Count / 2;
 
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
+            effect.Parameters["length"].SetValue(trailCurrentLength);
             effect.Parameters["samplePointOffset1"].SetValue(samplePointOffset1);
             effect.Parameters["samplePointOffset2"].SetValue(samplePointOffset2);
             effect.Parameters["fadeOut"].SetValue(fadeOut);

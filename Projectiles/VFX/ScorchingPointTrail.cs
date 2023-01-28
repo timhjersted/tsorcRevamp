@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
             trailCollision = true;
             collisionFrequency = 5;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         float timer = 0;
@@ -61,8 +61,6 @@ namespace tsorcRevamp.Projectiles.VFX
         {
             trailWidth = 45;
             trailMaxLength = 400;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
             effect.Parameters["length"].SetValue(trailCurrentLength);

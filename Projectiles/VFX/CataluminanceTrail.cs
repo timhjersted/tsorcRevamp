@@ -141,7 +141,6 @@ namespace tsorcRevamp.Projectiles.VFX
             collisionPadding = 8;
             collisionEndPadding = trailPositions.Count / 24;
             trailWidth = 100;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
             //I do it like this so it retains its color state even if the host NPC dies or despawns
             if (!FinalStandMode && !PreSetTrail && hostNPC != null && hostNPC.active && hostNPC.life < (hostNPC.lifeMax * 2f / 3f) && transitionTimer <= 120)
