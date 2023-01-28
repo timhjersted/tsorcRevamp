@@ -38,8 +38,6 @@ namespace tsorcRevamp.Projectiles.VFX
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/InterstellarVessel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
-        float timer = 0;
-        float transitionTimer = 0;
         public override void AI()
         {
             base.AI();
@@ -71,8 +69,6 @@ namespace tsorcRevamp.Projectiles.VFX
             behindProjectiles.Add(index);
         }
 
-        bool pinkTrail = false;
-        Color trailColor = new Color(2.42f, 1.25f, 0.12f);
         Vector2 samplePointOffset1;
         Vector2 samplePointOffset2;
         float trailIntensity = 1;

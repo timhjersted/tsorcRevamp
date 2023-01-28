@@ -37,8 +37,6 @@ namespace tsorcRevamp.Projectiles.VFX
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
-        float timer = 0;
-        float transitionTimer = 0;
         public override bool? CanCutTiles()
         {
             return false;
@@ -53,8 +51,7 @@ namespace tsorcRevamp.Projectiles.VFX
         {
             behindProjectiles.Add(index);
         }
-        bool pinkTrail = false;
-        Color trailColor = new Color(2.57f, 0.55f, 0.24f);
+
         Vector2 samplePointOffset1;
         Vector2 samplePointOffset2;
         public override void SetEffectParameters(Effect effect)
@@ -94,23 +91,6 @@ namespace tsorcRevamp.Projectiles.VFX
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
             effect.Parameters["shaderColor"].SetValue(Color.Orange.ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
-            return;
-
-            /*
-             * 
-float3 Color;
-float3 SecondaryColor;
-float FadeOut;
-float Time;
-float2 ProjectileSize;
-float TextureSize;
-             * */
-            effect.Parameters["TextureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
-            effect.Parameters["FadeOut"].SetValue(fadeOut);
-            effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
-            effect.Parameters["Color"].SetValue(Color.Blue.ToVector4());
-            effect.Parameters["SecondaryColor"].SetValue(Color.White.ToVector4());
-            effect.Parameters["ProjectileSize"].SetValue(200);
         }
     }
 }

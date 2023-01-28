@@ -126,7 +126,7 @@ namespace tsorcRevamp.NPCs.Special
         
         public static Texture2D[] textures;
         public static Texture2D[] outlines;
-        public static ArmorShaderData data;
+        //public static ArmorShaderData data;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)        
         {
             if(bossVisions == null)
@@ -148,11 +148,12 @@ namespace tsorcRevamp.NPCs.Special
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
+                /*
                 //Apply the shader, caching it as well
-               // if (data == null)
+                if (data == null)
                 {
-                    //data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/MarilithIntro", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "MarilithIntroPass");
-                }
+                    data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/MarilithIntro", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "MarilithIntroPass");
+                }*/
 
                 if (textures[i] == null || textures[i].IsDisposed)
                 {

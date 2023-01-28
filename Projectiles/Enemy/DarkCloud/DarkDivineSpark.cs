@@ -52,13 +52,6 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             Additive = true;
         }
 
-
-
-        Player targetPlayer;
-        float rotDirection;
-
-        bool rapid = false;
-        bool initialized = false;
         bool initializedParameters = false;
         int direction = 0;
         public override void AI()

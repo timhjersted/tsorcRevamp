@@ -444,8 +444,6 @@ namespace tsorcRevamp.Projectiles.VFX
             return false;
         }
 
-        int ꙮ;
-
         public static Matrix GetWorldViewProjectionMatrix()
         {
             Matrix view = Matrix.CreateLookAt(Vector3.Zero, Vector3.UnitZ, Vector3.Up) * Matrix.CreateTranslation(Main.graphics.GraphicsDevice.Viewport.Width / 2, Main.graphics.GraphicsDevice.Viewport.Height / -2, 0) * Matrix.CreateRotationZ(MathHelper.Pi) * Matrix.CreateScale(Main.GameViewMatrix.Zoom.X, Main.GameViewMatrix.Zoom.Y, 1f);

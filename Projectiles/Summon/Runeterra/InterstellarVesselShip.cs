@@ -8,6 +8,7 @@ using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra;
 using tsorcRevamp.Projectiles.VFX;
 using Microsoft.Xna.Framework.Graphics;
+using System.IO;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
@@ -63,8 +64,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		{
 			InterstellarVesselControls.projectiles.Remove(this);
 		}
-		Vector2 lastPos;
-		InterstellarVesselTrail trail;
+
 		public override void AI()
 		{
 			Player owner = Main.player[Projectile.owner];
@@ -95,13 +95,23 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Projectile.position = visualplayercenter + offset;            
 			if (!spawnedTrail)
 			{
-				trail = (InterstellarVesselTrail)Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<InterstellarVesselTrail>(), 0, 0, Projectile.owner, 0, UsefulFunctions.EncodeID(Projectile)).ModProjectile;
+				Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<InterstellarVesselTrail>(), 0, 0, Projectile.owner, 0, UsefulFunctions.EncodeID(Projectile));
 				spawnedTrail = true;
 			}
 
             Visuals();
 		}
-		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+			//writer.Write(angularSpeed2);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+			//angularSpeed2 = reader.ReadSingle();
+		}
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 		{
 			float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
 			if (distance < Projectile.height * 1.2f && distance > Projectile.height * 1.2f - 32)

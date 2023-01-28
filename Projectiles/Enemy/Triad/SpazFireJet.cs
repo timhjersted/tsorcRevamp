@@ -38,24 +38,15 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             Projectile.height = 250;
         }
 
-        float chargeProgress;
         float laserWidth = 30;
-        float firingTime = 216;
 
-        SlotId soundSlotID;
-        SoundStyle LaserSoundStyle = new SoundStyle("tsorcRevamp/Sounds/Custom/ChargeBeam") with { PlayOnlyIfFocused = false, MaxInstances = 0 };
-        bool soundPaused;
-        ActiveSound laserSound;
         bool initialized;
-        float initialTimeLeft = 0;
         float timeFactor;
         List<Vector2> lastPositions;
         List<float> lastRotations;
         public override void AI()
         {
-            if(Main.GameUpdateCount % 8 == 0)
-            {
-            }
+
             Projectile.Center = Main.LocalPlayer.Center;
             Projectile.rotation = MathHelper.Pi + (Main.LocalPlayer.Center - Main.MouseWorld).ToRotation();
 
@@ -69,7 +60,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             if (!initialized)
             {
                 SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, Projectile.Center);
-                initialTimeLeft = Projectile.timeLeft;
                 initialized = true;
                 lastPositions = new List<Vector2>();
                 lastRotations = new List<float>();

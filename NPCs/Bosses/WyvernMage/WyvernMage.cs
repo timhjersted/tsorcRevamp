@@ -266,7 +266,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
         public void WyvernMageTeleport()
         {
-            if (nextWarpPoint != null)
+            if (nextWarpPoint != Vector2.Zero)
             {
                 //Check if the player has line of sight to the warp point. If not, rotate it by 90 degrees and try again. After 4 checks, give up.
                 //Lazy way to do this, but it's deterministic and works for 99% of cases so it works.
