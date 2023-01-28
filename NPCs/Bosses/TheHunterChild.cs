@@ -14,12 +14,12 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
-        }
-
+            DisplayName.SetDefault("The Hunter's child");
+        } 
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 7500;
+            NPC.lifeMax = 6000;
             NPC.damage = 105;
             NPC.defense = 26;
             NPC.knockBackResist = 0f;
@@ -104,7 +104,15 @@ namespace tsorcRevamp.NPCs.Bosses
                 player.AddBuff(BuffID.Hunter, 60, false);
             }
 
-          
+            bool hunterAlive = NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheHunter>());
+
+            
+            if (!hunterAlive)
+            {
+                if(NPC.life >= 501)
+                { NPC.life = 500; } 
+            }
+
             if (NPC.ai[3] == 0)
             {
                 //NPC.alpha = 200;
@@ -158,7 +166,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     //This exists to delay switching to the 'charging' pattern for 150 frames, because otherwise the way the sprouters linger can often make the first charge impossible to dodge
                     NPC.velocity.X *= 0.95f;
                     NPC.velocity.Y *= 0.95f;
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 131, Main.rand.Next(-1, 1), Main.rand.Next(-1, 1), 200, default, 0.5f);
+                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 131, Main.rand.Next(-1, 1), Main.rand.Next(-10, 1), 200, default, 0.5f);
                 }
                 else if (NPC.ai[2] >= 950 && NPC.ai[2] < 1350)
                 {

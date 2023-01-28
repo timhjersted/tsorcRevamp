@@ -176,7 +176,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
             //chance to trigger frogs spawning
-            if (Main.rand.NextBool(550) && NPC.life >= NPC.lifeMax / 2)
+            if (Main.rand.NextBool(600) && NPC.life >= NPC.lifeMax / 2)
             {
                 FrogSpawnCounter = 0;
                 
@@ -281,15 +281,17 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 else if (NPC.ai[2] >= 600 && NPC.ai[2] < 850) //was 750
                 {
-                    
-                    
+
+
                     //Then chill for a few seconds.
                     //This exists to delay switching to the 'charging' pattern for 150 frames, because otherwise the way the sprouters linger can often make the first charge impossible to dodge
-                    
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 131, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 200, default, 1.5f);
 
+                    if (NPC.ai[2] <= 700)
+                    { 
+                        Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 131, Main.rand.Next(-2, 2), Main.rand.Next(-20, 2), 200, default, 1f);
+                    }
                     // NEW BREATH ATTACK 
-                  
+
                     if (breathTimer > 501)
                     {
                         breathTimer = 359;
@@ -414,7 +416,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     //if (NPC.life > (NPC.lifeMax / 2) + 100 || NPC.life < (NPC.lifeMax / 2) - 1100)
                     if (NPC.life > 600)
                     {
-                        NPC.life -= 550; //boss takes burst damage when enraged
+                        NPC.life -= 400; //boss takes burst damage when enraged
                     }
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }

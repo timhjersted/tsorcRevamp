@@ -195,7 +195,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.LavaSlime):
                     {
                         npc.knockBackResist = 0.4f;
-                        npc.scale = 1.5f;
+                        npc.scale = 1.0f;
                         npc.value = 650;
                         break;
                     }

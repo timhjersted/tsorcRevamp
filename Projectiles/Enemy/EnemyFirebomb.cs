@@ -86,12 +86,18 @@ namespace tsorcRevamp.Projectiles.Enemy
             else
             {
                 // Smoke and fuse dust spawn.
-                if (Main.rand.NextBool(4))
+                if (Main.rand.NextBool(2))
                 {
                     int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 6, 0f, 0f, 100, default(Color), 1f);
                     Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;
                     Main.dust[dustIndex].fadeIn = .5f + (float)Main.rand.Next(5) * 0.1f;
                     Main.dust[dustIndex].noGravity = true;
+
+                    for (int num36 = 0; num36 < 2; num36++)
+                    {
+                        int pink = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, DustID.CrystalSerpent, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.3f);
+                        Main.dust[pink].noGravity = true;
+                    }
                     // Main.dust[dustIndex].position = projectile.Center + new Vector2(0f, (float)(-(float)projectile.height / 2)).RotatedBy((double)projectile.rotation, default(Vector2)) * 1.1f;
                     /*dustIndex = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 75, 0f, 0f, 100, default(Color), 1f);
                     Main.dust[dustIndex].scale = 1f + (float)Main.rand.Next(5) * 0.1f;

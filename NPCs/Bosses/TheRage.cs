@@ -63,8 +63,12 @@ namespace tsorcRevamp.NPCs.Bosses
         int holdTimer = 0;
         int breathTimer = 0;
 
-        float lostSoulTimer = 0;
+       
 
+        public bool secondPhase
+        {
+            get => NPC.life <= NPC.lifeMax / 2;
+        }
 
         //gaibon 
         public int Timer
@@ -229,6 +233,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (NPC.life < NPC.lifeMax / 2 * 1.5)
             {
                 breathTimer++;
+                
             }
             if (breathTimer > 280)
             {
@@ -243,7 +248,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireTrailsDamage, 0f, Main.myPlayer);
                     }
-                    //NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
+                    
 
                     //play breath sound
                     if (Main.rand.NextBool(3))
@@ -268,7 +273,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                        for (int num36 = 0; num36 < 10; num36++)
+                        for (int num36 = 0; num36 < 6; num36++)
                         {
                             int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
                             Main.dust[pink].noGravity = true;
@@ -277,11 +282,13 @@ namespace tsorcRevamp.NPCs.Bosses
                
                     Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 6.5f, .1f, true, true);
                     velocity += Target.velocity / 1.5f;
+                    
                     if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), fireTrailsDamage, 0.5f, Main.myPlayer); 
                         Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), fireTrailsDamage, 0.5f, Main.myPlayer); //ProjectileID.LostSoulHostile
                     }
+                    
                 }
             }
             //2nd phase frequency
@@ -289,7 +296,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int num36 = 0; num36 < 10; num36++)
+                    for (int num36 = 0; num36 < 6; num36++)
                     {
                         int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
 
@@ -305,18 +312,12 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
 
-            //ANTI-GRAVITY BLAST SHOOT
-            if (NPC.Distance(player.Center) > 320)
-            { 
-                bool lineOfSight = Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
-                tsorcRevampAIs.SimpleProjectile(NPC, ref lostSoulTimer, 1100, ModContent.ProjectileType<Projectiles.Enemy.AntiGravityBlast>(), fireTrailsDamage, 1, lineOfSight, true, SoundID.Item79 with { Volume = 0.5f, PitchVariance = 2f }, 0); //ProjectileID.LostSoulHostile
-              
-            }
-
-
+           
+            
+            
 
             //SPAWN METEOR HELL
-            if (Main.rand.NextBool(80) && NPC.Distance(player.Center) > 100 && NPC.life <= 2750 )
+            if (Main.rand.NextBool(80) && NPC.Distance(player.Center) > 100 && NPC.life <= 3000 )
             {
 
                 if (player.position.Y + 50 >= NPC.position.Y)
@@ -434,8 +435,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.alpha = 210;
                 NPC.defense = 32;
                 NPC.damage = 130;
-                //NPC.dontTakeDamage = true;
 
+                //NPC.dontTakeDamage = true;
+                
                 //FlameShotCounter2 = 0;
 
                 if (Main.player[NPC.target].position.X < vector8.X)
@@ -487,7 +489,8 @@ namespace tsorcRevamp.NPCs.Bosses
                     //if (NPC.life < NPC.lifeMax / 2)
                     if (NPC.life > 500)
                     {
-                        NPC.life -= 450; //amount boss takes damage when enraged
+                        NPC.life -= 300; //amount boss takes damage when enraged
+                      
                     }
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }

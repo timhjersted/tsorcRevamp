@@ -104,7 +104,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             turtleTimer++;
             //SPAWN TURTLES!
-            if (turtleTimer > 2600 && (Target.Center.Y + 20 >= NPC.Center.Y) && breathTimer > 0 && !secondPhase)
+            if (turtleTimer > 3000 && (Target.Center.Y + 20 >= NPC.Center.Y) && breathTimer > 0 && !secondPhase)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit24 with { Volume = 0.5f }, NPC.Center);
 
@@ -472,12 +472,12 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     //Use ice spirit attack
                     iceSpiritTimer = 900;
-                    turtleTimer += 2600;
+                    turtleTimer += 500;
                     NPC.ai[3] = 1;
                     //if (NPC.life > (NPC.lifeMax / 2) + 100 || NPC.life < (NPC.lifeMax / 2) - 950)
                     if (NPC.life > 550)
                     {
-                        NPC.life -= 500; //amount boss takes damage when becoming enraged
+                        NPC.life -= 350; //amount boss takes damage when becoming enraged
                     }
                         
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
