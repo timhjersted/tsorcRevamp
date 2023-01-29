@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         bool soundPaused;
         bool playedSound = false;
         ActiveSound TornadoSound;
-        private static int numrings = 24;
+        private static int numrings = 30;
         private static Vector2 ringScale = new Vector2(0.2f);
         private int frameTimer;
         private int currentFrame;
