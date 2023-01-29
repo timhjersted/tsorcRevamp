@@ -9,15 +9,14 @@ using tsorcRevamp.Buffs.Runeterra;
 using tsorcRevamp.Projectiles.VFX;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
+using System.Collections.Generic;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
-	public class InterstellarVesselShip : ModProjectile
+	public class InterstellarVesselShip : DynamicTrail
 	{
 		public float angularSpeed2 = 0.03f;
-		public static float circleRad2 = 50f;
 		public float currentAngle2 = 0;
-		bool spawnedTrail = false;
 
         public override void SetStaticDefaults()
 		{
@@ -39,7 +38,19 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = 20;
-        }
+
+
+			trailWidth = 45;
+			trailPointLimit = 900;
+			trailMaxLength = 333;
+			Projectile.hide = true;
+			collisionPadding = 50;
+			NPCSource = false;
+			trailCollision = true;
+			collisionFrequency = 5;
+			noFadeOut = true;
+			customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/InterstellarVessel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+		}
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             Player owner = Main.player[Projectile.owner];
@@ -60,6 +71,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		{
 			return true;
 		}
+		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+		{
+			behindNPCs.Add(index);
+		}
 		public override void Kill(int timeLeft) 
 		{
 			InterstellarVesselControls.projectiles.Remove(this);
@@ -67,9 +82,22 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 		public override void AI()
 		{
-			Player owner = Main.player[Projectile.owner];
+			base.AI();
 
-			Vector2 visualplayercenter = owner.Center + new Vector2(-27, -12);
+			if (angularSpeed2 > 0.03f)
+			{
+				trailIntensity = 2;
+			}
+		
+
+			if (trailIntensity > 1)
+			{
+				trailIntensity -= 0.05f;
+			}
+
+			Player owner = Main.player[Projectile.owner];
+			tsorcRevampPlayer modPlayer = owner.GetModPlayer<tsorcRevampPlayer>();
+
 
 			if (!CheckActive(owner))
 			{
@@ -86,32 +114,81 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             {
                 angularSpeed2 = 0.03f;
 				owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = false;
-            }
-
-            currentAngle2 += (angularSpeed2 / (circleRad2 * 0.001f + 1f)); 
-
-			Vector2 offset = new Vector2(MathF.Sin(currentAngle2), MathF.Cos(currentAngle2)) * circleRad2;
-
-			Projectile.position = visualplayercenter + offset;            
-			if (!spawnedTrail)
-			{
-				Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<InterstellarVesselTrail>(), 0, 0, Projectile.owner, 0, UsefulFunctions.EncodeID(Projectile));
-				spawnedTrail = true;
+				if (Main.netMode == NetmodeID.MultiplayerClient)
+				{
+					ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+					minionPacket.Write(tsorcPacketID.SyncMinionRadius);
+					minionPacket.Write((byte)owner.whoAmI);
+					minionPacket.Write(owner.GetModPlayer<tsorcRevampPlayer>().MinionCircleRadius);
+					minionPacket.Write(owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost);
+					minionPacket.Send();
+				}
 			}
+
+            currentAngle2 += (angularSpeed2 / (modPlayer.MinionCircleRadius * 0.001f + 1f)); 
+
+			Vector2 offset = new Vector2(0, modPlayer.MinionCircleRadius).RotatedBy(-currentAngle2);
+
+			Projectile.Center = owner.Center + offset;
 
             Visuals();
 		}
 
-        public override void SendExtraAI(BinaryWriter writer)
+
+		/*public override void SendExtraAI(BinaryWriter writer)
         {
-			//writer.Write(angularSpeed2);
-        }
+			writer.Write(angularSpeed2);
+		}
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-			//angularSpeed2 = reader.ReadSingle();
+			angularSpeed2 = reader.ReadSingle();
+		}*/
+		Vector2 samplePointOffset1;
+		Vector2 samplePointOffset2;
+		float trailIntensity = 1;
+		public override void SetEffectParameters(Effect effect)
+		{
+			trailWidth = 45;
+			trailMaxLength = 500;
+
+			effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
+			effect.Parameters["length"].SetValue(trailCurrentLength);
+			float hostVel = 0;
+			hostVel = Projectile.velocity.Length();
+			float modifiedTime = 0.001f * hostVel;
+
+			if (Main.gamePaused)
+			{
+				modifiedTime = 0;
+			}
+			samplePointOffset1.X += (modifiedTime * 2);
+			samplePointOffset1.Y -= (0.001f);
+			samplePointOffset2.X += (modifiedTime * 3.01f);
+			samplePointOffset2.Y += (0.001f);
+
+			samplePointOffset1.X += modifiedTime;
+			samplePointOffset1.X %= 1;
+			samplePointOffset1.Y %= 1;
+			samplePointOffset2.X %= 1;
+			samplePointOffset2.Y %= 1;
+			collisionEndPadding = trailPositions.Count / 2;
+
+			effect.Parameters["samplePointOffset1"].SetValue(samplePointOffset1);
+			effect.Parameters["samplePointOffset2"].SetValue(samplePointOffset2);
+			effect.Parameters["fadeOut"].SetValue(trailIntensity);
+			effect.Parameters["speed"].SetValue(hostVel);
+			effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+			effect.Parameters["shaderColor"].SetValue(new Color(0.8f, 0.6f, 0.2f).ToVector4());
+			effect.Parameters["secondaryColor"].SetValue(new Color(0.005f, 0.05f, 1f).ToVector4());
+			effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
+			return;
+		}
+		public override float CollisionWidthFunction(float progress)
+		{
+			return WidthFunction(progress) - 35;
 		}
 
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 		{
 			float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
 			if (distance < Projectile.height * 1.2f && distance > Projectile.height * 1.2f - 32)
@@ -134,7 +211,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			if (!owner.HasBuff(ModContent.BuffType<InterstellarCommander>()))
 			{
-				circleRad2 = 50f;
 				currentAngle2 = 0;
 				InterstellarVesselControls.projectiles.Clear();
 			}
@@ -157,32 +233,38 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 				target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 40);
 			}
         }
-        private void Visuals()
+		private void Visuals()
 		{
-		Projectile.rotation = currentAngle2 * -1f;
+			Projectile.rotation = currentAngle2 * -1f;
 
-		Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
+			Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
 		}
 
 		public static Texture2D texture;
 		public static Texture2D glowTexture;
 		public override bool PreDraw(ref Color lightColor)
         {
-			//if (texture == null || texture.IsDisposed)
+			base.PreDraw(ref lightColor);
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+			if (texture == null || texture.IsDisposed)
 			{
-				texture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Summon/Runeterra/InterstellarVesselShip", ReLogic.Content.AssetRequestMode.ImmediateLoad);
 			}
-			//if (glowTexture == null || glowTexture.IsDisposed)
+			if (glowTexture == null || glowTexture.IsDisposed)
 			{
-				glowTexture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				glowTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Summon/Runeterra/InterstellarVesselShip" + "Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad);
 			}
 
-			Rectangle sourceRectangle = new Rectangle(0,0, texture.Width, texture.Height);
+			Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
 			Vector2 origin = sourceRectangle.Size() / 2f;
 
 			Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.Lerp(lightColor, Color.Orange, 0.25f), Projectile.rotation, origin, 1, SpriteEffects.None, 0f);
-
 			Main.spriteBatch.Draw(glowTexture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, 1, SpriteEffects.None, 0f);
+
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
 			return false;
 		}

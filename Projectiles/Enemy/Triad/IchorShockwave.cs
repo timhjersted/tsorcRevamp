@@ -48,7 +48,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
                 if(Projectile.ai[1] == 1)
                 {
-                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.VFX.HomingStarTrail>(), Projectile.damage, 0, Main.myPlayer, 0, UsefulFunctions.EncodeID(Projectile));
+                    //Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.VFX.HomingStarTrail>(), Projectile.damage, 0, Main.myPlayer, 0, UsefulFunctions.EncodeID(Projectile));
                     Projectile.timeLeft = 400;
                 }
                 playedSound = true;

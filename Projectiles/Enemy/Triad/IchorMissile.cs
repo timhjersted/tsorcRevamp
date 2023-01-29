@@ -38,8 +38,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         {
             if (!spawnedTrail)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.IchorTrail>(), 0, 0, Main.myPlayer, 1, NPC.whoAmI);
-
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.IchorTrail>(), 0, 0, Main.myPlayer, 1, NPC.whoAmI);
+                }
                 spawnedTrail = true;
             }
 
@@ -58,6 +60,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             NPC.life = 0;
+            NPC.netUpdate = true;
             target.AddBuff(BuffID.Ichor, 300);
 
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Normalize(NPC.velocity).RotatedBy(MathHelper.Pi / 6f) * 10, ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorFragment>(), NPC.damage / 4, 1, Main.myPlayer);

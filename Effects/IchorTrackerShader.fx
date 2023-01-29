@@ -101,7 +101,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     
     float4 effectColor = pow(noiseColor, 6) * intensity * 10 * pow(uv.x, 3);
     effectColor *= 2;
-    return effectColor; //    input.Color;
+    return effectColor * fadeOut; //    input.Color;
     
     //Looks cool as hell, but not the vibe i'm going for
     //float4 effectColor = noiseColor * noiseColor * pow(intensity, 2) * 8.0;

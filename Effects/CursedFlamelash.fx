@@ -52,13 +52,9 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     //Raise it to a high exponent, resulting in sharply increased intensity at the center that trails off smoothly
     //Higher number = more narrow and compressed trail
     intensity = pow(intensity, 3.0);
-    
-    //Flat doubling to incrase the total intensity
-    intensity *= 1;
-    
+        
     //This controls where the front of the bolt starts to curve
     float inflectionPoint = 0.9;
-    //inflectionPoint *= fadeOut;
     
     //Make it fade out towards the end
     if (uv.x < inflectionPoint)
@@ -74,14 +70,13 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     
     intensity = pow(intensity, 5.0);
     
-    intensity *= fadeOut * fadeOut;
+    intensity *= fadeOut;
 
     //Pick where to sample the texture used for the flowing effect
     float2 samplePoint1 = uv;
     
-    //Zoom in on the noise texture, then shift it over time to make it appear to be flowing    
-    //samplePoint /= 70;
-    samplePoint1.x = (samplePoint1.x) * length / 100; // ;
+    //Zoom in on the noise texture, then shift it over time to make it appear to be flowing
+    samplePoint1.x = (samplePoint1.x) * length / 100;
     
     //Compress it vertically
     samplePoint1.y = (samplePoint1.y / 1);
@@ -101,18 +96,12 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     noiseColor.b = sampleIntensity * shaderColor.b;
     noiseColor.g = sampleIntensity * shaderColor.g;
     
-    //return noiseColor;
-    //
-    //Mix it with 'intensity' to make it more intense near the center
-    //float4 effectColor = pow(noiseColor, 0.85) * pow(intensity, 2) * 1.0;
-    
-    //Not the vibe i'm going for here, but looks cool as hell and will be useful later:
     if (intensity > 1)
     {
         intensity = 1;
     }
     
-    return pow(noiseColor, 1) * 13.0 * intensity ;
+    return pow(noiseColor, 1) * 13.0 * intensity;
 }
 
 

@@ -26,13 +26,14 @@ namespace tsorcRevamp.Projectiles.VFX
             Projectile.tileCollide = false;
             Projectile.timeLeft = 999999999;
             Projectile.penetrate = -1;
+            Projectile.hide = true;
+
             trailWidth = 45;
             trailPointLimit = 900;
             trailMaxLength = 333;
             Projectile.hide = true;
             collisionPadding = 50;
             NPCSource = false;
-
             trailCollision = true;
             collisionFrequency = 5;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/InterstellarVessel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
@@ -40,19 +41,8 @@ namespace tsorcRevamp.Projectiles.VFX
 
         public override void AI()
         {
+            Projectile.Kill();
             base.AI();
-            if (hostProjectile != null)
-            {
-                if (((InterstellarVesselShip)hostProjectile.ModProjectile).angularSpeed2 > 0.03f)
-                {
-                    trailIntensity = 2;
-                }
-            }
-
-            if(trailIntensity > 1)
-            {
-                trailIntensity -= 0.05f;
-            }
         }
         public override bool? CanCutTiles()
         {
@@ -80,10 +70,7 @@ namespace tsorcRevamp.Projectiles.VFX
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
             effect.Parameters["length"].SetValue(trailCurrentLength);
             float hostVel = 0;
-            if (hostProjectile != null)
-            {
-                hostVel = hostProjectile.velocity.Length();
-            }
+            hostVel = Projectile.velocity.Length();
             float modifiedTime = 0.001f * hostVel;
 
             if (Main.gamePaused)

@@ -7,10 +7,11 @@ using Terraria.Graphics;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Enemy.Triad
 {
-    class RetDeathLaser : ModProjectile
+    class RetDeathLaser : DynamicTrail
     {
         
         public override void SetStaticDefaults()
@@ -26,6 +27,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.tileCollide = false;
+
+            trailWidth = 25;
+            trailPointLimit = 150;
+            trailYOffset = 50;
+            trailMaxLength = 150;
+            NPCSource = false;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
@@ -36,21 +44,28 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         bool playedSound = false;
         public override void AI()
         {
+            base.AI();
             Lighting.AddLight(Projectile.Center, Color.Red.ToVector3());
             if (!playedSound)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item33 with { Volume = 0.5f}, Projectile.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.VFX.RetDeathLaserTrail>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.EncodeID(Projectile));
-                }
                 playedSound = true;
             }
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        float timeFactor = 0;
+        public override void SetEffectParameters(Effect effect)
         {
-            return false;
+            timeFactor++;
+            trailYOffset = 30;
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture1);
+            effect.Parameters["fadeOut"].SetValue(fadeOut);
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+
+            Color shaderColor = new Color(1.0f, 0.4f, 0.4f, 1.0f);
+            shaderColor = UsefulFunctions.ShiftColor(shaderColor, timeFactor, 0.03f);
+            effect.Parameters["shaderColor"].SetValue(shaderColor.ToVector4());
+            effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
     }
 }

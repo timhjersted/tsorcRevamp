@@ -1062,15 +1062,17 @@ namespace tsorcRevamp
         {
             int message = reader.ReadByte();
             switch (message) {
-                case tsorcPacketID.SyncSoulSlot: {
-                    byte player = reader.ReadByte(); //player.whoAmI;
-                    tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
-                    modPlayer.SoulSlot.Item = ItemIO.Receive(reader);
-                    if (Main.netMode == NetmodeID.Server) {
-                        modPlayer.SendSingleItemPacket(1, modPlayer.SoulSlot.Item, -1, whoAmI);
+                case tsorcPacketID.SyncSoulSlot:
+                    {
+                        byte player = reader.ReadByte(); //player.whoAmI
+                        tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
+                        modPlayer.SoulSlot.Item = ItemIO.Receive(reader);
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            modPlayer.SendSingleItemPacket(1, modPlayer.SoulSlot.Item, -1, whoAmI);
+                        }
+                        break;
                     }
-                    break;
-                }
                 case tsorcPacketID.SyncEventDust: {
                     if (Main.netMode != NetmodeID.Server) {
                         tsorcScriptedEvents.NetworkEvents = new List<NetworkEvent>();
@@ -1225,31 +1227,32 @@ namespace tsorcRevamp
                         NetMessage.SendData(MessageID.WorldData);
                         break;
                     }
-                /**
-                //For synced random
-                //Recieves the seed from the server, and passes it off to UsefulFunctions.RecieveRandPacket which uses it to instantiate the new random generator
-                switch tsorcPacketID.SyncRandom:
-                {
-                    if (Main.netMode == NetmodeID.MultiplayerClient)
+
+                case tsorcPacketID.SyncMinionRadius:
                     {
-                        byte seed = reader.ReadByte();
-                        Main.NewText("Client recieved seed:" + seed);
-                        UsefulFunctions.RecieveRandPacket(seed);
+                        byte player = reader.ReadByte(); //player.whoAmI
+                        tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
+                        modPlayer.MinionCircleRadius = reader.ReadSingle();
+                        modPlayer.InterstellarBoost = reader.ReadBoolean();
+
+                        //If the server recieved this from a client, then forward it to all the other clients
+                        if(Main.netMode == NetmodeID.Server)
+                        {
+                            ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                            minionPacket.Write(tsorcPacketID.SyncMinionRadius);
+                            minionPacket.Write(player);
+                            minionPacket.Write(modPlayer.MinionCircleRadius);
+                            minionPacket.Write(modPlayer.InterstellarBoost);
+                            minionPacket.Send();
+                        }
+                        break;
                     }
-                }**/
 
                 default: {
                     Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
                     break;
                 }
             }
-
-
-            
-
-
-
-
         }
 
         public override object Call(params object[] args)
@@ -2303,6 +2306,7 @@ namespace tsorcRevamp
         public const byte SpawnNPC = 8;
         public const byte SyncNPCExtras = 9;
         public const byte SyncMasterScroll = 10;
+        public const byte SyncMinionRadius = 11;
     }
 
     //config moved to separate file

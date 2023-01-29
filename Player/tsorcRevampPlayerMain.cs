@@ -85,6 +85,7 @@ namespace tsorcRevamp
             ItemIO.Send(SoulSlot.Item, packet);
             packet.Send(toWho, fromWho);
 
+
             /**
             //For synced random. Called when a new player connects.
             //The server (and only the server) generates a new random seed and sends it to all clients.
@@ -879,17 +880,30 @@ namespace tsorcRevamp
                 PlasmaWhirlwind thisPlasmaWhirlwind = Player.HeldItem.ModItem as PlasmaWhirlwind;
                 Nightbringer thisNightbringer = Player.HeldItem.ModItem as Nightbringer;
 
-                if (!(Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>()) && Player.HasBuff(ModContent.BuffType<InterstellarCommander>()))
+                //Uncomment these when CotU is re-added
+                bool holdingControls = Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>();// || Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>();
+                bool hasBuff = Player.HasBuff(ModContent.BuffType<InterstellarCommander>());// || Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
+                if (holdingControls && hasBuff)
+                {
+                    owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
+
+                    //Every time the player releases the button, sync this info to everyone else
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                    {
+                        ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                        minionPacket.Write(tsorcPacketID.SyncMinionRadius);
+                        minionPacket.Write((byte)Player.whoAmI);
+                        minionPacket.Write(MinionCircleRadius);
+                        minionPacket.Write(InterstellarBoost);
+                        minionPacket.Send();
+                    }
+                }
+
+                //Only run this update loop if the player is holding one of these
+                if (thisPlasmaWhirlwind != null || thisNightbringer != null)
                 {
                     owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
                 }
-                /*if (!(Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>()) && Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>()))
-                {
-                    owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
-                }*/
-
-
-
 
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
@@ -929,54 +943,26 @@ namespace tsorcRevamp
                     }
                 }
             }
-            if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>())
+            if (tsorcRevamp.specialAbility.Current && (Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>() || Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>()))
             {
                 if (Main.keyState.IsKeyDown(Keys.LeftShift))
                 {
-                    Projectiles.Summon.Runeterra.ScorchingPointFireball.circleRad -= 1.5f;
-                    if(Projectiles.Summon.Runeterra.ScorchingPointFireball.circleRad < 50)
+                    MinionCircleRadius -= 1.5f;
+                    if (MinionCircleRadius < 50)
                     {
-                        Projectiles.Summon.Runeterra.ScorchingPointFireball.circleRad = 50;
+                        MinionCircleRadius = 50;
                     }
                 }
                 else
                 {
-                    Projectiles.Summon.Runeterra.ScorchingPointFireball.circleRad += 1.5f;
+                    MinionCircleRadius += 1.5f;
+                    if (MinionCircleRadius > 500)
+                    {
+                        MinionCircleRadius = 500;
+                    }
                 }
                 Dust.NewDustDirect(Player.Center, 10, 10, DustID.FlameBurst, 0.5f, 0.5f, 0, Color.Firebrick, 0.5f);
             }
-            if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>())
-            {
-                if (Main.keyState.IsKeyDown(Keys.LeftShift))
-                {
-                    Projectiles.Summon.Runeterra.InterstellarVesselShip.circleRad2 -= 1.5f;
-                    if (Projectiles.Summon.Runeterra.InterstellarVesselShip.circleRad2 < 50)
-                    {
-                        Projectiles.Summon.Runeterra.InterstellarVesselShip.circleRad2 = 50;
-                    }
-                }
-                else
-                {
-                    Projectiles.Summon.Runeterra.InterstellarVesselShip.circleRad2 += 1.5f;
-                }
-                Dust.NewDustDirect(Player.Center, 10, 10, DustID.FlameBurst, 0.5f, 0.5f, 0, Color.Firebrick, 0.5f);
-            }
-            /*if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>())
-            {
-                if (Main.keyState.IsKeyDown(Keys.LeftShift))
-                {
-                    Projectiles.Summon.Runeterra.CenterOfTheUniverseStar.circleRad3 -= 1.5f;
-                    if (Projectiles.Summon.Runeterra.CenterOfTheUniverseStar.circleRad3 < 50)
-                    {
-                        Projectiles.Summon.Runeterra.CenterOfTheUniverseStar.circleRad3 = 50;
-                    }
-                }
-                else
-                {
-                    Projectiles.Summon.Runeterra.CenterOfTheUniverseStar.circleRad3 += 1.5f;
-                }
-                Dust.NewDustDirect(Player.Center, 10, 10, DustID.MagicMirror, 0.5f, 0.5f, 0, Color.Magenta, 0.5f);
-            }*/
         }
 
         //On hit, subtract the mana cost and disable natural mana regen for a short period

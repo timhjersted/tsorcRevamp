@@ -8,13 +8,13 @@ using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra;
 using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Buffs.Summon.WhipDebuffs;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
-	public class ScorchingPointFireball : ModProjectile
+	public class ScorchingPointFireball : DynamicTrail
 	{
-		public static float angularSpeed = 0.03f;
-		public static float circleRad = 50f;
+		public float angularSpeed = 0.03f;
 		public float currentAngle = 0;
         bool spawnedTrail = false;
 
@@ -39,6 +39,16 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = 20;
+
+			trailWidth = 45;
+			trailPointLimit = 900;
+			trailMaxLength = 111;
+			collisionPadding = 50;
+			NPCSource = false;
+			trailCollision = true;
+			collisionFrequency = 5;
+			noFadeOut = true;
+			customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 		}
 		public override void OnSpawn(IEntitySource source)
 		{
@@ -59,27 +69,23 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 		public override void AI()
 		{
-			Player owner = Main.player[Projectile.owner];
+			base.AI();
 
-			Vector2 visualplayercenter = owner.Center + new Vector2(-27, -12);
+			Player owner = Main.player[Projectile.owner];
+			tsorcRevampPlayer modPlayer = owner.GetModPlayer<tsorcRevampPlayer>();
+
 
 			if (!CheckActive(owner))
 			{
 				return;
 			}
 
-			currentAngle += (angularSpeed / (circleRad * 0.001f + 1f));
+			currentAngle += (angularSpeed / (modPlayer.MinionCircleRadius * 0.001f + 1f));
 
-			Vector2 offset = new Vector2(MathF.Sin(currentAngle), MathF.Cos(currentAngle)) * circleRad;
+			Vector2 offset = new Vector2(MathF.Sin(currentAngle), MathF.Cos(currentAngle)) * modPlayer.MinionCircleRadius;
 
-			Projectile.position = visualplayercenter + offset;
+			Projectile.Center = owner.Center + offset;
 			Projectile.velocity = Projectile.rotation.ToRotationVector2();
-
-            if (!spawnedTrail)
-			{
-				Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<ScorchingPointTrail>(), 0, 0, Projectile.owner, 0, UsefulFunctions.EncodeID(Projectile));
-				spawnedTrail = true;
-			}
 
 			Visuals();
 		}
@@ -95,6 +101,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 				return false;
 			}
 		}
+		public override float CollisionWidthFunction(float progress)
+		{
+			return WidthFunction(progress) - 35;
+		}
+
 
 		private bool CheckActive(Player owner)
 		{
@@ -107,7 +118,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			if (!owner.HasBuff(ModContent.BuffType<CenterOfTheHeat>()))
 			{
-				circleRad = 50f;
 				currentAngle = 0;
 				ScorchingPoint.projectiles.Clear();
 			}
@@ -141,6 +151,45 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
 		}
+
+		Vector2 samplePointOffset1;
+		Vector2 samplePointOffset2;
+		public override void SetEffectParameters(Effect effect)
+		{
+			trailWidth = 45;
+			trailMaxLength = 400;
+
+			effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
+			effect.Parameters["length"].SetValue(trailCurrentLength);
+			float hostVel = 0;
+			hostVel = Projectile.velocity.Length();
+			float modifiedTime = 0.001f * hostVel;
+
+			if (Main.gamePaused)
+			{
+				modifiedTime = 0;
+			}
+			samplePointOffset1.X += (modifiedTime);
+			samplePointOffset1.Y -= (0.001f);
+			samplePointOffset2.X += (modifiedTime * 3.01f);
+			samplePointOffset2.Y += (0.001f);
+
+			samplePointOffset1.X += modifiedTime;
+			samplePointOffset1.X %= 1;
+			samplePointOffset1.Y %= 1;
+			samplePointOffset2.X %= 1;
+			samplePointOffset2.Y %= 1;
+			collisionEndPadding = trailPositions.Count / 2;
+
+			effect.Parameters["samplePointOffset1"].SetValue(samplePointOffset1);
+			effect.Parameters["samplePointOffset2"].SetValue(samplePointOffset2);
+			effect.Parameters["fadeOut"].SetValue(fadeOut);
+			effect.Parameters["speed"].SetValue(hostVel);
+			effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+			effect.Parameters["shaderColor"].SetValue(Color.Orange.ToVector4());
+			effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
+		}
+
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
 			if (crit)
@@ -152,10 +201,5 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
                 target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 40);
             }
 		}
-
-        public override bool PreDraw(ref Color lightColor)
-        {
-			return false;
-        }
     }
 }

@@ -13,6 +13,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp
 {
@@ -860,9 +861,17 @@ namespace tsorcRevamp
         {
             for(int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].type == type)
+                if (Main.projectile[i].type == type && Main.projectile[i].active)
                 {
-                    Main.projectile[i].Kill();
+                    if(Main.projectile[i].ModProjectile is DynamicTrail)
+                    {
+                        ((DynamicTrail)Main.projectile[i].ModProjectile).dying = true;
+                    }
+                    else
+                    {
+                        Main.projectile[i].Kill();
+                    }
+                    NetMessage.SendData(MessageID.SyncProjectile, number: i);
                 }
             }
 

@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.UseSound = SoundID.Item20;
             Item.rare = ItemRarityID.LightRed;
             Item.crit = 4;
-            Item.mana = 150;
+            Item.mana = 200;
             Item.noMelee = true;
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Magic;

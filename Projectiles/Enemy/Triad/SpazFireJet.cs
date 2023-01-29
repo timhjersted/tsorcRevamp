@@ -120,7 +120,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //Apply the shader, caching it as well
-            //if (data == null)
+            if (data == null)
             {
                 data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/SpazFireJet", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "SpazFireJetPass");
             }

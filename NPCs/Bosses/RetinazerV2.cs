@@ -159,12 +159,14 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             writer.Write(NPC.rotation);
             writer.Write(rotationTarget);
+            writer.Write(finalStandTimer);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             NPC.rotation = reader.ReadSingle();
             rotationTarget = reader.ReadSingle();
+            finalStandTimer = reader.ReadInt32();
         }
 
         bool aimingDown;
@@ -1127,9 +1129,10 @@ namespace tsorcRevamp.NPCs.Bosses
         //TODO: Copy vanilla death effects
         public override void OnKill()
         {
-            if (!Main.dedServ)
+            //Just to be sure
+            if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:RetShockwave"].IsActive())
             {
-
+                Filters.Scene["tsorcRevamp:RetShockwave"].Deactivate();
             }
         }
     }

@@ -32,7 +32,8 @@ namespace tsorcRevamp.Projectiles.VFX
             trailCollision = false;
             NPCSource = true;
             trailYOffset = 50;
-            trailMaxLength = 200;            
+            trailMaxLength = 200;
+            deathSpeed = 1f / 20f;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/IchorTrackerShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 

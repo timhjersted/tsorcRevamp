@@ -11,6 +11,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.VFX;
 using Terraria.Graphics.Effects;
 using Terraria.Audio;
+using System.IO;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -174,6 +175,20 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(NPC.rotation);
+            writer.Write(rotationTarget);
+            writer.Write(finalStandTimer);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            NPC.rotation = reader.ReadSingle();
+            rotationTarget = reader.ReadSingle();
+            finalStandTimer = reader.ReadInt32();
+        }
+
         bool transformed;
         bool HandleRealLife()
         {
@@ -200,7 +215,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (finalStandTimer == 0 && finalStandLevel == 0)
                 {
                     UsefulFunctions.BroadcastText("The Triad prepares to take you down with them...", Color.Cyan);
-                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<CataluminanceTrail>());
+                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.CataluminanceTrail>());
                 }
 
                 if (finalStandLevel == 0 && !NPC.AnyNPCs(ModContent.NPCType<RetinazerV2>()))
@@ -297,13 +312,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //Clear all homing stars when attack is over
             if (MoveTimer == 899)
             {
-                for (int i = 0; i < Main.maxProjectiles; i++)
-                {
-                    if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>())
-                    {
-                        Main.projectile[i].Kill();
-                    }
-                }
+                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>());
             }
         }
 
@@ -478,7 +487,6 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 fireRotationRotation = 0;
                 UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>());
-                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.CataluminanceTrail>());
 
                 clearedTrails = true;
             }
@@ -880,11 +888,6 @@ namespace tsorcRevamp.NPCs.Bosses
             if(finalStandLevel == 2)
             {
                 DrawFinalStandAttack();
-
-                if(finalStandTimer > 2420f)
-                {
-                    DrawExplosion();
-                }
             }
 
             if (texture == null || texture.IsDisposed)
@@ -1065,8 +1068,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
             Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, crystalPoint - Main.screenPosition, starRectangle, Color.White, -starRotation, starOrigin, NPC.scale, SpriteEffects.None, 0);
 
-
-
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
         }
@@ -1139,11 +1140,6 @@ namespace tsorcRevamp.NPCs.Bosses
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
         }
-        public void DrawExplosion()
-        {
-            //Terraria.Graphics.Effects.Filters.Scene.a
-            //Terraria.Graphics.Effects.Filters.Scene.Activate("Shockwave", NPC.Center).GetShader().UseColor(5, rippleSize, rippleSpeed).UseTargetPosition(NPC.Center);
-        }
 
         public void StartAura(float radius, float ringSpeed = 1.05f, float fadeOutSpeed = 0.05f)
         {
@@ -1168,31 +1164,11 @@ namespace tsorcRevamp.NPCs.Bosses
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TriadBag>()));
         }
 
-        //TODO: Copy vanilla death effects
         public override void OnKill()
         {
-            if (!Main.dedServ)
+            if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:CatShockwave"].IsActive())
             {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 1").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 2").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 3").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 4").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 5").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 6").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 7").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 8").Type, 1f);
-            }
-
-            int? spaz = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
-            if(spaz != null)
-            {
-                Main.npc[spaz.Value].HitEffect(1, 9999999);
-            }
-
-            int? ret = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
-            if (ret != null)
-            {
-                Main.npc[ret.Value].HitEffect(1, 9999999);
+                Filters.Scene["tsorcRevamp:CatShockwave"].Deactivate();
             }
         }
     }

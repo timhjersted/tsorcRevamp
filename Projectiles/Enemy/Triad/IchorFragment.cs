@@ -7,10 +7,11 @@ using Terraria.Graphics;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Enemy.Triad
 {
-    class IchorFragment : ModProjectile
+    class IchorFragment : DynamicTrail
     {
         
         public override void SetStaticDefaults()
@@ -26,27 +27,29 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.friendly = false;
+
+            trailWidth = 20;
+            trailPointLimit = 50;
+            trailCollision = false;
+            NPCSource = false;
+            trailYOffset = 50;
+            trailMaxLength = 200;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/IchorTrackerShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             target.AddBuff(BuffID.Ichor, 300);
         }
 
-        bool spawnedTrail = false;
-        public override void AI()
+        public override void SetEffectParameters(Effect effect)
         {
-            if (!spawnedTrail)
-            {
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.VFX.IchorFragmentTrail>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.EncodeID(Projectile));
-                spawnedTrail = true;
-            }
-        }
-
-        public override bool PreDraw(ref Color lightColor)
-        {
-            return false;
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture2);
+            effect.Parameters["fadeOut"].SetValue(fadeOut);
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            effect.Parameters["shaderColor"].SetValue(Color.Gold.ToVector4());
+            effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
 
         public override void Kill(int timeLeft)

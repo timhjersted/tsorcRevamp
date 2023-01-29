@@ -27,6 +27,7 @@ namespace tsorcRevamp.Projectiles.VFX
             Projectile.penetrate = -1;
             Projectile.hostile = true;
             Projectile.friendly = false;
+            Projectile.hide = true;
 
             trailWidth = 45;
             trailPointLimit = 900;
@@ -36,15 +37,14 @@ namespace tsorcRevamp.Projectiles.VFX
             NPCSource = true;           
             trailCollision = true;
             collisionFrequency = 5;
+            noFadeOut = true;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            drawBehindNPCs = true;
         }
 
         float timer = 0;
         float transitionTimer = 0;
         public bool FinalStandMode = false;
         bool GreenMode = false; //It's green now. That's it's attack.
-        float storedDamage = 0;
         public override void AI()
         {
             if (Projectile.ai[0] == 2)
@@ -63,7 +63,6 @@ namespace tsorcRevamp.Projectiles.VFX
                 if (timer == 0)
                 {
                     fadeOut = 0;
-                    storedDamage = Projectile.damage;
                     trailPositions = new List<Vector2>();
                     trailRotations = new List<float>();
                     for(int i = 0; i < 905; i++)
@@ -112,14 +111,19 @@ namespace tsorcRevamp.Projectiles.VFX
                 }
 
                 //Once the boss is all the way back to that stage again, then start removing the old positions
-                if (timer > 2700 || !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()))
-                {
-                    if (trailPositions.Count > 3)
+                bool finalStandInitiated = false;
+                int? cat = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Cataluminance>());
+                if (cat != null) {
+                    if (Main.npc[cat.Value].life <= 1000)
                     {
-                        trailPositions.RemoveAt(0);
-                        trailRotations.RemoveAt(0);
+                        finalStandInitiated = true;
                     }
-                    else
+                }
+                if (timer > 2700 || cat == null || finalStandInitiated)
+                {
+                    Projectile.damage = 0;
+                    fadeOut -= 1f / 120f;
+                    if(fadeOut <= 0)
                     {
                         Projectile.Kill();
                     }
@@ -130,6 +134,11 @@ namespace tsorcRevamp.Projectiles.VFX
         public override float CollisionWidthFunction(float progress)
         {
             return WidthFunction(progress) - 55;
+        }
+
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        {
+            behindNPCs.Add(index);
         }
 
         bool PreSetTrail = false;
@@ -176,5 +185,6 @@ namespace tsorcRevamp.Projectiles.VFX
             effect.Parameters["length"].SetValue(trailCurrentLength);
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
+
     }
 }

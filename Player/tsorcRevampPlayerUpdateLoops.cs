@@ -76,6 +76,7 @@ namespace tsorcRevamp
         public int CritCounter = 0;
 
         public bool InterstellarBoost = false;
+        public float MinionCircleRadius = 50;
 
         public bool WaspPower = false;
 
