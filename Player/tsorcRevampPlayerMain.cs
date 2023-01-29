@@ -894,16 +894,17 @@ namespace tsorcRevamp
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC other = Main.npc[i];
+                    Vector2 MouseHitbox = new Vector2(25, 25);
 
-                    if (other.active && !other.friendly && other.Distance(Main.MouseWorld) <= 25 && other.Distance(owner.Center) <= 10000 && (!Player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()) || !Player.HasBuff(ModContent.BuffType<NightbringerDashCooldown>())))
+                    if (other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitbox)) & other.Distance(Player.Center) <= 400 && (!Player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()) || !Player.HasBuff(ModContent.BuffType<NightbringerDashCooldown>())))
                     {
                         if (thisPlasmaWhirlwind != null)
                         {
-                            thisPlasmaWhirlwind.DashingTimer = 0.1f;
+                            thisPlasmaWhirlwind.DashingTimer = 0.2f;
                         }
                         if (thisNightbringer != null)
                         {
-                            thisNightbringer.DashingTimer = 0.1f;
+                            thisNightbringer.DashingTimer = 0.2f;
                         }
                     }
                     else

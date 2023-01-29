@@ -19,15 +19,18 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         }
         public override void SetDefaults()
         {
-            Projectile.width = 62;
-            Projectile.height = 66;
-            Projectile.aiStyle = ProjAIStyleID.TwilightLance;
+            Projectile.width = 90;
+            Projectile.height = 180;
+            Projectile.aiStyle = -1;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 300;
             Projectile.DamageType = DamageClass.Melee;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 5;
         }
+
         SlotId SoundSlotID;
         SoundStyle TornadoSoundStyle = SoundID.DD2_BookStaffTwisterLoop;
         bool soundPaused;
@@ -68,6 +71,8 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
                     TornadoSound.Position = Projectile.Center;
                 }
             }
+            int dustID = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, Scale:2);
+            Main.dust[dustID].noGravity = true;
         }
         public override void Kill(int timeLeft)
         {
@@ -105,6 +110,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
                     float _rot = (-numrings) + i; //the rotation of a given ring to make it look just a little more dynamic
                     _rot *= -((float)Math.PI / 180); //convert to radians cus terraria is like that
                     var vec = new Vector2(Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-3f, 3f)).RotatedBy(_rot); //ring position relative to projectile position. random offset to make it look chaotic
+                    vec += new Vector2(0, 70);
                     vec.X += (float)_offset; //apply wave
                     vec.Y -= _dist; //apply ring separation
                     var frameIndex = (currentFrame + i / 2) % Main.projFrames[Projectile.type]; //get frame index to draw

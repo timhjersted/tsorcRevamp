@@ -35,8 +35,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Item.maxStack = 1;
             Item.scale = 0.85f;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 17;
-            Item.useTime = 17;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
             Item.noUseGraphic = false;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
@@ -59,11 +59,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC other = Main.npc[i];
+                Vector2 MouseHitbox = new Vector2(25, 25);
 
-                if (other.active & !other.friendly & other.Distance(Main.MouseWorld) <= 25 & other.Distance(player.Center) <= 10000 & !player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()))
+                if (other.active & !other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitbox)) & other.Distance(player.Center) <= 400 & !player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()))
                 {
                     if (DashingTimer > 0)
                     {
+                        int dustID = Dust.NewDust(player.position, player.width, player.height, DustID.CoralTorch, Scale: 3);
+                        Main.dust[dustID].noGravity = true;
                         player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, other.Center, 15f);
                         Invincibility = 1f;
                         player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>(), 30 * 60);
