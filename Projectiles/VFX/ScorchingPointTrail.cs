@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.VFX
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Interstellar Trail");
+            DisplayName.SetDefault("Scorching Trail");
         }
         public override void SetDefaults()
         {
