@@ -77,7 +77,10 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         {
             if (Projectile.timeLeft < 2)
             {
-                TornadoSound.Stop();
+                if (TornadoSound != null && TornadoSound.IsPlaying)
+                {
+                    TornadoSound.Stop();
+                }
             }
         }
         public override bool PreDraw(ref Color lightColor)
