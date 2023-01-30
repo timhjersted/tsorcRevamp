@@ -154,6 +154,7 @@ namespace tsorcRevamp
 
         private void LoadSlain(TagCompound tag)
         {
+            //Convert old slain
             if (tag.ContainsKey("type"))
             {
                 List<int> list = tag.Get<List<int>>("type");
@@ -162,6 +163,21 @@ namespace tsorcRevamp
                 {
                     NPCDefinition npc = new(list[i]);
                     NewSlain.Add(npc, list2[i]);
+                }
+            }
+
+            //Load new slain
+            if (tag.ContainsKey("NewSlainKeys"))
+            {
+                List<NPCDefinition> list = tag.Get<List<NPCDefinition>>("NewSlainKeys");
+                List<int> list2 = tag.Get<List<int>>("NewSlainValues");
+                for (int i = 0; i < list.Count; i++)
+                {
+                    NPCDefinition npc = list[i];
+                    if (!NewSlain.ContainsKey(list[i]))
+                    {
+                        NewSlain.Add(list[i], list2[i]);
+                    }
                 }
             }
         }
