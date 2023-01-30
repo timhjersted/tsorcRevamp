@@ -823,6 +823,19 @@ namespace tsorcRevamp
             #region ModifiedRecipes List
             ModifiedRecipes = new Dictionary<int, List<(int ID, int Count)>>()
             {
+                #region Boss Items
+                { ItemID.PumpkinMoonMedallion,       new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.SoulofFright, 1),
+                                            (ItemID.SoulofMight, 1),
+                                            (ItemID.SoulofSight, 1)
+                                        }                                       },
+                { ItemID.NaughtyPresent,       new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.SoulofMight, 1),
+                                            (ItemID.SoulofSight, 1)
+                                        }                                       },
+                #endregion
                 #region Hooks
                 { ItemID.IvyWhip,       new List<(int ItemID, int Count)>()
                                         {
