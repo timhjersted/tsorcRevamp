@@ -26,7 +26,6 @@ namespace tsorcRevamp.Projectiles.Summon
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Summon;
-            Projectile.hide = true;
 
             FollowHost = false;
             LaserOrigin = Main.projectile[HostIdentifier].Center;

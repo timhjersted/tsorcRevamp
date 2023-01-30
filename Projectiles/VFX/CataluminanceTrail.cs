@@ -32,7 +32,6 @@ namespace tsorcRevamp.Projectiles.VFX
             trailWidth = 45;
             trailPointLimit = 900;
             trailMaxLength = 9999999;
-            Projectile.hide = true;
             collisionPadding = 50;
             NPCSource = true;           
             trailCollision = true;

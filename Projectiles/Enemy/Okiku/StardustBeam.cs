@@ -21,7 +21,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Magic;
-            Projectile.hide = true;
             Projectile.timeLeft = 999;
 
             LaserSize = 1.1f;

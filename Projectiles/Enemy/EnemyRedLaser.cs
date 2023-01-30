@@ -19,7 +19,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.penetrate = -1;
             Projectile.tileCollide = true;
             Projectile.DamageType = DamageClass.Magic;
-            Projectile.hide = true;
 
             FollowHost = true;
             LaserOrigin = Main.npc[HostIdentifier].Center;

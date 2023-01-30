@@ -178,7 +178,14 @@ namespace tsorcRevamp
                             trail.PreDraw(ref color);
                             trail.additiveContext = false;
                         }
-
+                        if (Main.projectile[i].ModProjectile is GenericLaser)
+                        {
+                            GenericLaser laser = (GenericLaser)Main.projectile[i].ModProjectile;
+                            laser.additiveContext = true;
+                            Color color = Color.White;
+                            laser.PreDraw(ref color);
+                            laser.additiveContext = false;
+                        }
                         if (Main.projectile[i].ModProjectile is SpazFireJet)
                         {
                             SpazFireJet jet = (SpazFireJet)Main.projectile[i].ModProjectile;

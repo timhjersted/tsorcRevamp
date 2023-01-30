@@ -53,7 +53,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Magic;
-            Projectile.hide = true;
 
             ProjectileSource = true;
             FollowHost = true;

@@ -259,7 +259,6 @@ namespace tsorcRevamp.Projectiles
             Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.damage = 25;
-            Projectile.hide = true;
 
             LaserOrigin = ProjectileSource ? Main.projectile[UsefulFunctions.DecodeID(HostIdentifier)].position : Main.npc[HostIdentifier].position;
         }
@@ -272,11 +271,13 @@ namespace tsorcRevamp.Projectiles
 
         float timeFactor = 0;
         float fadePercent;
+        public bool additiveContext = false;
         public override bool PreDraw(ref Color lightColor)
         {
-            //Restart the spritebatch to avoid contaminating the main one with new shader data
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            if (!additiveContext)
+            {
+                return false;
+            }
 
             //If no custom shader has been given then load the generic one
             if (LaserShader == null)
@@ -340,9 +341,6 @@ namespace tsorcRevamp.Projectiles
             //Draw the laser
             Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.velocity.ToRotation(), origin, Projectile.scale, SpriteEffects.None, 0);
 
-            //Restart the spritebatch with the vanilla parameters
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             return false;
         }
 

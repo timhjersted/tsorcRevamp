@@ -23,7 +23,6 @@ namespace tsorcRevamp.Projectiles
             Projectile.ownerHitCheck = false;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = false;
-            Projectile.hide = false;
             Projectile.scale = 1f;
             Projectile.DamageType = DamageClass.Magic;
 

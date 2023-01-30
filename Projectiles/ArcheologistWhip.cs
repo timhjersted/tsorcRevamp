@@ -22,7 +22,6 @@ namespace tsorcRevamp.Projectiles
             Projectile.friendly = true;
             Projectile.hostile = false;
             Projectile.tileCollide = false;
-            Projectile.hide = false;
             Projectile.scale = 1f;
         }
         public override bool PreDraw(ref Color lightColor)
