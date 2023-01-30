@@ -34,6 +34,8 @@ namespace tsorcRevamp
         {
             On.Terraria.Player.Spawn += SpawnPatch;
 
+            On.Terraria.WorldGen.TriggerLunarApocalypse += StopLunarApocalypse;
+
             On.Terraria.WorldGen.UpdateLunarApocalypse += StopMoonLord;
 
             On.Terraria.Player.TileInteractionsCheckLongDistance += SignTextPatch;
@@ -94,6 +96,11 @@ namespace tsorcRevamp
             On.Terraria.Main.DrawProjectiles += Main_DrawProjectiles;
 
             On.Terraria.Main.DrawCachedProjs += Main_DrawCachedProjs;
+        }
+
+        private static void StopLunarApocalypse(On.Terraria.WorldGen.orig_TriggerLunarApocalypse orig)
+        {
+            return;
         }
 
         public static bool fixRainbowRod = true;
@@ -1342,7 +1349,6 @@ namespace tsorcRevamp
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-
                 if (!NPC.LunarApocalypseIsUp)
                 {
                     return;
