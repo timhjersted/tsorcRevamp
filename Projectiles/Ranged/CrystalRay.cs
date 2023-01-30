@@ -221,11 +221,6 @@ namespace tsorcRevamp.Projectiles.Ranged
         {
             switch (Projectile.ai[0])
             {
-                case ProjectileID.CrystalBullet:
-                    {
-                        
-                        break;
-                    }
                 case ProjectileID.CursedBullet:
                     {
                         target.AddBuff(BuffID.CursedInferno, 420);
