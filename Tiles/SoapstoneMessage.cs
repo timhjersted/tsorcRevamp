@@ -18,7 +18,7 @@ namespace tsorcRevamp.Tiles {
         public int textWidth;
         public SoapstoneStyle style;
 
-        public const int DEFAULT_WIDTH = 270;
+        public const int DEFAULT_WIDTH = 320;
         public const SoapstoneStyle DEFAULT_STYLE = SoapstoneStyle.Dialogue;
 
         public SoapstoneMessage(string text, Point16 location, int textWidth = DEFAULT_WIDTH, SoapstoneStyle style = DEFAULT_STYLE) {

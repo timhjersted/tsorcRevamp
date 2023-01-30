@@ -746,7 +746,7 @@ namespace tsorcRevamp
                 {
                     if (Main.item[i].type == ItemID.Sign && Main.item[i].active)
                     {
-                        Main.item[i].active = false; //delete ground items (in this case campfires)
+                        Main.item[i].active = false; //delete ground items
                     }
                 }
             }
@@ -765,13 +765,32 @@ namespace tsorcRevamp
             if (!skipRead)
             {
                 mod.Logger.Info("Attempting to read soapstone JSON");
+
+                for (int x = 0; x < Main.maxTilesX - 2; x++) {
+                    for (int y = 0; y < Main.maxTilesY - 2; y++) {
+                        Tile worldTile = Framing.GetTileSafely(x, y);
+                        if (worldTile.HasTile && worldTile.TileType == TileID.Signs) {
+                            for (int q = x; q < x + 2; q++) {
+                                for (int w = y; w < y + 2; w++) {
+                                    WorldGen.KillTile(q, w);
+                                }
+                            }
+                        }
+                    }
+                }
+                for (int i = 0; i < 400; i++) {
+                    if (Main.item[i].type == ItemID.Sign && Main.item[i].active) {
+                        Main.item[i].active = false; //delete ground items
+                    }
+                }
                 string bigJson = File.ReadAllText(jsonPath);
                 List<SignJSONSerializable> texts = UsefulFunctions.DeserializeMultiple<SignJSONSerializable>(bigJson).ToList();
                 foreach (SignJSONSerializable sign in texts)
                 {
                     int locX = sign.tileX;
                     int locY = sign.tileY;
-                    Dust.QuickBox(new Vector2(locX, locY) * 16, new Vector2(locX + 1, locY + 1) * 16, 2, Color.YellowGreen, null);
+                    //Dust.QuickBox(new Vector2(locX, locY) * 16, new Vector2(locX + 1, locY + 1) * 16, 2, Color.YellowGreen, null);
+
 
 
                     Tile tile = Framing.GetTileSafely(locX, locY);
