@@ -981,6 +981,8 @@ namespace tsorcRevamp
                 Main.goreLoaded[156] = false;
             }*/
         }
+
+        [Obsolete]
         public override void AddRecipes()
         {
             foreach (var recipe in Main.recipe)
@@ -992,25 +994,29 @@ namespace tsorcRevamp
                     recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
                 }
 
+                //No processing recipes that have already been modified once
                 if (ModifiedRecipes.ContainsKey(itemID))
                 {
-                    //Split the recipe into two copies
-                    Recipe modifiedRecipe = recipe.Clone();
-
-                    //Give the unmodified one the AdventureModeDisabled condition
-                    recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
-
-                    //Give the modified one the AdventureModeEnabled condition
-                    modifiedRecipe.AddCondition(tsorcRevampWorld.AdventureModeEnabled);
-
-                    //Add the ingredients to the modified one
-                    foreach (var ingredient in ModifiedRecipes[itemID])
+                    if (!(recipe.HasCondition(tsorcRevampWorld.AdventureModeDisabled) || recipe.HasCondition(tsorcRevampWorld.AdventureModeEnabled)))
                     {
-                        modifiedRecipe.AddIngredient(ingredient.ID, ingredient.Count);
-                    }
+                        //Split the recipe into two copies
+                        Recipe modifiedRecipe = recipe.Clone();
 
-                    //Register it
-                    modifiedRecipe.Register();
+                        //Give the unmodified one the AdventureModeDisabled condition
+                        recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
+
+                        //Give the modified one the AdventureModeEnabled condition
+                        modifiedRecipe.AddCondition(tsorcRevampWorld.AdventureModeEnabled);
+
+                        //Add the ingredients to the modified one
+                        foreach (var ingredient in ModifiedRecipes[itemID])
+                        {
+                            modifiedRecipe.AddIngredient(ingredient.ID, ingredient.Count);
+                        }
+
+                        //Register it
+                        modifiedRecipe.Register();
+                    }
                 }
             }
             // add new recipes

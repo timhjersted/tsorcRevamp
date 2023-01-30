@@ -1265,18 +1265,28 @@ namespace tsorcRevamp
         //Chaos
         //Dark Cloud
 
+        static Recipe.Condition internalDisabled;
         public static Recipe.Condition AdventureModeDisabled
         {
             get
             {
-                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Only craftable outside of Adventure Mode"), r => ModContent.GetInstance<tsorcRevampConfig>().AdventureMode);
+                if (internalDisabled == null)
+                {
+                    internalDisabled = new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Only craftable outside of Adventure Mode"), r => !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode);
+                }
+                return internalDisabled;
             }
         }
+        static Recipe.Condition internalEnabled;
         public static Recipe.Condition AdventureModeEnabled
         {
             get
             {
-                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Only craftable outside of Adventure Mode"), r => !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode);
+                if (internalEnabled == null)
+                {
+                    internalEnabled = new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Adventure Mode-only recipe"), r => ModContent.GetInstance<tsorcRevampConfig>().AdventureMode);
+                }
+                return internalEnabled;
             }
         }
 
