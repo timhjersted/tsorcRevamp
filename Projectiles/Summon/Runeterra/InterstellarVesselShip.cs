@@ -245,27 +245,29 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		public override bool PreDraw(ref Color lightColor)
         {
 			base.PreDraw(ref lightColor);
-			Main.spriteBatch.End();
-			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-			if (texture == null || texture.IsDisposed)
+			if (additiveContext)
 			{
-				texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Summon/Runeterra/InterstellarVesselShip", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				Main.spriteBatch.End();
+				Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+				if (texture == null || texture.IsDisposed)
+				{
+					texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Summon/Runeterra/InterstellarVesselShip", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				}
+				if (glowTexture == null || glowTexture.IsDisposed)
+				{
+					glowTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Summon/Runeterra/InterstellarVesselShip" + "Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+				}
+
+				Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+				Vector2 origin = sourceRectangle.Size() / 2f;
+
+				Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.Lerp(lightColor, Color.Orange, 0.25f), Projectile.rotation, origin, 1, SpriteEffects.None, 0f);
+				Main.spriteBatch.Draw(glowTexture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, 1, SpriteEffects.None, 0f);
+
+				Main.spriteBatch.End();
+				Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 			}
-			if (glowTexture == null || glowTexture.IsDisposed)
-			{
-				glowTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Summon/Runeterra/InterstellarVesselShip" + "Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-			}
-
-			Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
-			Vector2 origin = sourceRectangle.Size() / 2f;
-
-			Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.Lerp(lightColor, Color.Orange, 0.25f), Projectile.rotation, origin, 1, SpriteEffects.None, 0f);
-			Main.spriteBatch.Draw(glowTexture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, 1, SpriteEffects.None, 0f);
-
-			Main.spriteBatch.End();
-			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
 			return false;
 		}
     }	

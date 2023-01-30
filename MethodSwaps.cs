@@ -23,6 +23,8 @@ using tsorcRevamp.UI;
 using Terraria.DataStructures;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
 using tsorcRevamp.Projectiles.VFX;
+using tsorcRevamp.Projectiles.Enemy.Triad;
+using Terraria.Graphics;
 
 namespace tsorcRevamp
 {
@@ -94,16 +96,42 @@ namespace tsorcRevamp
             On.Terraria.Main.DrawCachedProjs += Main_DrawCachedProjs;
         }
 
+        public static bool fixRainbowRod = true;
         private static void Main_DrawCachedProjs(On.Terraria.Main.orig_DrawCachedProjs orig, Main self, List<int> projCache, bool startSpriteBatch)
         {
-            orig(self, projCache, startSpriteBatch);
-
             if (Main.IsGraphicsDeviceAvailable)
             {
                 if(startSpriteBatch == false)
                 {
                     Main.spriteBatch.End();
                 }
+
+                //Rainbow rod & friends are super duper special and *must* be drawn in their own spritebatch before *any* additive projectiles are drawn or else they will throw a tantrum and fucking die
+                if (fixRainbowRod)
+                {
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
+                    for (int i = 0; i < Main.maxProjectiles; i++)
+                    {
+                        if (Main.projectile[i] != null && Main.projectile[i].active)
+                        {
+                            if (Main.projectile[i].type == 34)
+                                default(FlameLashDrawer).Draw(Main.projectile[i]);
+
+                            if (Main.projectile[i].type == 16)
+                                default(MagicMissileDrawer).Draw(Main.projectile[i]);
+
+                            if (Main.projectile[i].type == 933)
+                                default(FinalFractalHelper).Draw(Main.projectile[i]);
+
+                            if (Main.projectile[i].type == 79)
+                                default(RainbowRodDrawer).Draw(Main.projectile[i]);
+                        }
+                        fixRainbowRod = false;
+                    }
+                    Main.spriteBatch.End();
+                }
+                
+                //Draw anything additive that needs to be drawn on a different layer in one big batch
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
@@ -123,7 +151,7 @@ namespace tsorcRevamp
                     }
                 }
                 Main.spriteBatch.End();
-                if(startSpriteBatch == false)
+                if (startSpriteBatch == false)
                 {
                     Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
                 }
@@ -136,6 +164,7 @@ namespace tsorcRevamp
 
             if (Main.IsGraphicsDeviceAvailable)
             {
+                //Draw most additive projectiles in one big batch
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
@@ -149,17 +178,26 @@ namespace tsorcRevamp
                             trail.PreDraw(ref color);
                             trail.additiveContext = false;
                         }
+
+                        if (Main.projectile[i].ModProjectile is SpazFireJet)
+                        {
+                            SpazFireJet jet = (SpazFireJet)Main.projectile[i].ModProjectile;
+                            jet.additiveContext = true;
+                            Color color = Color.White;
+                            jet.PreDraw(ref color);
+                            jet.additiveContext = false;
+                        }
                     }
                 }
                 Main.spriteBatch.End();
             }
         }
 
-
         //Changing the rendertarget destroys everything currently in it
         //So we have to do it here, before the game draws anything else
         private static void Main_Draw(On.Terraria.Main.orig_Draw orig, Main self, GameTime gameTime)
         {
+            fixRainbowRod = true;
             if (Main.IsGraphicsDeviceAvailable)
             {
                 for (int i = 0; i < Main.maxProjectiles; i++)

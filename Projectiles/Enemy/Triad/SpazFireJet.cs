@@ -114,10 +114,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
         public static ArmorShaderData data;
         public static ArmorShaderData targetingData;
+        public bool additiveContext = false;
         public override bool PreDraw(ref Color lightColor)
         {
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            if (!additiveContext)
+            {
+                return false;
+            }
 
             //Apply the shader, caching it as well
             if (data == null)
@@ -163,10 +166,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             data.UseOpacity(scaleDown);
             data.Apply(null);
             Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
-
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             return false;
         }
