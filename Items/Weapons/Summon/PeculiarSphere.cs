@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         }
         public override void SetDefaults() 
         {
-            Item.damage = 100;
+            Item.damage = 115;
             Item.knockBack = 1f;
             Item.width = 44;
             Item.height = 50;
