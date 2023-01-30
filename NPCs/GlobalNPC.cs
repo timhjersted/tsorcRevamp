@@ -9,6 +9,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Throwing;
@@ -384,7 +385,7 @@ namespace tsorcRevamp.NPCs
                 #region Bosses drop souls once
                 if (npc.boss)
                 {
-                    if (tsorcRevampWorld.Slain.ContainsKey(npc.type))
+                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(npc.type)))
                     {
                         DarkSoulQuantity = 0;
                     }
@@ -430,7 +431,7 @@ namespace tsorcRevamp.NPCs
                         }
                         else
                         {
-                            tsorcRevampWorld.Slain.Add(npc.type, 1);
+                            tsorcRevampWorld.NewSlain.Add(new NPCDefinition(npc.type), 1);
                         }
 
                         if (Main.netMode == NetmodeID.Server)

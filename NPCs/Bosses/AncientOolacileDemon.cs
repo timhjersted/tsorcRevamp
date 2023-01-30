@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -50,13 +50,13 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EyeofCthulhu))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EyeofCthulhu)))
             {
                 target.AddBuff(20, 150, false); //poisoned
                 target.AddBuff(30, 150, false); //bleeding
             }
 
-            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)))
             {
                 target.AddBuff(70, 150, false); //acid venom
                 target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 HP after several hits
@@ -85,7 +85,7 @@ namespace tsorcRevamp.NPCs.Bosses
             greatAttackDamage = (int)(greatAttackDamage / 2);
 
 
-            //alt code: if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead))
+            //alt code: if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EaterofWorldsHead))
             if (NPC.downedBoss1)  
             {
                 NPC.defense = 18;

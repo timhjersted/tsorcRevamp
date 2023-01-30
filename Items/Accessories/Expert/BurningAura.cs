@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "killcount", $"Current count: {((tsorcRevampWorld.Slain == null) ? 0 : tsorcRevampWorld.Slain.Count)}"));
+            tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "killcount", $"Current count: {((tsorcRevampWorld.NewSlain == null) ? 0 : tsorcRevampWorld.NewSlain.Count)}"));
             base.ModifyTooltips(tooltips);
         }
         public override void UpdateEquip(Player player)

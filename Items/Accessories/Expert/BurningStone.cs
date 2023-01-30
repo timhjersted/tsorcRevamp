@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "killcount", $"Current count: {((tsorcRevampWorld.Slain == null) ? 0 : tsorcRevampWorld.Slain.Count)}"));
+            tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "killcount", $"Current count: {((tsorcRevampWorld.NewSlain == null) ? 0 : tsorcRevampWorld.NewSlain.Count)}"));
             base.ModifyTooltips(tooltips);
         }
         public override void UpdateEquip(Player player)
@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
                         if (target != null && Main.npc[target.Value].Distance(player.Center) < 1000)
                         {
                             Vector2 velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.npc[target.Value].Center, 10);
-                            int damage = 1 + (tsorcRevampWorld.Slain.Count * 3);
+                            int damage = 1 + (tsorcRevampWorld.NewSlain.Count * 3);
                             if (tsorcRevampWorld.SuperHardMode)
                             {
                                 damage *= 2;

@@ -7,6 +7,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 {
@@ -93,9 +94,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
 
 
-            if (tsorcRevampWorld.SuperHardMode && (Sky || AboveEarth) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<SeathTheScalelessHead>()) && FrozenOcean && Main.rand.NextBool(100)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && (Sky || AboveEarth) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<SeathTheScalelessHead>())) && FrozenOcean && Main.rand.NextBool(100)) return 1;
 
-            if (Main.hardMode && P.townNPCs > 2f && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Artorias>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<SeathTheScalelessHead>()) && !Main.dayTime && Main.rand.NextBool(1000))
+            if (Main.hardMode && P.townNPCs > 2f && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Artorias>())) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<SeathTheScalelessHead>())) && !Main.dayTime && Main.rand.NextBool(1000))
             {
                 UsefulFunctions.BroadcastText("The village is under attack!", 175, 75, 255);
                 UsefulFunctions.BroadcastText("Seath the Scaleless has come to destroy all...", 175, 75, 255);

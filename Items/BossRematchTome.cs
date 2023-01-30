@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.Items
 {
@@ -34,17 +35,17 @@ namespace tsorcRevamp.Items
         }
 
         int index = 0;
-        List<int> keys;
+        List<NPCDefinition> keys;
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             string selectedBoss;
-            if(tsorcRevampWorld.Slain == null || tsorcRevampWorld.Slain.Keys.Count == 0)
+            if(tsorcRevampWorld.NewSlain == null || tsorcRevampWorld.NewSlain.Keys.Count == 0)
             {
                 selectedBoss = "No rematchable bosses defeated!";
             }
             else
             {
-                keys = new List<int>(tsorcRevampWorld.Slain.Keys);
+                keys = new List<NPCDefinition>(tsorcRevampWorld.NewSlain.Keys);
                 RemoveBannedBosses(keys);
                 if(keys.Count == 0)
                 {
@@ -70,14 +71,14 @@ namespace tsorcRevamp.Items
 
         public override bool? UseItem(Player player)
         {
+            keys = new List<NPCDefinition>(tsorcRevampWorld.NewSlain.Keys);
             if(player.whoAmI != Main.myPlayer || Main.netMode == NetmodeID.Server)
             {
                 return false;
             }
 
-            keys = new List<int>(tsorcRevampWorld.Slain.Keys);
             RemoveBannedBosses(keys);
-            if (tsorcRevampWorld.Slain == null || tsorcRevampWorld.Slain.Keys.Count == 0 || keys.Count == 0)
+            if (tsorcRevampWorld.NewSlain == null || tsorcRevampWorld.NewSlain.Keys.Count == 0 || keys.Count == 0)
             {
                 UsefulFunctions.BroadcastText("No rematchable bosses defeated!");
                 return true;
@@ -97,7 +98,7 @@ namespace tsorcRevamp.Items
                     }
                 }
                 NPC temp = new NPC();
-                temp.SetDefaults(keys[index]);
+                temp.SetDefaults(keys[index].Type);
 
                 string selectedBoss = temp.GivenOrTypeName;
 
@@ -105,11 +106,11 @@ namespace tsorcRevamp.Items
                 {
                     selectedBoss = "Slogra and Gaibon";
                 }
-                if (keys[index] == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>())
+                if (keys[index].Type == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>())
                 {
                     selectedBoss = "Attraidies First Phase";
                 }
-                if (keys[index] == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())
+                if (keys[index].Type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())
                 {
                     selectedBoss = "Attraidies Final Form";
                 }
@@ -157,7 +158,7 @@ namespace tsorcRevamp.Items
             return base.UseItem(player);
         }
 
-        public void RemoveBannedBosses(List<int> keys)
+        public void RemoveBannedBosses(List<NPCDefinition> keys)
         {
             //These are pieces or alternate phases of bosses which automatically get spawned by their 'parent' boss and should not be spawned on their own
             List<int> bannedBosses = new List<int>();
@@ -180,9 +181,9 @@ namespace tsorcRevamp.Items
             //Check if the keys list has any of the banned bosses, and if so remove them
             for (int i = 0; i < bannedBosses.Count; i++)
             {
-                if (keys.Contains(bannedBosses[i]))
+                if (keys.Contains(new NPCDefinition(bannedBosses[i])))
                 {
-                    keys.Remove(bannedBosses[i]);
+                    keys.Remove(new NPCDefinition(bannedBosses[i]));
                 }
             }
         }

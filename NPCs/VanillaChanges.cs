@@ -10,6 +10,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Pets;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs
 {
@@ -5697,13 +5698,13 @@ namespace tsorcRevamp.NPCs
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<MiakodaFull>());
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<MiakodaFull>());
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
 
             }
             if (npc.type == NPCID.SkeletronPrime && !Main.expertMode)
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfSteel>(), 2);
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronPrime) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(NPCID.SkeletronPrime) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
             }
             if ((npc.type == NPCID.Retinazer || npc.type == NPCID.Spazmatism) && !Main.expertMode)
             {
@@ -5735,13 +5736,13 @@ namespace tsorcRevamp.NPCs
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.HerosShirt);
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.HerosPants);
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.HermesBoots, 1, false, -1);
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.EyeofCthulhu) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EyeofCthulhu)) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
 
             }
 
             if (npc.type == NPCID.WallofFlesh && !Main.expertMode)
             {
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.WallofFlesh) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<EstusFlaskShard>());
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.WallofFlesh)) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<EstusFlaskShard>());
             }
 
             if (npc.type == NPCID.PossessedArmor && Main.rand.NextBool(50) && !Main.expertMode)

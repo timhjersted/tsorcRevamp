@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.Utilities;
 
 namespace tsorcRevamp.NPCs.Friendly
@@ -163,7 +164,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
             }
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())))
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.GreatEnergyBeamScroll>());
                 shop.item[nextSlot].shopCustomPrice = 3500;

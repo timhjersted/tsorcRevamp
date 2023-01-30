@@ -7,6 +7,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Bosses.Fiends
 {
@@ -672,7 +673,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>(), 10);
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPC.type)))
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
                 }

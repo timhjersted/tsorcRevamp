@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
@@ -376,7 +377,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Emerald, Main.rand.Next(1, 7));
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Amethyst, Main.rand.Next(1, 7));
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Amber, Main.rand.Next(1, 7));
-                if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<JungleWyvernHead>())))
+                if (!(tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<JungleWyvernHead>()))))
                 { //If the boss has not yet been killed
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 9000); //Then drop the souls
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<StaminaVessel>());

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Bosses.Fiends
 {
@@ -122,7 +123,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             }
             if (!Main.expertMode)
             {
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPC.type)))
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
                 }
