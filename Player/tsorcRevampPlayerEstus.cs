@@ -134,7 +134,7 @@ namespace tsorcRevamp
 
         public void UpdateDrinkingEstus()
         {
-            estusHealthPerTick += estusHealthGain / estusHealingTimerMax; //Heal this much each tick
+            //estusHealthPerTick += estusHealthGain / estusHealingTimerMax; //Heal this much each tick
             //Attempt to drink if the player isn't already
             if (!isDrinking /*&& !TryDrinkEstus()*/)
             {
@@ -220,6 +220,7 @@ namespace tsorcRevamp
 
                 if (estusHealingTimer >= estusHealingTimerMax) //Once healing process is over
                 {
+                    estusHealthPerTick = 0;
                     estusHealingTimer = 0; //Set timer back to 0
                     isEstusHealing = false; //No longer drinking
                 }
