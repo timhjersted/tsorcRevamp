@@ -31,12 +31,19 @@ namespace tsorcRevamp.Projectiles
             trailYOffset = 50;
             trailMaxLength = 350;
             NPCSource = false;
+            noDiscontinuityCheck = true;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         public override void AI()
         {
             base.AI();
+
+            if (Main.GameUpdateCount % 5 == 0)
+            {
+                Projectile.netUpdate = true;
+            }
+
             if (UsefulFunctions.IsTileReallySolid(Projectile.Center / 16f))
             {
                 dying = true;

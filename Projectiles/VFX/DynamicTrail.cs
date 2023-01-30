@@ -100,6 +100,9 @@ namespace tsorcRevamp.Projectiles.VFX
         /// </summary>
         public float deathProgress;
 
+        /// <summary>
+        /// When dying, the trail fades out this much each frame
+        /// </summary>
         public float deathSpeed = 1f / 60f;
 
         /// <summary>
@@ -122,6 +125,12 @@ namespace tsorcRevamp.Projectiles.VFX
         /// Trails fade out when their timeLeft gets low by default. Turn this on to disable that behavior.
         /// </summary>
         public bool noFadeOut = false;
+
+        /// <summary>
+        /// Trails get 'reset' if their host jumps too far in position, to avoid jankiness and trails getting stretched weirdly.
+        /// This disables that behavior.
+        /// </summary>
+        public bool noDiscontinuityCheck = false;
 
         /// <summary>
         /// If Projectile.ai[0] is set to 1, then this projectile is attached to an NPC
@@ -311,7 +320,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 float extraDistance = Vector2.Distance(trailPositions[i], trailPositions[i + 1]);
 
                 //If the trail is discontinuous (because its host got teleported, for example) then restart it
-                if(extraDistance > 60)
+                if(extraDistance > 60 && !noDiscontinuityCheck)
                 {
                     trailPositions = new List<Vector2>();
                     trailRotations = new List<float>();
