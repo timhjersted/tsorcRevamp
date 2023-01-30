@@ -421,8 +421,8 @@ namespace tsorcRevamp.NPCs
                                     //If the other boss is not alive, then add them both. If not, don't.
                                     if (!NPC.AnyNPCs(tsorcRevampWorld.PairedBosses[i + pairedNPCOffset]))
                                     {
-                                        tsorcRevampWorld.Slain.Add(npc.type, 1);
-                                        tsorcRevampWorld.Slain.Add(tsorcRevampWorld.PairedBosses[i + pairedNPCOffset], 1);
+                                        tsorcRevampWorld.NewSlain.Add(new NPCDefinition(npc.type), 1);
+                                        tsorcRevampWorld.NewSlain.Add(new NPCDefinition(tsorcRevampWorld.PairedBosses[i + pairedNPCOffset]), 1);
                                     }
 
                                     break;

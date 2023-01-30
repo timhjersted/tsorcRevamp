@@ -1606,7 +1606,7 @@ namespace tsorcRevamp
                     new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>() },
                     this, // Mod
                     "Witchking", // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     0,
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.ArtoriasBag>(), ModContent.ItemType<Items.Accessories.Expert.RingofArtorias>(), ModContent.ItemType<Items.Accessories.Defensive.WolfRing>(), ModContent.ItemType<Items.SoulOfArtorias>(), ItemID.LargeAmethyst }, // List containing all the loot to show in the bestiary
@@ -1659,7 +1659,7 @@ namespace tsorcRevamp
                     new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>() },
                     this, // Mod
                     "Abysmal Oolacile Sorcerer", // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.BlightStone>(),
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.BlightBag>(), ModContent.ItemType<Items.SoulOfBlight>(), ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() },// List containing all the loot to show in the bestiary

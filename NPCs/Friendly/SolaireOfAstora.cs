@@ -6,6 +6,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.Utilities;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Weapons.Melee;
@@ -150,7 +151,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
 
 
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheSorrow>())))
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenIceBrand>());
                 shop.item[nextSlot].shopCustomPrice = 4000;

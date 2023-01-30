@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
@@ -47,7 +48,7 @@ namespace tsorcRevamp.Items.VanillaItems
             //SimpleModTooltip(mod, item, tooltips, ItemID., "a", "b");
             //SimpleModTooltip(mod, item, tooltips, ItemID.FlaskofFire, "Adds 10% melee damage");  don't do this. flask of fire's tooltip goes at a specific index, not the end
             
-            if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheHunter>()))
+            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
             {
                 SimpleModTooltip(Mod, item, tooltips, ItemID.AngelWings, "[c/ffbf00:You will discover these in time...]", "Can be upgraded with Supersonic Boots");
             }

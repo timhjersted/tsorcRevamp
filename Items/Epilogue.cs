@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items
             {
                 if (tooltips[i].Text.Contains("obscured"))
                 {
-                    if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()))
+                    if (tsorcRevampWorld.NewSlain.ContainsKey(new Terraria.ModLoader.Config.NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>())))
                     {
                         tooltips[i].Text = "[c/ffbf00:Congratulations! You have unlocked the true ending of the game!]" +
                                "\nHaving defeated Gwyn, the portal that Attraidies opened at the moment of his death has closed." +

@@ -112,7 +112,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 {
 
                     UsefulFunctions.BroadcastText("The souls of " + NPC.GivenOrTypeName + " have been released!", 175, 255, 75);
-                    tsorcRevampWorld.Slain[ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>()] = 1;
+                    tsorcRevampWorld.NewSlain[new Terraria.ModLoader.Config.NPCDefinition(ModContent.NPCType<GhostDragonHead>())] = 1;
                 }
             }
         }

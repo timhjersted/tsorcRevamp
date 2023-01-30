@@ -604,7 +604,7 @@ namespace tsorcRevamp
 
         public static bool GwynsTombVisionCustomCondition()
         {
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Special.GwynBossVision>()))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>())) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Special.GwynBossVision>()))
             {
                 return false;
             }

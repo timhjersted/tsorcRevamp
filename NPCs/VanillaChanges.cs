@@ -5704,7 +5704,7 @@ namespace tsorcRevamp.NPCs
             if (npc.type == NPCID.SkeletronPrime && !Main.expertMode)
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfSteel>(), 2);
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(NPCID.SkeletronPrime) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronPrime)) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
             }
             if ((npc.type == NPCID.Retinazer || npc.type == NPCID.Spazmatism) && !Main.expertMode)
             {

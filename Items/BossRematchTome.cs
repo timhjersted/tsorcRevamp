@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items
                 else
                 {
                     NPC temp = new NPC();
-                    temp.SetDefaults(keys[index]);
+                    temp.SetDefaults(keys[index].Type);
 
                     selectedBoss = temp.GivenOrTypeName;
 
@@ -122,7 +122,7 @@ namespace tsorcRevamp.Items
                 
                 if (!tsorcRevampWorld.BossAlive)
                 {
-                    if (keys[index] == ModContent.NPCType<NPCs.Bosses.Slogra>())
+                    if (keys[index].Type == ModContent.NPCType<NPCs.Bosses.Slogra>())
                     {
                         if (Main.netMode == NetmodeID.SinglePlayer)
                         {
@@ -139,13 +139,13 @@ namespace tsorcRevamp.Items
                     }
                     if (Main.netMode == NetmodeID.SinglePlayer)
                     {
-                        NPC.NewNPCDirect(Item.GetSource_FromThis(), player.Center + new Vector2(0, -300), keys[index]);
+                        NPC.NewNPCDirect(Item.GetSource_FromThis(), player.Center + new Vector2(0, -300), keys[index].Type);
                     }
                     else
                     {
                         ModPacket spawnNPCPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
                         spawnNPCPacket.Write(tsorcPacketID.SpawnNPC);
-                        spawnNPCPacket.Write(keys[index]);
+                        spawnNPCPacket.Write(keys[index].Type);
                         spawnNPCPacket.WriteVector2(player.Center + new Vector2(0, -300));
                         spawnNPCPacket.Send();
                     }

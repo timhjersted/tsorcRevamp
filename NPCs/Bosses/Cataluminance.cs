@@ -12,6 +12,7 @@ using tsorcRevamp.Projectiles.VFX;
 using Terraria.Graphics.Effects;
 using Terraria.Audio;
 using System.IO;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -652,13 +653,13 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.dontTakeDamage = false;
                 NPC.StrikeNPC(999999, 0, 0);
                 NPC.downedMechBoss2 = true;
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.Spazmatism))
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.Spazmatism)))
                 {
-                    tsorcRevampWorld.Slain.Add(NPCID.Spazmatism, 1);
+                    tsorcRevampWorld.NewSlain.Add(new NPCDefinition(NPCID.Spazmatism), 1);
                 }
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.Retinazer))
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.Retinazer)))
                 {
-                    tsorcRevampWorld.Slain.Add(NPCID.Retinazer, 1);
+                    tsorcRevampWorld.NewSlain.Add(new NPCDefinition(NPCID.Retinazer), 1);
                 }
             }
         }

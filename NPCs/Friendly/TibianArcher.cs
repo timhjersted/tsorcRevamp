@@ -150,7 +150,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
             }
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>()))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.JungleWyvern.JungleWyvernHead>())))
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.EnchantedThrowingSpear>());
                 shop.item[nextSlot].shopCustomPrice = 2200;
@@ -170,7 +170,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 nextSlot++;
             }
 
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheHunter>()))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheHunter>())))
             {
                 shop.item[nextSlot].SetDefaults(ItemID.HolyArrow);
                 shop.item[nextSlot].shopCustomPrice = 1;

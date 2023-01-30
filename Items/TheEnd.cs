@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.Items
 {
@@ -27,7 +28,7 @@ namespace tsorcRevamp.Items
             {
                 if (tooltips[i].Text.Contains("obscured"))
                 {
-                    if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
+                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())))
                     {
                         tooltips[i].Text = "As the burning remains of the Mindflayer King lay before you, you look up and out to the horizon." +
                                "\nYou feel relieved, but notice your heart is still not at peace. Attraidies was known for his games." +

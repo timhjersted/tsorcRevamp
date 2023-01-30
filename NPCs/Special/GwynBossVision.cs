@@ -8,6 +8,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using tsorcRevamp;
 
 namespace tsorcRevamp.NPCs.Special
@@ -109,7 +110,7 @@ namespace tsorcRevamp.NPCs.Special
             }
 
             //Despawn if Gwyn dies
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.SuperHardMode.Gwyn>())))
             {
                 for (int i = 0; i < bossVisions.Length; i++)
                 {
@@ -232,7 +233,7 @@ namespace tsorcRevamp.NPCs.Special
         public bool canActivate
         {
             get { 
-                return tsorcRevampWorld.Slain.ContainsKey(bossID);
+                return tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(bossID));
             }
         }
 
