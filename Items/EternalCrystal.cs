@@ -180,5 +180,13 @@ namespace tsorcRevamp.Items
 
             return false;
         }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.CrystalShard, 33);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
+        }
     }
 }
