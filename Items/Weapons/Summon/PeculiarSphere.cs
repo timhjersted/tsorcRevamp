@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedBar, 6);
-            recipe.AddIngredient(ItemID.SoulofFright, 10);
+            recipe.AddIngredient(ItemID.SoulofSight, 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
             recipe.AddTile(TileID.DemonAltar);
 
