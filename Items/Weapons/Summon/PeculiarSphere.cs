@@ -42,5 +42,15 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Main.projectile[p].originalDamage = Item.damage;
             return true;
         }
+        /*public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.HallowedBar, 6);
+            recipe.AddIngredient(ItemID.SoulofFright, 10);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
+        }*/
     }
 }

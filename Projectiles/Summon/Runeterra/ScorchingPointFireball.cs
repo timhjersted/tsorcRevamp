@@ -37,10 +37,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Projectile.penetrate = -1;
 			Projectile.extraUpdates = 1;
 
-			Projectile.usesLocalNPCImmunity = true;
-			Projectile.localNPCHitCooldown = 20;
+            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.idStaticNPCHitCooldown = 20;
 
-			trailWidth = 45;
+            trailWidth = 45;
 			trailPointLimit = 900;
 			trailMaxLength = 111;
 			collisionPadding = 50;
