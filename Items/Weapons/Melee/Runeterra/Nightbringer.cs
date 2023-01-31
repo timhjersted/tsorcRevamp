@@ -83,6 +83,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 Item.noMelee = false;
                 //Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             }
+            Vector2 playerCenter = new Vector2(-13, 0);
+            if (player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2)
+            {
+                Dust.NewDust(player.TopLeft + playerCenter, 50, 50, DustID.DesertTorch, Scale: 2);
+            }
         }
 
         public override void UseStyle(Player player, Rectangle heldItemFrame)
