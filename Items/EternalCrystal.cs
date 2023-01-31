@@ -183,7 +183,7 @@ namespace tsorcRevamp.Items
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CrystalShard, 33);
+            recipe.AddIngredient(ItemID.CrystalShard, 55);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
