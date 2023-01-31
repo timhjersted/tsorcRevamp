@@ -163,12 +163,14 @@ namespace tsorcRevamp
                     Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
                 }
             }
+
+
+            orig(self, projCache, startSpriteBatch);
         }
 
         private static void Main_DrawProjectiles(On.Terraria.Main.orig_DrawProjectiles orig, Main self)
         {
             orig(self);
-
             if (Main.IsGraphicsDeviceAvailable)
             {
                 //Draw most additive projectiles in one big batch
