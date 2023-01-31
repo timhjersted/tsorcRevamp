@@ -164,6 +164,10 @@ namespace tsorcRevamp.UI
             {
                 valid = false;
             }
+            if (item.type == ItemID.RecallPotion)
+            {
+                valid = false;
+            }
 
             return valid;
         }

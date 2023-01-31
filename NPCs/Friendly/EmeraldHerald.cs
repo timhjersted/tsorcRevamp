@@ -219,10 +219,6 @@ namespace tsorcRevamp.NPCs.Friendly
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.Lifegem>(), 10);
 
-                    if (Main.netMode != NetmodeID.Server)
-                    {
-                        Main.NewText("Estus Flask acquired! Use it by pressing the Quick Heal hotkey. The Estus Flask is a reusable healing item that can be refilled at bonfires", Color.OrangeRed);
-                    }
                     if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
                         Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ItemID.WormholePotion, 5);

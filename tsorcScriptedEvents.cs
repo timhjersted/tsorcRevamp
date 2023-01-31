@@ -288,7 +288,7 @@ namespace tsorcRevamp
             ScriptedEvent GwynsTombEvent = new ScriptedEvent(new Vector2(670, 1164), 150, ModContent.NPCType<NPCs.Special.GwynBossVision>(), DustID.RedTorch, false, true, true, "default", default, false, GwynsTombVisionCustomCondition);
 
             //GWYN
-            ScriptedEvent GwynEvent = new ScriptedEvent(new Vector2(832, 1244), 16, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.OrangeTorch, true, true, true, "Gwyn has awoken to bring your journey to its final end...", Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent GwynEvent = new ScriptedEvent(new Vector2(832, 1244), 16, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.OrangeTorch, true, true, true, "Gwyn has awoken to bring your journey to its final end...", Color.Red, false);
 
             //ABYSMAL OOLACILE SORCERER
             ScriptedEvent AbysmalOolacileSorcererEvent = new ScriptedEvent(new Vector2(6721, 1905), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), DustID.Shadowflame, true, true, true, "The Abysmal Oolacile Sorcerer shall now disembowel you...", Color.Red, false, SuperHardModeCustomCondition);
@@ -1586,7 +1586,7 @@ namespace tsorcRevamp
                 //Or if they have already been slain
                 for (int i = 0; i < eventNPCs.Count; i++)
                 {
-                    if (tsorcRevampWorld.Slain.ContainsKey(eventNPCs[i].type))
+                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(eventNPCs[i].type)))
                     {
                         return true;
                     }

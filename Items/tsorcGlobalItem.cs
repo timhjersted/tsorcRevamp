@@ -114,7 +114,7 @@ namespace tsorcRevamp.Items
         {
             if(item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0 && !player.HasItem(ModContent.ItemType<Weapons.DebugTome>()))
             {
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+                if (item.type != ItemID.CreativeWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
                 {
                     return false;
                 }
@@ -131,7 +131,7 @@ namespace tsorcRevamp.Items
 
             if (item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0)
             {
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+                if (item.type != ItemID.CreativeWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "These wings have been [c/383838:cursed] by a ferocious [c/009400:Hunter]"));
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "They can not be used until it is defeated"));
