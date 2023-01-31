@@ -387,6 +387,11 @@ namespace tsorcRevamp.Items
                 WeaponSound.Volume = 0.3f;
                 SoundEngine.PlaySound(WeaponSound, target.position);
             }
+
+            if (item.type == ItemID.DD2SquireBetsySword)
+            {
+                target.AddBuff(BuffID.BetsysCurse, 600);
+            }
         }
 
         public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)

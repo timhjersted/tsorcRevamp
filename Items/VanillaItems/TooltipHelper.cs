@@ -88,6 +88,10 @@ namespace tsorcRevamp.Items.VanillaItems
             SimpleModTooltip(Mod, item, tooltips, ItemID.RecallPotion, "Can not be used while a boss is alive!");
             SimpleModTooltip(Mod, item, tooltips, ItemID.LargeAmethyst, "[c/ffbf00:A symbol resembling a large pyramid with the moon to its right side is carved into it]");
             SimpleModTooltip(Mod, item, tooltips, ItemID.LargeSapphire, "[c/ffbf00:A symbol resembling a snow-capped mountain near a fortress is carved into it]");
+            SimpleModTooltip(Mod, item, tooltips, ItemID.ApprenticeStaffT3, "Applies a vulnerability hex");
+            SimpleModTooltip(Mod, item, tooltips, ItemID.MonkStaffT3, "Applies a vulnerability hex");
+            SimpleModTooltip(Mod, item, tooltips, ItemID.DD2SquireBetsySword, "Applies a vulnerability hex");
+            SimpleModTooltip(Mod, item, tooltips, ItemID.DD2BetsyBow, "Applies a vulnerability hex");
 
 
             Player player = Main.LocalPlayer;

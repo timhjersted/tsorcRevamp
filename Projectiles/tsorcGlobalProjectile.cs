@@ -220,6 +220,11 @@ namespace tsorcRevamp.Projectiles
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.3f }, target.position);
             }
+
+            if (projectile.type >= ProjectileID.MonkStaffT3 && projectile.type <= ProjectileID.DD2BetsyArrow || projectile.type == ProjectileID.DD2SquireSonicBoom)
+            {
+                target.AddBuff(BuffID.BetsysCurse, 600);
+            }
         }
 
         public override void OnHitPlayer(Projectile projectile, Player target, int damage, bool crit)
@@ -237,7 +242,7 @@ namespace tsorcRevamp.Projectiles
 
             }
 
-            base.OnHitPlayer(projectile, target, damage, crit);
+                base.OnHitPlayer(projectile, target, damage, crit);
         }
         public override void ModifyHitNPC(Projectile projectile, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
