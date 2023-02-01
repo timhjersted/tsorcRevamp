@@ -81,7 +81,6 @@ namespace tsorcRevamp
         public bool WaspPower = false;
 
         public bool HollowSoldierAgility = false;
-        public bool HollowSoldierEstusBenefits = false;
         public bool SmoughShieldSkills = false;
         public bool BurdenOfSmough = false;
         public bool SmoughAttackSpeedReduction = false;
@@ -274,7 +273,6 @@ namespace tsorcRevamp
             WaspPower = false;
 
             HollowSoldierAgility = false;
-            HollowSoldierEstusBenefits = false;
             SmoughShieldSkills = false;
             BurdenOfSmough = false;
             SmoughAttackSpeedReduction = false;
