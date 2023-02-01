@@ -520,18 +520,21 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
 
         public void DrawSegments()
-        {            
-            for (int i = 0; i < branches.Count; i++)
+        {
+            if (branches != null)
             {
-                for (int j = 0; j < branches[i].Count - 1; j++)
+                for (int i = 0; i < branches.Count; i++)
                 {
-                    float scale = 0.7f;
-                    if (i == 0)
+                    for (int j = 0; j < branches[i].Count - 1; j++)
                     {
-                        scale = 1;
+                        float scale = 0.7f;
+                        if (i == 0)
+                        {
+                            scale = 1;
+                        }
+                        DrawLightning(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], branches[i][j],
+                                branches[i][j + 1], LaserTargetingHead, LaserTextureBody, LaserTargetingTail, branchLengths[i][j], branchAngles[i][j], scale, LaserColor);
                     }
-                    DrawLightning(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], branches[i][j],
-                            branches[i][j + 1], LaserTargetingHead, LaserTextureBody, LaserTargetingTail, branchLengths[i][j], branchAngles[i][j], scale, LaserColor);
                 }
             }
         }
