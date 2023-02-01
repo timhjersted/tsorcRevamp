@@ -69,38 +69,14 @@ namespace tsorcRevamp.Tiles {
                     zero = Vector2.Zero;
                 }
 
-                TransparentTextureHandler.TransparentTextureType type;
-                switch (entity.style) {
-                    case SoapstoneStyle.Runes: {
-                        type = TransparentTextureHandler.TransparentTextureType.SoapstoneMessage0;
-                        break;
-                    }
-                    case SoapstoneStyle.Dialogue: {
-                        type = TransparentTextureHandler.TransparentTextureType.SoapstoneMessage1;
-                        break;
-                    }
-                    default: {
-                        type = TransparentTextureHandler.TransparentTextureType.SoapstoneMessage0;
-                        break;
-                    }
-                }
+                TransparentTextureHandler.TransparentTextureType type = TransparentTextureHandler.TransparentTextureType.SoapstoneMessage;
                 Texture2D texture = TransparentTextureHandler.TransparentTextures[type];
 
                 Vector2 textureSize = texture.Size();
 
                 Vector2 position = new(i * 16 - ((int)Main.screenPosition.X + textureSize.X / 2) + 16, j * 16 - (int)Main.screenPosition.Y);
 
-                Color ShimmerColor;
-                switch (entity.style) {
-                    case SoapstoneStyle.Runes: {
-                        ShimmerColor = new(192 + (Main.DiscoR / 2), 128 + (Main.DiscoG / 4), 16);
-                        break;
-                    }
-                    default: {
-                        ShimmerColor = Color.PapayaWhip;
-                        break;
-                    }
-                }
+                Color ShimmerColor = Color.PapayaWhip;
 
                 if (entity.read) {
                     ShimmerColor.R /= 4;

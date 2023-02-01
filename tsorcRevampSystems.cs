@@ -271,11 +271,19 @@ namespace tsorcRevamp
             modPlayer.Draw(spriteBatch);
             if (tsorcRevamp.NearbySoapstone != null) {
                 SoapstoneTileEntity soapstone = tsorcRevamp.NearbySoapstone;
+                float scaleMod = (float)((ModContent.GetInstance<tsorcRevampConfig>().SoapstoneScale) / 100f) + 1;
+
                 if (soapstone.timer > 0 && soapstone.show) {
-                    int textWidth = soapstone.textWidth > 0 ? soapstone.textWidth : SoapstoneMessage.DEFAULT_WIDTH;
-                    string text = UsefulFunctions.WrapString(soapstone.text, FontAssets.ItemStack.Value, textWidth, 1);
+                    float textWidth = soapstone.textWidth > 0 ? soapstone.textWidth : SoapstoneMessage.DEFAULT_WIDTH;
+                    textWidth *= scaleMod;
+
+                    string text = UsefulFunctions.WrapString(soapstone.text, FontAssets.ItemStack.Value, textWidth, scaleMod);
+                    textWidth += FontAssets.ItemStack.Value.MeasureString(" ").X * scaleMod;
                     float alpha = (soapstone.timer / 20);
                     Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition) - new Vector2((textWidth / 2) - 4, 128);
+                    
+                    //right padding
+                    textWidth += FontAssets.ItemStack.Value.MeasureString(" ").X * scaleMod;
 
                     Main.spriteBatch.End();
                     Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied); //allows it to have alpha
@@ -283,26 +291,29 @@ namespace tsorcRevamp
                     Texture2D boxTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/blackpixel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
                     int lineCount = text.Count(a => a == '\n') + 1;
-                    int height = (FontAssets.ItemStack.Value.LineSpacing * lineCount) + 8;
-                    Rectangle drect = new((int)textPosition.X - 4, (int)textPosition.Y - 4, textWidth + 8, height);
+                    float height = scaleMod * (FontAssets.ItemStack.Value.LineSpacing * lineCount) + 8;
+                    Rectangle drect = new((int)textPosition.X - 4, (int)textPosition.Y - 4, (int)textWidth + 8, (int)height);
                     Color bgColor = new(0, 0, 0, (0.5f * alpha) + 0.1f);
                     Main.spriteBatch.Draw(boxTexture, drect, bgColor);
 
                     Color textColor = new(1, 1, 1, alpha);
-                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, text, textPosition, textColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, text, textPosition, textColor, 0, Vector2.Zero, scaleMod, SpriteEffects.None, 0);
 
                     //recycle the rect for the show button
                     textPosition.Y = drect.Y + height + 8;
-                    drect.Y = drect.Y + height + 4;
+                    drect.Y = drect.Y + (int)height + 4;
 
-                    drect.Width = 112; //manually measured
-                    //"but zeo! magic numbers" fight me
-                    drect.Height = FontAssets.ItemStack.Value.LineSpacing + 8;
+                    //the leading space is not a typo. WrapString prepends a space and is always called on normal text, but not buttons
+                    string hideButtonText = " Click to Hide ";
+                    Vector2 size = FontAssets.ItemStack.Value.MeasureString(hideButtonText) * scaleMod;
+
+                    drect.Width = (int)size.X;
+                    drect.Height = (int)size.Y;
 
 
                     Main.spriteBatch.Draw(boxTexture, drect, bgColor);
                     //the leading space is not a typo. WrapString prepends a space and is always called on normal text, but not buttons
-                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, " Click to Hide", textPosition, textColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, " Click to Hide", textPosition, textColor, 0, Vector2.Zero, scaleMod, SpriteEffects.None, 0);
                     Point scaledMouseScreen = (Main.MouseScreen * Main.UIScale).ToPoint();
                     Main.spriteBatch.End();
                     Main.spriteBatch.Begin();
@@ -317,18 +328,20 @@ namespace tsorcRevamp
                 }
                 else {
                     if (!soapstone.nearPlayer) return;
-                    int textWidth = 112;
-                    Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition) - new Vector2((textWidth / 2) - 4, 64);
+
+                    string showButtonText = " Click to Show  ";
+                    Vector2 textSize = FontAssets.ItemStack.Value.MeasureString(showButtonText) * scaleMod;
+                    Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition) - new Vector2((textSize.X / 2) - 4, 64);
 
                     Main.spriteBatch.End();
                     Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 
                     Texture2D boxTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/blackpixel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
-                    Rectangle drect = new((int)textPosition.X - 4, (int)textPosition.Y - 4, textWidth + 8, 28);
+                    Rectangle drect = new((int)textPosition.X - 4, (int)textPosition.Y - 4, (int)textSize.X, (int)textSize.Y);
                     Main.spriteBatch.Draw(boxTexture, drect, new(0, 0, 0, 113));
 
-                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, " Click to Show", textPosition, new(255, 255, 255, 170), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, showButtonText, textPosition, new(255, 255, 255, 170), 0, Vector2.Zero, scaleMod, SpriteEffects.None, 0);
                     Main.spriteBatch.End();
                     Main.spriteBatch.Begin();
                     Point scaledMouseScreen = (Main.MouseScreen * Main.UIScale).ToPoint();

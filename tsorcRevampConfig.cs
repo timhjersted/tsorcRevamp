@@ -37,7 +37,7 @@ namespace tsorcRevamp
         public bool BossZenConfig { get; set; }
 
 
-        [Header("Options")]
+        [Header("Visual")]
 
         /*
         [Label("Legacy Music")]
@@ -45,12 +45,6 @@ namespace tsorcRevamp
         [Tooltip("Warning! This music was disabled to protect streamers and youtubers who were having copyright issues with it, despite being fair use. Enable it for the classic experience, but we do not advise streaming or recording while it is active.")]
         [DefaultValue(false)]
         public bool LegacyMusic { get; set; }*/
-
-        [Label("Miakoda Volume")]
-        [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Revamp Miakoda giving you Navi flashbacks?\nThis slider controls Miakoda's volume.\nSet to 0 to disable Miakoda sounds.")]
-        [DefaultValue(100)]
-        public uint MiakodaVolume { get; set; }
 
         [Label("Soul Counter X position")]
         [BackgroundColor(60, 140, 80, 192)]
@@ -92,10 +86,16 @@ namespace tsorcRevamp
 
         [Label("Hide Read Soapstones")]
         [BackgroundColor(60, 140, 80, 192)]
-        [SliderColor(224, 165, 56, 128)]
         [DefaultValue(true)]
         [Tooltip("If enabled, soapstone messages that have been read will\nnot be shown until a button is clicked to show them.\nDefaults to on.")]
         public bool HideSoapstones { get; set; }
+
+        [Label("Soapstone Size Increase")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [Range(0, 100)]
+        [DefaultValue(0)]
+        [Tooltip("Increases the size of all soapstone dialogue boxes by a percentage.\nDefaults to 0%.")]
+        public uint SoapstoneScale { get; set; }
 
         [Label("Disable Gravitation Effect Screen Flip")]
         [BackgroundColor(200, 80, 80, 192)]
@@ -105,8 +105,15 @@ namespace tsorcRevamp
         [Tooltip("IN BETA! (Mostly working, but there will be some minor bugs)" +
             "\nFlipping gravity will only flip your character instead of the whole screen.")]
         public bool GravityFix { get; set; }
-        
 
+
+        [Header("Sound")]
+
+        [Label("Miakoda Volume")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [Tooltip("Revamp Miakoda giving you Navi flashbacks?\nThis slider controls Miakoda's volume.\nSet to 0 to disable Miakoda sounds.")]
+        [DefaultValue(100)]
+        public uint MiakodaVolume { get; set; }
 
         /*
         [Label("Auto-Update Adventure Map")]

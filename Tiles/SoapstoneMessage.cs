@@ -7,8 +7,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Tiles {
     public enum SoapstoneStyle {
-        Runes = 0,
-        Dialogue = 1
+        Dialogue = 1,
     }
     public class SoapstoneMessage {
         public static List<SoapstoneMessage> SoapstoneList;
