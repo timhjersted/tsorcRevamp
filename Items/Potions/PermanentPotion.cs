@@ -86,7 +86,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             get => false;
         }
         public virtual int ScalingFactor {
-            get => 71;
+            get => 44;
         }
 
         public virtual float EffectPotency {
@@ -428,7 +428,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int PermanentID => 18;
         public override int BuffType => BuffID.Tipsy;
         public override bool CanScale => true;
-        public override int ScalingFactor => 107;
         public override float EffectPotency {
             get {
                 //higher base, slower scaling
@@ -658,7 +657,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int PermanentID => 33;
         public override int BuffType => BuffID.Summoning;
         public override bool CanScale => true;
-        public override int ScalingFactor => 66;
         public override float EffectPotency
         {
             get
@@ -868,7 +866,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => ModContent.BuffType<ArmorDrug>();
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetCombat;
         public override bool CanScale => true;
-        public override int ScalingFactor => 36;
+        public override int ScalingFactor => 30;
 
         public override void PotionEffect(Player player)
         {
@@ -884,7 +882,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => ModContent.BuffType<Battlefront>();
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetCombat;
         public override bool CanScale => true;
-        public override int ScalingFactor => 36;
+        public override int ScalingFactor => 30;
         public override void PotionEffect(Player player)
         {
             player.GetDamage(DamageClass.Generic) += ApplyScaling(0.15f);
@@ -900,7 +898,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int PermanentID => 47;
         public override int BuffType => ModContent.BuffType<Boost>();
         public override bool CanScale => true;
-        public override int ScalingFactor => 52;
+        public override int ScalingFactor => 36;
 
         public override void PotionEffect(Player player)
         {
@@ -928,7 +926,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetCombat;
         public override bool CanScale => true;
-        public override int ScalingFactor => 36;
+        public override int ScalingFactor => 30;
 
         public override void PotionEffect(Player player)
         {
@@ -956,7 +954,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => ModContent.BuffType<Strength>();
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetCombat;
         public override bool CanScale => true;
-        public override int ScalingFactor => 36;
+        public override int ScalingFactor => 30;
 
         public override void PotionEffect(Player player)
         {
@@ -996,7 +994,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => BuffID.WellFed2;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetWellFed;
         public override bool CanScale => true;
-        public override int ScalingFactor => 40; 
+        public override int ScalingFactor => 22; 
         public override float EffectPotency {
             get {
                 float potency = (float)ConsumedAmount / (float)ScalingFactor; 
