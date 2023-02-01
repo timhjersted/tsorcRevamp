@@ -17,9 +17,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         {
             DisplayName.SetDefault("Plasma Whirlwind");
             Tooltip.SetDefault("Doubled crit chance scaling" +
-                "\nThrusts on right click dealing 150% damage, cooldown scales down with attack speed" +
+                "\nThrusts on right click dealing double damage, cooldown scales down with attack speed" +
                 "\nGain a stack of Steel Tempest upon thrusting any enemy" +
-                "\nUpon reaching 2 stacks, the next right click will release a plasma whirlwind dealing 250% damage" +
+                "\nUpon reaching 2 stacks, the next right click will release a plasma whirlwind dealing double damage" +
                 "\nHover your mouse over an enemy and press Special Ability to dash through the enemy");
         }
         public override void SetDefaults()

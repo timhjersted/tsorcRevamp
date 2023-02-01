@@ -17,9 +17,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         {
             DisplayName.SetDefault("Nightbringer");
             Tooltip.SetDefault("Doubled crit chance scaling" +
-                "\nThrusts on right click dealing 150% damage, cooldown scales down with attack speed" +
+                "\nThrusts on right click dealing double damage, cooldown scales down with attack speed" +
                 "\nGain a stack of Steel Tempest upon thrusting any enemy" +
-                "\nUpon reaching 2 stacks, the next right click will release a chaotic tornado dealing 250% damage" +
+                "\nUpon reaching 2 stacks, the next right click will release a chaotic tornado dealing double damage" +
                 "\nHover your mouse over an enemy and press Special Ability to dash through the enemy" +
                 "\nPress Special Ability to create a stationary windwall which blocks most enemy projectiles for 4 seconds");
         }
