@@ -210,6 +210,7 @@ namespace tsorcRevamp
         public bool touchedSurface;
 
         public float rotation3d;
+        public static Vector2 RealMouseWorld;
 
         public string DeathText;
         bool setDeathText = false;
@@ -340,6 +341,7 @@ namespace tsorcRevamp
         
         public override void PreUpdate()
         {
+            RealMouseWorld = Main.MouseWorld;
             //Fixes bug where switching from a better to a worse pair of wings keeps the previous wing time cap
             if(Player.wingTime > Player.wingTimeMax)
             {

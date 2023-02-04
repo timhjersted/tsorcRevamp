@@ -62,10 +62,11 @@ namespace tsorcRevamp.Tiles {
             fail = true; 
         }
         public override void PostDraw(int i, int j, SpriteBatch spriteBatch) {
-            if (TileUtils.TryGetTileEntityAs(i, j, out SoapstoneTileEntity entity)) {
-
+            if (TileUtils.TryGetTileEntityAs(i, j, out SoapstoneTileEntity entity))
+            {
                 Vector2 zero = new(Main.offScreenRange, Main.offScreenRange);
-                if (Main.drawToScreen) {
+                if (Main.drawToScreen)
+                {
                     zero = Vector2.Zero;
                 }
 
@@ -75,20 +76,58 @@ namespace tsorcRevamp.Tiles {
                 Vector2 textureSize = texture.Size();
 
                 Vector2 position = new(i * 16 - ((int)Main.screenPosition.X + textureSize.X / 2) + 16, j * 16 - (int)Main.screenPosition.Y);
+                Vector2 worldPosition = new Vector2(i+1, j+1) * 16;
+                float distance = Vector2.Distance(Main.LocalPlayer.Center, worldPosition);
+                float mouseDistance = Vector2.Distance(tsorcRevampPlayer.RealMouseWorld, worldPosition);
+                
+                bool mouseLineOfSight = (Collision.CanHitLine(Main.LocalPlayer.Center, 1, 1, worldPosition, 1, 1));
+                if (entity.read)
+                {
+                    mouseLineOfSight = true;
+                }
+
+                if (distance <= 128 || (mouseDistance < 75 && mouseLineOfSight))
+                {
+                    tsorcRevamp.NearbySoapstone = entity;
+                    entity.timer = 25;
+                    entity.read = true;
+                    entity.nearPlayer = true;
+                }
+                else
+                {
+                    if (entity.timer > 0)
+                    {
+                        entity.timer -= 5;
+
+                        if (entity.timer <= 0)
+                        {
+                            entity.timer = 0;
+                            entity.nearPlayer = false;
+
+                            if (tsorcRevamp.NearbySoapstone == entity)
+                            {
+                                tsorcRevamp.NearbySoapstone = null;
+                            }
+
+                            if (ModContent.GetInstance<tsorcRevampConfig>().HideSoapstones)
+                            {
+                                entity.hidden = true;
+                            }
+                        }
+                    }
+                }
+
 
                 Color ShimmerColor = Color.PapayaWhip;
 
-                if (entity.read) {
+                if (entity.read)
+                {
                     ShimmerColor.R /= 4;
                     ShimmerColor.G /= 4;
                     ShimmerColor.B /= 3;
                 }
 
                 spriteBatch.Draw(texture, position + zero, new Rectangle(0, 0, (int)textureSize.X, (int)textureSize.Y), ShimmerColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
-
-                if (entity.nearPlayer) {
-                    tsorcRevamp.NearbySoapstone = entity;
-                }
             }
         }
     }
@@ -99,7 +138,7 @@ namespace tsorcRevamp.Tiles {
         public float timer;
         public bool nearPlayer;
         public bool read = false;
-        public bool show;
+        public bool hidden = false;
 
         public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate) {
             if (Main.netMode == NetmodeID.MultiplayerClient) {
@@ -127,33 +166,16 @@ namespace tsorcRevamp.Tiles {
         }
 
         public override void Update() {
-            show = !read || !ModContent.GetInstance<tsorcRevampConfig>().HideSoapstones;
-            nearPlayer = false;
-            for (int i = 0; i < Main.maxPlayers; i++) {
-                Player p = Main.player[i];
-                if (Vector2.Distance(p.Center, Position.ToVector2() * 16) <= 96 && Collision.CanHitLine(p.Center, 1, 1, Position.ToWorldCoordinates(), 1, 1)) {
-                    nearPlayer = true;
-                    read = true;
-                    if (text == null) {
-                        foreach (SoapstoneMessage cache in SoapstoneMessage.SoapstoneList) {
-                            if (Position == cache.location) {
-                                text = cache.text;
-                                break;
-                            }
-                        }
+
+            if (text == null)
+            {
+                foreach (SoapstoneMessage cache in SoapstoneMessage.SoapstoneList)
+                {
+                    if (Position == cache.location)
+                    {
+                        text = cache.text;
+                        break;
                     }
-                    break;
-                }
-            }
-            if (timer > 0) {
-                show = true;
-            }
-            if (nearPlayer && show) {
-                if (timer < 20) timer += 1;
-            }
-            else {
-                if (timer >= 1) {
-                    timer -= 2;
                 }
             }
         }

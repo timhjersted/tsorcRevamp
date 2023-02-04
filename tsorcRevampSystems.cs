@@ -273,13 +273,18 @@ namespace tsorcRevamp
                 SoapstoneTileEntity soapstone = tsorcRevamp.NearbySoapstone;
                 float scaleMod = (float)((ModContent.GetInstance<tsorcRevampConfig>().SoapstoneScale) / 100f) + 1;
 
-                if (soapstone.timer > 0 && soapstone.show) {
+                if (soapstone.timer > 0 && !soapstone.hidden) {
                     float textWidth = soapstone.textWidth > 0 ? soapstone.textWidth : SoapstoneMessage.DEFAULT_WIDTH;
                     textWidth *= scaleMod;
 
                     string text = UsefulFunctions.WrapString(soapstone.text, FontAssets.ItemStack.Value, textWidth, scaleMod);
                     textWidth += FontAssets.ItemStack.Value.MeasureString(" ").X * scaleMod;
-                    float alpha = (soapstone.timer / 20);
+                    float alpha = (soapstone.timer / 20f);
+                    if(soapstone.timer >= 20)
+                    {
+                        alpha = 1;
+                    }
+                    //Main.NewText("Alpha: " + alpha + " timer: " + soapstone.timer);
                     Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition) - new Vector2((textWidth / 2) - 4, 128);
                     
                     //right padding
@@ -312,6 +317,8 @@ namespace tsorcRevamp
 
 
                     Main.spriteBatch.Draw(boxTexture, drect, bgColor);
+
+                    
                     //the leading space is not a typo. WrapString prepends a space and is always called on normal text, but not buttons
                     DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, " Click to Hide", textPosition, textColor, 0, Vector2.Zero, scaleMod, SpriteEffects.None, 0);
                     Point scaledMouseScreen = (Main.MouseScreen * Main.UIScale).ToPoint();
@@ -321,8 +328,8 @@ namespace tsorcRevamp
                         Main.LocalPlayer.mouseInterface = true;
                         if (Main.mouseLeft && Main.mouseLeftRelease) {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
-                            soapstone.show = false;
                             soapstone.timer = 0;
+                            soapstone.hidden = true;
                         }
                     }
                 }
@@ -348,7 +355,8 @@ namespace tsorcRevamp
                     if (drect.Contains(scaledMouseScreen)) {
                         if (Main.mouseLeft && Main.mouseLeftRelease) {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
-                            soapstone.timer = 1;
+                            soapstone.timer = 25;
+                            soapstone.hidden = false;
                         }
                     }
                 }
