@@ -5708,7 +5708,7 @@ namespace tsorcRevamp.NPCs
             }
             if ((npc.type == NPCID.Retinazer || npc.type == NPCID.Spazmatism) && !Main.expertMode)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfSky>(), 2);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfSky>(), 3);
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), 1000);
             }
 

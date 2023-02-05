@@ -87,13 +87,14 @@ namespace tsorcRevamp.Items
         public override void SetDefaults()
         {
             base.SetDefaults();
+            Item.maxStack = 3;
         }
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crest of Sky");
-            Tooltip.SetDefault("Half of a shard of oxygenated carbonate\n" +
-                               "Combined with the second half, this makes one of eight. [c/00ffd4:On its side it contains a clue:]\n" +
+            DisplayName.SetDefault("Crests of Sky");
+            Tooltip.SetDefault("Three shards of oxygenated carbonate\n" +
+                               "Combined this makes one of eight. [c/00ffd4:On its side it contains a clue:]\n" +
                                "\"[c/ffbf00:Two paths lead to my entrance. Below the Oasis in the Desert, Serris unlocks the Way.]\n" +
                                "\"[c/ffbf00:From below a familiar, Violet Smoke, a Chlorophyte Gate guards the other.]\"");
                 

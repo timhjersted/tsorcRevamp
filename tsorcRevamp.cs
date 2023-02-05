@@ -790,7 +790,7 @@ namespace tsorcRevamp
                                                         }                                                                                },
                 {   ItemID.TwinsBossBag             ,   new List<IItemDropRule>()                           
                                                         {
-                                                            ItemDropRule.Common(ModContent.ItemType<CrestOfSky>())
+                                                            ItemDropRule.Common(ModContent.ItemType<CrestOfSky>(), 1, 3)
                                                         }                                                                                },
                 {   ItemID.SkeletronPrimeBossBag    ,   new List<IItemDropRule>()                           
                                                         {

@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items.BossItems
             recipe.AddIngredient(ModContent.ItemType<CrestOfFire>(), 1);
             recipe.AddIngredient(ModContent.ItemType<CrestOfWater>(), 1);
             recipe.AddIngredient(ModContent.ItemType<CrestOfEarth>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<CrestOfSky>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<CrestOfSky>(), 3);
             recipe.AddIngredient(ModContent.ItemType<CrestOfCorruption>(), 1);
             recipe.AddIngredient(ModContent.ItemType<CrestOfSteel>(), 1);
             recipe.AddIngredient(ModContent.ItemType<CrestOfLife>(), 1);
@@ -72,7 +72,7 @@ namespace tsorcRevamp.Items.BossItems
             recipe2.AddIngredient(ModContent.ItemType<CrestOfFire>(), 1);
             recipe2.AddIngredient(ModContent.ItemType<CrestOfWater>(), 1);
             recipe2.AddIngredient(ModContent.ItemType<CrestOfEarth>(), 1);
-            recipe2.AddIngredient(ModContent.ItemType<CrestOfSky>(), 1);
+            recipe2.AddIngredient(ModContent.ItemType<CrestOfSky>(), 3);
             recipe2.AddIngredient(ModContent.ItemType<CrestOfCorruption>(), 1);
             recipe2.AddIngredient(ModContent.ItemType<CrestOfSteel>(), 1);
             recipe2.AddIngredient(ModContent.ItemType<CrestOfLife>(), 1);
