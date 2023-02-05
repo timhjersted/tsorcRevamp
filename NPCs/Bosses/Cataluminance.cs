@@ -13,6 +13,7 @@ using Terraria.Graphics.Effects;
 using Terraria.Audio;
 using System.IO;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -1167,6 +1168,17 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void OnKill()
         {
+            if (!Main.expertMode)
+            {
+                Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<CrestOfSky>(), 3);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MechanicalWheelPiece);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HallowedBar, 15 + Main.rand.Next(16));
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SoulofSight, 25 + Main.rand.Next(16));
+                if (Main.rand.NextBool(7))
+                {
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.TwinMask);
+                }
+            }
             if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:CatShockwave"].IsActive())
             {
                 Filters.Scene["tsorcRevamp:CatShockwave"].Deactivate();

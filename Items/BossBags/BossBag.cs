@@ -221,7 +221,7 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfSky>(), 1, 3));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfSky>(), 1, 3, 3));
             itemLoot.Add(ItemDropRule.Common(ItemID.MechanicalWheelPiece));
             itemLoot.Add(ItemDropRule.Common(ItemID.HallowedBar, 1, 15, 30));
             itemLoot.Add(ItemDropRule.Common(ItemID.SoulofSight, 1, 25, 40));
