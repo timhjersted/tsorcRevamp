@@ -110,6 +110,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                     case 9:
                         Projectile.timeLeft = 600;
                         break;
+
+                    //Homing blue ones in final stand part 1
+                    case 10:
+                        homingAcceleration = 0.12f;
+                        forceBlue = true;
+                        break;
                 }
 
                 playedSound = true;

@@ -174,7 +174,7 @@ namespace tsorcRevamp
             if (Main.IsGraphicsDeviceAvailable)
             {
                 //Draw most additive projectiles in one big batch
-                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
                     if (Main.projectile[i] != null && Main.projectile[i].active && !Main.projectile[i].hide)

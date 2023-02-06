@@ -47,11 +47,11 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Retinazer v2.04");
+            DisplayName.SetDefault("Retinazer v2.05");
         }
 
-        int DeathLaserDamage = 20;
-        int PiercingGazeDamage = 25;
+        int DeathLaserDamage = 30;
+        int PiercingGazeDamage = 40;
 
         //If this is set to anything but -1, the boss will *only* use that attack ID
         int testAttack = -1;
@@ -500,6 +500,18 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
 
+            if (Main.GameUpdateCount % 20 == 0 && Main.netMode != NetmodeID.Server)
+            {
+                Vector2 dustPoint = Main.rand.NextVector2Circular(50, 50);
+                Vector2 dustVel = Vector2.Normalize(dustPoint);
+                float dustAmount = 30;
+                for (float i = 0; i < dustAmount; i++)
+                {
+                    Dust.NewDustPerfect(dustPoint + NPC.Center, DustID.Torch, dustVel.RotatedBy(MathHelper.TwoPi * i / dustAmount) * Main.rand.NextFloat(0, 1), Scale: Main.rand.NextFloat(1, 3));
+                }
+                Gore.NewGorePerfect(NPC.GetSource_FromThis(), dustPoint + NPC.Center, Main.rand.NextVector2Circular(1, 1), GoreID.Smoke3);
+            }
+
             //Clean up
             if (finalStandTimer == 1)
             {
@@ -546,6 +558,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //Recoil
                 if (laserCountdown == 376)
                 {
+                    NPC.StrikeNPC(999, 0, 0, true);
                     NPC.velocity += new Vector2(7, 0).RotatedBy(NPC.rotation - MathHelper.PiOver2);
                 }
             }
@@ -777,7 +790,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //"Die." - Minos Prime, 2022
             if (deathTimer > 240)
             {
-                UsefulFunctions.BroadcastText("Retinazer v2.04 has been defeated!", Color.Red);
+                UsefulFunctions.BroadcastText(NPC.TypeName + " has been defeated!", Color.Red);
                 if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:RetShockwave"].IsActive())
                 {
                     Filters.Scene["tsorcRevamp:RetShockwave"].Deactivate();
@@ -792,7 +805,12 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 OnKill();
                 NPC.dontTakeDamage = false;
-                NPC.StrikeNPC(999999, 0, 0);
+                NPC.realLife = -1;
+                NPC.life = 0;
+                for (int i = 0; i < 10; i++)
+                {
+                    CombatText.NewText(NPC.Hitbox, CombatText.DamagedHostile, 9999999, true);
+                }
             }
         }
         

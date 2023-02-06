@@ -12,11 +12,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 {
     class CursedMalestrom : ModProjectile
     {
-        
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Cursed Malestrom");
-        }
         public override void SetDefaults()
         {
             Projectile.width = 20;
@@ -52,7 +47,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             return Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2()) < projRadius;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             target.AddBuff(BuffID.CursedInferno, 300);
         }

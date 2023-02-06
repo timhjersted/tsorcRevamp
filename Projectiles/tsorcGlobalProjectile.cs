@@ -242,7 +242,7 @@ namespace tsorcRevamp.Projectiles
 
             }
 
-                base.OnHitPlayer(projectile, target, damage, crit);
+            base.OnHitPlayer(projectile, target, damage, crit);
         }
         public override void ModifyHitNPC(Projectile projectile, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {

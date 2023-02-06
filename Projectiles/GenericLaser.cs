@@ -269,8 +269,8 @@ namespace tsorcRevamp.Projectiles
             behindNPCs.Add(index);
         }
 
-        float timeFactor = 0;
-        float fadePercent;
+        public float timeFactor = 0;
+        public float fadePercent;
         public bool additiveContext = false;
         public override bool PreDraw(ref Color lightColor)
         {
@@ -530,9 +530,37 @@ namespace tsorcRevamp.Projectiles
         {
             string deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(-1, Projectile.whoAmI).GetDeathText(target.name).ToString();
             deathMessage = deathMessage.Replace("DefaultLaserName", LaserName);
-            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), Projectile.damage * 4, 1);
 
+            for (int i = 0; i < LaserDebuffs.Count; i++)
+            {
+                if (!target.immune)
+                {
+                    target.AddBuff(LaserDebuffs[i], DebuffTimers[i]);
+                }
+            }
+
+            Vector2 endpoint = target.position;
+            Vector2 origin = GetOrigin();
+            float distance = Vector2.Distance(endpoint, origin);
+            float velocity = -8f;
+            Vector2 speed = ((endpoint - origin) / distance) * velocity;
+            speed.X += Main.rand.Next(-1, 1);
+            speed.Y += Main.rand.Next(-1, 1);
+            int dust = Dust.NewDust(endpoint, 3, 3, LaserDust, speed.X + Main.rand.Next(-10, 10), speed.Y + Main.rand.Next(-10, 10), 20, default, 3.0f);
+            Main.dust[dust].noGravity = true;
+            dust = Dust.NewDust(endpoint, 3, 3, LaserDust, speed.X, speed.Y, 20, default, 1.0f);
+            Main.dust[dust].noGravity = true;
+            Main.dust[dust].shader = GameShaders.Armor.GetSecondaryShader(107, Main.LocalPlayer);
+            dust = Dust.NewDust(endpoint, 30, 30, LaserDust, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 20, default, 1.0f);
+            Main.dust[dust].noGravity = true;
+
+            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), Projectile.damage * 4, 1);
             return false;
+        }
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
@@ -580,12 +608,8 @@ namespace tsorcRevamp.Projectiles
                 }
             }
 
-
             Projectile.position = origin + Projectile.velocity * MOVE_DISTANCE;
             Projectile.timeLeft = 2;
-
-
-
 
             ChargeLaser();
             if (LaserDust != 0)

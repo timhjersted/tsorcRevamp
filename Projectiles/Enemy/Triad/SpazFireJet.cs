@@ -20,13 +20,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 60;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 3;
+            DisplayName.SetDefault("Noxious Jet");
 
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
 
         public override void SetDefaults()
         {
-
             Projectile.friendly = false;
             Projectile.hostile = true;
             Projectile.penetrate = 50;
@@ -110,6 +110,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             {
                 return false;
             }
+        }
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            target.AddBuff(BuffID.CursedInferno, 300);
         }
 
         public static ArmorShaderData data;

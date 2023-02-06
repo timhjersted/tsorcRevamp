@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -64,11 +65,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 Projectile.ai[0] -= 1000;
             }
 
-            if (FiringTimeLeft > 0)
-            {
-                Vector2 origin = GetOrigin();
-            }
-
             if (Main.player[(int)Projectile.ai[0]] != null && Main.player[(int)Projectile.ai[0]].active)
             {
                 if (Main.npc[(int)Projectile.ai[1]] != null && Main.npc[(int)Projectile.ai[1]].active && Main.npc[(int)Projectile.ai[1]].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>())
@@ -125,31 +121,84 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 return Vector2.Zero;
             }
         }
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            target.AddBuff(BuffID.OnFire, 300);
+        }
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if ((Projectile.ai[0] == -3 || Projectile.ai[0] == -2 || Projectile.ai[0] == -1) && !IsAtMaxCharge)
+            if (!additiveContext)
             {
+                return false;
+            }
 
-                Color color;
-                if (LaserTargetingTexture == TransparentTextureHandler.TransparentTextureType.GenericLaserTargeting)
+            //If no custom shader has been given then load the generic one
+            if (LaserShader == null)
+            {
+                LaserShader = ModContent.Request<Effect>("tsorcRevamp/Effects/GenericLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            //Gives the laser its 'flowing' effect
+            timeFactor++;
+            LaserShader.Parameters["Time"].SetValue(timeFactor);
+
+            //Shifts its color slightly over time
+            Vector3 hslColor = Main.rgbToHsl(LaserColor);
+            hslColor.X += 0.03f * (float)Math.Cos(timeFactor / 50f);
+            Color rgbColor = Main.hslToRgb(hslColor);
+            LaserShader.Parameters["Color"].SetValue(rgbColor.ToVector3());
+
+            float modifiedSize = LaserSize * 200;
+
+            //Fade in and out, and pulse while targeting
+            if ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2))
+            {
+                if (FiringTimeLeft < FadeOutFrames)
                 {
-                    color = LaserColor;
+                    fadePercent = (float)FiringTimeLeft / (float)FadeOutFrames;
                 }
                 else
                 {
-                    color = Color.White;
+                    fadePercent += FadeInSpeed;
+                    if (fadePercent > 1)
+                    {
+                        fadePercent = 1;
+                    }
                 }
 
-                color *= 0.85f + 0.15f * (float)(Math.Sin(Main.GameUpdateCount / 5f));
-
-                DrawLaser(TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
-                        Projectile.velocity, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, color);
+                if (rapid)
+                {
+                    fadePercent = 1;
+                }
+            }
+            else if (TelegraphTime + Charge >= MaxCharge || TargetingMode == 1)
+            {
+                modifiedSize /= 2;
+                fadePercent = (float)Math.Cos(timeFactor / 30f);
+                fadePercent = Math.Abs(fadePercent) * 0.2f;
+                fadePercent += 0.2f;
             }
             else
             {
-                base.PreDraw(ref lightColor);
+                fadePercent = 0;
             }
+
+            //Apply the rest of the parameters it needs
+            LaserShader.Parameters["FadeOut"].SetValue(fadePercent);
+            LaserShader.Parameters["SecondaryColor"].SetValue(Color.White.ToVector3());
+            LaserShader.Parameters["ProjectileSize"].SetValue(new Vector2(Distance, modifiedSize));
+            LaserShader.Parameters["TextureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+
+            //Calculate where to draw it
+            Rectangle sourceRectangle = new Rectangle(0, 0, (int)Distance, (int)(modifiedSize));
+            Vector2 origin = new Vector2(0, sourceRectangle.Height / 2f);
+
+            //Apply the shader
+            LaserShader.CurrentTechnique.Passes[0].Apply();
+
+            //Draw the laser
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.velocity.ToRotation(), origin, Projectile.scale, SpriteEffects.None, 0);
 
             return false;
         }

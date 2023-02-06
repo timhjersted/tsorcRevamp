@@ -30,9 +30,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
             trailWidth = 25;
             trailPointLimit = 150;
-            trailYOffset = 50;
+            trailYOffset = 30;
             trailMaxLength = 150;
             NPCSource = false;
+            collisionPadding = 0;
+            collisionEndPadding = 1;
+            collisionFrequency = 2;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
@@ -57,7 +60,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         public override void SetEffectParameters(Effect effect)
         {
             timeFactor++;
-            trailYOffset = 30;
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture1);
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);

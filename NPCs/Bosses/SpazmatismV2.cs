@@ -49,10 +49,12 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spazmatism v2.13");
+            DisplayName.SetDefault("Spazmatism v2.14");
         }
 
-        int EyeFireDamage = 25;
+        int FireJetDamage = 40;
+        int CursedMalestromDamage = 50;
+        int CursedFireballDamage = 35;
 
         //If this is set to anything but -1, the boss will *only* use that attack ID
         int testAttack = -1;
@@ -190,7 +192,7 @@ namespace tsorcRevamp.NPCs.Bosses
         //Phase 2: Fire aura
         void Charging()
         {
-            NPC.damage = 100;
+            NPC.damage = 170;
             if (PhaseTwo)
             {
                 rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
@@ -213,7 +215,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 21);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>(), EyeFireDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>(), FireJetDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
                     }
                     NPC.netUpdate = true;
                 }
@@ -265,7 +267,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient) {
                         Vector2 offset = new Vector2(-50, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.CursedMalestrom>(), EyeFireDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.CursedMalestrom>(), CursedMalestromDamage, 0.5f, Main.myPlayer);
                     }
                 }
             }
@@ -281,7 +283,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         float angle = -MathHelper.Pi / 3;
                         for (int i = 0; i < 3; i++)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 4).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazCursedFireball>(), EyeFireDamage, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 4).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazCursedFireball>(), CursedFireballDamage, 0.5f, Main.myPlayer);
                             angle += MathHelper.Pi / 3;
                         }
                     }
@@ -395,6 +397,16 @@ namespace tsorcRevamp.NPCs.Bosses
 
         void FinalFinalStand()
         {
+            if (Main.netMode != NetmodeID.Server)
+            {
+                Vector2 dustPoint = Main.rand.NextVector2Circular(50, 50);
+                Vector2 dustVel = Vector2.Normalize(dustPoint);
+                Dust.NewDustPerfect(dustPoint + NPC.Center, DustID.CursedTorch, dustVel * Main.rand.NextFloat(1, 2), Scale: Main.rand.NextFloat(1, 3));
+                if (Main.GameUpdateCount % 20 == 0)
+                {
+                    Gore.NewGorePerfect(NPC.GetSource_FromThis(), dustPoint + NPC.Center, Main.rand.NextVector2Circular(1, 1) + NPC.velocity, GoreID.Smoke3);
+                }
+            }
             rotationSpeed = 0.2f;
             rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
             if (finalStandTimer % 80 == 0)
@@ -406,7 +418,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 25);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>(), EyeFireDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>(), FireJetDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
                 }
                 NPC.netUpdate = true;
             }
@@ -655,7 +667,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (deathTimer > 240)
             {
-                UsefulFunctions.BroadcastText("Spazmatism v2.13 has been defeated!", Color.GreenYellow);
+                UsefulFunctions.BroadcastText(NPC.TypeName + " has been defeated!", Color.GreenYellow);
                 if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:SpazShockwave"].IsActive())
                 {
                     Filters.Scene["tsorcRevamp:SpazShockwave"].Deactivate();
@@ -671,6 +683,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 OnKill();
                 NPC.dontTakeDamage = false;
                 NPC.StrikeNPC(999999, 0, 0);
+                for (int i = 0; i < 10; i++)
+                {
+                    CombatText.NewText(NPC.Hitbox, CombatText.DamagedHostile, 9999999, true);
+                }
             }
         }
 
