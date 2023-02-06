@@ -558,16 +558,11 @@ namespace tsorcRevamp.Projectiles
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            
-        }
-
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
             for (int i = 0; i < LaserDebuffs.Count; i++)
             {
-                if (!target.dontTakeDamage || !Main.debuff[LaserDebuffs[i]])
+                if (!target.dontTakeDamage)
                 {
                     target.AddBuff(LaserDebuffs[i], DebuffTimers[i]);
                 }
