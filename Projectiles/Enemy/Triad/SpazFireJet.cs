@@ -102,7 +102,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         {
             float point = 0;
             if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center,
-                    Projectile.Center + Projectile.rotation.ToRotationVector2() * laserWidth * 0.8f, Projectile.height / 3f, ref point))
+                    Projectile.Center + Projectile.rotation.ToRotationVector2() * laserWidth * 0.7f, Projectile.height / 3f, ref point))
             {
                 return true;
             }
