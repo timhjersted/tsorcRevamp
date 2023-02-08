@@ -98,7 +98,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         public override bool PreDraw(ref Color lightColor)
         {
             DrawAura();
-            DrawFlash();
+            if (effectTimer < 600)
+            {
+                DrawFlash();
+            }
             return false;
         }
 
