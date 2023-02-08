@@ -104,7 +104,30 @@ namespace tsorcRevamp.NPCs.Bosses
             MoveTimer++;
             HandleAura();
             FindFrame(0);
-            despawnHandler.TargetAndDespawn(NPC.whoAmI);
+            if (despawnHandler.TargetAndDespawn(NPC.whoAmI))
+            {
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.ColorToFloat(Color.White));
+                int? retID = UsefulFunctions.GetFirstNPC(ModContent.NPCType<RetinazerV2>());
+                if (retID.HasValue)
+                {
+                    for (int i = 0; i < 60; i++)
+                    {
+                        int dustID = Dust.NewDust(Main.npc[retID.Value].position, Main.npc[retID.Value].width, Main.npc[retID.Value].height, DustID.RedTorch, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
+                        Main.dust[dustID].noGravity = true;
+                    }
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.npc[retID.Value].Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.ColorToFloat(Color.White));
+                }
+                int? spazID = UsefulFunctions.GetFirstNPC(ModContent.NPCType<SpazmatismV2>());
+                if (spazID.HasValue)
+                {
+                    for (int i = 0; i < 60; i++)
+                    {
+                        int dustID = Dust.NewDust(Main.npc[spazID.Value].position, Main.npc[spazID.Value].width, Main.npc[spazID.Value].height, DustID.CursedTorch, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
+                        Main.dust[dustID].noGravity = true;
+                    }
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.npc[spazID.Value].Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.ColorToFloat(Color.White));
+                }
+            }
 
             //This will be changed by other attacks
             NPC.damage = 0;

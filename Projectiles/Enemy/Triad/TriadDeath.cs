@@ -45,12 +45,18 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         float effectTimer = 0;
         public override void AI()
         {
+            Projectile.timeLeft++;
+            float effectLimit = 600;
             effectTimer++;
 
             //Faster if the 'startup' VFX
             if (Projectile.ai[0] == 0)
             {
                 effectTimer += 3;
+            }
+            else
+            {
+                effectLimit *= 5;
             }
 
             if (Filters.Scene[FilterID] == null)
@@ -65,21 +71,22 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
             if (Main.netMode != NetmodeID.Server && Filters.Scene[FilterID].IsActive())
             {
-                float opacity = 2;
-                if(effectTimer > 300)
-                {
-                    opacity = 2 - ((effectTimer - 300f) / 30f);
-                }
+                float opacity = 2 * (1f - (effectTimer / effectLimit));
+
                 float progress = effectTimer / 100f;
 
                 if (Projectile.ai[0] == 0)
                 {
                     progress /= 3f;
                 }
+                else
+                {
+                    opacity *= 2;
+                }
                 Filters.Scene[FilterID].GetShader().UseTargetPosition(Projectile.Center).UseProgress(progress).UseOpacity(5 * opacity).UseIntensity(0.000001f).UseColor(AuraColor.ToVector3());
             }
 
-            if(effectTimer > 360)
+            if(effectTimer > effectLimit)
             {
                 if (Main.netMode != NetmodeID.Server && Filters.Scene[FilterID].IsActive())
                 {
