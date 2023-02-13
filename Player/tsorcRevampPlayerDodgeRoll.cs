@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using Terraria;
@@ -74,9 +75,9 @@ namespace tsorcRevamp
         public PlayerFrames? forcedLegFrame;
         public int forcedDirection;
 
-        
 
 
+        int oldItemAnimation = 0;
         public override bool PreItemCheck()
         {
             UpdateDodging();
@@ -94,77 +95,54 @@ namespace tsorcRevamp
 
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.damage <= 1 || item.DamageType == DamageClass.Summon)
-                    return true;
-                if (item.useAnimation * 0.8f > Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 && Player.itemAnimation == Player.itemAnimationMax - 1)
-                {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
-                }
+                
+                tsorcRevampStaminaPlayer modPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                int scaledUseAnimation = (int)(item.useAnimation / Player.GetAttackSpeed(item.DamageType));
 
-                // Melee
-                if (item.DamageType == DamageClass.Melee && Player.itemAnimation == Player.itemAnimationMax - 1 && !(item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram
-                    || item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc
-                    || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>() || item.type == ItemID.FlyingKnife))
+                bool startedAnimation = (Player.itemAnimation > oldItemAnimation && Player.itemAnimationMax > 0);
+                oldItemAnimation = Player.itemAnimation;
+
+                if (!startedAnimation && item.type != ItemID.Harpoon) return true; 
+
+                if (item.type == ItemID.CoinGun) //coin gun has a damage stat of zero but can still do damage!
                 {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation / Player.GetAttackSpeed(DamageClass.Melee) * .8f);
+                    modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation);
                 }
-                if (item.DamageType == DamageClass.Melee && Player.itemAnimation == Player.itemAnimationMax - 1 && (item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram
-                    || item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>() || item.type == ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>()))
-                {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation / Player.GetAttackSpeed(DamageClass.Melee));
-                }
+                else if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.damage <= 1) return true;
 
 
-                // Ranged
-                if (item.DamageType == DamageClass.Ranged && Player.itemAnimation == Player.itemAnimationMax - 1 && !(item.type == ItemID.PiranhaGun))
+                if (item.useAnimation * 0.8f > modPlayer.staminaResourceMax2)
                 {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation / Player.GetAttackSpeed(DamageClass.Ranged));
-
-                }
-                if (item.type == ItemID.CoinGun && Player.itemAnimation == Player.itemAnimationMax - 1) //doesn't seem to work at all D:
-                {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation / Player.GetAttackSpeed(DamageClass.Ranged));
-                }
-                if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.ArtemisBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.SagittariusBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>()))
-                {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .5f;
-                }
-                if (item.type == ItemID.Harpoon && Player.itemAnimation == 1)
-                {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 14f;
+                    modPlayer.staminaResourceCurrent -= modPlayer.staminaResourceMax2;
                 }
 
-                // Magic
-                if (item.damage >= 1 && (item.CountsAsClass(DamageClass.Magic)) && Player.itemAnimation == Player.itemAnimationMax - 1)
-                {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation / Player.GetAttackSpeed(DamageClass.Magic));
+
+                // specifically whips
+                if (item.CountsAsClass(DamageClass.SummonMeleeSpeed)) {
+                    //whip use time is disproportionately high relative to their damage
+                    scaledUseAnimation *= 9;
+                    scaledUseAnimation /= 10;
+
+                    modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation);
+                }
+
+                //piranha gun works differently enough to warrant a special case
+                else if (item.type != ItemID.PiranhaGun && item.type != ItemID.Harpoon) {
+                    modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation);
+                     
+                }
+                //i have no clue how they made this item behave the way it does, but it is deeply cursed
+                else if (item.type == ItemID.Harpoon && Player.itemAnimation == 4) {
+                    modPlayer.staminaResourceCurrent -= 14;
                 }
                 if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
                 {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .8f;
-                }
-
-                // Summoner
-                if (item.CountsAsClass(DamageClass.Summon) && Player.itemAnimation == Player.itemAnimationMax - 1)
-                {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation / Player.GetAttackSpeed(DamageClass.Summon));
-                }
-
-                // Throwing
-                if (item.damage >= 1 && (item.CountsAsClass(DamageClass.Throwing)) && Player.itemAnimation == Player.itemAnimationMax - 1)
-                {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation / Player.GetAttackSpeed(DamageClass.Throwing));
-                }
-
-                // Classless? Just in case? 
-                if (item.damage >= 1 && (!item.CountsAsClass(DamageClass.Melee) && !item.CountsAsClass(DamageClass.Ranged) && !item.CountsAsClass(DamageClass.Magic) && !item.CountsAsClass(DamageClass.Summon) && !item.CountsAsClass(DamageClass.Throwing)) && Player.itemAnimation == Player.itemAnimationMax - 1)
-                {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
+                    modPlayer.staminaResourceCurrent -= .8f;
                 }
             }
 
             #endregion
-
+            
             return true;
         }
 
@@ -181,9 +159,11 @@ namespace tsorcRevamp
 
         //request that the compiler inlines this method, as opposed to making method calls which are slightly slower
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal float ReduceStamina(int itemUseAnimation)
+        static internal float ReduceStamina(int itemUseAnimation)
         {
             // y=\left(\log_{1.025}\left(x+41\right)\right)-150.392
+            //float foo = (float)((Math.Log(itemUseAnimation + 41, 1.025)) - 150.392);
+            //Main.NewText(foo);
             return (float)((Math.Log(itemUseAnimation + 41, 1.025)) - 150.392);
         }
 

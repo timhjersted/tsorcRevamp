@@ -1,9 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
+using System.Text;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using tsorcRevamp.Items.Weapons.Melee;
 
 namespace tsorcRevamp
 {
@@ -93,11 +96,19 @@ namespace tsorcRevamp
             UpdateResource();
         }
 
+
+        const float BoomerangDrainPerFrame = 0.6f;
+        const float SpearDrainPerFrame = 1f;
+        const float HeldProjectileDrainPerFrame = 1f;
+        const float SpecialHeldProjectileDrainPerFrame = 0.6f;
+        const float FlailDrainPerFrame = 0.4f;
+        const float YoyoDrainPerFrame = 0.4f;
+
         // Lets do all our logic for the custom resource here, such as limiting it, increasing it and so on.
         private void UpdateResource()
         {
-
-            //Main.NewText("Stamina: " + staminaResourceCurrent);
+            
+            //Main.NewText("Stamina: " + staminaResourceCurrent + "/" + staminaResourceMax2);
             //Main.NewText("Stamina regen rate: " + staminaResourceRegenRate);
             //Main.NewText("Stamina regen gain mult: " + staminaResourceGainMult);
             //Main.NewText("Timer: " + staminaResourceRegenTimer);
@@ -115,7 +126,7 @@ namespace tsorcRevamp
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.ChainGuillotine
                         || Main.projectile[p].type == ProjectileID.MechanicalPiranha))
                     {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .6f;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= SpecialHeldProjectileDrainPerFrame;
                         if (staminaResourceCurrent < 1)
                         {
                             Main.projectile[p].Kill();
@@ -123,32 +134,20 @@ namespace tsorcRevamp
                         break;
                     }
 
-                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.CopperShortswordStab || Main.projectile[p].type == ProjectileID.TinShortswordStab
-                        || Main.projectile[p].type == ProjectileID.IronShortswordStab || Main.projectile[p].type == ProjectileID.LeadShortswordStab
-                        || Main.projectile[p].type == ProjectileID.SilverShortswordStab || Main.projectile[p].type == ProjectileID.TungstenShortswordStab
-                        || Main.projectile[p].type == ProjectileID.GoldShortswordStab || Main.projectile[p].type == ProjectileID.PlatinumShortswordStab
-                        || Main.projectile[p].type == ProjectileID.GladiusStab || Main.projectile[p].type == ProjectileID.PiercingStarlight))
-                    {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 0.35f;
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
-                        if (staminaResourceCurrent < 1)
-                        {
-                            Main.projectile[p].Kill();
-                        }
-                    }
+                    //why did shortswords have a special per-frame drain in addition to their normal drain?
 
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == ProjAIStyleID.Boomerang) //Can't have boomerangs just not use any stamina, especially weapons like Bananarangs and Possessed Hatchet(their individual throws just do not use stamina currently)
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0.34f;
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 0.6f;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= BoomerangDrainPerFrame;
                         break;
                     }
 
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].aiStyle == ProjAIStyleID.Spear))
 
                     {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 1f;
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= SpearDrainPerFrame;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
                         if (staminaResourceCurrent < 1)
                         {
                             Main.projectile[p].Kill();
@@ -161,8 +160,8 @@ namespace tsorcRevamp
                         || Main.projectile[p].type == ProjectileID.Celeb2Weapon || Main.projectile[p].type == ProjectileID.FlyingKnife 
                         || Main.projectile[p].type == ProjectileID.ShadowFlameKnife))
                     {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 1f;
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= HeldProjectileDrainPerFrame;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
                         if (staminaResourceCurrent < 1)
                         {
                             Main.projectile[p].Kill();
@@ -175,8 +174,8 @@ namespace tsorcRevamp
                         || Main.projectile[p].type == ProjectileID.LaserMachinegun
                         || Main.projectile[p].type == ProjectileID.DD2PhoenixBow || Main.projectile[p].type == ProjectileID.Phantasm))
                     {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 1f;
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= HeldProjectileDrainPerFrame;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
                         if (staminaResourceCurrent < 1)
                         {
                             Main.projectile[p].Kill();
@@ -187,8 +186,8 @@ namespace tsorcRevamp
                         || Main.projectile[p].type == ProjectileID.Anchor))
 
                     {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .4f;
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= FlailDrainPerFrame;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
                         if (staminaResourceCurrent < 1)
                         {
                             Main.projectile[p].Kill();
@@ -199,8 +198,8 @@ namespace tsorcRevamp
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].aiStyle == ProjAIStyleID.Yoyo))
 
                     {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .3f;
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= YoyoDrainPerFrame;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
                         if (staminaResourceCurrent < 1)
                         {
                             Main.projectile[p].Kill();
@@ -252,6 +251,116 @@ namespace tsorcRevamp
 
             // Limit exampleResourceCurrent from going over the limit imposed by exampleResourceMax.
             staminaResourceCurrent = Utils.Clamp(staminaResourceCurrent, 0, staminaResourceMax2);
+        }
+
+        static readonly List<int> HeldProjectileWeapons = new() {
+            ItemID.Terragrim,
+            ItemID.Arkhalis,
+            ItemID.ChargedBlasterCannon,
+            ItemID.MedusaHead,
+            ItemID.ChainKnife,
+            ItemID.LastPrism,
+            ItemID.LaserMachinegun,
+            ItemID.DD2PhoenixBow,
+            ItemID.Phantasm,
+            ItemID.VortexBeater,
+            ItemID.Celeb2,
+            ItemID.FlyingKnife,
+            ItemID.ShadowFlameKnife
+        };
+
+        static readonly List<int> SpecialHeldProjectileWeapons = new() {
+            ItemID.ChainGuillotines,
+            ItemID.PiranhaGun
+        };
+        private class tsrStaminaGlobalItem : GlobalItem {
+            public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
+                if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) return;
+                if (!ModContent.GetInstance<tsorcRevampConfig>().ShowStaminaTooltip) return;
+                if (item.pick != 0 || item.axe != 0 || item.hammer != 0) return;
+                if (item.damage <= 0 && item.type != ItemID.CoinGun) return;
+                StringBuilder tipToAdd = new();
+                tipToAdd.Append("Stamina Use: ");
+
+                int preModificationLength = tipToAdd.Length;
+
+                #region drain per frame AIStyle-based cases
+                Projectile shot = new();
+                shot.SetDefaults(item.shoot);
+
+                float drainPerFrame = 0f;
+                bool preventsRegen = false;
+                bool inhibitsRegen = false;
+                switch (shot.aiStyle) {
+                    case ProjAIStyleID.Boomerang: {
+                        drainPerFrame = BoomerangDrainPerFrame;
+                        inhibitsRegen = true;
+                        break;
+                    }
+                    case ProjAIStyleID.Spear: {
+                        drainPerFrame = SpearDrainPerFrame;
+                        preventsRegen = true;
+                        break;
+                    }
+                    case ProjAIStyleID.Flail: {
+                        drainPerFrame = FlailDrainPerFrame;
+                        preventsRegen = true;
+                        break;
+                    }
+                    case ProjAIStyleID.Yoyo: {
+                        drainPerFrame = YoyoDrainPerFrame;
+                        preventsRegen = true;
+                        break;
+                    }
+                    default: break;
+                        
+                }
+                #endregion
+
+                #region unique cases
+                //it's just harpoon. seriously, what IS this weapon? i dont understand.
+                if (item.type == ItemID.Harpoon) {
+                    tipToAdd.Append("14");
+                }
+                #endregion
+
+                if (tipToAdd.Length == preModificationLength) {
+                    int staminaUse = (int)(item.useAnimation / Main.LocalPlayer.GetAttackSpeed(item.DamageType));
+                    staminaUse = (int)tsorcRevampPlayer.ReduceStamina(staminaUse);
+                    tipToAdd.Append($"{staminaUse}"); 
+                }
+
+                #region special drain per frame
+                if (HeldProjectileWeapons.Contains(item.type)) {
+                    drainPerFrame = HeldProjectileDrainPerFrame;
+                    preventsRegen = true;
+                }
+
+                else if (SpecialHeldProjectileWeapons.Contains(item.type)) {
+                    drainPerFrame = SpecialHeldProjectileDrainPerFrame;
+                    //these dont prevent regen
+                }
+                #endregion
+
+                #region drain per frame tooltips
+                if (drainPerFrame != 0f) {
+                    tipToAdd.Append($" + {drainPerFrame * 60} / second");
+                }
+
+                if (inhibitsRegen) {
+                    tipToAdd.Append("\nNatural regen is [c/bb9999:reduced] while in use");
+                }
+                if (preventsRegen) {
+                    tipToAdd.Append("\nNatural regen is [c/ff9955:disabled] while in use");
+                }
+                #endregion
+                int ttindex = tooltips.FindLastIndex(t => t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
+                if (ttindex != -1) {// if we find one
+                                    //insert the extra tooltip line
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "",
+                    tipToAdd.ToString()));
+                }
+            }
         }
     }
 }

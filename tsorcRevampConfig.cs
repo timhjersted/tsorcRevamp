@@ -97,6 +97,13 @@ namespace tsorcRevamp
         [Tooltip("Increases the size of all soapstone dialogue boxes by a percentage.\nDefaults to 0%.")]
         public uint SoapstoneScale { get; set; }
 
+        [Label("Stamina Use Tooltip")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [Range(0, 100)]
+        [DefaultValue(true)]
+        [Tooltip("Show the stamina consumption tooltip for Bearer of the Curse mode.\nDefaults to On.")]
+        public bool ShowStaminaTooltip { get; set; }
+
         [Label("Disable Gravitation Effect Screen Flip")]
         [BackgroundColor(200, 80, 80, 192)]
         [SliderColor(224, 165, 56, 128)]
