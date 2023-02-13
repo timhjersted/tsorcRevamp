@@ -4,15 +4,15 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Summon
 {
-    public class Oxyale : ModItem
+    [LegacyName("Oxyale")]
+    public class CrystallineShard : ModItem
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Gear worn by Dragoons" +
-                               "\nIncreases your max minions by 2" +
+            Tooltip.SetDefault("Increases your max minions by 2" +
                                "\nIncreases your minion damage by 1.5% multiplicatively for each minion slot you have" +
                                "\nDecreases whip range by 33%" +
-                               "\nAllows you to breathe underwater and negates water physics");
+                               "\n\"A magical substance found only in the Crystalline Dimension\"");
 
         }
 
@@ -29,14 +29,14 @@ namespace tsorcRevamp.Items.Accessories.Summon
         public override void UpdateEquip(Player player)
         {
             player.maxMinions += 2;
-            float oxyale = (float)(0.015 * player.maxMinions);
-            player.GetDamage(DamageClass.Summon) *= 1 + oxyale;
+            float crystalline = (float)(0.015 * player.maxMinions);
+            player.GetDamage(DamageClass.Summon) *= 1 + crystalline;
             player.whipRangeMultiplier -= 0.33f;
-            if (player.wet)
+/*            if (player.wet)
             {
                 player.gills = true;
                 player.ignoreWater = true;
-            }
+            }*/
         }
     }
 }

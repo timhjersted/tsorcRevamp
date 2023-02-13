@@ -78,7 +78,7 @@ namespace tsorcRevamp.NPCs.Friendly
         #region Chat
         public override string GetChat()
         {
-            return "Thank you for freeing me! Have the Oxyale I recovered from the bottom of the spring";
+            return "Thank you for freeing me! Have this [c/aa9911:glowing thing] I recovered from the bottom of the spring";
         }
         #endregion
         public override void SetChatButtons(ref string button, ref string button2)
@@ -86,17 +86,17 @@ namespace tsorcRevamp.NPCs.Friendly
             button = Language.GetTextValue("Accept");
         }
 
-        bool droppedOxyale = false;
+        bool droppedCrystallineShard = false;
         public override void OnChatButtonClicked(bool firstButton, ref bool shop)
         {
-            if (!droppedOxyale)
+            if (!droppedCrystallineShard)
             {
                 //Drop one for each player
                 for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
                 {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Summon.Oxyale>());
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Summon.CrystallineShard>());
                 }
-                droppedOxyale = true;
+                droppedCrystallineShard = true;
             }
         }
 
@@ -105,7 +105,7 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             //The despawning has to be done in AI(), because spawning dusts from within OnChatButtonClicked doesn't work specifically when autopause is on.
             //I don't know why. I probably don't want to know why. This is as simple as workarounds get, though.
-            if (droppedOxyale)
+            if (droppedCrystallineShard)
             {
                 NPC.active = false;
                 for (int i = 0; i < 20; i++)
