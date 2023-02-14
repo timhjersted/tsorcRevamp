@@ -141,10 +141,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
                 }
 
                 tooltips.Insert(line++, new TooltipLine(Mod, "", "[c/ff7777:Does nothing while the non-permanent buff is active.]"));
-                if (BuffName == "Shine") {
-                    tooltips.Insert(line++, new TooltipLine(Mod, "", "Has no effect on the [c/6d8827:Bearer of the Curse]"));
-
-                }
             }
         }
 
@@ -328,7 +324,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void UpdateInventory(Player player)
         {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[10] && !player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[10])
             {
                 Lighting.AddLight((int)(player.Center.X / 16), (int)(player.Center.Y / 16), 0.8f, 0.95f, 1f);
             }
