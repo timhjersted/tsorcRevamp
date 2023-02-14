@@ -43,9 +43,9 @@ namespace tsorcRevamp.Items
                 string tooltipText = null;
 
                 if (item.prefix == ModContent.PrefixType<Blessed>()) { tooltipText = "+1 life regen while held"; }
-                if (item.prefix == ModContent.PrefixType<Refreshing>()) { tooltipText = "+3% stamina recovery speed"; }
+                if (item.prefix == ModContent.PrefixType<Refreshing>()) { tooltipText = "+4% stamina recovery speed"; }
                 if (item.prefix == ModContent.PrefixType<Revitalizing>()) { tooltipText = "+6% stamina recovery speed"; }
-                if (item.prefix == ModContent.PrefixType<Invigorating>()) { tooltipText = "+9% stamina recovery speed"; }
+                if (item.prefix == ModContent.PrefixType<Invigorating>()) { tooltipText = "+8% stamina recovery speed"; }
                 
                 if (tooltipText != null) {
                     TooltipLine line = new TooltipLine(Mod, "tsorcRevamp:Prefix", tooltipText) { IsModifier = true };
