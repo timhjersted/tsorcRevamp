@@ -279,6 +279,7 @@ namespace tsorcRevamp
                 if (!ModContent.GetInstance<tsorcRevampConfig>().ShowStaminaTooltip) return;
                 if (item.pick != 0 || item.axe != 0 || item.hammer != 0) return;
                 if (item.damage <= 0 && item.type != ItemID.CoinGun) return;
+                if (item.ammo != AmmoID.None) return; //ammo does not consume stamina
                 StringBuilder tipToAdd = new();
                 tipToAdd.Append("Stamina Use: ");
 
