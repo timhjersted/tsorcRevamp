@@ -26,31 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetDamage(DamageClass.Magic) *= .7f;
-            Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().GemBox = true;
-        }
-    }
-
-    class GemBox_Global : GlobalItem
-    {
-        public override float UseTimeMultiplier(Item item, Player player)
-        {
-            Item selected = player.inventory[player.selectedItem];
-            if ((selected.DamageType == DamageClass.Magic) && (player.GetModPlayer<tsorcRevampPlayer>().GemBox))
-            {
-                float roundup = (float)Math.Ceiling(selected.useTime * 0.5f);
-                return (roundup / (float)selected.useTime);
-            }
-            else return 1f;
-        }
-        public override float UseAnimationMultiplier(Item item, Player player)
-        {
-            Item selected = player.inventory[player.selectedItem];
-            if ((selected.DamageType == DamageClass.Magic) && (player.GetModPlayer<tsorcRevampPlayer>().GemBox))
-            {
-                float roundup = (float)Math.Ceiling(selected.useAnimation * 0.5f);
-                return (roundup / (float)selected.useAnimation);
-            }
-            else return 1f;
+            player.GetAttackSpeed(DamageClass.Magic) *= 2;
         }
     }
 }

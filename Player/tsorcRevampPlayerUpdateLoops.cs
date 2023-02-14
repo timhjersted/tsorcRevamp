@@ -41,7 +41,6 @@ namespace tsorcRevamp
         public bool DragoonBootsEnable = false;
         public bool DragoonHorn = false;
 
-        public bool GemBox = false;
         public bool ConditionOverload = true;
 
         public int CurseLevel = 1;
@@ -267,7 +266,6 @@ namespace tsorcRevamp
             Celestriad = false;
 
             DragoonBoots = false;
-            GemBox = false;
             OldWeapon = false;
             Miakoda = false;
 
