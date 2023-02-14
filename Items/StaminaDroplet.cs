@@ -14,6 +14,7 @@ namespace tsorcRevamp.Items
             Item.width = 14;
             Item.height = 20;
             Item.rare = ItemRarityID.Green;
+            Item.value = 1; //prevents auto-trash
         }
 
         public override bool ItemSpace(Player player)
