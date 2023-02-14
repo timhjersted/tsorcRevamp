@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         };
 
         public static readonly List<PermanentPotion> ExclusiveSetWellFed = new() {
-            new PermanentTea(),
+            new Infinitea(),
             new PermanentSoup(),
             new PermanentGoldenDelight(),
         };
@@ -1018,7 +1018,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(0.2f);
         }
     }
-    public class PermanentTea : PermanentPotion {
+    public class Infinitea : PermanentPotion {
         public override string Texture => "tsorcRevamp/Items/Potions/VanillaTextures/Teacup";
         public override int PermanentID => 54;
         public override int BuffType => BuffID.WellFed;

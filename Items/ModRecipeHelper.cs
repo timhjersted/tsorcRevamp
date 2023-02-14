@@ -65,7 +65,7 @@ namespace tsorcRevamp.Items
             PermaPotionRecipeB(mod, ItemID.WaterWalkingPotion, ModContent.ItemType<PermanentWaterWalkingPotion>());
             PermaPotionRecipeB(mod, ItemID.FlaskofParty, ModContent.ItemType<PermanentFlaskOfParty>());
             PermaPotionRecipeB(mod, ItemID.FlaskofPoison, ModContent.ItemType<PermanentFlaskOfPoison>());
-            PermaPotionRecipeB(mod, ItemID.Teacup, ModContent.ItemType<PermanentTea>());
+            PermaPotionRecipeB(mod, ItemID.Teacup, ModContent.ItemType<Infinitea>());
 
             #endregion
             #region add c tier recipes
