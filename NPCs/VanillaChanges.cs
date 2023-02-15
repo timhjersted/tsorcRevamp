@@ -1274,7 +1274,7 @@ namespace tsorcRevamp.NPCs
                             npc.knockBackResist = 0f;
                             npc.damage = 130;
                             npc.defense = 50;
-                            npc.lifeMax = 850;
+                            npc.lifeMax = 450; //more hp than a tortoise? really?
                             npc.value = 1750;
                         }
                         break;
