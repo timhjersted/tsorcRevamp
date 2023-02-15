@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.light = 0.8f;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = 1;
-            Projectile.tileCollide = true;
+            Projectile.tileCollide = false; //strictly worse than unupgraded variant otherwise
             Projectile.timeLeft = 200;
         }
 
