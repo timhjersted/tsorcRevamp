@@ -34,8 +34,8 @@ namespace tsorcRevamp.Items.Accessories.Magic
             Item.height = 12;
             Item.accessory = true;
             Item.maxStack = 1;
-            Item.value = PriceByRarity.Blue_1;
-            Item.rare = ItemRarityID.Blue;
+            Item.value = PriceByRarity.Yellow_8;
+            Item.rare = PriceByRarity.fromItem(Item);
         }
 
         public override void AddRecipes()
