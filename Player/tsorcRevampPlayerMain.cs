@@ -255,9 +255,17 @@ namespace tsorcRevamp
         }
         public override void OnHitAnything(float x, float y, Entity victim)
         {
-            if (Main.rand.NextBool(30))
-            {
-                Items.Accessories.Magic.CelestialCloak.hitchances += 1;
+            bool hasCelestialCloak = false;
+            for (int i = 3; i < 8 + Player.extraAccessorySlots; i++) {
+                if (Player.armor[i].type == ModContent.ItemType<Items.Accessories.Magic.CelestialCloak>()) {
+                    hasCelestialCloak = true;
+                    break;
+                }
+            }
+            if (hasCelestialCloak) {
+                if (Main.rand.NextBool(30)) {
+                    Items.Accessories.Magic.CelestialCloak.hitchances += 1;
+                }
             }
             if (Main.rand.NextBool(9) & MagicPlating.MagicPlatingStacks <= 22 & Player.HasBuff(ModContent.BuffType<MagicPlating>()))
             {

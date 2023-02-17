@@ -727,7 +727,7 @@ namespace tsorcRevamp
 
         private static void CustomQuickBuff(On.Terraria.Player.orig_QuickBuff orig, Player player)
         {
-            if (player.noItems)
+            if (player.noItems || player.dead)
                 return;
 
             Item[] PotionBagItems = player.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
