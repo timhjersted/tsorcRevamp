@@ -67,24 +67,37 @@ namespace tsorcRevamp.Items
 
         public override bool CanUseItem(Player player)
         {
+
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                Main.NewText("The Curse prevents you from using this!", Color.OrangeRed);
+                if (player.whoAmI == Main.myPlayer)
+                {
+                    Main.NewText("The Curse prevents you from using this!", Color.OrangeRed);
+                }
                 return false;
             }
             if (tsorcRevampWorld.BossAlive)
             {
-                Main.NewText("Can not be used while a boss is alive!", Color.Yellow);
+                if (player.whoAmI == Main.myPlayer)
+                {
+                    Main.NewText("Can not be used while a boss is alive!", Color.Yellow);
+                }
                 return false;
             }
             if (!player.GetModPlayer<tsorcRevampPlayer>().warpSet)
             {
-                Main.NewText("You haven't set a location!", 255, 240, 20);
+                if (player.whoAmI == Main.myPlayer)
+                {
+                    Main.NewText("You haven't set a location!", 255, 240, 20);
+                }
                 return false;
             }
             else if (player.GetModPlayer<tsorcRevampPlayer>().warpWorld != Main.worldID)
             {
-                Main.NewText("This mirror is set in a different world!", 255, 240, 20);
+                if (player.whoAmI == Main.myPlayer)
+                {
+                    Main.NewText("This mirror is set in a different world!", 255, 240, 20);
+                }
                 return false;
             }
             return base.CanUseItem(player);

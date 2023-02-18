@@ -855,11 +855,14 @@ namespace tsorcRevamp
 
             Item[] PotionBagItems = player.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
 
-            for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
+            if (PotionBagItems != null)
             {
-                if (PotionBagItems[i] != null && PotionBagItems[i].type != 0 && (player.potionDelay == 0 || !PotionBagItems[i].potion) && ItemLoader.CanUseItem(PotionBagItems[i], player) && (player.GetHealMana(PotionBagItems[i], true) > player.GetHealMana(selectedItem, true)) || PotionBagItems[i].type == ModContent.ItemType<Items.Potions.SupremeManaPotion>())
+                for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
                 {
-                    selectedItem = PotionBagItems[i];
+                    if (PotionBagItems[i] != null && PotionBagItems[i].type != 0 && (player.potionDelay == 0 || !PotionBagItems[i].potion) && ItemLoader.CanUseItem(PotionBagItems[i], player) && (player.GetHealMana(PotionBagItems[i], true) > player.GetHealMana(selectedItem, true)) || PotionBagItems[i].type == ModContent.ItemType<Items.Potions.SupremeManaPotion>())
+                    {
+                        selectedItem = PotionBagItems[i];
+                    }
                 }
             }
 
