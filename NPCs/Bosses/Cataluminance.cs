@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Bosses
             DisplayName.SetDefault("Cataluminance v1.08");
         }
 
-        int StarBlastDamage = 40;
+        int StarBlastDamage = 35;
         int FinalStandStarDamage = 30;
         int TrailDamage = 50;
 

@@ -50,8 +50,8 @@ namespace tsorcRevamp.NPCs.Bosses
             DisplayName.SetDefault("Retinazer v2.05");
         }
 
-        int DeathLaserDamage = 30;
-        int PiercingGazeDamage = 40;
+        int DeathLaserDamage = 27;
+        int PiercingGazeDamage = 35;
 
         //If this is set to anything but -1, the boss will *only* use that attack ID
         int testAttack = -1;
