@@ -204,7 +204,7 @@ namespace tsorcRevamp.Items
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), 2000); // Gives player souls.
-                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, Mod.Find<ModProjectile>("Soulsplosion").Type, 250, 15, 0);
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, ModContent.ProjectileType<Projectiles.Soulsplosion>(), 250, 15, 0);
                 }
 
                 for (int d = 0; d < 90; d++) // Upwards
@@ -285,7 +285,7 @@ namespace tsorcRevamp.Items
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), 5000); // Gives player souls.
-                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, Mod.Find<ModProjectile>("Soulsplosion").Type, 600, 15, 0);
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, ModContent.ProjectileType<Projectiles.Soulsplosion>(), 600, 15, 0);
                 }
 
                 for (int d = 0; d < 100; d++) // Upwards
@@ -374,7 +374,7 @@ namespace tsorcRevamp.Items
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), 10000); // Gives player souls.
-                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, Mod.Find<ModProjectile>("SoulsplosionLarge").Type, 2000, 15, 0);
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, ModContent.ProjectileType<Projectiles.SoulsplosionLarge>(), 2000, 15, 0);
                 }
 
                 for (int d = 0; d < 100; d++) // Upwards

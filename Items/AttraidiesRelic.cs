@@ -1,7 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using tsorcRevamp.NPCs.Enemies;
 
 namespace tsorcRevamp.Items
 {
@@ -29,9 +29,9 @@ namespace tsorcRevamp.Items
         }
         public override bool? UseItem(Player player)
         {
-            if (!NPC.AnyNPCs(Mod.Find<ModNPC>("AttraidiesIllusion").Type))
+            if (!NPC.AnyNPCs(ModContent.NPCType<AttraidiesIllusion>()))
             {
-                NPC.SpawnOnPlayer(player.whoAmI, Mod.Find<ModNPC>("AttraidiesIllusion").Type);
+                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<AttraidiesIllusion>());
                 return true;
             }
             else

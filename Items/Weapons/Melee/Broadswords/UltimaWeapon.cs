@@ -36,9 +36,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.TerraBlade, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
             recipe.AddTile(TileID.DemonAltar);
 

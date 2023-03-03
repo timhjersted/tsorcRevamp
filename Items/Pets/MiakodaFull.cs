@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Pets
         {
             {
                 Recipe recipe = CreateRecipe();
-                recipe.AddIngredient(Mod.Find<ModItem>("MiakodaCrescent").Type);
+                recipe.AddIngredient(ModContent.ItemType<MiakodaCrescent>());
                 recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100);
                 recipe.AddTile(TileID.DemonAltar);
 
@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.Pets
             }
             {
                 Recipe recipe = CreateRecipe();
-                recipe.AddIngredient(Mod.Find<ModItem>("MiakodaNew").Type);
+                recipe.AddIngredient(ModContent.ItemType<MiakodaNew>());
                 recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100);
                 recipe.AddTile(TileID.DemonAltar);
 

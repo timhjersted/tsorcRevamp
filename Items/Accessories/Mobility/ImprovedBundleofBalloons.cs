@@ -35,9 +35,9 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             recipe.Register();
 
             Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(Mod.Find<ModItem>("ImprovedBlueBalloon").Type, 1);
-            recipe2.AddIngredient(Mod.Find<ModItem>("ImprovedWhiteBalloon").Type, 1);
-            recipe2.AddIngredient(Mod.Find<ModItem>("ImprovedYellowBalloon").Type, 1);
+            recipe2.AddIngredient(ModContent.ItemType<ImprovedBlueBalloon>(), 1);
+            recipe2.AddIngredient(ModContent.ItemType<ImprovedWhiteBalloon>(), 1);
+            recipe2.AddIngredient(ModContent.ItemType<ImprovedYellowBalloon>(), 1);
             recipe2.AddIngredient(ItemID.AdamantiteBar, 1);
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe2.AddTile(TileID.DemonAltar);

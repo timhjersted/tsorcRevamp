@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("SupersonicBoots").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<SupersonicBoots>(), 1);
             recipe.AddIngredient(ItemID.AngelWings, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
             recipe.AddTile(TileID.DemonAltar);

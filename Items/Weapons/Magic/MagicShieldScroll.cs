@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("HealingElixir").Type);
+            recipe.AddIngredient(ModContent.ItemType<Potions.HealingElixir>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
 

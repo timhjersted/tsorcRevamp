@@ -39,10 +39,10 @@ namespace tsorcRevamp.Items
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 5);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
             recipe.AddTile(TileID.DemonAltar);
 

@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofLight, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("Muramassa").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<Muramassa>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
             recipe.AddTile(TileID.DemonAltar);
 

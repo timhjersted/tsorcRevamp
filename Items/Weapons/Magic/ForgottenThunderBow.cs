@@ -33,10 +33,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("ForgottenThunderBowScroll").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("Bolt4Tome").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 9);
+            recipe.AddIngredient(ModContent.ItemType<ForgottenThunderBowScroll>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<Bolt4Tome>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<Humanity>(), 9);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200000);
             recipe.AddTile(TileID.DemonAltar);
 

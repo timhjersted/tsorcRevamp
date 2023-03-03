@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("EphemeralThrowingAxe").Type);
+            recipe.AddIngredient(ModContent.ItemType<EphemeralThrowingAxe>());
             //recipe.AddIngredient(ItemID.SoulofNight, 8);
             recipe.AddIngredient(ItemID.AdamantiteBar, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 12000);

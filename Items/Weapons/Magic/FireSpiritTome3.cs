@@ -40,28 +40,28 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("FireSpiritTome2").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<FireSpiritTome2>(), 1);
             recipe.AddIngredient(ItemID.InfernoFork, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 5);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 45000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
 
             Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(Mod.Find<ModItem>("FireSpiritTome2").Type, 1);
+            recipe2.AddIngredient(ModContent.ItemType<FireSpiritTome2>(), 1);
             recipe2.AddIngredient(ItemID.FragmentSolar, 10);
-            recipe2.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 5);
+            recipe2.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 45000);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register(); 
             
             Recipe recipe3 = CreateRecipe();
-            recipe3.AddIngredient(Mod.Find<ModItem>("FireSpiritTome2").Type, 1);
+            recipe3.AddIngredient(ModContent.ItemType<FireSpiritTome2>(), 1);
             recipe3.AddIngredient(ItemID.InfernoFork, 1);
             recipe3.AddIngredient(ItemID.FragmentSolar, 10);
-            recipe3.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 5);
+            recipe3.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
             recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
             recipe3.AddTile(TileID.DemonAltar);
 

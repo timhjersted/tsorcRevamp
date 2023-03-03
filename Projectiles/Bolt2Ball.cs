@@ -72,7 +72,7 @@ namespace tsorcRevamp.Projectiles
         {
             if (Main.rand.NextBool(4))
             {
-                target.AddBuff(Mod.Find<ModBuff>("ElectrocutedBuff").Type, 180);
+                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 180);
             }
         }
 

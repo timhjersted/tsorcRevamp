@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             }
 
-            if (spawnInfo.Player.ZoneUnderworldHeight && !Main.hardMode && !NPC.AnyNPCs(Mod.Find<ModNPC>("AttraidiesIllusion").Type))
+            if (spawnInfo.Player.ZoneUnderworldHeight && !Main.hardMode && !NPC.AnyNPCs(ModContent.NPCType<AttraidiesIllusion>()))
             {
                 chance = .033f;
             }

@@ -33,8 +33,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("ThrowingAxe").Type);
-            recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 15);
+            recipe.AddIngredient(ModContent.ItemType<ThrowingAxe>());
+            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 15);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
             recipe.AddTile(TileID.DemonAltar);
 

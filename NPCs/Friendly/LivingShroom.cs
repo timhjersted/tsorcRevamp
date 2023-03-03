@@ -41,7 +41,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 return chance;
             }
 
-            if (Main.dayTime && NPC.CountNPCS(Mod.Find<ModNPC>("LivingShroom").Type) < 4 && TileID.Sets.Conversion.Grass[spawnInfo.SpawnTileType] && !spawnInfo.Water && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 5].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 8].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 12].WallType == WallID.None) && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneMeteor))
+            if (Main.dayTime && NPC.CountNPCS(ModContent.NPCType<LivingShroom>()) < 4 && TileID.Sets.Conversion.Grass[spawnInfo.SpawnTileType] && !spawnInfo.Water && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 5].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 8].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 12].WallType == WallID.None) && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneMeteor))
             {
                 return 0.35f;
             }

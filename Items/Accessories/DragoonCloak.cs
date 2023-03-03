@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Accessories.Defensive;
 
 namespace tsorcRevamp.Items.Accessories
 {
@@ -26,9 +27,9 @@ namespace tsorcRevamp.Items.Accessories
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("LightCloak").Type);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkCloak").Type);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkmoonCloak").Type);
+            recipe.AddIngredient(ModContent.ItemType<LightCloak>());
+            recipe.AddIngredient(ModContent.ItemType<DarkCloak>());
+            recipe.AddIngredient(ModContent.ItemType<DarkmoonCloak>());
             recipe.AddIngredient(ItemID.ChlorophyteBar, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);

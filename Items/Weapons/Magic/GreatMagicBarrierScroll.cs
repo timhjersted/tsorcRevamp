@@ -35,9 +35,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 3);
-            recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 3);
-            recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 3);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 3);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);
 

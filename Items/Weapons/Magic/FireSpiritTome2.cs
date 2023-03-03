@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("FireSpiritTome").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<FireSpiritTome>(), 1);
             recipe.AddIngredient(ModContent.ItemType<ExplosionRune>(), 1);
             recipe.AddIngredient(ItemID.LunarTabletFragment, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);

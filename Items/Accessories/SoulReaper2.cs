@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
-            recipe.AddIngredient(Mod.Find<ModItem>("SoulReaper").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<SoulReaper>(), 1);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

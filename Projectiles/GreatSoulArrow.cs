@@ -121,7 +121,7 @@ namespace tsorcRevamp.Projectiles
             {
                 if (Main.rand.NextBool(2))
                 {
-                    target.AddBuff(Mod.Find<ModBuff>("Soulstruck").Type, 180);
+                    target.AddBuff(ModContent.BuffType<Buffs.Soulstruck>(), 180);
                 }
             }
 

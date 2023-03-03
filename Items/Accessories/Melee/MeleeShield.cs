@@ -137,7 +137,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("GazingShield").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<GazingShield>(), 1);
             recipe.AddIngredient(ItemID.SoulofMight, 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
             recipe.AddTile(TileID.DemonAltar);
@@ -189,9 +189,9 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("BeholderShield").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<BeholderShield>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -243,8 +243,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("BeholderShield2").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 2);
+            recipe.AddIngredient(ModContent.ItemType<BeholderShield2>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 2);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
             recipe.AddTile(TileID.DemonAltar);
 

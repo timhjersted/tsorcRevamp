@@ -33,8 +33,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("DivineSpark").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("Epilogue").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<DivineSpark>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<Epilogue>(), 1);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

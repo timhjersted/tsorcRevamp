@@ -155,7 +155,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
         {
-            projType = Mod.Find<ModProjectile>("ArcheologistWhip").Type;
+            projType = ModContent.ProjectileType<Projectiles.ArcheologistWhip>();
 
             attackDelay = 1;
         }

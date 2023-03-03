@@ -28,8 +28,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("BlueTearstoneRing").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 5);
+            recipe.AddIngredient(ModContent.ItemType<BlueTearstoneRing>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
             recipe.AddTile(TileID.DemonAltar);

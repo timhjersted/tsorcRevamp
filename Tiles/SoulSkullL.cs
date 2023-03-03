@@ -230,7 +230,7 @@ namespace tsorcRevamp.Tiles
                 if (sansannoyed == 12) //after clicking 12 times, gives accessory
                 {
                     UsefulFunctions.BroadcastText("Fine. Here. Take it and leave.", 255, 90, 90);
-                    Item.NewItem(new Terraria.DataStructures.EntitySource_Misc("Soul Skelly"), new Vector2(i * 16, j * 16), 16, 16, Mod.Find<ModItem>("RingOfTheBlueEye").Type, 1);
+                    Item.NewItem(new Terraria.DataStructures.EntitySource_Misc("Soul Skelly"), new Vector2(i * 16, j * 16), 16, 16, ModContent.ItemType<Items.Accessories.Defensive.RingOfTheBlueEye>(), 1);
                 }
 
                 if (sansannoyed > 12)

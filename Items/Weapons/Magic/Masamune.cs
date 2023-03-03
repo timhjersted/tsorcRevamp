@@ -35,10 +35,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             //recipe.AddIngredient(ItemID.SoulofLight, 3);
-            recipe.AddIngredient(Mod.Find<ModItem>("Murassame").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 10);
-            recipe.AddIngredient(Mod.Find<ModItem>("GhostWyvernSoul").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<Murassame>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 10);
+            recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 250000);
             recipe.AddTile(TileID.DemonAltar);
 

@@ -77,7 +77,7 @@ namespace tsorcRevamp.Projectiles
         {
             if (Main.rand.NextBool(4))
             {
-                target.AddBuff(Mod.Find<ModBuff>("ElectrocutedBuff").Type, 120);
+                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 120);
             }
         }
         public override void Kill(int timeLeft)

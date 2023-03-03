@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
+using tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile;
 
 namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
 {
@@ -98,19 +99,19 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
                     num119 = num122;
                 }
             }
-            if (NPC.CountNPCS(Mod.Find<ModNPC>("JungleWyvernJuvenileHead").Type) < 2)
+            if (NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenileHead>()) < 2)
             {
                 juvenileSpawnTimer += Main.rand.Next(1, 3);
             }
 
 
-            if (juvenileSpawnTimer >= 1900 && NPC.CountNPCS(Mod.Find<ModNPC>("JungleWyvernJuvenileHead").Type) < 2) //1900 was 1200
+            if (juvenileSpawnTimer >= 1900 && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenileHead>()) < 2) //1900 was 1200
             {
                 if (Vector2.Distance(Main.player[NPC.target].Center, NPC.Center) > 500)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + Main.rand.Next(-20, 20), (int)NPC.position.Y + Main.rand.Next(-20, 20), Mod.Find<ModNPC>("JungleWyvernJuvenileHead").Type);
+                        NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + Main.rand.Next(-20, 20), (int)NPC.position.Y + Main.rand.Next(-20, 20), ModContent.NPCType<JungleWyvernJuvenileHead>());
                     }
                     juvenileSpawnTimer = 0;
                 }

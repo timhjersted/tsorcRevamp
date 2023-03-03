@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -55,11 +56,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             }
             if (Main.rand.NextBool(3))
             {
-                npc.AddBuff(Mod.Find<ModBuff>("CrimsonBurn").Type, 300, false);
+                npc.AddBuff(ModContent.BuffType<CrimsonBurn>(), 300, false);
             }
             if (Main.rand.NextBool(3))
             {
-                npc.AddBuff(Mod.Find<ModBuff>("DarkInferno").Type, 300, false);
+                npc.AddBuff(ModContent.BuffType<DarkInferno>(), 300, false);
             }
         }
         public override void MeleeEffects(Player player, Rectangle rectangle)

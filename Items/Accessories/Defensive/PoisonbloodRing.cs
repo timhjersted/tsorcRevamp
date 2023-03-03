@@ -27,8 +27,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("PoisonbiteRing").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("BloodbiteRing").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<PoisonbiteRing>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<BloodbiteRing>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);
 

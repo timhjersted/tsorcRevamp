@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("FrozenStarlight").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<FrozenStarlight>(), 1);
             recipe.AddIngredient(ItemID.StarCloak, 1);
             recipe.AddIngredient(ItemID.CrossNecklace, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Accessories
             recipe.Register();
 
             Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(Mod.Find<ModItem>("FrozenStarlight").Type, 1);
+            recipe2.AddIngredient(ModContent.ItemType<FrozenStarlight>(), 1);
             recipe2.AddIngredient(ItemID.StarVeil, 1);
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe2.AddTile(TileID.DemonAltar);

@@ -100,7 +100,7 @@ namespace tsorcRevamp.Projectiles
             //Give hit targets a debuff that "marks" them as hit, so they can't chain it twice
             target.AddBuff(ModContent.BuffType<Buffs.BoltChainImmunity>(), 60);
 
-            target.AddBuff(Mod.Find<ModBuff>("ElectrocutedBuff").Type, 120);
+            target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 120);
 
             //Controls how many times it can chain. For level 1, the max is 2
             if (Projectile.ai[0] < 2)

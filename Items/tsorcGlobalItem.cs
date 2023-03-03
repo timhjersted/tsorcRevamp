@@ -287,7 +287,7 @@ namespace tsorcRevamp.Items
 				player.lifeRegen += 1;
             }*/
 
-            if (item.prefix == Mod.Find<ModPrefix>("Blessed").Type)
+            if (item.prefix == ModContent.PrefixType<Prefixes.Blessed>())
             {
                 player.lifeRegen += 1;
             }

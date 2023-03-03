@@ -71,7 +71,7 @@ namespace tsorcRevamp.Projectiles
 
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(Mod.Find<ModBuff>("ElectrocutedBuff").Type, 120);
+                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 120);
             }
 
             //Controls how many times it can chain. For level 1, the max is 2

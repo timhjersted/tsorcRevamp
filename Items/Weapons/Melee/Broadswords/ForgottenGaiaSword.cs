@@ -35,8 +35,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         /*public override void AddRecipes() {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.FallenStar, 120);
-            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 10);
+            recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
             recipe.AddTile(TileID.DemonAltar);
             

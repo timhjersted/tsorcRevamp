@@ -43,9 +43,9 @@ namespace tsorcRevamp.Items.BossItems
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 30);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 30);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
             recipe.AddTile(TileID.DemonAltar);

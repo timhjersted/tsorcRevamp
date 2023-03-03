@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles
             {
                 if (Main.rand.NextBool(2))
                 {
-                    target.AddBuff(Mod.Find<ModBuff>("PolarisElectrocutedBuff").Type, 360);
+                    target.AddBuff(ModContent.BuffType<Buffs.PolarisElectrocutedBuff>(), 360);
                 }
                 Projectile.timeLeft = 2;
             }
@@ -52,7 +52,7 @@ namespace tsorcRevamp.Projectiles
 
                 if (Main.rand.NextBool(2))
                 {
-                    target.AddBuff(Mod.Find<ModBuff>("PolarisElectrocutedBuff").Type, 240);
+                    target.AddBuff(ModContent.BuffType<Buffs.PolarisElectrocutedBuff>(), 240);
                 }
 
                 Projectile.timeLeft = 0;

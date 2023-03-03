@@ -60,7 +60,7 @@ namespace tsorcRevamp.Items.Potions
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.RichMahogany, 1);
             recipe.AddIngredient(ItemID.GlowingMushroom, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DeadChicken").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<DeadChicken>(), 1);
             recipe.AddIngredient(ItemID.PixieDust, 1);
             recipe.AddTile(TileID.Campfire);
 

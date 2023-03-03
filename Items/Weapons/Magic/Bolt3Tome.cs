@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofLight, 3);
-            recipe.AddIngredient(Mod.Find<ModItem>("Bolt2Tome").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<Bolt2Tome>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
             recipe.AddTile(TileID.DemonAltar);
 

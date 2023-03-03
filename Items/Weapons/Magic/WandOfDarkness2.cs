@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("WandOfDarkness").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<WandOfDarkness>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2300);
             recipe.AddTile(TileID.DemonAltar);
 

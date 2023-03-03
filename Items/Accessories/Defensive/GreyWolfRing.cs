@@ -30,8 +30,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("WolfRing").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("BandOfSupremeCosmicPower").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<WolfRing>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<BandOfSupremeCosmicPower>(), 1);
             recipe.AddIngredient(ModContent.ItemType<RingOfClarity>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
             recipe.AddTile(TileID.DemonAltar);

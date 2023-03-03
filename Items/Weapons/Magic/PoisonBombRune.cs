@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Stinger, 3);
-            recipe.AddIngredient(Mod.Find<ModItem>("PoisonFieldRune").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<PoisonFieldRune>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
             recipe.AddTile(TileID.DemonAltar);
 

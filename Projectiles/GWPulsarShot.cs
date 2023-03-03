@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles
             if (Projectile.owner == Main.myPlayer && Projectile.timeLeft <= 95)
             {
 
-                target.AddBuff(Mod.Find<ModBuff>("ElectrocutedBuff").Type, 420);
+                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 420);
                 Projectile.timeLeft = 2;
 
             }
@@ -51,7 +51,7 @@ namespace tsorcRevamp.Projectiles
                 Projectile.knockBack = 2.5f;
                 Projectile.DamageType = DamageClass.Ranged;
 
-                target.AddBuff(Mod.Find<ModBuff>("ElectrocutedBuff").Type, 300);
+                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 300);
 
                 Projectile.timeLeft = 0;
             }

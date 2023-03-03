@@ -52,15 +52,15 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             float chance = 0;
 
-            if (NPC.CountNPCS(Mod.Find<ModNPC>("CosmicCrystalLizard").Type) < 1 && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneDirtLayerHeight) && !spawnInfo.Water && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].RightSlope && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].LeftSlope && !spawnInfo.Player.ZoneJungle)
+            if (NPC.CountNPCS(ModContent.NPCType<CosmicCrystalLizard>()) < 1 && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneDirtLayerHeight) && !spawnInfo.Water && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].RightSlope && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].LeftSlope && !spawnInfo.Player.ZoneJungle)
             {
                 return 0.02f;
             }
-            if (NPC.CountNPCS(Mod.Find<ModNPC>("CosmicCrystalLizard").Type) < 1 && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneDirtLayerHeight) && !spawnInfo.Water && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].RightSlope && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].LeftSlope && spawnInfo.Player.ZoneJungle)
+            if (NPC.CountNPCS(ModContent.NPCType<CosmicCrystalLizard>()) < 1 && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneDirtLayerHeight) && !spawnInfo.Water && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].RightSlope && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].LeftSlope && spawnInfo.Player.ZoneJungle)
             {
                 return 0.02f;
             }
-            if (NPC.CountNPCS(Mod.Find<ModNPC>("CosmicCrystalLizard").Type) < 1 && spawnInfo.Player.ZoneOverworldHeight && !spawnInfo.Water && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].RightSlope && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].LeftSlope && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 2].WallType == WallID.DirtUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 2].WallType == WallID.MudUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 2].WallType == WallID.Planked))
+            if (NPC.CountNPCS(ModContent.NPCType<CosmicCrystalLizard>()) < 1 && spawnInfo.Player.ZoneOverworldHeight && !spawnInfo.Water && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].RightSlope && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].LeftSlope && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 2].WallType == WallID.DirtUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 2].WallType == WallID.MudUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 2].WallType == WallID.Planked))
             {
                 return 0.02f;
             }

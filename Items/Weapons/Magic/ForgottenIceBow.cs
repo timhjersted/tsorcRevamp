@@ -42,10 +42,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             //todo add ingredients
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("ForgottenIceBowScroll").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("Ice4Tome").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 9);
+            recipe.AddIngredient(ModContent.ItemType<ForgottenIceBowScroll>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<Ice4Tome>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<Humanity>(), 9);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200000);
             recipe.AddTile(TileID.DemonAltar);
 

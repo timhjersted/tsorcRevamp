@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("WoodenWand").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<WoodenWand>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2300);
             recipe.AddTile(TileID.DemonAltar);
 

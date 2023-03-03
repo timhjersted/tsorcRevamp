@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             //recipe.AddIngredient(ItemID.SoulofLight, 3);
-            recipe.AddIngredient(Mod.Find<ModItem>("EnergyFieldRune").Type, 1);
+            recipe.AddIngredient(ModContent.ItemType<EnergyFieldRune>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 16000);
             recipe.AddTile(TileID.DemonAltar);
 

@@ -5647,7 +5647,7 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.BigStinger)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("BloodredMossClump").Type);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<BloodredMossClump>());
             }
 
             if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && !Main.expertMode)
@@ -5665,7 +5665,7 @@ namespace tsorcRevamp.NPCs
             {
                 if (Main.rand.NextFloat() >= .66f)
                 { // 33% chance in revamped
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("BloodredMossClump").Type);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<BloodredMossClump>());
                 }
             }
 
@@ -5726,7 +5726,7 @@ namespace tsorcRevamp.NPCs
             {
                 if (Main.rand.NextBool(10))
                 {
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("SymbolOfAvarice").Type);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Armors.SymbolOfAvarice>());
                 }
             }
 
@@ -5747,17 +5747,17 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.PossessedArmor && Main.rand.NextBool(50) && !Main.expertMode)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("WallTome").Type);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>());
             }
 
             if ((npc.type == NPCID.PossessedArmor || npc.type == NPCID.Wraith) && Main.rand.NextBool(25) && Main.expertMode)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("WallTome").Type);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>());
             }
 
             if (npc.type == NPCID.Shark && Main.rand.NextBool(20))
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("CoralSword").Type, 1, false, -1);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.CoralSword>(), 1, false, -1);
             }
 
             if (Main.rand.NextBool(25)&& ((npc.type >= NPCID.BigPantlessSkeleton && npc.type <= NPCID.SmallSkeleton) ||
@@ -5769,12 +5769,12 @@ namespace tsorcRevamp.NPCs
                                 npc.type == NPCID.ArmoredSkeleton ||
                                 npc.type == NPCID.SkeletonArcher))
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DeadChicken>());
             }
 
             if (npc.type == NPCID.Vulture && Main.rand.NextBool(10))
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DeadChicken>());
             }
 
             if (npc.type == NPCID.Wraith)
@@ -5801,7 +5801,7 @@ namespace tsorcRevamp.NPCs
                                 npc.type == NPCID.FemaleZombie ||
                                 (npc.type >= NPCID.PincushionZombie && npc.type <= NPCID.TwiggyZombie)))
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DeadChicken>());
             }
 
             if (npc.type == NPCID.GoblinArcher || npc.type == NPCID.GoblinPeon || npc.type == NPCID.GoblinWarrior || npc.type == NPCID.GoblinSorcerer || npc.type == NPCID.GoblinThief)
@@ -5809,12 +5809,12 @@ namespace tsorcRevamp.NPCs
 
                 if (Main.rand.NextBool(200))
                 { // 0.5%
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("Pulsar").Type, 1, false, -1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.Pulsar>(), 1, false, -1);
                 }
 
                 else if (Main.rand.NextBool(200))
                 { // 0.5% 
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("ToxicCatalyzer").Type, 1, false, -1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.ToxicCatalyzer>(), 1, false, -1);
                 }
             }
             if (npc.type == NPCID.Plantera && !Main.expertMode)
