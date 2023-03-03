@@ -873,18 +873,6 @@ namespace tsorcRevamp
 
         public override void PostUpdateEquips()
         {
-            if (!Main.hardMode)
-            {
-                Player.GetDamage(DamageClass.Summon) -= 0.12f;
-            } else
-            {
-                Player.GetDamage(DamageClass.Summon) -= 0.25f;
-            }
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                Player.GetDamage(DamageClass.Summon) -= 0.15f;
-            }
-
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 Player.GetDamage(DamageClass.Melee) *= 1.2f;
