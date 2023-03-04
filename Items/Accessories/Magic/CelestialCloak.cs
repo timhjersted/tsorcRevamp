@@ -69,10 +69,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
                 Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector1, starmove1, ProjectileID.ManaCloakStar, player.statManaMax2 / 5, 2f, Main.myPlayer);
                 Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector2, starmove2, ProjectileID.ManaCloakStar, player.statManaMax2 / 5, 2f, Main.myPlayer);
                 Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector3, starmove3, ProjectileID.ManaCloakStar, player.statManaMax2 / 5, 2f, Main.myPlayer);
-                if (Main.GameUpdateCount % 1 == 0)
-                {
-                    hitchances -= 1;
-                }
+                hitchances -= 1;
             }
         }
 
