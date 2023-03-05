@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Amor from the East" +
+            Tooltip.SetDefault("Armor from the East" +
                 "\n+25% magic damage");
         }
         public override void SetDefaults()

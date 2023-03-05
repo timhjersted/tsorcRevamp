@@ -1,0 +1,6748 @@
+
+Mods: {
+	tsorcRevamp: {
+		Items: {
+			AbandonedStumpBanner: {
+				DisplayName: Abandoned Stump Banner
+				Tooltip: Nearby players get a bonus against: Abandoned Stump
+			}
+
+			AbysswalkerBanner: {
+				DisplayName: Abysswalker Banner
+				Tooltip: Nearby players get a bonus against: Abysswalker
+			}
+
+			AncientDemonBanner: {
+				DisplayName: Ancient Demon Banner
+				Tooltip: Nearby players get a bonus against: Ancient Demon
+			}
+
+			AncientDemonOfTheAbyssBanner: {
+				DisplayName: Ancient Demon Of The Abyss Banner
+				Tooltip: Nearby players get a bonus against: Ancient Demon Of The Abyss
+			}
+
+			ArchdeaconBanner: {
+				DisplayName: Archdeacon Banner
+				Tooltip: Nearby players get a bonus against: Archdeacon
+			}
+
+			ArmoredWraithBanner: {
+				DisplayName: Armored Wraith Banner
+				Tooltip: Nearby players get a bonus against: Armored Wraith
+			}
+
+			AssassinBanner: {
+				DisplayName: Assassin Banner
+				Tooltip: Nearby players get a bonus against: Assassin
+			}
+
+			AttraidiesIllusionBanner: {
+				DisplayName: Attraidies Illusion Banner
+				Tooltip: Nearby players get a bonus against: Attraidies Illusion
+			}
+
+			AttraidiesManifestationBanner: {
+				DisplayName: Attraidies Manifestation Banner
+				Tooltip: Nearby players get a bonus against: Attraidies Manifestation
+			}
+
+			BarrowWightBanner: {
+				DisplayName: Barrow Wight Banner
+				Tooltip: Nearby players get a bonus against: Barrow Wight
+			}
+
+			BarrowWightNemesisBanner: {
+				DisplayName: Barrow Wight Nemesis Banner
+				Tooltip: Nearby players get a bonus against: Barrow Wight Nemesis
+			}
+
+			BarrowWightPhantomBanner: {
+				DisplayName: Barrow Wight Phantom Banner
+				Tooltip: Nearby players get a bonus against: Barrow Wight Phantom
+			}
+
+			BasiliskHunter: {
+				DisplayName: Basilisk Hunter
+				Tooltip: Nearby players get a bonus against: Basilisk Hunter
+			}
+
+			BasiliskShifterBanner: {
+				DisplayName: Basilisk Shifter Banner
+				Tooltip: Nearby players get a bonus against: Basilisk Shifter
+			}
+
+			BasiliskWalkerBanner: {
+				DisplayName: Basilisk Walker Banner
+				Tooltip: Nearby players get a bonus against: Basilisk Walker
+			}
+
+			BlackKnightBanner: {
+				DisplayName: Black Knight Banner
+				Tooltip: Nearby players get a bonus against: Black Knight
+			}
+
+			ChickenBanner: {
+				DisplayName: Chicken Banner
+				Tooltip: Nearby players get a bonus against: Chicken
+			}
+
+			CloudBatBanner: {
+				DisplayName: Cloud Bat Banner
+				Tooltip: Nearby players get a bonus against: Cloud Bat
+			}
+
+			CorruptedElementalBanner: {
+				DisplayName: Corrupted Elemental Banner
+				Tooltip: Nearby players get a bonus against: Corrupted Elemental
+			}
+
+			CorruptedHornetBanner: {
+				DisplayName: Corrupted Hornet Banner
+				Tooltip: Nearby players get a bonus against: Corrupted Hornet
+			}
+
+			CosmicCrystalLizardBanner: {
+				DisplayName: Cosmic Crystal Lizard Banner
+				Tooltip: Nearby players get a bonus against: Cosmic Crystal Lizard
+			}
+
+			CrazedDemonSpiritBanner: {
+				DisplayName: Crazed Demon Spirit Banner
+				Tooltip: Nearby players get a bonus against: Crazed Demon Spirit
+			}
+
+			CrystalKnightBanner: {
+				DisplayName: Crystal Knight Banner
+				Tooltip: Nearby players get a bonus against: Crystal Knight
+			}
+
+			DarkBloodKnightBanner: {
+				DisplayName: Dark Blood Knight Banner
+				Tooltip: Nearby players get a bonus against: Dark Blood Knight
+			}
+
+			DarkElfMageBanner: {
+				DisplayName: Dark Elf Mage Banner
+				Tooltip: Nearby players get a bonus against: Dark Elf Mage
+			}
+
+			DarkKnightBanner: {
+				DisplayName: Dark Knight Banner
+				Tooltip: Nearby players get a bonus against: Dark Knight
+			}
+
+			DemonSpiritBanner: {
+				DisplayName: Demon Spirit Banner
+				Tooltip: Nearby players get a bonus against: Demon Spirit
+			}
+
+			DiscipleOfAttraidiesBanner: {
+				DisplayName: Disciple Of Attraidies Banner
+				Tooltip: Nearby players get a bonus against: Disciple of Attraidies
+			}
+
+			DungeonMageBanner: {
+				DisplayName: Dungeon Mage Banner
+				Tooltip: Nearby players get a bonus against: Dungeon Mage
+			}
+
+			DunlendingBanner: {
+				DisplayName: Dunlending Banner
+				Tooltip: Nearby players get a bonus against: Dunlending
+			}
+
+			DworcFleshhunterBanner: {
+				DisplayName: Dworc Fleshhunter Banner
+				Tooltip: Nearby players get a bonus against: Dworc Fleshhunter
+			}
+
+			DworcVenomsniperBanner: {
+				DisplayName: Dworc Venomsniper Banner
+				Tooltip: Nearby players get a bonus against: Dworc Venomsniper
+			}
+
+			DworcVoodoomasterBanner: {
+				DisplayName: Dworc Voodoomaster Banner
+				Tooltip: Nearby players get a bonus against: Dworc Alchemist
+			}
+
+			DworcVoodooShamanBanner: {
+				DisplayName: Dworc Voodoo Shaman Banner
+				Tooltip: Nearby players get a bonus against: Dworc Voodoo Shaman
+			}
+
+			FirebombHollowBanner: {
+				DisplayName: Firebomb Hollow Banner
+				Tooltip: Nearby players get a bonus against: Firebomb Hollow
+			}
+
+			FlameBatBanner: {
+				DisplayName: Flame Bat Banner
+				Tooltip: Nearby players get a bonus against: Flame Bat
+			}
+
+			GhostOfTheDarkmoonKnightBanner: {
+				DisplayName: Ghost Of The Darkmoon Knight Banner
+				Tooltip: Nearby players get a bonus against: Ghost of The Darkmoon Knight
+			}
+
+			GhostOfTheForgottenKnightBanner: {
+				DisplayName: Ghost Of The Forgotten Knight Banner
+				Tooltip: Nearby players get a bonus against: Ghost of The Forgotten Knight
+			}
+
+			GhostOfTheForgottenWarriorBanner: {
+				DisplayName: Ghost Of The Forgotten Warrior Banner
+				Tooltip: Nearby players get a bonus against: Ghost Of The Forgotten Warrior
+			}
+
+			GreatRedKnightOfArtoriasBanner: {
+				DisplayName: Great Red Knight Of Artorias Banner
+				Tooltip: Nearby players get a bonus against: Great Red Knight of Artorias
+			}
+
+			GreatRedKnightOfTheAbyssBanner: {
+				DisplayName: Great Red Knight Of The Abyss Banner
+				Tooltip: Nearby players get a bonus against: Great Red Knight Of The Abyss
+			}
+
+			GuardianCorruptorBanner: {
+				DisplayName: Guardian Corruptor Banner
+				Tooltip: Nearby players get a bonus against: Guardian Corruptor
+			}
+
+			HeroOfLumeliaBanner: {
+				DisplayName: Hero Of Lumelia Banner
+				Tooltip: Nearby players get a bonus against: Hero of Lumelia
+			}
+
+			HydrisElementalBanner: {
+				DisplayName: Hydris Elemental Banner
+				Tooltip: Nearby players get a bonus against: Hydris Elemental
+			}
+
+			HydrisNecromancerBanner: {
+				DisplayName: Hydris Necromancer Banner
+				Tooltip: Nearby players get a bonus against: Hydris Necromancer
+			}
+
+			IceSkeletonBanner: {
+				DisplayName: Ice Skeleton Banner
+				Tooltip: Nearby players get a bonus against: Ice Skeleton
+			}
+
+			JungleSentreeBanner: {
+				DisplayName: Jungle Sentree Banner
+				Tooltip: Nearby players get a bonus against: Jungle Sentree
+			}
+
+			JungleWyvernJuvenileBanner: {
+				DisplayName: Jungle Wyvern Juvenile Banner
+				Tooltip: Nearby players get a bonus against: Jungle Wyvern Juvenile
+			}
+
+			LivingGlowshroomBanner: {
+				DisplayName: Living Glowshroom Banner
+				Tooltip: Nearby players get a bonus against: Living Glowshroom
+			}
+
+			LivingShroomBanner: {
+				DisplayName: Fleeing Fungi Banner
+				Tooltip: Nearby players get a bonus against: Fleeing Fungi
+			}
+
+			LivingShroomThiefBanner: {
+				DisplayName: Fungi Felon Banner
+				Tooltip: Nearby players get a bonus against: Fungi Felon
+			}
+
+			ManHunterBanner: {
+				DisplayName: Man Hunter Banner
+				Tooltip: Nearby players get a bonus against: Man Hunter
+			}
+
+			ManOfWarBanner: {
+				DisplayName: Man Of War Banner
+				Tooltip: Nearby players get a bonus against: Man Of War
+			}
+
+			MarilithSpiritTwinBanner: {
+				DisplayName: Marilith Spirit Twin Banner
+				Tooltip: Nearby players get a bonus against: Marilith Spirit Twin
+			}
+
+			MindflayerIllusionBanner: {
+				DisplayName: Mindflayer Illusion Banner
+				Tooltip: Nearby players get a bonus against: Mindflayer Illusion
+			}
+
+			MindflayerKingServantBanner: {
+				DisplayName: Mindflayer King Servant Banner
+				Tooltip: Nearby players get a bonus against: Mindflayer King Servant
+			}
+
+			MindflayerServantBanner: {
+				DisplayName: Mindflayer Servant Banner
+				Tooltip: Nearby players get a bonus against: Mindflayer Servant
+			}
+
+			MutantToadBanner: {
+				DisplayName: Mutant Toad Banner
+				Tooltip: Nearby players get a bonus against: Mutant Toad
+			}
+
+			NecromancerBanner: {
+				DisplayName: Necromancer Banner
+				Tooltip: Nearby players get a bonus against: Necromancer
+			}
+
+			NecromancerElementalBanner: {
+				DisplayName: Necromancer Elemental Banner
+				Tooltip: Nearby players get a bonus against: Necromancer Elemental
+			}
+
+			ObsidianJellyfishBanner: {
+				DisplayName: Obsidian Jellyfish Banner
+				Tooltip: Nearby players get a bonus against: Obsidian Jellyfish
+			}
+
+			OolacileDemonBanner: {
+				DisplayName: Ephemeral Oolacile Demon Banner
+				Tooltip: Nearby players get a bonus against: Oolacile Demon
+			}
+
+			OolacileKnightBanner: {
+				DisplayName: Oolacile Knight Banner
+				Tooltip: Nearby players get a bonus against: Oolacile Knight
+			}
+
+			OolacileSorcererBanner: {
+				DisplayName: Oolacile Sorcerer Banner
+				Tooltip: Nearby players get a bonus against: Oolacile Sorcerer
+			}
+
+			ParaspriteBanner: {
+				DisplayName: Parasprite Banner
+				Tooltip: Nearby players get a bonus against: Parasprite
+			}
+
+			ParasyticWormBanner: {
+				DisplayName: Parasytic Worm Banner
+				Tooltip: Nearby players get a bonus against: Parasytic Worm
+			}
+
+			QuaraHydromancerBanner: {
+				DisplayName: Quara Hydromancer Banner
+				Tooltip: Nearby players get a bonus against: Quara Hydromancer
+			}
+
+			RedCloudHunterBanner: {
+				DisplayName: Red Cloud Hunter Banner
+				Tooltip: Nearby players get a bonus against: Red Cloud Hunter
+			}
+
+			RedKnightofArtoriasBanner: {
+				DisplayName: Red Knight of Artorias Banner
+				Tooltip: Nearby players get a bonus against: Red Knight of Artorias
+			}
+
+			ResentfulSeedlingBanner: {
+				DisplayName: Resentful Seedling Banner
+				Tooltip: Nearby players get a bonus against: Resentful Seedling
+			}
+
+			SerpentOfTheAbyssBanner: {
+				DisplayName: Serpent Of The Abyss Banner
+				Tooltip: Nearby players get a bonus against: Serpent Of The Abyss
+			}
+
+			ShadowMageBanner: {
+				DisplayName: Shadow Mage Banner
+				Tooltip: Nearby players get a bonus against: Shadow Mage
+			}
+
+			SlograIIBanner: {
+				DisplayName: Slogra Banner
+				Tooltip: Nearby players get a bonus against: Slogra
+			}
+
+			SnowOwlBanner: {
+				DisplayName: Snow Owl Banner
+				Tooltip: Nearby players get a bonus against: Snow Owl
+			}
+
+			StoneGolemBanner: {
+				DisplayName: Stone Golem Banner
+				Tooltip: Nearby players get a bonus against: Stone Golem
+			}
+
+			TaurusKnightBanner: {
+				DisplayName: Taurus Knight Banner
+				Tooltip: Nearby players get a bonus against: Taurus Knight
+			}
+
+			TetsujinBanner: {
+				DisplayName: Tetsujin Banner
+				Tooltip: Nearby players get a bonus against: Tetsujin
+			}
+
+			TibianAmazonBanner: {
+				DisplayName: Tibian Amazon Banner
+				Tooltip: Nearby players get a bonus against: Tibian Amazon
+			}
+
+			TibianValkyrieBanner: {
+				DisplayName: Tibian Valkyrie Banner
+				Tooltip: Nearby players get a bonus against: Tibian Valkyrie
+			}
+
+			TonberryBanner: {
+				DisplayName: Tonberry Banner
+				Tooltip: Nearby players get a bonus against: Tonberry
+			}
+
+			UndeadCasterBanner: {
+				DisplayName: Undead Caster Banner
+				Tooltip: Nearby players get a bonus against: Undead Caster
+			}
+
+			VampireBatBanner: {
+				DisplayName: Vampire Bat Banner
+				Tooltip: Nearby players get a bonus against: Vampire Bat
+			}
+
+			WarlockBanner: {
+				DisplayName: Warlock Banner
+				Tooltip: Nearby players get a bonus against: Warlock
+			}
+
+			WaterSpiritBanner: {
+				DisplayName: Water Spirit Banner
+				Tooltip: Nearby players get a bonus against: Water Spirit
+			}
+
+			AbyssScroll: {
+				DisplayName: Abyss Scroll
+				Tooltip:
+					'''
+					To close the seal to the Abyss, you must defeat 6 lords of The Abyss:
+					Artorias, The Blight, The Wyvern Mage Shadow, Seath the Scaleless, and Chaos.
+					With a lord soul from each of these beings,
+					you will be able to summon the final lord: Gwyn, Lord of Cinder.
+					To craft the summoning item for each lord, you will need to return to eight familiar places
+					and collect a unique item dropped from an enemy you will find there: The Western Ocean, the Underground,
+					the Corruption, the Jungle, the Dungeon, the Underworld and the Eastern Ocean.
+					'''
+			}
+
+			AngerTalisman: {
+				DisplayName: Anger Talisman
+				Tooltip:
+					'''
+					-30 defense
+					30% increased damage
+					'''
+			}
+
+			Celestriad: {
+				DisplayName: Celestriad
+				Tooltip:
+					'''
+					[c/ffbf00:Focuses the user's mana into a protective shield when below 200 HP]
+					Mana Shield reduces incoming damage by 50%, but drains 95 mana per hit
+					Inhibits both natural and artificial mana regen for a period of time
+					[c/00ffd4:Doubles max mana and decreases stamina usage by 15%]
+					'''
+			}
+
+			ConditionOverload: {
+				DisplayName: Condition Overload
+				Tooltip:
+					'''
+					Enemies take exponentially increasing
+					bonus damage for every debuff affecting them.
+					"H Deimos CO farm 3/4 LF despoil"
+					Debuffs inflicted by whips excluded.
+					'''
+			}
+
+			CosmicWatch: {
+				DisplayName: Cosmic Watch
+				Tooltip:
+					'''
+					Use this item to push time foward
+					to the beginning of night or to the beginning of day
+					'''
+			}
+
+			DarkmoonCloak: {
+				DisplayName: Darkmoon Cloak
+				Tooltip:
+					'''
+					Rapid mana regen, +15% magic crit & +15% magic dmg when health falls below 150
+					Provides Star Cloak, +5% magic crit & +5% magic damage boost normally
+					Magic Imbues no longer need to go on cooldown
+					'''
+			}
+
+			AncientDemonShield: {
+				DisplayName: Ancient Demon Shield
+				Tooltip: Powerful Greatshield that reduces damage taken by 5%, inherits Obsidian Shield's effects and gives thorns buff
+			}
+
+			BandOfCosmicPower: {
+				DisplayName: Band of Cosmic Power
+				Tooltip: Increases life regeneration by 2 and increases max mana by 40
+			}
+
+			BandOfGreatCosmicPower: {
+				DisplayName: Band of Great Cosmic Power
+				Tooltip: +3 life regen and increases max mana by 60
+			}
+
+			BandOfSupremeCosmicPower: {
+				DisplayName: Band of Supreme Cosmic Power
+				Tooltip: +4 life regen and increases max mana by 80
+			}
+
+			BarrierRing: {
+				DisplayName: Barrier Ring
+				Tooltip:
+					'''
+					Casts Magic Barrier when the wearer is critically wounded
+					Magic Barrier increases defense by 20
+					Does not stack with other barrier or shield spells
+					'''
+			}
+
+			BloodbiteRing: {
+				DisplayName: Bloodbite Ring
+				Tooltip:
+					'''
+					One of the infamous bite rings commissioned by Sir Arstor of Carim
+					Despite the dreadful rumors surrounding its creation, this ring
+					is an unmistakable asset, due to its ability to prevent bleeding.
+					+3 defense
+					'''
+			}
+
+			BlueTearstoneRing: {
+				DisplayName: Blue Tearstone Ring
+				Tooltip:
+					'''
+					The rare gem called tearstone has the uncanny ability to sense imminent death.
+					This blue tearstone from Catarina boosts the defense of its wearer by 50 when in danger.
+					When the ring is active, melee damage is reduced by 200%, making it a ring ideal for mages
+					and other ranged classes. However, the ring provides 8 defense under normal circumstances.
+					'''
+			}
+
+			BlueTearstoneRing2: {
+				DisplayName: Blue Tearstone Ring II
+				Tooltip:
+					'''
+					The rare gem called tearstone has the uncanny ability to sense imminent death.
+					This enchanted blue tearstone from Catarina boosts the defence of its wearer by 85 when in danger.
+					Otherwise, the ring gifts the wearer a normal +30 defense boost.
+					While worn, melee damage is reduced by 200%, making it a ring 
+					only suited to mages and other ranged classes.
+					'''
+			}
+
+			CovenantOfArtorias: {
+				DisplayName: Covenant of Artorias
+				Tooltip:
+					'''
+					[c/ffbf00:Allows you to safely enter The Abyss when worn. Remove the ring to escape from The Abyss!]
+					[c/ffbf00:The Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous in this realm.]
+					[c/00ffd4:Grants immunity to particular dangers caused by the Abyss and foes empowered by it, such as Crippled, Poisoned, On Fire and Oiled]
+					Also grants protection from lava, knockback, and fire blocks, but increases enemy spawn rates.
+					+7% Melee speed
+					+7% Move speed
+					+7% Damage
+					+7% Critical strike chance
+					'''
+			}
+
+			CrackedDragonStone: {
+				DisplayName: Cracked Dragon Stone
+				Tooltip:
+					'''
+					[c/ffbf00:Provides immunity to catching on fire, burning, slow, frostbite and becoming chilled]
+					Also raises damage dealt by 3% and prevents knockback
+					'''
+			}
+
+			DarkCloak: {
+				DisplayName: Dark Cloak
+				Tooltip:
+					'''
+					[c/ffbf00:Dark Cloak gives +15 defense when health falls below 150]
+					+5 defense normally
+					'''
+			}
+
+			GreyWolfRing: {
+				DisplayName: Grey Wolf Ring
+				Tooltip:
+					'''
+					One of the rings worn by Artorias.
+					Inherits Ring of Clarity effects
+					+22 defense within the Abyss, +10 defense otherwise
+					Grants Magma Stone and Acid Venom imbue effect
+					+4 HP Regen. +120 Mana.
+					Imbue effect can be toggled by hiding the accessory.
+					'''
+			}
+
+			IronShield: {
+				DisplayName: Iron Shield
+				Tooltip:
+					'''
+					Reduces damage taken by 4% 
+					but also reduces movement speed by 10%
+					Can be upgraded with 500 Dark Souls.
+					'''
+			}
+
+			LightCloak: {
+				DisplayName: Light Cloak
+				Tooltip:
+					'''
+					Light Cloak activates +12 Life Regen when health falls below 150
+					+4 life regen normally
+					'''
+			}
+
+			MythrilGlove: {
+				DisplayName: Mythril Glove
+				Tooltip:
+					'''
+					Casts and sustains Wall when wearer is critically wounded
+					Wall gives +50 defense
+					Does not stack with Fog, Barrier or Shield spells
+					'''
+			}
+
+			PoisonbiteRing: {
+				DisplayName: Poisonbite Ring
+				Tooltip:
+					'''
+					One of the infamous bite rings commissioned by Sir Arstor of Carim.
+					Despite the dreadful rumors surrounding its creation, this ring is an unmistakable asset,
+					due to its ability to prevent becoming poisoned.
+					+3 defense
+					'''
+			}
+
+			PoisonbloodRing: {
+				DisplayName: Poisonblood Ring
+				Tooltip:
+					'''
+					One of the infamous bite rings commissioned by Sir Arstor of Carim.
+					Despite the dreadful rumors surrounding its creation, this ring is an unmistakable asset,
+					due to its ability to prevent bleeding and becoming poisoned.
+					+2 HP Regeneration and 6 defense
+					'''
+			}
+
+			ProtectRing: {
+				DisplayName: Protect Ring
+				Tooltip:
+					'''
+					Ring that guards against death.
+					Puts "protect" on wearer (+30 defense).
+					'''
+			}
+
+			RingOfClarity: {
+				DisplayName: Ring Of Clarity
+				Tooltip:
+					'''
+					Prevents a wide variety of debuffs, including many DoT effects. 
+					+3% damage, +4 regeneration, and 9 defense
+					'''
+			}
+
+			RingOfTheBlueEye: {
+				DisplayName: Ring Of The Blue Eye
+				Tooltip: Bones fly out in retaliation when player is hurt
+			}
+
+			SilverRing: {
+				DisplayName: Silver Ring
+				Tooltip: Grants 4 defense. Can be upgraded.
+			}
+
+			SpikedIronShield: {
+				DisplayName: Spiked Iron Shield
+				Tooltip:
+					'''
+					'Everyone will stay away from you'
+					Reduces damage taken by 4% and gives thorns buff
+					but also reduces movement speed by 5%
+					Can be upgraded with an Obsidian Shield and 5000 Dark Souls
+					'''
+			}
+
+			UndeadTalisman: {
+				DisplayName: Undead Talisman
+				Tooltip: Reduces damage from undead by 15
+			}
+
+			WolfRing: {
+				DisplayName: Wolf Ring
+				Tooltip:
+					'''
+					One of the rings worn by Artorias.
+					Immunity to the on-fire and broken-armor debuffs.
+					+18 defense within the Abyss, +6 defense otherwise.
+					Grants Acid Venom imbue effect
+					Imbue effect can be toggled by hiding the accessory.
+					'''
+			}
+
+			ZirconRing: {
+				DisplayName: Zircon Ring
+				Tooltip:
+					'''
+					Imbues weapons with fire, providing
+					10% increased melee and whip damage, and all swords and whips inflict fire damage.
+					Plus Thorns Effect and +4 Defense.
+					Fire imbue effect can be toggled by hiding the accessory.
+					'''
+			}
+
+			DragoonCloak: {
+				DisplayName: Dragoon Cloak
+				Tooltip:
+					'''
+					Combines the effects of the Dark, Light and Darkmoon Cloak into one all-powerful protective cloak.
+					A large amount of Dark Souls were used to preserve each cloak's potency.
+					'''
+			}
+
+			EnchantedMoonCharm: {
+				DisplayName: Enchanted Moon Charm
+				Tooltip:
+					'''
+					Changes the phases of the Moon 
+					Can trigger blood moons. 
+					Provides 10 defense when equipped.
+					'''
+			}
+
+			BurningAura: {
+				DisplayName: Burning Aura
+				Tooltip:
+					'''
+					An array of meteorite shards, floating in a slow orbit
+					Passively launches homing fireballs at nearby enemies
+					Fireballs scale in power with each boss you kill
+					Also increases damage dealt to burning foes by 5%
+					'''
+			}
+
+			BurningStone: {
+				DisplayName: Burning Stone
+				Tooltip:
+					'''
+					A chunk of meteorite, glowing with heat
+					Rolling summons a barrage of homing fireballs
+					Fireballs scale in power with each boss you kill
+					Also increases damage dealt to burning foes by 5%
+					'''
+			}
+
+			ChloranthyRing: {
+				DisplayName: Chloranthy Ring I
+				Tooltip:
+					'''
+					Increases Stamina recovery speed by 15%,
+					[c/ffbf00:Enhances your agility and evasiveness when dodge rolling]
+					Increases Stamina Droplet pickup range
+					This old ring is named for its decorative green
+					blossom, but its luster is long since faded
+					+2 defense
+					'''
+			}
+
+			ChloranthyRing2: {
+				DisplayName: Chloranthy Ring II
+				Tooltip:
+					'''
+					Increases Stamina recovery speed by 25%
+					[c/ffbf00:Further enhances your agility and evasiveness when dodge rolling]
+					[c/ffbf00:Grants the Black Belt's effect & superior mid-air dexterity]
+					This ring is named for its decorative green
+					blossom. Its luster has now been fully restored.
+					+4 defense
+					'''
+			}
+
+			CovetousSilverSerpentRing: {
+				DisplayName: Covetous Silver Serpent Ring
+				Tooltip:
+					'''
+					An ancient relic forged and lost many centuries ago
+					One of the 4 Kings of Arradius was said to wear this ring
+					[c/ffbf00:Increases the number of souls dropped from fallen creatures by 20% but reduces defense by 15]
+					The ring glows with a bright white light
+					'''
+			}
+
+			CovetousSoulSerpentRing: {
+				DisplayName: Covetous Soul Serpent Ring
+				Tooltip:
+					'''
+					An ancient relic forged and lost many centuries ago
+					[c/ffbf00:Increases the number of Dark Souls dropped by fallen creatures by 50% but reduces defense by 40]
+					All souls are drawn to the wearer from a large distance
+					The ring glows with a bright white light
+					'''
+			}
+
+			DragonCrestShield: {
+				DisplayName: Dragon Crest Shield
+				Tooltip:
+					'''
+					Unique shield of a nameless knight
+					[c/ffbf00:Reduces incoming damage by 75% when not attacking or 25% when attacking, but drains 75 stamina per hit]
+					Holding the shield also prevents knockback and protects against fire but reduces stamina regen by 15%
+					Getting hit while low on stamina will stagger you and only reduce damage taken by 5%
+					'''
+			}
+
+			DragonStone: {
+				DisplayName: Dragon Stone
+				Tooltip:
+					'''
+					Imbues swords with fire, raises damage dealt by 5% and provides immunity to
+					most flying creatures, lava, catching on fire, knockback, and fire blocks.
+					Fire imbue effect can be toggled by hiding the accessory.
+					'''
+			}
+
+			DragoonBoots: {
+				DisplayName: Dragoon Boots
+				Tooltip:
+					'''
+					Steel Boots made for Dragoons.
+					No damage from falling.
+					Faster Jump, which also results in a higher jump.
+					Press the Dragoon Boots key to toggle high jump (default Z)
+					'''
+			}
+
+			DragoonGear: {
+				DisplayName: Dragoon Gear
+				Tooltip:
+					'''
+					Gear worn by Dragoons.
+					50% increased melee damage if falling.
+					No damage from falling.
+					Faster Jump, which also results in a higher jump.
+					Press the Dragoon Boots key to toggle high jump (default Z)
+					'''
+			}
+
+			DragoonHorn: {
+				DisplayName: Dragoon Horn
+				Tooltip:
+					'''
+					Horn inhabited by the spirit of a dragon.
+					50% increased melee damage if falling.
+					'''
+			}
+
+			DuskCrownRing: {
+				DisplayName: Dusk Crown Ring
+				Tooltip:
+					'''
+					This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth.
+					[c/ffbf00:The ringstone doubles magic damage and boosts magic crit by 50%,]
+					[c/ffbf00:at the cost of 50% max HP.]Your previous max HP is restored when the ring is removed.
+					'''
+			}
+
+			GoldenHairpin: {
+				DisplayName: Golden Hairpin
+				Tooltip:
+					'''
+					Increases either arrow, bullet or rocket damage by 17% multiplicatively
+					Ammo type is decided by a timer that picks one of the three regularly
+					Switches every 7 seconds
+					'''
+			}
+
+			HealingDuskCrownRing: {
+				DisplayName: Healing Dusk Crown Ring
+				Tooltip:
+					'''
+					This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth.
+					The ringstone doubles magic damage and boosts magic crit by 50%,
+					but at the cost of 50% max HP. 
+					Your previous max HP is restored when the ring is removed. 
+					Healing enchantment provides +9 Life Regen.
+					'''
+			}
+
+			ReflectionShift: {
+				DisplayName: Reflection Shift
+				Tooltip:
+					'''
+					Your full potential trancends even space and time
+					[c/ffbf00:Gain the ability to dodge even mid-weapon use]
+					Double tap any direction or press the hotkey to [c/9803fc:shift]
+					While shifting you are [c/9803fc:completely intangable] for a brief moment
+					'''
+			}
+
+			RingofArtorias: {
+				DisplayName: Ring of Artorias
+				Tooltip:
+					'''
+					The great Ring of Artorias.
+					Once held strength too great for this world to bear.
+					[c/ffbf00:It now grants immunity to Powerful Curse Buildup, Slow and Freezing.]
+					'''
+			}
+
+			RingOfPower: {
+				DisplayName: Ring Of Power
+				Tooltip:
+					'''
+					A great ring of power gifted to men.
+					Casts darkness and battle potion effects on wearer.
+					+25% crit chance. 
+					'''
+			}
+
+			WingsOfSeath: {
+				DisplayName: Wings of Seath
+				Tooltip:
+					'''
+					The wings of Seath the Scaleless
+					Allow for superior control of movement in the air, including walking on air
+					Walking on air follows hovering controls
+					Provide immunity to all fire and lava damage, as well as perfect sight and hunting abilities.
+					Also provide immunity to knockback
+					'''
+			}
+
+			EyeOfTheGods: {
+				DisplayName: Eye of the Gods
+				Tooltip:
+					'''
+					Lights up the cursor of you and your allies when equipped
+					Also works in vanity slots
+					'''
+			}
+
+			FrozenStarlight: {
+				DisplayName: Frozen Starlight
+				Tooltip:
+					'''
+					Accessory that emits blue light.
+					Also works in vanity slots
+					'''
+			}
+
+			HerosCrest: {
+				DisplayName: Hero's Crest
+				Tooltip:
+					'''
+					Damage, crit chance, health, and defense
+					increased by 6%. Luck increased by 0.06
+					"Proof of the hero's accomplishments"
+					'''
+			}
+
+			HolyNecklace: {
+				DisplayName: Holy Necklace
+				Tooltip: Emits blue light, longer invincibility and starcloak effect.
+			}
+
+			AquamarineRing: {
+				DisplayName: Aquamarine Ring
+				Tooltip:
+					'''
+					5% increased magic damage
+					+40 mana
+					'''
+			}
+
+			CelestialCloak: {
+				DisplayName: Celestial Cloak
+				Tooltip:
+					'''
+					Increases max mana by 40
+					Reduces mana usage by 16%
+					Automatically use mana potions when needed
+					Increases pickup range for mana stars
+					Restores mana when damaged
+					Grants a thorns effects scaling with max mana
+					Small chance to spawn falling mana stars when hitting an enemy
+					Their damage scales with max mana
+					Mana stars restore mana when collected
+					'''
+			}
+
+			EnchantedWizardsHat: {
+				DisplayName: Enchanted Wizard's Hat
+				Tooltip:
+					'''
+					Increases magic damage by 13% multiplicatively
+					+80 max Mana
+					'''
+			}
+
+			EssenceOfMana: {
+				DisplayName: Essence of Mana
+				Tooltip:
+					'''
+					Increases max mana by 50%
+					Reduces mana usage by 9%
+					'''
+			}
+
+			GemBox: {
+				DisplayName: Gem Box
+				Tooltip:
+					'''
+					All spells can be casted twice as fast
+					Reduces magic damage by 30% multiplicatively
+					Some spells cannot benefit from this.
+					'''
+			}
+
+			BeholderShield: {
+				DisplayName: Beholder Shield
+				Tooltip:
+					'''
+					For melee warriors only
+					Grants immunity to knockback and fire blocks
+					Reduces movement speed by 20% and increased mana cost by 7%
+					'''
+			}
+
+			BeholderShield2: {
+				DisplayName: Beholder Shield II
+				Tooltip:
+					'''
+					For melee warriors only
+					Grants immunity to knockback and fire blocks
+					Reduces movement speed by 20% and increased mana cost by 7%
+					'''
+			}
+
+			BerserkerEmblem: {
+				DisplayName: Berserker Emblem
+				Tooltip: 11% increased melee damage and crit
+			}
+
+			EnchantedBeholderShield2: {
+				DisplayName: Enchanted Beholder Shield II
+				Tooltip:
+					'''
+					A legendary shield for melee warriors only
+					Grants immunity to knockback and nearly all debuffs, plus 12% damage reduction
+					Reduces Ranged, Magic and Summoner Damage by 300%. +70% mana cost
+					Reduces movement speed by 20%
+					'''
+			}
+
+			GazingShield: {
+				DisplayName: Gazing Shield
+				Tooltip:
+					'''
+					For melee warriors only
+					Grants immunity to knockback and fire blocks
+					Reduces movement speed by 20% and increased mana cost by 7%
+					'''
+			}
+
+			ManaShield: {
+				DisplayName: Mana Shield
+				Tooltip:
+					'''
+					Focuses the user's mana into a protective shield
+					Reduces incoming damage by 35%, but drains 75 mana per hit
+					Inhibits both natural and artificial mana regen
+					[c/ffbf00:Useful for those who do not specialize in magic]
+					'''
+			}
+
+			MoltenRing: {
+				DisplayName: Molten Ring
+				Tooltip:
+					'''
+
+					+10% Melee Damage and Magma Stone effect
+					'''
+			}
+
+			BootsOfHaste: {
+				DisplayName: Boots Of Haste
+				Tooltip:
+					'''
+					Multiplies your movement speed by 10%
+					Inherits Hermes Boots effect
+					'''
+			}
+
+			ImprovedBlueBalloon: {
+				DisplayName: Improved Cloud in a Balloon
+				Tooltip:
+					'''
+					Allows the holder to double jump
+					Increases jump height + 40% jump speed
+					'''
+			}
+
+			ImprovedBundleofBalloons: {
+				DisplayName: Improved Bundle of Balloons
+				Tooltip:
+					'''
+					Allows the holder to quadruple jump
+					Increases jump height + 120% jump speed
+					'''
+			}
+
+			ImprovedPinkHorseshoeBalloon: {
+				DisplayName: Improved Sharkron Balloon
+				Tooltip:
+					'''
+					Allows the holder to double jump
+					Increases jump height + 50% jump speed
+					Grants immunity to fall damage
+					'''
+			}
+
+			ImprovedWhiteBalloon: {
+				DisplayName: Improved Blizzard in a Balloon
+				Tooltip:
+					'''
+					Allows the holder to double jump
+					Increases jump height + 60% jump speed
+					'''
+			}
+
+			ImprovedYellowBalloon: {
+				DisplayName: Improved Sandstorm in a Balloon
+				Tooltip:
+					'''
+					Allows the holder to double jump
+					Increases jump height + 80% jump speed
+					'''
+			}
+
+			SpeedTalisman: {
+				DisplayName: Speed Talisman
+				Tooltip:
+					'''
+					15% increased movement speed
+					20% increased melee speed
+					'''
+			}
+
+			SupersonicBoots: {
+				DisplayName: Supersonic Boots
+				Tooltip:
+					'''
+					Supersonic movement speed, rocket boots effect, knockback protection, and water-walking if moving fast enough.
+					Does not work if Hermes Boots or Spectre Boots are equipped.
+					Speed boost is multiplied by movement speed boosts.
+					Can be upgraded eventually with Angel Wings & 20000 Dark Souls.
+					'''
+			}
+
+			SupersonicWings: {
+				DisplayName: Supersonic Wings
+				Tooltip:
+					'''
+					+20% supersonic movement speed, flight, rocket boots effect, 
+					fire-walk skill, knockback protection, and water-walking if moving fast enough.
+					Does not work if Hermes Boots or Spectre Boots are equipped.
+					Speed boost is multiplied by movement speed boosts.
+					Compatible with Dragoon Boots and Dragoon Gear.
+					'''
+			}
+
+			SupersonicWings2: {
+				DisplayName: Supersonic Wings II
+				Tooltip:
+					'''
+					+60% supersonic movement speed and virtually limitless flight
+					Plus all the previous abilities of Supersonic Wings and Improved Bundle of Balloons
+					Does not work if Hermes Boots or Spectre Boots are equipped.
+					Compatible with Dragoon Boots and Dragoon Gear.
+					Improved Bundle of Balloons effect can be toggled by hiding the accessory.
+					'''
+			}
+
+			MonocleOfPrecision: {
+				DisplayName: Monocle of Precision
+				Tooltip: Increases critical strike chance by 5%
+			}
+
+			ArchmenEmblem: {
+				DisplayName: Archmen Emblem
+				Tooltip: 15% increased ranged damage + 5 flat
+			}
+
+			BoneRing: {
+				DisplayName: Bone Ring
+				Tooltip:
+					'''
+					+8% Ranged damage
+					+8% Ranged critical strike chance
+					'''
+			}
+
+			SoulReaper: {
+				DisplayName: Soul Reaper
+				Tooltip:
+					'''
+					Increases Dark Soul pick-up range and increases
+					consumable soul drop chance by 25%
+					Gives off a faint glow
+					Can be upgraded with 7000 Dark Souls
+					'''
+			}
+
+			SoulReaper2: {
+				DisplayName: Soul Reaper II
+				Tooltip:
+					'''
+					Greatly increases Dark Soul pick-up range and
+					increases consumable soul drop chance by 50%
+					Lashes out with a sickle in retaliation
+					Gives off an eerie aura
+					'''
+			}
+
+			ChallengersGlove: {
+				DisplayName: Challenger's Glove
+				Tooltip:
+					'''
+					Increases whip knockback
+					12% increased whip damage and speed
+					Increases the size of whips by 10%
+					Enemies are more likely to target you
+					Increases the damage of whip crits by 25%
+					'''
+			}
+
+			CrystallineShard: {
+				DisplayName: Crystalline Shard
+				Tooltip:
+					'''
+					Increases your max minions by 2
+					Increases your minion damage by 1.5% multiplicatively for each minion slot you have
+					Decreases whip range by 33%
+					"A magical substance found only in the Crystalline Dimension"
+					'''
+			}
+
+			ShamanEmblem: {
+				DisplayName: Shaman Emblem
+				Tooltip: +12% minion damage, +1 minion and turret slot
+			}
+
+			BetterGodmode: {
+				DisplayName: Better Godmode
+				Tooltip:
+					'''
+					For testing purposes only 
+					"For when God Mode just isnt enough..."
+					'''
+			}
+
+			TrueCopperRing: {
+				DisplayName: True Copper Ring
+				Tooltip: Grants damage reduction
+			}
+
+			ArrowOfBard: {
+				DisplayName: Arrow of Bard
+				Tooltip: '''"The arrow which slew Smaug."'''
+			}
+
+			Bolt.DisplayName: Bolt
+
+			CruelArrow: {
+				DisplayName: Cruel Arrow
+				Tooltip:
+					'''
+					An arrow fashioned to kill lost and forgotten souls...
+					Does 8x greater damage to some enemies
+					Pierces once
+					'''
+			}
+
+			PowerBolt.DisplayName: Power Bolt
+
+			TeslaBolt: {
+				DisplayName: Tesla Bolt
+				Tooltip: The power source for strange machines from beyond the sky
+			}
+
+			AlucardFrockCoat: {
+				DisplayName: Alucard Frock Coat
+				Tooltip: Part of the TSORC Revamp Team dev set belonging to NephilimDeath
+			}
+
+			AlucardJackboots: {
+				DisplayName: Alucard Jackboots
+				Tooltip: Part of the TSORC Revamp Team dev set belonging to NephilimDeath
+			}
+
+			AlucardWig: {
+				DisplayName: Alucard Wig
+				Tooltip: Part of the TSORC Revamp Team dev set belonging to NephilimDeath
+			}
+
+			AncientHornedHelmet: {
+				DisplayName: Ancient Horned Helmet
+				Tooltip:
+					'''
+					A treasure from ancient Plains of Havoc
+					Increases crit by 13% and adds 2 minion slots
+					'''
+			}
+
+			AncientMagicPlateArmor: {
+				DisplayName: Ancient Magic Plate Armor
+				Tooltip:
+					'''
+					Fueled by a magical gem in the chest
+					Increases all attack speed by 12%(doubled for melee)
+					Set Bonus: Chance to gain stacks upon damaging anything
+					Collect stacks to gain up to 28% damage reduction against the next hit
+					'''
+			}
+
+			AncientMagicPlateGreaves: {
+				DisplayName: Ancient Magic Plate Greaves
+				Tooltip:
+					'''
+					The long forgotten greaves
+					Increases movement speed by 19%
+					'''
+			}
+
+			ArtoriasArmor: {
+				DisplayName: Artorias' Armor
+				Tooltip:
+					'''
+					Enchanted armor of Artorias of the Abyss.
+					Increases your damage dealt by 21% and life regeneration by 8
+					Grants knockback and fall damage immunity
+					Set Bonus: Increases maximum stamina and it's regeneration by 20%
+					'''
+			}
+
+			ArtoriasGreaves: {
+				DisplayName: Artorias' Greaves
+				Tooltip:
+					'''
+					Enchanted armor of Artorias.
+					Increases maximum mana by 100
+					Increases your movement speed by 50%
+					Increases your attack speed by 24%(doubled for melee)
+					'''
+			}
+
+			ArtoriasHelmet: {
+				DisplayName: Artorias' Helmet
+				Tooltip:
+					'''
+					Enchanted helmet of Artorias.
+					Grants the effect of the Cross Necklace
+					Increases your critical strike chance by 30%
+					Decreases mana costs by 13%
+					'''
+			}
+
+			BlueHerosHat: {
+				DisplayName: Blue Hero's hat
+				Tooltip:
+					'''
+					Worn by the hero himself!
+					+40 Mana
+					Can be upgraded eventually with 5 Souls of Sight and 40,000 Dark Souls
+					'''
+			}
+
+			BlueHerosPants: {
+				DisplayName: Blue Hero's Pants
+				Tooltip:
+					'''
+					Worn by the hero himself!
+					Increases max minions by 1
+					'''
+			}
+
+			BlueHerosShirt: {
+				DisplayName: Blue Hero's Shirt
+				Tooltip:
+					'''
+					Set Bonus: Grants extended breath & swimming skills
+					+9% damage, crit, melee and movement speed, -8% mana costs, 20% less chance to consume ammo
+					+3 life regen speed, faster movement & hunter vision while in water
+					'''
+			}
+
+			BrassArmor: {
+				DisplayName: Brass Armor
+				Tooltip:
+					'''
+					Grants immunity to knockback
+					Set Bonus: Grants 10% damage reduction + Paladin Shield effect
+					'''
+			}
+
+			BrassGreaves: {
+				DisplayName: Brass Greaves
+				Tooltip: Increases movement speed by 18%
+			}
+
+			BrassHelmet: {
+				DisplayName: Brass Helmet
+				Tooltip:
+					'''
+					Decreases damage dealt by 15%
+					Increases life regen by 4
+					'''
+			}
+
+			DragoonArmor: {
+				DisplayName: Dragoon Armor
+				Tooltip:
+					'''
+					+30% melee speed
+					The legends of Arradius spoke of the one who would wear this
+					You are a master of all forces, the protector of Earth, the Hero of the age.
+					Set Bonus: Harmonized with the four elements: fire, water, earth and air, including +2 life regen and flight
+					Boosts damage, crit chance and movement speed by 30%
+					'''
+			}
+
+			DragoonArmor2: {
+				DisplayName: Supreme Dragoon Armor
+				Tooltip:
+					'''
+					A reforged upgrade to the legendary Dragoon Armor.
+					You are a master of all forces, the protector of Earth, the Hero of the age.
+					The powers of the Dragoon Cloak are embedded within its blue-plated chest piece.
+					Dragoon Cloak effects kick in at 160 HP.
+					'''
+			}
+
+			DragoonGreaves: {
+				DisplayName: Dragoon Greaves
+				Tooltip:
+					'''
+					Grants an extra double jump and Shiny Red Balloon effect
+					Increases your max number of minions by 2
+					'''
+			}
+
+			DragoonGreaves2: {
+				DisplayName: Supreme Dragoon Greaves
+				Tooltip:
+					'''
+					Grants an extra double jump and Shiny Red Balloon effect
+					Increases your max number of minions by 3
+					'''
+			}
+
+			DragoonHelmet: {
+				DisplayName: Dragoon Helmet
+				Tooltip: +120 Mana, reduces mana costs by 14%
+			}
+
+			DragoonHelmet2: {
+				DisplayName: Supreme Dragoon Helmet
+				Tooltip:
+					'''
+					+200 Mana and Philosopher's stone effect
+					Set Bonus: Harmonized with the four elements: fire, water, earth and air, including +6 life regen and flight
+					Boosts damage, crit chance, melee and movement speed by 38% and reduces mana costs by 17%
+					'''
+			}
+
+			HollowSoldierBreastplate: {
+				DisplayName: Hollow Soldier Breastplate
+				Tooltip:
+					'''
+					Increases damage dealt by 10% multiplicatively
+					Set Bonus: Nullifies life regen, increases damage dealt by 15% multiplicatively again
+					Increases maximum stamina and stamina regen by 10%
+					'''
+			}
+
+			HollowSoldierHelmet: {
+				DisplayName: Hollow Soldier Helmet
+				Tooltip: Nullifies the negative stamina regen of the Dragon Crest Shield
+			}
+
+			HollowSoldierWaistcloth: {
+				DisplayName: Hollow Soldier Waistcloth
+				Tooltip: Increases dodgeroll agility, especially on solid ground
+			}
+
+			AnkorWatChestplate: {
+				DisplayName: Ankor Wat Chestplate
+				Tooltip:
+					'''
+					Increases magic critical strike chance by 15%
+					Set Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
+					Defense and maximum mana are not affected by this
+					'''
+			}
+
+			AnkorWatHelmet: {
+				DisplayName: Ankor Wat Helmet
+				Tooltip:
+					'''
+					Increases max mana by 120
+					Reduces mana costs by 8% and increases mana regen by 4
+					'''
+			}
+
+			AnkorWatLeggings: {
+				DisplayName: Ankor Wat Leggings
+				Tooltip: Increases magic damage by 15% and movement speed by 10%
+			}
+
+			DragonScaleGreaves: {
+				DisplayName: Dragon Scale Greaves
+				Tooltip:
+					'''
+					Known to be treasured by assassins.
+					+25% movement.
+					'''
+			}
+
+			DragonScaleHelmet: {
+				DisplayName: Dragon Scale Helmet
+				Tooltip:
+					'''
+					It is made of razor sharp dragon scales.
+					Thorns Effect
+					'''
+			}
+
+			DragonScaleMail: {
+				DisplayName: Dragon Scale Mail
+				Tooltip:
+					'''
+					A powerful magic/low defense set chosen by skilled Paladins with a taste for high risk/reward combat
+					Set bonus: 20% magic crit, +30% magic damage, +60 mana, -9% mana cost + Darkmoon Cloak skill
+					Darkmoon Cloak activates rapid mana regen, Star Cloak & Doubles magic crit and damage when life falls below 100
+					'''
+			}
+
+			GenjiArmor: {
+				DisplayName: Genji Armor
+				Tooltip:
+					'''
+					Armor from the East, enchanted with magic forces
+					-12% mana cost
+					Set bonus: +20% Magic Crit, +100 mana, +3 Mana Regen
+					'''
+			}
+
+			GenjiGreaves: {
+				DisplayName: Genji Greaves
+				Tooltip:
+					'''
+					Armor from the East
+					+15% movement.
+					'''
+			}
+
+			GenjiHelmet: {
+				DisplayName: Genji Helmet
+				Tooltip:
+					'''
+					Amor from the East
+					+25% magic damage
+					'''
+			}
+
+			MimeticHat: {
+				DisplayName: Mimetic Hat
+				Tooltip: Increases your max mana by 80 and reduces mana costs by 13%
+			}
+
+			MimeticPants: {
+				DisplayName: Mimetic Pants
+				Tooltip:
+					'''
+					Increases movement speed by 10%
+					15% increased magic critical strike chance
+					'''
+			}
+
+			MimeticSuit: {
+				DisplayName: Mimetic Suit
+				Tooltip:
+					'''
+					Increases magic damage by 11%
+					Set Bonus: Burning Mana Skill activates when health falls below 50%, increasing mana regen by 5
+					'''
+			}
+
+			RedClothHat: {
+				DisplayName: Red Cloth Hat
+				Tooltip: Increases magic crit by 5%
+			}
+
+			RedClothPants: {
+				DisplayName: Red Cloth Pants
+				Tooltip: Increases movement speed by 6%
+			}
+
+			RedClothTunic: {
+				DisplayName: Red Cloth Tunic
+				Tooltip:
+					'''
+					Increases magic damage by 2 flat
+					Set bonus: Increases max mana by 50, decreases mana costs by 5%
+					'''
+			}
+
+			RTQ2Chestplate: {
+				DisplayName: RTQ2 Chestplate
+				Tooltip:
+					'''
+					Increases magic critical strike chance by 7%
+					Set Bonus: +10% magic attack speed, space gun effect
+					Emergency shield kicks in when health is less than 141, increasing defense by 15
+					'''
+			}
+
+			RTQ2Helmet: {
+				DisplayName: RTQ2 Helmet
+				Tooltip: Increases magic damage by 27%
+			}
+
+			RTQ2Leggings: {
+				DisplayName: RTQ2 Leggings
+				Tooltip: Increases movement speed by 13%
+			}
+
+			MaskOfTheChild.DisplayName: Mask Of The Child
+			MaskOfTheFather.DisplayName: Mask Of The Father
+			MaskOfTheMother.DisplayName: Mask Of The Mother
+
+			AncientGoldenArmor: {
+				DisplayName: Ancient Golden Armor
+				Tooltip:
+					'''
+					A lost prince's armor.
+					Increases melee damage by 3 flat
+					Set bonus: +11% melee speed
+					'''
+			}
+
+			AncientGoldenGreaves: {
+				DisplayName: Ancient Golden Greaves
+				Tooltip:
+					'''
+					A lost prince's greaves.
+					Increases movement speed by 11%
+					'''
+			}
+
+			AncientGoldenHelmet: {
+				DisplayName: Ancient Golden Helmet
+				Tooltip:
+					'''
+					It is the famous Helmet of the Stars.
+					Increases melee crit chance by 4%
+					'''
+			}
+
+			BlackBeltGiPants: {
+				DisplayName: Black Belt Gi Pants
+				Tooltip: +28% Move Speed
+			}
+
+			BlackBeltGiTop: {
+				DisplayName: Black Belt Gi Top
+				Tooltip:
+					'''
+					+20% melee damage
+					Set Bonus: +20% Melee Speed
+					Zen meditation adds amazing +13 life regen
+					Defense is capped at 30
+					Damage reduction is converted into movement speed
+					'''
+			}
+
+			BlackBeltHairStyle: {
+				DisplayName: Black Belt Hair Style
+				Tooltip:
+					'''
+					You are a master of the zen arts, at one with the Tao
+					+7% melee crit
+					'''
+			}
+
+			CrystalArmor: {
+				DisplayName: Crystal Armor
+				Tooltip:
+					'''
+					Crystal armor vibrates with a mysterious energy
+					Increases melee critical strike chance by 26%
+					'''
+			}
+
+			CrystalEnchantedHelmet: {
+				DisplayName: Crystal Enchanted Helmet
+				Tooltip:
+					'''
+					Dazzling armor cut from crystal
+					Increases damage reduction by 5%
+					Set Bonus: Increases critical strike damage by 25%
+					Increases damage reduction by another 10% when under 166 health
+					'''
+			}
+
+			CrystalGreaves: {
+				DisplayName: Crystal Greaves
+				Tooltip:
+					'''
+					Dazzling armor cut from crystal.
+					Increases movement speed by 21%
+					'''
+			}
+
+			CrystalSightedHelmet: {
+				DisplayName: Crystal Sighted Helmet
+				Tooltip:
+					'''
+					Dazzling armor cut from crystal
+					Increases melee damage by 6%
+					Set Bonus: Increases critical strike damage by 25%
+					Increases melee speed by 18%, doubled when under 166 health
+					'''
+			}
+
+			DarkKnightArmor: {
+				DisplayName: Dark Knight Armor
+				Tooltip:
+					'''
+
+					One of the fiercest armors for melee warriors
+					Increases melee damage by 15%
+					Set Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
+					Defense is not affected by this
+					Small chance to regain life from melee strikes while Holy Dodge is active
+					'''
+			}
+
+			DarkKnightGreaves: {
+				DisplayName: Dark Knight Greaves
+				Tooltip:
+					'''
+					Forsaken by the one who turned Paladin.
+					Increases movement and melee speed by 17%
+					'''
+			}
+
+			DarkKnightHelmet: {
+				DisplayName: Dark Knight Helmet
+				Tooltip: Increases melee critical strike chance by 15%
+			}
+
+			FighterBreastplate: {
+				DisplayName: Fighter Breastplate
+				Tooltip:
+					'''
+					Adept at close combat
+					+20% melee speed
+					Set Bonus: +25% Melee damage
+					'''
+			}
+
+			FighterGreaves: {
+				DisplayName: Fighter Greaves
+				Tooltip:
+					'''
+					Adept at close combat
+					Adds double jump and jump boost, +12% movement speed
+					'''
+			}
+
+			FighterHairStyle: {
+				DisplayName: Fighter Hair Style
+				Tooltip:
+					'''
+					Adept at close combat
+					+17% melee crit
+					'''
+			}
+
+			MagmaBreastplate: {
+				DisplayName: Magma Breastplate
+				Tooltip:
+					'''
+					Increases melee damage by 15%
+					Set bonus: Increases melee damage by 10% multiplicatively
+					Grants the Magma Stone effect
+					'''
+			}
+
+			MagmaGreaves: {
+				DisplayName: Magma Greaves
+				Tooltip: Increases movement and melee speed by 18%
+			}
+
+			MagmaHelmet: {
+				DisplayName: Magma Helmet
+				Tooltip: Increase melee critical strike chance by 10%
+			}
+
+			ShadowCloakGreaves: {
+				DisplayName: Shadow Cloak Greaves
+				Tooltip:
+					'''
+					18% increased movement speed
+					Increases melee speed by 27%
+					'''
+			}
+
+			ShadowCloakPlateHelm: {
+				DisplayName: Shadow Cloak Helm
+				Tooltip: Increases melee critical strike chance by 6%
+			}
+
+			ShadowCloakPlateMail: {
+				DisplayName: Shadow Cloak Plate Mail
+				Tooltip:
+					'''
+					Increases melee damage by 10%
+					Set bonus: A Shadow Cloak activates when health falls below 100, increasing life regen by 7
+					Increases life regen by 3 otherwise
+					Grants Double Jump Skill
+					'''
+			}
+
+			ShadowNinjaBottoms: {
+				DisplayName: Shadow Ninja Bottoms
+				Tooltip: +33% Move Speed
+			}
+
+			ShadowNinjaMask: {
+				DisplayName: Shadow Ninja Mask
+				Tooltip:
+					'''
+					+30% Melee Crit
+					Set bonus: +30% Melee Speed, +30 rapid life regen
+					Defense is capped at 40
+					Damage reduction is converted into movement speed
+					'''
+			}
+
+			ShadowNinjaTop: {
+				DisplayName: Shadow Ninja Top
+				Tooltip: +30% Melee damage
+			}
+
+			PowerArmorNUGreaves: {
+				DisplayName: Power Armor NU Greaves
+				Tooltip:
+					'''
+					Increases movement speed by 40%
+					Allows you to walk on liquids, adds an extra jump and jump boost
+					Also grants immunity to knockback
+					'''
+			}
+
+			PowerArmorNUHelmet: {
+				DisplayName: Power Armor NU Helmet
+				Tooltip:
+					'''
+					20% Increased Melee Damage
+					Increases critical strike chance by 17%
+					Longer Breath
+					'''
+			}
+
+			PowerArmorNUTorso: {
+				DisplayName: Power Armor NU Torso
+				Tooltip:
+					'''
+					A powerful armor forged by the god of chaos.
+					Increases ranged damage by 17% and magic damage by 9%
+					Reduces chance of consuming ammo by 20%, increases max mana by 80 and decreases mana costs by 10%
+					Set Bonus: +20% attack speed(doubled for melee), +10 life regen/20 in water
+					Increases maximum stamina and stamina regen by 15%
+					'''
+			}
+
+			ArcherOfLumeliaHairStyle: {
+				DisplayName: Archer of Lumelia Hairstyle
+				Tooltip: Gifted with bows, repeaters, and other long range weapons
+			}
+
+			ArcherOfLumeliaPants: {
+				DisplayName: Archer of Lumelia Pants
+				Tooltip:
+					'''
+					Gifted with bows, repeaters, and other long range weapons
+					+13% movement speed
+					'''
+			}
+
+			ArcherOfLumeliaShirt: {
+				DisplayName: Archer of Lumelia Shirt
+				Tooltip:
+					'''
+					Gifted with lethal archery abilities
+					25% chance not to consume ammo.
+					Set Bonus: +23% Ranged Crit, +15% Ranged Damage
+					'''
+			}
+
+			LeatherArmor: {
+				DisplayName: Leather Armor
+				Tooltip:
+					'''
+					Increases ranged damage by 2 flat
+					Set bonus: 20% less chance to consume ammo
+					'''
+			}
+
+			LeatherGreaves: {
+				DisplayName: Leather Greaves
+				Tooltip: Increases movement speed by 9%
+			}
+
+			LeatherHelmet: {
+				DisplayName: Leather Helmet
+				Tooltip: Increases ranged crit by 8%
+			}
+
+			MirkwoodElvenBlondeHairStyle: {
+				DisplayName: Mirkwood Elven Blonde Hair Style
+				Tooltip:
+					'''
+					Gifted with ranged combat. High defense not necessary
+					With eyes of a hunter you can spot enemies in the dark
+					'''
+			}
+
+			MirkwoodElvenLeatherArmor: {
+				DisplayName: Mirkwood Elven Leather Armor
+				Tooltip:
+					'''
+					Gifted with healing. High defense not necessary.
+					25% chance not to consume ammo
+					Set Bonus: 20% Ranged Crit, +20 Ranged Dmg, +9 Life Regen
+					'''
+			}
+
+			MirkwoodElvenLeggings: {
+				DisplayName: Mirkwood Elven Leggings
+				Tooltip:
+					'''
+					Gifted with ranged combat. High defense not necessary.
+					+35% Movement Speed and Jump Boost
+					'''
+			}
+
+			ShellArmor: {
+				DisplayName: Shell Armor
+				Tooltip:
+					'''
+					Armor made from the shell of a legendary creature
+					Increases ranged damage by 15%
+					'''
+			}
+
+			ShellGreaves: {
+				DisplayName: Shell Greaves
+				Tooltip:
+					'''
+					Armor made from the shell of a legendary creature
+					+15% movement speed
+					'''
+			}
+
+			ShellHelmet: {
+				DisplayName: Shell Helmet
+				Tooltip:
+					'''
+					Armor made from the shell of a legendary creature
+					Increases ranged critical strike chance by 16%
+					Set Bonus: Ranged Critical Strike Chance is doubled under 50% max health
+					Reduces chance to consume ammo by 25%
+					'''
+			}
+
+			TheUnforseeable: {
+				DisplayName: The Unforseeable
+				Tooltip:
+					'''
+					Increases ranged damage by 15%
+					Increases life regen by 3
+					'''
+			}
+
+			TheUnknowable: {
+				DisplayName: The Unknowable
+				Tooltip:
+					'''
+					25% chance to not consume ammo
+					Increases ranged critical strike chance by 17%
+					Set Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
+					Defense and ammo consumption chance are not affected by this
+					'''
+			}
+
+			TheUntouchable: {
+				DisplayName: The Untouchable
+				Tooltip: Increases movement speed by 13%
+			}
+
+			TriceratopsBody: {
+				DisplayName: Triceratops Body
+				Tooltip:
+					'''
+					Increases ranged damage by 3 flat
+					Set Bonus: Grants sandstorm double jump
+					Reduces chance to consume ammo by 25%
+					'''
+			}
+
+			TriceratopsHead: {
+				DisplayName: Triceratops Head
+				Tooltip: Increases ranged critical strike chance by 12%
+			}
+
+			TriceratopsLegs: {
+				DisplayName: Triceratops Legs
+				Tooltip: Increases movement speed by 14%
+			}
+
+			RedHerosHat: {
+				DisplayName: Red Hero's hat
+				Tooltip:
+					'''
+					Skill: Longer invincibility after being hit, +80 max mana
+					Can be upgraded to it's master form with 80,000 Dark Souls
+					'''
+			}
+
+			RedHerosPants: {
+				DisplayName: Red Hero's Pants
+				Tooltip:
+					'''
+					Worn by the hero himself!
+					Increases your max number of minions by 2
+					'''
+			}
+
+			RedHerosShirt: {
+				DisplayName: Red Hero's Shirt
+				Tooltip:
+					'''
+					The legendary clothes of the master.
+					Set bonus: Lava resistance, fire block & knockback immunity
+					Plus extended breath, water and lava walk, & swim
+					Boosts damage, crit, melee and movement speed by 14%
+					Reduces mana costs by 11%
+					+4 life regen while in lava & +2 in water
+					'''
+			}
+
+			ShadowNinjaMask2: {
+				DisplayName: Shadow Ninja Mask II
+				Tooltip:
+					'''
+					+30% Melee Crit
+					Set Bonus: +30% to all damage, melee speed, crit chance and +30 rapid life regen
+					Defense is capped at 60
+					Damage reduction is converted into movement speed
+					'''
+			}
+
+			SmoughArmor: {
+				DisplayName: Smough's Armor
+				Tooltip:
+					'''
+					Increases the effectiveness of the Dragon Crest Shield
+					Set Bonus: Decreases all attack speed by 50% multiplicatively but grants 100% increased critical strike chance
+					'''
+			}
+
+			SmoughGreaves: {
+				DisplayName: Smough's Greaves
+				Tooltip: Decreases dodgeroll agility
+			}
+
+			SmoughHelmet: {
+				DisplayName: Smough's Helmet
+				Tooltip: Increases damage dealt by 15%
+			}
+
+			SnarbolaxArmor: {
+				DisplayName: Snarbolax Armor
+				Tooltip: Part of the TSORC Revamp Team dev set belonging to ChromaEquinox
+			}
+
+			SnarbolaxGreaves: {
+				DisplayName: Snarbolax Greaves
+				Tooltip: Part of the TSORC Revamp Team dev set belonging to ChromaEquinox
+			}
+
+			SnipedStrangerHat: {
+				DisplayName: Sniped Stranger Hat
+				Tooltip: Part of the TSORC Revamp Team dev set belonging to ChromaEquinox
+			}
+
+			StuddedLeatherArmor: {
+				DisplayName: Studded Leather Armor
+				Tooltip:
+					'''
+					Increases damage by 2 flat
+					Set bonus: Increases all attack speed by 15%
+					'''
+			}
+
+			StuddedLeatherGreaves: {
+				DisplayName: Studded Leather Greaves
+				Tooltip: Increases movement speed by 15%
+			}
+
+			StuddedLeatherHelmet: {
+				DisplayName: Studded Leather Helmet
+				Tooltip: Increases crit chance by 5%
+			}
+
+			AncientDemonArmor: {
+				DisplayName: Ancient Demon Armor
+				Tooltip:
+					'''
+					Forged by those who brave Annihilation
+					+27% whip damage
+					Set bonus: Increases whip range by 30%
+					Increases summon attack speed by 25%, this gets doubled when under 50% health
+					'''
+			}
+
+			AncientDemonGreaves: {
+				DisplayName: Ancient Demon Greaves
+				Tooltip:
+					'''
+					+22% movement speed
+					Increases your max number of minions by 1
+					'''
+			}
+
+			AncientDemonHelmet: {
+				DisplayName: Ancient Demon Helmet
+				Tooltip:
+					'''
+					You hear an evil whispering from inside
+					+27% minion damage
+					'''
+			}
+
+			DwarvenArmor: {
+				DisplayName: Dwarven Armor
+				Tooltip:
+					'''
+					Increases your max number of minions by 1
+					Increases minion damage by 16%
+					'''
+			}
+
+			DwarvenCrusaderHelmet: {
+				DisplayName: Dwarven Crusader Helmet
+				Tooltip:
+					'''
+					Increases whip damage and summon attack speed by 18%
+					Set Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
+					Defense, minion slots and whip range are not affected by this
+					Increases whip range by 30% and life regen by 4
+					'''
+			}
+
+			DwarvenGreaves: {
+				DisplayName: Dwarven Greaves
+				Tooltip:
+					'''
+					Increases your max number of minions by 1
+					Increases movement speed by 19%
+					'''
+			}
+
+			DwarvenKnightHelmet: {
+				DisplayName: Dwarven Knight Helmet
+				Tooltip:
+					'''
+					Increases minion damage by 5% and 3 flat
+					Set Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
+					Defense, minion and turret slots are not affected by this
+					Increases your max number of minions and turrets by 1
+					'''
+			}
+
+			OldChainArmor: {
+				DisplayName: Old Chain Armor
+				Tooltip:
+					'''
+					+1 flat minion damage
+					Set Bonus: Increases your max number of minions by 1
+					A Flinx Fur Coat will also proc this set bonus
+					'''
+			}
+
+			OldChainCoif: {
+				DisplayName: Old Chain Coif
+				Tooltip: +9% summon attack speed
+			}
+
+			OldChainGreaves: {
+				DisplayName: Old Chain Greaves
+				Tooltip: +12% movement speed
+			}
+
+			TarantulaCarapace: {
+				DisplayName: Tarantula Carapace
+				Tooltip:
+					'''
+					Increases minion damage by 25%
+					Increases your max number of minions by 1
+					'''
+			}
+
+			TarantulaHelmet: {
+				DisplayName: Tarantula Helmet
+				Tooltip:
+					'''
+
+					Increases whip damage by 25%
+					Set Bonus: Increases whip range by 30% and summon attack speed by 20%
+					Increases critical strike damage by 25%
+					'''
+			}
+
+			TarantulaLegs: {
+				DisplayName: Tarantula Legs
+				Tooltip:
+					'''
+					Increases your max number of minions by 1
+					Increases movement speed by 22%
+					'''
+			}
+
+			TarantulaMask: {
+				DisplayName: Tarantula Mask
+				Tooltip:
+					'''
+					Increases minion damage by 10%
+					Set Bonus: Increases your max number of minions and turrets by 1
+					Increases critical strike damage by 25%
+					'''
+			}
+
+			WaspArmor: {
+				DisplayName: Wasp Armor
+				Tooltip:
+					'''
+					Increases minion damage by 24%
+					Increases your max number of minions by 1
+					Set Bonus: Increases hornet minions pierce by 5 and increases stinger movement speed
+					'''
+			}
+
+			WaspGreaves: {
+				DisplayName: Wasp Greaves
+				Tooltip:
+					'''
+
+					Increases movement speed by 20%
+					Increases your max number of turrets by 2
+					'''
+			}
+
+			WaspHelmet: {
+				DisplayName: Wasp Helmet
+				Tooltip:
+					'''
+					Increases minion damage by 3 flat
+					Increases your max number of minions by 1
+					'''
+			}
+
+			WitchkingBottoms: {
+				DisplayName: Witchking Bottoms
+				Tooltip:
+					'''
+					+20% minion damage
+					Increases your max number of minions and turrets by 1
+					+44% movement speed
+					'''
+			}
+
+			WitchkingHelmet: {
+				DisplayName: Witchking Helmet
+				Tooltip:
+					'''
+					+20% minion damage
+					Increases your max number of minions and turrets by 1
+					'''
+			}
+
+			WitchkingTop: {
+				DisplayName: Witchking Top
+				Tooltip:
+					'''
+					+20% minion damage
+					Increases your max number of minions and turrets by 1
+					Set Bonus: Increases your max number of minions and turrets by 1
+					+30% whip range, +25% summon attack speed
+					'''
+			}
+
+			SymbolOfAvarice: {
+				DisplayName: Symbol Of Avarice
+				Tooltip:
+					'''
+					Increases Dark soul absorption from defeated enemies by 40%
+					but the curse of the branded also [c/FF0000:drains HP].
+					'''
+			}
+
+			AttraidiesRelic: {
+				DisplayName: Attraidies Relic
+				Tooltip:
+					'''
+					Summons a mindflayer illusion from the legion army of Attraidies!
+					"[c/00ffd4:You feel compelled to try this...]"
+					'''
+			}
+
+			BequeathedSoul: {
+				DisplayName: Bequeathed Lord Soul Shard
+				Tooltip:
+					'''
+					Soul of the albino Seath the Scaleless.
+					A fragment of a Lord Soul discovered at the dawn of the Age of Fire.
+					Seath allied with Lord Gwyn and turned upon the dragons, and for this he was
+					awarded dukedom, embraced by the royalty, and given a fragment of a great soul.
+					'''
+			}
+
+			BloodredMossClump: {
+				DisplayName: Bloodred Moss Clump
+				Tooltip:
+					'''
+					[c/ffbf00:Heals 30 HP, with only 5 seconds of potion sickness.]
+					[c/ffbf00:Removes bleeding and poisoned.]
+					A supply of these may be essential for exploring some areas.
+					Can still be used to remove poison and bleeding while under the
+					effect of potion sickness. However, it will not heal any HP.
+					'''
+			}
+
+			BlueTitanite: {
+				DisplayName: Blue Titanite
+				Tooltip: A rare and valuable ore
+			}
+
+			AncientDemonBag: {
+				DisplayName: Treasure Bag (Ancient Demon)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			ArtoriasBag: {
+				DisplayName: Treasure Bag (Artorias)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			AttraidiesBag: {
+				DisplayName: Treasure Bag (Attraidies)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			BlightBag: {
+				DisplayName: Treasure Bag (Blight)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			ChaosBag: {
+				DisplayName: Treasure Bag (Chaos)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			DarkCloudBag: {
+				DisplayName: Treasure Bag (Dark Cloud)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			DeathBag: {
+				DisplayName: Treasure Bag (Death)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			GaibonBag: {
+				DisplayName: Treasure Bag (Gaibon)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			GwynBag: {
+				DisplayName: Treasure Bag (Gwyn, Lord of Cinder)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			HellkiteBag: {
+				DisplayName: Treasure Bag (Hellkite Dragon)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			HeroOfLumeliaBag: {
+				DisplayName: Treasure Bag (Hero of Lumelia)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			JungleWyvernBag: {
+				DisplayName: Treasure Bag (Jungle Wyvern)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			KrakenBag: {
+				DisplayName: Treasure Bag (Water Fiend Kraken)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			LichBag: {
+				DisplayName: Treasure Bag (Earth Fiend Lich)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			MarilithBag: {
+				DisplayName: Treasure Bag (Fire Fiend Marilith)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			MindflayerIllusionBag: {
+				DisplayName: Treasure Bag (Mindflayer Illusion)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			OolacileDemonBag: {
+				DisplayName: Treasure Bag (Ancient Oolacile Demon)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			OolacileSorcererBag: {
+				DisplayName: Treasure Bag (Abysmal Oolacile Sorcerer)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			SeathBag: {
+				DisplayName: Treasure Bag (Seath the Scaleless)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			SerrisBag: {
+				DisplayName: Treasure Bag (Serris)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			SlograBag: {
+				DisplayName: Treasure Bag (Slogra)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			TheHunterBag: {
+				DisplayName: Treasure Bag (The Hunter)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			TheRageBag: {
+				DisplayName: Treasure Bag (The Rage)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			TheSorrowBag: {
+				DisplayName: Treasure Bag (The Sorrow)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			TriadBag: {
+				DisplayName: Treasure Bag (The Triad)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			WitchkingBag: {
+				DisplayName: Treasure Bag (Witchking)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			WyvernMageBag: {
+				DisplayName: Treasure Bag (Wyvern Mage)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			WyvernMageShadowBag: {
+				DisplayName: Treasure Bag (Wyvern Mage Shadow)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			AaronsProtectionStone: {
+				DisplayName: Aarons Protection Stone
+				Tooltip:
+					'''
+					The volcanic stoned etched in Aaron's image
+					Said to protect the one who carries it in times of despair
+					[c/00ffd4:It's true use may reveal itself in time...or at a particular location...]
+					Not MP compatible currently
+					'''
+			}
+
+			AbysmalStone: {
+				DisplayName: Abysmal Stone
+				Tooltip:
+					'''
+					Summons the Abysmal Oolacile Sorcerer.
+					Can only be used at night.
+					'''
+			}
+
+			BlightStone: {
+				DisplayName: Blight Stone
+				Tooltip:
+					'''
+					Summons The Blight, one of six guardians of The Abyss.
+					You must fight this battle on the surface.
+					The Blight cannot be fought with the Covenant of Artorias ring equipped.
+					'''
+			}
+
+			CursedSkull: {
+				DisplayName: Cursed Skull
+				Tooltip:
+					'''
+					Summons Skeletron, the First of the Dead.
+					You must use this at the demon altar in the ancient temple ruins
+					But be warned, this battle will not be easy...
+					Item is not consumed so you can retry the fight until victory.
+					'''
+			}
+
+			DarkMirror.DisplayName: Dark Mirror
+
+			DeathBringer: {
+				DisplayName: Death Bringer
+				Tooltip: A powerful weapon which brings death to all.
+			}
+
+			DyingEarthCrystal: {
+				DisplayName: Dying Earth Crystal
+				Tooltip:
+					'''
+					The fading Crystal of Earth. 
+					Will summon Lich. 
+					Item is non-consumable
+					'''
+			}
+
+			DyingFireCrystal: {
+				DisplayName: Dying Fire Crystal
+				Tooltip:
+					'''
+					The fading Crystal of Fire. 
+					Will summon Marilith. 
+					Item is non-consumable
+					'''
+			}
+
+			DyingWaterCrystal: {
+				DisplayName: Dying Water Crystal
+				Tooltip:
+					'''
+					The fading Crystal of Water. 
+					Will summon Kraken. 
+					Item is non-consumable
+					'''
+			}
+
+			DyingWindCrystal: {
+				DisplayName: Dying Wind Crystal
+				Tooltip:
+					'''
+					The fading Crystal of Wind. 
+					Will summon Chaos.
+					'''
+			}
+
+			FieryEgg: {
+				DisplayName: Fiery Egg
+				Tooltip:
+					'''
+					Summons The Rage 
+					You must sacrifice this at the Demon Altar 
+					within the Cathedral in the Underworld
+					'''
+			}
+
+			GrassyEgg: {
+				DisplayName: Grassy Egg
+				Tooltip:
+					'''
+					Summons The Hunter 
+					You must sacrifice this at a Demon Altar in the Jungle far to the West
+					'''
+			}
+
+			HellkiteStone: {
+				DisplayName: Hellkite Stone
+				Tooltip: Summons a Hellkite Dragon from the sky...
+			}
+
+			JungleFeather: {
+				DisplayName: Jungle Feather
+				Tooltip:
+					'''
+					Summons the Jungle Wyvern 
+					An ancient beast that once guarded an advanced civilization, 
+					long since forgotten. To this day, it watches over the lost 
+					city, ripping to shreds any traveler who should discover it.
+					'''
+			}
+
+			LostScrollOfGwyn: {
+				DisplayName: Lost Scroll of Gwyn
+				Tooltip:
+					'''
+					Used to summon Gwyn, Lord of Cinder. 
+					Gwyn may prove impossible to defeat unless you have defeated 7 guardians of the Abyss:
+					Artorias, Seath, the Lich King, Kraken, Marilith, the Blight, and the Wyvern Mage Shadow. 
+					Only the true warrior of the age will survive this fight. 
+					'''
+			}
+
+			MindCube: {
+				DisplayName: Mind Cube
+				Tooltip:
+					'''
+					Summons Attraidies, the Mindflayer King 
+					This is it. The final battle. 
+					[c/ffbf00:To find the light and dark shards needed to craft this in adventure mode... Seek the Dark Tower of Attraidies.]
+					'''
+			}
+
+			MindflayerIllusionRelic: {
+				DisplayName: Mindflayer Illusion Relic
+				Tooltip:
+					'''
+					Use this relic to summon the final battle with Attraidies. 
+					Attraidies laughs. 'Alright Red, I'm content to end this now. Face me. No more games.'
+					'''
+			}
+
+			PottedPlanteraBulb: {
+				DisplayName: Potted Plantera Bulb
+				Tooltip: Summons Plantera
+			}
+
+			SerrisBait: {
+				DisplayName: Serris Bait
+				Tooltip: Summons Serris
+			}
+
+			StoneOfSeath: {
+				DisplayName: Stone of Seath
+				Tooltip:
+					'''
+					Summons Seath the Scaleless, a great dragon granted the title of Duke by Lord Gwyn for his 
+					assistance in defeating the Everlasting Dragons and given a fragment of a Lord Soul. Seath 
+					was driven insane during his research on the Scales of Immortality, which he could never 
+					obtain. Ironically, he is now an immortal himself, a true Undead by means of his research 
+					into the Primordial Crystal, which he stole from the dragons when he defected.
+					'''
+			}
+
+			StrangeMagicRing: {
+				DisplayName: Strange Magic Ring
+				Tooltip:
+					'''
+					A strange magic ring that Miakoda tells you will summon Artorias, the Abysswalker.
+					One of Gwyn's Four Knights, Artorias is a holy warrior with an unbendable will of steel.
+					'''
+			}
+
+			TomeOfSlograAndGaibon: {
+				DisplayName: Tome of Slogra and Gaibon
+				Tooltip:
+					'''
+					Summons the nocturnal beast known as Slogra, a reptilian creature who fights alongside the demon 
+					known as Gaibon. Not much is known of Gaibon, though it is legend that Slogra was once a man,  
+					whose rings he wore finally consumed him until the man was gone and only his lost soul remained
+					'''
+			}
+
+			WateryEgg: {
+				DisplayName: Watery Egg
+				Tooltip:
+					'''
+					Summons The Sorrow 
+					Must be used near the ocean
+					'''
+			}
+
+			WingOfTheFallen: {
+				DisplayName: Wing of the Fallen
+				Tooltip:
+					'''
+					Summons the Wyvern Mage, a powerful demon adept with the forces of magic and lightning
+					The Wyvern Mage is known to command the loyalty of a fiery Wyvern with white scales as strong as steel
+					If you cannot defeat the Wyvern Mage after several tries, it would be wise
+					to return later when you've become stronger and possess greater abilities.
+					'''
+			}
+
+			WingOfTheGhostWyvern: {
+				DisplayName: Wing of the Ghost Wyvern
+				Tooltip:
+					'''
+					Frees the Wyvern Mage's Shadow from its Glass Prison.
+					The Wyvern Mage once created a shadow form of himself, cursed by the powers of the Abyss
+					It was so hideous that the Mage imprisoned his shadow self in a massive glass cage, enchanted by dark magic
+
+					'''
+			}
+
+			BossRematchTome: {
+				DisplayName: Boss Rematch Tome
+				Tooltip:
+					'''
+					Allows you to re-summon any boss you have defeated
+					Left click to summon the selected boss, right click to select the one you want
+					Bosses summoned in this way will not drop dark souls, guardian souls or stamina vessels
+					However, they will drop the rest of their normal loot
+					[Developer note: Not all bosses can be summoned this way yet, but the rest will be added over time]
+					'''
+			}
+
+			BraveWarriorSoul: {
+				DisplayName: Soul of a Brave Warrior
+				Tooltip: Consume to gain 5000 souls
+			}
+
+			BrokenPicksaw: {
+				DisplayName: Broken Picksaw
+				Tooltip:
+					'''
+					An ancient and powerful tool seems to have been stripped for parts
+					[c/00ffd4:The remnants have been drained of their power, and quietly hum with Attraidies' dark magic.]
+					[c/ffbf00:It seems if you want the power to break Lihzahrd bricks you'll have to take it from him]...
+					This item no longer serves any purpose, and should be discarded
+					'''
+			}
+
+			BrokenStrangeMagicRing: {
+				DisplayName: Broken Strange Magic Ring
+				Tooltip:
+					'''
+					A strange magic ring, broken into two pieces...
+					Miakoda: "To reforge this ring and restore its magical abilitiy,
+					you'll need 7 White Titanite, 20 Cursed Souls and 1000 Dark Souls.
+					To find what we need, we should seek out the corruption and the undergound."
+					'''
+			}
+
+			CharcoalPineResin: {
+				DisplayName: Charcoal Pine Resin
+				Tooltip:
+					'''
+					Black charcoal-like pine resin
+					Consume to imbue melee weapons with fire for 4 minutes
+					Particularly effective against woody enemies
+					+10% melee damage
+					'''
+			}
+
+			CompactFrame: {
+				DisplayName: Compact Frame
+				Tooltip:
+					'''
+					Used for making advanced weaponry, from a civilization not of this world
+					The strange way it is unaffected by gravity reminds you of somewhere...
+					'''
+			}
+
+			CrestOfCorruption: {
+				DisplayName: Crest of Corruption
+				Tooltip:
+					'''
+					A shard of glowing demonite, oozing with phazon
+					One of eight. [c/00ffd4:On the underside it says simply:]
+					"[c/ffbf00:Below a Broken, familiar Bridge, you will find me.]"
+					'''
+			}
+
+			CrestOfEarth: {
+				DisplayName: Crest of Earth
+				Tooltip:
+					'''
+					A shard of pure minerals
+					One of eight
+					[c/00ffd4:This one contains a riddle:] 
+					"[c/ffbf00:Atop the Twin Peaks of Arazium, we gaze at Sky Above, and the Great Chasm Below. We are the Eyes of the Ancient One.]"
+					'''
+			}
+
+			CrestOfFire: {
+				DisplayName: Crest of Fire
+				Tooltip:
+					'''
+					A shard of blazing fury
+					You don't know what it's for, but you're sure it's important.
+					[c/00ffd4:After defeating The Rage, Miakoda tells you about the Wyvern Mage that lives high atop the mountain above these caverns] - 
+					[c/00ffd4:an ally of Attraidies.] [c/ffbf00:"If he is helping the Mindflayer King, he could know where Asha is."]
+					'''
+			}
+
+			CrestOfLife: {
+				DisplayName: Crest of Life
+				Tooltip:
+					'''
+					A shard of woven vine, stronger than iron
+					One of eight.
+					[c/00ffd4:Threaded between its strands, another riddle:] 
+					"[c/ffbf00:You've found the Key. But where is the Lock?]"
+					'''
+			}
+
+			CrestOfSky: {
+				DisplayName: Crests of Sky
+				Tooltip:
+					'''
+					Three shards of oxygenated carbonate
+					Combined this makes one of eight. [c/00ffd4:On its side it contains a clue:]
+					"[c/ffbf00:Two paths lead to my entrance. Below the Oasis in the Desert, Serris unlocks the Way.]
+					"[c/ffbf00:From below a familiar, Violet Smoke, a Chlorophyte Gate guards the other.]"
+					'''
+			}
+
+			CrestOfSteel: {
+				DisplayName: Crest of Steel
+				Tooltip:
+					'''
+					A shard of burning hot steel
+					One of eight.
+					[c/00ffd4:A riddle is etched into the metal:] 
+					"[c/ffbf00:Above the Machine's Throne, Below the Dryad's Cove: A Locked Door guards an Ancient Pyramid, long ago forgotten.]"
+					'''
+			}
+
+			CrestOfStone: {
+				DisplayName: Crest of Stone
+				Tooltip:
+					'''
+					A shard of solar-charged masonry
+					One of eight.
+					When I fit all the pieces together, there's still something missing.
+					[c/00ffd4:This crest contains the final riddle:]
+					"[c/ffbf00:Towering Heights, Far to the West. The Molten Eye of Attraidies looks to the Sky Above. He is near.]"
+					'''
+			}
+
+			CrestOfWater: {
+				DisplayName: Crest of Water
+				Tooltip:
+					'''
+					A shard of crystallized water
+					A second piece. 'Are these artifacts part of a puzzle?'
+					[c/00ffd4:This shard contains a riddle:] "[c/ffbf00:Beneath the Burning hot sun,]
+					[c/ffbf00:sheltered from the blistering Western Winds, Black Smoke with a faint Violet Glow illuminates the path.]"
+					'''
+			}
+
+			CursedSoul: {
+				DisplayName: Cursed Soul
+				Tooltip: Soul of a cursed being.
+			}
+
+			Darksign: {
+				DisplayName: Darksign
+				Tooltip:
+					'''
+					Use to become the [c/6d8827:Bearer of the Curse]
+					Playing as the [c/6d8827:Bearer of the Curse] has the following effects:
+					You deal +20% damage(multiplicative), receive +20% more souls and your stamina recovers much faster
+					However, [c/dd3333:using weapons drains stamina], life regen is halved while stamina isn't at max,
+					minions do not benefit from the damage bonus and cap your stamina at 70%,
+					and dying reduces your max HP by 20% until you return to where you died.
+					Greater Magic Mirror use is prohibited, and instant-heal items won't heal you
+					[c/ca1e00:This mode is intended for players experienced with the mod]
+					[c/ca1e00:It is not recommended on first playthroughs.]
+					'''
+			}
+
+			DarkSoul: {
+				DisplayName: Dark Soul
+				Tooltip:
+					'''
+					Soul of a fallen creature.
+					Can be used at Demon Altars to forge new weapons, items, and armors.
+					'''
+			}
+
+			DeadChicken: {
+				DisplayName: Dead Chicken
+				Tooltip:
+					'''
+					Can be cooked at a cooking pot to make 1 Cooked Chicken
+					Cooked chicken heals 100 HP and has 30 seconds of potion cooldown. Wow! Tasty!
+					'''
+			}
+
+			DestructionElement: {
+				DisplayName: Destruction Element
+				Tooltip:
+					'''
+					Used for making high damage guns
+					The strange way it feels warm to the touch reminds you of somewhere...
+					'''
+			}
+
+			DiamondPickaxe: {
+				DisplayName: Diamond Pickaxe
+				Tooltip:
+					'''
+					An ideal pickaxe for exploring...
+					The diamond tip has been imbued with magic from a celestial being.
+					Because of this, it can do no harm to living creatures, but its tip breaks through blocks
+					with incredible ease... In fact, it moves so fast in your hand,
+					you can hardly see it, yet using it feels effortless...
+					'''
+			}
+
+			DisabledRecipe: {
+				DisplayName: Disabled Recipe
+				Tooltip:
+					'''
+					This recipe has been disabled!
+					You will have to find this item in the world!
+					'''
+			}
+
+			DisabledSale: {
+				DisplayName: Disabled Sale
+				Tooltip: This sale has been deemed illegal! As such, I cannot sell it to you.
+			}
+
+			DodgerollMemo: {
+				DisplayName: Dodgeroll Memo
+				Tooltip:
+					'''
+					It looks like a diary entry. It reads as follows:
+					"There have been rumours of bandits in the forest lately,
+					so father has been apprehensive about letting me go into the
+					forest alone to pick mushrooms... Pfft, what does he know?
+					I may be small, but I'm nimble and have mastered [c/00ffd4:the technique]
+					[c/00ffd4:of the dodgeroll!] I'll be fine as long as I don't run out of stamina..."
+					Judging by how bandits were in possession of this note, I guess it
+					didn't go too well for them. Perhaps I can make good use of this technique?
+					[c/ffbf00:[Press Left Alt to roll. Try rebinding it to Left Shift, R, or something new.]
+					'''
+			}
+
+			DragonEssence: {
+				DisplayName: Dragon Essence
+				Tooltip:
+					'''
+					The essence of slain dragons.
+					A rare and valuable material.
+					'''
+			}
+
+			DraxEX: {
+				DisplayName: Drax EX
+				Tooltip:
+					'''
+					[c/ffbf00:Congratulations on beating the game as the Bearer of the Curse!]
+					[c/00ffd4:You are truly a hero of the ages!]
+					...
+					...
+					We hope you enjoyed the experience.
+					As always, we'd love to hear your comments, suggestions and feedback on our Steam page or Discord.
+					- Tim Hjersted, aka Vibrent, and the rest of the Revamp Team
+					'''
+			}
+
+			DwarvenContract: {
+				DisplayName: Dwarven Contract
+				Tooltip:
+					'''
+					A contract for a dwarf guard.
+					Will summon a dwarf to guard a piece of property.
+					'''
+			}
+
+			DyingWindShard: {
+				DisplayName: Dying Wind Shard
+				Tooltip: A shard of the fading Crystal of Wind.
+			}
+
+			EphemeralDust.DisplayName: Ephemeral Dust
+
+			Epilogue: {
+				DisplayName: Epilogue
+				Tooltip: This item is from the future, and its text is obscured. You will have to progress further in your adventure to reveal it...
+			}
+
+			EssenceOfTerraria: {
+				DisplayName: Essence of Terraria
+				Tooltip:
+					'''
+					Summons almost every boss at once.
+					You will never survive this.
+					'''
+			}
+
+			EstusFlaskShard: {
+				DisplayName: Estus Flask Shard
+				Tooltip:
+					'''
+					The shard of an Estus Flask
+					Take it to the Emerald Herald to increase flask uses
+					'''
+			}
+
+			EternalCrystal: {
+				DisplayName: Eternal Crystal
+				Tooltip:
+					'''
+					[i:5627][c/4949c2:A mysterious crystal][i:5627]
+					Looking into it is like peering into the infinite expanse of [c/4949c2:space]
+					'''
+			}
+
+			EventReset: {
+				DisplayName: Event Reset
+				Tooltip: Re-enables ALL events and un-saves saved ones. Dev testing item, you should not have this!!
+			}
+
+			FadingSoul: {
+				DisplayName: Fading soul
+				Tooltip: Consume to gain a mere 50 souls
+			}
+
+			FairyInABottle: {
+				DisplayName: Fairy In A Bottle
+				Tooltip:
+					'''
+					A fairy can be seen trapped in the bottle.
+					Using this will free the fairy.
+					'''
+			}
+
+			FlameOfTheAbyss: {
+				DisplayName: Flame of the Abyss
+				Tooltip: Dropped from a fallen soul that has traveled through the abyss.
+			}
+
+			ForgottenIceBowScroll: {
+				DisplayName: Forgotten Ice Bow Scroll
+				Tooltip:
+					'''
+					Used with 1 Soul of Artorias and 200000 Dark Soul at a Demon Altar
+					Sold by a powerful sorcerer
+					'''
+			}
+
+			ForgottenThunderBowScroll: {
+				DisplayName: Forgotten Thunder Bow Scroll
+				Tooltip:
+					'''
+					Used with 1 Soul of Artorias and 200000 Dark Soul at a Demon Altar
+					Sold by a powerful sorcerer
+					'''
+			}
+
+			GhostWyvernSoul: {
+				DisplayName: Soul of the Ghost Wyvern
+				Tooltip: The essence of the Ghost Wyvern.
+			}
+
+			GlintstonePebble: {
+				DisplayName: Glintstone Pebble
+				Tooltip:
+					'''
+
+					Crush in your hand to send out Glintstone Specks
+					Glintstone Specks hover a moment before firing off toward the closest enemy
+					Great for setting up ambushes on unsuspecting foes. Scales with magic damage
+					'''
+			}
+
+			GreatMagicMirror: {
+				DisplayName: Great Magic Mirror
+				Tooltip:
+					'''
+					Equip this in an accessory slot anywhere to create a new warp point.
+					Activate by left-clicking the mirror in your toolbar.
+					Warp point saves on quit.
+					Reduces defense to 0 and slows movement while equipped and setting your warp point.
+					Channel time is five seconds and you cannot move during the channel.
+					'''
+			}
+
+			GuardianSoul: {
+				DisplayName: Guardian Soul
+				Tooltip:
+					'''
+					Soul of an ancient guardian.
+					Can be used at Demon Altars to forge powerful weapons and items.
+					'''
+			}
+
+			HeavenPiercer: {
+				DisplayName: Heaven Piercer
+				Tooltip:
+					'''
+					Infused with the energy of the Picksaw and the dark magic of Attraidies
+					[c/00ffd4:Easily shatters lihzahrd bricks]
+					'''
+			}
+
+			HeroSoul: {
+				DisplayName: Soul of a Hero
+				Tooltip: Consume to gain 10000 souls
+			}
+
+			Humanity: {
+				DisplayName: Humanity
+				Tooltip:
+					'''
+					Redirects curse, restoring all of your lost max HP
+					Won't increase max HP over the maximum achieved
+					via Life Crystals or Life Fruit
+					'''
+			}
+
+			BoltCrate: {
+				DisplayName: Bolt Crate
+				Tooltip:
+					'''
+					A crate containing 100 Crossbow Bolts
+					{$CommonItemTooltip.RightClickToOpen}
+					'''
+			}
+
+			FrostburnArrowCrate: {
+				DisplayName: Frostburn Arrow Crate
+				Tooltip:
+					'''
+					A crate containing 100 Frostburn Arrows
+					{$CommonItemTooltip.RightClickToOpen}
+					'''
+			}
+
+			GelCrate: {
+				DisplayName: Gel Crate
+				Tooltip:
+					'''
+					A crate containing 100 Gel
+					{$CommonItemTooltip.RightClickToOpen}
+					'''
+			}
+
+			MeteorShotCrate: {
+				DisplayName: Meteor Shot Crate
+				Tooltip:
+					'''
+					A crate containing 100 Meteor Bullets
+					{$CommonItemTooltip.RightClickToOpen}
+					'''
+			}
+
+			RoyalThrowingSpearCrate: {
+				DisplayName: Royal Throwing Spear Crate
+				Tooltip:
+					'''
+					A crate containing 100 Royal Throwing Spears
+					{$CommonItemTooltip.RightClickToOpen}
+					'''
+			}
+
+			SoulCoinCrate: {
+				DisplayName: Soul Coin Crate
+				Tooltip:
+					'''
+					A crate containing 1000 soul coins
+					Given as weregild for an item that no longer exists
+					{$CommonItemTooltip.RightClickToOpen}
+					'''
+			}
+
+			ThrowingAxeCrate: {
+				DisplayName: Throwing Axe Crate
+				Tooltip:
+					'''
+					A crate containing 100 Throwing Axes
+					{$CommonItemTooltip.RightClickToOpen}
+					'''
+			}
+
+			ThrowingKnifeCrate: {
+				DisplayName: Throwing Knife Crate
+				Tooltip:
+					'''
+					A crate containing 100 Throwing Knives
+					{$CommonItemTooltip.RightClickToOpen}
+					'''
+			}
+
+			ThrowingSpearCrate: {
+				DisplayName: Throwing Spear Crate
+				Tooltip:
+					'''
+					A crate containing 100 Throwing Spears
+					{$CommonItemTooltip.RightClickToOpen}
+					'''
+			}
+
+			UnholyArrowCrate: {
+				DisplayName: Unholy Arrow Crate
+				Tooltip:
+					'''
+					A crate containing 100 Unholy Arrows
+					{$CommonItemTooltip.RightClickToOpen}
+					'''
+			}
+
+			WoodenArrowCrate: {
+				DisplayName: Wooden Arrow Crate
+				Tooltip:
+					'''
+					A crate containing 100 Wooden Arrows
+					{$CommonItemTooltip.RightClickToOpen}
+					'''
+			}
+
+			LostUndeadSoul: {
+				DisplayName: Soul of a Lost Undead
+				Tooltip: Consume to gain 200 souls
+			}
+
+			MastersScroll: {
+				DisplayName: Masters Scroll
+				Tooltip:
+					'''
+					Turns on Master Mode or turns it off
+					Master Mode has not been tuned yet whatsoever, don't expect it to be well balanced
+					Alpha mode in testing starting now. [c/00ffd4:For a more polished, unique challenge, try the Dark Sign]
+					'''
+			}
+
+			MysteriousIdol: {
+				DisplayName: Mysterious Idol
+				Tooltip: May attract the archaeologist to stay in your town if held in your inventory.
+			}
+
+			NamelessSoldierSoul: {
+				DisplayName: Soul of a Nameless Soldier
+				Tooltip: Consume to gain 800 souls
+			}
+
+			MiakodaCrescent: {
+				DisplayName: Miakoda - Crescent Moon Form
+				Tooltip:
+					'''
+					Miakoda - an ancient being of light over 100 years old, 
+					who has vowed to help you find your wife and defeat Attraidies.
+					Miakoda is an indigenous name that means "Power of the Moon".
+					Crescent Moon Form - Imbues weapons with Crescent Moonlight
+					when you get a crit (2 second duration, 12 second cooldown)
+					+3% damage, +7% more while weapon imbue is active
+					Can switch between forms at an altar
+					'''
+			}
+
+			MiakodaFull: {
+				DisplayName: Miakoda - Full Moon Form
+				Tooltip:
+					'''
+					Miakoda - an ancient being of light over 100 years old, 
+					who has vowed to help you find your wife and defeat Attraidies.
+					Miakoda is an indigenous name that means "Power of the Moon".
+					Full Moon Form - Heals you when you get a crit
+					(12 second cooldown - heal scales with max hp)
+					+3% damage reduction
+					Can switch between forms at an altar
+					'''
+			}
+
+			MiakodaNew: {
+				DisplayName: Miakoda - New Moon Form
+				Tooltip:
+					'''
+					Miakoda - an ancient being of light over 100 years old, 
+					who has vowed to help you find your wife and defeat Attraidies.
+					Miakoda is an indigenous name that means "Power of the Moon".
+					New Moon Form - Imbues weapons with Midas when you get a crit,
+					boosting enemy coin drops (2 second duration, 12 second cooldown)
+					+5% movespeed, +90% more while boost is active
+					Knockback immunity and half damage taken while boost is active
+					Can switch between forms at an altar
+					'''
+			}
+
+			RTQ2: {
+				DisplayName: RTQ2
+				Tooltip:
+					'''
+					Vanity pet
+					It's cute, but not fluffy.
+					'''
+			}
+
+			EmptyTrophy.DisplayName: Empty Trophy
+
+			PotionBag: {
+				DisplayName: Potion Bag
+				Tooltip:
+					'''
+					Can store up to 28 potions
+					Supports Quick Buff/Heal/Mana hotkeys as well as permanent potions!
+					"[c/C92CD1:Favorite]" valuable potions in the pouch with Alt+Click
+					[c/C92CD1:Favorited potions] are not consumed by Quick Buff
+					Potions are stored per character instead of per-bag, similar to a piggy bank
+					'''
+			}
+
+			ArmorDrugPotion: {
+				DisplayName: Armor Drug
+				Tooltip:
+					'''
+					Increases defense by 25 and damage reduction by 15
+					Does not stack with Demon Drug, Strength, or Battlefront Potions.
+					'''
+			}
+
+			BattlefrontPotion: {
+				DisplayName: Battlefront Potion
+				Tooltip:
+					'''
+					Increases damage by 15% and critical strike chance by 15%
+					Grants enhanced Thorns and the Battle potion effect
+					Does not stack with Demon Drug, Armor Drug, or Strength Potions.
+					'''
+			}
+
+			BoostPotion: {
+				DisplayName: Boost Potion
+				Tooltip: Multiplies your movement speed by 20%
+			}
+
+			ChickenGlowingMushroomSkewer: {
+				DisplayName: Chicken Glowing Mushroom Skewer
+				Tooltip:
+					'''
+					Heals 150 HP and applies 30 seconds of Potion Sickness
+					Potion sickness is only 20 seconds with the Philosopher's Stone effect
+					Gives Well Fed buff for 15 minutesWhile the [c/6d8827:Bearer of the Curse] wont be healed by this,
+					they still gain some healing items' other effects such as buffs
+					'''
+			}
+
+			ChickenMushroomSkewer: {
+				DisplayName: Chicken Mushroom Skewer
+				Tooltip:
+					'''
+					Heals 125 HP and applies 30 seconds of Potion Sickness
+					Potion sickness is only 25 seconds with the Philosopher's Stone effect
+					Gives Well Fed buff for 10 minutes
+					'''
+			}
+
+			CookedChicken: {
+				DisplayName: Cooked Chicken
+				Tooltip:
+					'''
+					Heals 100 HP and applies 30 seconds of Potion Sickness
+					Potion sickness is only 20 seconds with the Philosopher's Stone effect
+					'''
+			}
+
+			CrimsonPotion: {
+				DisplayName: Crimson Potion
+				Tooltip:
+					'''
+					Enemies within a ten tile radius are inflicted with 
+					Crimson Burn, which quickly drains life
+					'''
+			}
+
+			DemonDrugPotion: {
+				DisplayName: Demon Drug
+				Tooltip:
+					'''
+					Multiplies damage by 22%, lowers defense by 15
+					Does not stack with Armor Drug, Strength, or Battlefront Potions.
+					'''
+			}
+
+			GlowingMushroomSkewer: {
+				DisplayName: Glowing Mushroom Skewer
+				Tooltip:
+					'''
+					Heals 65 HP and applies 30 seconds of Potion Sickness
+					Potion sickness is only 15 seconds with the Philosopher's Stone effect
+					Gives Well Fed buff for 5 minutes
+					While the [c/6d8827:Bearer of the Curse] wont be healed by this,
+					they still gain some healing items' other effects such as buffs
+					'''
+			}
+
+			GreaterRestorationPotion: {
+				DisplayName: Greater Restoration Potion
+				Tooltip: Applies 40 seconds of Potion Sickness
+			}
+
+			GreenBlossom: {
+				DisplayName: Green Blossom
+				Tooltip: Increases stamina recovery rate by 30%
+			}
+
+			HealingElixir: {
+				DisplayName: Healing Elixir
+				Tooltip:
+					'''
+					Heals the player of a multitude of debuffs
+					Grants the rapid healing buff
+					'''
+			}
+
+			HolyWarElixir: {
+				DisplayName: Holy War Elixir
+				Tooltip:
+					'''
+					Will make you invincible.
+					Cannot be used again for 60 seconds after wearing off.
+					Your supply of these is finite, so they are never used by Quick Buff
+					'''
+			}
+
+			Lifegem: {
+				DisplayName: Lifegem
+				Tooltip:
+					'''
+
+					Small stone made up of crystallized souls
+					Gradually restores a small amount of HP
+					Often found near abandoned corpses,
+					as if it were what remains of the soul
+					Restores 120 HP over the course of 12 seconds
+					Inflicts potion sickness
+					'''
+			}
+
+			MushroomSkewer: {
+				DisplayName: Mushroom Skewer
+				Tooltip:
+					'''
+					Heals 55 HP and applies 30 seconds of Potion Sickness
+					Potion sickness is only 15 seconds with the Philosopher's Stone effect
+					Gives Well Fed buff for 2 minutes
+					While the [c/6d8827:Bearer of the Curse] wont be healed by this,
+					they still gain some healing items' other effects such as buffs
+					'''
+			}
+
+			Infinitea.DisplayName: Infinitea
+			PermanentAle.DisplayName: Permanent Ale
+			PermanentAmmoReservationPotion.DisplayName: Permanent Ammo Reservation Potion
+			PermanentArcheryPotion.DisplayName: Permanent Archery Potion
+			PermanentArmorDrug.DisplayName: Permanent Armor Drug
+			PermanentBattlefrontPotion.DisplayName: Permanent Battlefront Potion
+			PermanentBattlePotion.DisplayName: Permanent Battle Potion
+			PermanentBoostPotion.DisplayName: Permanent Boost Potion
+			PermanentBuilderPotion.DisplayName: Permanent Builder Potion
+			PermanentCalmingPotion.DisplayName: Permanent Calming Potion
+			PermanentCratePotion.DisplayName: Permanent Crate Potion
+			PermanentCrimsonPotion.DisplayName: Permanent Crimson Potion
+			PermanentDangersensePotion.DisplayName: Permanent Dangersense Potion
+			PermanentDemonDrug.DisplayName: Permanent Demon Drug
+			PermanentEndurancePotion.DisplayName: Permanent Endurance Potion
+			PermanentFeatherfallPotion.DisplayName: Permanent Featherfall Potion
+			PermanentFishingPotion.DisplayName: Permanent Fishing Potion
+			PermanentFlaskOfCursedFlames.DisplayName: Permanent Flask Of Cursed Flames
+			PermanentFlaskOfFire.DisplayName: Permanent Flask Of Fire
+			PermanentFlaskOfGold.DisplayName: Permanent Flask Of Gold
+			PermanentFlaskOfIchor.DisplayName: Permanent Flask Of Ichor
+			PermanentFlaskOfNanites.DisplayName: Permanent Flask Of Nanites
+			PermanentFlaskOfParty.DisplayName: Permanent Flask Of Party
+			PermanentFlaskOfPoison.DisplayName: Permanent Flask Of Poison
+			PermanentFlaskOfVenom.DisplayName: Permanent Flask Of Venom
+			PermanentFlipperPotion.DisplayName: Permanent Flipper Potion
+			PermanentGillsPotion.DisplayName: Permanent Gills Potion
+			PermanentGoldenDelight.DisplayName: Permanent Golden Delight
+			PermanentGravitationPotion.DisplayName: Permanent Gravitation Potion
+			PermanentHeartreachPotion.DisplayName: Permanent Heartreach Potion
+			PermanentHunterPotion.DisplayName: Permanent Hunter Potion
+			PermanentInfernoPotion.DisplayName: Permanent Inferno Potion
+			PermanentInvisibilityPotion.DisplayName: Permanent Invisibility Potion
+			PermanentIronskinPotion.DisplayName: Permanent Ironskin Potion
+			PermanentLifeforcePotion.DisplayName: Permanent Lifeforce Potion
+			PermanentMagicPowerPotion.DisplayName: Permanent Magic Power Potion
+			PermanentManaRegenerationPotion.DisplayName: Permanent Mana Regeneration Potion
+			PermanentMiningPotion.DisplayName: Permanent Mining Potion
+			PermanentNightOwlPotion.DisplayName: Permanent Night Owl Potion
+			PermanentObsidianSkinPotion.DisplayName: Permanent Obsidian Skin Potion
+			PermanentRagePotion.DisplayName: Permanent Rage Potion
+			PermanentRegenerationPotion.DisplayName: Permanent Regeneration Potion
+			PermanentShinePotion.DisplayName: Permanent Shine Potion
+			PermanentShockwavePotion.DisplayName: Permanent Shockwave Potion
+			PermanentSonarPotion.DisplayName: Permanent Sonar Potion
+			PermanentSoulSiphonPotion.DisplayName: Permanent Soul Siphon Potion
+			PermanentSoup.DisplayName: Permanent Soup
+			PermanentSpelunkerPotion.DisplayName: Permanent Spelunker Potion
+			PermanentStrengthPotion.DisplayName: Permanent Strength Potion
+			PermanentSummoningPotion.DisplayName: Permanent Summoning Potion
+			PermanentSwiftnessPotion.DisplayName: Permanent Swiftness Potion
+			PermanentThornsPotion.DisplayName: Permanent Thorns Potion
+			PermanentTitanPotion.DisplayName: Permanent Titan Potion
+			PermanentWarmthPotion.DisplayName: Permanent Warmth Potion
+			PermanentWaterWalkingPotion.DisplayName: Permanent Water Walking Potion
+			PermanentWrathPotion.DisplayName: Permanent Wrath Potion
+
+			RadiantLifegem: {
+				DisplayName: Radiant Lifegem
+				Tooltip:
+					'''
+
+					Stone made up of crystallized souls
+					Gradually restores HP
+					The dull glimmer of these mysterious
+					stones brightens with the passage of time
+					Restores 200 HP over the course of 13 seconds
+					Inflicts potions sickness
+					'''
+			}
+
+			ShockwavePotion: {
+				DisplayName: Shockwave Potion
+				Tooltip:
+					'''
+					Hold DOWN to increase fall speed 
+					Create a damaging shockwave when you land 
+					which grows in strength based on distance fallen
+					'''
+			}
+
+			SoulSiphonPotion: {
+				DisplayName: Soul Siphon Potion
+				Tooltip:
+					'''
+					Enemies drop 20% more Dark souls
+					Consumable souls' drop chance is increased by 50%
+					Soul pickup range greatly increased
+					'''
+			}
+
+			StrengthPotion: {
+				DisplayName: Strength Potion
+				Tooltip:
+					'''
+					Increases damage by 10%,
+					defense by 15, and all attack speed by 15%(doubled for melee)
+					Does not stack with Demon Drug, Armor Drug, or Battlefront Potions.
+					'''
+			}
+
+			SupremeManaPotion: {
+				DisplayName: Supreme Mana Potion
+				Tooltip:
+					'''
+					Restores 400 mana
+					Applies 3 seconds of mana sickness
+					Only usable through quick mana
+					'''
+			}
+
+			PowerWithin: {
+				DisplayName: Power Within
+				Tooltip:
+					'''
+					Harness the power of flame to actualize the inner-self
+					Increases damage by 20% and stamina regeneration by 30%
+					Excessive power eats away the life-force of its caster
+					Lasts 30 seconds, can't be cancelled
+					Effect potency doubled for the [c/6d8827:Bearer of the Curse]
+					'''
+			}
+
+			ProudKnightSoul: {
+				DisplayName: Soul of a Proud Knight
+				Tooltip: Consume to gain 2000 souls
+			}
+
+			PurgingStone: {
+				DisplayName: Purging Stone
+				Tooltip:
+					'''
+					Ash-colored stone encasing a skull
+					Secret treasure of Arstor, the Earl of Carim
+					Absorbs curse build-up and breaks curse, restoring your max HP to 500
+					Can not be used while potion sickness is active, and inflicts it
+					Humans are helpless against curses, and can only redirect their influence
+					The Purging Stone does not dispel curses, but receives them as a surrogate
+					The stone itself was once a person or some other being
+					Won't increase max HP over the maximum achieved 
+					via Life Crystals or Life Fruit
+					'''
+			}
+
+			RedTitanite: {
+				DisplayName: Red Titanite
+				Tooltip: A rare and valuable ore
+			}
+
+			SoulCoin: {
+				DisplayName: Soul Coin
+				Tooltip:
+					'''
+					A mysterious coin formed out of dark souls
+					Used as a currency among certain merchants
+					'''
+			}
+
+			SoulOfArtorias: {
+				DisplayName: Soul of Artorias
+				Tooltip: The essence of Artorias of the Abyss.
+			}
+
+			SoulOfAttraidies: {
+				DisplayName: Soul of Attraidies
+				Tooltip:
+					'''
+					The essence of Attraidies' power burns within this soul.
+					You question whether you should even hold such a thing in your possession.
+					'''
+			}
+
+			SoulOfBlight: {
+				DisplayName: Soul of Blight
+				Tooltip: The essence of destruction.
+			}
+
+			SoulOfChaos: {
+				DisplayName: Soul of Chaos
+				Tooltip: The essence of chaos.
+			}
+
+			SoulOfLife: {
+				DisplayName: Soul of Life
+				Tooltip: The essence of growth, deeply connected to the Earth.
+			}
+
+			StaminaDroplet.DisplayName: Stamina Droplet
+
+			StaminaVessel: {
+				DisplayName: Stamina Vessel
+				Tooltip:
+					'''
+					Permanently increases max stamina by 5%
+					Stamina maxes out after consuming 10
+					'''
+			}
+
+			SublimeBoneDust: {
+				DisplayName: Sublime Bone Dust
+				Tooltip:
+					'''
+					Charred, ashen bones
+					Cast into the flames of a Bonfire to increase Estus
+					Flask potency, increasing the amount of HP healed
+					'''
+			}
+
+			TheEnd: {
+				DisplayName: The End
+				Tooltip: This item is from the future, and its text is obscured. You will have to progress further in your adventure to reveal it...
+			}
+
+			VillageMirror: {
+				DisplayName: Village Mirror
+				Tooltip:
+					'''
+					Equip this in an accessory slot anywhere to create a new warp point.
+					Activate by left-clicking the mirror in your toolbar.
+					Warp point saves on quit.
+					Reduces defense to 0 and slows movement while equipped and setting your warp point.
+					Channel time is five seconds and you cannot move during the channel.
+					'''
+			}
+
+			DebugTome: {
+				DisplayName: Debug Tome
+				Tooltip:
+					'''
+					You should not have this
+					Dev item used for testing purposes only
+					Using this may have irreversible effects on your world
+					'''
+			}
+
+			Ancient: {
+				DisplayName: Ancient
+				Tooltip: Creates a Sandstorm using a long forgotten spell.
+			}
+
+			ArcaneLightrifle: {
+				DisplayName: Arcane Lightrifle
+				Tooltip:
+					'''
+					Charges a focused beam of piercing light
+					Reflects up to two times, massively amplifying its damage with each
+					'''
+			}
+
+			BloomShards: {
+				DisplayName: Bloom Shards
+				Tooltip:
+					'''
+					Evokes blooming shards of radiant light
+					Close range
+					'''
+			}
+
+			Bolt1Tome: {
+				DisplayName: Bolt 1 Tome
+				Tooltip:
+					'''
+					A lost beginner's tome
+					Drops a small lightning strike upon collision
+					Has a chance to electrify enemies
+					Can be upgraded
+					'''
+			}
+
+			Bolt2Tome: {
+				DisplayName: Bolt 2 Tome
+				Tooltip:
+					'''
+					A lost tome for artisans.
+					Drops a lightning strike upon collision
+					Electrifies enemies
+					Can be upgraded with 25,000 Dark Souls and 15 Soul of Light.
+					'''
+			}
+
+			Bolt3Tome: {
+				DisplayName: Bolt 3 Tome
+				Tooltip:
+					'''
+					A lost tome fabled to deal great damage.
+
+					Electrifies and paralyzes enemiesOnly mages will be able to realize this tome's full potential. 
+					Can be upgraded with 85,000 Dark Souls
+					'''
+			}
+
+			Bolt4Tome: {
+				DisplayName: Bolt 4 Tome
+				Tooltip:
+					'''
+					A lost legendary tome. You command the forces of the sky.
+
+					Electrifies and paralyzes enemies
+					Only the most powerful mages will be able to cast this spell.
+					'''
+			}
+
+			CelestialShards: {
+				DisplayName: Celestial Shards
+				Tooltip: Summons an array of shards which unleash divine wrath upon your foes
+			}
+
+			ChaosTome: {
+				DisplayName: Chaos Tome
+				Tooltip: Casts a purple flame that can pass through solid objects.
+			}
+
+			CrystalMagicWeapon: {
+				DisplayName: Crystal Magic Weapon
+				Tooltip:
+					'''
+					Imbues melee weapons with crystalline magic,
+					allowing for incredible magic damage scaling
+					Adds 100% of bonus magic damage
+					Lasts 1 minute, 2 minute cooldown
+					Not compatible with other weapon imbues
+					'''
+			}
+
+			CursedFlamelash: {
+				DisplayName: Cursed Tormentor
+				Tooltip:
+					'''
+					Summons a lash of cursed flame to blight your foes
+					Deals more damage the faster it is moving when it strikes an enemy
+					'''
+			}
+
+			DeathStrikeScroll: {
+				DisplayName: Death Strike Scroll
+				Tooltip: The scroll reads "Exori mort."
+			}
+
+			DevilsScythe: {
+				DisplayName: Devil's Scythe
+				Tooltip: Casts a hellfire scythe.
+			}
+
+			DivineBoomCannon: {
+				DisplayName: Divine Boom Cannon
+				Tooltip: Obliterates everything upon contact.
+			}
+
+			DivineSpark: {
+				DisplayName: Divine Spark
+				Tooltip: This mysterious device shoots a huge, uncontrollable wave beam
+			}
+
+			EnchantedThrowingSpear: {
+				DisplayName: Enchanted Throwing Spear
+				Tooltip: Magic throwing spear that passes through walls and is created with mana on each throw
+			}
+
+			EnergyBombRune: {
+				DisplayName: Energy Bomb Rune
+				Tooltip: Summons 9 electric energy orbs in a square at the point of impact.
+			}
+
+			EnergyFieldRune: {
+				DisplayName: Energy Field Rune
+				Tooltip:
+					'''
+					Creates an electric energy orb at the point of impact.
+					Lasts for a few seconds.
+					'''
+			}
+
+			EnergyStrikeScroll: {
+				DisplayName: Energy Strike Scroll
+				Tooltip: The scroll reads "Exori vis."
+			}
+
+			ExplosionRune: {
+				DisplayName: Explosion Rune
+				Tooltip: Projectile that explodes with 5 small fireballs at the point of impact.
+			}
+
+			FarronDart: {
+				DisplayName: Farron Dart
+				Tooltip: Rapidly shoots controllable farron darts
+			}
+
+			FireBombRune: {
+				DisplayName: Fire Bomb Rune
+				Tooltip: Projectile that explodes with a wall of 9 fireballs at the point of impact
+			}
+
+			FireFieldRune: {
+				DisplayName: Fire Field Rune
+				Tooltip: Projectile that explodes with a sustained burning flame at the point of impact
+			}
+
+			FireSpiritTome: {
+				DisplayName: Fire Spirit Tome
+				Tooltip: Summons fire spirits at incredible speed
+			}
+
+			FireSpiritTome2: {
+				DisplayName: Detonation Tome
+				Tooltip: Summons a hail of explosive fireballs
+			}
+
+			FireSpiritTome3: {
+				DisplayName: Incineration Tome
+				Tooltip:
+					'''
+					Summons a barrage of solar flares that combust into lingering explosions
+					Shatters enemy defense
+					'''
+			}
+
+			FireSpiritTome4: {
+				DisplayName: Tome of the Dying Star
+				Tooltip:
+					'''
+					Leave nothing but ash in your wake.
+					Left click to charge a detonating core
+					Right click to fire a rapid barrage of solar flares
+					'''
+			}
+
+			FlamesOfTheNight: {
+				DisplayName: Flames Of The Night
+				Tooltip: A full sprectral array of green flame will light up the skies
+			}
+
+			FlameStrikeScroll: {
+				DisplayName: Flame Strike Scroll
+				Tooltip: The scroll reads "Exori flam."
+			}
+
+			FlareTome: {
+				DisplayName: Flare Tome
+				Tooltip: A lost legendary tome.
+			}
+
+			ForgottenIceBow: {
+				DisplayName: Forgotten Ice Bow
+				Tooltip:
+					'''
+					Casts magic shards of ice from your bow.
+					Attuned with the greatest powers when wielded by mages.
+					Each shot can be channeled with the powers of your mind once in the air.
+					Channeling is useful for directing the shot directly above your enemies for maximum damage
+					'''
+			}
+
+			ForgottenThunderBow: {
+				DisplayName: Forgotten Thunder Bow
+				Tooltip: "Casts a bolt of lightning from your bow, doing massive damage over time. "
+			}
+
+			FreezeBolt: {
+				DisplayName: Freeze Bolt
+				Tooltip: Casts a fast-moving bolt of ice
+			}
+
+			FreezeBolt2: {
+				DisplayName: Freeze Bolt II
+				Tooltip: Casts a fast-moving bolt of ice
+			}
+
+			FreezeBolt3: {
+				DisplayName: Freeze Bolt III
+				Tooltip: Casts a super fast-moving bolt of ice
+			}
+
+			GreatEnergyBeamScroll: {
+				DisplayName: Great Energy Beam Scroll
+				Tooltip: The scroll reads "Exevo gran vix lux."
+			}
+
+			GreatMagicBarrierScroll: {
+				DisplayName: Great Magic Barrier
+				Tooltip:
+					'''
+					A lost legendary scroll
+					[c/ffbf00:Casts Great Magic Barrier on the player, raising defense by 60 for 30 seconds]
+					2 minute cooldown. Does not stack with other barrier or shield spells
+					'''
+			}
+
+			GreatMagicShieldScroll: {
+				DisplayName: Great Magic Shield
+				Tooltip:
+					'''
+					An incantation that casts a Great Magic Shield around the player
+					Raises defense by 25 for 25 seconds
+					Does not stack with other barrier or shield spells
+					Reduces damage dealt by 20% and movement speed by 15%
+					Cannot be used again for 10 minutes after wearing off
+					'''
+			}
+
+			GreatMagicWeapon: {
+				DisplayName: Great Magic Weapon
+				Tooltip:
+					'''
+					Imbues melee weapons with powerful magic,
+					allowing for greater magic damage scaling
+					Adds 75% of bonus magic damage
+					Lasts 1 minute, 2 minute cooldown
+					Not compatible with other weapon imbues
+					'''
+			}
+
+			GreatSoulArrowStaff: {
+				DisplayName: Great Soul Arrow
+				Tooltip:
+					'''
+					Shoots a lightly homing great soul arrow
+					which can leave enemies Soulstruck
+					Soulstruck enemies drop 10% more souls
+					'''
+			}
+
+			Ice1Tome: {
+				DisplayName: Ice 1 Tome
+				Tooltip:
+					'''
+					A lost beginner's tome
+					Multiple shots can be controlled and stacked
+					allowing for high burst damage
+					Drops a small icicle upon collision
+					Slows enemies
+					Can be upgraded
+					'''
+			}
+
+			Ice2Tome: {
+				DisplayName: Ice 2 Tome
+				Tooltip:
+					'''
+					A lost tome for artisans, with a high rate of casting.
+					Slows and occasionally freezes enemies
+					Can be upgraded
+					'''
+			}
+
+			Ice3Tome: {
+				DisplayName: Ice 3 Tome
+				Tooltip:
+					'''
+					A lost tome fabled to deal great damage.
+
+					Slows and occasionally freezes enemies
+					Only mages will be able to realize this tome's full potential. 
+					Can be upgraded
+					'''
+			}
+
+			Ice4Tome: {
+				DisplayName: Ice 4 Tome
+				Tooltip:
+					'''
+					A lost legendary tome. Shatter your enemies with a freezing hailstorm.
+					Constant hits are capable of completely imprisoning weaker foes.
+					'''
+			}
+
+			LampTome: {
+				DisplayName: Lamp Tome
+				Tooltip: A lost tome known to cure blindness.
+			}
+
+			MagicBarrierScroll: {
+				DisplayName: Magic Barrier
+				Tooltip:
+					'''
+					A lost scroll for artisans
+					[c/ffbf00:Casts Magic Barrier on the user, which adds 20 defense for 20 seconds]
+
+					Does not stack with other barrier or shield spells
+					'''
+			}
+
+			MagicShieldScroll: {
+				DisplayName: Magic Shield
+				Tooltip:
+					'''
+					A lost beginner's scroll
+					[c/ffbf00:Casts Magic Shield on the player, raising defense by 10 for 15 seconds]
+					Does not stack with other shield or barrier spells
+					'''
+			}
+
+			MagicWeapon: {
+				DisplayName: Magic Weapon
+				Tooltip:
+					'''
+					Imbues melee weapons with magic,
+					allowing for weak magic damage scaling
+					Adds 50% of bonus magic damage
+					Lasts 1 minute, 2 minute cooldown
+					Not compatible with other weapon imbues
+					'''
+			}
+
+			ManaBomb: {
+				DisplayName: Mana Bomb
+				Tooltip: Creates a magic vortex at your location that deals high damage over time
+			}
+
+			Masamune: {
+				DisplayName: Masamune
+				Tooltip:
+					'''
+					The blade almost cannot be seen it cuts so fast, ripping enemies to shreds in seconds.
+					Has the power to shoot a magical water flame from its blade yet it uses no mana.
+					'''
+			}
+
+			MeteorShower: {
+				DisplayName: Meteor Shower
+				Tooltip: Causes meteorites to rain from the sky.
+			}
+
+			MeteorTome: {
+				DisplayName: Meteor Tome
+				Tooltip: A legendary spell tome that calls down a meteor storm
+			}
+
+			Muramassa: {
+				DisplayName: Muramassa
+				Tooltip:
+					'''
+					A sword crafted for magic users
+					Deals +1 damage for every 20 mana the user has over 200
+					Can be upgraded
+					'''
+			}
+
+			Murassame: {
+				DisplayName: Murassame
+				Tooltip:
+					'''
+					A sword crafted for magic users
+					Deals +1 damage for every 10 mana the user has over 200
+					'''
+			}
+
+			PoisonBombRune: {
+				DisplayName: Poison Bomb Rune
+				Tooltip:
+					'''
+					Creates 9 poison bombs on impact
+					Superior area denial, drains enemy life with the deadliest poison
+					Not necessarily a direct upgrade
+					'''
+			}
+
+			PoisonFieldRune: {
+				DisplayName: Poison Field Rune
+				Tooltip:
+					'''
+					Creates a poisonous cloud at the point of impact.
+					High duration and can damage many targets.
+					'''
+			}
+
+			RadiantGlimmer: {
+				DisplayName: Radiant Glimmer
+				Tooltip: Channel a storm of razor-sharp glowing shards which shred enemy defense
+			}
+
+			RemedyScroll: {
+				DisplayName: Remedy
+				Tooltip: A lost tome known to cure all but the rarest of ailments.
+			}
+
+			OrbofDeception: {
+				DisplayName: Orb of Deception
+				Tooltip:
+					'''
+					Throws a magic orb which will return to you after a certain distance
+					You cannot throw more than one orb at a time
+					You can recast with mana to force it to return early
+					The orb deals more damage on the way back
+					Each hit gathers a stack of Essence Thief, crits gather 2
+					Upon reaching 9 stacks, the next cast will have 10% lifesteal
+					'''
+			}
+
+			OrbofFlame: {
+				DisplayName: Orb of Flame
+				Tooltip:
+					'''
+					Throws a flaming orb which will return to you after a certain distance
+					You cannot throw more than one orb at a time
+					You can recast with mana to force it to return early
+					The orb deals more damage on the way back
+					Each hit gathers a stack of Essence Thief, crits gather 2
+					Upon reaching 9 stacks, the next cast will have 10% lifesteal
+					and spawn a homing flame on-hit(2 on-crit)
+					'''
+			}
+
+			OrbofSpirituality: {
+				DisplayName: Orb of Spirituality
+				Tooltip:
+					'''
+					Throws a magic orb which will return to you after a certain distance
+					You cannot throw more than one orb at a time
+					You can recast with mana to force it to return early
+					The orb deals more damage on the way back
+					Each hit gathers a stack of Essence Thief, crits gather 2
+					Upon reaching 9 stacks, the next cast will have 10% lifesteal
+					and spawn a homing flame on-hit(2 on-crit)
+					Right click to dash in mouse direction and spawn homing flames while dashing
+					This has a 60 second cooldown and consumes double the mana
+					'''
+			}
+
+			ShatteredPrism: {
+				DisplayName: Shattered Prism
+				Tooltip:
+					'''
+					Holding this item surrounds you in a prism that gathers power from grazing enemy attacks
+					Firing it unleahes this energy in a furious blast
+					'''
+			}
+
+			SoulArrowStaff: {
+				DisplayName: Soul Arrow
+				Tooltip:
+					'''
+					Shoots a lightly homing soul arrow
+					Can be upgraded
+					'''
+			}
+
+			Starfall: {
+				DisplayName: Starfall
+				Tooltip:
+					'''
+					Summon a rain of homing stars
+					'Your very own meteor shower'
+					'''
+			}
+
+			Starstorm: {
+				DisplayName: Starstorm
+				Tooltip: Causes stars to storm from the sky
+			}
+
+			TheBlackenedFlames: {
+				DisplayName: The Blackened Flames
+				Tooltip: Has a chance to burn enemies' health away
+			}
+
+			TomeOfHealth: {
+				DisplayName: Tome of Health
+				Tooltip:
+					'''
+					Spell tome that heals 220 HP
+					Shares cooldown with potions
+					Cannot be used with "Quick Heal"
+					'''
+			}
+
+			UltimaTome: {
+				DisplayName: Ultima Tome
+				Tooltip: Ultimate tome guarded by the Omega Weapon.
+			}
+
+			WandOfDarkness: {
+				DisplayName: Wand of Darkness
+				Tooltip: Shoots a piercing bolt of darkness
+			}
+
+			WandOfDarkness2: {
+				DisplayName: Wand of Darkness II
+				Tooltip: Greater damage and higher knockback
+			}
+
+			WandOfFire.DisplayName: Wand of Fire
+			WandOfFire2.DisplayName: Wand of Fire II
+
+			WandOfFrost: {
+				DisplayName: Wand of Frost
+				Tooltip:
+					'''
+					A powerful wand made for fighting magic users that can shoot through walls.
+					Can be upgraded with 25,000 Dark Souls, 60 Crystal Shards, and 5 Souls of Light
+					'''
+			}
+
+			WandOfFrost2: {
+				DisplayName: Wand of Frost II
+				Tooltip:
+					'''
+					Reforged to reveal the full power of this ancient ice spell
+					Can pass through walls
+					'''
+			}
+
+			WaterSpiritTome: {
+				DisplayName: Water Spirit Tome
+				Tooltip:
+					'''
+					Summons frost spirits that can pass through walls.
+					Damage grows as the spirits grow larger
+					'''
+			}
+
+			WhiteLotus: {
+				DisplayName: White Lotus
+				Tooltip:
+					'''
+					Shoots flowers. Each petal hits separately 
+					'You can hear the cries of angels when you close your eyes'
+					'''
+			}
+
+			WoodenFlute.DisplayName: Wooden Flute
+
+			WoodenWand: {
+				DisplayName: Wooden Wand
+				Tooltip:
+					'''
+					An unenchanted wooden wand 
+					Can be upgraded many different ways
+					'''
+			}
+
+			AncientFireAxe: {
+				DisplayName: Ancient Fire Axe
+				Tooltip:
+					'''
+					The blade hits with a powerful magic flame.
+					Knocks back foes with a force that also sets them ablaze, doing damage over time.
+					'''
+			}
+
+			DunlendingAxe: {
+				DisplayName: Dunlending Axe
+				Tooltip:
+					'''
+					A cruel hill-man's axe fashioned to kill men
+					Deals massive damage to humans
+					'''
+			}
+
+			ForgottenPoisonAxe: {
+				DisplayName: Forgotten Poison Axe
+				Tooltip: The blade has been dipped in poison.
+			}
+
+			ForgottenRuneAxe: {
+				DisplayName: Forgotten Rune Axe
+				Tooltip: 4 times as effective against magic users.
+			}
+
+			GigantAxe: {
+				DisplayName: Gigant Axe
+				Tooltip: An axe used to kill humans.
+			}
+
+			AncientFireSword: {
+				DisplayName: Ancient Fire Sword
+				Tooltip:
+					'''
+					The blade is a magic flame, slicing quickly. 
+					Will set enemies ablaze and do damage over time.
+					'''
+			}
+
+			AtmaWeapon: {
+				DisplayName: Atma Weapon
+				Tooltip:
+					'''
+					A sword that draws power from the wielder.
+					Deals maximum damage at full health
+					'''
+			}
+
+			CalciumBlade: {
+				DisplayName: Calcium Blade
+				Tooltip:
+					'''
+					'A blade of sharpened bone'
+					Shoots out a bone upon hitting enemies with the blade
+					'''
+			}
+
+			CoralSword: {
+				DisplayName: Coral Sword
+				Tooltip: Edged to slay those of the sea. Deals 4x damage to water enemies.
+			}
+
+			CorruptedTooth: {
+				DisplayName: Corrupted Tooth
+				Tooltip:
+					'''
+					[c/ffbf00:A green ooze dribbles from the tooth, which deals]
+					[c/ffbf00:triple damage to enemies of a similar nature, potentially more.]
+					Has a chance to heal the player on hit.
+					Heal chance is doubled on non-corrupted enemies.
+					'''
+			}
+
+			CrescentMoonSword: {
+				DisplayName: Crescent Moon Sword
+				Tooltip:
+					'''
+					Ringfinger Leonhard's weapon of choice,
+					a type of shotel imbued with the power of the moon
+					[c/ffbf00:Shoots beams of crescent moonlight that pierce walls at night]
+					'''
+			}
+
+			Drakarthus: {
+				DisplayName: Drakarthus
+				Tooltip:
+					'''
+					Right click to throw a dagger that
+					sticks to enemies and tiles it hits
+					Right click again to teleport towards the
+					dagger, destroying it and firing homing blades
+					Throwing a dagger costs 100 mana
+					'''
+			}
+
+			ForgottenGaiaSword: {
+				DisplayName: Forgotten Gaia Sword
+				Tooltip:
+					'''
+					A blade made to slay the Witchking.
+					[c/ffbf00:Does 3x damage to the Witchking and dispels the defensive shield of the Witchking and Artorias]
+					'''
+			}
+
+			ForgottenIceBrand: {
+				DisplayName: Forgotten Ice Brand
+				Tooltip:
+					'''
+					A sword imbued with ice.
+					Will randomly cast ice 2.
+					'''
+			}
+
+			ForgottenSwordbreaker: {
+				DisplayName: Forgotten Swordbreaker
+				Tooltip: "[c/ffbf00:Striking an enemy may temporarily make you deflect attacks.]"
+			}
+
+			Galaxia: {
+				DisplayName: Galaxia
+				Tooltip: Forged from the stars of a distant galaxy
+			}
+
+			IntrepidSword: {
+				DisplayName: Intrepid Sword
+				Tooltip:
+					'''
+					Only those who walk lightly can master this sword's true power
+					[c/ffbf00:Damage is reduced from its full power with higher defense.]
+					'''
+			}
+
+			Jawblade: {
+				DisplayName: Jawblade
+				Tooltip:
+					'''
+					'A blade of bone and fangs'
+					Shoots out a homing skull upon hitting enemies with the blade
+					'''
+			}
+
+			LionheartGunblade: {
+				DisplayName: Lionheart Gunblade
+				Tooltip: '''"Of gunblades, the finest model is the Lionheart."'''
+			}
+
+			MagmaTooth: {
+				DisplayName: Magma Tooth
+				Tooltip: Chance to light enemies on hellish fire.
+			}
+
+			MoonlightGreatsword: {
+				DisplayName: Moonlight Greatsword
+				Tooltip:
+					'''
+					[c/ffbf00:The Moonlight Greatsword, the sword of legend...]
+					Glows and gains piercing projectiles at night
+					Scales with your magic or melee stats, whichever is higher
+					Launches glimmering waves of moonlight
+					'''
+			}
+
+			Ragnarok.DisplayName: Ragnarok
+
+			RTQ2Sword: {
+				DisplayName: RTQ2 Sword
+				Tooltip:
+					'''
+					Causes stars to rain from the sky
+					Magnetic to stars.
+					'''
+			}
+
+			RuneBlade: {
+				DisplayName: Rune Blade
+				Tooltip:
+					'''
+					A sword used to kill magic users.
+					[c/ffbf00:Does up to 8x damage to mages]
+					Every third hit with the Blade generates a magic slash
+					'''
+			}
+
+			ShadowSickle: {
+				DisplayName: Shadow Sickle
+				Tooltip: A curiously simple but deadly weapon - its short reach seems to be its only weakness.
+			}
+
+			SunBlade: {
+				DisplayName: Sun Blade
+				Tooltip:
+					'''
+					Praise the sun!
+					Does quadruple damage against the heartless
+					'''
+			}
+
+			ThornDecapitator: {
+				DisplayName: Thorn Decapitator
+				Tooltip: Creates spore clouds on top of struck enemies
+			}
+
+			UltimaWeapon: {
+				DisplayName: Ultima Weapon
+				Tooltip:
+					'''
+					Ultimate sword drawing power from the wielder
+					Damage scales directly with health
+					'''
+			}
+
+			VampireBlade: {
+				DisplayName: Vampire Blade
+				Tooltip: Heals 2 hp on hit
+			}
+
+			WereBane: {
+				DisplayName: WereBane
+				Tooltip:
+					'''
+					A sword used to kill werewolves instantly.
+					Does 8x damage to werewolves.
+					'''
+			}
+
+			WitchkingsSword: {
+				DisplayName: Witchking's Sword
+				Tooltip: May inflict multiple debuffs
+			}
+
+			YianBlade: {
+				DisplayName: Yian Blade
+				Tooltip: Random chance to steal life from attacks
+			}
+
+			ForgottenBurningFist: {
+				DisplayName: Forgotten Burning Fist
+				Tooltip: Randomly casts a great fireball explosion.
+			}
+
+			ForgottenKaiserKnuckles: {
+				DisplayName: Forgotten Kaiser Knuckles
+				Tooltip: Great spiked knuckles.
+			}
+
+			ForgottenTigerFangs: {
+				DisplayName: Forgotten Tiger Fangs
+				Tooltip: Long and extremely sharp fighting claws.
+			}
+
+			EphemeralThrowingAxe: {
+				DisplayName: Ephemeral Throwing Axe
+				Tooltip: Passes through solid walls
+			}
+
+			EphemeralThrowingAxe2: {
+				DisplayName: Ephemeral Throwing Axe2
+				Tooltip:
+					'''
+					An enchanted melee weapon that can be thrown through walls.
+					It does double damage against mages and other magic users.
+					'''
+			}
+
+			BerserkerNightmare.DisplayName: Berserker Nightmare
+
+			HeavensTear: {
+				DisplayName: Heaven's Tear
+				Tooltip:
+					'''
+					Heaven splits with each swing
+					Deals double damage to mages and ghosts
+					'''
+			}
+
+			Moonfury.DisplayName: Moonfury
+
+			SunderingLight: {
+				DisplayName: Sundering Light
+				Tooltip:
+					'''
+					Rips apart the border of life and death
+					Deals double damage to mages and ghosts
+					'''
+			}
+
+			ForgottenRisingSun.DisplayName: Forgotten Rising Sun
+
+			AncientWarhammer: {
+				DisplayName: Ancient Warhammer
+				Tooltip: An old choice for advancing druids
+			}
+
+			DiamondMace: {
+				DisplayName: Diamond Mace
+				Tooltip: A mace made of a large diamond. Has a 1 in 15 chance to heal 20 life.
+			}
+
+			Mjolnir: {
+				DisplayName: Mjolnir
+				Tooltip:
+					'''
+					Shatter the earth
+					Breaks walls with amazing speed
+					Hold the cursor away from you to wield only as a weapon
+					Summons electrospheres upon hitting an enemy
+					'''
+			}
+
+			Limit.DisplayName: Limit
+
+			ForgottenIceRod: {
+				DisplayName: Forgotten Ice Rod
+				Tooltip: Randomly casts ice 2.
+			}
+
+			ForgottenStardustRod: {
+				DisplayName: Forgotten Stardust Rod
+				Tooltip: Randomly casts Meteor.
+			}
+
+			ForgottenThunderRod: {
+				DisplayName: Forgotten Thunder Rod
+				Tooltip: Randomly casts Bolt 2.
+			}
+
+			Nightbringer: {
+				DisplayName: Nightbringer
+				Tooltip:
+					'''
+					Doubled crit chance scaling
+					Thrusts on right click dealing double damage, cooldown scales down with attack speed
+					Gain a stack of Steel Tempest upon thrusting any enemy
+					Upon reaching 2 stacks, the next right click will release a chaotic tornado dealing double damage
+					Hover your mouse over an enemy and press Special Ability to dash through the enemy
+					Press Special Ability to create a stationary windwall which blocks most enemy projectiles for 4 seconds
+					'''
+			}
+
+			PlasmaWhirlwind: {
+				DisplayName: Plasma Whirlwind
+				Tooltip:
+					'''
+					Doubled crit chance scaling
+					Thrusts on right click dealing double damage, cooldown scales down with attack speed
+					Gain a stack of Steel Tempest upon thrusting any enemy
+					Upon reaching 2 stacks, the next right click will release a plasma whirlwind dealing double damage
+					Hover your mouse over an enemy and press Special Ability to dash through the enemy
+					'''
+			}
+
+			SteelTempest: {
+				DisplayName: Steel Tempest
+				Tooltip:
+					'''
+					Doubled crit chance scaling
+					Thrusts on right click dealing double damage, cooldown scales down with attack speed
+					Gain a stack of Steel Tempest upon thrusting any enemy
+					Upon reaching 2 stacks, the next right click will release a tornado dealing double damage
+					'''
+			}
+
+			ShatteredMoonlight: {
+				DisplayName: Shattered Moonlight
+				Tooltip:
+					'''
+					The broken blade of Leonhard
+					Luckily serves well as a boomerang
+					A soft glow like that of the moon seeps through the cracks
+					'''
+			}
+
+			BarbarousThornBlade: {
+				DisplayName: Barbarous Thorn Blade
+				Tooltip:
+					'''
+					A blade that lashes out with the fury of a mythical beast
+					Right-click to shoot briars
+					'''
+			}
+
+			BarrowBlade: {
+				DisplayName: Barrow Blade
+				Tooltip:
+					'''
+					An invisible blade wrought with spells of a fierce power.
+					[c/ffbf00:Dispels the defensive shields of Artorias and the Witchking]
+					The night reveals its connection to the Abyss...
+					Has a chance to spread Ichor to those it pierces
+					'''
+			}
+
+			ClaiomhSolais: {
+				DisplayName: Claiomh Solais
+				Tooltip: Seize the day
+			}
+
+			Laevateinn: {
+				DisplayName: Laevateinn
+				Tooltip:
+					'''
+					Strike true.
+					Wielded like a shortsword
+					'''
+			}
+
+			Wyrmkiller: {
+				DisplayName: Wyrmkiller
+				Tooltip:
+					'''
+					A sword used to kill wyverns and dragons.
+					Does 8x damage against flying beasts.
+					'''
+			}
+
+			YellowTail: {
+				DisplayName: Yellow Tail
+				Tooltip: Shatters strong defenses with high penetration(multi - hit damage)
+			}
+
+			AncientBloodLance: {
+				DisplayName: Ancient Blood Lance
+				Tooltip: Pierces multiple times on every hit.
+			}
+
+			AncientDragonLance: {
+				DisplayName: Ancient Dragon Lance
+				Tooltip:
+					'''
+					Said to pierce any armor, even through walls
+					Can hit multiple times
+					Inherits Trident water effect
+					'''
+			}
+
+			AncientHolyLance: {
+				DisplayName: Ancient Holy Lance
+				Tooltip: Bright Holy Spear.
+			}
+
+			CelestialLance: {
+				DisplayName: Celestial Lance
+				Tooltip:
+					'''
+					Celestial lance fabled to hold sway over the world.
+					Doubled damage while falling and has a chance to heal 6 HP on hit.
+					'''
+			}
+
+			CobaltHalberd: {
+				DisplayName: Cobalt Halberd
+				Tooltip:
+					'''
+					Left-click to stab like a spear, right-click to swing
+					Swing strike does 25% more damage
+					'''
+			}
+
+			DragoonLance: {
+				DisplayName: Dragoon Lance
+				Tooltip: A spear forged from the fang of the Dragoon Serpent.
+			}
+
+			ForgottenImpHalberd: {
+				DisplayName: Forgotten Imp Halberd
+				Tooltip: A crescent shaped spear used by imps.
+			}
+
+			ForgottenPearlSpear.DisplayName: Forgotten Pearl Spear
+
+			ForgottenPolearm: {
+				DisplayName: Forgotten Polearm
+				Tooltip: Shimmering ephemeral energy.
+			}
+
+			GaeBolg: {
+				DisplayName: Gae Bolg
+				Tooltip:
+					'''
+					Pierce reality 
+					Can be upgraded into its mythical form with 70,000 Dark Souls
+					'''
+			}
+
+			HiRyuuSpear.DisplayName: HiRyuu Spear
+
+			Longinus: {
+				DisplayName: Longinus
+				Tooltip:
+					'''
+					Legendary spear fabled to hold sway over the world.
+					Increases attack damage by 30% when falling and has a chance to heal 3 HP on hit.
+					'''
+			}
+
+			OldHalberd: {
+				DisplayName: Old Halberd
+				Tooltip:
+					'''
+					Does random damage from 0 to 35
+					Maximum damage is increased by damage modifiers.
+					Left-click to stab like a spear, right-click to swing
+					'''
+			}
+
+			SupremeDragoonLance: {
+				DisplayName: Supreme Dragoon Lance
+				Tooltip: An all-powerful spear forged from the fang of the Dragoon Serpent.
+			}
+
+			ThrowingAxe.DisplayName: Throwing Axe
+
+			ArgentPeacemaker: {
+				DisplayName: Argent Peacemaker
+				Tooltip: Deals extra damage to corrupt/crimson creatures
+			}
+
+			Biohazard: {
+				DisplayName: Biohazard
+				Tooltip:
+					'''
+					The addition of the propulsion field allows detonating shots to pierce twice
+					Warning - perfectly capable of destroying entire ecosystems
+					'''
+			}
+
+			Blackhawk: {
+				DisplayName: Blackhawk
+				Tooltip:
+					'''
+					Deals extra damage to hallowed creatures
+					Doesn't require ammo
+					'''
+			}
+
+			Blaster: {
+				DisplayName: Blaster
+				Tooltip: Relatively short range but pierces once. Doesn't require ammo
+			}
+
+			BlizzardBlaster: {
+				DisplayName: Blizzard Blaster
+				Tooltip:
+					'''
+					Fires a blast of freezing wind,
+					damaging up to 8 enemies in a cone.
+					'''
+			}
+
+			AncientGreatBow.DisplayName: Ancient Great Bow
+
+			ArtemisBow: {
+				DisplayName: Artemis Bow
+				Tooltip:
+					'''
+					A bow forged to slay demon-gods.
+					Hold FIRE to charge
+					Arrows are faster and more accurate when the bow is charged
+					'''
+			}
+
+			BowOfEarendil: {
+				DisplayName: Bow of Earendil
+				Tooltip:
+					'''
+					Always aim for the heart
+					Legendary
+					'''
+			}
+
+			CernosPrime: {
+				DisplayName: Cernos Prime
+				Tooltip:
+					'''
+					Fires three arrows. 
+					Hold FIRE to charge. 
+					Arrows are faster and more accurate when the bow is charged.
+					'''
+			}
+
+			ElfinBow: {
+				DisplayName: Elfin Bow
+				Tooltip:
+					'''
+					Never miss again
+					Unleashes a storm of enchanted arrows that hunt down any enemy you select
+					'''
+			}
+
+			Gastraphetes: {
+				DisplayName: Gastraphetes
+				Tooltip: Blacken the sky
+			}
+
+			OldLongbow: {
+				DisplayName: Old Longbow
+				Tooltip:
+					'''
+					Does random damage from 0 to 32
+					Maximum damage is increased by damage modifiers.
+					'''
+			}
+
+			PhoenixOverdrive: {
+				DisplayName: Phoenix Overdrive
+				Tooltip:
+					'''
+					Calls forth a storm of blazing phoenixes
+					Carve burning scars across the sky
+					'''
+			}
+
+			RadiantStrand: {
+				DisplayName: Radiant Strand
+				Tooltip: Fires arrows of light which leave a damaging trail of energy as they fly
+			}
+
+			SagittariusBow: {
+				DisplayName: Sagittarius Bow
+				Tooltip:
+					'''
+					Fires two arrows
+					Hold FIRE to charge
+					Arrows are faster and more accurate when the bow is charged
+					'''
+			}
+
+			Crossbow: {
+				DisplayName: Crossbow
+				Tooltip:
+					'''
+					High crit rate
+					Uses Bolts as ammo. 10 are crafted with
+					one wood and two Dark Souls at a Demon Altar
+					Bolts pierce once
+					'''
+			}
+
+			DarkTrident: {
+				DisplayName: Dark Trident
+				Tooltip:
+					'''
+					Pierces enemies with dark magic
+					Hold left click to charge a throw, right click to stab
+					Changes its damage type between ranged or melee depending your highest stats
+					Fully charged tridents ignite, setting hit enemies ablaze
+					'''
+			}
+
+			Freezethrower: {
+				DisplayName: Freezethrower
+				Tooltip:
+					'''
+					Uses Gel as ammo.
+					Has a chance to freeze
+					'''
+			}
+
+			FocusedEnergyBeam: {
+				DisplayName: Focused Energy Beam
+				Tooltip:
+					'''
+					Uses Tesla Bolts for ammo
+					Fires a single high damage beam that obliterates weaker enemies on contact...
+					A weapon from a civilization not of this world...
+					'''
+			}
+
+			GlaiveBeam: {
+				DisplayName: Glaive Beam
+				Tooltip:
+					'''
+					A legendary weapon of war from beyond the stars
+					Fabled to cut entire ships in half with a single blast
+					'''
+			}
+
+			AngelicAura: {
+				DisplayName: Angelic Aura
+				Tooltip:
+					'''
+					Full-auto submachine gun with high RoF
+					50% chance to not consume ammo
+					'''
+			}
+
+			AntimatRifle: {
+				DisplayName: Antimat Rifle
+				Tooltip:
+					'''
+					Unbelievable damage at the cost of a 2.5 second cooldown between shots 
+					Fires piercing high-velocity rounds that punch through thin walls
+					Damage increases with enemy armor
+					'''
+			}
+
+			Barrage: {
+				DisplayName: Barrage
+				Tooltip: Unleashes a storm of homing missiles toward your foes
+			}
+
+			CrystalSpectrum: {
+				DisplayName: Crystal Spectrum
+				Tooltip: Converts bullets into a beam of crystal light, which inherits their properties
+			}
+
+			ExpulsorCannon: {
+				DisplayName: Expulsor Cannon
+				Tooltip:
+					'''
+					Four shot burst
+					Only the first shot consumes ammo
+					Fires a spread of four bullets with each shot
+					'''
+			}
+
+			HighCaliberRifle: {
+				DisplayName: High Caliber Rifle
+				Tooltip:
+					'''
+					Incredible damage at the cost of 2.5 second cooldown between shots
+					Remember to hold your breath.
+					'''
+			}
+
+			PhazonRifle: {
+				DisplayName: Phazon Rifle
+				Tooltip:
+					'''
+					Three round burst 
+					Only the first shot consumes ammo
+					Phazon rounds are extremely volatile
+					'''
+			}
+
+			QuadroCannon: {
+				DisplayName: Quadro Cannon
+				Tooltip:
+					'''
+					Four shot burst
+					Only the first shot consumes ammo
+					Fires a spread of four bullets with each shot
+					'''
+			}
+
+			RTQ2Rifle.DisplayName: RTQ2 Rifle
+			GWPulsar.DisplayName: Gigawatt Pulsar
+
+			Marksman: {
+				DisplayName: Marksman
+				Tooltip:
+					'''
+					For those with mechanical precision
+					Right click to throw a coin
+					Shooting a coin reflects your shot into the nearest enemy weak point
+					Reflected shots have increased damage, guarenteed crits, and pierce walls
+					'''
+			}
+
+			OldCrossbow: {
+				DisplayName: Old Crossbow
+				Tooltip:
+					'''
+					Does random damage from 0 to 38
+					Maximum damage is increased by damage modifiers.
+					'''
+			}
+
+			Polaris: {
+				DisplayName: Polaris
+				Tooltip: Batteries included
+			}
+
+			Pulsar: {
+				DisplayName: Pulsar
+				Tooltip:
+					'''
+					Keep your enemies close, but not too close!
+					Enlarged projectile does x1.5 damage
+					Electrocutes enemies
+					Powerful, but hard to master
+					'''
+			}
+
+			AlienRifle: {
+				DisplayName: Alien Rifle
+				Tooltip:
+					'''
+					Converts seeds into Plasma Shots, these scale with magic damage too
+					Also uses all darts as ammo
+					Right click on a cd to shoot a homing blinding shot which inflicts confusion, also scales with magic damage
+					'''
+			}
+
+			OmegaSquadRifle: {
+				DisplayName: Omega Squad Rifle
+				Tooltip:
+					'''
+					Converts seeds into Toxic Shots, these scale with magic damage too
+					Also uses all darts as ammo
+					Right click on a cd to shoot a homing blind dart which inflicts confusion, also scales with magic damage
+					Press Q hotkey on a cd to drop a miniature nuclear bomb, scaling with magic damage too
+					'''
+			}
+
+			ToxicShot: {
+				DisplayName: Toxic Shot
+				Tooltip:
+					'''
+					Converts seeds into Toxic Shots, these scale with magic damage too
+					Also uses all darts as ammo
+					'''
+			}
+
+			Sentenza: {
+				DisplayName: Sentenza
+				Tooltip: Deals extra damage to hallowed creatures
+			}
+
+			Silversix: {
+				DisplayName: Silversix
+				Tooltip:
+					'''
+					Deals extra damage to corrupt/crimson creatures
+					Doesn't require ammo
+					'''
+			}
+
+			SuperBlaster.DisplayName: Super Blaster
+
+			Crissaegrim: {
+				DisplayName: Crissaegrim
+				Tooltip:
+					'''
+					A powerful, throwable sword made of 30 lost souls of the night
+					A dark aura endlessly manifests four blades in the wielder's hand, and will
+					return them if the wielder's throw misses the one for whom it was intended.
+					'''
+			}
+
+			EphemeralThrowingSpear: {
+				DisplayName: Ephemeral Throwing Spear
+				Tooltip: Passes through solid walls
+			}
+
+			HeavenSword: {
+				DisplayName: Heaven Sword
+				Tooltip:
+					'''
+					Aside from its adamantite grip, it is a throwing sword made of pure light.
+					Blessed with a divine aura, it manifests endlessly in the wielder's hand
+					and returns if its blade should not pierce into the one whom it was meant for.
+					Passes through walls.
+					'''
+			}
+
+			RoyalThrowingSpear.DisplayName: Royal Throwing Spear
+			ThrowingSpear.DisplayName: Throwing Spear
+
+			ToxicCatalyzer: {
+				DisplayName: Toxic Catalyzer
+				Tooltip:
+					'''
+					Left-click shots tag and poison enemies
+					Right-click shots detonate tags
+					The more tags, the greater the explosion and damage
+					'''
+			}
+
+			VirulentCatalyzer: {
+				DisplayName: Virulent Catalyzer
+				Tooltip:
+					'''
+					An enhanced projectile propulsion core allows detonating shots to pierce once
+					Extremely toxic - handle with care
+					'''
+			}
+
+			BeetleIdol: {
+				DisplayName: Beetle Idol
+				Tooltip: Summons a Samurai Beetle to fight for you
+			}
+
+			NullSpriteStaff: {
+				DisplayName: Null Sprite Staff
+				Tooltip:
+					'''
+					Summons a null sprite to fight for you
+					Null sprites apply a permanent stacking debuff
+					that increases damage taken from all sources
+					Takes 3/4th of a minion slot
+					'''
+			}
+
+			PeculiarSphere: {
+				DisplayName: Peculiar Sphere
+				Tooltip: Summons a friendly Owl Archer to fight for you.
+			}
+
+			PhoenixEgg: {
+				DisplayName: Phoenix Egg
+				Tooltip:
+					'''
+					Summons a raging Phoenix Juvenile to fight for you
+					Warms up by dealing damage to enemies, speeding up its movements
+					Deals increased damage after warming up sufficiently
+					Also benefits more from summon tag bonuses
+					Uses 2 minion slots
+					'''
+			}
+
+			InterstellarVesselControls: {
+				DisplayName: Interstellar Vessel Controls
+				Tooltip:
+					'''
+					Summons spaceships to rotate around you and damage enemies in their way
+					Uses half a minion slot
+					While holding this item, increase their radius by holding the Special Ability hotkey
+					Or hold Shift + Special Ability to shrink their radius
+					Press Special Ability while not holding the remote to activate Turboboost
+					This increases the spaceships damage and movement speed
+					Turboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness
+					Applies the Shocked debuff, which grants minions crit chance based on a fraction of your critical strike chance
+					'Adjusting trajectory for ASOL-13!'
+					'''
+			}
+
+			ScorchingPoint: {
+				DisplayName: Scorching Point
+				Tooltip:
+					'''
+					Summons fireballs to rotate around you and damage enemies in their way
+					Uses half a minion slot
+					While holding this item, increase their radius by holding the Special Ability hotkey
+					Or hold Shift + Special Ability to shrink their radius
+					Applies the Scorching debuff, which grants minions crit chance based on a fraction of your critical strike chance
+					'By the Ashen Lord of Runeterra!'
+					'''
+			}
+
+			GaleForce: {
+				DisplayName: Gale Force
+				Tooltip: Summons a wind spirit which shoots a gust of wind towards your cursor
+			}
+
+			SpiritBell: {
+				DisplayName: Spirit Bell
+				Tooltip: Summons a Barrow Wight to fight for you
+			}
+
+			SunsetQuasar: {
+				DisplayName: Sunset Quasar
+				Tooltip:
+					'''
+					Summons a small creature to fight for you
+					"Raccoons are very good as a lifeform"
+					'''
+			}
+
+			TetsujinRemote: {
+				DisplayName: Tetsujin Remote
+				Tooltip:
+					'''
+					Summons a glowing Tetsujin to fight for you
+					Orbits an enemy, bombarding them with light and fire
+					Uses 2 minion slots
+					'''
+			}
+
+			DetonationSignal: {
+				DisplayName: Detonation Signal
+				Tooltip:
+					'''
+					Enemies struck by this whip will explode once on minion hit
+					Scales with double the minion damage
+					Inflicts Hellfire
+					Your minions will focus struck enemies
+					'''
+			}
+
+			Dominatrix: {
+				DisplayName: Dominatrix
+				Tooltip:
+					'''
+					7% summon tag critical strike chance
+					Inflicts bleeding debuff(Unimplemented)
+					Your summons will focus struck enemies
+					'''
+			}
+
+			DragoonLash: {
+				DisplayName: Dragoon Lash
+				Tooltip:
+					'''
+					Breathe fire at enemies struck by this whip and a minion on a cooldown
+					Refresh the cooldown by whipping an enemy
+					Strike enemies to gain attack speed
+					Your summons will focus struck enemies
+					'''
+			}
+
+			EnchantedWhip: {
+				DisplayName: Enchanted Whip
+				Tooltip:
+					'''
+					4 summon tag damage
+					Strike enemies with an enchantment
+					Enchanted enemies will be showered by stars upon minion hits
+					Star damage scales with half of this whips damage
+					Your summons will focus struck enemies
+					'''
+			}
+
+			NightsCracker: {
+				DisplayName: Night's Cracker
+				Tooltip:
+					'''
+					Stats of this whip scale with how long you've charged it
+					2-8 summon tag damage
+					Inherits Searing Lash's effect at up to half of its strength
+					1-4% summon tag critical strike chance
+					Gain 6-24% summon attack speed upon striking an enemy
+					Performs better against multiple targets than most whips
+					Your summons will focus struck enemies
+					'''
+			}
+
+			PolarisLeash: {
+				DisplayName: Polaris Leash
+				Tooltip:
+					'''
+					6 summon tag damage
+					Striking enemies will create Polaris, which scales with 66% of this whips damage
+					Polaris stays on your cursor and hits enemies with a frigid enchantment
+					Enchanted Enemies will also be showered by polar stars when struck by minions
+					These scale with half of this whips damage
+					Your summons will focus enemies struck by Polaris
+					This whip also inflicts Frostbite
+					'''
+			}
+
+			Pyrosulfate: {
+				DisplayName: Pyrosulfate
+				Tooltip:
+					'''
+					8 summon tag damage
+					3% summon tag critical strike chance
+					Your minions will focus struck enemies
+					Inflicts Cursed Inferno
+					'''
+			}
+
+			SearingLash: {
+				DisplayName: Searing Lash
+				Tooltip:
+					'''
+					This whip can be charged up for increased range, damage and tag duration
+					Enemies struck by this whip will burn horribly
+					and increase minion damage by 66% of this whips base damage in +%
+					This stacks on top of other whip tag damage
+					Your minions will focus struck enemies
+					'''
+			}
+
+			TerraFall: {
+				DisplayName: Terra Fall
+				Tooltip:
+					'''
+					Stats of this whip scale with how long you've charged it
+					Summons a Terraprisma after striking an enemy
+					5-20 summon tag damage
+					Inherits Searing Lash's effect at up to an eighth of it's strength
+					4-12% summon tag crit
+					Gain 12-48% summon attack speed upon striking an enemy
+					This whip performs better against multiple targets than most whips
+					Your summons will focus struck enemies
+					'''
+			}
+
+			BlackFirebomb: {
+				DisplayName: Black Firebomb
+				Tooltip:
+					'''
+					Explodes, dealing fire damage in a small area
+					Sets the ground and enemies alight
+					'''
+			}
+
+			Firebomb: {
+				DisplayName: Firebomb
+				Tooltip: Explodes, dealing damage in a small area
+			}
+
+			SporePowder.DisplayName: Spore Powder
+
+			WhiteTitanite: {
+				DisplayName: White Titanite
+				Tooltip: A rare and valuable ore
+			}
+
+			WitchkingScroll: {
+				DisplayName: Witchking Scroll
+				Tooltip:
+					'''
+					To close the portal to the Abyss you must seek out the Witchking and restore the strange ring he drops.
+					He will appear out of the Abyss at night, and more often deeper underground, especially in dungeons.
+					The most assured way to find him, however, is to enter the Abyss yourself, using the Covanent of Artorias ring.
+					'''
+			}
+
+			WorldIDReset: {
+				DisplayName: "{TROUBLESHOOTING ITEM!!} World ID Reset"
+				Tooltip:
+					'''
+					Debug Item used for restoring corrupted maps. Can cause minimap corruption if you are not trying to do that!!
+					Here are the steps to restore your map. It may not work, but there is a chance it will:
+					1) Use this item
+					2) Leave the world
+					3) Rejoin the world with the character you want to have a restored minimap
+					4) Delete this item and never use it again
+					Warnings:
+					This will only work for one character per world. Attempting to restore a second character's minimap will break the minimap of the first.
+					This will reset your spawn to the world spawn next time you load the map. This is expected.
+					This works by temporarily editing your World ID to trick Terraria into recognizing your old minimap as correct.
+					This is completely unteseted with other mods. Tred very lightly.
+					If you have entered other copies of the the custom map on this character since the update, there is a nonzero chance your minimap was overwritten
+					If so it will not be recoverable.
+					'''
+			}
+
+			WorldRune: {
+				DisplayName: World Rune
+				Tooltip:
+					'''
+					An otherworldy artifact of great power
+					It seems to react to dark souls...
+					'''
+			}
+
+			BonfirePlaceable: {
+				DisplayName: Dark Souls Bonfire
+				Tooltip:
+					'''
+					Right-click to light
+					You probably shouldn't have this
+					Can only be placed by devs
+					'''
+			}
+
+			FlameJetItem: {
+				DisplayName: Flame Jet
+				Tooltip: Creates a jet of flame that players can only pass by dodging
+			}
+
+			SoapstonePlaceable: {
+				DisplayName: Soapstone Placeable
+				Tooltip: You probably shouldn't have this.
+			}
+
+			SoulSkellyItemL: {
+				DisplayName: Soul Skelly Left
+				Tooltip:
+					'''
+					Right-Click once placed to acquire a Soul of a Nameless Soldier (800 souls)
+					Gives Soul of a Proud Knight (2000 souls) outside of Pre-HM
+					Used by mapmakers for placing around the map as loot
+					'''
+			}
+
+			SoulSkellyItemR: {
+				DisplayName: Soul Skelly Right
+				Tooltip:
+					'''
+					Right-Click once placed to acquire a Soul of a Nameless Soldier (800 souls)
+					Gives Soul of a Proud Knight (2000 souls) outside of Pre-HM
+					Used by mapmakers for placing around the map as loot
+					'''
+			}
+
+			SoulSkellyWall1Item: {
+				DisplayName: Soul Skelly Wall 1
+				Tooltip:
+					'''
+					Right-Click once placed to acquire a Soul of a Lost Undead (200 souls)
+					Gives Soul of a Nameless Soldier (800 souls) outside of Pre-HM
+					Used by mapmakers for placing around the map as loot
+					'''
+			}
+
+			SoulSkellyWall2Item: {
+				DisplayName: Soul Skelly Wall 2
+				Tooltip:
+					'''
+					Right-Click once placed to acquire a Soul of a Nameless Soldier (800 souls)
+					Gives Soul of a Proud Knight (2000 souls) outside of Pre-HM
+					Used by mapmakers for placing around the map as loot
+					'''
+			}
+
+			SoulSkullItemL: {
+				DisplayName: Soul Skull Left
+				Tooltip:
+					'''
+					Right-Click once placed to acquire a Soul of a Lost Undead (200 souls)
+					Gives Soul of a Nameless Soldier (800 souls) outside of Pre-HM
+					Used by mapmakers for placing around the map as loot
+					'''
+			}
+
+			SoulSkullItemR: {
+				DisplayName: Soul Skull Right
+				Tooltip:
+					'''
+					Right-Click once placed to acquire a Soul of a Lost Undead (200 souls)
+					Gives Soul of a Nameless Soldier (800 souls) outside of Pre-HM
+					Used by mapmakers for placing around the map as loot
+					'''
+			}
+		}
+
+		Buffs: {
+			ArmorDrug: {
+				DisplayName: Demonic Scales
+				Description: Your skin is covered with hard scales...
+			}
+
+			Battlefront: {
+				DisplayName: Battlefront
+				Description: You've never felt more ready for a fight...
+			}
+
+			BiohazardDrain: {
+				DisplayName: Biohazard Drain
+				Description: Rapidly losing life
+			}
+
+			BoltChainImmunity: {
+				DisplayName: Mods.tsorcRevamp.BuffName.BoltChainImmunity
+				Description: Can not be struck by a bolt chain lightning again until this expires
+			}
+
+			Bonfire: {
+				DisplayName: Bonfire
+				Description:
+					'''
+					Stay a little while... Let your soul heal 
+					Enemy spawns disabled
+					'''
+			}
+
+			Boost: {
+				DisplayName: Boost
+				Description: Increased movement speed
+			}
+
+			BossZenBuff: {
+				DisplayName: Boss Zen
+				Description: The active boss is blocking enemy spawns!
+			}
+
+			BrokenSpirit: {
+				DisplayName: Broken Spirit
+				Description: You feel like giving up!
+			}
+
+			Chilled: {
+				DisplayName: Frostbite
+				Description: Defense and speed reduced
+			}
+
+			CowardsAffliction: {
+				DisplayName: Coward's Affliction
+				Description: Do not flee from the Lord of Cinder.
+			}
+
+			CrescentMoonlight: {
+				DisplayName: Crescent Moonlight
+				Description: Losing life
+			}
+
+			CrimsonBurn: {
+				DisplayName: Crimson Burn
+				Description: Your flesh is burning
+			}
+
+			CrimsonDrain: {
+				DisplayName: Crimson Drain
+				Description: Enemies within a ten tile radius receive Crimson Burn.
+			}
+
+			Crippled: {
+				DisplayName: Crippled
+				Description: Your mobility has been crippled!
+			}
+
+			CrystalMagicWeapon: {
+				DisplayName: Crystal Magic Weapon
+				Description: Your weapon is imbued with crystalline magic!
+			}
+
+			CurseBuildup: {
+				DisplayName: Curse Buildup
+				Description: Mods.tsorcRevamp.BuffDescription.CurseBuildup
+			}
+
+			DarkInferno: {
+				DisplayName: Dark Inferno
+				Description: The black flames eat away at your skin
+			}
+
+			DemonDrug: {
+				DisplayName: Demonic Might
+				Description: Your body can barely handle it...
+			}
+
+			DispelShadow: {
+				DisplayName: Dispel Shadow
+				Description: Your defense has been dispelled
+			}
+
+			Dissolving: {
+				DisplayName: Dissolving
+				Description: Taking bonus damage
+			}
+
+			EarthAlignment: {
+				DisplayName: Alignment of the Earth
+				Description:
+					'''
+					The world's gravity offers no resistance to your flight 
+					It's as if the entire planet is lifting you up in counter to Attraidies' dark power...
+					'''
+			}
+
+			ElectrocutedBuff: {
+				DisplayName: Electrocuted!
+				Description: Losing life
+			}
+
+			ElixirCooldown: {
+				DisplayName: Elixir Cooldown
+				Description: You cannot drink Holy War Elixirs!
+			}
+
+			FadingShadow: {
+				DisplayName: Crimson Drain
+				Description: Enemies within a ten tile radius receive Crimson Burn.
+			}
+
+			FasterThanSight: {
+				DisplayName: Faster Than Sight
+				Description: Latent illuminant energy lets you defy gravity!
+			}
+
+			FracturingArmor: {
+				DisplayName: Fracturing Armor
+				Description: Mods.tsorcRevamp.BuffDescription.FracturingArmor
+			}
+
+			GrappleMalfunction: {
+				DisplayName: Grapple Malfunction
+				Description: Something is causing your grapple to sieze up!
+			}
+
+			GravityAlignment: {
+				DisplayName: Gravitional Alignment
+				Description:
+					'''
+					Attuned with the magical energy of the area
+					Press 'up' to reverse gravity
+					'''
+			}
+
+			GravityField: {
+				DisplayName: Gravity Field
+				Description: The active boss is negating the low gravity of space!
+			}
+
+			GreatMagicBarrier: {
+				DisplayName: Great Magic Barrier
+				Description: Defense is increased by 60!
+			}
+
+			GreatMagicShield: {
+				DisplayName: Great Magic Shield
+				Description: Defense increased by 25, but damage reduced by 20% and speed reduced by 15%!
+			}
+
+			GreatMagicWeapon: {
+				DisplayName: Great Magic Weapon
+				Description: Your weapon is imbued with powerful magic!
+			}
+
+			GreenBlossom: {
+				DisplayName: Green Blossom
+				Description: Stamina recovery speed increased!
+			}
+
+			HealingElixirCooldown: {
+				DisplayName: Healing Elixir Cooldown
+				Description: You cannot use Healing Elixirs!
+			}
+
+			Hold: {
+				DisplayName: Held
+				Description: You're being held in position!
+			}
+
+			Hollowed: {
+				DisplayName: Hollowed
+				Description: Max HP reduced by 20%
+			}
+
+			InCombat: {
+				DisplayName: In Combat
+				Description: You are in combat.
+			}
+
+			Invincible: {
+				DisplayName: Invincible
+				Description: You are invincible!
+			}
+
+			LifegemHealing: {
+				DisplayName: Lifegem Healing
+				Description: Health is slowly being restored
+			}
+
+			Loading: {
+				DisplayName: Loading
+				Description: You're being held in position while the world finishes loading!
+			}
+
+			MagicBarrier: {
+				DisplayName: Magic Barrier
+				Description: Defense is increased by 20!
+			}
+
+			MagicImbueCooldown: {
+				DisplayName: Magic Imbue Cooldown
+				Description: You cannot use any magical weapon imbues!
+			}
+
+			MagicPlating: {
+				DisplayName: Magic Plating
+				Description: Damage taken is reduced by attacking
+			}
+
+			MagicShield: {
+				DisplayName: Magic Shield
+				Description: Defense is increased by 10!
+			}
+
+			MagicWeapon: {
+				DisplayName: Magic Weapon
+				Description: Your weapon is imbued with magic!
+			}
+
+			MarilithHold: {
+				DisplayName: Held
+				Description: You can't move!
+			}
+
+			MarilithWind: {
+				DisplayName: Storm Wind
+				Description: You're being blown by fierce wind!
+			}
+
+			Miakoda: {
+				DisplayName: Miakoda
+				Description: An ancient being freed from Skeletron.
+			}
+
+			MiakodaCrescent: {
+				DisplayName: Miakoda - Crescent Moon Form
+				Description:
+					'''
+					An ancient being freed from Skeletron.
+					It is said to possess a divine smile
+					'''
+			}
+
+			MiakodaFull: {
+				DisplayName: Miakoda - Full Moon Form
+				Description: An ancient being freed from Skeletron.
+			}
+
+			MiakodaNew: {
+				DisplayName: Miakoda - New Moon Form
+				Description: An ancient being freed from Skeletron.
+			}
+
+			PhazonContamination: {
+				DisplayName: Phazon Contamination
+				Description: Radiation is tearing your cells apart
+			}
+
+			PolarisElectrocutedBuff: {
+				DisplayName: Electrocuted!
+				Description: Losing life
+			}
+
+			PowerfulCurseBuildup: {
+				DisplayName: Powerful Curse Buildup
+				Description: Mods.tsorcRevamp.BuffDescription.PowerfulCurseBuildup
+			}
+
+			PowerWithin: {
+				DisplayName: Power Within
+				Description: Excessive power is eating away at you!
+			}
+
+			Protect: {
+				DisplayName: Protect
+				Description: Defense is increased by 30!
+			}
+
+			RadiantLifegemHealing: {
+				DisplayName: Radiant Lifegem Healing
+				Description: Health is slowly being restored
+			}
+
+			RTQ2: {
+				DisplayName: RTQ2
+				Description: RTQ2 is following you
+			}
+
+			CenterOfTheHeat: {
+				DisplayName: Center of the Heat
+				Description: You're in a hot center
+			}
+
+			InterstellarCommander: {
+				DisplayName: Interstellar Commander
+				Description: You're the commander of these ships!
+			}
+
+			NightbringerDashCooldown: {
+				DisplayName: Dashing Cooldown
+				Description: You can't dash until this runs out
+			}
+
+			NightbringerThrustCooldown: {
+				DisplayName: Thrusting Cooldown
+				Description: You can't thrust until this runs out
+			}
+
+			NightbringerWindwallCooldown: {
+				DisplayName: Windwall Cooldown
+				Description: You can't windwall until this runs out
+			}
+
+			PlasmaWhirlwindDashCooldown: {
+				DisplayName: Dash Cooldown
+				Description: You can't dash until this runs out
+			}
+
+			PlasmaWhirlwindThrustCooldown: {
+				DisplayName: Thrusting Cooldown
+				Description: You can't thrust until this runs out
+			}
+
+			ScorchingDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.ScorchingDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.ScorchingDebuff
+			}
+
+			ShockedDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.ShockedDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.ShockedDebuff
+			}
+
+			SteelTempestThrustCooldown: {
+				DisplayName: Thrusting Cooldown
+				Description: You can't thrust until this runs out
+			}
+
+			ShieldCooldown: {
+				DisplayName: Shield Cooldown
+				Description: You cannot use wall tomes!
+			}
+
+			Shockwave: {
+				DisplayName: Shockwave
+				Description: Release a damaging shockwave when you land while holding DOWN.
+			}
+
+			SlowedLifeRegen: {
+				DisplayName: Slowed Life Regeneration
+				Description: Life regen is weaker
+			}
+
+			SoulSiphon: {
+				DisplayName: Soul Siphon
+				Description: Soul gain increased!
+			}
+
+			Soulstruck: {
+				DisplayName: Soulstruck
+				Description: Will drop 10% more souls if killed while buff is active
+			}
+
+			StoryTime: {
+				DisplayName: Story Time
+				Description:
+					'''
+					Stay a moment... gain knowledge. 
+					Enemy spawns disabled
+					'''
+			}
+
+			Strength: {
+				DisplayName: Strength
+				Description: You feel as if you could break the world in two, with your bare hands...
+			}
+
+			BarrowWightBuff: {
+				DisplayName: Barrow Wight
+				Description: The Barrow Wight will fight for you
+			}
+
+			DragoonLashBuff: {
+				DisplayName: Dragoon Awakening
+				Description: +33% summon attack speed
+			}
+
+			NightsCrackerBuff: {
+				DisplayName: Night Crack
+				Description: +6% summon attack speed
+			}
+
+			NondescriptOwlBuff: {
+				DisplayName: Owl Archer
+				Description: The owl will fire at your enemies!
+			}
+
+			NullSpriteBuff: {
+				DisplayName: Null Sprite
+				Description: The null sprite will fight for you
+			}
+
+			PhoenixBuff: {
+				DisplayName: Phoenix Juvenile
+				Description: The Phoenix Juvenile will fight for you
+			}
+
+			PolarisLeashBuff: {
+				DisplayName: Polaris
+				Description: Polaris will fight for you
+			}
+
+			SamuraiBeetleBuff: {
+				DisplayName: Samurai Beetle
+				Description: The Beetle will fight for you
+			}
+
+			SunsetQuasarBuff: {
+				DisplayName: Sunset Quasar
+				Description: The small creature will fight to protect you
+			}
+
+			TerraFallBuff: {
+				DisplayName: Terraria's Fall
+				Description:
+					'''
+					+12% summon attack speed
+					Terra Energy fights for you
+					'''
+			}
+
+			TetsujinBuff: {
+				DisplayName: Tetsujin Minion
+				Description: The Tetsujin will fight for you
+			}
+
+			DetonationSignalDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.DetonationSignalDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.DetonationSignalDebuff
+			}
+
+			DominatrixDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.DominatrixDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.DominatrixDebuff
+			}
+
+			DragoonLashDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.DragoonLashDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.DragoonLashDebuff
+			}
+
+			EnchantedWhipDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.EnchantedWhipDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.EnchantedWhipDebuff
+			}
+
+			NightsCrackerDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.NightsCrackerDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.NightsCrackerDebuff
+			}
+
+			PolarisLeashDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.PolarisLeashDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.PolarisLeashDebuff
+			}
+
+			PyrosulfateDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.PyrosulfateDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.PyrosulfateDebuff
+			}
+
+			SearingLashDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.SearingLashDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.SearingLashDebuff
+			}
+
+			TerraFallDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.TerraFallDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.TerraFallDebuff
+			}
+
+			ThermalRise: {
+				DisplayName: Updraft
+				Description: Heat from the lasers is extending your flight!
+			}
+
+			TornWings: {
+				DisplayName: Torn Wings
+				Description: You can't fly!
+			}
+
+			ToxicCatDrain: {
+				DisplayName: Toxic Catalyzer Drain
+				Description: Losing life
+			}
+
+			ViruCatDrain: {
+				DisplayName: Virulent Catalyzer Drain
+				Description: Losing life
+			}
+
+			WeightOfShadow: {
+				DisplayName: Weight of Shadow
+				Description: The gravity of what you might become sets in...
+			}
+		}
+
+		Projectiles: {
+			BlizzardBlasterShot.DisplayName: Blizzard Blaster Shot
+			AntiMaterialRound.DisplayName: Anti-Material Round
+			APShot.DisplayName: A P Shot
+			ArcheologistWhip.DisplayName: Archeologist Whip
+			ArrowOfBard.DisplayName: Arrow of Bard
+			ArtemisBowHeld.DisplayName: Charged Bow
+			Barrier.DisplayName: Barrier
+			BiohazardDetonator.DisplayName: Biohazard Detonator
+			BiohazardExplosion.DisplayName: Biohazard Explosion
+			BiohazardShot.DisplayName: Biohazard Shot
+			BlackFire.DisplayName: Black Fire
+			BlackFirebombProj.DisplayName: Black Firebomb Proj
+			BlackFirelet.DisplayName: Black Fire
+			BlasterShot.DisplayName: Blaster Shot
+			Bloodsign.DisplayName: Bloodsign
+			Bolt.DisplayName: Bolt
+			Bolt1Ball.DisplayName: Bolt1 Ball
+			Bolt1Bolt.DisplayName: Bolt1 Bolt
+			Bolt1Revamped.DisplayName: Bolt1 Revamped
+			Bolt2Ball.DisplayName: Bolt2 Ball
+			Bolt2Bolt.DisplayName: Bolt2 Bolt
+			Bolt3Ball.DisplayName: Bolt3 Ball
+			Bolt3Bolt.DisplayName: Bolt3 Bolt
+			Bolt4Ball.DisplayName: Bolt4 Ball
+			Bolt4Bolt.DisplayName: Bolt4 Bolt
+			BoltChaining.DisplayName: Bolt Chaining
+			BoneHostile.DisplayName: Bone Hostile
+			BoneRevenge.DisplayName: Bone Revenge
+			Briar.DisplayName: Briar
+			BurningShards.DisplayName: Barrier
+			CernosPrimeHeld.DisplayName: Charged Bow
+			ChaosBall2.DisplayName: Chaos Ball2
+			CMSCrescent.DisplayName: C M S Crescent
+			Coin.DisplayName: Coin
+			Comet.DisplayName: Comet
+			Crescent.DisplayName: Crescent
+			CrescentTrue.DisplayName: Crescent True
+			Crissaegrim.DisplayName: Crissaegrim
+			CruelArrow.DisplayName: Cruel Arrow
+			CursedFlamelash.DisplayName: Cursed Flamelash
+			CursedFlames.DisplayName: Cursed Flames
+			DeathStrike.DisplayName: Death Strike
+			DevilSickle.DisplayName: Devil Sickle
+			DyingStarHoldout.DisplayName: Dying Star Holdout
+			ElfinArrow.DisplayName: Elfin Arrow
+			ElfinTargeting.DisplayName: Elfin Targeting
+			EnchantedThrowingSpear.DisplayName: Enchanted Throwing Spear
+			AntiGravityBlast.DisplayName: Anti Gravity Blast
+			ArcherBolt.DisplayName: Archer Bolt
+			ArtoriasDarkBead.DisplayName: Artorias Dark Bead
+			ArtoriasGreatsword.DisplayName: Artorias Greatsword
+			BlackBreath.DisplayName: Black Breath
+			BlackKnightGhostSpear.DisplayName: Black Knight Ghost Spear
+			BlackKnightSpear.DisplayName: Black Knight Spear
+			BlackKnightsSpear.DisplayName: Black Knights Spear
+			BoulderDropLeft.DisplayName: Explosion
+			BoulderDropRight.DisplayName: Explosion
+			Bubble.DisplayName: Bubble
+			BurningPhantomSeeker.DisplayName: Burning Phantom Seeker
+			ChaosDeathAnimation.DisplayName: Chaos Death Animation
+			CrazedPurpleCrush.DisplayName: Void Toxin
+			CrystalFire.DisplayName: Crystal Fire
+			CursedDragonsBreath.DisplayName: Cursed Dragons Breath
+			AntimatTargeting.DisplayName: DefaultLaserName
+			DarkAntiMatRound.DisplayName: Anti-Material Round
+			DarkCloudDragoonLance.DisplayName: Dragoon Lance
+			DarkDivineSpark.DisplayName: DefaultLaserName
+			DarkFlow.DisplayName: Dark Flow
+			DarkFreezeBolt.DisplayName: Dark Freeze Bolt
+			DarkUltimaWeaponDummyProjectile.DisplayName: Dark Ultima Weapon
+			DarkWave.DisplayName: Dark Wave
+			EnemyArrowOfDarkCloud.DisplayName: Arrow of Dark Cloud
+			DarkExplosion.DisplayName: Dark Explosion
+			DarkExplosion2.DisplayName: Dark Explosion
+			DemonSpirit.DisplayName: Demon Spirit
+			DragonMeteor.DisplayName: Dragon Meteor
+			DragonsBreath.DisplayName: Dragons Breath
+			EarthTrident.DisplayName: Earth Trident
+			EnemyArrowOfBard.DisplayName: Arrow of Bard
+			EnemyBioSpitBall.DisplayName: Acid Spit
+			EnemyBlackFire.DisplayName: Black Fire
+			EnemyBlackFirelet.DisplayName: Black Fire
+			EnemyBolt4Ball.DisplayName: Enemy Bolt4 Ball
+			EnemyBolt4Bolt.DisplayName: Enemy Bolt4 Bolt
+			EnemyCrystalKnightBolt.DisplayName: Crystal Bolt
+			EnemyCrystalKnightBoltII.DisplayName: Freezing Crystal Bolt
+			EnemyCursedBreath.DisplayName: Cursed Breath
+			EnemyCursedBreathCollides.DisplayName: Cursed Breath
+			EnemyCursedFlames.DisplayName: Enemy Cursed Flames
+			EnemyDragoonLance.DisplayName: Dragoon Lance
+			EnemyFirebomb.DisplayName: Enemy Firebomb
+			EnemyGreatAttack.DisplayName: Enemy Great Attack
+			EnemyIceBallUp.DisplayName: Ice Spell
+			EnemyIceIcicleUp.DisplayName: Ice Crystal
+			EnemyLightningStrike.DisplayName: Laser
+			EnemyLingeringLaser.DisplayName: DefaultLaserName
+			EnemyMeteor.DisplayName: Enemy Meteor
+			EnemyPlasmaOrb.DisplayName: Omega Blast
+			EnemyRedirectingShark.DisplayName: Enemy Redirecting Shark
+			EnemyRedLaser.DisplayName: DefaultLaserName
+			EnemySmokebomb.DisplayName: Enemy Smokebomb
+			EnemySpellAbyssPoisonStrike.DisplayName: Enemy Spell Abyss Poison Strike
+			EnemySpellAbyssPoisonStrikeBall.DisplayName: Enemy Spell Abyss Poison Strike Ball
+			EnemySpellAbyssPoisonStrikeBallLong.DisplayName: Enemy Spell Abyss Poison Strike Ball Long
+			EnemySpellAbyssPoisonStrikeLong.DisplayName: Enemy Spell Abyss Poison Strike Long
+			EnemySpellAbyssStorm.DisplayName: Dark Wave Storm
+			EnemySpellAbyssStormBall.DisplayName: Dark Wave
+			EnemySpellAbyssStormWave.DisplayName: Dark Wave
+			EnemySpellArmageddon.DisplayName: Enemy Spell Armageddon
+			EnemySpellArmageddonBall.DisplayName: Enemy Spell Armageddon Ball
+			EnemySpellArmageddonBlast.DisplayName: Enemy Spell Armageddon Blast
+			EnemySpellArmageddonBlastBall.DisplayName: Enemy Spell Armageddon Blast Ball
+			EnemySpellBlaze.DisplayName: Enemy Spell Blaze
+			EnemySpellBlazeBall.DisplayName: Dark Wave Storm
+			EnemySpellEffectBuff.DisplayName: Enemy Spell Effect Buff
+			EnemySpellEffectHealing.DisplayName: Enemy Spell Effect Healing
+			EnemySpellGravity1Ball.DisplayName: Enemy Spell Gravity1 Ball
+			EnemySpellGravity1Strike.DisplayName: Enemy Spell Gravity1 Strike
+			EnemySpellGravity4Ball.DisplayName: Enemy Spell Gravity4 Ball
+			EnemySpellGravity4Strike.DisplayName: Enemy Spell Gravity4 Strike
+			EnemySpellGreatEnergyBall.DisplayName: Enemy Spell Great Energy Ball
+			EnemySpellGreatEnergyBeam.DisplayName: Enemy Spell Great Energy Beam
+			EnemySpellGreatEnergyBeamBall.DisplayName: Enemy Spell Great Energy Beam Ball
+			EnemySpellGreatEnergyStrike.DisplayName: Enemy Spell Great Energy Strike
+			EnemySpellGreatFireball.DisplayName: Enemy Spell Great Fireball
+			EnemySpellGreatFireballBall.DisplayName: Enemy Spell Great Fireball Ball
+			EnemySpellGreatPoisonStrike.DisplayName: Enemy Spell Great Poison Strike
+			EnemySpellGreatPoisonStrikeBall.DisplayName: Enemy Spell Great Poison Strike Ball
+			EnemySpellHoldBall.DisplayName: Enemy Spell Hold Ball
+			EnemySpellIce3Ball.DisplayName: Enemy Spell Ice 3
+			EnemySpellIce3Icicle.DisplayName: Enemy Spell Ice3 Icicle
+			EnemySpellIcestormBall.DisplayName: Ice Storm Shards
+			EnemySpellIcestormIcicle1.DisplayName: Enemy Spell Ice Storm
+			EnemySpellIcestormIcicle2.DisplayName: Enemy Spell Ice Storm
+			EnemySpellIcestormIcicle3.DisplayName: Ice Storm
+			EnemySpellIcestormIcicle4.DisplayName: Ice Storm
+			EnemySpellLightning3Ball.DisplayName: Enemy Spell Lightning 3
+			EnemySpellLightning3Bolt.DisplayName: Enemy Spell Lightning3 Bolt
+			EnemySpellLightning4Ball.DisplayName: Enemy Spell Lightning4 Ball
+			EnemySpellLightning4Bolt.DisplayName: Enemy Spell Lightning4 Bolt
+			EnemySpellLightPillar.DisplayName: Enemy Spell Light Pillar
+			EnemySpellLightPillarBall.DisplayName: Enemy Spell Light Pillar Ball
+			EnemySpellMeteor.DisplayName: Enemy Spell Meteor
+			EnemySpellPoisonField.DisplayName: Enemy Spell Poison Field
+			EnemySpellPoisonFieldBall.DisplayName: Enemy Spell Poison Field Ball
+			EnemySpellPoisonStorm.DisplayName: Enemy Spell Poison Storm
+			EnemySpellPoisonStormBall.DisplayName: Enemy Spell Great Poison Strike Ball
+			EnemySpellSuddenDeathBall.DisplayName: Enemy Spell Sudden Death Ball
+			EnemySpellSuddenDeathStrike.DisplayName: Enemy Spell Sudden Death Strike
+			EnemySpellTornado.DisplayName: Enemy Spell Tornado
+			EnemySporeTrap.DisplayName: Enemy Spore Trap
+			EnemyThrowingKnife.DisplayName: Sharpened Blade
+			EnemyThrowingKnifeSmall.DisplayName: (O_O;)
+			FireBreath.DisplayName: Fire Breath
+			FireTrail.DisplayName: Fire Trail
+			FireTrails.DisplayName: Fire Trails
+			FlameRain.DisplayName: Flame Rain
+			FrozenDragonsBreath.DisplayName: Frozen Dragon's Breath
+			FrozenSaw.DisplayName: Frozen Orb
+			FrozenSawII.DisplayName: Elemental Frozen Orb
+			FrozenTear.DisplayName: Frozen Orb
+			GravityDistortion.DisplayName: Gravity Distortion
+			GreySlash.DisplayName: Grey Slash
+			BulletHellLaser.DisplayName: DefaultLaserName
+			BulletHellLaserSpawner.DisplayName: Bullet Hell Laser Spawner
+			BulletHellShot.DisplayName: Lightning Spear
+			BulletHellSpawner.DisplayName: Bullet Hell Spawner
+			FarronHail.DisplayName: Farron Hail
+			FarronHailSpawner.DisplayName: Farron Hail Spawner
+			GreatFarronDart.DisplayName: Great Farron Dart
+			GreatFarronDartSpawner.DisplayName: Great Farron Dart Spawner
+			SwordOfLordGwyn.DisplayName: Sword Of Lord Gwyn
+			TackleProjectile.DisplayName: Gwyn
+			Hellwing.DisplayName: Hellwing
+			HerosArrow.DisplayName: Heros Arrow
+			HypnoticDisrupter.DisplayName: Hypnotic Disrupter
+			IceSpirit.DisplayName: Ice Spirit
+			InkGeyser.DisplayName: Ink Geyser
+			InkJet.DisplayName: Ink Jet
+			JellyfishLightning.DisplayName: Laser
+			JungleWyvernFire.DisplayName: Breath of the Jungle
+			CataclysmicFirestorm.DisplayName: Cataclysmic Firestorm
+			MarilithAura.DisplayName: Cataclysmic Firestorm
+			MarilithCataclysm.DisplayName: Cataclysmic Detonator
+			MarilithFireball.DisplayName: Pyroclastic Detonator
+			MarilithFirestorm.DisplayName: Pyroclastic Detonation
+			MarilithFirewall.DisplayName: Marilith Firewall
+			MarilithHoldBall.DisplayName: Marilith Hold Ball
+			MarilithLightning.DisplayName: Laser
+			MediumWeaponSlash.DisplayName: Medium Weapon Slash
+			MediumWeaponSlashCrimson.DisplayName: Crimson Medium Weapon Slash
+			MediumWeaponSlashFire.DisplayName: Medium Weapon Slash Fire
+			MiracleSprouter.DisplayName: Miracle Sprouter
+			MiracleVines.DisplayName: Miracle Vines
+			MiracleVinesTrail.DisplayName: Miracle Vines Trail
+			ObscureSeeker.DisplayName: Wave Attack
+			CrazedOrb.DisplayName: Pulsating Energy
+			CrazyOrb.DisplayName: Pulsating Energy
+			DarkLaser.DisplayName: DefaultLaserName
+			DarkLaserHost.DisplayName: Dark Laser Host
+			EnemyAttraidiesBlackFire.DisplayName: Black Fire
+			EnemyBlackFireVisual.DisplayName: Black Fire
+			EnemySuddenDeathBall.DisplayName: Sudden Death Ball
+			EnemySuddenDeathStrike.DisplayName: Sudden Death Strike
+			EnergyPulse.DisplayName: Energy Pulse
+			MassiveCrystalShards.DisplayName: Massive Crystal Shards
+			MassiveCrystalShardsSpell.DisplayName: Massive Crystal Shards Spell
+			ObscureDrop.DisplayName: Obscure Drop
+			ObscureSaw.DisplayName: Wave Attack
+			ObscureShot.DisplayName: Obscure Shot
+			PhasedMatterBlast.DisplayName: Phased Matter Blast
+			PoisonSmog.DisplayName: Poison Smog
+			ShadowOrb.DisplayName: Shadow Orb
+			SolarBeam.DisplayName: DefaultLaserName
+			SolarDetonator.DisplayName: Solar Detonator
+			SolarFireball.DisplayName: Solar Fireball
+			StardustBeam.DisplayName: DefaultLaserName
+			StardustShot.DisplayName: Stardust Shot
+			OolacileDarkBead.DisplayName: Oolacile Dark Bead
+			OolacileDarkOrb.DisplayName: Oolacile's Dark Orb
+			OolacileSeeker.DisplayName: Oolacile Seeker
+			PoisonCrystalFire.DisplayName: Poison Crystal Fire
+			PoisonFlames.DisplayName: Poison Flames
+			PurpleCrush.DisplayName: Purple Crush
+			RedKnightsSpear.DisplayName: Red Knights Spear
+			ScrewAttack.DisplayName: Screw Attack
+			ShadowShot.DisplayName: Shadow Shot
+			SmallFlameJet.DisplayName: Small Flame Jet
+			SmallWeaponSlash.DisplayName: Small Weapon Slash
+			Spearhead.DisplayName: Spearhead
+			SpearheadCrimson.DisplayName: Spearhead Crimson
+			SpearheadFire.DisplayName: Spearhead Fire
+			SpellUltimateExplosion.DisplayName: Spell Ultimate Explosion
+			TetsujinLaser.DisplayName: Tetsujin Laser
+			TheOracle.DisplayName: The Oracle
+			BlindingGaze.DisplayName: Blinding Gaze
+			CursedMalestrom.DisplayName: Cursed Malestrom
+			HomingStar.DisplayName: Seeking Star
+			IchorFragment.DisplayName: Ichor Fragment
+			IchorShockwave.DisplayName: Ichor Shockwave
+			IncineratingGaze.DisplayName: Incinerating Gaze
+			MaliciousGaze.DisplayName: Malicious Gaze
+			RetDeathLaser.DisplayName: Death Laser
+			RetPiercingLaser.DisplayName: DefaultLaserName
+			SpazCursedFireball.DisplayName: Cursed Fireball
+			SpazFireJet.DisplayName: Noxious Jet
+			TriadDeath.DisplayName: TriadDeath
+			WaterTrail.DisplayName: Water Trail
+			EnergyBombBall.DisplayName: Energy Bomb Ball
+			EnergyField.DisplayName: Energy Field
+			EnergyFieldBall.DisplayName: Energy Field Ball
+			EnergyStrike.DisplayName: Energy Strike
+			EphemeralThrowingAxeProj.DisplayName: Ephemeral Throwing Axe Proj
+			EphemeralThrowingAxeProj2.DisplayName: Ephemeral Throwing Axe Proj2
+			EphemeralThrowingSpear.DisplayName: Ephemeral Throwing Spear
+			Explosion.DisplayName: Explosion
+			ExplosionBall.DisplayName: Explosion Ball
+			FarronDart.DisplayName: Farron Dart
+			FireBall.DisplayName: Fire Ball
+			Fireball1.DisplayName: Fireball1
+			Fireball2.DisplayName: Fireball2
+			Fireball3.DisplayName: Firestorm Detonator
+			Fireball4.DisplayName: Fireball4
+			FireballInferno1.DisplayName: Fireball Inferno1
+			FireballInferno2.DisplayName: Fireball Inferno2
+			FireballNova.DisplayName: Fireball Nova
+			FireBombBall.DisplayName: Fire Bomb Ball
+			FirebombProj.DisplayName: Firebomb Proj
+			FireField.DisplayName: Fire Field
+			FireFieldBall.DisplayName: Fire Field Ball
+			BerserkerNightmareBall.DisplayName: Berserker Nightmare Ball
+			HeavensTearBall.DisplayName: Heavens Tear Ball
+			MoonfuryBall.DisplayName: Moonfury Ball
+			SunderingLightBall.DisplayName: Sundering Light Ball
+			FlameJet.DisplayName: Flame Jet
+			FlameStrike.DisplayName: Flame Strike
+			ForgottenRisingSunProj.DisplayName: Forgotten Rising Sun Proj
+			FreezeBolt.DisplayName: Freeze Bolt
+			Freezethrower.DisplayName: Freezethrower
+			GenericLaser.DisplayName: DefaultLaserName
+			GlaiveBeamHoldout.DisplayName: Glaive Beam
+			GlaiveBeamLaser.DisplayName: Glaive Beam Laser
+			GlintstoneSpeck.DisplayName: Glintstone Speck
+			GreatEnergyBeam.DisplayName: Great Energy Beam
+			GreatEnergyBeamBall.DisplayName: Great Energy Beam Ball
+			GreatFireball.DisplayName: Great Fireball
+			GreatFireballBall.DisplayName: Great Fireball Ball
+			GreatFireStrike.DisplayName: Great Fire Strike
+			GreatMagicBarrier.DisplayName: Great Magic Barrier
+			GreatMagicShield.DisplayName: Great Magic Shield
+			GreatSoulArrow.DisplayName: Great Soul Arrow
+			GWPulsarShot.DisplayName: G W Pulsar Shot
+			HealingWater.DisplayName: Healing Water
+			HeavenPiercer.DisplayName: Heaven Piercer
+			HeavenSword.DisplayName: Heaven Sword
+			HomingFireball.DisplayName: Enemy Spell Great Fireball Ball
+			Ice1Ball.DisplayName: Ice1 Ball
+			Ice1Icicle.DisplayName: Ice1 Icicle
+			Ice2Ball.DisplayName: Ice2 Ball
+			Ice2Icicle.DisplayName: Ice2 Icicle
+			Ice3Ball.DisplayName: Ice3 Ball
+			Ice3Icicle.DisplayName: Ice3 Icicle
+			Ice4Ball.DisplayName: Ice4 Ball
+			Ice4Icicle.DisplayName: Ice4 Icicle
+			Ice5Ball.DisplayName: Ice5 Ball
+			Ice5Icicle.DisplayName: Ice5 Icicle
+			IceSpirit4.DisplayName: Ice Spirit4
+			Icicle.DisplayName: Icicle
+			IdealArrow.DisplayName: Ideal Arrow
+			Limit.DisplayName: Limit
+			ArcaneLightrifle.DisplayName: Arcane Lightrifle
+			CelestialShard.DisplayName: Celestial Shard
+			CelestialStrike.DisplayName: Celestial Strike
+			LightrifleFire.DisplayName: Lightrifle Fire
+			RadiantGlimmer.DisplayName: Radiant Glimmer
+			OrbofDeceptionProj.DisplayName: Orbof Deception Proj
+			OrbofFlameFlame.DisplayName: Orbof Flame Flame
+			OrbofFlameProj.DisplayName: Orbof Flame Proj
+			OrbofSpiritualityFlame.DisplayName: Orbof Spirituality Flame
+			OrbofSpiritualityProj.DisplayName: Orbof Spirituality Proj
+			ShatteredPrism.DisplayName: Shattered Prism
+			MagicalBall.DisplayName: Magical Ball
+			MagicShield.DisplayName: Magic Shield
+			MarksmanShot.DisplayName: Marksman Shot
+			MasterBuster.DisplayName: Master Buster
+			MegaDrill.DisplayName: Mega Drill
+			Meteor.DisplayName: Meteor
+			MeteorShower.DisplayName: Meteor Shower
+			MLGSCrescent.DisplayName: M L G S Crescent
+			MusicalNote.DisplayName: Musical Note
+			NetSound.DisplayName: Net Sound
+			Nothing.DisplayName: Nothing
+			Miakoda.DisplayName: Miakoda
+			MiakodaCrescent.DisplayName: Crescent Moon Miakoda
+			MiakodaFull.DisplayName: Full Moon Miakoda
+			MiakodaNew.DisplayName: New Moon Miakoda
+			PiggyBankProjectile.DisplayName: Soul Piglett
+			RTQ2.DisplayName: RTQ2
+			SafeProjectile.DisplayName: Soul Safe
+			PhantomSeeker.DisplayName: Phantom Seeker
+			PhantomSpiral.DisplayName: Phantom Spiral
+			PhazonRound.DisplayName: Phazon Round
+			PoisonBombBall.DisplayName: Poison Bomb Ball
+			PoisonField.DisplayName: Poison Field
+			PoisonField2.DisplayName: Poison Field2
+			PoisonFieldBall.DisplayName: Poison Field Ball
+			PolarisShot.DisplayName: Polaris Shot
+			PrimTrailTest.DisplayName: Test
+			PulsarShot.DisplayName: Pulsar Shot
+			BarrageBlast.DisplayName: Barrage Blast
+			CrystalRay.DisplayName: Crystal Ray
+			PhoenixFlame.DisplayName: Phoenix Flame
+			RadiantStrand.DisplayName: Radiant Strand
+			AlienRifleBlindingLaser.DisplayName: Blinding Laser
+			OmegaSquadRifleToxicMine.DisplayName: Toxic Mine
+			ToxicShotProj.DisplayName: Toxic Shot
+			RedLaserBeam.DisplayName: Red Laser Beam
+			RoyalThrowingSpear.DisplayName: Royal Throwing Spear
+			SagittariusBowHeld.DisplayName: Charged Bow
+			Sand.DisplayName: Sand
+			Sandstorm.DisplayName: Sandstorm
+			SentenzaShot.DisplayName: Sentenza Shot
+			ShadowBall.DisplayName: Shadow Ball
+			ShamanBolt.DisplayName: Shaman Bolt
+			ShatteredMoonlight.DisplayName: Shattered Moonlight
+			Shockwave.DisplayName: Shockwave
+			BarbarousThornBladeProjectile.DisplayName: Barbarous Thorn Blade Projectile
+			BarrowBladeProjectile.DisplayName: Barrow Blade Projectile
+			ClaiomhSolaisProjectile.DisplayName: Claiomh Solais Projectile
+			LaevateinnProjectile.DisplayName: Laevateinn Projectile
+			WyrmkillerProjectile.DisplayName: Wyrmkiller Projectile
+			YellowTailProjectile.DisplayName: Yellow Tail Projectile
+			ShulletBellDark.DisplayName: Shullet Bell Dark
+			ShulletBellLight.DisplayName: Shullet Bell Light
+			SoulArrow.DisplayName: Soul Arrow
+			SoulDrop.DisplayName: Dark Soul
+			SoulSickle.DisplayName: Soul Sickle
+			Soulsplosion.DisplayName: Soulsplosion
+			SoulsplosionLarge.DisplayName: Large Soulsplosion
+			AncientBloodLanceProj.DisplayName: Ancient Blood Lance Proj
+			AncientDragonLanceProj.DisplayName: Ancient Dragon Lance Proj
+			AncientHolyLanceProj.DisplayName: Ancient Holy Lance Proj
+			CelestialLanceProj.DisplayName: Celestial Lance Proj
+			CobaltHalberdProj.DisplayName: Cobalt Halberd Proj
+			DarkTridentHeld.DisplayName: Charged Bow
+			DarkTridentPoke.DisplayName: Dark Trident Poke
+			DarkTridentThrown.DisplayName: Dark Trident Thrown
+			DragoonLanceProj.DisplayName: Dragoon Lance Proj
+			ForgottenImpHalberdProj.DisplayName: Forgotten Imp Halberd Proj
+			ForgottenPearlSpearProj.DisplayName: Forgotten Pearl Spear Proj
+			ForgottenPolearmProj.DisplayName: Forgotten Polearm Proj
+			ForgottenRadiantLanceProj.DisplayName: Forgotten Radiant Lance Proj
+			GaeBolgProj.DisplayName: Gae Bolg Proj
+			HiRyuuSpearProj.DisplayName: Hi Ryuu Spear Proj
+			LonginusProj.DisplayName: Longinus Proj
+			OldHalberdProj.DisplayName: Old Halberd Proj
+			SporePowder.DisplayName: Spore Powder
+			SSShot.DisplayName: S S Shot
+			StarfallProjectile.DisplayName: Starfall Projectile
+			SuddenDeathStrike.DisplayName: Sudden Death Strike
+			ArcherToken.DisplayName: Archer
+			NondescriptOwlProjectile.DisplayName: Owl Archer
+			OwlsArrow.DisplayName: Owls Arrow
+			FriendlyDragonsBreath.DisplayName: Friendly Dragons Breath
+			FriendlyRedLaser.DisplayName: Laser
+			FriendlyTetsujinLaser.DisplayName: Friendly Tetsujin Laser
+			NullSprite.DisplayName: Null Sprite
+			PhoenixProjectile.DisplayName: Phoenix Juvenile
+			InterstellarVesselShip.DisplayName: Interstellar Vessel Ship
+			ScorchingPointFireball.DisplayName: Scorching Point Fireball
+			SamuraiBeetle.DisplayName: Samurai Beetle
+			GaleForceProjectile.DisplayName: Gale Force Projectile
+			BarrowWightMinion.DisplayName: Barrow Wight Minion
+			NullSpriteBeam.DisplayName: Null Beam
+			PhoenixBoom.DisplayName: Phoenix Boom
+			PhoenixBoomCrit.DisplayName: Phoenix Boom Crit
+			SunsetQuasarMinion.DisplayName: Sunset Quasar
+			SunsetQuasarToken.DisplayName: Sunset Quasar
+			TetsujinProjectile.DisplayName: Tetsujin Projectile
+			DetonationSignalProjectile.DisplayName: Detonation Signal Projectile
+			DominatrixProjectile.DisplayName: Dominatrix Projectile
+			DragoonLashProjectile.DisplayName: Dragoon Lash Projectile
+			EnchantedWhipFallingStar.DisplayName: Enchanted Whip Falling Star
+			EnchantedWhipProjectile.DisplayName: Enchanted Whip Projectile
+			NightsCrackerProjectile.DisplayName: Nights Cracker Projectile
+			PolarisLeashFallingStar.DisplayName: Polaris Leash Falling Star
+			PolarisLeashPolaris.DisplayName: Polaris Leash Polaris
+			PolarisLeashProjectile.DisplayName: Polaris Leash Projectile
+			PyrosulfateProjectile.DisplayName: Pyrosulfate Projectile
+			SearingLashProjectile.DisplayName: Searing Lash Projectile
+			TerraFallProjectile.DisplayName: Terra Fall Projectile
+			TerraFallTerraprisma.DisplayName: True Terraprisma
+			SuperBlasterShot.DisplayName: Super Blaster Shot
+			DrakarthusDagger.DisplayName: Drakarthus Dagger
+			DrakarthusDagger2.DisplayName: Drakarthus Dagger2
+			NightbringerThrust.DisplayName: Nightbringer Thrust
+			NightbringerTornado.DisplayName: Nightbringer Tornado
+			NightbringerWindWall.DisplayName: Nightbringer Wind Wall
+			PlasmaWhirlwindThrust.DisplayName: Plasma Whirlwind Thrust
+			PlasmaWhirlwindTornado.DisplayName: Plasma Whirlwind Tornado
+			SteelTempestThrust.DisplayName: Steel Tempest Thrust
+			SteelTempestTornado.DisplayName: Steel Tempest Tornado
+			ThrowingAxe.DisplayName: Throwing Axe
+			ThrowingKnifeHostile.DisplayName: Throwing Knife Hostile
+			ThrowingSpear.DisplayName: Throwing Spear
+			ToxicCatDetonator.DisplayName: Toxic Cat Detonator
+			ToxicCatExplosion.DisplayName: Toxic Cat Explosion
+			ToxicCatShot.DisplayName: Toxic Cat Shot
+			Ultima.DisplayName: Ultima
+			UltimaExplosion.DisplayName: Ultima Explosion
+			CataluminanceTrail.DisplayName: Illuminant Trail
+			DynamicTrail.DisplayName: Dynamic Trail
+			IchorTrail.DisplayName: Ichor Trail
+			LightRay.DisplayName: Light Ray
+			VirulentCatDetonator.DisplayName: Virulent Cat Detonator
+			VirulentCatExplosion.DisplayName: Virulent Cat Explosion
+			VirulentCatShot.DisplayName: Virulent Cat Shot
+			WhiteLotusCore.DisplayName: White Lotus Core
+			WhiteLotusPetal.DisplayName: White Lotus Petal
+		}
+
+		NPCs: {
+			AncientDemon.DisplayName: Ancient Demon
+			AncientOolacileDemon.DisplayName: Ancient Oolacile Demon
+			Cataluminance.DisplayName: Cataluminance v1.08
+			Death.DisplayName: Death
+			EarthFiendLich.DisplayName: Earth Fiend Lich
+			FireFiendMarilith.DisplayName: Fire Fiend Marilith
+			LichKingDisciple.DisplayName: Lich King Disciple
+			LichKingSerpentBody.DisplayName: Lich King Serpent
+			LichKingSerpentHead.DisplayName: Lich King Serpent
+			LichKingSerpentTail.DisplayName: Lich King Serpent
+			MarilithDeath.DisplayName: Fire Fiend Marilith
+			MarilithIntro.DisplayName: ?????
+			WaterFiendKraken.DisplayName: Water Fiend Kraken
+			Gaibon.DisplayName: Gaibon
+			HeroofLumelia.DisplayName: Hero of Lumelia
+			JungleWyvernBody.DisplayName: Ancient Jungle Wyvern
+			JungleWyvernBody2.DisplayName: Ancient Jungle Wyvern
+			JungleWyvernBody3.DisplayName: Ancient Jungle Wyvern
+			JungleWyvernHead.DisplayName: Ancient Jungle Wyvern
+			JungleWyvernLegs.DisplayName: Ancient Jungle Wyvern
+			JungleWyvernTail.DisplayName: Ancient Jungle Wyvern
+			Attraidies.DisplayName: Attraidies
+			AttraidiesMimic.DisplayName: Attraidies
+			DamnedSoul.DisplayName: Damned Soul
+			DarkShogunMask.DisplayName: Mindflayer King
+			DarkDragonMask.DisplayName: Attraidies
+			ShadowDragonBody.DisplayName: Shadow Dragon
+			ShadowDragonBody2.DisplayName: Shadow Dragon
+			ShadowDragonBody3.DisplayName: Shadow Dragon
+			ShadowDragonHead.DisplayName: Shadow Dragon
+			ShadowDragonLegs.DisplayName: Shadow Dragon
+			ShadowDragonTail.DisplayName: Shadow Dragon
+			BrokenOkiku.DisplayName: Mindflayer Illusion
+			Okiku.DisplayName: Mindflayer Illusion
+			RetinazerV2.DisplayName: Retinazer v2.05
+			SerrisBody.DisplayName: Serris
+			SerrisHead.DisplayName: Serris
+			SerrisTail.DisplayName: Serris
+			SerrisX.DisplayName: Serris-X
+			Slogra.DisplayName: Slogra, Lost Soul of the Depths
+			SpazmatismV2.DisplayName: Spazmatism v2.14
+			AbysmalOolacileSorcerer.DisplayName: Abysmal Oolacile Sorcerer
+			Artorias.DisplayName: Artorias
+			Blight.DisplayName: Blight
+			Chaos.DisplayName: Chaos
+			DarkCloud.DisplayName: Dark Cloud
+			DarkCloudMirror.DisplayName: Dark Cloud Mirror
+			DarkUltimaWeapon.DisplayName: Dark Ultima Weapon
+			GhostDragonBody.DisplayName: Ghost Wyvern
+			GhostDragonBody2.DisplayName: Ghost Wyvern
+			GhostDragonBody3.DisplayName: Ghost Wyvern
+			GhostDragonHead.DisplayName: Ghost Wyvern
+			GhostDragonLegs.DisplayName: Ghost Wyvern
+			GhostDragonTail.DisplayName: Ghost Wyvern
+			MageShadow.DisplayName: Mage Shadow
+			WyvernMageShadow.DisplayName: Wyvern Mage Shadow
+			Gwyn.DisplayName: Gwyn, Lord of Cinder
+			HellkiteDragonBody.DisplayName: Hellkite Dragon
+			HellkiteDragonBody2.DisplayName: Hellkite Dragon
+			HellkiteDragonBody3.DisplayName: Hellkite Dragon
+			HellkiteDragonHead.DisplayName: Hellkite Dragon
+			HellkiteDragonLegs.DisplayName: Hellkite Dragon
+			HellkiteDragonTail.DisplayName: Hellkite Dragon
+			PrimordialCrystal.DisplayName: Primordial Crystal
+			SeathTheScalelessBody.DisplayName: Seath the Scaleless
+			SeathTheScalelessBody2.DisplayName: Seath the Scaleless
+			SeathTheScalelessBody3.DisplayName: Seath the Scaleless
+			SeathTheScalelessHead.DisplayName: Seath the Scaleless
+			SeathTheScalelessLegs.DisplayName: Seath the Scaleless
+			SeathTheScalelessTail.DisplayName: Seath the Scaleless
+			SoulOfCinder.DisplayName: Gwyn, Lord of Cinder
+			SwordOfLordGwyn.DisplayName: Sword of Lord Gwyn
+			Witchking.DisplayName: Witchking
+			TestBoss.DisplayName: Test Boss
+			TheHunter.DisplayName: The Hunter
+			TheHunterChild.DisplayName: The Hunter's child
+			TheRage.DisplayName: The Rage
+			TheSorrow.DisplayName: The Sorrow
+			MechaDragonBody.DisplayName: Wyvern Mage Disciple
+			MechaDragonBody2.DisplayName: Wyvern Mage Disciple
+			MechaDragonBody3.DisplayName: Wyvern Mage Disciple
+			MechaDragonHead.DisplayName: Wyvern Mage Disciple
+			MechaDragonLegs.DisplayName: Wyvern Mage Disciple
+			MechaDragonTail.DisplayName: Wyvern Mage Disciple
+			WyvernMage.DisplayName: Wyvern Mage
+			AbandonedStump.DisplayName: Abandoned Stump
+			Archdeacon.DisplayName: Archdeacon
+			ArmoredWraith.DisplayName: Unarmored Wraith
+			Assassin.DisplayName: Assassin
+			AttraidiesIllusion.DisplayName: Attraidies Illusion
+			AttraidiesManifestation.DisplayName: Attraidies Manifestation
+			BarrowWight.DisplayName: Barrow Wight
+			BasiliskShifter.DisplayName: Basilisk Shifter
+			BasiliskWalker.DisplayName: Basilisk Walker
+			BlackKnight.DisplayName: Black Knight
+			CloudBat.DisplayName: Cloud Bat
+			CosmicCrystalLizard.DisplayName: Cosmic Crystal Lizard
+			CrazedDemonSpirit.DisplayName: Crazed Demon Spirit
+			DarkElfMage.DisplayName: Dark Elf Mage
+			DemonElemental.DisplayName: Demon Elemental
+			DemonSpirit.DisplayName: Demon Spirit
+			DestroyerLaserProbe.DisplayName: Laser Probe
+			DiscipleOfAttraidies.DisplayName: Disciple Of Attraidies
+			DungeonMage.DisplayName: Dungeon Mage
+			Dunlending.DisplayName: Dunlending
+			DworcFleshhunter.DisplayName: Dworc Fleshhunter
+			DworcVenomsniper.DisplayName: Dworc Venomsniper
+			DworcVoodoomaster.DisplayName: Dworc Alchemist
+			DworcVoodooShaman.DisplayName: Dworc Shaman
+			FirebombHollow.DisplayName: Firebomb Hollow
+			FireLurker.DisplayName: Fire Lurker
+			FlameBat.DisplayName: Flame Bat
+			GaibonFireball.DisplayName: Gaibon Fireball
+			GhostOfTheDarkmoonKnight.DisplayName: Ghost of the Darkmoon Knight
+			GhostoftheForgottenKnight.DisplayName: Ghost of the Forgotten Knight
+			GhostOfTheForgottenWarrior.DisplayName: Ghost Of The Forgotten Warrior
+			HollowSoldier.DisplayName: Hollow Soldier
+			HollowWarrior.DisplayName: Hollow Warrior
+			HumanityPhantom.DisplayName: Humanity Phantom
+			JungleSentree.DisplayName: Jungle Sentree
+			JungleWyvernJuvenileBody.DisplayName: Jungle Wyvern Juvenile
+			JungleWyvernJuvenileBody2.DisplayName: Jungle Wyvern Juvenile
+			JungleWyvernJuvenileBody3.DisplayName: Jungle Wyvern Juvenile
+			JungleWyvernJuvenileHead.DisplayName: Jungle Wyvern Juvenile
+			JungleWyvernJuvenileLegs.DisplayName: Jungle Wyvern Juvenile
+			JungleWyvernJuvenileTail.DisplayName: Jungle Wyvern Juvenile
+			LivingShroomThief.DisplayName: Living Shroom Thief
+			LothricBlackKnight.DisplayName: Lothric Black Knight
+			LothricKnight.DisplayName: Lothric Knight
+			LothricSpearKnight.DisplayName: Lothric Spear Knight
+			ManHunter.DisplayName: Man Hunter
+			MarilithSeeker.DisplayName: Marilith Seeker
+			MarilithSpiritTwin.DisplayName: Marilith Spirit Twin
+			MindflayerIllusion.DisplayName: Mindflayer Illusion
+			MindflayerKingServant.DisplayName: Mindflayer King Servant
+			MindflayerServant.DisplayName: Mindflayer Servant
+			MutantToad.DisplayName: Mutant Toad
+			Necromancer.DisplayName: Necromancer
+			NecromancerElemental.DisplayName: Necromancer Elemental
+			ObsidianJellyfish.DisplayName: Obsidian Jellyfish
+			Parasprite.DisplayName: Parasprite
+			PrimeLaserProbe.DisplayName: Laser Probe
+			QuaraHydromancer.DisplayName: Quara Hydromancer
+			RedCloudHunter.DisplayName: Red Cloud Hunter
+			RedKnight.DisplayName: Red Knight
+			ResentfulSeedling.DisplayName: Resentful Seedling
+			RingedKnight.DisplayName: Ringed Knight
+			ShadowMage.DisplayName: Shadow Mage
+			SnowOwl.DisplayName: Snow Owl
+			StoneGolem.DisplayName: Stone Golem
+			Abysswalker.DisplayName: Dworc Abysswalker
+			AncientDemonOfTheAbyss.DisplayName: Ancient Demon of the Abyss
+			BarrowWightNemesis.DisplayName: Barrow Wight Nemesis
+			BarrowWightPhantom.DisplayName: Barrow Wight Phantom
+			BasiliskHunter.DisplayName: Basilisk Hunter
+			CorruptedElemental.DisplayName: Corrupted Elemental
+			CorruptedHornet.DisplayName: Corrupted Hornet
+			CrystalKnight.DisplayName: Crystal Knight
+			DarkBloodKnight.DisplayName: Dark Blood Knight
+			DarkKnight.DisplayName: Dark Knight
+			DemonWheel.DisplayName: Demon Wheel
+			GreatRedKnight.DisplayName: Great Red Knight
+			GuardianCorruptor.DisplayName: Guardian Corruptor
+			HydrisElemental.DisplayName: Hydris Elemental
+			HydrisNecromancer.DisplayName: Hydris Necromancer
+			IceSkeleton.DisplayName: Ice Skeleton
+			KnightOfGwyn.DisplayName: Knight Of Gwyn
+			ManOfWar.DisplayName: Man Of War
+			OolacileDemon.DisplayName: Ephemeral Oolacile Demon
+			OolacileKnight.DisplayName: Oolacile Knight
+			OolacileSorcerer.DisplayName: Oolacile Sorcerer
+			SerpentOfTheAbyssBody.DisplayName: Serpent of the Abyss
+			SerpentOfTheAbyssHead.DisplayName: Serpent of the Abyss
+			SerpentOfTheAbyssTail.DisplayName: Serpent of the Abyss
+			SlograII.DisplayName: Slogra
+			TaurusKnight.DisplayName: Taurus Knight
+			Tetsujin.DisplayName: Tetsujin
+			VampireBat.DisplayName: Vampire Bat
+			TibianAmazon.DisplayName: Tibian Amazon
+			TibianValkyrie.DisplayName: Tibian Valkyrie
+			Tonberry.DisplayName: Tonberry
+			UndeadCaster.DisplayName: Undead Caster
+			ViciousSpit.DisplayName: Vicious Spit
+			Warlock.DisplayName: Warlock
+			WaterSpirit.DisplayName: Water Spirit
+			ZombieWormBody.DisplayName: Parasytic Worm
+			ZombieWormHead.DisplayName: Parasytic Worm
+			ZombieWormTail.DisplayName: Parasytic Worm
+			Chicken.DisplayName: Chicken
+			Dwarf.DisplayName: Dwarf
+			DwarvenGuard.DisplayName: Dwarven Guard
+			EmeraldHerald.DisplayName: Emerald Herald
+			FreedFairy.DisplayName: Freed Fairy
+			LivingGlowshroom.DisplayName: Living Glowshroom
+			LivingShroom.DisplayName: Living Shroom
+			ShamanElder.DisplayName: Shaman Elder
+			SolaireOfAstora.DisplayName: Warrior of Sunlight
+			TibianArcher.DisplayName: Tibian Archer
+			TibianMage.DisplayName: Tibian Mage
+			UndeadMerchant.DisplayName: Undead Merchant
+			AttraidiesApparition.DisplayName: Attraidies
+			Bonfirefly.DisplayName: Bonfirefly
+			Faraam.DisplayName: Faraam
+			GwynBossVision.DisplayName: Gwyn Boss Vision
+			LeonhardPhase1.DisplayName: ???
+			IchorGlob.DisplayName: Ichor Glob
+			IchorMissile.DisplayName: Ichor Missile
+		}
+
+		Prefixes: {
+			Blessed.DisplayName: Blessed
+			Brave.DisplayName: Brave
+			Commanding.DisplayName: Commanding
+			Domineering.DisplayName: Domineering
+			Impatient.DisplayName: Impatient
+			Invigorating.DisplayName: Invigorating
+			Perfectionist.DisplayName: Perfectionist
+			Reckless.DisplayName: Reckless
+			Refreshing.DisplayName: Refreshing
+			Revitalizing.DisplayName: Revitalizing
+			Sadistic.DisplayName: Sadistic
+			Tenacious.DisplayName: Tenacious
+			Undisciplined.DisplayName: Undisciplined
+		}
+
+		Tiles: {
+			EnemyBannerTile.MapEntry: Banner
+			BonfireCheckpoint.MapEntry: Bonfire Checkpoint
+			FlameJet.MapEntry: Flame Jet
+			SoapstoneTile.MapEntry: Soapstone Message
+			SoulSkellyL.MapEntry: Soul Skelly
+			SoulSkellyR.MapEntry: Soul Skelly
+			SoulSkellyWall1.MapEntry: Soul Skelly
+			SoulSkellyWall2.MapEntry: Soul Skelly
+			SoulSkullL.MapEntry: Soul Skull
+			SoulSkullR.MapEntry: Soul Skull
+		}
+	}
+}
