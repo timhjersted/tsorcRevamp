@@ -32,7 +32,7 @@ namespace tsorcRevamp
     {
         internal static void ApplyMethodSwaps()
         {
-            //Terraria.On_Player.Spawn += SpawnPatch;
+            Terraria.On_Player.Spawn += SpawnPatch;
 
             Terraria.On_WorldGen.TriggerLunarApocalypse += StopLunarApocalypse;
 
@@ -97,6 +97,8 @@ namespace tsorcRevamp
             Terraria.On_Main.DrawProjectiles += Main_DrawProjectiles;
 
             Terraria.On_Main.DrawCachedProjs += Main_DrawCachedProjs;
+
+            On_Recipe.CollectItemsToCraftWithFrom += Recipe_CollectItemsToCraftWithFrom;
         }
 
         private static void StopLunarApocalypse(Terraria.On_WorldGen.orig_TriggerLunarApocalypse orig)
@@ -1273,6 +1275,14 @@ namespace tsorcRevamp
             {
                 self.AutoFinchStaff();
             }
+            if (self.whoAmI == Main.myPlayer && context == PlayerSpawnContext.SpawningIntoWorld) {
+                Main.ReleaseHostAndPlayProcess();
+                self.RefreshItems(true);
+                self.SetPlayerDataToOutOfClassFields();
+                Main.LocalGolfState.SetScoreTime();
+                Main.ActivePlayerFileData.StartPlayTimer();
+                Player.Hooks.EnterWorld(self.whoAmI);
+            }
         }
         
         internal static bool IsAreaAValidWorldSpawn(int floorX, int floorY) {
@@ -2105,5 +2115,25 @@ namespace tsorcRevamp
             return input;
         }
 
+        //allow the soul slot to be included in recipes
+        private static void Recipe_CollectItemsToCraftWithFrom(On_Recipe.orig_CollectItemsToCraftWithFrom orig, Player player) {
+            orig(player);
+            Item souls = player.GetModPlayer<tsorcRevampPlayer>().SoulSlot.Item;
+            if (souls != null && souls.stack >= 1) {
+                Item[] asArray = { souls };
+
+                Assembly tml = player.GetType().Assembly;
+                Type recipeClass = null;
+                foreach (Type T in tml.GetTypes()) {
+                    if (T.Name == "Recipe") {
+                        recipeClass = T;
+                        break;
+                    }
+                }
+
+                MethodInfo mi = recipeClass.GetMethod("CollectItems", BindingFlags.NonPublic | BindingFlags.Static, new Type[] { typeof(Item[]), typeof(int) });
+                mi.Invoke(default, new object[] { asArray, 1 });
+            }
+        }
     }
 }
