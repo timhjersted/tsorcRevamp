@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Anti-Material Round");
+            // DisplayName.SetDefault("Anti-Material Round");
         }
 
         bool reposition = true;

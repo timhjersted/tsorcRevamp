@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cosmic Crystal Lizard");
+            // DisplayName.SetDefault("Cosmic Crystal Lizard");
             Main.npcFrameCount[NPC.type] = 29;
         }
 

@@ -10,8 +10,8 @@ namespace tsorcRevamp.Buffs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dispel Shadow");
-            Description.SetDefault("Your defense has been dispelled");
+            // DisplayName.SetDefault("Dispel Shadow");
+            // Description.SetDefault("Your defense has been dispelled");
         }
     }
 }

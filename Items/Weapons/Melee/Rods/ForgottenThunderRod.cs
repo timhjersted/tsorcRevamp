@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Rods
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Randomly casts Bolt 2.");
+            // Tooltip.SetDefault("Randomly casts Bolt 2.");
         }
 
         public override void SetDefaults()

@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A blade made to slay the Witchking.\n" + "[c/ffbf00:Does 3x damage to the Witchking and dispels the defensive shield of the Witchking and Artorias]");
+            // Tooltip.SetDefault("A blade made to slay the Witchking.\n" + "[c/ffbf00:Does 3x damage to the Witchking and dispels the defensive shield of the Witchking and Artorias]");
         }
 
         public override void SetDefaults()

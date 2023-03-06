@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Heals 2 hp on hit");
+            // Tooltip.SetDefault("Heals 2 hp on hit");
         }
         public override void SetDefaults()
         {

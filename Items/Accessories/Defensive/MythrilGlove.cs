@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Casts and sustains Wall when wearer is critically wounded" +
+            /* Tooltip.SetDefault("Casts and sustains Wall when wearer is critically wounded" +
                                "\nWall gives +50 defense" +
-                               "\nDoes not stack with Fog, Barrier or Shield spells");
+                               "\nDoes not stack with Fog, Barrier or Shield spells"); */
         }
 
         public override void SetDefaults()

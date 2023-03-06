@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Friendly
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Freed Fairy");
+            // DisplayName.SetDefault("Freed Fairy");
             Main.npcFrameCount[NPC.type] = 6;
             //NPCID.Sets.HatOffsetY[npc.type] = 4;
         }

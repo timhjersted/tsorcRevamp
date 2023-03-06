@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A cruel hill-man's axe fashioned to kill men" +
-                 "\nDeals massive damage to humans");
+            /* Tooltip.SetDefault("A cruel hill-man's axe fashioned to kill men" +
+                 "\nDeals massive damage to humans"); */
         }
         public override void SetDefaults()
         {

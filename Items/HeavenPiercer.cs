@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Heaven Piercer");
-            Tooltip.SetDefault("Infused with the energy of the Picksaw and the dark magic of Attraidies" +
-                "\n[c/00ffd4:Easily shatters lihzahrd bricks]");
+            // DisplayName.SetDefault("Heaven Piercer");
+            /* Tooltip.SetDefault("Infused with the energy of the Picksaw and the dark magic of Attraidies" +
+                "\n[c/00ffd4:Easily shatters lihzahrd bricks]"); */
         }
 
         public override void SetDefaults()

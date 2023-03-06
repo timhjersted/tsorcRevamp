@@ -11,11 +11,11 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Allows you to re-summon any boss you have defeated" +
+            /* Tooltip.SetDefault("Allows you to re-summon any boss you have defeated" +
                 "\nLeft click to summon the selected boss, right click to select the one you want" +
                 "\nBosses summoned in this way will not drop dark souls, guardian souls or stamina vessels" +
                 "\nHowever, they will drop the rest of their normal loot" +
-                "\n[Developer note: Not all bosses can be summoned this way yet, but the rest will be added over time]");
+                "\n[Developer note: Not all bosses can be summoned this way yet, but the rest will be added over time]"); */
         }
 
         public override void SetDefaults()

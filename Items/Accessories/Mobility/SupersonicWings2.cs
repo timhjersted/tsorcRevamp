@@ -10,12 +10,12 @@ namespace tsorcRevamp.Items.Accessories.Mobility
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Supersonic Wings II");
-            Tooltip.SetDefault("+60% supersonic movement speed and virtually limitless flight" +
+            // DisplayName.SetDefault("Supersonic Wings II");
+            /* Tooltip.SetDefault("+60% supersonic movement speed and virtually limitless flight" +
                                 "\nPlus all the previous abilities of Supersonic Wings and Improved Bundle of Balloons" +
                                 "\nDoes not work if Hermes Boots or Spectre Boots are equipped." +
                                 "\nCompatible with Dragoon Boots and Dragoon Gear." +
-                                "\nImproved Bundle of Balloons effect can be toggled by hiding the accessory.");
+                                "\nImproved Bundle of Balloons effect can be toggled by hiding the accessory."); */
         }
 
         public override void SetDefaults()

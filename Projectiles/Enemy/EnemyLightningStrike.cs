@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Laser");
+            // DisplayName.SetDefault("Laser");
         }
 
         public override string Texture => base.Texture;

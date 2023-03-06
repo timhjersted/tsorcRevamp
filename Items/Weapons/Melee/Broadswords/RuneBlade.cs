@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A sword used to kill magic users." +
+            /* Tooltip.SetDefault("A sword used to kill magic users." +
                                 "\n[c/ffbf00:Does up to 8x damage to mages]" +
-                                "\nEvery third hit with the Blade generates a magic slash");
+                                "\nEvery third hit with the Blade generates a magic slash"); */
         }
         public int shootstacks = 0;
         public override void SetDefaults()

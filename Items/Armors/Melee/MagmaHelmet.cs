@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increase melee critical strike chance by 10%");
+            // Tooltip.SetDefault("Increase melee critical strike chance by 10%");
         }
         public override void SetDefaults()
         {

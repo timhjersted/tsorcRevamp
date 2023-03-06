@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Blue Hero's hat");
-            Tooltip.SetDefault("Worn by the hero himself!" +
+            // DisplayName.SetDefault("Blue Hero's hat");
+            /* Tooltip.SetDefault("Worn by the hero himself!" +
                 "\n+40 Mana" +
-                "\nCan be upgraded eventually with 5 Souls of Sight and 40,000 Dark Souls");
+                "\nCan be upgraded eventually with 5 Souls of Sight and 40,000 Dark Souls"); */
         }
         public override void SetDefaults()
         {

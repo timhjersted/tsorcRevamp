@@ -12,10 +12,10 @@ namespace tsorcRevamp.Items.Armors
         public override string Texture => "tsorcRevamp/Items/Armors/DragoonHelmet";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Supreme Dragoon Helmet");
-            Tooltip.SetDefault("+200 Mana and Philosopher's stone effect" +
+            // DisplayName.SetDefault("Supreme Dragoon Helmet");
+            /* Tooltip.SetDefault("+200 Mana and Philosopher's stone effect" +
                 "\nSet Bonus: Harmonized with the four elements: fire, water, earth and air, including +6 life regen and flight" +
-                "\nBoosts damage, crit chance, melee and movement speed by 38% and reduces mana costs by 17%");
+                "\nBoosts damage, crit chance, melee and movement speed by 38% and reduces mana costs by 17%"); */
         }
 
         public override void SetDefaults()

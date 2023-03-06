@@ -43,7 +43,7 @@ namespace tsorcRevamp.NPCs.Special
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Gwyn Boss Vision");
+            // DisplayName.SetDefault("Gwyn Boss Vision");
         }
 
         //Location in world, "is the boss downed", and "has the vision shattered when the player walked by"

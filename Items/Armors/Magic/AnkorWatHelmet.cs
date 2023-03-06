@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases max mana by 120" +
-                "\nReduces mana costs by 8% and increases mana regen by 4");
+            /* Tooltip.SetDefault("Increases max mana by 120" +
+                "\nReduces mana costs by 8% and increases mana regen by 4"); */
         }
         public override void SetDefaults()
         {

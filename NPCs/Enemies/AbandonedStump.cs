@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Abandoned Stump"); // A sore sight.
+            // DisplayName.SetDefault("Abandoned Stump"); // A sore sight.
             Main.npcFrameCount[NPC.type] = 8;
         }
 

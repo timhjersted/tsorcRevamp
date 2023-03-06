@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases stamina recovery rate by 30%");
+            // Tooltip.SetDefault("Increases stamina recovery rate by 30%");
         }
 
         public override void SetDefaults()

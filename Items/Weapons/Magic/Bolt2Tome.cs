@@ -10,11 +10,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bolt 2 Tome");
-            Tooltip.SetDefault("A lost tome for artisans." +
+            // DisplayName.SetDefault("Bolt 2 Tome");
+            /* Tooltip.SetDefault("A lost tome for artisans." +
                                 "\nDrops a lightning strike upon collision" +
                                 "\nElectrifies enemies" +
-                                "\nCan be upgraded with 25,000 Dark Souls and 15 Soul of Light.");
+                                "\nCan be upgraded with 25,000 Dark Souls and 15 Soul of Light."); */
 
         }
 

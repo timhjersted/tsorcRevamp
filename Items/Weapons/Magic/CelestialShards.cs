@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Summons an array of shards which unleash divine wrath upon your foes");
+            // Tooltip.SetDefault("Summons an array of shards which unleash divine wrath upon your foes");
 
         }
                

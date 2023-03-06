@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Summons The Hunter \n" + "You must sacrifice this at a Demon Altar in the Jungle far to the West");
+            // Tooltip.SetDefault("Summons The Hunter \n" + "You must sacrifice this at a Demon Altar in the Jungle far to the West");
         }
 
         public override void SetDefaults()

@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fire Fiend Marilith");
+            // DisplayName.SetDefault("Fire Fiend Marilith");
         }
 
         public override void SetDefaults()

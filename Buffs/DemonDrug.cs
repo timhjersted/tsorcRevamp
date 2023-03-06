@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Demonic Might");
-            Description.SetDefault("Your body can barely handle it...");
+            // DisplayName.SetDefault("Demonic Might");
+            // Description.SetDefault("Your body can barely handle it...");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

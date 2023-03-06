@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Smough's Greaves");
-            Tooltip.SetDefault("Decreases dodgeroll agility");
+            // DisplayName.SetDefault("Smough's Greaves");
+            // Tooltip.SetDefault("Decreases dodgeroll agility");
         }
         public override void SetDefaults()
         {

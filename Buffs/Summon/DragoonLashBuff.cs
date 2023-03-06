@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Dragoon Awakening");
-			Description.SetDefault("+33% summon attack speed");
+			// DisplayName.SetDefault("Dragoon Awakening");
+			// Description.SetDefault("+33% summon attack speed");
 			Main.buffNoSave[Type] = true;
 			Main.buffNoTimeDisplay[Type] = false;
 		}

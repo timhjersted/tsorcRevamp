@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Shatters strong defenses with high penetration(multi - hit damage)");
+            // Tooltip.SetDefault("Shatters strong defenses with high penetration(multi - hit damage)");
         }
 
         public override void SetDefaults()

@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases ranged damage by 15%" +
-                "\nIncreases life regen by 3");
+            /* Tooltip.SetDefault("Increases ranged damage by 15%" +
+                "\nIncreases life regen by 3"); */
         }
 
         public override void SetDefaults()

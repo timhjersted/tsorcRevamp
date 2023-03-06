@@ -48,7 +48,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         public int LightningStrikeDamage = 132;
         public int DarkLaserDamage = 102;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             ShadowOrbDamage /= 2;
             CrystalShardsDamage /= 2;

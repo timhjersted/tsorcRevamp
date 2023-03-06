@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Battlefront");
-            Description.SetDefault("You've never felt more ready for a fight...");
+            // DisplayName.SetDefault("Battlefront");
+            // Description.SetDefault("You've never felt more ready for a fight...");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

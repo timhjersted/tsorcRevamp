@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Lightning Spear");
+            // DisplayName.SetDefault("Lightning Spear");
         }
         public override void SetDefaults()
         {

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Summon
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Null Sprite");
+            // DisplayName.SetDefault("Null Sprite");
             Main.projFrames[Projectile.type] = 1; //4?
             Main.projPet[Projectile.type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;

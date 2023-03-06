@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-			Tooltip.SetDefault("7% summon tag critical strike chance" +
+			/* Tooltip.SetDefault("7% summon tag critical strike chance" +
                 "\nInflicts bleeding debuff(Unimplemented)" +
-				"\nYour summons will focus struck enemies");
+				"\nYour summons will focus struck enemies"); */
 		}
 
 		public override void SetDefaults()

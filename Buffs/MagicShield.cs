@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Magic Shield");
-            Description.SetDefault("Defense is increased by 10!");
+            // DisplayName.SetDefault("Magic Shield");
+            // Description.SetDefault("Defense is increased by 10!");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

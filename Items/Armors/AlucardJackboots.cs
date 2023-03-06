@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Part of the TSORC Revamp Team dev set belonging to NephilimDeath");
+            // Tooltip.SetDefault("Part of the TSORC Revamp Team dev set belonging to NephilimDeath");
         }
 
         public override void SetDefaults()

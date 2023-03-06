@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Summons The Sorrow \n" + "Must be used near the ocean");
+            // Tooltip.SetDefault("Summons The Sorrow \n" + "Must be used near the ocean");
         }
 
         public override void SetDefaults()

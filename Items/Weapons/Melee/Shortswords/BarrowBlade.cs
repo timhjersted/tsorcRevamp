@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("An invisible blade wrought with spells of a fierce power." +
+            /* Tooltip.SetDefault("An invisible blade wrought with spells of a fierce power." +
                                 "\n[c/ffbf00:Dispels the defensive shields of Artorias and the Witchking]" +
                                 "\nThe night reveals its connection to the Abyss..." +
-                                "\nHas a chance to spread Ichor to those it pierces");
+                                "\nHas a chance to spread Ichor to those it pierces"); */
         }
         public override void SetDefaults()
         {

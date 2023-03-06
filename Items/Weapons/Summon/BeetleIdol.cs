@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Beetle Idol");
-			Tooltip.SetDefault("Summons a Samurai Beetle to fight for you");
+			// DisplayName.SetDefault("Beetle Idol");
+			// Tooltip.SetDefault("Summons a Samurai Beetle to fight for you");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller

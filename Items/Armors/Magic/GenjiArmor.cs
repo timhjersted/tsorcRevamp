@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Armor from the East, enchanted with magic forces" +
-                "\n-12% mana cost\nSet bonus: +20% Magic Crit, +100 mana, +3 Mana Regen");
+            /* Tooltip.SetDefault("Armor from the East, enchanted with magic forces" +
+                "\n-12% mana cost\nSet bonus: +20% Magic Crit, +100 mana, +3 Mana Regen"); */
         }
         public override void SetDefaults()
         {

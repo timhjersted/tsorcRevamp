@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Accessories.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("5% increased magic damage" +
-                                "\n+40 mana");
+            /* Tooltip.SetDefault("5% increased magic damage" +
+                                "\n+40 mana"); */
         }
 
         public override void SetDefaults()

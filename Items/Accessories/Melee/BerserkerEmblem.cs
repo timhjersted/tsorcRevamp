@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("11% increased melee damage and crit");
+            // Tooltip.SetDefault("11% increased melee damage and crit");
         }
 
         public override void SetDefaults()

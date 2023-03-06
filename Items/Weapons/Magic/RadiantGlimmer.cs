@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Channel a storm of razor-sharp glowing shards which shred enemy defense");
+            // Tooltip.SetDefault("Channel a storm of razor-sharp glowing shards which shred enemy defense");
         }
 
         public override void SetDefaults()

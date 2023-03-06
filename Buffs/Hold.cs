@@ -8,8 +8,8 @@ namespace tsorcRevamp.Buffs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Held");
-            Description.SetDefault("You're being held in position!");
+            // DisplayName.SetDefault("Held");
+            // Description.SetDefault("You're being held in position!");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

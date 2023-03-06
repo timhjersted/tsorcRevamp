@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A treasure from ancient Plains of Havoc\nIncreases crit by 13% and adds 2 minion slots");
+            // Tooltip.SetDefault("A treasure from ancient Plains of Havoc\nIncreases crit by 13% and adds 2 minion slots");
         }
 
         public override void SetDefaults()

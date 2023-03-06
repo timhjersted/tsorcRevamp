@@ -41,7 +41,7 @@ namespace tsorcRevamp.UI
             ButtonSetSpawn.Width.Set(44, 0f);
             ButtonSetSpawn.Height.Set(44, 0f);
             // UIHoverImageButton doesn't do anything when Clicked. Here we assign a method that we'd like to be called when the button is clicked.
-            ButtonSetSpawn.OnClick += new MouseEvent(ButtonSetSpawnClicked);
+            ButtonSetSpawn.OnLeftClick += new MouseEvent(ButtonSetSpawnClicked);
             BonfireUI.Append(ButtonSetSpawn);
 
             Asset<Texture2D> buttonPiggyBankTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/ButtonPiggyBank");
@@ -50,7 +50,7 @@ namespace tsorcRevamp.UI
             ButtonPiggyBank.Top.Set(10, 0f);
             ButtonPiggyBank.Width.Set(44, 0f);
             ButtonPiggyBank.Height.Set(44, 0f);
-            ButtonPiggyBank.OnClick += new MouseEvent(ButtonPiggyBankClicked);
+            ButtonPiggyBank.OnLeftClick += new MouseEvent(ButtonPiggyBankClicked);
             BonfireUI.Append(ButtonPiggyBank);
 
             Asset<Texture2D> buttonSafeTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/ButtonSafe");
@@ -59,7 +59,7 @@ namespace tsorcRevamp.UI
             ButtonSafe.Top.Set(10, 0f);
             ButtonSafe.Width.Set(44, 0f);
             ButtonSafe.Height.Set(44, 0f);
-            ButtonSafe.OnClick += new MouseEvent(ButtonSafeClicked);
+            ButtonSafe.OnLeftClick += new MouseEvent(ButtonSafeClicked);
             BonfireUI.Append(ButtonSafe);
 
             Append(BonfireUI);

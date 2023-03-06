@@ -8,8 +8,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Phazon Contamination");
-            Description.SetDefault("Radiation is tearing your cells apart");
+            // DisplayName.SetDefault("Phazon Contamination");
+            // Description.SetDefault("Radiation is tearing your cells apart");
             Main.debuff[Type] = true;
             Main.pvpBuff[Type] = true;
             Main.buffNoSave[Type] = true;

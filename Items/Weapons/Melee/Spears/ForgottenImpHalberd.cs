@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A crescent shaped spear used by imps.");
+            // Tooltip.SetDefault("A crescent shaped spear used by imps.");
         }
 
         public override void SetDefaults()

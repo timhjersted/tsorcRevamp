@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Armor made from the shell of a legendary creature" +
-                "\nIncreases ranged damage by 15%");
+            /* Tooltip.SetDefault("Armor made from the shell of a legendary creature" +
+                "\nIncreases ranged damage by 15%"); */
         }
 
         public override void SetDefaults()

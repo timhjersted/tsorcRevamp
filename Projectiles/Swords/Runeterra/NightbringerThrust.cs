@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 12;
-            DisplayName.SetDefault("Nightbringer Thrust");
+            // DisplayName.SetDefault("Nightbringer Thrust");
         }
 
 

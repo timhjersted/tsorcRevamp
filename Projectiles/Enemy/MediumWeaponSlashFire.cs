@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/ThrowingAxe"; //invis so doesnt matter
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Medium Weapon Slash Fire");
+            // DisplayName.SetDefault("Medium Weapon Slash Fire");
         }
         public override void SetDefaults()
         {

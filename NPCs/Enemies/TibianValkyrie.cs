@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Tibian Valkyrie");
+            // DisplayName.SetDefault("Tibian Valkyrie");
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Skeleton];
         }
 

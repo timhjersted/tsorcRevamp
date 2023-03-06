@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Biohazard");
-            Tooltip.SetDefault("The addition of the propulsion field allows detonating shots to pierce twice"
-                                + "\nWarning - perfectly capable of destroying entire ecosystems");
+            // DisplayName.SetDefault("Biohazard");
+            /* Tooltip.SetDefault("The addition of the propulsion field allows detonating shots to pierce twice"
+                                + "\nWarning - perfectly capable of destroying entire ecosystems"); */
         }
 
         public override void SetDefaults()

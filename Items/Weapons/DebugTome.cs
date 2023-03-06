@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Weapons
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("You should not have this" +
+            /* Tooltip.SetDefault("You should not have this" +
                 "\nDev item used for testing purposes only" +
-                "\nUsing this may have irreversible effects on your world");
+                "\nUsing this may have irreversible effects on your world"); */
         }
 
         public override void SetDefaults()

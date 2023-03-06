@@ -9,8 +9,8 @@ namespace tsorcRevamp.Buffs.Runeterra
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Center of the Heat");
-			Description.SetDefault("You're in a hot center");
+			// DisplayName.SetDefault("Center of the Heat");
+			// Description.SetDefault("You're in a hot center");
 
 			Main.buffNoSave[Type] = true;
 			Main.buffNoTimeDisplay[Type] = true;

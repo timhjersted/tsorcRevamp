@@ -1270,7 +1270,10 @@ Mods: {
 				Tooltip: '''"The arrow which slew Smaug."'''
 			}
 
-			Bolt.DisplayName: Bolt
+			Bolt: {
+				DisplayName: Bolt
+				Tooltip: ""
+			}
 
 			CruelArrow: {
 				DisplayName: Cruel Arrow
@@ -1282,7 +1285,10 @@ Mods: {
 					'''
 			}
 
-			PowerBolt.DisplayName: Power Bolt
+			PowerBolt: {
+				DisplayName: Power Bolt
+				Tooltip: ""
+			}
 
 			TeslaBolt: {
 				DisplayName: Tesla Bolt
@@ -1636,9 +1642,20 @@ Mods: {
 				Tooltip: Increases movement speed by 13%
 			}
 
-			MaskOfTheChild.DisplayName: Mask Of The Child
-			MaskOfTheFather.DisplayName: Mask Of The Father
-			MaskOfTheMother.DisplayName: Mask Of The Mother
+			MaskOfTheChild: {
+				DisplayName: Mask Of The Child
+				Tooltip: ""
+			}
+
+			MaskOfTheFather: {
+				DisplayName: Mask Of The Father
+				Tooltip: ""
+			}
+
+			MaskOfTheMother: {
+				DisplayName: Mask Of The Mother
+				Tooltip: ""
+			}
 
 			AncientGoldenArmor: {
 				DisplayName: Ancient Golden Armor
@@ -2541,7 +2558,10 @@ Mods: {
 					'''
 			}
 
-			DarkMirror.DisplayName: Dark Mirror
+			DarkMirror: {
+				DisplayName: Dark Mirror
+				Tooltip: ""
+			}
 
 			DeathBringer: {
 				DisplayName: Death Bringer
@@ -2998,7 +3018,10 @@ Mods: {
 				Tooltip: A shard of the fading Crystal of Wind.
 			}
 
-			EphemeralDust.DisplayName: Ephemeral Dust
+			EphemeralDust: {
+				DisplayName: Ephemeral Dust
+				Tooltip: ""
+			}
 
 			Epilogue: {
 				DisplayName: Epilogue
@@ -3312,7 +3335,10 @@ Mods: {
 					'''
 			}
 
-			EmptyTrophy.DisplayName: Empty Trophy
+			EmptyTrophy: {
+				DisplayName: Empty Trophy
+				Tooltip: ""
+			}
 
 			PotionBag: {
 				DisplayName: Potion Bag
@@ -3465,62 +3491,285 @@ Mods: {
 					'''
 			}
 
-			Infinitea.DisplayName: Infinitea
-			PermanentAle.DisplayName: Permanent Ale
-			PermanentAmmoReservationPotion.DisplayName: Permanent Ammo Reservation Potion
-			PermanentArcheryPotion.DisplayName: Permanent Archery Potion
-			PermanentArmorDrug.DisplayName: Permanent Armor Drug
-			PermanentBattlefrontPotion.DisplayName: Permanent Battlefront Potion
-			PermanentBattlePotion.DisplayName: Permanent Battle Potion
-			PermanentBoostPotion.DisplayName: Permanent Boost Potion
-			PermanentBuilderPotion.DisplayName: Permanent Builder Potion
-			PermanentCalmingPotion.DisplayName: Permanent Calming Potion
-			PermanentCratePotion.DisplayName: Permanent Crate Potion
-			PermanentCrimsonPotion.DisplayName: Permanent Crimson Potion
-			PermanentDangersensePotion.DisplayName: Permanent Dangersense Potion
-			PermanentDemonDrug.DisplayName: Permanent Demon Drug
-			PermanentEndurancePotion.DisplayName: Permanent Endurance Potion
-			PermanentFeatherfallPotion.DisplayName: Permanent Featherfall Potion
-			PermanentFishingPotion.DisplayName: Permanent Fishing Potion
-			PermanentFlaskOfCursedFlames.DisplayName: Permanent Flask Of Cursed Flames
-			PermanentFlaskOfFire.DisplayName: Permanent Flask Of Fire
-			PermanentFlaskOfGold.DisplayName: Permanent Flask Of Gold
-			PermanentFlaskOfIchor.DisplayName: Permanent Flask Of Ichor
-			PermanentFlaskOfNanites.DisplayName: Permanent Flask Of Nanites
-			PermanentFlaskOfParty.DisplayName: Permanent Flask Of Party
-			PermanentFlaskOfPoison.DisplayName: Permanent Flask Of Poison
-			PermanentFlaskOfVenom.DisplayName: Permanent Flask Of Venom
-			PermanentFlipperPotion.DisplayName: Permanent Flipper Potion
-			PermanentGillsPotion.DisplayName: Permanent Gills Potion
-			PermanentGoldenDelight.DisplayName: Permanent Golden Delight
-			PermanentGravitationPotion.DisplayName: Permanent Gravitation Potion
-			PermanentHeartreachPotion.DisplayName: Permanent Heartreach Potion
-			PermanentHunterPotion.DisplayName: Permanent Hunter Potion
-			PermanentInfernoPotion.DisplayName: Permanent Inferno Potion
-			PermanentInvisibilityPotion.DisplayName: Permanent Invisibility Potion
-			PermanentIronskinPotion.DisplayName: Permanent Ironskin Potion
-			PermanentLifeforcePotion.DisplayName: Permanent Lifeforce Potion
-			PermanentMagicPowerPotion.DisplayName: Permanent Magic Power Potion
-			PermanentManaRegenerationPotion.DisplayName: Permanent Mana Regeneration Potion
-			PermanentMiningPotion.DisplayName: Permanent Mining Potion
-			PermanentNightOwlPotion.DisplayName: Permanent Night Owl Potion
-			PermanentObsidianSkinPotion.DisplayName: Permanent Obsidian Skin Potion
-			PermanentRagePotion.DisplayName: Permanent Rage Potion
-			PermanentRegenerationPotion.DisplayName: Permanent Regeneration Potion
-			PermanentShinePotion.DisplayName: Permanent Shine Potion
-			PermanentShockwavePotion.DisplayName: Permanent Shockwave Potion
-			PermanentSonarPotion.DisplayName: Permanent Sonar Potion
-			PermanentSoulSiphonPotion.DisplayName: Permanent Soul Siphon Potion
-			PermanentSoup.DisplayName: Permanent Soup
-			PermanentSpelunkerPotion.DisplayName: Permanent Spelunker Potion
-			PermanentStrengthPotion.DisplayName: Permanent Strength Potion
-			PermanentSummoningPotion.DisplayName: Permanent Summoning Potion
-			PermanentSwiftnessPotion.DisplayName: Permanent Swiftness Potion
-			PermanentThornsPotion.DisplayName: Permanent Thorns Potion
-			PermanentTitanPotion.DisplayName: Permanent Titan Potion
-			PermanentWarmthPotion.DisplayName: Permanent Warmth Potion
-			PermanentWaterWalkingPotion.DisplayName: Permanent Water Walking Potion
-			PermanentWrathPotion.DisplayName: Permanent Wrath Potion
+			Infinitea: {
+				DisplayName: Infinitea
+				Tooltip: ""
+			}
+
+			PermanentAle: {
+				DisplayName: Permanent Ale
+				Tooltip: ""
+			}
+
+			PermanentAmmoReservationPotion: {
+				DisplayName: Permanent Ammo Reservation Potion
+				Tooltip: ""
+			}
+
+			PermanentArcheryPotion: {
+				DisplayName: Permanent Archery Potion
+				Tooltip: ""
+			}
+
+			PermanentArmorDrug: {
+				DisplayName: Permanent Armor Drug
+				Tooltip: ""
+			}
+
+			PermanentBattlefrontPotion: {
+				DisplayName: Permanent Battlefront Potion
+				Tooltip: ""
+			}
+
+			PermanentBattlePotion: {
+				DisplayName: Permanent Battle Potion
+				Tooltip: ""
+			}
+
+			PermanentBoostPotion: {
+				DisplayName: Permanent Boost Potion
+				Tooltip: ""
+			}
+
+			PermanentBuilderPotion: {
+				DisplayName: Permanent Builder Potion
+				Tooltip: ""
+			}
+
+			PermanentCalmingPotion: {
+				DisplayName: Permanent Calming Potion
+				Tooltip: ""
+			}
+
+			PermanentCratePotion: {
+				DisplayName: Permanent Crate Potion
+				Tooltip: ""
+			}
+
+			PermanentCrimsonPotion: {
+				DisplayName: Permanent Crimson Potion
+				Tooltip: ""
+			}
+
+			PermanentDangersensePotion: {
+				DisplayName: Permanent Dangersense Potion
+				Tooltip: ""
+			}
+
+			PermanentDemonDrug: {
+				DisplayName: Permanent Demon Drug
+				Tooltip: ""
+			}
+
+			PermanentEndurancePotion: {
+				DisplayName: Permanent Endurance Potion
+				Tooltip: ""
+			}
+
+			PermanentFeatherfallPotion: {
+				DisplayName: Permanent Featherfall Potion
+				Tooltip: ""
+			}
+
+			PermanentFishingPotion: {
+				DisplayName: Permanent Fishing Potion
+				Tooltip: ""
+			}
+
+			PermanentFlaskOfCursedFlames: {
+				DisplayName: Permanent Flask Of Cursed Flames
+				Tooltip: ""
+			}
+
+			PermanentFlaskOfFire: {
+				DisplayName: Permanent Flask Of Fire
+				Tooltip: ""
+			}
+
+			PermanentFlaskOfGold: {
+				DisplayName: Permanent Flask Of Gold
+				Tooltip: ""
+			}
+
+			PermanentFlaskOfIchor: {
+				DisplayName: Permanent Flask Of Ichor
+				Tooltip: ""
+			}
+
+			PermanentFlaskOfNanites: {
+				DisplayName: Permanent Flask Of Nanites
+				Tooltip: ""
+			}
+
+			PermanentFlaskOfParty: {
+				DisplayName: Permanent Flask Of Party
+				Tooltip: ""
+			}
+
+			PermanentFlaskOfPoison: {
+				DisplayName: Permanent Flask Of Poison
+				Tooltip: ""
+			}
+
+			PermanentFlaskOfVenom: {
+				DisplayName: Permanent Flask Of Venom
+				Tooltip: ""
+			}
+
+			PermanentFlipperPotion: {
+				DisplayName: Permanent Flipper Potion
+				Tooltip: ""
+			}
+
+			PermanentGillsPotion: {
+				DisplayName: Permanent Gills Potion
+				Tooltip: ""
+			}
+
+			PermanentGoldenDelight: {
+				DisplayName: Permanent Golden Delight
+				Tooltip: ""
+			}
+
+			PermanentGravitationPotion: {
+				DisplayName: Permanent Gravitation Potion
+				Tooltip: ""
+			}
+
+			PermanentHeartreachPotion: {
+				DisplayName: Permanent Heartreach Potion
+				Tooltip: ""
+			}
+
+			PermanentHunterPotion: {
+				DisplayName: Permanent Hunter Potion
+				Tooltip: ""
+			}
+
+			PermanentInfernoPotion: {
+				DisplayName: Permanent Inferno Potion
+				Tooltip: ""
+			}
+
+			PermanentInvisibilityPotion: {
+				DisplayName: Permanent Invisibility Potion
+				Tooltip: ""
+			}
+
+			PermanentIronskinPotion: {
+				DisplayName: Permanent Ironskin Potion
+				Tooltip: ""
+			}
+
+			PermanentLifeforcePotion: {
+				DisplayName: Permanent Lifeforce Potion
+				Tooltip: ""
+			}
+
+			PermanentMagicPowerPotion: {
+				DisplayName: Permanent Magic Power Potion
+				Tooltip: ""
+			}
+
+			PermanentManaRegenerationPotion: {
+				DisplayName: Permanent Mana Regeneration Potion
+				Tooltip: ""
+			}
+
+			PermanentMiningPotion: {
+				DisplayName: Permanent Mining Potion
+				Tooltip: ""
+			}
+
+			PermanentNightOwlPotion: {
+				DisplayName: Permanent Night Owl Potion
+				Tooltip: ""
+			}
+
+			PermanentObsidianSkinPotion: {
+				DisplayName: Permanent Obsidian Skin Potion
+				Tooltip: ""
+			}
+
+			PermanentRagePotion: {
+				DisplayName: Permanent Rage Potion
+				Tooltip: ""
+			}
+
+			PermanentRegenerationPotion: {
+				DisplayName: Permanent Regeneration Potion
+				Tooltip: ""
+			}
+
+			PermanentShinePotion: {
+				DisplayName: Permanent Shine Potion
+				Tooltip: ""
+			}
+
+			PermanentShockwavePotion: {
+				DisplayName: Permanent Shockwave Potion
+				Tooltip: ""
+			}
+
+			PermanentSonarPotion: {
+				DisplayName: Permanent Sonar Potion
+				Tooltip: ""
+			}
+
+			PermanentSoulSiphonPotion: {
+				DisplayName: Permanent Soul Siphon Potion
+				Tooltip: ""
+			}
+
+			PermanentSoup: {
+				DisplayName: Permanent Soup
+				Tooltip: ""
+			}
+
+			PermanentSpelunkerPotion: {
+				DisplayName: Permanent Spelunker Potion
+				Tooltip: ""
+			}
+
+			PermanentStrengthPotion: {
+				DisplayName: Permanent Strength Potion
+				Tooltip: ""
+			}
+
+			PermanentSummoningPotion: {
+				DisplayName: Permanent Summoning Potion
+				Tooltip: ""
+			}
+
+			PermanentSwiftnessPotion: {
+				DisplayName: Permanent Swiftness Potion
+				Tooltip: ""
+			}
+
+			PermanentThornsPotion: {
+				DisplayName: Permanent Thorns Potion
+				Tooltip: ""
+			}
+
+			PermanentTitanPotion: {
+				DisplayName: Permanent Titan Potion
+				Tooltip: ""
+			}
+
+			PermanentWarmthPotion: {
+				DisplayName: Permanent Warmth Potion
+				Tooltip: ""
+			}
+
+			PermanentWaterWalkingPotion: {
+				DisplayName: Permanent Water Walking Potion
+				Tooltip: ""
+			}
+
+			PermanentWrathPotion: {
+				DisplayName: Permanent Wrath Potion
+				Tooltip: ""
+			}
 
 			RadiantLifegem: {
 				DisplayName: Radiant Lifegem
@@ -3652,7 +3901,10 @@ Mods: {
 				Tooltip: The essence of growth, deeply connected to the Earth.
 			}
 
-			StaminaDroplet.DisplayName: Stamina Droplet
+			StaminaDroplet: {
+				DisplayName: Stamina Droplet
+				Tooltip: ""
+			}
 
 			StaminaVessel: {
 				DisplayName: Stamina Vessel
@@ -4245,8 +4497,15 @@ Mods: {
 				Tooltip: Greater damage and higher knockback
 			}
 
-			WandOfFire.DisplayName: Wand of Fire
-			WandOfFire2.DisplayName: Wand of Fire II
+			WandOfFire: {
+				DisplayName: Wand of Fire
+				Tooltip: ""
+			}
+
+			WandOfFire2: {
+				DisplayName: Wand of Fire II
+				Tooltip: ""
+			}
 
 			WandOfFrost: {
 				DisplayName: Wand of Frost
@@ -4284,7 +4543,10 @@ Mods: {
 					'''
 			}
 
-			WoodenFlute.DisplayName: Wooden Flute
+			WoodenFlute: {
+				DisplayName: Wooden Flute
+				Tooltip: ""
+			}
 
 			WoodenWand: {
 				DisplayName: Wooden Wand
@@ -4460,7 +4722,10 @@ Mods: {
 					'''
 			}
 
-			Ragnarok.DisplayName: Ragnarok
+			Ragnarok: {
+				DisplayName: Ragnarok
+				Tooltip: ""
+			}
 
 			RTQ2Sword: {
 				DisplayName: RTQ2 Sword
@@ -4562,7 +4827,10 @@ Mods: {
 					'''
 			}
 
-			BerserkerNightmare.DisplayName: Berserker Nightmare
+			BerserkerNightmare: {
+				DisplayName: Berserker Nightmare
+				Tooltip: ""
+			}
 
 			HeavensTear: {
 				DisplayName: Heaven's Tear
@@ -4573,7 +4841,10 @@ Mods: {
 					'''
 			}
 
-			Moonfury.DisplayName: Moonfury
+			Moonfury: {
+				DisplayName: Moonfury
+				Tooltip: ""
+			}
 
 			SunderingLight: {
 				DisplayName: Sundering Light
@@ -4584,7 +4855,10 @@ Mods: {
 					'''
 			}
 
-			ForgottenRisingSun.DisplayName: Forgotten Rising Sun
+			ForgottenRisingSun: {
+				DisplayName: Forgotten Rising Sun
+				Tooltip: ""
+			}
 
 			AncientWarhammer: {
 				DisplayName: Ancient Warhammer
@@ -4607,7 +4881,10 @@ Mods: {
 					'''
 			}
 
-			Limit.DisplayName: Limit
+			Limit: {
+				DisplayName: Limit
+				Tooltip: ""
+			}
 
 			ForgottenIceRod: {
 				DisplayName: Forgotten Ice Rod
@@ -4766,7 +5043,10 @@ Mods: {
 				Tooltip: A crescent shaped spear used by imps.
 			}
 
-			ForgottenPearlSpear.DisplayName: Forgotten Pearl Spear
+			ForgottenPearlSpear: {
+				DisplayName: Forgotten Pearl Spear
+				Tooltip: ""
+			}
 
 			ForgottenPolearm: {
 				DisplayName: Forgotten Polearm
@@ -4782,7 +5062,10 @@ Mods: {
 					'''
 			}
 
-			HiRyuuSpear.DisplayName: HiRyuu Spear
+			HiRyuuSpear: {
+				DisplayName: HiRyuu Spear
+				Tooltip: ""
+			}
 
 			Longinus: {
 				DisplayName: Longinus
@@ -4808,7 +5091,10 @@ Mods: {
 				Tooltip: An all-powerful spear forged from the fang of the Dragoon Serpent.
 			}
 
-			ThrowingAxe.DisplayName: Throwing Axe
+			ThrowingAxe: {
+				DisplayName: Throwing Axe
+				Tooltip: ""
+			}
 
 			ArgentPeacemaker: {
 				DisplayName: Argent Peacemaker
@@ -4847,7 +5133,10 @@ Mods: {
 					'''
 			}
 
-			AncientGreatBow.DisplayName: Ancient Great Bow
+			AncientGreatBow: {
+				DisplayName: Ancient Great Bow
+				Tooltip: ""
+			}
 
 			ArtemisBow: {
 				DisplayName: Artemis Bow
@@ -5043,8 +5332,15 @@ Mods: {
 					'''
 			}
 
-			RTQ2Rifle.DisplayName: RTQ2 Rifle
-			GWPulsar.DisplayName: Gigawatt Pulsar
+			RTQ2Rifle: {
+				DisplayName: RTQ2 Rifle
+				Tooltip: ""
+			}
+
+			GWPulsar: {
+				DisplayName: Gigawatt Pulsar
+				Tooltip: ""
+			}
 
 			Marksman: {
 				DisplayName: Marksman
@@ -5126,7 +5422,10 @@ Mods: {
 					'''
 			}
 
-			SuperBlaster.DisplayName: Super Blaster
+			SuperBlaster: {
+				DisplayName: Super Blaster
+				Tooltip: ""
+			}
 
 			Crissaegrim: {
 				DisplayName: Crissaegrim
@@ -5154,8 +5453,15 @@ Mods: {
 					'''
 			}
 
-			RoyalThrowingSpear.DisplayName: Royal Throwing Spear
-			ThrowingSpear.DisplayName: Throwing Spear
+			RoyalThrowingSpear: {
+				DisplayName: Royal Throwing Spear
+				Tooltip: ""
+			}
+
+			ThrowingSpear: {
+				DisplayName: Throwing Spear
+				Tooltip: ""
+			}
 
 			ToxicCatalyzer: {
 				DisplayName: Toxic Catalyzer
@@ -5391,7 +5697,10 @@ Mods: {
 				Tooltip: Explodes, dealing damage in a small area
 			}
 
-			SporePowder.DisplayName: Spore Powder
+			SporePowder: {
+				DisplayName: Spore Powder
+				Tooltip: ""
+			}
 
 			WhiteTitanite: {
 				DisplayName: White Titanite
@@ -6743,6 +7052,13 @@ Mods: {
 			SoulSkellyWall2.MapEntry: Soul Skelly
 			SoulSkullL.MapEntry: Soul Skull
 			SoulSkullR.MapEntry: Soul Skull
+		}
+
+		Keybinds: {
+			"Dragoon Boots.DisplayName": Mods.tsorcRevamp.Keybinds.Dragoon Boots.DisplayName
+			"Reflection Shift.DisplayName": Mods.tsorcRevamp.Keybinds.Reflection Shift.DisplayName
+			"Dodge Roll.DisplayName": Mods.tsorcRevamp.Keybinds.Dodge Roll.DisplayName
+			"Special Ability.DisplayName": Mods.tsorcRevamp.Keybinds.Special Ability.DisplayName
 		}
 	}
 }

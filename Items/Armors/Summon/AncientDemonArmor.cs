@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Forged by those who brave Annihilation" +
+            /* Tooltip.SetDefault("Forged by those who brave Annihilation" +
                 "\n+27% whip damage" +
                 "\nSet bonus: Increases whip range by 30%" +
-                "\nIncreases summon attack speed by 25%, this gets doubled when under 50% health");
+                "\nIncreases summon attack speed by 25%, this gets doubled when under 50% health"); */
             ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = false;
         }
 

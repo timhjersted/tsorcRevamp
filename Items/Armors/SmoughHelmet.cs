@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Smough's Helmet");
-            Tooltip.SetDefault("Increases damage dealt by 15%");
+            // DisplayName.SetDefault("Smough's Helmet");
+            // Tooltip.SetDefault("Increases damage dealt by 15%");
         }
         public override void SetDefaults()
         {

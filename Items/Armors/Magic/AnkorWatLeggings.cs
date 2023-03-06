@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases magic damage by 15% and movement speed by 10%");
+            // Tooltip.SetDefault("Increases magic damage by 15% and movement speed by 10%");
         }
         public override void SetDefaults()
         {

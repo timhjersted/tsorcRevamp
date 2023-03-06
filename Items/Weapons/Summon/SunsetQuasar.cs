@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Weapons.Summon {
     {
         public override void SetStaticDefaults() 
         {
-            DisplayName.SetDefault("Sunset Quasar");
-            Tooltip.SetDefault("Summons a small creature to fight for you\n" +
-                                "\"Raccoons are very good as a lifeform\"");
+            // DisplayName.SetDefault("Sunset Quasar");
+            /* Tooltip.SetDefault("Summons a small creature to fight for you\n" +
+                                "\"Raccoons are very good as a lifeform\""); */
 
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true;

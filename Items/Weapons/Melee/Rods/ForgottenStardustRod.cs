@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Rods
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Randomly casts Meteor.");
+            // Tooltip.SetDefault("Randomly casts Meteor.");
         }
 
         public override void SetDefaults()

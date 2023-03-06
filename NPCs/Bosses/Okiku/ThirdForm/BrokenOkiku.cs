@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
-            DisplayName.SetDefault("Mindflayer Illusion");
+            // DisplayName.SetDefault("Mindflayer Illusion");
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
                 Hide = true
             };
@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             NPC.value = 350000;
             despawnHandler = new NPCDespawnHandler(DustID.PurpleCrystalShard);
         }
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
         }
 

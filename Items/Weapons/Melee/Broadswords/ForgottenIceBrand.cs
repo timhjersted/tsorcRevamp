@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A sword imbued with ice.\n" + "Will randomly cast ice 2.");
+            // Tooltip.SetDefault("A sword imbued with ice.\n" + "Will randomly cast ice 2.");
         }
         public override void SetDefaults()
         {

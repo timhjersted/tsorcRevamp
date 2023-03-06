@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Frozen Dragon's Breath");
+            // DisplayName.SetDefault("Frozen Dragon's Breath");
 
         }
 

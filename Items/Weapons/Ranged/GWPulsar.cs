@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Gigawatt Pulsar");
+            // DisplayName.SetDefault("Gigawatt Pulsar");
             //Tooltip.SetDefault("");
         }
 

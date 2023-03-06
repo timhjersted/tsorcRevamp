@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Elemental Frozen Orb");
+            // DisplayName.SetDefault("Elemental Frozen Orb");
 
         }
         public override void SetDefaults()

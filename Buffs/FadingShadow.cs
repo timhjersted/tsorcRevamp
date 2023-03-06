@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crimson Drain");
-            Description.SetDefault("Enemies within a ten tile radius receive Crimson Burn.");
+            // DisplayName.SetDefault("Crimson Drain");
+            // Description.SetDefault("Enemies within a ten tile radius receive Crimson Burn.");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

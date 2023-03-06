@@ -8,12 +8,12 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("One of the rings worn by Artorias." +
+            /* Tooltip.SetDefault("One of the rings worn by Artorias." +
                                 "\nInherits Ring of Clarity effects" +
                                 "\n+22 defense within the Abyss, +10 defense otherwise" +
                                 "\nGrants Magma Stone and Acid Venom imbue effect" +
                                 "\n+4 HP Regen. +120 Mana." +
-                                "\nImbue effect can be toggled by hiding the accessory.");
+                                "\nImbue effect can be toggled by hiding the accessory."); */
         }
 
         public override void SetDefaults()

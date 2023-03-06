@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jungle Wyvern Juvenile");
+            // DisplayName.SetDefault("Jungle Wyvern Juvenile");
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
                 Hide = true
             };

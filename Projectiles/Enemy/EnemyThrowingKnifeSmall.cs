@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("(O_O;)");
+            // DisplayName.SetDefault("(O_O;)");
         }
         public override void SetDefaults()
         {

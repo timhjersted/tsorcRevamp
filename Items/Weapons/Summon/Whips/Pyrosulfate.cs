@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-			Tooltip.SetDefault("8 summon tag damage" +
+			/* Tooltip.SetDefault("8 summon tag damage" +
                 "\n3% summon tag critical strike chance" +
                 "\nYour minions will focus struck enemies" +
-                "\nInflicts Cursed Inferno");
+                "\nInflicts Cursed Inferno"); */
 		}
 
 		public override void SetDefaults()

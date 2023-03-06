@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Friendly
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Doctor Jones");
+            // DisplayName.SetDefault("Doctor Jones");
             Main.npcFrameCount[NPC.type] = 26;
             //NPCID.Sets.ExtraFramesCount[npc.type] = 10;
             //NPCID.Sets.AttackFrameCount[npc.type] = 5;

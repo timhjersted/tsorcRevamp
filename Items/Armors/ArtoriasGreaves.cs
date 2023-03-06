@@ -10,11 +10,11 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Artorias' Greaves");
-            Tooltip.SetDefault("Enchanted armor of Artorias." +
+            // DisplayName.SetDefault("Artorias' Greaves");
+            /* Tooltip.SetDefault("Enchanted armor of Artorias." +
                 "\nIncreases maximum mana by 100" +
                 "\nIncreases your movement speed by 50%" +
-                "\nIncreases your attack speed by 24%(doubled for melee)");
+                "\nIncreases your attack speed by 24%(doubled for melee)"); */
         }
         public override void SetDefaults()
         {

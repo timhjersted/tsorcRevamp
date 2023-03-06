@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A sword that draws power from the wielder.\n" +
-                                "Deals maximum damage at full health");
+            /* Tooltip.SetDefault("A sword that draws power from the wielder.\n" +
+                                "Deals maximum damage at full health"); */
 
         }
 

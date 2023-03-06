@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Seize the day");
+            // Tooltip.SetDefault("Seize the day");
         }
         public override void SetDefaults()
         {

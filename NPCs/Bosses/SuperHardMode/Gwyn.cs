@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Gwyn, Lord of Cinder");
+            // DisplayName.SetDefault("Gwyn, Lord of Cinder");
         }
         public override void SetDefaults()
         {
@@ -124,7 +124,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int lifeTimer = 0;
         int swordTimer = 0;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2.3);
             NPC.damage = (int)(NPC.damage / 2);

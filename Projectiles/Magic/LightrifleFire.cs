@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Lightrifle Fire");
+            // DisplayName.SetDefault("Lightrifle Fire");
         }
 
         public override string Texture => base.Texture;

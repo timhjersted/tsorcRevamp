@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Retinazer v2.05");
+            // DisplayName.SetDefault("Retinazer v2.05");
         }
 
         int DeathLaserDamage = 27;

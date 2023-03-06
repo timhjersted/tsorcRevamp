@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Heals 125 HP and applies 30 seconds of Potion Sickness\n"
+            /* Tooltip.SetDefault("Heals 125 HP and applies 30 seconds of Potion Sickness\n"
                 + "Potion sickness is only 25 seconds with the Philosopher's Stone effect\n"
-                + "Gives Well Fed buff for 10 minutes");
+                + "Gives Well Fed buff for 10 minutes"); */
         }
 
         public override void SetDefaults()

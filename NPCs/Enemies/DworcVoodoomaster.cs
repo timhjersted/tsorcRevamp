@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dworc Alchemist");
+            // DisplayName.SetDefault("Dworc Alchemist");
         }
         public override void OnKill()
         {

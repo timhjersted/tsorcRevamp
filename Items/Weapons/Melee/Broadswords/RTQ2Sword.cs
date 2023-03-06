@@ -7,9 +7,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("RTQ2 Sword");
-            Tooltip.SetDefault("Causes stars to rain from the sky" +
-                                "\nMagnetic to stars.");
+            // DisplayName.SetDefault("RTQ2 Sword");
+            /* Tooltip.SetDefault("Causes stars to rain from the sky" +
+                                "\nMagnetic to stars."); */
         }
 
         public override void SetDefaults()

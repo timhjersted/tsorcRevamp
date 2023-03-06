@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Magic Shield");
+            // DisplayName.SetDefault("Magic Shield");
         }
         public override void SetDefaults()
         {

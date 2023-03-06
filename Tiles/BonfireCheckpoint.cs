@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using tsorcRevamp.UI;
@@ -23,8 +24,8 @@ namespace tsorcRevamp.Tiles
             TileObjectData.newTile.CoordinateHeights = new[] { 16, 16, 16, 18 };
             AnimationFrameHeight = 74;
             TileObjectData.addTile(Type);
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Bonfire Checkpoint");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Bonfire Checkpoint");
             AddMapEntry(new Color(215, 60, 0), name);
             DustType = 30;
             TileID.Sets.DisableSmartCursor[Type] = true; 
@@ -547,10 +548,10 @@ namespace tsorcRevamp.Tiles
         {
             public override void SetStaticDefaults()
             {
-                DisplayName.SetDefault("Dark Souls Bonfire");
-                Tooltip.SetDefault("Right-click to light" +
+                // DisplayName.SetDefault("Dark Souls Bonfire");
+                /* Tooltip.SetDefault("Right-click to light" +
                 "\nYou probably shouldn't have this" +
-                "\nCan only be placed by devs");
+                "\nCan only be placed by devs"); */
             }
 
             public override void SetDefaults()

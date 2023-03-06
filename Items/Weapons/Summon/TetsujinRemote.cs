@@ -11,10 +11,10 @@ namespace tsorcRevamp.Items.Weapons.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Tetsujin Remote");
-			Tooltip.SetDefault("Summons a glowing Tetsujin to fight for you" +
+			// DisplayName.SetDefault("Tetsujin Remote");
+			/* Tooltip.SetDefault("Summons a glowing Tetsujin to fight for you" +
                 "\nOrbits an enemy, bombarding them with light and fire" +
-                "\nUses 2 minion slots");
+                "\nUses 2 minion slots"); */
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller

@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wand of Fire");
+            // DisplayName.SetDefault("Wand of Fire");
             Item.staff[Item.type] = true;
         }
         public override void SetDefaults()

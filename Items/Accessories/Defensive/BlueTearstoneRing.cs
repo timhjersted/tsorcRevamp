@@ -8,10 +8,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The rare gem called tearstone has the uncanny ability to sense imminent death." +
+            /* Tooltip.SetDefault("The rare gem called tearstone has the uncanny ability to sense imminent death." +
                                 "\nThis blue tearstone from Catarina boosts the defense of its wearer by 50 when in danger." +
                                 "\nWhen the ring is active, melee damage is reduced by 200%, making it a ring ideal for mages" +
-                                "\nand other ranged classes. However, the ring provides 8 defense under normal circumstances.");
+                                "\nand other ranged classes. However, the ring provides 8 defense under normal circumstances."); */
         }
 
         public override void SetDefaults()

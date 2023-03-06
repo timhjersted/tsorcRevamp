@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ancient Warhammer");
-            Tooltip.SetDefault("An old choice for advancing druids");
+            // DisplayName.SetDefault("Ancient Warhammer");
+            // Tooltip.SetDefault("An old choice for advancing druids");
 
         }
 

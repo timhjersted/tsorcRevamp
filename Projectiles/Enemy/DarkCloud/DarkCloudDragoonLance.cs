@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dragoon Lance");
+            // DisplayName.SetDefault("Dragoon Lance");
         }
 
         public override void AI()

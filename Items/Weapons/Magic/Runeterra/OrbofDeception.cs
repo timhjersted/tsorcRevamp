@@ -11,13 +11,13 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         public static int useOrbofDeception = 0;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Orb of Deception");
-            Tooltip.SetDefault("Throws a magic orb which will return to you after a certain distance" +
+            // DisplayName.SetDefault("Orb of Deception");
+            /* Tooltip.SetDefault("Throws a magic orb which will return to you after a certain distance" +
                 "\nYou cannot throw more than one orb at a time" +
                 "\nYou can recast with mana to force it to return early" +
                 "\nThe orb deals more damage on the way back" +
                 "\nEach hit gathers a stack of Essence Thief, crits gather 2" +
-                "\nUpon reaching 9 stacks, the next cast will have 10% lifesteal");
+                "\nUpon reaching 9 stacks, the next cast will have 10% lifesteal"); */
 
         }
         public override void SetDefaults()

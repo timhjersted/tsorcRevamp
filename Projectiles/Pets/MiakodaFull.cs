@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Pets
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Full Moon Miakoda");
+            // DisplayName.SetDefault("Full Moon Miakoda");
             Main.projFrames[Projectile.type] = 8;
             Main.projPet[Projectile.type] = true;
         }

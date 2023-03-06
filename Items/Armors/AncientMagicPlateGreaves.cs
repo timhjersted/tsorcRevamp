@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The long forgotten greaves\nIncreases movement speed by 19%");
+            // Tooltip.SetDefault("The long forgotten greaves\nIncreases movement speed by 19%");
         }
 
         public override void SetDefaults()

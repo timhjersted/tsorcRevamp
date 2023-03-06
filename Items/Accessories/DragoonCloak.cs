@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Combines the effects of the Dark, Light and Darkmoon Cloak into one all-powerful protective cloak." +
-                                 "\nA large amount of Dark Souls were used to preserve each cloak's potency.");
+            /* Tooltip.SetDefault("Combines the effects of the Dark, Light and Darkmoon Cloak into one all-powerful protective cloak." +
+                                 "\nA large amount of Dark Souls were used to preserve each cloak's potency."); */
         }
 
         public override void SetDefaults()

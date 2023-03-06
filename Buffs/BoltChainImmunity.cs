@@ -7,7 +7,7 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            Description.SetDefault("Can not be struck by a bolt chain lightning again until this expires");
+            // Description.SetDefault("Can not be struck by a bolt chain lightning again until this expires");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

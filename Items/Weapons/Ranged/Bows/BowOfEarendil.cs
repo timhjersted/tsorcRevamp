@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bow of Earendil");
-            Tooltip.SetDefault("Always aim for the heart" +
-                               "\nLegendary");
+            // DisplayName.SetDefault("Bow of Earendil");
+            /* Tooltip.SetDefault("Always aim for the heart" +
+                               "\nLegendary"); */
 
         }
 

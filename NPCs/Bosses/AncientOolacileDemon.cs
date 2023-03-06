@@ -10,7 +10,7 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ancient Oolacile Demon");
+            // DisplayName.SetDefault("Ancient Oolacile Demon");
         }
 
         public override void SetDefaults()
@@ -70,7 +70,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 1.25);
             NPC.damage = (int)(NPC.damage / 2);

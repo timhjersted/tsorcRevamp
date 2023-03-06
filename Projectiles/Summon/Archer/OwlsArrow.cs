@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Owls Arrow");
+            // DisplayName.SetDefault("Owls Arrow");
             ProjectileID.Sets.MinionShot[Projectile.type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
             Main.projFrames[Projectile.type] = 6;

@@ -11,11 +11,11 @@ namespace tsorcRevamp.Items.Armors
         public override string Texture => "tsorcRevamp/Items/Armors/Melee/ShadowNinjaMask";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shadow Ninja Mask II");
-            Tooltip.SetDefault("+30% Melee Crit" +
+            // DisplayName.SetDefault("Shadow Ninja Mask II");
+            /* Tooltip.SetDefault("+30% Melee Crit" +
                 "\nSet Bonus: +30% to all damage, melee speed, crit chance and +30 rapid life regen" +
                 "\nDefense is capped at 60" +
-                "\nDamage reduction is converted into movement speed");
+                "\nDamage reduction is converted into movement speed"); */
         }
         public override void SetDefaults()
         {

@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Accessories.Expert
         public static int ammoType = 0;
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases either arrow, bullet or rocket damage by 17% multiplicatively" +
+            /* Tooltip.SetDefault("Increases either arrow, bullet or rocket damage by 17% multiplicatively" +
                 "\nAmmo type is decided by a timer that picks one of the three regularly" +
-                "\nSwitches every 7 seconds");
+                "\nSwitches every 7 seconds"); */
 
         }
 

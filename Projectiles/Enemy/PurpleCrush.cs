@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Purple Crush");
+            // DisplayName.SetDefault("Purple Crush");
         }
 
         public override bool PreKill(int timeLeft)

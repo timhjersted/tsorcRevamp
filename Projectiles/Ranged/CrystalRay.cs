@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Ranged
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crystal Ray");
+            // DisplayName.SetDefault("Crystal Ray");
         }
 
         public override string Texture => base.Texture;

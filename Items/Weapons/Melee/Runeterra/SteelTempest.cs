@@ -13,11 +13,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public int AttackSpeedScalingDuration;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Steel Tempest");
-            Tooltip.SetDefault("Doubled crit chance scaling" +
+            // DisplayName.SetDefault("Steel Tempest");
+            /* Tooltip.SetDefault("Doubled crit chance scaling" +
                 "\nThrusts on right click dealing double damage, cooldown scales down with attack speed" +
                 "\nGain a stack of Steel Tempest upon thrusting any enemy" +
-                "\nUpon reaching 2 stacks, the next right click will release a tornado dealing double damage");
+                "\nUpon reaching 2 stacks, the next right click will release a tornado dealing double damage"); */
         }
         public override void SetDefaults()
         {

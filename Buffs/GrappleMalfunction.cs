@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Grapple Malfunction");
-            Description.SetDefault("Something is causing your grapple to sieze up!");
+            // DisplayName.SetDefault("Grapple Malfunction");
+            // Description.SetDefault("Something is causing your grapple to sieze up!");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = true;
         }

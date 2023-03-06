@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Casts magic shards of ice from your bow." +
+            /* Tooltip.SetDefault("Casts magic shards of ice from your bow." +
                                 "\nAttuned with the greatest powers when wielded by mages." +
                                 "\nEach shot can be channeled with the powers of your mind once in the air." +
-                                "\nChanneling is useful for directing the shot directly above your enemies for maximum damage");
+                                "\nChanneling is useful for directing the shot directly above your enemies for maximum damage"); */
         }
 
         public override void SetDefaults()

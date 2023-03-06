@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Armor from the East" +
-                "\n+15% movement.");
+            /* Tooltip.SetDefault("Armor from the East" +
+                "\n+15% movement."); */
         }
         public override void SetDefaults()
         {

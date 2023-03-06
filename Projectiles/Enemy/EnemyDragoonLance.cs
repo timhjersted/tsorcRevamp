@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dragoon Lance");
+            // DisplayName.SetDefault("Dragoon Lance");
         }
 
         #region Kill

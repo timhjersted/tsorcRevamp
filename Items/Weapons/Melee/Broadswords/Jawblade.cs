@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("'A blade of bone and fangs'" +
-                "\nShoots out a homing skull upon hitting enemies with the blade");
+            /* Tooltip.SetDefault("'A blade of bone and fangs'" +
+                "\nShoots out a homing skull upon hitting enemies with the blade"); */
         }
         public bool canitshoot = false;
 

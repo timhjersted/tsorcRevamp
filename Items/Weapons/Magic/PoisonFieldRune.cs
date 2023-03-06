@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Creates a poisonous cloud at the point of impact." +
-                                "\nHigh duration and can damage many targets.");
+            /* Tooltip.SetDefault("Creates a poisonous cloud at the point of impact." +
+                                "\nHigh duration and can damage many targets."); */
         }
 
         public override void SetDefaults()

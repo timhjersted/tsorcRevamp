@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cataclysmic Detonator");
+            // DisplayName.SetDefault("Cataclysmic Detonator");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
         }

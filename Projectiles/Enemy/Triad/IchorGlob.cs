@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ichor Glob");
+            // DisplayName.SetDefault("Ichor Glob");
         }
 
         public override void SetDefaults()

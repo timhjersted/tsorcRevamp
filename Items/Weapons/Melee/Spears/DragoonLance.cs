@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dragoon Lance");
-            Tooltip.SetDefault("A spear forged from the fang of the Dragoon Serpent.");
+            // DisplayName.SetDefault("Dragoon Lance");
+            // Tooltip.SetDefault("A spear forged from the fang of the Dragoon Serpent.");
         }
 
         public override void SetDefaults()

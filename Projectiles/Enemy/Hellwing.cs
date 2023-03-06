@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Hellwing");
+            // DisplayName.SetDefault("Hellwing");
         }
 
         public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.Hellwing;

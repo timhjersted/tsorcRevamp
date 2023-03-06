@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("It looks like a diary entry. It reads as follows:" +
+            /* Tooltip.SetDefault("It looks like a diary entry. It reads as follows:" +
                                 "\n\"There have been rumours of bandits in the forest lately," +
                                 "\nso father has been apprehensive about letting me go into the" +
                                 "\nforest alone to pick mushrooms... Pfft, what does he know?" +
@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items
                                 "\n[c/00ffd4:of the dodgeroll!] I'll be fine as long as I don't run out of stamina...\"" +
                                 "\nJudging by how bandits were in possession of this note, I guess it" +
                                 "\ndidn't go too well for them. Perhaps I can make good use of this technique?" +
-                                "\n[c/ffbf00:[Press Left Alt to roll. Try rebinding it to Left Shift, R, or something new.]");
+                                "\n[c/ffbf00:[Press Left Alt to roll. Try rebinding it to Left Shift, R, or something new.]"); */
         }
 
         public override void SetDefaults()

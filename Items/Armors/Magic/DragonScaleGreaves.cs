@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Known to be treasured by assassins.\n+25% movement.");
+            // Tooltip.SetDefault("Known to be treasured by assassins.\n+25% movement.");
         }
         public override void SetDefaults()
         {

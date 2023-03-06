@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+30% Melee Crit" +
+            /* Tooltip.SetDefault("+30% Melee Crit" +
                 "\nSet bonus: +30% Melee Speed, +30 rapid life regen" +
                 "\nDefense is capped at 40" +
-                "\nDamage reduction is converted into movement speed");
+                "\nDamage reduction is converted into movement speed"); */
         }
         public override void SetDefaults()
         {

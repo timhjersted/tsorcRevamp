@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Weapons.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The broken blade of Leonhard" +
+            /* Tooltip.SetDefault("The broken blade of Leonhard" +
                                "\nLuckily serves well as a boomerang" +
-                               "\nA soft glow like that of the moon seeps through the cracks");
+                               "\nA soft glow like that of the moon seeps through the cracks"); */
         }
         public override void SetDefaults()
         {

@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Use this relic to summon the final battle with Attraidies. \n" +
-                "Attraidies laughs. 'Alright Red, I'm content to end this now. Face me. No more games.'");
+            /* Tooltip.SetDefault("Use this relic to summon the final battle with Attraidies. \n" +
+                "Attraidies laughs. 'Alright Red, I'm content to end this now. Face me. No more games.'"); */
         }
 
         public override void SetDefaults()

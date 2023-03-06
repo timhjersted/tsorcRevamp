@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Applies 40 seconds of Potion Sickness");
+            // Tooltip.SetDefault("Applies 40 seconds of Potion Sickness");
         }
         public override void SetDefaults()
         {

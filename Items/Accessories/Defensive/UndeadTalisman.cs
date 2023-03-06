@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Reduces damage from undead by 15");
+            // Tooltip.SetDefault("Reduces damage from undead by 15");
 
         }
 

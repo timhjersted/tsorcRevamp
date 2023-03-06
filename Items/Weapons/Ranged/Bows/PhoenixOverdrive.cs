@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Calls forth a storm of blazing phoenixes" +
-                "\nCarve burning scars across the sky");
+            /* Tooltip.SetDefault("Calls forth a storm of blazing phoenixes" +
+                "\nCarve burning scars across the sky"); */
         }
         public override void SetDefaults()
         {

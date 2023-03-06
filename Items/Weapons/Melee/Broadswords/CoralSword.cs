@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Edged to slay those of the sea. Deals 4x damage to water enemies.");
+            // Tooltip.SetDefault("Edged to slay those of the sea. Deals 4x damage to water enemies.");
         }
         public override void SetDefaults()
         {

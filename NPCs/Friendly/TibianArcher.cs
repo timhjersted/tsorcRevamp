@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Friendly
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Tibian Archer");
+            // DisplayName.SetDefault("Tibian Archer");
             Main.npcFrameCount[NPC.type] = 26;
             NPCID.Sets.ExtraFramesCount[NPC.type] = 10;
             NPCID.Sets.AttackFrameCount[NPC.type] = 5;
@@ -233,7 +233,7 @@ namespace tsorcRevamp.NPCs.Friendly
             randomOffset = 0f;
         }
 
-        public override bool CanTownNPCSpawn(int numTownNPCs, int money)
+        public override bool CanTownNPCSpawn(int numTownNPCs)/* tModPorter Suggestion: Copy the implementation of NPC.SpawnAllowed_Merchant in vanilla if you to count money, and be sure to set a flag when unlocked, so you don't count every tick. */
         {
             foreach (Player p in Main.player)
             {

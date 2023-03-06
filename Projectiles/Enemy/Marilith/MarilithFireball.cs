@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Pyroclastic Detonator");
+            // DisplayName.SetDefault("Pyroclastic Detonator");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
         }

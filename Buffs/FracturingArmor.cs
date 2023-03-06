@@ -8,7 +8,7 @@ namespace tsorcRevamp.Buffs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fracturing Armor");
+            // DisplayName.SetDefault("Fracturing Armor");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

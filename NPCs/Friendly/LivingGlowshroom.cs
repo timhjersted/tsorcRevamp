@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Friendly
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Living Glowshroom");
+            // DisplayName.SetDefault("Living Glowshroom");
             Main.npcFrameCount[NPC.type] = 8;
         }
 

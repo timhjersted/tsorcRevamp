@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Attraidies Illusion");
+            // DisplayName.SetDefault("Attraidies Illusion");
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.GoblinSorcerer];
         }
 

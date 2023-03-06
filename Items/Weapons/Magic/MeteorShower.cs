@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Causes meteorites to rain from the sky.");
+            // Tooltip.SetDefault("Causes meteorites to rain from the sky.");
         }
         public override void SetDefaults()
         {

@@ -11,11 +11,11 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Artorias' Armor");
-            Tooltip.SetDefault("Enchanted armor of Artorias of the Abyss." +
+            // DisplayName.SetDefault("Artorias' Armor");
+            /* Tooltip.SetDefault("Enchanted armor of Artorias of the Abyss." +
                 "\nIncreases your damage dealt by 21% and life regeneration by 8" +
                 "\nGrants knockback and fall damage immunity" +
-                "\nSet Bonus: Increases maximum stamina and it's regeneration by 20%");
+                "\nSet Bonus: Increases maximum stamina and it's regeneration by 20%"); */
         }
         public override void SetDefaults()
         {

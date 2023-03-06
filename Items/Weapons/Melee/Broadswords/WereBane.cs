@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("WereBane");
-            Tooltip.SetDefault("A sword used to kill werewolves instantly." +
-                                "\nDoes 8x damage to werewolves.");
+            // DisplayName.SetDefault("WereBane");
+            /* Tooltip.SetDefault("A sword used to kill werewolves instantly." +
+                                "\nDoes 8x damage to werewolves."); */
         }
         public override void SetDefaults()
         {

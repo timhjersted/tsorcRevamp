@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wing of the Ghost Wyvern");
-            Tooltip.SetDefault("Frees the Wyvern Mage's Shadow from its Glass Prison.\n" +
+            // DisplayName.SetDefault("Wing of the Ghost Wyvern");
+            /* Tooltip.SetDefault("Frees the Wyvern Mage's Shadow from its Glass Prison.\n" +
                 "The Wyvern Mage once created a shadow form of himself, cursed by the powers of the Abyss\n" +
-                "It was so hideous that the Mage imprisoned his shadow self in a massive glass cage, enchanted by dark magic\n");
+                "It was so hideous that the Mage imprisoned his shadow self in a massive glass cage, enchanted by dark magic\n"); */
 
         }
 

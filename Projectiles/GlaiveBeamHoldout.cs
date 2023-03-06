@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Glaive Beam");
+            // DisplayName.SetDefault("Glaive Beam");
             Main.projFrames[Projectile.type] = NumAnimationFrames;
 
             // Signals to Terraria that this projectile requires a unique identifier beyond its index in the projectile array.

@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Great Red Knight");
+            // DisplayName.SetDefault("Great Red Knight");
         }
         public override void SetDefaults()
         {
@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public int redMagicDamage = 40;
 
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);

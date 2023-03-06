@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+28% Move Speed");
+            // Tooltip.SetDefault("+28% Move Speed");
         }
 
         public override void SetDefaults()

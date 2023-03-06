@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A sword used to kill wyverns and dragons." +
-                                "\nDoes 8x damage against flying beasts.");
+            /* Tooltip.SetDefault("A sword used to kill wyverns and dragons." +
+                                "\nDoes 8x damage against flying beasts."); */
         }
         public override void SetDefaults()
         {

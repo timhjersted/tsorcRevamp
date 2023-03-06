@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Oolacile Seeker");
+            // DisplayName.SetDefault("Oolacile Seeker");
         }
         public override void SetDefaults()
         {

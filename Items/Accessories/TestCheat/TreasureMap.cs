@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Accessories.TestCheat
         //this thing has no drop location or recipe. what?
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Shows location, and may reveal hidden rewards");
+            // Tooltip.SetDefault("Shows location, and may reveal hidden rewards");
 
         }
 

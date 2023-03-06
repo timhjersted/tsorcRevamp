@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Praise the sun!" +
-                                "\nDoes quadruple damage against the heartless");
+            /* Tooltip.SetDefault("Praise the sun!" +
+                                "\nDoes quadruple damage against the heartless"); */
         }
 
         public override void SetDefaults()

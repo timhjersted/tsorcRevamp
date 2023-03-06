@@ -11,12 +11,12 @@ namespace tsorcRevamp.Items.Accessories.Expert
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wings of Seath");
-            Tooltip.SetDefault("The wings of Seath the Scaleless" +
+            // DisplayName.SetDefault("Wings of Seath");
+            /* Tooltip.SetDefault("The wings of Seath the Scaleless" +
                                "\nAllow for superior control of movement in the air, including walking on air" +
                                "\nWalking on air follows hovering controls" +
                                 "\nProvide immunity to all fire and lava damage, as well as perfect sight and hunting abilities." +
-                                "\nAlso provide immunity to knockback");
+                                "\nAlso provide immunity to knockback"); */
             ArmorIDs.Wing.Sets.Stats[Item.wingSlot] = new WingStats(6000, 10f, 1.4f, true, 3, 3);
         }
 

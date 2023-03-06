@@ -7,7 +7,7 @@ namespace tsorcRevamp.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Soul Sickle");
+            // DisplayName.SetDefault("Soul Sickle");
             Main.projFrames[Projectile.type] = 3;
         }
         public override void SetDefaults()

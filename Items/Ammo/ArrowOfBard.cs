@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Ammo
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Arrow of Bard");
-            Tooltip.SetDefault("\"The arrow which slew Smaug.\"");
+            // DisplayName.SetDefault("Arrow of Bard");
+            // Tooltip.SetDefault("\"The arrow which slew Smaug.\"");
 
         }
 

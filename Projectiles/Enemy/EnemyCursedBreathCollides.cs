@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cursed Breath");
+            // DisplayName.SetDefault("Cursed Breath");
         }
         public override void SetDefaults()
         {

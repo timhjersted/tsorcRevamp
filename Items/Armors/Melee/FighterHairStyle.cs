@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Adept at close combat" +
-                "\n+17% melee crit");
+            /* Tooltip.SetDefault("Adept at close combat" +
+                "\n+17% melee crit"); */
         }
         public override void SetDefaults()
         {

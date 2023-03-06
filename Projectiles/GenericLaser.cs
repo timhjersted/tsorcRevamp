@@ -245,7 +245,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("DefaultLaserName");
+            // DisplayName.SetDefault("DefaultLaserName");
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
 
         }

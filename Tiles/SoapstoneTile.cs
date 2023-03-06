@@ -9,6 +9,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.ObjectData;
@@ -20,7 +21,7 @@ namespace tsorcRevamp.Tiles {
         public override string Texture => "tsorcRevamp/Tiles/BonfirePlaceable";
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("You probably shouldn't have this.");
+            // Tooltip.SetDefault("You probably shouldn't have this.");
         }
 
         public override void SetDefaults() {
@@ -40,8 +41,8 @@ namespace tsorcRevamp.Tiles {
             TileObjectData.newTile.Origin = new(0, 0);
             TileObjectData.newTile.HookPostPlaceMyPlayer = new PlacementHook(ModContent.GetInstance<SoapstoneTileEntity>().Hook_AfterPlacement, -1, 0, false);
             TileObjectData.addTile(Type);
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Soapstone Message");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Soapstone Message");
             AddMapEntry(new Color(100, 0, 20), name);
             DustType = 117;
             TileID.Sets.DisableSmartCursor[Type] = true;

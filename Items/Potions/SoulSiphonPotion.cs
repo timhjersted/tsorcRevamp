@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Enemies drop 20% more Dark souls\n"
+            /* Tooltip.SetDefault("Enemies drop 20% more Dark souls\n"
                                 + "Consumable souls' drop chance is increased by 50%\n"
-                                + "Soul pickup range greatly increased");
+                                + "Soul pickup range greatly increased"); */
 
             ItemID.Sets.ItemIconPulse[Item.type] = true; // Makes item pulsate in world.
         }

@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Used for making advanced weaponry, from a civilization not of this world\n" +
-                               "The strange way it is unaffected by gravity reminds you of somewhere...");
+            /* Tooltip.SetDefault("Used for making advanced weaponry, from a civilization not of this world\n" +
+                               "The strange way it is unaffected by gravity reminds you of somewhere..."); */
 
             ItemID.Sets.ItemNoGravity[Item.type] = true;
         }

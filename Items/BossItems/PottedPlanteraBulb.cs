@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Summons Plantera");
+            // Tooltip.SetDefault("Summons Plantera");
         }
 
         public override void SetDefaults()
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.BossItems
             }
             else
             {
-                NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, 262f);
+                NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, 262f);
             }
             return true;
         }

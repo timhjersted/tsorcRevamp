@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Fires two arrows\nHold FIRE to charge\nArrows are faster and more accurate when the bow is charged");
+            // Tooltip.SetDefault("Fires two arrows\nHold FIRE to charge\nArrows are faster and more accurate when the bow is charged");
         }
         public override void SetDefaults()
         {

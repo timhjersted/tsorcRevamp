@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Creates a magic vortex at your location that deals high damage over time");
+            // Tooltip.SetDefault("Creates a magic vortex at your location that deals high damage over time");
         }
 
         public override void SetDefaults()

@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bloom Shards");
-            Tooltip.SetDefault("Evokes blooming shards of radiant light\n" +
-                                "Close range");
+            // DisplayName.SetDefault("Bloom Shards");
+            /* Tooltip.SetDefault("Evokes blooming shards of radiant light\n" +
+                                "Close range"); */
 
         }
 

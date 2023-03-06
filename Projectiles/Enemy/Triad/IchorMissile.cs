@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ichor Missile");
+            // DisplayName.SetDefault("Ichor Missile");
         }
 
         public override void SetDefaults()

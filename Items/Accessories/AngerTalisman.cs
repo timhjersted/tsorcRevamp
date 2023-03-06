@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("-30 defense" +
-                                "\n30% increased damage");
+            /* Tooltip.SetDefault("-30 defense" +
+                                "\n30% increased damage"); */
         }
 
         public override void SetDefaults()

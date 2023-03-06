@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Holding this item surrounds you in a prism that gathers power from grazing enemy attacks" +
-                "\nFiring it unleahes this energy in a furious blast");
+            /* Tooltip.SetDefault("Holding this item surrounds you in a prism that gathers power from grazing enemy attacks" +
+                "\nFiring it unleahes this energy in a furious blast"); */
 
         }
 

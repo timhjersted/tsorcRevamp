@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Creates a Sandstorm using a long forgotten spell.");
+            // Tooltip.SetDefault("Creates a Sandstorm using a long forgotten spell.");
 
         }
 

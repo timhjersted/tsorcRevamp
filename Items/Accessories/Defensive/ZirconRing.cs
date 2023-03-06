@@ -8,10 +8,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Imbues weapons with fire, providing" +
+            /* Tooltip.SetDefault("Imbues weapons with fire, providing" +
                                 "\n10% increased melee and whip damage, and all swords and whips inflict fire damage." +
                                 "\nPlus Thorns Effect and +4 Defense." +
-                                "\nFire imbue effect can be toggled by hiding the accessory.");
+                                "\nFire imbue effect can be toggled by hiding the accessory."); */
         }
 
         public override void SetDefaults()

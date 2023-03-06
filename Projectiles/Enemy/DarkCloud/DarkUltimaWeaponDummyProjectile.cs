@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Ultima Weapon");
+            // DisplayName.SetDefault("Dark Ultima Weapon");
         }
         public NPC Sword
         {

@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jungle Sentree");
+            // DisplayName.SetDefault("Jungle Sentree");
             Main.npcFrameCount[NPC.type] = 9;
         }
 

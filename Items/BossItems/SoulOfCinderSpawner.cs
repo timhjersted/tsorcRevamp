@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.BossItems
             }
             else
             {
-                NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<SoulOfCinder>());
+                NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, ModContent.NPCType<SoulOfCinder>());
             }
             return true;
         }

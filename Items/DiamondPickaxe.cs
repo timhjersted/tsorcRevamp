@@ -8,11 +8,11 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("An ideal pickaxe for exploring..." +
+            /* Tooltip.SetDefault("An ideal pickaxe for exploring..." +
                                 "\nThe diamond tip has been imbued with magic from a celestial being." +
                                 "\nBecause of this, it can do no harm to living creatures, but its tip breaks through blocks" +
                                 "\nwith incredible ease... In fact, it moves so fast in your hand," +
-                                "\nyou can hardly see it, yet using it feels effortless...");
+                                "\nyou can hardly see it, yet using it feels effortless..."); */
         }
 
         public override void SetDefaults()

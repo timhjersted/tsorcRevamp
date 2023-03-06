@@ -10,11 +10,11 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("\nOne of the fiercest armors for melee warriors" +
+            /* Tooltip.SetDefault("\nOne of the fiercest armors for melee warriors" +
                 "\nIncreases melee damage by 15%" +
                 "\nSet Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active" +
                 "\nDefense is not affected by this" +
-                "\nSmall chance to regain life from melee strikes while Holy Dodge is active");
+                "\nSmall chance to regain life from melee strikes while Holy Dodge is active"); */
         }
 
         public override void SetDefaults()

@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Power Armor NU Greaves");
-            Tooltip.SetDefault("Increases movement speed by 40%" +
+            // DisplayName.SetDefault("Power Armor NU Greaves");
+            /* Tooltip.SetDefault("Increases movement speed by 40%" +
                 "\nAllows you to walk on liquids, adds an extra jump and jump boost" +
-                "\nAlso grants immunity to knockback");
+                "\nAlso grants immunity to knockback"); */
         }
         public override void SetDefaults()
         {

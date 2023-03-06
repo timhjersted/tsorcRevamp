@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Permanently increases max stamina by 5%" +
-                               "\nStamina maxes out after consuming 10");
+            /* Tooltip.SetDefault("Permanently increases max stamina by 5%" +
+                               "\nStamina maxes out after consuming 10"); */
         }
 
         public override void SetDefaults()

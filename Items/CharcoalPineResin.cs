@@ -10,11 +10,11 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Charcoal Pine Resin");
-            Tooltip.SetDefault("Black charcoal-like pine resin\n" +
+            // DisplayName.SetDefault("Charcoal Pine Resin");
+            /* Tooltip.SetDefault("Black charcoal-like pine resin\n" +
                                "Consume to imbue melee weapons with fire for 4 minutes\n" +
                                "Particularly effective against woody enemies\n" +
-                               "+10% melee damage");
+                               "+10% melee damage"); */
         }
 
         public override void SetDefaults()

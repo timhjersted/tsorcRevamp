@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/EnemyBlackFire";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Black Fire");
+            // DisplayName.SetDefault("Black Fire");
 
         }
         public override void SetDefaults()

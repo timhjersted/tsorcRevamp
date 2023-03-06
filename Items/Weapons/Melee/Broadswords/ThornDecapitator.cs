@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Thorn Decapitator");
-            Tooltip.SetDefault("Creates spore clouds on top of struck enemies");
+            // DisplayName.SetDefault("Thorn Decapitator");
+            // Tooltip.SetDefault("Creates spore clouds on top of struck enemies");
 
         }
         public int shootstacks = 0;

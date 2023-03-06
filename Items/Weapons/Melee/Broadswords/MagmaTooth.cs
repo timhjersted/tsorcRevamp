@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Chance to light enemies on hellish fire.");
+            // Tooltip.SetDefault("Chance to light enemies on hellish fire.");
         }
         public override void SetDefaults()
         {

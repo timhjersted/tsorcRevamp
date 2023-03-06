@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Great Magic Shield");
-            Description.SetDefault("Defense increased by 25, but damage reduced by 20% and speed reduced by 15%!");
+            // DisplayName.SetDefault("Great Magic Shield");
+            // Description.SetDefault("Defense increased by 25, but damage reduced by 20% and speed reduced by 15%!");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

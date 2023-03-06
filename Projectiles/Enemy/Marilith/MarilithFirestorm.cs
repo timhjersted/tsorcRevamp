@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Pyroclastic Detonation");
+            // DisplayName.SetDefault("Pyroclastic Detonation");
         }
 
         public override void SetDefaults()

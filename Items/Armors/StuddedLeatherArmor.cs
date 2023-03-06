@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases damage by 2 flat" +
-                "\nSet bonus: Increases all attack speed by 15%");
+            /* Tooltip.SetDefault("Increases damage by 2 flat" +
+                "\nSet bonus: Increases all attack speed by 15%"); */
         }
         public override void SetDefaults()
         {

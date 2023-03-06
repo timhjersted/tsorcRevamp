@@ -9,7 +9,7 @@ namespace tsorcRevamp.Buffs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Curse Buildup");
+            // DisplayName.SetDefault("Curse Buildup");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

@@ -42,7 +42,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("?????");
+            // DisplayName.SetDefault("?????");
         }
 
         float progress = 0;

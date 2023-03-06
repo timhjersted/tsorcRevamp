@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Ultima Weapon");
+            // DisplayName.SetDefault("Dark Ultima Weapon");
             NPCID.Sets.TrailCacheLength[NPC.type] = 6;
             NPCID.Sets.TrailingMode[NPC.type] = 1;
             NPCID.Sets.NeedsExpertScaling[NPC.type] = false;

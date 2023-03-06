@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The blade has been dipped in poison.");
+            // Tooltip.SetDefault("The blade has been dipped in poison.");
         }
         public override void SetDefaults()
         {

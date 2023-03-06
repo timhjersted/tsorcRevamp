@@ -9,13 +9,13 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Lost Scroll of Gwyn");
-            Tooltip.SetDefault("Used to summon Gwyn, Lord of Cinder. \n" +
+            // DisplayName.SetDefault("Lost Scroll of Gwyn");
+            /* Tooltip.SetDefault("Used to summon Gwyn, Lord of Cinder. \n" +
                 "Gwyn may prove impossible to defeat unless you have defeated 7 guardians of the Abyss:\n" +
                 "Artorias, Seath, the Lich King, Kraken, Marilith, the Blight, and the Wyvern Mage Shadow. \n" +
                 //"And beseech thee. Succeed Lord Gwyn, and inheriteth the Fire of our world. \n" +
                 //"Thou shall endeth this eternal twilight, and avert further Undead sacrifices.\"\n" +
-                "Only the true warrior of the age will survive this fight. ");
+                "Only the true warrior of the age will survive this fight. "); */
         }
 
         public override void SetDefaults()

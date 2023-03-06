@@ -8,8 +8,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Lifegem Healing");
-            Description.SetDefault("Health is slowly being restored");
+            // DisplayName.SetDefault("Lifegem Healing");
+            // Description.SetDefault("Health is slowly being restored");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

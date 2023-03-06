@@ -12,10 +12,10 @@ namespace tsorcRevamp.Items.BossItems
         public override string Texture => "tsorcRevamp/Items/BossItems/DeathBringer";
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Summons Skeletron, the First of the Dead." +
+            /* Tooltip.SetDefault("Summons Skeletron, the First of the Dead." +
                                 "\nYou must use this at the demon altar in the ancient temple ruins" +
                                 "\nBut be warned, this battle will not be easy..." +
-                                "\nItem is not consumed so you can retry the fight until victory.");
+                                "\nItem is not consumed so you can retry the fight until victory."); */
 
         }
         public override void SetDefaults()

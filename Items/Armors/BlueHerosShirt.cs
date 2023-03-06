@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Blue Hero's Shirt");
-            Tooltip.SetDefault("Set Bonus: Grants extended breath & swimming skills" +
+            // DisplayName.SetDefault("Blue Hero's Shirt");
+            /* Tooltip.SetDefault("Set Bonus: Grants extended breath & swimming skills" +
                 "\n+9% damage, crit, melee and movement speed, -8% mana costs, 20% less chance to consume ammo" +
-                "\n+3 life regen speed, faster movement & hunter vision while in water");
+                "\n+3 life regen speed, faster movement & hunter vision while in water"); */
         }
         public override void SetDefaults()
         {

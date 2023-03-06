@@ -45,11 +45,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
-            DisplayName.SetDefault("Attraidies");
+            // DisplayName.SetDefault("Attraidies");
         }
 
         public int ObscureDropDamage = 60;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
         }
 

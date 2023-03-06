@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("4 times as effective against magic users.");
+            // Tooltip.SetDefault("4 times as effective against magic users.");
         }
         public override void SetDefaults()
         {

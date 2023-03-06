@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Green Blossom");
-            Description.SetDefault("Stamina recovery speed increased!");
+            // DisplayName.SetDefault("Green Blossom");
+            // Description.SetDefault("Stamina recovery speed increased!");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

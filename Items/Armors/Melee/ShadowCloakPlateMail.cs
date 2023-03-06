@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases melee damage by 10%" +
+            /* Tooltip.SetDefault("Increases melee damage by 10%" +
                 "\nSet bonus: A Shadow Cloak activates when health falls below 100, increasing life regen by 7" +
                 "\nIncreases life regen by 3 otherwise" +
-                "\nGrants Double Jump Skill");
+                "\nGrants Double Jump Skill"); */
         }
 
         public override void SetDefaults()

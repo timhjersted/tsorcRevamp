@@ -10,8 +10,8 @@ namespace tsorcRevamp.Buffs.Summon
 		public int attackspeed;
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Night Crack");
-			Description.SetDefault("+6% summon attack speed");
+			// DisplayName.SetDefault("Night Crack");
+			// Description.SetDefault("+6% summon attack speed");
 			Main.buffNoSave[Type] = true;
 			Main.buffNoTimeDisplay[Type] = false;
 		}

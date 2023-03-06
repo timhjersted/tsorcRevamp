@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ichor Fragment");
+            // DisplayName.SetDefault("Ichor Fragment");
         }
         public override void SetDefaults()
         {

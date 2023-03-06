@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Prevents a wide variety of debuffs, including many DoT effects. \n+3% damage, +4 regeneration, and 9 defense");
+            // Tooltip.SetDefault("Prevents a wide variety of debuffs, including many DoT effects. \n+3% damage, +4 regeneration, and 9 defense");
         }
         public override void SetDefaults()
         {

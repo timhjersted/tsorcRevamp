@@ -9,12 +9,12 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Great Magic Shield");
-            Tooltip.SetDefault("An incantation that casts a Great Magic Shield around the player" +
+            // DisplayName.SetDefault("Great Magic Shield");
+            /* Tooltip.SetDefault("An incantation that casts a Great Magic Shield around the player" +
                                "\nRaises defense by 25 for 25 seconds" +
                                "\nDoes not stack with other barrier or shield spells" +
                                "\nReduces damage dealt by 20% and movement speed by 15%" +
-                               "\nCannot be used again for 10 minutes after wearing off");
+                               "\nCannot be used again for 10 minutes after wearing off"); */
         }
 
         public override void SetDefaults()

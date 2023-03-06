@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Accessories.Magic
     {
         public override void SetStaticDefaults()
         { //TODO "Double cast all spells"? maybe some day
-            Tooltip.SetDefault("All spells can be casted twice as fast" +
+            /* Tooltip.SetDefault("All spells can be casted twice as fast" +
                                "\nReduces magic damage by 30% multiplicatively" +
-                               "\nSome spells cannot benefit from this.");
+                               "\nSome spells cannot benefit from this."); */
         }
 
         public override void SetDefaults()

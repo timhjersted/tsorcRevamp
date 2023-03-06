@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Resentful Seedling");
+            // DisplayName.SetDefault("Resentful Seedling");
             Main.npcFrameCount[NPC.type] = 7;
         }
 

@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Toxic Shot");
-            Tooltip.SetDefault("Converts seeds into Toxic Shots, these scale with magic damage too" +
-                "\nAlso uses all darts as ammo");
+            // DisplayName.SetDefault("Toxic Shot");
+            /* Tooltip.SetDefault("Converts seeds into Toxic Shots, these scale with magic damage too" +
+                "\nAlso uses all darts as ammo"); */
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 

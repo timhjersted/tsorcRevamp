@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Soul");
+            // DisplayName.SetDefault("Dark Soul");
         }
         public override void SetDefaults()
         {

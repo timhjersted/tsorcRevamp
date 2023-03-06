@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Breath of the Jungle");
+            // DisplayName.SetDefault("Breath of the Jungle");
 
         }
         public override void SetDefaults()

@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -20,8 +21,8 @@ namespace tsorcRevamp.Tiles
             TileObjectData.newTile.CoordinateHeights = new[] { 16, 16, 18 };
             AnimationFrameHeight = 56;
             TileObjectData.addTile(Type);
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Bonfire");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Bonfire");
             AddMapEntry(new Color(215, 60, 0), name);
             DustType = 30;
             
@@ -106,10 +107,10 @@ namespace tsorcRevamp.Tiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Souls Bonfire");
-            Tooltip.SetDefault("Right-click to light" + //re-do once finalized
+            // DisplayName.SetDefault("Dark Souls Bonfire");
+            /* Tooltip.SetDefault("Right-click to light" + //re-do once finalized
             "\nOnce lit, right-clicking bottom 2 tiles sets spawn" +
-            "\nRight-clicking upper tiles opens personal storage");
+            "\nRight-clicking upper tiles opens personal storage"); */
         }
 
         public override void SetDefaults()

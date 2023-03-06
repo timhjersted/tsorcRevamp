@@ -39,14 +39,14 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Lich King Disciple");
+            // DisplayName.SetDefault("Lich King Disciple");
         }
 
         int frozenSawDamage = 105;
         //chaos
         int holdTimer = 0;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = (int)(NPC.damage * 1.3 / 2);
             NPC.defense = NPC.defense += 12;

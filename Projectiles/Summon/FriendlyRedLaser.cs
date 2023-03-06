@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Summon
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Laser");
+            // DisplayName.SetDefault("Laser");
             ProjectileID.Sets.MinionShot[Projectile.type] = true;
         }
 

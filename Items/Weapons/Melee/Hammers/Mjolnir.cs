@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Shatter the earth" +
+            /* Tooltip.SetDefault("Shatter the earth" +
                                 "\nBreaks walls with amazing speed" +
                                 "\nHold the cursor away from you to wield only as a weapon" +
-                                "\nSummons electrospheres upon hitting an enemy");
+                                "\nSummons electrospheres upon hitting an enemy"); */
         }
         public override void SetDefaults()
         {

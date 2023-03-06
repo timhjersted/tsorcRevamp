@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A lost prince's greaves." +
-                "\nIncreases movement speed by 11%");
+            /* Tooltip.SetDefault("A lost prince's greaves." +
+                "\nIncreases movement speed by 11%"); */
         }
         public override void SetDefaults()
         {

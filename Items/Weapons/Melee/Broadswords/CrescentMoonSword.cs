@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {                                        
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crescent Moon Sword");
-            Tooltip.SetDefault("Ringfinger Leonhard's weapon of choice," +
+            // DisplayName.SetDefault("Crescent Moon Sword");
+            /* Tooltip.SetDefault("Ringfinger Leonhard's weapon of choice," +
                                "\na type of shotel imbued with the power of the moon" +
-                               "\n[c/ffbf00:Shoots beams of crescent moonlight that pierce walls at night]");
+                               "\n[c/ffbf00:Shoots beams of crescent moonlight that pierce walls at night]"); */
         }
 
         public override void SetDefaults()

@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Restores 400 mana" +
+            /* Tooltip.SetDefault("Restores 400 mana" +
                 "\nApplies 3 seconds of mana sickness" +
-                "\nOnly usable through quick mana");
+                "\nOnly usable through quick mana"); */
         }
         public override void SetDefaults()
         {

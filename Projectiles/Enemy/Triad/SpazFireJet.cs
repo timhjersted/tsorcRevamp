@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 60;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 3;
-            DisplayName.SetDefault("Noxious Jet");
+            // DisplayName.SetDefault("Noxious Jet");
 
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";

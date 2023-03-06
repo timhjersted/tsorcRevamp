@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Friendly
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Emerald Herald");
+            // DisplayName.SetDefault("Emerald Herald");
             Main.npcFrameCount[NPC.type] = 6;
         }
 

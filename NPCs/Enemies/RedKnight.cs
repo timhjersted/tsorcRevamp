@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Red Knight");
+            // DisplayName.SetDefault("Red Knight");
         }
 
         public int redKnightsSpearDamage = 70;
@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         NPCDespawnHandler despawnHandler;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);

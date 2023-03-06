@@ -10,7 +10,7 @@ namespace tsorcRevamp.Buffs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Powerful Curse Buildup");
+            // DisplayName.SetDefault("Powerful Curse Buildup");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

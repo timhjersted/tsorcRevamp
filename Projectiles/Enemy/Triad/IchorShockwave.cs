@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ichor Shockwave");
+            // DisplayName.SetDefault("Ichor Shockwave");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 60;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 3;
         }

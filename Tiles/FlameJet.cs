@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Tiles
@@ -11,8 +12,8 @@ namespace tsorcRevamp.Tiles
     {
         public override void SetStaticDefaults()
         {
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Flame Jet");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Flame Jet");
             AddMapEntry(Color.Orange, name);
             DustType = DustID.OrangeTorch;
             Main.tileLighted[Type] = true;
@@ -85,8 +86,8 @@ namespace tsorcRevamp.Tiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Flame Jet");
-            Tooltip.SetDefault("Creates a jet of flame that players can only pass by dodging");
+            // DisplayName.SetDefault("Flame Jet");
+            // Tooltip.SetDefault("Creates a jet of flame that players can only pass by dodging");
         }
 
         public override void SetDefaults()

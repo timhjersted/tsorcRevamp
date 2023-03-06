@@ -11,7 +11,8 @@ namespace tsorcRevamp
         public DarkSoulCustomCurrency(int coinItemID, long currencyCap) : base(coinItemID, currencyCap)
         {
         }
-        public override void GetPriceText(string[] lines, ref int currentLine, int price)
+
+        public override void GetPriceText(string[] lines, ref int currentLine, long price)
         {
             lines[currentLine++] = string.Format("[c/00FF50:{0} {1} {2}]" + $"[i:{ModContent.ItemType<SoulCoin>()}]", new object[]
             {

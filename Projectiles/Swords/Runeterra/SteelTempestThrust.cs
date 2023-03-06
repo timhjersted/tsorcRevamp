@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 6;
-			DisplayName.SetDefault("Steel Tempest Thrust");
+			// DisplayName.SetDefault("Steel Tempest Thrust");
         }
 
 

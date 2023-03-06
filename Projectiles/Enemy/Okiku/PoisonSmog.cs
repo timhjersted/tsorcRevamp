@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Poison Smog");
+            // DisplayName.SetDefault("Poison Smog");
         }
         public override void SetDefaults()
         {

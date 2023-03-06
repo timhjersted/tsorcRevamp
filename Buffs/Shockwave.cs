@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shockwave");
-            Description.SetDefault("Release a damaging shockwave when you land while holding DOWN.");
+            // DisplayName.SetDefault("Shockwave");
+            // Description.SetDefault("Release a damaging shockwave when you land while holding DOWN.");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

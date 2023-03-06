@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Super Blaster");
+            // DisplayName.SetDefault("Super Blaster");
         }
 
         public override void SetDefaults()

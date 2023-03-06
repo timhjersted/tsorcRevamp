@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Oolacile's Dark Orb");
+            // DisplayName.SetDefault("Oolacile's Dark Orb");
         }
 
         public override void SetDefaults()

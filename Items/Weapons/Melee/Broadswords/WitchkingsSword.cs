@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Witchking's Sword");
-            Tooltip.SetDefault("May inflict multiple debuffs");
+            // DisplayName.SetDefault("Witchking's Sword");
+            // Tooltip.SetDefault("May inflict multiple debuffs");
         }
         public override void SetDefaults()
         {

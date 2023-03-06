@@ -8,8 +8,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Inferno");
-            Description.SetDefault("The black flames eat away at your skin");
+            // DisplayName.SetDefault("Dark Inferno");
+            // Description.SetDefault("The black flames eat away at your skin");
             Main.debuff[Type] = true;
             Main.pvpBuff[Type] = true;
             Main.buffNoSave[Type] = true;

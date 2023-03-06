@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Thrown
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A powerful, throwable sword made of 30 lost souls of the night" +
+            /* Tooltip.SetDefault("A powerful, throwable sword made of 30 lost souls of the night" +
                                 "\nA dark aura endlessly manifests four blades in the wielder's hand, and will" +
-                                "\nreturn them if the wielder's throw misses the one for whom it was intended.");
+                                "\nreturn them if the wielder's throw misses the one for whom it was intended."); */
         }
         public override void SetDefaults()
         {

@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Summons Serris");
+            // Tooltip.SetDefault("Summons Serris");
         }
 
         public override void SetDefaults()

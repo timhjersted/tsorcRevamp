@@ -9,11 +9,11 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+20% melee damage" +
+            /* Tooltip.SetDefault("+20% melee damage" +
                 "\nSet Bonus: +20% Melee Speed" +
                 "\nZen meditation adds amazing +13 life regen" +
                 "\nDefense is capped at 30" +
-                "\nDamage reduction is converted into movement speed");
+                "\nDamage reduction is converted into movement speed"); */
         }
 
         public override void SetDefaults()

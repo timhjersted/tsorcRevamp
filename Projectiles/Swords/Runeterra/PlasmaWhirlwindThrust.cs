@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 6;
-			DisplayName.SetDefault("Plasma Whirlwind Thrust");
+			// DisplayName.SetDefault("Plasma Whirlwind Thrust");
         }
 
 

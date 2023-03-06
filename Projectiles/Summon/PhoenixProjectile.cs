@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Summon
 		
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Phoenix Juvenile");
+			// DisplayName.SetDefault("Phoenix Juvenile");
 			Main.projFrames[Projectile.type] = 7;
 			// This is necessary for right-click targeting
 			ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;

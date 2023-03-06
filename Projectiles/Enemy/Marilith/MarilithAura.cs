@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cataclysmic Firestorm");
+            // DisplayName.SetDefault("Cataclysmic Firestorm");
         }
 
         public override void SetDefaults()

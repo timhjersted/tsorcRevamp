@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Blacken the sky");
+            // Tooltip.SetDefault("Blacken the sky");
         }
 
         public override void SetDefaults()

@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Accessories.Expert
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Imbues swords with fire, raises damage dealt by 5% and provides immunity to" +
+            /* Tooltip.SetDefault("Imbues swords with fire, raises damage dealt by 5% and provides immunity to" +
                                 "\nmost flying creatures, lava, catching on fire, knockback, and fire blocks." +
-                                "\nFire imbue effect can be toggled by hiding the accessory.");
+                                "\nFire imbue effect can be toggled by hiding the accessory."); */
         }
 
         public override void SetDefaults()

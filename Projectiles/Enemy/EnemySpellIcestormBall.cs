@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ice Storm Shards");
+            // DisplayName.SetDefault("Ice Storm Shards");
 
         }
         

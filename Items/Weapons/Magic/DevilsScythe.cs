@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Devil's Scythe");
-            Tooltip.SetDefault("Casts a hellfire scythe.");
+            // DisplayName.SetDefault("Devil's Scythe");
+            // Tooltip.SetDefault("Casts a hellfire scythe.");
         }
         public override void SetDefaults()
         {

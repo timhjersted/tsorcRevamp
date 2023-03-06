@@ -12,9 +12,9 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Changes the phases of the Moon \n" +
+            /* Tooltip.SetDefault("Changes the phases of the Moon \n" +
                 "Can trigger blood moons. \n" +
-                "Provides 10 defense when equipped.");
+                "Provides 10 defense when equipped."); */
         }
 
         public override void SetDefaults()

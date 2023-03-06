@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Samurai Beetle");
-			Description.SetDefault("The Beetle will fight for you");
+			// DisplayName.SetDefault("Samurai Beetle");
+			// Description.SetDefault("The Beetle will fight for you");
 
 			Main.buffNoSave[Type] = true; // This buff won't save when you exit the world
 			Main.buffNoTimeDisplay[Type] = true; // The time remaining won't display on this buff

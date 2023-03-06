@@ -56,7 +56,7 @@ namespace tsorcRevamp
             bagsOpened = new List<int>();
         }
 
-        public override void clientClone(ModPlayer clientClone)
+        public override void CopyClientState(ModPlayer clientClone)/* tModPorter Suggestion: Replace Item.Clone usages with Item.CopyNetStateTo */
         {
             tsorcRevampPlayer clone = clientClone as tsorcRevampPlayer;
             if (clone == null) { return; }
@@ -1016,11 +1016,11 @@ namespace tsorcRevamp
             }
         }
 
-        public override void OnEnterWorld(Player player)
+        public override void OnEnterWorld()
         {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !gotPickaxe)
             { //sandbox mode only, and only once
-                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DiamondPickaxe>());
+                Player.QuickSpawnItem(Player.GetSource_Loot(), ModContent.ItemType<DiamondPickaxe>());
                 gotPickaxe = true;
             }
             DeathText = PickDeathText();
@@ -1028,11 +1028,11 @@ namespace tsorcRevamp
 
 
 
-        public override void OnRespawn(Player player)
+        public override void OnRespawn()
         {
-            player.statLife = player.statLifeMax2;
-            if (BearerOfTheCurse) player.AddBuff(ModContent.BuffType<Hollowed>(), 2);
-            player.AddBuff(ModContent.BuffType<Invincible>(), 360);
+            Player.statLife = Player.statLifeMax2;
+            if (BearerOfTheCurse) Player.AddBuff(ModContent.BuffType<Hollowed>(), 2);
+            Player.AddBuff(ModContent.BuffType<Invincible>(), 360);
             DeathText = PickDeathText();
         }
 

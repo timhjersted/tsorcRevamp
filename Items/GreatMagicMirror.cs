@@ -58,11 +58,11 @@ namespace tsorcRevamp.Items
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Equip this in an accessory slot anywhere to create a new warp point." +
+            /* Tooltip.SetDefault("Equip this in an accessory slot anywhere to create a new warp point." +
                                 "\nActivate by left-clicking the mirror in your toolbar." +
                                 "\nWarp point saves on quit." +
                                 "\nReduces defense to 0 and slows movement while equipped and setting your warp point." +
-                                "\nChannel time is five seconds and you cannot move during the channel.");
+                                "\nChannel time is five seconds and you cannot move during the channel."); */
         }
 
         public override bool CanUseItem(Player player)

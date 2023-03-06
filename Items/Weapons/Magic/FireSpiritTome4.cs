@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Tome of the Dying Star");
-            Tooltip.SetDefault("Leave nothing but ash in your wake." +
+            // DisplayName.SetDefault("Tome of the Dying Star");
+            /* Tooltip.SetDefault("Leave nothing but ash in your wake." +
                 "\nLeft click to charge a detonating core" +
-                "\nRight click to fire a rapid barrage of solar flares");
+                "\nRight click to fire a rapid barrage of solar flares"); */
             ItemID.Sets.ItemsThatAllowRepeatedRightClick[Type] = true;
         }
 

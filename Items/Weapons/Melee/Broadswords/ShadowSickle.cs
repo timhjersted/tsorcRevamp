@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A curiously simple but deadly weapon - its short reach seems to be its only weakness.");
+            // Tooltip.SetDefault("A curiously simple but deadly weapon - its short reach seems to be its only weakness.");
         }
         public override void SetDefaults()
         {

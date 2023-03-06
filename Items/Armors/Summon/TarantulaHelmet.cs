@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("\nIncreases whip damage by 25%" +
+            /* Tooltip.SetDefault("\nIncreases whip damage by 25%" +
                 "\nSet Bonus: Increases whip range by 30% and summon attack speed by 20%" +
-                "\nIncreases critical strike damage by 25%");
+                "\nIncreases critical strike damage by 25%"); */
         }
         public override void SetDefaults()
         {

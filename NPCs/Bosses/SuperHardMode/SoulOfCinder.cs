@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Gwyn, Lord of Cinder");
+            // DisplayName.SetDefault("Gwyn, Lord of Cinder");
         }
 
         public override void SetDefaults()

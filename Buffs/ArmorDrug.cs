@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Demonic Scales");
-            Description.SetDefault("Your skin is covered with hard scales...");
+            // DisplayName.SetDefault("Demonic Scales");
+            // Description.SetDefault("Your skin is covered with hard scales...");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

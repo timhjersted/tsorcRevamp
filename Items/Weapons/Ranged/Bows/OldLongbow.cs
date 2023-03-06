@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Does random damage from 0 to 32" +
-                                "\nMaximum damage is increased by damage modifiers.");
+            /* Tooltip.SetDefault("Does random damage from 0 to 32" +
+                                "\nMaximum damage is increased by damage modifiers."); */
         }
 
         public override void SetDefaults()

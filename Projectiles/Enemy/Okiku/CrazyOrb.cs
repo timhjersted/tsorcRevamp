@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 4;
-            DisplayName.SetDefault("Pulsating Energy");
+            // DisplayName.SetDefault("Pulsating Energy");
         }
 
         public override void SetDefaults()

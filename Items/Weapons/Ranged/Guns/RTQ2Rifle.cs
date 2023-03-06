@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("RTQ2 Rifle");
+            // DisplayName.SetDefault("RTQ2 Rifle");
         }
 
         public override void SetDefaults()

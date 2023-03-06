@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Grants immunity to knockback\nSet Bonus: Grants 10% damage reduction + Paladin Shield effect");
+            // Tooltip.SetDefault("Grants immunity to knockback\nSet Bonus: Grants 10% damage reduction + Paladin Shield effect");
         }
 
         public override void SetDefaults()

@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Enemy Great Attack");
+            // DisplayName.SetDefault("Enemy Great Attack");
 
         }
         public override void SetDefaults()

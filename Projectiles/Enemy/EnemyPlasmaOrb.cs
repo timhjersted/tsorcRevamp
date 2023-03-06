@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Omega Blast");
+            // DisplayName.SetDefault("Omega Blast");
         }
 
         public override bool PreKill(int timeLeft)

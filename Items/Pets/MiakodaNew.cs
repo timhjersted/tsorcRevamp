@@ -10,15 +10,15 @@ namespace tsorcRevamp.Items.Pets
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Miakoda - New Moon Form");
-            Tooltip.SetDefault("Miakoda - an ancient being of light over 100 years old, " +
+            // DisplayName.SetDefault("Miakoda - New Moon Form");
+            /* Tooltip.SetDefault("Miakoda - an ancient being of light over 100 years old, " +
                                 "\nwho has vowed to help you find your wife and defeat Attraidies." +
                                 "\nMiakoda is an indigenous name that means \"Power of the Moon\"." +
                                 "\nNew Moon Form - Imbues weapons with Midas when you get a crit," +
                                 "\nboosting enemy coin drops (2 second duration, 12 second cooldown)" +
                                 "\n+5% movespeed, +90% more while boost is active" +
                                 "\nKnockback immunity and half damage taken while boost is active" +
-                                "\nCan switch between forms at an altar");
+                                "\nCan switch between forms at an altar"); */
         }
         public override void SetDefaults()
         {

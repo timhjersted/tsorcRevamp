@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("An axe used to kill humans.");
+            // Tooltip.SetDefault("An axe used to kill humans.");
         }
         public override void SetDefaults()
         {

@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Projectile that explodes with 5 small fireballs at the point of impact.");
+            // Tooltip.SetDefault("Projectile that explodes with 5 small fireballs at the point of impact.");
         }
         public override void SetDefaults()
         {

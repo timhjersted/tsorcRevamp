@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Black Fire");
+            // DisplayName.SetDefault("Black Fire");
 
         }
         public override void SetDefaults()

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases movement speed by 18%");
+            // Tooltip.SetDefault("Increases movement speed by 18%");
         }
 
         public override void SetDefaults()

@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Unleashes a storm of homing missiles toward your foes");
+            // Tooltip.SetDefault("Unleashes a storm of homing missiles toward your foes");
         }
         public override void SetDefaults()
         {

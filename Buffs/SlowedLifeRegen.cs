@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Slowed Life Regeneration");
-            Description.SetDefault("Life regen is weaker");
+            // DisplayName.SetDefault("Slowed Life Regeneration");
+            // Description.SetDefault("Life regen is weaker");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

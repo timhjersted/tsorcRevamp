@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("RTQ2 Leggings");
-            Tooltip.SetDefault("Increases movement speed by 13%");
+            // DisplayName.SetDefault("RTQ2 Leggings");
+            // Tooltip.SetDefault("Increases movement speed by 13%");
         }
         public override void SetDefaults()
         {

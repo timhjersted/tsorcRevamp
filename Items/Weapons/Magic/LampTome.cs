@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A lost tome known to cure blindness.");
+            // Tooltip.SetDefault("A lost tome known to cure blindness.");
         }
         public override void SetDefaults()
         {

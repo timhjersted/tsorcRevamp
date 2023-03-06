@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The blade hits with a powerful magic flame.\n" +
-                                "Knocks back foes with a force that also sets them ablaze, doing damage over time.");
+            /* Tooltip.SetDefault("The blade hits with a powerful magic flame.\n" +
+                                "Knocks back foes with a force that also sets them ablaze, doing damage over time."); */
 
         }
 

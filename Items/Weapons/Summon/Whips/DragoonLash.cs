@@ -10,11 +10,11 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-			DisplayName.SetDefault("Dragoon Lash");
-			Tooltip.SetDefault("Breathe fire at enemies struck by this whip and a minion on a cooldown" +
+			// DisplayName.SetDefault("Dragoon Lash");
+			/* Tooltip.SetDefault("Breathe fire at enemies struck by this whip and a minion on a cooldown" +
                 "\nRefresh the cooldown by whipping an enemy" +
                 "\nStrike enemies to gain attack speed" +
-				"\nYour summons will focus struck enemies");
+				"\nYour summons will focus struck enemies"); */
 		}
 
 		public override void SetDefaults()

@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Heals the player of a multitude of debuffs" +
-                                "\nGrants the rapid healing buff");
+            /* Tooltip.SetDefault("Heals the player of a multitude of debuffs" +
+                                "\nGrants the rapid healing buff"); */
         }
         public override void SetDefaults()
         {

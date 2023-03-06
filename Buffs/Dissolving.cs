@@ -10,8 +10,8 @@ namespace tsorcRevamp.Buffs;
 public class Dissolving : ModBuff {
     public override string Texture => "tsorcRevamp/Buffs/EmptyDebuff"; //enemy only
     public override void SetStaticDefaults() {
-        DisplayName.SetDefault("Dissolving");
-        Description.SetDefault("Taking bonus damage");
+        // DisplayName.SetDefault("Dissolving");
+        // Description.SetDefault("Taking bonus damage");
         Main.debuff[Type] = true;
         Main.buffNoTimeDisplay[Type] = false;
     }

@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
 	{
 		public override void SetStaticDefaults()
 		{
-			Tooltip.SetDefault("Summons a wind spirit which shoots a gust of wind towards your cursor");
-			SacrificeTotal = 1;
+			// Tooltip.SetDefault("Summons a wind spirit which shoots a gust of wind towards your cursor");
+			Item.ResearchUnlockCount = 1;
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
 			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;

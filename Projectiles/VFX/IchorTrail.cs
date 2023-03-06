@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.VFX
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Ichor Trail");
+            // DisplayName.SetDefault("Ichor Trail");
         }
         public override void SetDefaults()
         {

@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("'A blade of sharpened bone'" +
-                "\nShoots out a bone upon hitting enemies with the blade");
+            /* Tooltip.SetDefault("'A blade of sharpened bone'" +
+                "\nShoots out a bone upon hitting enemies with the blade"); */
         }
         public bool canitshoot = false;
 

@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Summons a Hellkite Dragon from the sky...");
+            // Tooltip.SetDefault("Summons a Hellkite Dragon from the sky...");
         }
 
         public override void SetDefaults()

@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wand of Frost II");
-            Tooltip.SetDefault("Reforged to reveal the full power of this ancient ice spell" +
-                                "\nCan pass through walls");
+            // DisplayName.SetDefault("Wand of Frost II");
+            /* Tooltip.SetDefault("Reforged to reveal the full power of this ancient ice spell" +
+                                "\nCan pass through walls"); */
             Item.staff[Item.type] = true;
         }
 

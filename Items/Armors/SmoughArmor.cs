@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Smough's Armor");
-            Tooltip.SetDefault("Increases the effectiveness of the Dragon Crest Shield" +
-                "\nSet Bonus: Decreases all attack speed by 50% multiplicatively but grants 100% increased critical strike chance");
+            // DisplayName.SetDefault("Smough's Armor");
+            /* Tooltip.SetDefault("Increases the effectiveness of the Dragon Crest Shield" +
+                "\nSet Bonus: Decreases all attack speed by 50% multiplicatively but grants 100% increased critical strike chance"); */
         }
         public override void SetDefaults()
         {

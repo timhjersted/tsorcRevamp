@@ -10,12 +10,12 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("\nStone made up of crystallized souls" +
+            /* Tooltip.SetDefault("\nStone made up of crystallized souls" +
                 "\nGradually restores HP" +
                 "\nThe dull glimmer of these mysterious" +
                 "\nstones brightens with the passage of time" +
                 "\nRestores 200 HP over the course of 13 seconds" +
-                "\nInflicts potions sickness");
+                "\nInflicts potions sickness"); */
 
 
         }

@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Special
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Faraam");
+            // DisplayName.SetDefault("Faraam");
             Main.npcFrameCount[NPC.type] = 27; //27 for ???
             NPCID.Sets.TrailCacheLength[NPC.type] = 5; //How many copies of shadow/trail
             NPCID.Sets.TrailingMode[NPC.type] = 0;

@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Thrown
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Passes through solid walls");
+            // Tooltip.SetDefault("Passes through solid walls");
         }
 
         public override void SetDefaults()

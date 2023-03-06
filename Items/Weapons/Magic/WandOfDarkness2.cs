@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override string Texture => "tsorcRevamp/Items/Weapons/Magic/WandOfDarkness";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wand of Darkness II");
-            Tooltip.SetDefault("Greater damage and higher knockback");
+            // DisplayName.SetDefault("Wand of Darkness II");
+            // Tooltip.SetDefault("Greater damage and higher knockback");
             Item.staff[Item.type] = true;
         }
         public override void SetDefaults()

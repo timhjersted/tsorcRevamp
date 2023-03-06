@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 4;
-            DisplayName.SetDefault("Wave Attack");
+            // DisplayName.SetDefault("Wave Attack");
         }
         public override void SetDefaults()
         {

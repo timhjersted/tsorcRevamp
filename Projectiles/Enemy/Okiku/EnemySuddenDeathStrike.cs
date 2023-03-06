@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sudden Death Strike");
+            // DisplayName.SetDefault("Sudden Death Strike");
         }
 
         public override void AI()

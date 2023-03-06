@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Full-auto submachine gun with high RoF\n50% chance to not consume ammo");
+            // Tooltip.SetDefault("Full-auto submachine gun with high RoF\n50% chance to not consume ammo");
         }
         public override void SetDefaults()
         {

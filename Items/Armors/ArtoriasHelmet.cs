@@ -10,11 +10,11 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Artorias' Helmet");
-            Tooltip.SetDefault("Enchanted helmet of Artorias." +
+            // DisplayName.SetDefault("Artorias' Helmet");
+            /* Tooltip.SetDefault("Enchanted helmet of Artorias." +
                 "\nGrants the effect of the Cross Necklace" +
                 "\nIncreases your critical strike chance by 30%" +
-                "\nDecreases mana costs by 13%");
+                "\nDecreases mana costs by 13%"); */
         }
         public override void SetDefaults()
         {

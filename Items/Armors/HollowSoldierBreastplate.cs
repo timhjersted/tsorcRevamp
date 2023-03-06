@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases damage dealt by 10% multiplicatively" +
+            /* Tooltip.SetDefault("Increases damage dealt by 10% multiplicatively" +
                 "\nSet Bonus: Nullifies life regen, increases damage dealt by 15% multiplicatively again" +
-                "\nIncreases maximum stamina and stamina regen by 10%");
+                "\nIncreases maximum stamina and stamina regen by 10%"); */
         }
         public override void SetDefaults()
         {

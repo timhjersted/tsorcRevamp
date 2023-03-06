@@ -10,11 +10,11 @@ namespace tsorcRevamp.Items.Weapons.Summon
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Null Sprite Staff");
-            Tooltip.SetDefault("Summons a null sprite to fight for you" +
+            // DisplayName.SetDefault("Null Sprite Staff");
+            /* Tooltip.SetDefault("Summons a null sprite to fight for you" +
                 "\nNull sprites apply a permanent stacking debuff" +
                 "\nthat increases damage taken from all sources" +
-                "\nTakes 3/4th of a minion slot");
+                "\nTakes 3/4th of a minion slot"); */
 
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller

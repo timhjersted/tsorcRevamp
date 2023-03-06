@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("You are a master of the zen arts, at one with the Tao" +
-                "\n+7% melee crit");
+            /* Tooltip.SetDefault("You are a master of the zen arts, at one with the Tao" +
+                "\n+7% melee crit"); */
         }
 
         public override void SetDefaults()

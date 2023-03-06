@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Randomly casts a great fireball explosion.");
+            // Tooltip.SetDefault("Randomly casts a great fireball explosion.");
         }
 
         public override void SetDefaults()

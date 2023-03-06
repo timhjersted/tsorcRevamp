@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A lost legendary tome.");
+            // Tooltip.SetDefault("A lost legendary tome.");
         }
 
         public override void SetDefaults()

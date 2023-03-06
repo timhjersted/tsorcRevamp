@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A powerful weapon which brings death to all.");
+            // Tooltip.SetDefault("A powerful weapon which brings death to all.");
         }
         public override void SetDefaults()
         {

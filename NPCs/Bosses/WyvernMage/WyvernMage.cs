@@ -42,7 +42,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wyvern Mage");
+            // DisplayName.SetDefault("Wyvern Mage");
         }
 
         int frozenSawDamage = 60;
@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         int lifeTimer = 0;
 
         int holdTimer = 0;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             frozenSawDamage = (int)(frozenSawDamage / 2);
             lightningDamage = (int)(lightningDamage / 2);

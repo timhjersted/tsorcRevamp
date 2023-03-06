@@ -38,11 +38,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Damned Soul");
+            // DisplayName.SetDefault("Damned Soul");
         }
 
         public int ObscureShotDamage = 30;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
         }
 

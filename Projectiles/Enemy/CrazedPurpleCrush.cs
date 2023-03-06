@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Void Toxin");
+            // DisplayName.SetDefault("Void Toxin");
         }
 
         public override bool PreKill(int timeLeft)

@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sundering Light");
-            Tooltip.SetDefault("Rips apart the border of life and death" +
-                "\nDeals double damage to mages and ghosts");
+            // DisplayName.SetDefault("Sundering Light");
+            /* Tooltip.SetDefault("Rips apart the border of life and death" +
+                "\nDeals double damage to mages and ghosts"); */
 
         }
 

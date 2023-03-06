@@ -9,11 +9,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bolt 3 Tome");
-            Tooltip.SetDefault("A lost tome fabled to deal great damage.\n" +
+            // DisplayName.SetDefault("Bolt 3 Tome");
+            /* Tooltip.SetDefault("A lost tome fabled to deal great damage.\n" +
                                 "\nElectrifies and paralyzes enemies" +
                                 "Only mages will be able to realize this tome's full potential. \n" +
-                                "Can be upgraded with 85,000 Dark Souls");
+                                "Can be upgraded with 85,000 Dark Souls"); */
 
         }
 

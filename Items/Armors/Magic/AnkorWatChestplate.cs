@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases magic critical strike chance by 15%" +
+            /* Tooltip.SetDefault("Increases magic critical strike chance by 15%" +
                 "\nSet Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active" +
-                "\nDefense and maximum mana are not affected by this");
+                "\nDefense and maximum mana are not affected by this"); */
         }
         public override void SetDefaults()
         {

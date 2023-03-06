@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Boss Zen");
-            Description.SetDefault("The active boss is blocking enemy spawns!");
+            // DisplayName.SetDefault("Boss Zen");
+            // Description.SetDefault("The active boss is blocking enemy spawns!");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = true;
             Terraria.ID.BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;

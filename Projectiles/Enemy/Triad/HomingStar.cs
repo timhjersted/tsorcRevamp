@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Seeking Star");
+            // DisplayName.SetDefault("Seeking Star");
         }
         public override void SetDefaults()
         {

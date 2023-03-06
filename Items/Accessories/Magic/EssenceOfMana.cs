@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Accessories.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Essence of Mana");
-            Tooltip.SetDefault("Increases max mana by 50%" +
-                "\nReduces mana usage by 9%");
+            // DisplayName.SetDefault("Essence of Mana");
+            /* Tooltip.SetDefault("Increases max mana by 50%" +
+                "\nReduces mana usage by 9%"); */
 
         }
 

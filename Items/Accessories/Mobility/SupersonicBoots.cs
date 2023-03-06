@@ -11,10 +11,10 @@ namespace tsorcRevamp.Items.Accessories.Mobility
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Supersonic movement speed, rocket boots effect, knockback protection, and water-walking if moving fast enough." +
+            /* Tooltip.SetDefault("Supersonic movement speed, rocket boots effect, knockback protection, and water-walking if moving fast enough." +
                                 "\nDoes not work if Hermes Boots or Spectre Boots are equipped." +
                                 "\nSpeed boost is multiplied by movement speed boosts." +
-                                "\nCan be upgraded eventually with Angel Wings & 20000 Dark Souls.");
+                                "\nCan be upgraded eventually with Angel Wings & 20000 Dark Souls."); */
         }
 
         public override void SetDefaults()

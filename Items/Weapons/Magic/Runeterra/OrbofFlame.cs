@@ -11,14 +11,14 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         public static int useOrbofFlame = 0;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Orb of Flame");
-            Tooltip.SetDefault("Throws a flaming orb which will return to you after a certain distance" +
+            // DisplayName.SetDefault("Orb of Flame");
+            /* Tooltip.SetDefault("Throws a flaming orb which will return to you after a certain distance" +
                 "\nYou cannot throw more than one orb at a time" +
                 "\nYou can recast with mana to force it to return early" +
                 "\nThe orb deals more damage on the way back" +
                 "\nEach hit gathers a stack of Essence Thief, crits gather 2" +
                 "\nUpon reaching 9 stacks, the next cast will have 10% lifesteal" +
-                "\nand spawn a homing flame on-hit(2 on-crit)");
+                "\nand spawn a homing flame on-hit(2 on-crit)"); */
 
         }
         public override void SetDefaults()

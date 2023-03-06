@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Poison Crystal Fire");
+            // DisplayName.SetDefault("Poison Crystal Fire");
 
         }
         public override void SetDefaults()

@@ -13,11 +13,11 @@ namespace tsorcRevamp.Items.Armors
         public override string Texture => "tsorcRevamp/Items/Armors/DragoonArmor";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Supreme Dragoon Armor");
-            Tooltip.SetDefault("A reforged upgrade to the legendary Dragoon Armor." +
+            // DisplayName.SetDefault("Supreme Dragoon Armor");
+            /* Tooltip.SetDefault("A reforged upgrade to the legendary Dragoon Armor." +
                 "\nYou are a master of all forces, the protector of Earth, the Hero of the age." +
                 "\nThe powers of the Dragoon Cloak are embedded within its blue-plated chest piece." +
-                "\nDragoon Cloak effects kick in at 160 HP.");
+                "\nDragoon Cloak effects kick in at 160 HP."); */
         }
 
         public override void SetDefaults()

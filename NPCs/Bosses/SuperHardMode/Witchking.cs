@@ -50,7 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         bool defenseBroken = false;
 
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = (int)(NPC.damage / 2);
             blackBreathDamage = (int)(blackBreathDamage / 2);

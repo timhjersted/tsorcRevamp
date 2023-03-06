@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases ranged crit by 8%");
+            // Tooltip.SetDefault("Increases ranged crit by 8%");
         }
         public override void SetDefaults()
         {

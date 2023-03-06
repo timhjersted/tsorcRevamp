@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Accessories.Expert
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Horn inhabited by the spirit of a dragon." +
-                                "\n50% increased melee damage if falling.");
+            /* Tooltip.SetDefault("Horn inhabited by the spirit of a dragon." +
+                                "\n50% increased melee damage if falling."); */
         }
 
         public override void SetDefaults()

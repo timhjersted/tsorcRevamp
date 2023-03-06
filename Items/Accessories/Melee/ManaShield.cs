@@ -12,10 +12,10 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public static float damageResistance = 0.35f;
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Focuses the user's mana into a protective shield" +
+            /* Tooltip.SetDefault("Focuses the user's mana into a protective shield" +
                                 $"\nReduces incoming damage by {damageResistance * 100}%, but drains {manaCost} mana per hit" +
                                 "\nInhibits both natural and artificial mana regen" +
-                                $"\n[c/ffbf00:Useful for those who do not specialize in magic]");
+                                $"\n[c/ffbf00:Useful for those who do not specialize in magic]"); */
         }
 
         public override void SetDefaults()

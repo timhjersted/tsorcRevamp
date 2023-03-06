@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wand of Frost");
-            Tooltip.SetDefault("A powerful wand made for fighting magic users that can shoot through walls." +
-                                "\nCan be upgraded with 25,000 Dark Souls, 60 Crystal Shards, and 5 Souls of Light");
+            // DisplayName.SetDefault("Wand of Frost");
+            /* Tooltip.SetDefault("A powerful wand made for fighting magic users that can shoot through walls." +
+                                "\nCan be upgraded with 25,000 Dark Souls, 60 Crystal Shards, and 5 Souls of Light"); */
             Item.staff[Item.type] = true;
         }
 

@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Re-enables ALL events and un-saves saved ones. Dev testing item, you should not have this!!");
+            // Tooltip.SetDefault("Re-enables ALL events and un-saves saved ones. Dev testing item, you should not have this!!");
         }
 
         public override void SetDefaults()

@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-			Tooltip.SetDefault("Enemies struck by this whip will explode once on minion hit" +
+			/* Tooltip.SetDefault("Enemies struck by this whip will explode once on minion hit" +
                 "\nScales with double the minion damage" +
                 "\nInflicts Hellfire" +
-                "\nYour minions will focus struck enemies");
+                "\nYour minions will focus struck enemies"); */
 		}
 
 		public override void SetDefaults()

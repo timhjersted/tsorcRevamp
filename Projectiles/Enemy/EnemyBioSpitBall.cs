@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Acid Spit");
+            // DisplayName.SetDefault("Acid Spit");
 
         }
         public override void SetDefaults()

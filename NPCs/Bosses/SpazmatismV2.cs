@@ -49,7 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spazmatism v2.14");
+            // DisplayName.SetDefault("Spazmatism v2.14");
         }
 
         int FireJetDamage = 40;

@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
-            DisplayName.SetDefault("The Hunter's child");
+            // DisplayName.SetDefault("The Hunter's child");
         } 
         public override void SetDefaults()
         {
@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Bosses
         int hitTime = 0;
         int sproutDamage = 65;
         public float flapWings;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = NPC.damage / 2;
             NPC.defense = NPC.defense += 10;

@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Summon
         bool IsFlinx = true;
         public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Samurai Beetle");
+			// DisplayName.SetDefault("Samurai Beetle");
 			Main.projFrames[Projectile.type] = 12; //Flinx: 12, Pirate: 15, Frog: 24
 			ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
 

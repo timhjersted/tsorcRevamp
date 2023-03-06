@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Death Laser");
+            // DisplayName.SetDefault("Death Laser");
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
         public override void SetDefaults()

@@ -16,8 +16,8 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         public float invincibility = 0f;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Orb of Spirituality");
-            Tooltip.SetDefault("Throws a magic orb which will return to you after a certain distance" +
+            // DisplayName.SetDefault("Orb of Spirituality");
+            /* Tooltip.SetDefault("Throws a magic orb which will return to you after a certain distance" +
                 "\nYou cannot throw more than one orb at a time" +
                 "\nYou can recast with mana to force it to return early" +
                 "\nThe orb deals more damage on the way back" +
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
                 "\nUpon reaching 9 stacks, the next cast will have 10% lifesteal" +
                 "\nand spawn a homing flame on-hit(2 on-crit)" +
                 "\nRight click to dash in mouse direction and spawn homing flames while dashing" +
-                "\nThis has a 60 second cooldown and consumes double the mana");
+                "\nThis has a 60 second cooldown and consumes double the mana"); */
 
         }
         public override void SetDefaults()

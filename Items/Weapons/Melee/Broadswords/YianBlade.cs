@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Yian Blade");
-            Tooltip.SetDefault("Random chance to steal life from attacks");
+            // DisplayName.SetDefault("Yian Blade");
+            // Tooltip.SetDefault("Random chance to steal life from attacks");
 
         }
 

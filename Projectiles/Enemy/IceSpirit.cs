@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ice Spirit");
+            // DisplayName.SetDefault("Ice Spirit");
         }
 
         public override bool PreKill(int timeLeft)

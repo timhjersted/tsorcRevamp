@@ -12,8 +12,8 @@ namespace tsorcRevamp.Buffs.Summon
         public int attackspeed;
         public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Terraria's Fall");
-			Description.SetDefault("+12% summon attack speed\nTerra Energy fights for you");
+			// DisplayName.SetDefault("Terraria's Fall");
+			// Description.SetDefault("+12% summon attack speed\nTerra Energy fights for you");
 			Main.buffNoSave[Type] = true;
 			Main.buffNoTimeDisplay[Type] = false;
 		}

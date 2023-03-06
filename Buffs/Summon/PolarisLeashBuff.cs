@@ -9,8 +9,8 @@ namespace tsorcRevamp.Buffs.Summon
 	{
         public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Polaris");
-			Description.SetDefault("Polaris will fight for you");
+			// DisplayName.SetDefault("Polaris");
+			// Description.SetDefault("Polaris will fight for you");
 			Main.buffNoSave[Type] = true;
 			Main.buffNoTimeDisplay[Type] = false;
 		}

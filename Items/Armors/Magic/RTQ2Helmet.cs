@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("RTQ2 Helmet");
-            Tooltip.SetDefault("Increases magic damage by 27%");
+            // DisplayName.SetDefault("RTQ2 Helmet");
+            // Tooltip.SetDefault("Increases magic damage by 27%");
         }
         public override void SetDefaults()
         {

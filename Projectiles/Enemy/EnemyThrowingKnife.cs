@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sharpened Blade");
+            // DisplayName.SetDefault("Sharpened Blade");
         }
         public override void SetDefaults()
         {

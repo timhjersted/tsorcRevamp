@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Arrow of Dark Cloud");
+            // DisplayName.SetDefault("Arrow of Dark Cloud");
         }
 
 

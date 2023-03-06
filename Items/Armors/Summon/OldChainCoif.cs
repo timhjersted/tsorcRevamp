@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+9% summon attack speed");
+            // Tooltip.SetDefault("+9% summon attack speed");
         }
         public override void SetDefaults()
         {

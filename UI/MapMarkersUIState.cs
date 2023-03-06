@@ -70,7 +70,7 @@ namespace tsorcRevamp.UI {
             _id = id;
         }
         
-        public override void Click(UIMouseEvent evt) {
+        public override void LeftClick(UIMouseEvent evt) {
             if (tsorcRevamp.MarkerSelected != _id) tsorcRevamp.MarkerSelected = _id;
             else tsorcRevamp.MarkerSelected = -1;
         }

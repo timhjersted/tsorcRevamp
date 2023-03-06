@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Archer of Lumelia Shirt");
-            Tooltip.SetDefault("Gifted with lethal archery abilities" +
+            // DisplayName.SetDefault("Archer of Lumelia Shirt");
+            /* Tooltip.SetDefault("Gifted with lethal archery abilities" +
                 "\n25% chance not to consume ammo." +
-                "\nSet Bonus: +23% Ranged Crit, +15% Ranged Damage");
+                "\nSet Bonus: +23% Ranged Crit, +15% Ranged Damage"); */
         }
         public override void SetDefaults()
         {

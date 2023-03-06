@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Gwyn");
+            // DisplayName.SetDefault("Gwyn");
         }
         public override void SetDefaults()
         {

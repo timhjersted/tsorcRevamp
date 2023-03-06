@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Obsidian Jellyfish");
+            // DisplayName.SetDefault("Obsidian Jellyfish");
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.PinkJellyfish];
         }
 

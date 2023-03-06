@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Use this item to push time foward" +
-                                "\nto the beginning of night or to the beginning of day");
+            /* Tooltip.SetDefault("Use this item to push time foward" +
+                                "\nto the beginning of night or to the beginning of day"); */
         }
 
         public override void SetDefaults()

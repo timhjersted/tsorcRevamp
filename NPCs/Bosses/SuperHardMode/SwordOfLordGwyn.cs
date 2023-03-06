@@ -8,7 +8,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sword of Lord Gwyn");
+            // DisplayName.SetDefault("Sword of Lord Gwyn");
         }
 
         public override void SetDefaults()

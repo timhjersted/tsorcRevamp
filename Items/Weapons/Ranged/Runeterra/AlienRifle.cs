@@ -12,10 +12,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public float cooldown = 0f;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Alien Rifle");
-            Tooltip.SetDefault("Converts seeds into Plasma Shots, these scale with magic damage too" +
+            // DisplayName.SetDefault("Alien Rifle");
+            /* Tooltip.SetDefault("Converts seeds into Plasma Shots, these scale with magic damage too" +
                 "\nAlso uses all darts as ammo" +
-                "\nRight click on a cd to shoot a homing blinding shot which inflicts confusion, also scales with magic damage");
+                "\nRight click on a cd to shoot a homing blinding shot which inflicts confusion, also scales with magic damage"); */
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 

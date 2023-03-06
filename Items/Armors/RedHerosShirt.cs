@@ -9,13 +9,13 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Red Hero's Shirt");
-            Tooltip.SetDefault("The legendary clothes of the master." +
+            // DisplayName.SetDefault("Red Hero's Shirt");
+            /* Tooltip.SetDefault("The legendary clothes of the master." +
                 "\nSet bonus: Lava resistance, fire block & knockback immunity" +
                 "\nPlus extended breath, water and lava walk, & swim" +
                 "\nBoosts damage, crit, melee and movement speed by 14%" +
                 "\nReduces mana costs by 11%" +
-                "\n+4 life regen while in lava & +2 in water");
+                "\n+4 life regen while in lava & +2 in water"); */
         }
         public override void SetDefaults()
         {

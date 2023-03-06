@@ -8,11 +8,11 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("One of the rings worn by Artorias." +
+            /* Tooltip.SetDefault("One of the rings worn by Artorias." +
                                 "\nImmunity to the on-fire and broken-armor debuffs." +
                                 "\n+18 defense within the Abyss, +6 defense otherwise." +
                                 "\nGrants Acid Venom imbue effect" +
-                                "\nImbue effect can be toggled by hiding the accessory.");
+                                "\nImbue effect can be toggled by hiding the accessory."); */
         }
 
         public override void SetDefaults()

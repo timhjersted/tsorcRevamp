@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Multiplies your movement speed by 20%");
+            // Tooltip.SetDefault("Multiplies your movement speed by 20%");
 
         }
 

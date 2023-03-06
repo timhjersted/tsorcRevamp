@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Summon a rain of homing stars\n'Your very own meteor shower'");
+            // Tooltip.SetDefault("Summon a rain of homing stars\n'Your very own meteor shower'");
         }
         public override void SetDefaults()
         {

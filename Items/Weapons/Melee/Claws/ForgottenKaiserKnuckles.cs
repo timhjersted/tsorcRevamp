@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Great spiked knuckles.");
+            // Tooltip.SetDefault("Great spiked knuckles.");
         }
 
         public override void SetDefaults()

@@ -11,8 +11,8 @@ namespace tsorcRevamp.Buffs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Virulent Catalyzer Drain");
-            Description.SetDefault("Losing life");
+            // DisplayName.SetDefault("Virulent Catalyzer Drain");
+            // Description.SetDefault("Losing life");
         }
 
         public override void Update(NPC npc, ref int buffIndex)

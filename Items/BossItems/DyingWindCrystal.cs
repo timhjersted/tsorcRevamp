@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The fading Crystal of Wind. \n" + "Will summon Chaos.");
+            // Tooltip.SetDefault("The fading Crystal of Wind. \n" + "Will summon Chaos.");
         }
 
         public override void SetDefaults()

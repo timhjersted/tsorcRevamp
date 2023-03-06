@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wave Attack");
+            // DisplayName.SetDefault("Wave Attack");
         }
 
         public override void SetDefaults()

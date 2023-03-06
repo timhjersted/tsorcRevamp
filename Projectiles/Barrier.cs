@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Barrier");
+            // DisplayName.SetDefault("Barrier");
         }
         public override void SetDefaults()
         {

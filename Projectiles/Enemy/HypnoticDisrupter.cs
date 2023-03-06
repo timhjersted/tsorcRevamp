@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Hypnotic Disrupter");
+            // DisplayName.SetDefault("Hypnotic Disrupter");
         }
 
         public override void AI()

@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Summon.SummonProjectiles
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Null Beam");
+            // DisplayName.SetDefault("Null Beam");
             ProjectileID.Sets.MinionShot[Projectile.type] = true;
         }
 

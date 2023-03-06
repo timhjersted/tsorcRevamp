@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A full sprectral array of green flame will light up the skies");
+            // Tooltip.SetDefault("A full sprectral array of green flame will light up the skies");
         }
 
         public override void SetDefaults()

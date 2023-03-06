@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Enemy Spell Poison Storm");
+            // DisplayName.SetDefault("Enemy Spell Poison Storm");
             Main.projFrames[Projectile.type] = 7;
         }
         public override void SetDefaults()

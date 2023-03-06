@@ -62,7 +62,7 @@ namespace tsorcRevamp.UI
             };
             newCustomMap.OnMouseOver += HoverCustomMap;
             newCustomMap.OnMouseOut += UnselectCustomMap;
-            newCustomMap.OnMouseDown += CustomMapSelected;
+            newCustomMap.OnLeftMouseDown += CustomMapSelected;
 
 
             tsorcUICenteredTextButton newVanillaMap = new tsorcUICenteredTextButton("New Vanilla Map", .85f, true)
@@ -76,7 +76,7 @@ namespace tsorcRevamp.UI
             };
             newVanillaMap.OnMouseOver += HoverVanillaMap;
             newVanillaMap.OnMouseOut += UnselectVanillaMap;
-            newVanillaMap.OnMouseDown += VanillaMapSelected;
+            newVanillaMap.OnLeftMouseDown += VanillaMapSelected;
 
             selectorBackground.Append(newCustomMap);
             selectorBackground.Append(newVanillaMap);
@@ -93,7 +93,7 @@ namespace tsorcRevamp.UI
 
             backButton.OnMouseOver += HoverVanillaMap;
             backButton.OnMouseOut += UnselectBackButton;
-            backButton.OnMouseDown += BackButtonPressed;
+            backButton.OnLeftMouseDown += BackButtonPressed;
 
             mapSelector.Append(backButton);
 

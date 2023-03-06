@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ghost of the Darkmoon Knight");
+            // DisplayName.SetDefault("Ghost of the Darkmoon Knight");
         }
 
         public override void SetDefaults()

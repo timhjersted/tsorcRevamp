@@ -7,7 +7,7 @@ namespace tsorcRevamp.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Large Soulsplosion"); // These are just part of the animation of the consumable souls
+            // DisplayName.SetDefault("Large Soulsplosion"); // These are just part of the animation of the consumable souls
             Main.projFrames[Projectile.type] = 4;
         }
         public override void SetDefaults()

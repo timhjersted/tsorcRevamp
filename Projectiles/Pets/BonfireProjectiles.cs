@@ -141,7 +141,7 @@ namespace tsorcRevamp.Projectiles.Pets
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Soul Safe");
+            // DisplayName.SetDefault("Soul Safe");
             Main.projFrames[Projectile.type] = 10;
         }
         public override void SetDefaults()
@@ -211,7 +211,7 @@ namespace tsorcRevamp.Projectiles.Pets
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Soul Piglett");
+            // DisplayName.SetDefault("Soul Piglett");
             Main.projFrames[Projectile.type] = 10;
         }
         public override void SetDefaults()

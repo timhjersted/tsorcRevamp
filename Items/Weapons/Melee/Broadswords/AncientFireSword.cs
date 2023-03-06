@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The blade is a magic flame, slicing quickly. \n" +
-                                "Will set enemies ablaze and do damage over time.");
+            /* Tooltip.SetDefault("The blade is a magic flame, slicing quickly. \n" +
+                                "Will set enemies ablaze and do damage over time."); */
 
         }
 

@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("For those with mechanical precision" +
+            /* Tooltip.SetDefault("For those with mechanical precision" +
                 "\nRight click to throw a coin" +
                 "\nShooting a coin reflects your shot into the nearest enemy weak point" +
-                "\nReflected shots have increased damage, guarenteed crits, and pierce walls");
+                "\nReflected shots have increased damage, guarenteed crits, and pierce walls"); */
         }
 
         public override void SetDefaults()

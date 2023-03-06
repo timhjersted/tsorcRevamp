@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Armor made from the shell of a legendary creature" +
-                "\n+15% movement speed");
+            /* Tooltip.SetDefault("Armor made from the shell of a legendary creature" +
+                "\n+15% movement speed"); */
         }
 
         public override void SetDefaults()

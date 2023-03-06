@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ancient Demon of the Abyss");
+            // DisplayName.SetDefault("Ancient Demon of the Abyss");
         }
 
         public override void SetDefaults()
@@ -51,7 +51,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int blackFireDamage = 147;
         int greatAttackDamage = 162;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);

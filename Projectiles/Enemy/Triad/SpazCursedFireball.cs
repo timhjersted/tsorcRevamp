@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cursed Fireball");
+            // DisplayName.SetDefault("Cursed Fireball");
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
         public override void SetDefaults()

@@ -9,8 +9,8 @@ namespace tsorcRevamp.Buffs.Runeterra
     {
         public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Interstellar Commander");
-			Description.SetDefault("You're the commander of these ships!");
+			// DisplayName.SetDefault("Interstellar Commander");
+			// Description.SetDefault("You're the commander of these ships!");
 
 			Main.buffNoSave[Type] = true;
 			Main.buffNoTimeDisplay[Type] = true;

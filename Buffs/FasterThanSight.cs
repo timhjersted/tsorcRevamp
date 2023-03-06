@@ -9,8 +9,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Faster Than Sight");
-            Description.SetDefault("Latent illuminant energy lets you defy gravity!");
+            // DisplayName.SetDefault("Faster Than Sight");
+            // Description.SetDefault("Latent illuminant energy lets you defy gravity!");
 
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = true;

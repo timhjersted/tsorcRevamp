@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Living Shroom Thief");
+            // DisplayName.SetDefault("Living Shroom Thief");
             Main.npcFrameCount[NPC.type] = 8;
         }
 

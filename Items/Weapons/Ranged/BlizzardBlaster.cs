@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Fires a blast of freezing wind,\ndamaging up to 8 enemies in a cone.");
+            // Tooltip.SetDefault("Fires a blast of freezing wind,\ndamaging up to 8 enemies in a cone.");
         }
 
         static readonly int RADIUS = 300;
@@ -182,7 +182,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Blizzard Blaster Shot");
+            // DisplayName.SetDefault("Blizzard Blaster Shot");
         }
 
         public override void AI()

@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ancient Holy Lance");
-            Tooltip.SetDefault("Bright Holy Spear.");
+            // DisplayName.SetDefault("Ancient Holy Lance");
+            // Tooltip.SetDefault("Bright Holy Spear.");
         }
 
         public override void SetDefaults()

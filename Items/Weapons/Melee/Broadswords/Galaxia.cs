@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Forged from the stars of a distant galaxy");
+            // Tooltip.SetDefault("Forged from the stars of a distant galaxy");
         }
         public override void SetDefaults()
         {

@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+1 flat minion damage\nSet Bonus: Increases your max number of minions by 1\nA Flinx Fur Coat will also proc this set bonus");
+            // Tooltip.SetDefault("+1 flat minion damage\nSet Bonus: Increases your max number of minions by 1\nA Flinx Fur Coat will also proc this set bonus");
         }
         public override void SetDefaults()
         {

@@ -9,11 +9,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bolt 1 Tome");
-            Tooltip.SetDefault("A lost beginner's tome" +
+            // DisplayName.SetDefault("Bolt 1 Tome");
+            /* Tooltip.SetDefault("A lost beginner's tome" +
                                 "\nDrops a small lightning strike upon collision" +
                                 "\nHas a chance to electrify enemies" +
-                                "\nCan be upgraded");
+                                "\nCan be upgraded"); */
 
         }
 

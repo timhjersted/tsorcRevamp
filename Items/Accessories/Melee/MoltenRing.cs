@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("\n+10% Melee Damage and Magma Stone effect");
+            // Tooltip.SetDefault("\n+10% Melee Damage and Magma Stone effect");
         }
 
         public override void SetDefaults()

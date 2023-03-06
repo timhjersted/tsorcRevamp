@@ -10,11 +10,11 @@ namespace tsorcRevamp.Items.Accessories.Mobility
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+20% supersonic movement speed, flight, rocket boots effect, " +
+            /* Tooltip.SetDefault("+20% supersonic movement speed, flight, rocket boots effect, " +
                                 "\nfire-walk skill, knockback protection, and water-walking if moving fast enough." +
                                 "\nDoes not work if Hermes Boots or Spectre Boots are equipped." +
                                 "\nSpeed boost is multiplied by movement speed boosts." +
-                                "\nCompatible with Dragoon Boots and Dragoon Gear.");
+                                "\nCompatible with Dragoon Boots and Dragoon Gear."); */
         }
 
         public override void SetDefaults()

@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crippled");
-            Description.SetDefault("Your mobility has been crippled!");
+            // DisplayName.SetDefault("Crippled");
+            // Description.SetDefault("Your mobility has been crippled!");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

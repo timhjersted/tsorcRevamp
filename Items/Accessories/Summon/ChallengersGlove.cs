@@ -9,12 +9,12 @@ namespace tsorcRevamp.Items.Accessories.Summon
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Challenger's Glove");
-            Tooltip.SetDefault("Increases whip knockback" +
+            // DisplayName.SetDefault("Challenger's Glove");
+            /* Tooltip.SetDefault("Increases whip knockback" +
                 "\n12% increased whip damage and speed" +
                 "\nIncreases the size of whips by 10%" +
                 "\nEnemies are more likely to target you" +
-                "\nIncreases the damage of whip crits by 25%");
+                "\nIncreases the damage of whip crits by 25%"); */
         }
         public override void SetDefaults()
         {

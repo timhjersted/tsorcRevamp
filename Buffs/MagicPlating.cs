@@ -8,8 +8,8 @@ namespace tsorcRevamp.Buffs
         public static int MagicPlatingStacks = 0;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Magic Plating");
-            Description.SetDefault("Damage taken is reduced by attacking");
+            // DisplayName.SetDefault("Magic Plating");
+            // Description.SetDefault("Damage taken is reduced by attacking");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

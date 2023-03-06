@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crystal Bolt");
+            // DisplayName.SetDefault("Crystal Bolt");
         }
         public override void SetDefaults()
         {

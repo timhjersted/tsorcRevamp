@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Grants 4 defense. Can be upgraded.");
+            // Tooltip.SetDefault("Grants 4 defense. Can be upgraded.");
         }
 
         public override void SetDefaults()
