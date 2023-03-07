@@ -789,11 +789,7 @@ namespace tsorcRevamp
                                                         {
                                                             ItemDropRule.Common(ModContent.ItemType<CrestOfCorruption>()),
                                                             ItemDropRule.Common(ModContent.ItemType<RTQ2>())
-                                                        }                                                                                },
-                {   ItemID.TwinsBossBag             ,   new List<IItemDropRule>()                           
-                                                        {
-                                                            ItemDropRule.Common(ModContent.ItemType<CrestOfSky>(), 1, 3, 3)
-                                                        }                                                                                },
+                                                        }                                                                                },                
                 {   ItemID.SkeletronPrimeBossBag    ,   new List<IItemDropRule>()                           
                                                         {
                                                             ItemDropRule.Common(ModContent.ItemType<CrestOfSteel>())
