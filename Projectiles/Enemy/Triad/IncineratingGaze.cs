@@ -46,7 +46,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         ActiveSound laserSound;
         public override void AI()
         {
-
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.RetinazerV2>()))
+            {
+                Projectile.timeLeft = 0;
+                Projectile.Kill();
+                Projectile.active = false;
+                laserWidth = 1;
+            }
             if(chargeProgress < firingTime)
             {
                 if (chargeProgress == 0)
