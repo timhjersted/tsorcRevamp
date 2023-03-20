@@ -98,7 +98,6 @@ namespace tsorcRevamp
 
 
         const float BoomerangDrainPerFrame = 0.6f;
-        const float SpearDrainPerFrame = 1f;
         const float HeldProjectileDrainPerFrame = 1f;
         const float SpecialHeldProjectileDrainPerFrame = 0.6f;
         const float FlailDrainPerFrame = 0.4f;
@@ -142,19 +141,6 @@ namespace tsorcRevamp
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= BoomerangDrainPerFrame;
                         break;
                     }
-
-                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].aiStyle == ProjAIStyleID.Spear))
-
-                    {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= SpearDrainPerFrame;
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
-                        if (staminaResourceCurrent < 1)
-                        {
-                            Main.projectile[p].Kill();
-                        }
-                    }
-
-
 
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.VortexBeater 
                         || Main.projectile[p].type == ProjectileID.Celeb2Weapon || Main.projectile[p].type == ProjectileID.FlyingKnife 
@@ -296,11 +282,6 @@ namespace tsorcRevamp
                     case ProjAIStyleID.Boomerang: {
                         drainPerFrame = BoomerangDrainPerFrame;
                         inhibitsRegen = true;
-                        break;
-                    }
-                    case ProjAIStyleID.Spear: {
-                        drainPerFrame = SpearDrainPerFrame;
-                        preventsRegen = true;
                         break;
                     }
                     case ProjAIStyleID.Flail: {
