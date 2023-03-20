@@ -114,6 +114,16 @@ namespace tsorcRevamp
         public bool GravityFix { get; set; }
 
 
+        [Label("Broadsword Rework")]
+        [BackgroundColor(200, 80, 80, 192)]
+        [SliderColor(224, 165, 56, 128)]
+        [ReloadRequired]
+        [DefaultValue(true)]
+        [Tooltip("IN BETA! \nMake broadswords great again. \nRequires reloading the world to have an effect.")]
+        public bool BroadswordRework { get; set; }
+
+
+
         [Header("Sound")]
 
         [Label("Miakoda Volume")]

@@ -1,0 +1,33 @@
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ModLoader;
+using Terraria.ModLoader.Core;
+using Hook =  tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Hooks.Items.ICanMeleeCollideWithNPC;
+
+namespace  tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Hooks.Items;
+
+public interface ICanMeleeCollideWithNPC
+{
+	public static readonly HookList<GlobalItem> Hook = ItemLoader.AddModHook(new HookList<GlobalItem>(typeof(Hook).GetMethod(nameof(CanMeleeCollideWithNPC))));
+
+	bool? CanMeleeCollideWithNPC(Item item, Player player, NPC target, Rectangle itemRectangle);
+
+	public static bool? Invoke(Item item, Player player, NPC target, Rectangle itemRectangle)
+	{
+		bool? globalResult = null;
+
+		foreach (Hook g in Hook.Enumerate(item)) {
+			bool? result = g.CanMeleeCollideWithNPC(item, player, target, itemRectangle);
+
+			if (result.HasValue) {
+				if (result.Value) {
+					globalResult = true;
+				} else {
+					return false;
+				}
+			}
+		}
+
+		return globalResult;
+	}
+}
