@@ -17,16 +17,17 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         {
             DisplayName.SetDefault("Plasma Whirlwind");
             Tooltip.SetDefault("Doubled crit chance scaling" +
-                "\nThrusts on right click dealing double damage, cooldown scales down with attack speed" +
+                "\nThrusts on right click, cooldown scales down with attack speed" +
                 "\nGain a stack of Steel Tempest upon thrusting any enemy" +
-                "\nUpon reaching 2 stacks, the next right click will release a plasma whirlwind dealing double damage" +
-                "\nHover your mouse over an enemy and press Special Ability to dash through the enemy");
+                "\nUpon reaching 2 stacks, the next right click will release a plasma whirlwind" +
+                "\nHover your mouse over an enemy and press Special Ability to dash through the enemy" +
+                "\n'A companion for this Odyssey'");
         }
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.LightPurple;
             Item.value = Item.buyPrice(0, 30, 0, 0);
-            Item.damage = 70;
+            Item.damage = 60;
             Item.crit = 6;
             Item.width = 52;
             Item.height = 54;

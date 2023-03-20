@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Armors.Magic
             DisplayName.SetDefault("RTQ2 Chestplate");
             Tooltip.SetDefault("Increases magic critical strike chance by 7%" +
                 "\nSet Bonus: +10% magic attack speed, space gun effect" +
-                "\nEmergency shield kicks in when health is less than 141, increasing defense by 15");
+                "\nEmergency shield kicks in when life is less than 40%, increasing defense by 15");
         }
         public override void SetDefaults()
         {
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Armors.Magic
             int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 60, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Red, 1.0f);
             Main.dust[dust].noGravity = true;
 
-            if (player.statLife < 141)
+            if ((player.statLife <= (player.statLifeMax / 5 * 2)))
             {
                 player.statDefense += 15;
                 int dust2 = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 60, (player.velocity.X) + (player.direction * 3), player.velocity.Y, 100, Color.Red, 3.0f);

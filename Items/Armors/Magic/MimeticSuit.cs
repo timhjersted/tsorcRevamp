@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Increases magic damage by 11%" +
-                "\nSet Bonus: Burning Mana Skill activates when health falls below 50%, increasing mana regen by 5");
+                "\nSet Bonus: Burning Mana Skill activates when life falls below 50%, increasing mana regen by 5");
         }
         public override void SetDefaults()
         {

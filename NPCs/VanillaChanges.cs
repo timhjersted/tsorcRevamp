@@ -2056,7 +2056,7 @@ namespace tsorcRevamp.NPCs
                 #region The Destroyer
                 case (NPCID.TheDestroyer):
                     {
-                        npc.lifeMax = 40000;
+                        npc.lifeMax = 60000;
                         npc.value = 203430;
                         npc.scale = 1.25f;
                         npc.damage = Main.expertMode ? 40 /* x4 in expert */: 60; //legacy: 200, vanilla: 70
@@ -2301,18 +2301,21 @@ namespace tsorcRevamp.NPCs
                 #region Moon Lord
                 case (NPCID.MoonLordCore):
                     {
+                        npc.life = 100000;
                         npc.value = 527590; //used by boss bag
                         break;
                     }
 
                 case (NPCID.MoonLordHand):
                     {
+                        npc.life = 50000;
                         npc.value = 0; //unused
                         break;
                     }
 
                 case (NPCID.MoonLordHead):
                     {
+                        npc.life = 50000;
                         npc.value = 0; //unused
                         break;
                     }

@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Accessories
             player.GetDamage(DamageClass.Magic) += .05f;
 
 
-            if (player.statLife <= 120)
+            if (player.statLife <= (player.statLifeMax / 5 * 2))
             {
                 player.lifeRegen += 12;
                 player.statDefense += 15;

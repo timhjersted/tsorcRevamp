@@ -4,21 +4,22 @@ using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Runeterra;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
     public class OmegaSquadRifle : ModItem
     {
-        public float cooldown = 0f;
-        public static float shroomCD = 0f;
-        public static bool ToxicShotHeld = false;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Omega Squad Rifle");
-            Tooltip.SetDefault("Converts seeds into Toxic Shots, these scale with magic damage too" +
+            Tooltip.SetDefault("Converts seeds into Radioactive Darts which inflict Irradiated" +
+                "\nIrradiated damage scales with ranged damage" +
                 "\nAlso uses all darts as ammo" +
-                "\nRight click on a cd to shoot a homing blind dart which inflicts confusion, also scales with magic damage" +
-                "\nPress Q hotkey on a cd to drop a miniature nuclear bomb, scaling with magic damage too");
+                "\nRight click to shoot a homing blinding dart which inflicts confusion" +
+                "\nPress Special Ability hotkey to drop a Nuclear Mushroom" +
+                "\nMushroom explodes on contact and applies an even higher dose of radiation" +
+                "\n'There's a mushroom out there with your name on it'");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 
@@ -28,8 +29,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Item.height = 8;
             Item.rare = ItemRarityID.Cyan;
             Item.value = Item.buyPrice(1, 0, 0, 0);
-            Item.useTime = 20;
-            Item.useAnimation = 20;
+            Item.useTime = 22;
+            Item.useAnimation = 22;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item64;//63
@@ -41,32 +42,31 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Item.shootSpeed = 10f;
             Item.useAmmo = AmmoID.Dart;
         }
+        public override Vector2? HoldoutOffset()
+        {
+            return new Vector2(0f, -10f);
+        }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
             if (type == ProjectileID.Seed & player.altFunctionUse == 1)
             {
-                type = ModContent.ProjectileType<ToxicShotProj>();
+                type = ModContent.ProjectileType<RadioactiveDart>();
             }
             if (player.altFunctionUse == 2)
             {
-                type = ModContent.ProjectileType<AlienRifleBlindingLaser>();
+                type = ModContent.ProjectileType<RadioactiveBlindingLaser>();
             }
         }
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
-            if (Main.mouseRight & !Main.mouseLeft)
+            if (Main.mouseRight & !Main.mouseLeft & !player.HasBuff(ModContent.BuffType<RadioactiveBlindingLaserCooldown>()))  //cooldown gets applied on projectile spawn
             {
                 player.altFunctionUse = 2;
-                cooldown = 10;
             }
             if (Main.mouseLeft)
             {
                 player.altFunctionUse = 1;
             }
-        }
-        public override void HoldItem(Player player)
-        {
-            ToxicShotHeld = true;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -74,7 +74,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override bool CanUseItem(Player player)
         {
-            if (player.altFunctionUse != 2 || cooldown <= 0)
+            if (player.altFunctionUse != 2 || !player.HasBuff(ModContent.BuffType<RadioactiveBlindingLaserCooldown>()))
             {
                 return true;
             }
@@ -83,18 +83,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                 return false;
             }
         }
-        public override void UpdateInventory(Player player)
-        {
-            if (Main.GameUpdateCount % 1 == 0)
-            {
-                cooldown -= 0.0167f;
-                shroomCD -= 0.0167f;
-            }
-            if (Main.GameUpdateCount % 10 == 0)
-            {
-                ToxicShotHeld = false;
-            }
-        }/*
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
@@ -105,6 +93,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }*/
+        }
     }
 }

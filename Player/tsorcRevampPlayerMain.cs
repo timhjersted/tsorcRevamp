@@ -628,10 +628,7 @@ namespace tsorcRevamp
 
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (proj.DamageType == DamageClass.Summon || proj.DamageType == DamageClass.SummonMeleeSpeed)
-            {
-                damage -= 4;
-            }
+            damage -= 4;
             if (BurningAura || BurningStone)
             {
                 damage = (int)(damage * 1.05f);
@@ -887,6 +884,7 @@ namespace tsorcRevamp
             {
                 PlasmaWhirlwind thisPlasmaWhirlwind = Player.HeldItem.ModItem as PlasmaWhirlwind;
                 Nightbringer thisNightbringer = Player.HeldItem.ModItem as Nightbringer;
+                OmegaSquadRifle thisOmegaSquadRifle = Player.HeldItem.ModItem as OmegaSquadRifle;
 
                 //Uncomment these when CotU is re-added
                 bool holdingControls = Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>();// || Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>();
@@ -933,21 +931,21 @@ namespace tsorcRevamp
                     {
                         if (!Player.HasBuff(ModContent.BuffType<NightbringerWindwallCooldown>()) && Player.HeldItem.ModItem is Nightbringer)
                         {
-                            Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Center, unitVectorTowardsMouse * 10f, ModContent.ProjectileType<Projectiles.Swords.Runeterra.NightbringerWindWall>(), 0, 0, Main.myPlayer);
+                            Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<Projectiles.Swords.Runeterra.NightbringerWindWall>(), 0, 0, Main.myPlayer);
                             if (thisNightbringer != null)
                             {
-                                Player.AddBuff(ModContent.BuffType<NightbringerWindwallCooldown>(), 90 * 60);
+                                Player.AddBuff(ModContent.BuffType<NightbringerWindwallCooldown>(), 1 * 60);
                             }
                             break;
                         }
                     }
                 }
-                if (OmegaSquadRifle.ToxicShotHeld & OmegaSquadRifle.shroomCD <= 0)
+                if (!Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.ModItem is OmegaSquadRifle)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Ranged.Runeterra.OmegaSquadRifleToxicMine>(), owner.GetWeaponDamage(Player.HeldItem), owner.GetWeaponKnockback(Player.HeldItem), Main.myPlayer);
-                    if(Main.GameUpdateCount % 1 == 0)
+                    Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Ranged.Runeterra.NuclearMushroom>(), owner.GetWeaponDamage(Player.HeldItem), owner.GetWeaponKnockback(Player.HeldItem), Main.myPlayer);
+                    if(thisOmegaSquadRifle != null)
                     {
-                        OmegaSquadRifle.shroomCD = 15;
+                        Player.AddBuff(ModContent.BuffType<NuclearMushroomCooldown>(), 5 * 60);
                     }
                 }
             }

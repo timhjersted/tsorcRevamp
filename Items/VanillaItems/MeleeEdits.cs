@@ -1,6 +1,8 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Armors.Melee;
+using tsorcRevamp.Items.Armors.Summon;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
@@ -68,6 +70,23 @@ namespace tsorcRevamp.Items.VanillaItems
                 | item.type == ItemID.Meowmere | item.type == ItemID.StarWrath)
             {
                 scale *= 1.25f;
+            }
+        }
+        public override string IsArmorSet(Item head, Item body, Item legs)
+        {
+            if (head.type == ModContent.ItemType<Items.Armors.Melee.AncientGoldenHelmet>() && body.type == ItemID.Gi && legs.type == ModContent.ItemType<AncientGoldenGreaves>())
+            {
+                return "GoldenGi";
+            }
+            else return base.IsArmorSet(head, body, legs);
+        }
+        public override void UpdateArmorSet(Player player, string set)
+        {
+            if (set == "GoldenGi")
+            {
+                player.setBonus = "Increases melee damage by 3 flat";
+
+                player.GetDamage(DamageClass.Melee).Flat += 3f;
             }
         }
     }

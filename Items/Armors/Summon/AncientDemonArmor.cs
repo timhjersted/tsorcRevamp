@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Armors.Summon
             Tooltip.SetDefault("Forged by those who brave Annihilation" +
                 "\n+27% whip damage" +
                 "\nSet bonus: Increases whip range by 30%" +
-                "\nIncreases summon attack speed by 25%, this gets doubled when under 50% health");
+                "\nIncreases summon attack speed by 25%, this gets doubled when under 50% life");
             ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = false;
         }
 
@@ -62,7 +62,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.ObsidianShirt, 1);
+            recipe.AddIngredient(ItemID.ObsidianShirt);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 

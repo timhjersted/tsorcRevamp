@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+12% movement speed");
+            Tooltip.SetDefault("+12% movement speed" +
+                "\nCan be bought");
         }
         public override void SetDefaults()
         {
@@ -23,6 +24,15 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += 0.12f;
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.SilverGreaves);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 300);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
         }
     }
 }

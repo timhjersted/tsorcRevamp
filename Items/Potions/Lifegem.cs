@@ -145,17 +145,23 @@ namespace tsorcRevamp.Items.Potions
         }
         public override void AddRecipes()
         {
-                Recipe recipe = CreateRecipe();
-                recipe.AddIngredient(ItemID.LesserHealingPotion, 10);
-                recipe.AddTile(TileID.Bottles);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.LesserHealingPotion, 10);
+            recipe.AddTile(TileID.Bottles);
 
-                recipe.Register();
+            recipe.Register();
 
-                Recipe recipe2 = CreateRecipe();
-                recipe2.AddIngredient(ItemID.HealingPotion, 5);
-                recipe2.AddTile(TileID.Bottles);
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ItemID.HealingPotion, 5);
+            recipe2.AddTile(TileID.Bottles);
 
-                recipe2.Register();
+            recipe2.Register();
+
+            Recipe recipe3 = CreateRecipe();
+            recipe3.AddIngredient(ItemID.Honeyfin, 3);
+            recipe3.AddTile(TileID.Bottles);
+
+            recipe3.Register();
         }
     }
 }

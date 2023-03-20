@@ -15,9 +15,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         {
             DisplayName.SetDefault("Steel Tempest");
             Tooltip.SetDefault("Doubled crit chance scaling" +
-                "\nThrusts on right click dealing double damage, cooldown scales down with attack speed" +
+                "\nThrusts on right click, cooldown scales down with attack speed" +
                 "\nGain a stack of Steel Tempest upon thrusting any enemy" +
-                "\nUpon reaching 2 stacks, the next right click will release a tornado dealing double damage");
+                "\nUpon reaching 2 stacks, the next right click will release a tornado" +
+                "\n'Death is like the wind, always by my side'");
         }
         public override void SetDefaults()
         {

@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Rapid mana regen, +15% magic crit & +15% magic dmg when health falls below 150\n" +
+            Tooltip.SetDefault("Rapid mana regen, +15% magic crit & +15% magic dmg when life falls below 40%\n" +
                                 "Provides Star Cloak, +5% magic crit & +5% magic damage boost normally\n" +
                                 "Magic Imbues no longer need to go on cooldown");
         }
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Accessories
 
             player.GetModPlayer<tsorcRevampPlayer>().DarkmoonCloak = true;
 
-            if (player.statLife <= 150)
+            if (player.statLife <= (player.statLifeMax / 5 * 2))
             {
                 player.manaRegenBuff = true;
                 player.starCloakItem = new Item(ItemID.StarCloak);
@@ -62,7 +62,7 @@ namespace tsorcRevamp.Items.Accessories
         {
             if (!hideVisual)
             {
-                if (player.statLife <= 150)
+                if (player.statLife <= (player.statLifeMax / 5 * 2))
                 {
                     Lighting.AddLight(player.Center, .250f, .250f, .650f);
                     if (player.direction == 1)

@@ -17,17 +17,18 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         {
             DisplayName.SetDefault("Nightbringer");
             Tooltip.SetDefault("Doubled crit chance scaling" +
-                "\nThrusts on right click dealing double damage, cooldown scales down with attack speed" +
+                "\nThrusts on right click, cooldown scales down with attack speed" +
                 "\nGain a stack of Steel Tempest upon thrusting any enemy" +
-                "\nUpon reaching 2 stacks, the next right click will release a chaotic tornado dealing double damage" +
+                "\nUpon reaching 2 stacks, the next right click will release a chaotic tempest" +
                 "\nHover your mouse over an enemy and press Special Ability to dash through the enemy" +
-                "\nPress Special Ability to create a stationary windwall which blocks most enemy projectiles for 4 seconds");
+                "\nPress Special Ability to create a stationary windwall which blocks most enemy projectiles for 4 seconds" +
+                "\n'Harmony is a lie told to force Obedience'");
         }
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Cyan;
             Item.value = Item.buyPrice(1, 0, 0, 0);
-            Item.damage = 180;
+            Item.damage = 220;
             Item.crit = 6;
             Item.width = 52;
             Item.height = 54;
@@ -205,7 +206,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 return false;
             }
         }
-        /*public override void AddRecipes()
+        public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
 
@@ -216,6 +217,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }*/
+        }
     }
 }

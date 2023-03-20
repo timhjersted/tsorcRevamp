@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
@@ -114,6 +115,11 @@ namespace tsorcRevamp.Items.VanillaItems
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.buffType == BuffID.WellFed3)
             {
                 SimpleGlobalModTooltip(Mod, tooltips, "Increases stamina regen by 30% for the [c/6d8827:Bearer of the Curse]");
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ModContent.ItemType<CrystalNunchaku>())
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, "May make the [c/6d8827:Bearer of the Curse] more vulnerable");
             }
         }
     }

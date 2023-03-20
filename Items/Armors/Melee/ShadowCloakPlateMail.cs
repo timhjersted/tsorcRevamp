@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Increases melee damage by 10%" +
-                "\nSet bonus: A Shadow Cloak activates when health falls below 100, increasing life regen by 7" +
+                "\nSet bonus: A Shadow Cloak activates when life falls below 25%, increasing life regen by 7" +
                 "\nIncreases life regen by 3 otherwise" +
                 "\nGrants Double Jump Skill");
         }
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             player.lifeRegen += 3;
 
-            if (player.statLife <= 100)
+            if (player.statLife <= (player.statLifeMax / 4))
             {
                 player.lifeRegen += 4;
 

@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+9% summon attack speed");
+            Tooltip.SetDefault("+9% summon attack speed" +
+                "\nCan be bought");
         }
         public override void SetDefaults()
         {
@@ -23,6 +24,15 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void UpdateEquip(Player player)
         {
             player.GetAttackSpeed(DamageClass.Summon) += 0.09f;
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.SilverHelmet);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 300);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
         }
 
     }

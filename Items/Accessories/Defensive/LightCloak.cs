@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Light Cloak");
-            Tooltip.SetDefault("Light Cloak activates +12 Life Regen when health falls below 150\n" +
+            Tooltip.SetDefault("Light Cloak activates +12 Life Regen when life falls below 40%\n" +
                                 "+4 life regen normally");
 
         }
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            if (player.statLife <= 150)
+            if (player.statLife <= (player.statLifeMax / 5 * 2))
             {
                 player.lifeRegen += 12;
 

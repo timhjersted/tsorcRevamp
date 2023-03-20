@@ -71,6 +71,8 @@ namespace tsorcRevamp
         public bool CritDamage250 = false;
         public bool WhipCritDamage250 = false;
 
+        public float CrystalDefenseDamage;
+
         public int steeltempest = 0;
         public int CritCounter = 0;
 

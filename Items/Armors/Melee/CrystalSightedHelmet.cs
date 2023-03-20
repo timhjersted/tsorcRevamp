@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Armors.Melee
             Tooltip.SetDefault("Dazzling armor cut from crystal" +
                 "\nIncreases melee damage by 6%" +
                 "\nSet Bonus: Increases critical strike damage by 25%" +
-                "\nIncreases melee speed by 18%, doubled when under 166 health");
+                "\nIncreases melee speed by 18%, doubled when under 40% life");
         }
 
         public override void SetDefaults()
@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Armors.Melee
             player.GetModPlayer<tsorcRevampPlayer>().CritDamage250 = true;
             player.GetAttackSpeed(DamageClass.Melee) += 0.18f;
 
-            if (player.statLife < 166)
+            if (player.statLife <= (player.statLifeMax / 5 * 2))
             {
                 player.GetAttackSpeed(DamageClass.Melee) += 0.18f;
 

@@ -4,18 +4,20 @@ using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Runeterra;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
     public class AlienRifle : ModItem
     {
-        public float cooldown = 0f;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Alien Rifle");
-            Tooltip.SetDefault("Converts seeds into Plasma Shots, these scale with magic damage too" +
+            Tooltip.SetDefault("Converts seeds into Alien Lasers which inflict Electrified for a bit" +
+                "\nElectrified damage scales with ranged damage" +
                 "\nAlso uses all darts as ammo" +
-                "\nRight click on a cd to shoot a homing blinding shot which inflicts confusion, also scales with magic damage");
+                "\nRight click to shoot a homing blinding shot which inflicts confusion" +
+                "\n'Armed and ready'");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 
@@ -25,36 +27,39 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Item.height = 8;
             Item.rare = ItemRarityID.LightPurple;
             Item.value = Item.buyPrice(0, 30, 0, 0);
-            Item.useTime = 20;
-            Item.useAnimation = 20;
+            Item.useTime = 22;
+            Item.useAnimation = 22;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.autoReuse = true;
-            Item.UseSound = SoundID.Item64;//63
+            Item.UseSound = SoundID.Item157;
             Item.DamageType = DamageClass.Ranged; 
-            Item.damage = 41;
+            Item.damage = 45;
             Item.knockBack = 1f;
             Item.noMelee = true;
             Item.shoot = ProjectileID.Seed;
             Item.shootSpeed = 10f;
             Item.useAmmo = AmmoID.Dart;
         }
+        public override Vector2? HoldoutOffset()
+        {
+            return new Vector2(0f, -10f);
+        }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
             if (type == ProjectileID.Seed & player.altFunctionUse == 1)
             {
-                type = ModContent.ProjectileType<ToxicShotProj>();
+                type = ModContent.ProjectileType<AlienLaser>();
             }
             if (player.altFunctionUse == 2)
             {
-                type = ModContent.ProjectileType<AlienRifleBlindingLaser>();
+                type = ModContent.ProjectileType<AlienBlindingLaser>();
             }
         }
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
-            if (Main.mouseRight & !Main.mouseLeft)
+            if (Main.mouseRight & !Main.mouseLeft & !player.HasBuff(ModContent.BuffType<AlienBlindingLaserCooldown>())) //cooldown gets applied on projectile spawn
             {
                 player.altFunctionUse = 2;
-                cooldown = 10;
             }
             if (Main.mouseLeft)
             {
@@ -67,7 +72,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override bool CanUseItem(Player player)
         {
-            if (player.altFunctionUse != 2 || cooldown <= 0)
+            if (player.altFunctionUse != 2 || !player.HasBuff(ModContent.BuffType<AlienBlindingLaserCooldown>()))
             {
                 return true;
             }
@@ -76,23 +81,16 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                 return false;
             }
         }
-        public override void UpdateInventory(Player player)
-        {
-            if (Main.GameUpdateCount % 1 == 0)
-            {
-                cooldown -= 0.0167f;
-            }
-        }/*
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ModContent.ItemType<ToxicShot>());
-            recipe.AddIngredient(ItemID.HallowedBar, 12);
+            recipe.AddIngredient(ItemID.ChlorophyteBar, 12);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }*/
+        }
     }
 }

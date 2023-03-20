@@ -54,6 +54,16 @@ namespace tsorcRevamp.Projectiles
             base.OnSpawn(projectile, source);
         }*/
 
+        public override void OnSpawn(Projectile projectile, IEntitySource source)
+        {
+            Player player = Main.player[Main.myPlayer];
+
+            if (projectile.type == ProjectileID.CrystalDart && !Main.hardMode)
+            {
+                projectile.damage = 1 + player.GetWeaponDamage(player.HeldItem);
+            }
+        }
+
         public override bool PreAI(Projectile projectile)
         {
             if (projectile.owner < Main.maxPlayers && Main.player[projectile.owner].active)
@@ -176,7 +186,22 @@ namespace tsorcRevamp.Projectiles
                     else projectile.Kill();
                 }
             }
-
+            if (projectile.type == ProjectileID.PhantasmalDeathray)
+            {
+                projectile.damage = 1000;
+            }
+            if (projectile.type == ProjectileID.PhantasmalBolt)
+            {
+                projectile.damage = 90;
+            }
+            if (projectile.type == ProjectileID.PhantasmalSphere)
+            {
+                projectile.damage = 130;
+            }
+            if (projectile.type == ProjectileID.PhantasmalEye)
+            {
+                projectile.damage = 80;
+            }
 
             //Destroyer shoots true lasers instead of normal projectile lasers
             //Probe lasers are replaced with true lasers. This is actually an enormous nerf because they were not telegraphed and were hard to see before.
@@ -196,6 +221,8 @@ namespace tsorcRevamp.Projectiles
                 }
             }
             return true;
+
+
         }
         public override void OnHitNPC(Projectile projectile, NPC target, int damage, float knockback, bool crit)
         {
@@ -247,6 +274,9 @@ namespace tsorcRevamp.Projectiles
         public override void ModifyHitNPC(Projectile projectile, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             Player player = Main.player[projectile.owner];
+
+            #region Vanilla Whip crits
+
             Vector2 LeatherTip = new Vector2(10, 18) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier;
             Vector2 SnapTip = new Vector2(22, 26) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier;
             Vector2 SpinalTip = new Vector2(14, 18) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier;
@@ -365,6 +395,9 @@ namespace tsorcRevamp.Projectiles
                     }
                 }
             }
+
+            #endregion
+
         }
 
         public override bool PreKill(Projectile projectile, int timeLeft)

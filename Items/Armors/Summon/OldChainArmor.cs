@@ -9,7 +9,10 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+1 flat minion damage\nSet Bonus: Increases your max number of minions by 1\nA Flinx Fur Coat will also proc this set bonus");
+            Tooltip.SetDefault("+1 flat minion damage" +
+                "\nSet Bonus: Increases your max number of minions by 1" +
+                "\nCan be bought" +
+                "\nA Flinx Fur Coat will also proc this set bonus");
         }
         public override void SetDefaults()
         {
@@ -33,6 +36,15 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void UpdateArmorSet(Player player)
         {
             player.maxMinions += 1;
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.SilverChainmail);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 300);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
         }
     }
 }

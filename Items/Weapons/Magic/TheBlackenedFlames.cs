@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Has a chance to burn enemies' health away");
+            Tooltip.SetDefault("Has a chance to burn enemies' life away");
 
         }
 

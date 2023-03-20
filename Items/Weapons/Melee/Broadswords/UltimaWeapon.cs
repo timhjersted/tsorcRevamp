@@ -12,21 +12,21 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Ultimate sword drawing power from the wielder" +
-                                "\nDamage scales directly with health");
+                                "\nDamage scales directly with life");
         }
 
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.LightPurple;
-            Item.damage = 500;
+            Item.damage = 650;
             Item.height = 64;
             Item.width = 64;
             Item.knockBack = 14f;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
-            Item.useAnimation = 16;
+            Item.useAnimation = 24;
             Item.scale = 2.1f;
-            Item.useTime = 16;
+            Item.useTime = 24;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Yellow_8;

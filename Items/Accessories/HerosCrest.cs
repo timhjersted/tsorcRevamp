@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Accessories;
 public class HerosCrest : ModItem {
     public override void SetStaticDefaults() {
         DisplayName.SetDefault("Hero's Crest");
-        Tooltip.SetDefault("Damage, crit chance, health, and defense\n" +
+        Tooltip.SetDefault("Damage, crit chance, life, and defense\n" +
                             "increased by 6%. Luck increased by 0.06\n" +
                             "\"Proof of the hero's accomplishments\"");
     }

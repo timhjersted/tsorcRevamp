@@ -150,6 +150,12 @@ namespace tsorcRevamp.Items.Potions
             recipe2.AddTile(TileID.Bottles);
 
             recipe2.Register();
+
+            Recipe recipe3 = CreateRecipe();
+            recipe3.AddIngredient(ItemID.RestorationPotion, 15);
+            recipe3.AddTile(TileID.Bottles);
+
+            recipe3.Register();
         }
     }
 }

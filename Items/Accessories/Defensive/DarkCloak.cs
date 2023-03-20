@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("[c/ffbf00:Dark Cloak gives +15 defense when health falls below 150]" +
+            Tooltip.SetDefault("[c/ffbf00:Dark Cloak gives +15 defense when life falls below 40%]" +
                                 "\n+5 defense normally");
         }
 
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            if (player.statLife <= 150)
+            if (player.statLife <= (player.statLifeMax / 5 * 2))
             {
                 player.statDefense += 15;
             }

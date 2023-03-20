@@ -16,7 +16,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 	{
 		public float angularSpeed = 0.03f;
 		public float currentAngle = 0;
-        bool spawnedTrail = false;
 
         public override void SetStaticDefaults()
 		{
