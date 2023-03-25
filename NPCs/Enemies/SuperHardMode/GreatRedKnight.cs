@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Banner = NPC.type;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
-            BannerItem = ModContent.ItemType<Banners.GreatRedKnightOfTheAbyssBanner>();
+            BannerItem = ModContent.ItemType<Banners.GreatRedKnightBanner>();
         }
 
         public int poisonStrikeDamage = 40;

@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Ranged).Flat += 2;
+            player.GetDamage(DamageClass.Ranged).Flat += 3;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -32,7 +32,6 @@ namespace tsorcRevamp.Items.Armors.Ranged
         public override void UpdateArmorSet(Player player)
         {
             player.hasJumpOption_Sandstorm = true;
-            player.GetDamage(DamageClass.Ranged) += 0.1f;
             player.ammoCost75 = true;
         }
         public override void AddRecipes()

@@ -1,14 +1,14 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Runeterra
+namespace tsorcRevamp.Buffs.Runeterra.Ranged
 {
-    class SteelTempestThrustCooldown : ModBuff
+    class ScoutsBoostCooldown : ModBuff
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Thrusting Cooldown");
-            Description.SetDefault("You can't thrust until this runs out");
+            DisplayName.SetDefault("Scouts Boost Cooldown");
+            Description.SetDefault("Movement bonus nullified");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

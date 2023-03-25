@@ -37,7 +37,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lavaImmune = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             Banner = NPC.type;
-            BannerItem = ModContent.ItemType<Banners.RedKnightofArtoriasBanner>();
+            BannerItem = ModContent.ItemType<Banners.RedKnightBanner>();
             despawnHandler = new NPCDespawnHandler("The Red Knight has slain you...", Color.Red, DustID.RedTorch);
 
             if (!Main.hardMode)

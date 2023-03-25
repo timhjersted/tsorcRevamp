@@ -3,9 +3,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Runeterra
+namespace tsorcRevamp.Buffs.Runeterra.Ranged
 {
-	public class IrradiatedDebuff : ModBuff
+	public class VenomDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
@@ -15,30 +15,30 @@ namespace tsorcRevamp.Buffs.Runeterra
 		public override void Update(NPC npc, ref int buffIndex)
 		{
 			Player player = Main.player[Main.myPlayer];
-			npc.GetGlobalNPC<IrradiatedDebuffNPC>().Irradiated = true;
+			npc.GetGlobalNPC<VenomDebuffNPC>().Venomized = true;
 			if (Main.GameUpdateCount % 5 == 0)
 			{
-				Dust.NewDust(npc.Top, 10, 10, DustID.CursedTorch);
+				Dust.NewDust(npc.Top, 10, 10, DustID.Venom);
 			}
 		}
 	}
 
-	public class IrradiatedDebuffNPC : GlobalNPC
+	public class VenomDebuffNPC : GlobalNPC
 	{
 		public override bool InstancePerEntity => true;
 
-		public bool Irradiated;
+		public bool Venomized;
 
 		public override void ResetEffects(NPC npc)
 		{
-			Irradiated = false;
+			Venomized = false;
 		}
 		public override void UpdateLifeRegen(NPC npc, ref int damage)
 		{
             Player player = Main.player[Main.myPlayer];
-			if (Irradiated)
+			if (Venomized)
 			{
-				npc.lifeRegen -= (int)player.GetDamage(DamageClass.Ranged).ApplyTo(50);
+				npc.lifeRegen -= (int)player.GetDamage(DamageClass.Ranged).ApplyTo(20);
 			}
         }
 	}

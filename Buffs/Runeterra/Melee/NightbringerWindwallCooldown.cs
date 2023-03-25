@@ -1,7 +1,7 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Runeterra
+namespace tsorcRevamp.Buffs.Runeterra.Melee
 {
     class NightbringerWindwallCooldown : ModBuff
     {

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 
 namespace tsorcRevamp.Tiles
 {
@@ -24,6 +25,14 @@ namespace tsorcRevamp.Tiles
                 {
                     player.AddBuff(ModContent.BuffType<Buffs.StoryTime>(), 30);
                 }
+            }
+        }
+        public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
+        {
+            Player player = Main.LocalPlayer;
+            if ((type == TileID.Plants | type == TileID.Plants2) && (player.HasItem(ModContent.ItemType<ToxicShot>()) | player.HasItem(ModContent.ItemType<AlienRifle>()) | player.HasItem(ModContent.ItemType<OmegaSquadRifle>())))
+            {
+                Item.NewItem(Item.GetSource_NaturalSpawn(), player.Center, ItemID.Seed, 10);
             }
         }
     }

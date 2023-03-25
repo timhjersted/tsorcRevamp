@@ -1,9 +1,9 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Runeterra
+namespace tsorcRevamp.Buffs.Runeterra.Melee
 {
-    class NightbringerThrustCooldown : ModBuff
+    class SteelTempestThrustCooldown : ModBuff
     {
         public override void SetStaticDefaults()
         {

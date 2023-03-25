@@ -14,29 +14,22 @@ namespace tsorcRevamp.Items.VanillaItems
                 //chlorophyte bullets are fucking stupid, dont @ me
                 item.damage = 1; //from 10
             }
+            if (item.type == ItemID.CrystalDart)
+            {
+                //this still makes them incredibly good in pre-hm and gives hardmode darts a chance to be viable, as crystal darts would just outclass them in our closed spaces
+                item.damage = 1; //from 14
+            }
+
+            if (item.type == ItemID.BloodRainBow)
+            {
+                //given out as reward for beating a red knight so I think this is fair, also hard to use
+                item.damage = 20; //from 14
+            }
 
             //Lunar items
             if (item.type == ItemID.Phantasm)
             {
                 item.damage = 35;
-            }
-        }
-        public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)
-        {
-            if (item.type == ItemID.CrystalDart && !Main.hardMode)
-            {
-                damage *= 0.1f;
-            }
-        }
-        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
-        {
-            if (item.type == ItemID.CrystalDart && !Main.hardMode)
-            {
-                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
-                if (ttindex != -1)
-                {
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TempNerf", "Hidden strength sealed by a demon of the underworld"));
-                }
             }
         }
     }

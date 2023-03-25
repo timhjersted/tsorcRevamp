@@ -2,7 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
-using tsorcRevamp.Buffs.Runeterra;
+using tsorcRevamp.Buffs.Runeterra.Ranged;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
@@ -17,17 +17,17 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 
 		public override void SetDefaults()
 		{
-			Projectile.width = 22;
-			Projectile.height = 24;
+			Projectile.width = 50;
+			Projectile.height = 50;
 
 			Projectile.friendly = true;
 			Projectile.DamageType = DamageClass.Ranged;
 			Projectile.penetrate = 1;
 			Projectile.timeLeft = 100 * 60;
-			Projectile.light = 0.5f;
 			Projectile.ignoreWater = true;
 			Projectile.tileCollide = true;
 			Projectile.extraUpdates = 3;
+            Projectile.knockBack = 10f;
 
 		}
 

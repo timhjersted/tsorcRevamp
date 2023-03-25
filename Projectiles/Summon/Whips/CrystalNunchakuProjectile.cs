@@ -133,8 +133,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			{
                 target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.CrystalNunchakuDebuff>(), 15 * 60);
             }
-
-			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
 		}
 

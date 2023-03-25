@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra;
+using tsorcRevamp.Buffs.Runeterra.Melee;
 using Terraria.DataStructures;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
@@ -14,8 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Steel Tempest");
-            Tooltip.SetDefault("Doubled crit chance scaling" +
-                "\nThrusts on right click, cooldown scales down with attack speed" +
+            Tooltip.SetDefault("Thrusts on right click, cooldown scales down with attack speed" +
                 "\nGain a stack of Steel Tempest upon thrusting any enemy" +
                 "\nUpon reaching 2 stacks, the next right click will release a tornado" +
                 "\n'Death is like the wind, always by my side'");

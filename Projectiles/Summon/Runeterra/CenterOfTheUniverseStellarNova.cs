@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra;
+using tsorcRevamp.Buffs.Runeterra.Summon;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {

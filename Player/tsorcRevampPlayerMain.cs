@@ -21,7 +21,9 @@ using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
-using tsorcRevamp.Buffs.Runeterra;
+using tsorcRevamp.Buffs.Runeterra.Melee;
+using tsorcRevamp.Buffs.Runeterra.Ranged;
+using tsorcRevamp.Buffs.Runeterra.Summon;
 
 namespace tsorcRevamp
 {
@@ -251,6 +253,10 @@ namespace tsorcRevamp
             if (Player.HasBuff(ModContent.BuffType<Invincible>()))
                 return false;
             Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s  
+            if (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienRifle>() | Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>() && !Main.player[Main.myPlayer].HasBuff(ModContent.BuffType<ScoutsBoost2>()))
+            {
+                Player.AddBuff(ModContent.BuffType<ScoutsBoostCooldown>(), 3 * 60);
+            }
             return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource, ref cooldownCounter);
         }
         public override void OnHitAnything(float x, float y, Entity victim)
@@ -886,9 +892,8 @@ namespace tsorcRevamp
                 Nightbringer thisNightbringer = Player.HeldItem.ModItem as Nightbringer;
                 OmegaSquadRifle thisOmegaSquadRifle = Player.HeldItem.ModItem as OmegaSquadRifle;
 
-                //Uncomment these when CotU is re-added
-                bool holdingControls = Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>();// || Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>();
-                bool hasBuff = Player.HasBuff(ModContent.BuffType<InterstellarCommander>());// || Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
+                bool holdingControls = Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>()|| Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>();
+                bool hasBuff = Player.HasBuff(ModContent.BuffType<InterstellarCommander>()) || Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
                 if (holdingControls && hasBuff)
                 {
                     owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
@@ -916,7 +921,7 @@ namespace tsorcRevamp
                     NPC other = Main.npc[i];
                     Vector2 MouseHitbox = new Vector2(25, 25);
 
-                    if (other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitbox)) & other.Distance(Player.Center) <= 400 && (!Player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()) || !Player.HasBuff(ModContent.BuffType<NightbringerDashCooldown>())))
+                    if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitbox)) & other.Distance(Player.Center) <= 400 && (!Player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()) || !Player.HasBuff(ModContent.BuffType<NightbringerDashCooldown>())))
                     {
                         if (thisPlasmaWhirlwind != null)
                         {
@@ -927,20 +932,8 @@ namespace tsorcRevamp
                             thisNightbringer.DashingTimer = 0.2f;
                         }
                     }
-                    else
-                    {
-                        if (!Player.HasBuff(ModContent.BuffType<NightbringerWindwallCooldown>()) && Player.HeldItem.ModItem is Nightbringer)
-                        {
-                            Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<Projectiles.Swords.Runeterra.NightbringerWindWall>(), 0, 0, Main.myPlayer);
-                            if (thisNightbringer != null)
-                            {
-                                Player.AddBuff(ModContent.BuffType<NightbringerWindwallCooldown>(), 1 * 60);
-                            }
-                            break;
-                        }
-                    }
                 }
-                if (!Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.ModItem is OmegaSquadRifle)
+                if (Main.keyState.IsKeyDown(Keys.LeftShift) && !Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.ModItem is OmegaSquadRifle)
                 {
                     Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Ranged.Runeterra.NuclearMushroom>(), owner.GetWeaponDamage(Player.HeldItem), owner.GetWeaponKnockback(Player.HeldItem), Main.myPlayer);
                     if(thisOmegaSquadRifle != null)
@@ -949,6 +942,22 @@ namespace tsorcRevamp
                     }
                 }
             }
+            if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<Nightbringer>() && !Player.HasBuff(ModContent.BuffType<NightbringerWindwallCooldown>()))
+            {
+                if (Main.keyState.IsKeyDown(Keys.LeftShift))
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<Projectiles.Swords.Runeterra.NightbringerWindWall>(), 0, 0, Main.myPlayer);
+                    Player.AddBuff(ModContent.BuffType<NightbringerWindwallCooldown>(), 30 * 60);
+                }
+            }
+
+            if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && !owner.HasBuff(ModContent.BuffType<ScoutsBoost2Cooldown>()) && tsorcRevamp.specialAbility.Current && (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienRifle>() | Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>()))
+            {
+                owner.AddBuff(ModContent.BuffType<ScoutsBoost2>(), 5 * 60);
+                owner.AddBuff(ModContent.BuffType<ScoutsBoost2Cooldown>(), 20 * 60);
+            }
+
+
             if (tsorcRevamp.specialAbility.Current && (Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>() || Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>()))
             {
                 if (Main.keyState.IsKeyDown(Keys.LeftShift))

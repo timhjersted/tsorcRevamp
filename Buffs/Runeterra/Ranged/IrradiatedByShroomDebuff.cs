@@ -3,9 +3,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Runeterra
+namespace tsorcRevamp.Buffs.Runeterra.Ranged
 {
-	public class ElectrifiedDebuff : ModBuff
+	public class IrradiatedByShroomDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
@@ -15,30 +15,30 @@ namespace tsorcRevamp.Buffs.Runeterra
 		public override void Update(NPC npc, ref int buffIndex)
 		{
 			Player player = Main.player[Main.myPlayer];
-			npc.GetGlobalNPC<ElectrifiedDebuffNPC>().Electrified = true;
+			npc.GetGlobalNPC<IrradiatedByShroomDebuffNPC>().IrradiatedByShroom = true;
 			if (Main.GameUpdateCount % 5 == 0)
 			{
-				Dust.NewDust(npc.Top, 10, 10, DustID.Electric);
+				Dust.NewDust(npc.Top, 20, 20, DustID.PoisonStaff);
 			}
 		}
 	}
 
-	public class ElectrifiedDebuffNPC : GlobalNPC
+	public class IrradiatedByShroomDebuffNPC : GlobalNPC
 	{
 		public override bool InstancePerEntity => true;
 
-		public bool Electrified;
+		public bool IrradiatedByShroom;
 
 		public override void ResetEffects(NPC npc)
 		{
-			Electrified = false;
+			IrradiatedByShroom = false;
 		}
 		public override void UpdateLifeRegen(NPC npc, ref int damage)
 		{
             Player player = Main.player[Main.myPlayer];
-			if (Electrified)
+			if (IrradiatedByShroom)
 			{
-				npc.lifeRegen -= (int)player.GetDamage(DamageClass.Ranged).ApplyTo(25);
+				npc.lifeRegen -= (int)player.GetDamage(DamageClass.Ranged).ApplyTo(100);
 			}
         }
 	}

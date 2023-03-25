@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra;
+using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Projectiles.Swords.Runeterra;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
@@ -12,15 +12,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
     {
         public int AttackSpeedScalingDuration;
         public float DashingTimer = 0f;
-        public float Invincibility = 0f;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Plasma Whirlwind");
-            Tooltip.SetDefault("Doubled crit chance scaling" +
-                "\nThrusts on right click, cooldown scales down with attack speed" +
+            Tooltip.SetDefault("Thrusts on right click, cooldown scales down with attack speed" +
                 "\nGain a stack of Steel Tempest upon thrusting any enemy" +
                 "\nUpon reaching 2 stacks, the next right click will release a plasma whirlwind" +
                 "\nHover your mouse over an enemy and press Special Ability to dash through the enemy" +
+                "\nThis grants you brief invulnerability and a huge melee damage boost" +
                 "\n'A companion for this Odyssey'");
         }
         public override void SetDefaults()
@@ -66,11 +65,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 {
                     if (DashingTimer > 0)
                     {
-                        int dustID = Dust.NewDust(player.position, player.width, player.height, DustID.CoralTorch, Scale: 3);
-                        Main.dust[dustID].noGravity = true;
                         player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, other.Center, 15f);
-                        Invincibility = 1f;
-                        player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>(), 30 * 60);
+                        player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), 1 * 60);
+                        player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>(), 20 * 60);
                     }
                     break;
                 }
@@ -164,14 +161,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         }
         public override void UpdateInventory(Player player)
         {
-            if (Invincibility > 0f)
-            {
-                player.immune = true;
-            }
             if (Main.GameUpdateCount % 1 == 0)
             {
                 DashingTimer -= 0.0167f;
-                Invincibility -= 0.0167f;
             }
         }
 
@@ -210,7 +202,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ModContent.ItemType<SteelTempest>());
-            recipe.AddIngredient(ItemID.HallowedBar, 12);
+            recipe.AddIngredient(ItemID.ChlorophyteBar, 11);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
 
             recipe.AddTile(TileID.DemonAltar);

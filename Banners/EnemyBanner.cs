@@ -67,6 +67,7 @@ namespace tsorcRevamp.Banners
             string item;
             switch (style)
             {
+                #region Pre-SHM
                 case 0:
                     item = "GuardianCorruptorBanner";
                     break;
@@ -175,9 +176,9 @@ namespace tsorcRevamp.Banners
                 case 35:
                     item = "GhostOfTheForgottenWarriorBanner";
                     break;
-                case 36:
-                    item = "GreatRedKnightOfArtoriasBanner";
-                    break;
+                /*case 36: /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    item = "";
+                    break;*/
                 case 37:
                     item = "HeroOfLumeliaBanner";
                     break;
@@ -217,9 +218,9 @@ namespace tsorcRevamp.Banners
                 case 49:
                     item = "RedCloudHunterBanner";
                     break;
-                case 50:
-                    item = "RedKnightofArtoriasBanner";
-                    break;
+                /*case 50: //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    item = "";
+                    break;*/
                 case 51:
                     item = "ShadowMageBanner";
                     break;
@@ -248,6 +249,8 @@ namespace tsorcRevamp.Banners
                     item = "JungleWyvernJuvenileBanner";
                     break;
 
+                #endregion
+                #region SHM
 
                 case 60:
                     item = "SerpentOfTheAbyssBanner";
@@ -285,9 +288,9 @@ namespace tsorcRevamp.Banners
                 case 71:
                     item = "DarkKnightBanner";
                     break;
-                case 72:
-                    item = "GreatRedKnightOfTheAbyssBanner";
-                    break;
+                /*case 72://////////////////////////////////////////////////////////////////////////
+                    item = "";
+                    break;*/
                 case 73:
                     item = "HydrisElementalBanner";
                     break;
@@ -324,6 +327,14 @@ namespace tsorcRevamp.Banners
                 case 84:
                     item = "ArchdeaconBanner";
                     break;
+                case 85:
+                    item = "RedKnightBanner";
+                    break;
+                case 86:
+                    item = "GreatRedKnightBanner";
+                    break;
+
+                #endregion
 
                 default:
                     return;
@@ -455,9 +466,9 @@ namespace tsorcRevamp.Banners
                     case 35:
                         type = "GhostOfTheForgottenWarrior";
                         break;
-                    case 36:
-                        type = "GreatRedKnightofArtorias";
-                        break;
+                    /*case 36: ///////////////////////////////////////////////////////////////////////////////
+                        type = "";
+                        break;*/
                     case 37:
                         type = "HeroofLumelia";
                         break;
@@ -497,9 +508,9 @@ namespace tsorcRevamp.Banners
                     case 49:
                         type = "RedCloudHunter";
                         break;
-                    case 50:
-                        type = "RedKnightofArtorias";
-                        break;
+                    /*case 50: /////////////////////////////////////////////////////////////////////////////
+                        type = "";
+                        break;*/
                     case 51:
                         type = "ShadowMage";
                         break;
@@ -563,9 +574,9 @@ namespace tsorcRevamp.Banners
                     case 71:
                         type = "DarkKnight";
                         break;
-                    case 72:
-                        type = "GreatRedKnightOfTheAbyss";
-                        break;
+                    /*case 72: //////////////////////////////////////////////////////////////////////////////////////
+                        type = "";
+                        break;*/
                     case 73:
                         type = "HydrisElemental";
                         break;
@@ -601,6 +612,12 @@ namespace tsorcRevamp.Banners
                         break;
                     case 84:
                         type = "Archdeacon";
+                        break;
+                    case 85:
+                        type = "RedKnight";
+                        break;
+                    case 86:
+                        type = "GreatRedKnight";
                         break;
 
                     default:
@@ -1067,18 +1084,18 @@ namespace tsorcRevamp.Banners
             Item.placeStyle = 35; //change when texture added
         }
     }
-    public class GreatRedKnightOfArtoriasBanner : EnemyBanner
+    /*public class Banner : EnemyBanner
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Nearby players get a bonus against: Great Red Knight of Artorias");
+            Tooltip.SetDefault("Nearby players get a bonus against: REDACTED");
         }
         public override void SetDefaults()
         {
             base.SetDefaults();
             Item.placeStyle = 36; //change when texture added
         }
-    }
+    }*/
     public class HeroOfLumeliaBanner : EnemyBanner
     {
         public override void SetStaticDefaults()
@@ -1235,19 +1252,19 @@ namespace tsorcRevamp.Banners
             Item.placeStyle = 49; //change when texture added
         }
     }
-    public class RedKnightofArtoriasBanner : EnemyBanner
+    /*public class Banner : EnemyBanner
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Red Knight of Artorias Banner");
-            Tooltip.SetDefault("Nearby players get a bonus against: Red Knight of Artorias");
+            DisplayName.SetDefault(" Banner");
+            Tooltip.SetDefault("Nearby players get a bonus against: REDACTED");
         }
         public override void SetDefaults()
         {
             base.SetDefaults();
             Item.placeStyle = 50; //change when texture added
         }
-    }
+    }*/
     public class ShadowMageBanner : EnemyBanner
     {
         public override void SetStaticDefaults()
@@ -1494,18 +1511,18 @@ namespace tsorcRevamp.Banners
             Item.placeStyle = 71; //change when texture added
         }
     }
-    public class GreatRedKnightOfTheAbyssBanner : EnemyBanner
+    /*public class Banner : EnemyBanner
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Nearby players get a bonus against: Great Red Knight Of The Abyss");
+            Tooltip.SetDefault("Nearby players get a bonus against: REDACTED");
         }
         public override void SetDefaults()
         {
             base.SetDefaults();
             Item.placeStyle = 72; //change when texture added
         }
-    }
+    }*/
     public class HydrisElementalBanner : EnemyBanner
     {
         public override void SetStaticDefaults()
@@ -1651,6 +1668,31 @@ namespace tsorcRevamp.Banners
         {
             base.SetDefaults();
             Item.placeStyle = 84; //change when texture added
+        }
+    }
+
+    public class RedKnightBanner : EnemyBanner
+    {
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Nearby players get a bonus against: Red Knight");
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Item.placeStyle = 85; //change when texture added
+        }
+    }
+    public class GreatRedKnightBanner : EnemyBanner
+    {
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Nearby players get a bonus against: Great Red Knight");
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Item.placeStyle = 86; //change when texture added
         }
     }
 

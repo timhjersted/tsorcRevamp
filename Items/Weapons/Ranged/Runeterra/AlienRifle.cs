@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra;
+using tsorcRevamp.Buffs.Runeterra.Ranged;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
@@ -13,9 +13,12 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Alien Rifle");
-            Tooltip.SetDefault("Converts seeds into Alien Lasers which inflict Electrified for a bit" +
-                "\nElectrified damage scales with ranged damage" +
+            Tooltip.SetDefault("Converts seeds into Alien Lasers and allows you to gather Seeds from grass" +
+                "\nAlien Lasers apply a short burst of Electrified and home into enemies" +
                 "\nAlso uses all darts as ammo" +
+                "\nStops players movement for a fraction of the weapon's usetime" +
+                "\nGrants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily" +
+                "\nPress Special Ability to gain an even higher temporary boost" +
                 "\nRight click to shoot a homing blinding shot which inflicts confusion" +
                 "\n'Armed and ready'");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
@@ -23,8 +26,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 
         public override void SetDefaults()
         {
-            Item.width = 38;
-            Item.height = 8;
+            Item.width = 56;
+            Item.height = 24;
             Item.rare = ItemRarityID.LightPurple;
             Item.value = Item.buyPrice(0, 30, 0, 0);
             Item.useTime = 22;
@@ -33,8 +36,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item157;
             Item.DamageType = DamageClass.Ranged; 
-            Item.damage = 45;
-            Item.knockBack = 1f;
+            Item.damage = 60;
+            Item.knockBack = 5f;
             Item.noMelee = true;
             Item.shoot = ProjectileID.Seed;
             Item.shootSpeed = 10f;
@@ -42,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override Vector2? HoldoutOffset()
         {
-            return new Vector2(0f, -10f);
+            return new Vector2(0f, -9f);
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
@@ -66,6 +69,20 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                 player.altFunctionUse = 1;
             }
         }
+        public override void HoldItem(Player player)
+        {
+            if (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()))
+            {
+                if (!player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
+                {
+                    player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
+                }
+            }
+            if (player.itemAnimation > 14)
+            {
+                player.velocity *= 0.01f;
+            }
+        }
         public override bool AltFunctionUse(Player player)
         {
             return true;
@@ -86,7 +103,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ModContent.ItemType<ToxicShot>());
-            recipe.AddIngredient(ItemID.ChlorophyteBar, 12);
+            recipe.AddIngredient(ItemID.ChlorophyteBar, 11);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
             recipe.AddTile(TileID.DemonAltar);
 

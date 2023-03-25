@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra;
+using tsorcRevamp.Buffs.Runeterra.Ranged;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
@@ -13,20 +13,22 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Omega Squad Rifle");
-            Tooltip.SetDefault("Converts seeds into Radioactive Darts which inflict Irradiated" +
-                "\nIrradiated damage scales with ranged damage" +
+            Tooltip.SetDefault("Converts seeds into Radioactive Darts and allows you to gather Seeds from grass" +
+                "\nRadioactive Darts apply a short burst of Irradiated and home into enemies" +
                 "\nAlso uses all darts as ammo" +
+                "\nStops players movement for a fraction of the weapon's usetime" +
+                "\nGrants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily" +
+                "\nPress Special Ability to gain an even higher temporary boost" +
                 "\nRight click to shoot a homing blinding dart which inflicts confusion" +
-                "\nPress Special Ability hotkey to drop a Nuclear Mushroom" +
-                "\nMushroom explodes on contact and applies an even higher dose of radiation" +
+                "\nPress Shift and Special Ability to drop a Nuclear Mushroom" +
                 "\n'There's a mushroom out there with your name on it'");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 
         public override void SetDefaults()
         {
-            Item.width = 38;
-            Item.height = 8;
+            Item.width = 62;
+            Item.height = 22;
             Item.rare = ItemRarityID.Cyan;
             Item.value = Item.buyPrice(1, 0, 0, 0);
             Item.useTime = 22;
@@ -35,8 +37,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item64;//63
             Item.DamageType = DamageClass.Ranged; 
-            Item.damage = 123;
-            Item.knockBack = 1f;
+            Item.damage = 220;
+            Item.knockBack = 6f;
             Item.noMelee = true;
             Item.shoot = ProjectileID.Seed;
             Item.shootSpeed = 10f;
@@ -44,7 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override Vector2? HoldoutOffset()
         {
-            return new Vector2(0f, -10f);
+            return new Vector2(0f, -8f);
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
@@ -55,6 +57,20 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             if (player.altFunctionUse == 2)
             {
                 type = ModContent.ProjectileType<RadioactiveBlindingLaser>();
+            }
+        }
+        public override void HoldItem(Player player)
+        {
+            if (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()))
+            {
+                if (!player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
+                {
+                    player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
+                }
+            }
+            if (player.itemAnimation > 14)
+            {
+                player.velocity *= 0.01f;
             }
         }
         public override void UseStyle(Player player, Rectangle heldItemFrame)

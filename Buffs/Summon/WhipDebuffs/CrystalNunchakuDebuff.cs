@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Summon.Whips;
 
 namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 {
@@ -31,7 +32,6 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
                 Dust.NewDust(npc.TopLeft, 10, 10, DustID.CrystalPulse);
                 npc.GetGlobalNPC<CrystalNunchakuDebuffNPC>().proc = true;
             }
-            Main.NewText(Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().CrystalDefenseDamage);
         }
 	}
 
@@ -56,7 +56,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 
         public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit)
         {
-			if (!proc && !(stacks == 0) && !projectile.npcProj && !projectile.trap && markedByCrystalNunchaku)
+			if (!proc && !(stacks == 0) && !projectile.npcProj && !projectile.trap && markedByCrystalNunchaku && projectile.type != ModContent.ProjectileType<CrystalNunchakuProjectile>())
 			{
                 stacks -= 1;
             }

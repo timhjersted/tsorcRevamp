@@ -11,16 +11,21 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 {
     public class NightbringerWindWall: ModProjectile
     {
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[Projectile.type] = 7;
+            DisplayName.SetDefault("Nightbringer Firewall");
+        }
         public override void SetDefaults()
         {
-            Projectile.width = 30;
-            Projectile.height = 150;
+            Projectile.width = 50;
+            Projectile.height = 250;
             Projectile.aiStyle = -1;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 800;
-            Projectile.DamageType = DamageClass.Melee;
+            Projectile.timeLeft = 10 * 60;
+            Projectile.DamageType = DamageClass.Default;
         }
         public override void OnSpawn(IEntitySource source)
         {
@@ -43,10 +48,30 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
                 {
                     if (other.type != ProjectileID.PhantasmalDeathray && other.type != ProjectileID.SaucerDeathray)
                     {
+                        Dust.NewDust(other.position, other.width * 2, other.height * 2, DustID.Torch);
                         other.Kill();
                     }
                 }
             }
+            Visuals();
+        }
+        private void Visuals()
+        {
+            float frameSpeed = 5f;
+
+            Projectile.frameCounter++;
+
+            if (Projectile.frameCounter >= frameSpeed)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
+                {
+                    Projectile.frame = 0;
+                }
+            }
+            Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
         }
     }
 }

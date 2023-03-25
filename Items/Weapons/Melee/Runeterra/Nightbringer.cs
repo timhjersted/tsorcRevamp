@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra;
+using tsorcRevamp.Buffs.Runeterra.Melee;
 using Terraria.DataStructures;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
@@ -12,16 +12,15 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
     {
         public int AttackSpeedScalingDuration;
         public float DashingTimer = 0f;
-        public float Invincibility = 0f;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Nightbringer");
-            Tooltip.SetDefault("Doubled crit chance scaling" +
-                "\nThrusts on right click, cooldown scales down with attack speed" +
+            Tooltip.SetDefault("Thrusts on right click, cooldown scales down with attack speed" +
                 "\nGain a stack of Steel Tempest upon thrusting any enemy" +
                 "\nUpon reaching 2 stacks, the next right click will release a chaotic tempest" +
                 "\nHover your mouse over an enemy and press Special Ability to dash through the enemy" +
-                "\nPress Special Ability to create a stationary windwall which blocks most enemy projectiles for 4 seconds" +
+                "\nThis grants you brief invulnerability and a huge melee damage boost" +
+                "\nPress Shift + Special Ability to create a stationary firewall which blocks most enemy projectiles for 10 seconds" +
                 "\n'Harmony is a lie told to force Obedience'");
         }
         public override void SetDefaults()
@@ -67,11 +66,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 {
                     if (DashingTimer > 0)
                     {
-                        int dustID = Dust.NewDust(player.position, player.width, player.height, DustID.Torch, Scale: 3);
-                        Main.dust[dustID].noGravity = true;
                         player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, other.Center, 15f);
-                        Invincibility = 1f;
-                        player.AddBuff(ModContent.BuffType<NightbringerDashCooldown>(), 30 * 60);
+                        player.AddBuff(ModContent.BuffType<NightbringerDash>(), 1 * 60);
+                        player.AddBuff(ModContent.BuffType<NightbringerDashCooldown>(), 20 * 60);
                     }
                     break;
                 }
@@ -165,14 +162,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         }
         public override void UpdateInventory(Player player)
         {
-            if (Invincibility > 0f)
-            {
-                player.immune = true;
-            }
             if (Main.GameUpdateCount % 1 == 0)
             {
                 DashingTimer -= 0.0167f;
-                Invincibility -= 0.0167f;
             }
         }
 

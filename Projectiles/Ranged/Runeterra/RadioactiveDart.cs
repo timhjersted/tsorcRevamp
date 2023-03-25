@@ -2,7 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
-using tsorcRevamp.Buffs.Runeterra;
+using tsorcRevamp.Buffs.Runeterra.Ranged;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
@@ -17,25 +17,25 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 
 		public override void SetDefaults()
 		{
-			Projectile.width = 10;
-			Projectile.height = 10;
+			Projectile.width = 2;
+			Projectile.height = 2;
 			Projectile.aiStyle = ProjAIStyleID.SmallFlying;
 			Projectile.friendly = true;
 			Projectile.DamageType = DamageClass.Ranged;
 			Projectile.penetrate = 1;
-			Projectile.timeLeft = 240;
+			Projectile.timeLeft = 300;
 			Projectile.light = 0.5f;
 			Projectile.ignoreWater = true;
 			Projectile.tileCollide = true;
+            Projectile.extraUpdates = 3;
 
-			AIType = ProjectileID.Bat;
+            AIType = ProjectileID.Bat;
 		}
 
         public override void AI()
         {
-			var owner = Main.player[Projectile.owner];
-			Dust.NewDust(Projectile.Center, 10, 10, DustID.VenomStaff, 0, 0, 0, Color.LightPink, 0.75f);
-            Projectile.extraUpdates = 3;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            //Dust.NewDust(Projectile.Center + new Vector2(0, -5), 10, 10, DustID.PoisonStaff, 0, 0, 0, Color.LimeGreen, 0.75f);
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         }
 		public override bool PreDraw(ref Color lightColor)
 		{
-			return false;
+			return true;
 		}
 	}
 }

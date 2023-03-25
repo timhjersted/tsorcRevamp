@@ -7,7 +7,7 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
-using tsorcRevamp.Buffs.Runeterra;
+using tsorcRevamp.Buffs.Runeterra.Summon;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 			DisplayName.SetDefault("Interstellar Vessel Controls");
 			Tooltip.SetDefault("Summons spaceships to rotate around you and damage enemies in their way" +
                                 "\nUses half a minion slot" +
-                                "\nWhile holding this item, increase their radius by holding the Special Ability hotkey" +
+                                "\nWhile holding this item, increase their radius by holding Special Ability" +
                                 "\nOr hold Shift + Special Ability to shrink their radius" +
                                 "\nPress Special Ability while not holding the remote to activate Turboboost" +
                                 "\nThis increases the spaceships damage and movement speed" +
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 			projectiles = new List<InterstellarVesselShip>(){};
 
 			Item.damage = 55;
-			Item.knockBack = 3f;
+			Item.knockBack = 5f;
 			Item.mana = 10;
 			Item.width = 32;
 			Item.height = 34;
@@ -104,7 +104,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 			Recipe recipe = CreateRecipe();
 
 			recipe.AddIngredient(ModContent.ItemType<ScorchingPoint>());
-			recipe.AddIngredient(ItemID.HallowedBar, 12);
+			recipe.AddIngredient(ItemID.ChlorophyteBar, 11);
 			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
 
 			recipe.AddTile(TileID.DemonAltar);

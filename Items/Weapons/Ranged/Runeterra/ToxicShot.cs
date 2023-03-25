@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Runeterra.Ranged;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
@@ -12,9 +13,12 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Toxic Shot");
-            Tooltip.SetDefault("Converts seeds into Toxic Shots" +
+            Tooltip.SetDefault("Converts seeds into Toxic Shots and allows you to gather Seeds from grass" +
                 "\nToxic Shots apply a short burst of venom and home into enemies" +
                 "\nAlso uses all darts as ammo" +
+                "\nStops players movement for a fraction of the weapon's usetime" +
+                "\nGrants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily" +
+                "\nPress Special Ability to gain an even higher temporary boost" +
                 "\n'That's gotta sting'");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
@@ -31,8 +35,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item64;//63
             Item.DamageType = DamageClass.Ranged; 
-            Item.damage = 15;
-            Item.knockBack = 1f;
+            Item.damage = 20;
+            Item.knockBack = 4f;
             Item.noMelee = true;
             Item.shoot = ProjectileID.Seed;
             Item.shootSpeed = 10f;
@@ -49,6 +53,21 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                 type = ModContent.ProjectileType<ToxicShotDart>();
             }
         }
+        public override void HoldItem(Player player)
+        {
+            if (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()))
+            {
+                if (!player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
+                {
+                    player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
+                }
+            }
+            if (player.itemAnimation > 14)
+            {
+                player.velocity *= 0.01f;
+            }
+        }
+
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
