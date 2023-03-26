@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 		{
 			projectiles = new List<InterstellarVesselShip>(){};
 
-			Item.damage = 55;
+			Item.damage = 60;
 			Item.knockBack = 5f;
 			Item.mana = 10;
 			Item.width = 32;

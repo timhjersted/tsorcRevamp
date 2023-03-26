@@ -72,8 +72,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ModContent.ItemType<WorldRune>());
             recipe.AddIngredient(ItemID.Blowpipe);
+            recipe.AddIngredient(ModContent.ItemType<WorldRune>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
             recipe.AddTile(TileID.DemonAltar);
 
