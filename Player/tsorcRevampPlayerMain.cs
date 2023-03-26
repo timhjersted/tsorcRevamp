@@ -18,7 +18,7 @@ using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.UI;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
-using tsorcRevamp.Items.Weapons.Magic.Runeterra;
+//using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Melee;
