@@ -53,24 +53,23 @@ namespace tsorcRevamp.Items.Accessories.Expert
         }
         public override void HorizontalWingSpeeds(Player player, ref float speed, ref float acceleration)
         {
-            speed = 13f;
+            speed = 14f;
             acceleration = 0.45f;
             if (player.TryingToHoverDown && player.controlJump && player.wingTime > 0f && !player.merman)
             {
-                speed = 14f;
+                speed = 16f;
                 acceleration = 1f;
             }
         }
 
         public override void UpdateEquip(Player player)
         {
-
+            player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 3;
             if (player.TryingToHoverDown && player.controlJump && player.wingTime > 0f && !player.merman)
             {
                 player.velocity.Y = 1f;
             }
-            //todo: make these wings alternative to supersonic that can hover
-            player.GetWingStats(22);
+            //player.GetWingStats(22);
             player.jumpBoost = true;
             player.jumpSpeedBoost = 1.5f;
             player.lavaImmune = true;

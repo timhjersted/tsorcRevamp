@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Casts Magic Barrier when the wearer is critically wounded" +
+            Tooltip.SetDefault("Casts Magic Barrier when life falls below 25%" +
                                 "\nMagic Barrier increases defense by 20" +
                                 "\nDoes not stack with other barrier or shield spells");
         }

@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Band of Great Cosmic Power");
-            Tooltip.SetDefault("+3 life regen and increases max mana by 60");
+            Tooltip.SetDefault("Increases life regeneration by 3 and maximum mana by 60");
         }
 
         public override void SetDefaults()
