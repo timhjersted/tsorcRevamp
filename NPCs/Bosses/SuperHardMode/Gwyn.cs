@@ -47,8 +47,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         //old attacks, not all used
-        int deathBallDamage = 75; //200
-        int phantomSeekerDamage = 97; //225
+        int deathBallDamage = 77; //200
+        int phantomSeekerDamage = 105; //225
         int armageddonBallDamage = 82; //300
         int holdBallDamage = 26;
         int fireballBallDamage = 108;
@@ -59,24 +59,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int gravityBallDamage = 112;//300
 
         //basilisk attacks
-        int cursedBreathDamage = 66; //100
-        int cursedFlamesDamage = 62; //100
-        int disruptDamage = 63;//203
-        int bioSpitDamage = 63;//185
-        int bioSpitfinalDamage = 68;//230
+        int cursedBreathDamage = 79; //100
+        int cursedFlamesDamage = 75; //100
+        int disruptDamage = 66;//203
+        int bioSpitDamage = 66;//185
+        int bioSpitfinalDamage = 72;//230
 
         //ultimate attack not used yet
-        public int redMagicDamage = 75;
+        public int redMagicDamage = 78;
 
         //lumelia attacks
-        public int throwingKnifeDamage = 65;//180
-        public int smokebombDamage = 113;//295
+        public int throwingKnifeDamage = 68;//180
+        public int smokebombDamage = 116;//295
 
-        //death skull attack when player gets too far away
-        public int herosArrowDamage = 100; //400
+        //death skull attack when player gets too far away - this is to encourage the player to stay in range of more of Gwyn's attacks so ranged builds don't make the fight too easy
+        public int herosArrowDamage = 149; //400
 
         //slogra attacks
-        public int tridentDamage = 80; //150
+        public int tridentDamage = 85; //150
         //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
         public int burningSphereDamage = 209;//360
 
@@ -109,10 +109,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int darkBeadDamage = 68;
 
         //ancient demon
-        int cultistFireDamage = 75;//192
+        int cultistFireDamage = 78;//192
         int cultistMagicDamage = 120;//259
-        int cultistLightningDamage = 78;//260
-        int fireBreathDamage = 77;//131
+        int cultistLightningDamage = 79;//260
+        int fireBreathDamage = 97;//131
         int lostSoulDamage = 71;//223
         int greatFireballDamage = 72;//216
         int blackFireDamage = 110;//147
