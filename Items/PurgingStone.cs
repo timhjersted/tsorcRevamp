@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Items
 {
@@ -52,7 +53,7 @@ namespace tsorcRevamp.Items
         public override bool CanUseItem(Player player)
         {
 
-            if ((player.statLifeMax < player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP) || player.HasBuff(ModContent.BuffType<Buffs.CurseBuildup>()) || player.HasBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>()))
+            if ((player.statLifeMax < player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP) || player.HasBuff(ModContent.BuffType<CurseBuildup>()) || player.HasBuff(ModContent.BuffType<PowerfulCurseBuildup>()))
             {
                 if (!player.HasBuff(BuffID.PotionSickness))
                 {
@@ -81,7 +82,7 @@ namespace tsorcRevamp.Items
             foreach (int buffType in player.buffType)
             {
 
-                if (buffType == ModContent.BuffType<Buffs.CurseBuildup>() || buffType == ModContent.BuffType<Buffs.PowerfulCurseBuildup>())
+                if (buffType == ModContent.BuffType<CurseBuildup>() || buffType == ModContent.BuffType<PowerfulCurseBuildup>())
                 {
                     player.DelBuff(buffIndex);
                     player.GetModPlayer<tsorcRevampPlayer>().CurseLevel = 0;

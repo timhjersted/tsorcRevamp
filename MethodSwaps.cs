@@ -25,6 +25,7 @@ using tsorcRevamp.Projectiles.Enemy.Marilith;
 using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Projectiles.Enemy.Triad;
 using Terraria.Graphics;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp
 {
@@ -881,8 +882,8 @@ namespace tsorcRevamp
                 {
                     estusPlayer.isDrinking = true;
                     estusPlayer.estusDrinkTimer = 0;
-                    player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 120);
-                    player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 120);
+                    player.AddBuff(ModContent.BuffType<Crippled>(), 120);
+                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 120);
                 }
                 return;
             }

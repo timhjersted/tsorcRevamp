@@ -47,7 +47,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-			target.AddBuff(BuffID.Confused, 120);
+            target.AddBuff(ModContent.BuffType<IrradiatedDebuff>(), 120);
+            target.AddBuff(BuffID.Confused, 120);
         }
     }
 }

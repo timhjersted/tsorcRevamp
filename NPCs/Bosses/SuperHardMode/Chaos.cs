@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -82,8 +83,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1800)
             {
                 player.AddBuff(BuffID.BrokenArmor, 120, false); 
-                player.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 60, false); 
-                player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
+                player.AddBuff(ModContent.BuffType<FracturingArmor>(), 60, false); 
+                player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
 
                 if (holdTimer2 <= 0)
                 {

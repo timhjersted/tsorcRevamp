@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 		public override void SetDefaults()
 		{
 			Projectile.width = 2;
-			Projectile.height = 42;
+			Projectile.height = 2;
 			Projectile.aiStyle = ProjAIStyleID.SmallFlying;
 			Projectile.friendly = true;
 			Projectile.DamageType = DamageClass.Ranged;
@@ -46,7 +46,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 		}
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-			target.AddBuff(BuffID.Confused, 120);
+            target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 120);
+            target.AddBuff(BuffID.Confused, 120);
         }
     }
 }

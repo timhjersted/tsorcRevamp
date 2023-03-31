@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("One of the rings worn by Artorias." +
-                                "\nImmunity to the on-fire and broken-armor debuffs." +
-                                "\n+18 defense within the Abyss, +6 defense otherwise." +
+                                "\nPress Shift and Special Ability to increase life regen and damage taken temporarily" +
+                                "\n+12 defense within the Abyss" +
                                 "\nGrants Acid Venom imbue effect" +
                                 "\nImbue effect can be toggled by hiding the accessory.");
         }
@@ -29,16 +29,14 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.buffImmune[BuffID.OnFire] = true;
-            player.buffImmune[BuffID.BrokenArmor] = true;
-
+            player.GetModPlayer<tsorcRevampPlayer>().WolfRing = true;
             if (Main.bloodMoon)
             { // Apparently this is the flag used in the Abyss?
                 player.statDefense += 12;
             }
         }
         public override void UpdateAccessory(Player player, bool hideVisual) {
-            if (!hideVisual) player.AddBuff(BuffID.WeaponImbueVenom, 60, false);
+            if (!hideVisual) player.AddBuff(BuffID.WeaponImbueVenom, 1, false);
         }
 
     }

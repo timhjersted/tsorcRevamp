@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
@@ -10,6 +11,7 @@ using tsorcRevamp.Buffs;
 using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.UI;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp
 {
@@ -36,6 +38,7 @@ namespace tsorcRevamp
         public bool DuskCrownRing = false;
         public bool Celestriad = false;
         public bool UndeadTalisman = false;
+        public bool WolfRing = false;
 
         public bool DragoonBoots = false;
         public bool DragoonBootsEnable = false;
@@ -74,6 +77,8 @@ namespace tsorcRevamp
         public int EssenceThief = 0;
 
         public float CrystalDefenseDamage;
+        public bool MythrilBulwark = false;
+        public bool IceboundMythrilAegis = false;
 
         public int steeltempest = 0;
         public int CritCounter = 0;
@@ -263,9 +268,13 @@ namespace tsorcRevamp
 
             ChloranthyRing1 = false;
             ChloranthyRing2 = false;
+            WolfRing = false;
 
             CritDamage250 = false; 
             WhipCritDamage250 = false;
+
+            MythrilBulwark = false; 
+            IceboundMythrilAegis = false;
 
             Celestriad = false;
 
@@ -765,7 +774,7 @@ namespace tsorcRevamp
                                     if (FieldTimer >= 340)
                                     {
                                         Player.velocity += new Vector2(0, -15);
-                                        Player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 30);
+                                        Player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 30);
                                         UsefulFunctions.BroadcastText("Your grapple suddenly snaps!!", Color.Red);
                                     }
                                 }
@@ -864,12 +873,12 @@ namespace tsorcRevamp
                 Player.KillMe(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(Player.name + " was consumed by The Wall."), 999999999, 1);
             }
 
-            if (!Player.HasBuff(ModContent.BuffType<Buffs.CurseBuildup>()))
+            if (!Player.HasBuff(ModContent.BuffType<CurseBuildup>()))
             {
                 CurseLevel = 1; //Not sure why 1 is the default
             }
 
-            if (!Player.HasBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>()))
+            if (!Player.HasBuff(ModContent.BuffType<PowerfulCurseBuildup>()))
             {
                 PowerfulCurseLevel = 1; //Not sure why 1 is the default
             }

@@ -4,6 +4,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -54,7 +55,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Main.expertMode) expertScaling = 2;
             Main.player[Main.myPlayer].AddBuff(BuffID.BrokenArmor, 120 / expertScaling, false); //broken armor
             Main.player[Main.myPlayer].AddBuff(BuffID.OnFire, 600 / expertScaling, false); //on fire
-            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 3600, false);
+            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<FracturingArmor>(), 3600, false);
 
             if (Main.rand.NextBool(10))
             {

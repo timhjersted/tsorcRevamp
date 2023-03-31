@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
 {
@@ -13,10 +14,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
                                 "\n[c/ffbf00:The Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous in this realm.]" +
                                 "\n[c/00ffd4:Grants immunity to particular dangers caused by the Abyss and foes empowered by it, such as Crippled, Poisoned, On Fire and Oiled]" +
                                 "\nAlso grants protection from lava, knockback, and fire blocks, but increases enemy spawn rates." +
-                                "\n+7% Melee speed" +
-                                "\n+7% Move speed" +
-                                "\n+7% Damage" +
-                                "\n+7% Critical strike chance");
+                                "\nIncreases damage, critical strike chance, movement and attack speed(melee speed bonus doubled) by 7% multiplicatively");
         }
 
         public override void SetDefaults()
@@ -40,11 +38,12 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Generic) += 0.07f;
-            player.moveSpeed += 0.07f;
-            player.GetCritChance(DamageClass.Magic) += 7;
-            player.GetCritChance(DamageClass.Melee) += 7;
-            player.GetCritChance(DamageClass.Ranged) += 7;
+            player.GetDamage(DamageClass.Generic) *= 1.07f;
+            player.GetCritChance(DamageClass.Generic) *= 1.07f;
+            player.GetCritChance(DamageClass.Generic) += 7;
+            player.moveSpeed *= 1.07f;
+            player.GetAttackSpeed(DamageClass.Generic) *= 1.07f;
+            player.GetAttackSpeed(DamageClass.Melee) *= 1.07f;
             player.lavaImmune = true;
             player.noKnockback = true;
             player.fireWalk = true;
@@ -52,7 +51,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.buffImmune[BuffID.Poisoned] = true;
             player.buffImmune[BuffID.OnFire] = true;
             player.buffImmune[BuffID.Oiled] = true;
-            player.buffImmune[ModContent.BuffType<Buffs.Crippled>()] = true;
+            player.buffImmune[ModContent.BuffType<Crippled>()] = true;
         }
 
 

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 
 namespace tsorcRevamp.Items
@@ -66,8 +67,8 @@ namespace tsorcRevamp.Items
             if (player.itemTime == 0)
             {
                 player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
-                player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 90);
-                player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 90);
+                player.AddBuff(ModContent.BuffType<Crippled>(), 90);
+                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 90);
             }
 
             if (player.itemTime < (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 2)

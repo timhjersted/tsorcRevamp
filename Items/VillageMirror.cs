@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-
+using tsorcRevamp.Buffs.Debuffs;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -110,7 +110,7 @@ namespace tsorcRevamp.Items
                         destination.Y = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpY * 16) - (float)player.height;
                     }
                     player.SafeTeleport(destination);
-                    player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 1); //1
+                    player.AddBuff(ModContent.BuffType<Crippled>(), 1); //1
 
                     for (int dusts = 0; dusts < 70; dusts++)
                     { //dusts on tp (destination)

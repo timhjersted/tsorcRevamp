@@ -8,8 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("[c/ffbf00:Dark Cloak gives +15 defense when life falls below 40%]" +
-                                "\n+5 defense normally");
+            Tooltip.SetDefault("[c/ffbf00:Dark Cloak gives +10 defense when life falls below 40%]");
         }
 
         public override void SetDefaults()
@@ -19,6 +18,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Item.accessory = true;
             Item.value = PriceByRarity.LightRed_4;
             Item.rare = ItemRarityID.LightRed;
+            Item.defense = 5;
         }
 
         public override void AddRecipes()
@@ -35,11 +35,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             if (player.statLife <= (player.statLifeMax / 5 * 2))
             {
-                player.statDefense += 15;
-            }
-            else
-            {
-                player.statDefense += 5;
+                player.statDefense += 10;
             }
 
             

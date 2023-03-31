@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -89,7 +90,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.DarkInferno>(), 240, false);
+            target.AddBuff(ModContent.BuffType<DarkInferno>(), 240, false);
         }
 
         public bool tileCollide(Vector2 CollideVel)

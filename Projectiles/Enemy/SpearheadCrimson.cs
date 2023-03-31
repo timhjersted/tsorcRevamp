@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -78,7 +79,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 1000);
+            target.AddBuff(ModContent.BuffType<Crippled>(), 1000);
             target.AddBuff(BuffID.Bleeding, 1000);
         }
     }

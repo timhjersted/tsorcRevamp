@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -46,7 +47,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             target.AddBuff(BuffID.Bleeding, 600);
             target.AddBuff(BuffID.Poisoned, 300);
             target.AddBuff(BuffID.PotionSickness, 300); // 20s of potion sick? that is *vile* why would you do that (I don't know who did that but I'll blame old Tim or a typo! :d)
-            target.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 600); //no kb resist
+            target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 600); //no kb resist
         }
     }
 }

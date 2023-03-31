@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {

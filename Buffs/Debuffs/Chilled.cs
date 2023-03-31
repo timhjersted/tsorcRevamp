@@ -1,7 +1,7 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs
+namespace tsorcRevamp.Buffs.Debuffs
 {
     public class Chilled : ModBuff
     { //every instance of the Chilled buff in the original source should be this one, not the vanilla one

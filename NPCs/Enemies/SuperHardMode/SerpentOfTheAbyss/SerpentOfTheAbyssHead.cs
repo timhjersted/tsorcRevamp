@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles.Enemy;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
 {
@@ -193,7 +194,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
             if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.CursedInferno, 600);
-                target.AddBuff(ModContent.BuffType<Buffs.SlowedLifeRegen>(), 1200);
+                target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 1200);
             }
         }
     }

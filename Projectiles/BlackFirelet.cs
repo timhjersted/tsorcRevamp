@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -92,7 +93,7 @@ namespace tsorcRevamp.Projectiles
         {
             if (Main.rand.NextBool(5))
             {
-                target.AddBuff(ModContent.BuffType<Buffs.DarkInferno>(), 240);
+                target.AddBuff(ModContent.BuffType<DarkInferno>(), 240);
             }
         }
 
@@ -100,7 +101,7 @@ namespace tsorcRevamp.Projectiles
         {
             if (Main.rand.NextBool(5))
             {
-                target.AddBuff(ModContent.BuffType<Buffs.DarkInferno>(), 240);
+                target.AddBuff(ModContent.BuffType<DarkInferno>(), 240);
             }
         }
     }

@@ -1,6 +1,9 @@
-﻿using Terraria;
+﻿using System;
+using Terraria;
+using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.PlayerDrawLayer;
 
 namespace tsorcRevamp.Items.Armors
 {
@@ -34,7 +37,23 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateArmorSet(Player player)
         {
             player.endurance += 0.1f;
-            player.defendedByPaladin = true;
+            if ((float)player.statLife > ((float)player.statLifeMax2 * 0.25f))
+            {
+                player.hasPaladinShield = true; 
+                if (player.whoAmI != Main.myPlayer && player.miscCounter % 10 == 0)
+                {
+                    int myPlayer = Main.myPlayer;
+                    if (Main.player[myPlayer].team == player.team && player.team != 0)
+                    {
+                        float num4 = player.position.X - Main.player[myPlayer].position.X;
+                        float num2 = player.position.Y - Main.player[myPlayer].position.Y;
+                        if ((float)Math.Sqrt(num4 * num4 + num2 * num2) < 800f)
+                        {
+                            Main.player[myPlayer].AddBuff(43, 20);
+                        }
+                    }
+                }
+            }
         }
                 public override void AddRecipes()
                 {

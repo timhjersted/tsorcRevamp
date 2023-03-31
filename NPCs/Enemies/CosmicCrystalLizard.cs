@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -37,7 +38,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.ShadowFlame] = true;
             NPC.buffImmune[ModContent.BuffType<Buffs.CrescentMoonlight>()] = true;
-            NPC.buffImmune[ModContent.BuffType<Buffs.DarkInferno>()] = true;
+            NPC.buffImmune[ModContent.BuffType<DarkInferno>()] = true;
             NPC.buffImmune[ModContent.BuffType<Buffs.CrimsonBurn>()] = true;
             NPC.buffImmune[ModContent.BuffType<Buffs.ToxicCatDrain>()] = true;
             NPC.buffImmune[ModContent.BuffType<Buffs.ViruCatDrain>()] = true;

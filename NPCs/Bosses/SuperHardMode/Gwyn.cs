@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.NPCs.Bosses.Fiends;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -160,9 +161,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void OnHitPlayer(Player player, int damage, bool crit)
         {
             player.AddBuff(24, 600, false); //on fire
-            player.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 1200, false); //lose defense on hit
-            player.AddBuff(ModContent.BuffType<Buffs.SlowedLifeRegen>(), 1200, false); //slowed life regen
-            player.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1200, false); //you lose knockback resistance
+            player.AddBuff(ModContent.BuffType<FracturingArmor>(), 1200, false); //lose defense on hit
+            player.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 1200, false); //slowed life regen
+            player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 1200, false); //you lose knockback resistance
             
             if (Main.rand.NextBool(2))
             {
@@ -245,13 +246,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //PROXIMITY-BASED DEBUFFS
             if (NPC.Distance(player.Center) < 600)
             {
-                player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);   
+                player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);   
             }
 
             //near instant death when player runs too far away
             if (NPC.Distance(player.Center) > 4600)
             {
-                player.AddBuff(ModContent.BuffType<Buffs.CowardsAffliction>(), 30, false);
+                player.AddBuff(ModContent.BuffType<CowardsAffliction>(), 30, false);
                 
             }
             //add later: 

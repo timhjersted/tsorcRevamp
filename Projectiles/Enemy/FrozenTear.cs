@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -39,8 +40,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             int expertMultiplier = 1;
             if (Main.expertMode) expertMultiplier = 2;
-            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.DarkInferno>(), 600, false);
-            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.DarkInferno>(), 30, false);
+            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<DarkInferno>(), 600, false);
+            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<DarkInferno>(), 30, false);
             Main.player[Main.myPlayer].AddBuff(BuffID.Slow, 600 / expertMultiplier, false);
         }
     }

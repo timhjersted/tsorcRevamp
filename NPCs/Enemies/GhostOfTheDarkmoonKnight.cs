@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -75,7 +76,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.Poisoned, 600);
-                target.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800);
+                target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 1800);
             }
         }
 

@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Summon.SpiritBell
 {
@@ -59,7 +60,7 @@ namespace tsorcRevamp.Projectiles.Summon.SpiritBell
             {
                 target.AddBuff(BuffID.BrokenArmor, 1200);
                 target.AddBuff(BuffID.Chilled, 1200);
-                target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 36000);
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000);
             }
 
             if (crit == true)

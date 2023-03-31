@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using static tsorcRevamp.SpawnHelper;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -88,7 +89,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.SlowedLifeRegen>(), 3600);
+            target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 3600);
             target.AddBuff(BuffID.Poisoned, 3600);
             target.AddBuff(BuffID.Bleeding, 3600);
         }

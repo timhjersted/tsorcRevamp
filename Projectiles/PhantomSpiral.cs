@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -54,7 +55,7 @@ namespace tsorcRevamp.Projectiles
 
             Main.player[Main.myPlayer].AddBuff(36, 120 / expertScaling, false); //broken armor
             Main.player[Main.myPlayer].AddBuff(39, 300 / expertScaling, false); //cursed inferno
-            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 3600, false); //
+            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<FracturingArmor>(), 3600, false); //
 
 
             if (Main.rand.NextBool(10))

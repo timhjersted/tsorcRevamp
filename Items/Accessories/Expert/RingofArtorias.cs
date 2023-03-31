@@ -1,6 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Items.Accessories.Expert
 {
@@ -25,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
         public override void UpdateEquip(Player player)
         {
-            player.buffImmune[ModContent.BuffType<Buffs.PowerfulCurseBuildup>()] = true;
+            player.buffImmune[ModContent.BuffType<PowerfulCurseBuildup>()] = true;
             //player.statDefense += 10;
             player.buffImmune[BuffID.Frozen] = true;
             player.buffImmune[BuffID.Slow] = true;

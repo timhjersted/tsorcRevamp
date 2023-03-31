@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy.Gwyn
 {
@@ -30,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 1500);
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 1500);
         }
     }
 }

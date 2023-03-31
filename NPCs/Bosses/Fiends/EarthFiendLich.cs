@@ -4,6 +4,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.Fiends
 {
@@ -99,7 +100,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1200)
             {
                 player.AddBuff(BuffID.OnFire, 30, false); //on fire
-                player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 30, false);
+                player.AddBuff(ModContent.BuffType<TornWings>(), 30, false);
                 
                 if (holdTimer <= 0)
                 {

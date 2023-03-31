@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -88,11 +89,11 @@ namespace tsorcRevamp.NPCs.Enemies
             //when close to enemy, grapple and mobility hindered
             if (NPC.Distance(player.Center) < 600)
             {
-                player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 2);
+                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 2);
             }
             if (Main.hardMode && NPC.Distance(player.Center) < 60)
             {
-                player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 60, false);
+                player.AddBuff(ModContent.BuffType<Crippled>(), 60, false);
             }
 
             int lifePercentage = (NPC.life * 100) / NPC.lifeMax;

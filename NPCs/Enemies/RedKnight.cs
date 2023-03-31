@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -408,8 +409,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.rand.NextBool(5))
             {
-                player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 180, false); // loss of flight mobility
-                player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 1800, false);
+                player.AddBuff(ModContent.BuffType<Crippled>(), 180, false); // loss of flight mobility
+                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 1800, false);
                 player.AddBuff(BuffID.NightOwl, 30, false);
 
             }

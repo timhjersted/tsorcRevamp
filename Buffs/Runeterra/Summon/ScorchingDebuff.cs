@@ -1,3 +1,4 @@
+using Mono.Cecil.Cil;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -36,9 +37,12 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 		public override void UpdateLifeRegen(NPC npc, ref int damage)
 		{
             Player player = Main.player[Main.myPlayer];
-			if (Scorched)
+			int DoT = (int)player.GetTotalDamage(DamageClass.Summon).ApplyTo(10);
+
+            if (Scorched)
 			{
-				npc.lifeRegen -= (int)player.GetDamage(DamageClass.Summon).ApplyTo(20);
+				npc.lifeRegen -= DoT * 2;
+				damage = DoT;
 			}
         }
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)

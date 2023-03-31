@@ -1,7 +1,7 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs
+namespace tsorcRevamp.Buffs.Debuffs
 {
     class CowardsAffliction : ModBuff
     {

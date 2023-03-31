@@ -36,10 +36,12 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
 		public override void UpdateLifeRegen(NPC npc, ref int damage)
 		{
             Player player = Main.player[Main.myPlayer];
-			if (IrradiatedByShroom)
+            int DoT = (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(500);
+            if (IrradiatedByShroom)
 			{
-				npc.lifeRegen -= (int)player.GetDamage(DamageClass.Ranged).ApplyTo(100);
-			}
+				npc.lifeRegen -= DoT * 2;
+				damage = DoT;
+            }
         }
 	}
 }

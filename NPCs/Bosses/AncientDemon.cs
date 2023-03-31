@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -122,8 +123,8 @@ namespace tsorcRevamp.NPCs.Bosses
         {
                 target.AddBuff(20, 600, false); //poisoned
                 target.AddBuff(30, 600, false); //bleeding
-                target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false); //reduced defense on hit
-                target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 HP after several hits
+                target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false); //reduced defense on hit
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 HP after several hits
                 target.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 20;
   
             if (Main.rand.NextBool(2))
@@ -531,7 +532,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.EyeOfTheGods>(), 1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.BarrierRing>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.CrackedDragonStone>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Expert.CrackedDragonStone>(), 1);
             }
 
             if (Main.rand.Next(99) < 40) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>(), 1);

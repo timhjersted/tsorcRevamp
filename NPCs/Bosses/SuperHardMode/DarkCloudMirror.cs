@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Enemy.DarkCloud;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -313,7 +314,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 player.AddBuff(BuffID.BrokenArmor, 120 / expertScale, false); //broken armor
                 player.AddBuff(BuffID.OnFire, 180 / expertScale, false); //on fire!
-                player.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 3600, false); //defense goes time on every hit
+                player.AddBuff(ModContent.BuffType<FracturingArmor>(), 3600, false); //defense goes time on every hit
             }
         }
         #endregion

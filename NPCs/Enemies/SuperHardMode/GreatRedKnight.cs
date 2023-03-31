@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 
 
@@ -151,8 +152,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (NPC.Distance(player.Center) < 600)
             {
 
-                player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
-                player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 60, false);
+                player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
+                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60, false);
 
             }
 

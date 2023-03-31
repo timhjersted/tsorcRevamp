@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 		public override void SetDefaults()
 		{
 			Projectile.width = 2;
-			Projectile.height = 42;
+			Projectile.height = 2;
 			Projectile.aiStyle = ProjAIStyleID.SmallFlying;
 			Projectile.friendly = true;
 			Projectile.DamageType = DamageClass.Ranged;

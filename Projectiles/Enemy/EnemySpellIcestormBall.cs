@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -43,7 +44,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             //target.AddBuff(BuffID.Blackout, 360, false); //darkness
-            target.AddBuff(ModContent.BuffType<Buffs.Chilled>(), 180, false);
+            target.AddBuff(ModContent.BuffType<Chilled>(), 180, false);
                
         }
 

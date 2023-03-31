@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp
 {

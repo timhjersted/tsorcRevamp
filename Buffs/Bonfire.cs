@@ -2,6 +2,7 @@
 using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Buffs
 {

@@ -5,6 +5,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -153,11 +154,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             //when close to enemy, grapple and mobility hindered
             if (NPC.Distance(player.Center) < 600)
             {
-                player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 2);
+                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 2);
             }
             if (Main.hardMode && NPC.Distance(player.Center) < 100)
             {
-                player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 60, false);
+                player.AddBuff(ModContent.BuffType<Crippled>(), 60, false);
             }
 
 
@@ -204,7 +205,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (Main.rand.NextBool(2))
             {
-                player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 36000, false); //-20 HP curse
+                player.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false); //-20 HP curse
             }
 
             if (Main.rand.NextBool(4))

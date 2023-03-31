@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs
+namespace tsorcRevamp.Buffs.Debuffs
 {
     class DarkInferno : ModBuff
     {

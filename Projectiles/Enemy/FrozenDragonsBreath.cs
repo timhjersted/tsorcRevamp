@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -116,7 +117,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 {
                     
                     target.AddBuff(BuffID.Frozen, 10, false);
-                    target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 18000, false); //may lose -100 max HP after taking enough hits. It had 100% trigger before. I think that was the problem.
+                    target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 18000, false); //may lose -100 max HP after taking enough hits. It had 100% trigger before. I think that was the problem.
                 }
 
             }

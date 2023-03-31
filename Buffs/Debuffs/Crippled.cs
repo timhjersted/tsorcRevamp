@@ -1,21 +1,21 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs
+namespace tsorcRevamp.Buffs.Debuffs
 {
-    class TornWings : ModBuff
+    class Crippled : ModBuff
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Torn Wings");
-            Description.SetDefault("You can't fly!");
+            DisplayName.SetDefault("Crippled");
+            Description.SetDefault("Your mobility has been crippled!");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }
 
         public override void Update(Player P, ref int buffIndex)
         {
-            P.GetModPlayer<tsorcRevampPlayer>().TornWings = true;
+            P.GetModPlayer<tsorcRevampPlayer>().Crippled = true;
         }
     }
 }

@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 {
@@ -49,8 +50,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             
-            target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
-            target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false);
+            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
         }
 
         public override void SetStaticDefaults()

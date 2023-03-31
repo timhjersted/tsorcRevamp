@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -71,8 +72,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             target.AddBuff(20, 1200, false); //poisoned
             target.AddBuff(30, 1200, false); //bleeding
-            target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false); //reduced defense on hit
-            target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 HP after several hits
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false); //reduced defense on hit
+            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 HP after several hits
             target.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 30;
         }
 

@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -584,12 +585,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             player.AddBuff(36, 600, false); //broken armor
             player.AddBuff(20, 1800, false); //poisoned
-            player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 100
+            player.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 life if counter hits 100
 
             if (Main.rand.NextBool(2))
             {
                 
-                player.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800, false);
+                player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 1800, false);
                 
             }
 

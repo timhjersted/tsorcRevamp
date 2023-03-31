@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Tooltip.SetDefault("Converts seeds into Alien Lasers and allows you to gather Seeds from grass" +
                 "\nAlien Lasers apply a short burst of Electrified and home into enemies" +
                 "\nAlso uses all darts as ammo" +
-                "\nStops players movement for a fraction of the weapon's usetime" +
+                "\nStops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise" +
                 "\nGrants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily" +
                 "\nPress Special Ability to gain an even higher temporary boost" +
                 "\nRight click to shoot a homing blinding shot which inflicts confusion" +
@@ -78,7 +78,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                     player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
                 }
             }
-            if (player.itemAnimation > 14)
+            if (player.itemAnimation > 14 && (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()) | player.HasBuff(ModContent.BuffType<ScoutsBoost2>())))
+            {
+                player.moveSpeed *= 0.01f;
+            }
+            else if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()))
             {
                 player.velocity *= 0.01f;
             }

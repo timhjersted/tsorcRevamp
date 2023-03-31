@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -497,14 +498,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (Main.rand.NextBool(2))
             {
-                player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 36000, false); //-20 HP curse
+                player.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false); //-20 HP curse
             }
 
             if (Main.rand.NextBool(4))
             {
 
-                player.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 3600, false); //armor reduced on hit
-                player.AddBuff(ModContent.BuffType<Buffs.Chilled>(), 300, false); //chilled
+                player.AddBuff(ModContent.BuffType<FracturingArmor>(), 3600, false); //armor reduced on hit
+                player.AddBuff(ModContent.BuffType<Chilled>(), 300, false); //chilled
 
             }
 

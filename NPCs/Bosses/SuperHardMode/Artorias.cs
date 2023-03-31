@@ -7,6 +7,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -76,13 +77,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             int expertScale = 1;
             if (Main.expertMode) expertScale = 2;
             
-            target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false);
 
             if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.BrokenArmor, 180 / expertScale, false);
                 target.AddBuff(BuffID.Poisoned, 3600 / expertScale, false);
-                target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
             }
         }
         float customAi1;
@@ -173,7 +174,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1200)
             {
                 
-                player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
+                player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
 
                 if (holdTimer <= 0)
                 {
@@ -248,8 +249,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //DEBUFFS
                 if (NPC.Distance(player.Center) < 600)
                 {
-                    player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
-                    player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 60, false);
+                    player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
+                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60, false);
                 }
 
 

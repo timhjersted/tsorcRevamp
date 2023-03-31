@@ -59,14 +59,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC other = Main.npc[i];
-                Vector2 MouseHitbox = new Vector2(25, 25);
+                Vector2 MouseHitboxSize = new Vector2(1000000, 1000000);
 
-                if (other.active & !other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitbox)) & other.Distance(player.Center) <= 400 & !player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()))
+                if (other.active & !other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(player.Center) <= 400 & !player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()))
                 {
                     if (DashingTimer > 0)
                     {
                         player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, other.Center, 15f);
-                        player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), 1 * 60);
+                        player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), 2 * 60);
                         player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>(), 20 * 60);
                     }
                     break;

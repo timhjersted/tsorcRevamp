@@ -14,6 +14,7 @@ using tsorcRevamp.Textures;
 using ReLogic.Graphics;
 using tsorcRevamp.Tiles;
 using System.Linq;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp
 {
@@ -88,7 +89,7 @@ namespace tsorcRevamp
                     //Step 4: Check if they're left-clicking, and close the minimap + teleport them if so
                     if (Main.mouseLeft && !tsorcRevampWorld.BossAlive)
                     {
-                        if (Main.LocalPlayer.HasBuff(ModContent.BuffType<Buffs.InCombat>())) {
+                        if (Main.LocalPlayer.HasBuff(ModContent.BuffType<InCombat>())) {
                             if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().TextCooldown >= 0) {
                                 Main.NewText("Can not teleport while in combat!");
                             }
@@ -108,7 +109,7 @@ namespace tsorcRevamp
                     {
                         mouseText = "Can not teleport while a boss is alive!";
                     }
-                    else if (Main.LocalPlayer.HasBuff(ModContent.BuffType<Buffs.InCombat>())) {
+                    else if (Main.LocalPlayer.HasBuff(ModContent.BuffType<InCombat>())) {
                         mouseText = "Can not teleport while in combat!";
                     }
                 }

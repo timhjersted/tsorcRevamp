@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -78,11 +79,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             target.AddBuff(BuffID.Bleeding, 600 / buffLengthMod, false); //bleeding
-            target.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 600 / buffLengthMod, false); //you take knockback
+            target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 600 / buffLengthMod, false); //you take knockback
 
             if (Projectile.ai[1] < 1)
             {
-                target.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 300 / buffLengthMod, false);
+                target.AddBuff(ModContent.BuffType<Crippled>(), 300 / buffLengthMod, false);
             }
         }
 

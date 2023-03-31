@@ -87,6 +87,10 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
             Projectile.damage = (int)(Projectile.damage * 0.95f); //Multihit penalty
+            if (target.type == NPCID.TheDestroyer | target.type == NPCID.TheDestroyerBody | target.type == NPCID.TheDestroyerTail)
+            {
+                Projectile.damage = (int)(Projectile.damage * 0.95f);
+            }
         }
         public override bool PreDraw(ref Color lightColor)
         {

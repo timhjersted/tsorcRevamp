@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -74,7 +75,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             //Vanilla Debuffs cut in half to counter expert mode doubling them
-            target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false);
+            target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 36000, false);
             target.AddBuff(39, 150, false); //cursed flames
             target.AddBuff(30, 1800, false); //bleeding
             target.AddBuff(33, 1800, false); //week

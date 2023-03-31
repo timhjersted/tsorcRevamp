@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         {
             projectiles = new List<CenterOfTheUniverseStar>() { };
 
-            Item.damage = 112;
+            Item.damage = 220;
             Item.knockBack = 3f;
             Item.mana = 10;
             Item.width = 32;

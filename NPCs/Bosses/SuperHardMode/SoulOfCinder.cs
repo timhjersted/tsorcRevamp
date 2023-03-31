@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Gwyn;
 using static tsorcRevamp.UsefulFunctions;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -152,7 +153,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     if (!IsPointWithinEllipse(tagged.Center, ArenaCenter, ARENA_WIDTH + (8 * 16), ARENA_HEIGHT + (8 * 16)))
                     {
-                        tagged.AddBuff(ModContent.BuffType<Buffs.CowardsAffliction>(), 30);
+                        tagged.AddBuff(ModContent.BuffType<CowardsAffliction>(), 30);
                     }
                 }
             }

@@ -8,6 +8,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 {
@@ -78,9 +79,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         float customspawn1;
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.Chilled>(), 60, false);
-            target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 18000, false);
-            target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
+            target.AddBuff(ModContent.BuffType<Chilled>(), 60, false);
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false);
+            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
             
         }
 

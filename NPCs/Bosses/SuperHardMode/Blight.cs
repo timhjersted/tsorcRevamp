@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -85,7 +86,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 target.AddBuff(BuffID.BrokenArmor, 180 / expertScale, false); //broken armor
                 target.AddBuff(BuffID.CursedInferno, 180 / expertScale, false); //cursed inferno
                 //player.AddBuff("Powerful Curse Buildup", 18000, false); //chance to lose -20 life for 5 minutes
-                target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
             }
         }
 

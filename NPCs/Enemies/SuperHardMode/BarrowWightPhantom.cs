@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -367,7 +368,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void OnHitPlayer(Player player, int target, bool crit)
         {
-            player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 36000, false); //-20 life after several hits
+            player.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false); //-20 life after several hits
                                                                                      //player.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false); //-100 life after several hits	
 
 

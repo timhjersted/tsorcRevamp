@@ -6,11 +6,12 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     [AutoloadEquip(EquipType.HandsOn)]
 
-    public class BandOfSupremeCosmicPower : ModItem
+    [LegacyName("BandOfSupremeCosmicPower")]
+    public class BandOfPhenomenalCosmicPower : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Band of Supreme Cosmic Power");
+            DisplayName.SetDefault("Band of Phenomenal Cosmic Power");
             Tooltip.SetDefault("+4 life regen and increases max mana by 80");
         }
 
@@ -37,6 +38,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
+            player.lifeRegen += 4;
             player.statManaMax2 += 80;
         }
 

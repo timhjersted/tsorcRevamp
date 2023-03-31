@@ -7,6 +7,9 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Buffs.Runeterra.Melee;
+using tsorcRevamp.Buffs.Summon.WhipDebuffs;
 
 namespace tsorcRevamp
 {
@@ -200,7 +203,7 @@ namespace tsorcRevamp
 
             if (isLocal && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !Player.mouseInterface
                 && Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30 && !Player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking
-                && !Player.HasBuff(BuffID.Frozen) && !Player.HasBuff(ModContent.BuffType<Buffs.Hold>()) && !Player.HasBuff(BuffID.Stoned))
+                && !Player.HasBuff(BuffID.Frozen) && !Player.HasBuff(ModContent.BuffType<Hold>()) && !Player.HasBuff(BuffID.Stoned))
             {
                 QueueDodgeroll(0.25f, (sbyte)KeyDirection(Player));
             }
@@ -298,6 +301,7 @@ namespace tsorcRevamp
         }
         private void UpdateDodging()
         {
+
             wantsDodgerollTimer = StepTowards(wantsDodgerollTimer, 0f, (float)1 / 60);
 
             noDodge |= Player.mount.Active;
@@ -350,6 +354,14 @@ namespace tsorcRevamp
                     if (onGround)
                         dodgeSpeed = 15f;
                 }
+
+                if (Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
+                {
+                    dodgeSpeed = 7f;
+
+                    if (onGround)
+                        dodgeSpeed = 10f;
+                }
                 if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1)
                 {
                     dodgeSpeed = 11f;
@@ -365,6 +377,21 @@ namespace tsorcRevamp
                     if (onGround)
                         dodgeSpeed = 14f;
                 }
+                if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1 && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
+                {
+                    dodgeSpeed = 8f;
+
+                    if (onGround)
+                        dodgeSpeed = 12f;
+                }
+                if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2 && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
+                {
+                    dodgeSpeed = 11f;
+
+                    if (onGround)
+                        dodgeSpeed = 13f;
+                }
+
                 if (Player.GetModPlayer<tsorcRevampPlayer>().BurdenOfSmough)
                 {
                     dodgeSpeed = 5.5f;
@@ -372,6 +399,7 @@ namespace tsorcRevamp
                     if (onGround)
                         dodgeSpeed = 8f;
                 }
+
 
 
 
@@ -400,7 +428,6 @@ namespace tsorcRevamp
 
             if (dodgeTime >= DodgeTimeMax * 0.6f)
             {
-                //chloranthy ring effect
                 float decelerationRate = 0.85f;
                 if (Player.GetModPlayer<tsorcRevampPlayer>().HollowSoldierAgility)
                 {
@@ -416,7 +443,15 @@ namespace tsorcRevamp
                         DodgeImmuneTime = 21;
                     dodgeCooldown = 10;
                 }
-                if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1) {
+
+                if (Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
+                {
+                    decelerationRate = 0.72f;
+                    DodgeImmuneTime = 16;
+                    dodgeCooldown = 35;
+                }
+                if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1) 
+                {
                     decelerationRate = 0.88f;       
                     DodgeImmuneTime = 21;
                     dodgeCooldown = 10;
@@ -428,11 +463,67 @@ namespace tsorcRevamp
                     DodgeImmuneTime = 24;
                     dodgeCooldown = 0;
                 }
-                if (Player.GetModPlayer<tsorcRevampPlayer>().BurdenOfSmough)
+
+                if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1 && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
+                {
+                    decelerationRate = 0.85f;
+                    DodgeImmuneTime = 18; 
+                    dodgeCooldown = 30;
+                }
+
+                if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2 && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
+                {
+                    decelerationRate = 0.88f;
+                    DodgeImmuneTime = 21;
+                    dodgeCooldown = 10;
+                }
+
+                    if (Player.GetModPlayer<tsorcRevampPlayer>().BurdenOfSmough)
                 {
                     decelerationRate = 0.6f;
                     DodgeImmuneTime = 14;
-                    dodgeCooldown = 25;
+                    dodgeCooldown = 40;
+                }
+
+
+                if (isDodging && Player.GetModPlayer<tsorcRevampPlayer>().MythrilBulwark)
+                {
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        NPC other = Main.npc[i];
+
+                        if (other.active & !other.friendly & other.Hitbox.Intersects(Player.Hitbox))
+                        {
+                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), 5 * 60);
+                        }
+                    }
+                }
+                if (isDodging && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
+                {
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        NPC other = Main.npc[i];
+
+                        if (other.active & !other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Player.Center, new Vector2(200, 200))))
+                        {
+                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), 5 * 60);
+                            other.AddBuff(BuffID.Frostburn2, 5 * 60);
+
+                            if (Main.rand.NextBool(3)) 
+                            {
+                                other.AddBuff(BuffID.Confused, 5 * 60);
+                            }
+                            if (Main.rand.NextBool(3))
+                            {
+                                other.AddBuff(BuffID.Bleeding, 5 * 60);
+                            }
+                            if (Main.rand.NextBool(3))
+                            {
+                                other.AddBuff(BuffID.Poisoned, 5 * 60);
+                            }
+                            Player.AddBuff(BuffID.IceBarrier, 5 * 60);
+                        }
+                    }
                 }
 
 

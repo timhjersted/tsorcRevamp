@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Armors;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -61,7 +62,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             
                 target.AddBuff(BuffID.Weak, 7200);
                 target.AddBuff(BuffID.Bleeding, 1200);
-                target.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 8200);
+                target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 8200);
             
         }
 
@@ -435,8 +436,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (NPC.Distance(player.Center) < 600)
             {
                 player.AddBuff(BuffID.Slow, 60, false); 
-                player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
-                player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 60, false);
+                player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
+                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60, false);
                
             }
             if (NPC.Distance(player.Center) < 150)

@@ -1,6 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -68,7 +69,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             target.AddBuff(BuffID.Slow, 300 / buffLengthMod);
             target.AddBuff(BuffID.BrokenArmor, 300 / buffLengthMod);
-            target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 1200);
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 1200);
             
         }
     }

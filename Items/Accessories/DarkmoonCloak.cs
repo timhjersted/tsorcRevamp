@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Rapid mana regen, +15% magic crit & +15% magic dmg when life falls below 40%\n" +
-                                "Provides Star Cloak, +5% magic crit & +5% magic damage boost normally\n" +
+            Tooltip.SetDefault("Grants rapid mana regeneration and 15% increased damage and critical strike chance when life falls below 40%\n" +
+                                "Provides Star Cloak effect and 5% increased damage and critical strike chance normally\n" +
                                 "Magic Imbues no longer need to go on cooldown");
         }
 
@@ -44,18 +44,14 @@ namespace tsorcRevamp.Items.Accessories
 
             if (player.statLife <= (player.statLifeMax / 5 * 2))
             {
-                player.manaRegenBuff = true;
-                player.starCloakItem = new Item(ItemID.StarCloak);
-                player.GetCritChance(DamageClass.Magic) += 15;
-                player.GetDamage(DamageClass.Magic) += .15f;
+                player.manaRegenBonus += 5;
+                player.GetCritChance(DamageClass.Generic) += 10;
+                player.GetDamage(DamageClass.Generic) += 0.1f;
 
             }
-            else
-            {
                 player.starCloakItem = new Item(ItemID.StarCloak);
-                player.GetCritChance(DamageClass.Magic) += 5;
-                player.GetDamage(DamageClass.Magic) += .05f;
-            }
+                player.GetCritChance(DamageClass.Generic) += 5;
+                player.GetDamage(DamageClass.Generic) += 0.05f;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)

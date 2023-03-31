@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Tooltip.SetDefault("Converts seeds into Toxic Shots and allows you to gather Seeds from grass" +
                 "\nToxic Shots apply a short burst of venom and home into enemies" +
                 "\nAlso uses all darts as ammo" +
-                "\nStops players movement for a fraction of the weapon's usetime" +
+                "\nStops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise" +
                 "\nGrants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily" +
                 "\nPress Special Ability to gain an even higher temporary boost" +
                 "\n'That's gotta sting'");
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Item.useAnimation = 22;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.autoReuse = true;
-            Item.UseSound = SoundID.Item64;//63
+            Item.UseSound = SoundID.Item63;
             Item.DamageType = DamageClass.Ranged; 
             Item.damage = 20;
             Item.knockBack = 4f;
@@ -62,7 +62,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                     player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
                 }
             }
-            if (player.itemAnimation > 14)
+            if (player.itemAnimation > 14 && (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()) | player.HasBuff(ModContent.BuffType<ScoutsBoost2>())))
+            {
+                player.moveSpeed *= 0.01f;
+            }
+            else if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()))
             {
                 player.velocity *= 0.01f;
             }

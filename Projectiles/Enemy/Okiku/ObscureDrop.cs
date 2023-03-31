@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy.Okiku
 {
@@ -54,12 +55,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             {
                 target.AddBuff(BuffID.Weak, 600);
                 target.AddBuff(BuffID.OnFire, 180);
-                target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 7200);
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 7200);
             }
 
             if (Main.rand.NextBool(8))
             {
-                target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 1800);
+                target.AddBuff(ModContent.BuffType<FracturingArmor>(), 1800);
             }
         }
 

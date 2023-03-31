@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Accessories
         {
             Item.width = 38;
             Item.height = 36;
-            Item.defense = 2;
+            Item.defense = 7;
             Item.accessory = true;
             Item.value = PriceByRarity.LightPurple_6;
             Item.rare = ItemRarityID.LightPurple;
@@ -44,20 +44,19 @@ namespace tsorcRevamp.Items.Accessories
             Lighting.AddLight(i2, j2, 0.92f, 0.8f, 0.65f);
 
             player.GetModPlayer<tsorcRevampPlayer>().DarkmoonCloak = true;
-            player.statDefense += 5;
             player.lifeRegen += 4;
             player.starCloakItem = new Item(ItemID.StarCloak);
-            player.GetCritChance(DamageClass.Magic) += 5;
-            player.GetDamage(DamageClass.Magic) += .05f;
+            player.GetCritChance(DamageClass.Generic) += 5;
+            player.GetDamage(DamageClass.Generic) += 0.05f;
 
 
             if (player.statLife <= (player.statLifeMax / 5 * 2))
             {
                 player.lifeRegen += 12;
-                player.statDefense += 15;
-                player.manaRegenBuff = true;
-                player.GetCritChance(DamageClass.Magic) += 15;
-                player.GetDamage(DamageClass.Magic) += .15f;
+                player.statDefense += 10;
+                player.manaRegenBonus += 5;
+                player.GetCritChance(DamageClass.Generic) += 10;
+                player.GetDamage(DamageClass.Generic) += 0.1f;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 245, Color.White, 1.0f);
                 Main.dust[dust].noGravity = true;

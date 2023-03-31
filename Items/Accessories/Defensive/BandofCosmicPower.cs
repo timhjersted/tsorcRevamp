@@ -42,6 +42,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
+            player.lifeRegen += 2;
             player.statManaMax2 += 40;
         }
 

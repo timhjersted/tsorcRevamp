@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -34,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())) && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())))
             {
-                target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000);
+                target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 36000);
             }
         
          

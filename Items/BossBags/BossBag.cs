@@ -146,7 +146,7 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.CrackedDragonStone>(), 1));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Expert.CrackedDragonStone>(), 1));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.EyeOfTheGods>(), 1));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.BarrierRing>(), 1));
         }
@@ -203,7 +203,7 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            //no expert-exclusive item yet
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.MythrilBulwark>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfEarth>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.AngelWings));
             itemLoot.Add(ItemDropRule.Common(ItemID.Drax));

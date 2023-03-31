@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Projectiles.VFX;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -181,26 +182,26 @@ namespace tsorcRevamp.Projectiles
                     }
                     else if (projectile.aiStyle == ProjAIStyleID.Flail)
                     {
-                        projectile.ai[1] = 1; //return flail smoothly, dont just kill it(doesn't work)
+                        projectile.ai[1] = 1; //return flail smoothly, dont just kill it (doesn't work)
                     }
                     else projectile.Kill();
                 }
             }
-            if (projectile.type == ProjectileID.PhantasmalDeathray)
+            if (projectile.type == ProjectileID.PhantasmalDeathray) //die
             {
                 projectile.damage = 1000;
             }
-            if (projectile.type == ProjectileID.PhantasmalBolt)
+            if (projectile.type == ProjectileID.PhantasmalBolt) //the double shot
             {
-                projectile.damage = 90;
+                projectile.damage = 75;
             }
-            if (projectile.type == ProjectileID.PhantasmalSphere)
+            if (projectile.type == ProjectileID.PhantasmalSphere) //the big circly eyes that go after you
             {
                 projectile.damage = 130;
             }
-            if (projectile.type == ProjectileID.PhantasmalEye)
+            if (projectile.type == ProjectileID.PhantasmalEye) //the things that home in towards you and explode
             {
-                projectile.damage = 80;
+                projectile.damage = 90;
             }
 
             //Destroyer shoots true lasers instead of normal projectile lasers
@@ -263,7 +264,7 @@ namespace tsorcRevamp.Projectiles
 
             if (projectile.type == ProjectileID.DemonSickle)
             {
-                target.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 15);
+                target.AddBuff(ModContent.BuffType<Crippled>(), 15);
                 target.AddBuff(BuffID.Slow, 180);
                 target.AddBuff(BuffID.Darkness, 180);
 

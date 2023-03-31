@@ -5,6 +5,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -176,7 +177,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 player.AddBuff(36, 600, false); //broken armor
                 player.AddBuff(22, 180, false); //darkness
-                player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 100
+                player.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 life if counter hits 100
             }
         }
         #endregion

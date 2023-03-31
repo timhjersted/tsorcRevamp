@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using static tsorcRevamp.oSpawnHelper;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -291,7 +292,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 target.AddBuff(BuffID.BrokenArmor, 1200);
                 target.AddBuff(BuffID.Chilled, 1200);
-                target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 36000);
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000);
             }
         }
 

@@ -17,6 +17,7 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.UI;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 //using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
@@ -890,11 +891,10 @@ namespace tsorcRevamp
             {
                 PlasmaWhirlwind thisPlasmaWhirlwind = Player.HeldItem.ModItem as PlasmaWhirlwind;
                 Nightbringer thisNightbringer = Player.HeldItem.ModItem as Nightbringer;
-                OmegaSquadRifle thisOmegaSquadRifle = Player.HeldItem.ModItem as OmegaSquadRifle;
 
                 bool holdingControls = Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>()|| Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>();
                 bool hasBuff = Player.HasBuff(ModContent.BuffType<InterstellarCommander>()) || Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
-                if (holdingControls && hasBuff)
+                if (holdingControls && hasBuff && !(Main.keyState.IsKeyDown(Keys.LeftShift)))
                 {
                     owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
 
@@ -908,6 +908,11 @@ namespace tsorcRevamp
                         minionPacket.Write(InterstellarBoost);
                         minionPacket.Send();
                     }
+                }
+
+                if (Main.keyState.IsKeyDown(Keys.LeftShift) && owner.GetModPlayer<tsorcRevampPlayer>().WolfRing && !(Player.HeldItem.type == ModContent.ItemType<Nightbringer>()) && !(Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>()) && !(Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>()) && !(Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>()))
+                {
+                    Player.AddBuff(ModContent.BuffType<Rejuvenation>(), 5 * 60);
                 }
 
                 //Only run this update loop if the player is holding one of these
@@ -933,13 +938,10 @@ namespace tsorcRevamp
                         }
                     }
                 }
-                if (Main.keyState.IsKeyDown(Keys.LeftShift) && !Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.ModItem is OmegaSquadRifle)
+                if (Main.keyState.IsKeyDown(Keys.LeftShift) && !Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
                 {
                     Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Ranged.Runeterra.NuclearMushroom>(), owner.GetWeaponDamage(Player.HeldItem), owner.GetWeaponKnockback(Player.HeldItem), Main.myPlayer);
-                    if(thisOmegaSquadRifle != null)
-                    {
-                        Player.AddBuff(ModContent.BuffType<NuclearMushroomCooldown>(), 5 * 60);
-                    }
+                    Player.AddBuff(ModContent.BuffType<NuclearMushroomCooldown>(), 5 * 60);
                 }
             }
             if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<Nightbringer>() && !Player.HasBuff(ModContent.BuffType<NightbringerWindwallCooldown>()))

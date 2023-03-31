@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
 {
@@ -8,7 +9,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Prevents a wide variety of debuffs, including many DoT effects. \n+3% damage, +4 regeneration, and 9 defense");
+            Tooltip.SetDefault("Immunity to On Fire, Burning, Chilled, Cursed Inferno, Ichor," +
+                               " Gravitation, Bleeding, Poisoned and knockback" +
+                               "\n+3% damage, +4 regeneration");
         }
         public override void SetDefaults()
         {
@@ -16,6 +19,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Item.height = 24;
             Item.accessory = true;
             Item.useAnimation = 100;
+            Item.defense = 9;
             Item.useTime = 100;
             Item.maxStack = 1;
             Item.rare = ItemRarityID.Orange;
@@ -27,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<PoisonbloodRing>());
             recipe.AddIngredient(ItemID.HallowedBar, 5);
-            recipe.AddIngredient(ModContent.ItemType<Items.Accessories.Defensive.CrackedDragonStone>());
+            recipe.AddIngredient(ModContent.ItemType<Items.Accessories.Expert.CrackedDragonStone>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -36,7 +40,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetDamage(DamageClass.Generic) += 0.03f;
             player.noKnockback = true;
             player.fireWalk = true;
             player.buffImmune[BuffID.OnFire] = true;
@@ -44,16 +47,13 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.buffImmune[BuffID.Chilled] = true;
             player.buffImmune[BuffID.CursedInferno] = true;
             player.buffImmune[BuffID.Ichor] = true;
-            player.buffImmune[BuffID.BrokenArmor] = true;
-            player.buffImmune[BuffID.Slow] = true;
-            player.buffImmune[BuffID.Confused] = true;
             player.buffImmune[BuffID.Gravitation] = true;
             player.buffImmune[BuffID.Bleeding] = true;
             player.buffImmune[BuffID.Poisoned] = true;
-            player.buffImmune[ModContent.BuffType<Buffs.Chilled>()] = true;
+            player.buffImmune[ModContent.BuffType<Chilled>()] = true;
 
+            player.GetDamage(DamageClass.Generic) += 0.03f;
             player.lifeRegen += 4;
-            player.statDefense += 9;
         }
     }
 }
