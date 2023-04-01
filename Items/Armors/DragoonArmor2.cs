@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Armors
             player.GetCritChance(DamageClass.Generic) += 3;
             player.GetDamage(DamageClass.Generic) += 0.05f;
 
-            if (player.statLife <= (player.statLifeMax / 5 * 2))
+            if (player.statLife <= (player.statLifeMax2 / 5 * 2))
             {
                 player.lifeRegen += 6;
                 player.statDefense += 10;

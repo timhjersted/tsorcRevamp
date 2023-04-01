@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
                                "\nWalking on air follows hovering controls" +
                                 "\nProvide immunity to all fire and lava damage, as well as perfect sight and hunting abilities." +
                                 "\nAlso provide immunity to knockback");
-            ArmorIDs.Wing.Sets.Stats[Item.wingSlot] = new WingStats(6000, 10f, 1.4f, true, 3, 3);
+            ArmorIDs.Wing.Sets.Stats[Item.wingSlot] = new WingStats(999999999, 10f, 1.4f, true, 3, 3);
         }
 
         public override void SetDefaults()
@@ -69,6 +69,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             {
                 player.velocity.Y = 1f;
             }
+            player.wingTime = 999999999;
             //player.GetWingStats(22);
             player.jumpBoost = true;
             player.jumpSpeedBoost = 1.5f;

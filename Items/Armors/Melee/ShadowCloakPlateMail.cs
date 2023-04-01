@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             player.lifeRegen += 2;
 
-            if (player.statLife <= (player.statLifeMax / 4))
+            if (player.statLife <= (player.statLifeMax2 / 4))
             {
                 player.lifeRegen += 3;
 

@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Accessories
 
             player.GetModPlayer<tsorcRevampPlayer>().DarkmoonCloak = true;
 
-            if (player.statLife <= (player.statLifeMax / 5 * 2))
+            if (player.statLife <= (player.statLifeMax2 / 5 * 2))
             {
                 player.manaRegenBonus += 5;
                 player.GetCritChance(DamageClass.Generic) += 10;
@@ -58,7 +58,7 @@ namespace tsorcRevamp.Items.Accessories
         {
             if (!hideVisual)
             {
-                if (player.statLife <= (player.statLifeMax / 5 * 2))
+                if (player.statLife <= (player.statLifeMax2 / 5 * 2))
                 {
                     Lighting.AddLight(player.Center, .250f, .250f, .650f);
                     if (player.direction == 1)

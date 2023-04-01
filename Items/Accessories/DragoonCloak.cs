@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Accessories
             player.GetDamage(DamageClass.Generic) += 0.05f;
 
 
-            if (player.statLife <= (player.statLifeMax / 5 * 2))
+            if (player.statLife <= (player.statLifeMax2 / 5 * 2))
             {
                 player.lifeRegen += 8;
                 player.statDefense += 10;

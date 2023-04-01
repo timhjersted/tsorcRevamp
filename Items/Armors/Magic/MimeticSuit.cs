@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateArmorSet(Player player)
         {
-            if (player.statLife <= (player.statLifeMax / 2))
+            if (player.statLife <= (player.statLifeMax2 / 2))
             {
                 player.manaRegen += 5;
 

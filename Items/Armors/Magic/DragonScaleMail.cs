@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         {
             player.manaCost -= 0.09f;
             player.statManaMax2 += 60;
-            if (player.statLife <= (player.statLifeMax / 4))
+            if (player.statLife <= (player.statLifeMax2 / 4))
             {
                 player.manaRegenBuff = true;
                 player.starCloakItem = new Item(ItemID.StarCloak); ;

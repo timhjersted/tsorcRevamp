@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void UpdateEquip(Player player)
         {
             player.lifeRegen += 3;
-            if (player.statLife <= (player.statLifeMax / 5 * 2))
+            if (player.statLife <= (player.statLifeMax2 / 5 * 2))
             {
                 player.lifeRegen += 8;
 

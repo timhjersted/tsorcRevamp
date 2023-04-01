@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateArmorSet(Player player)
         {
-            if (player.statLife <= (player.statLifeMax / 2))
+            if (player.statLife <= (player.statLifeMax2 / 2))
             {
                 player.GetCritChance(DamageClass.Ranged) += player.GetWeaponCrit(player.HeldItem);
 

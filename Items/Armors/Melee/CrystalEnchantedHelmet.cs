@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             player.GetModPlayer<tsorcRevampPlayer>().CritDamage250 = true;
 
-            if (player.statLife <= (player.statLifeMax / 5 * 2))
+            if (player.statLife <= (player.statLifeMax2 / 5 * 2))
             {
                 player.endurance += 0.075f;
 

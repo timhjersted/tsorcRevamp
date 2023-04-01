@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Armors.Melee
             player.GetModPlayer<tsorcRevampPlayer>().CritDamage250 = true;
             player.GetAttackSpeed(DamageClass.Melee) += 0.18f;
 
-            if (player.statLife <= (player.statLifeMax / 5 * 2))
+            if (player.statLife <= (player.statLifeMax2 / 5 * 2))
             {
                 player.GetAttackSpeed(DamageClass.Melee) += 0.18f;
 
