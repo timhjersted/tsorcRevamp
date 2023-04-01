@@ -814,7 +814,8 @@ namespace tsorcRevamp
             if (MiakodaNewBoost)
             {
                 Player.moveSpeed += 0.9f;
-                Player.endurance = .5f;
+                Player.endurance *= 0.5f;
+                Player.endurance += 0.5f;
                 Player.noKnockback = true;
             }
 

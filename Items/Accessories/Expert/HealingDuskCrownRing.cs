@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
                                 "\nThe ringstone doubles magic damage and boosts magic crit by 50%," +
                                 "\nbut at the cost of 50% max HP. " +
                                 "\nYour previous max HP is restored when the ring is removed. " +
-                                "\nHealing enchantment provides +9 Life Regen.");
+                                "\nHealing enchantment provides +7 Life Regen.");
         }
 
         public override void SetDefaults()
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             player.statLifeMax2 /= 2;
             player.GetDamage(DamageClass.Magic) *= 2;
             player.GetCritChance(DamageClass.Magic) += 50;
-            player.lifeRegen += 9;
+            player.lifeRegen += 7;
             player.GetModPlayer<tsorcRevampPlayer>().DuskCrownRing = true;
 
         }

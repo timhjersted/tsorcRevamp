@@ -991,18 +991,18 @@ namespace tsorcRevamp
             base.Hurt(pvp, quiet, damage, hitDirection, crit, cooldownCounter);
             if (manaShield == 1)
             {
-                if (Player.statMana >= Items.Accessories.Melee.ManaShield.manaCost)
+                if (Player.statMana >= Items.Accessories.Defensive.ManaShield.manaCost)
                 {
-                    Player.statMana -= Items.Accessories.Melee.ManaShield.manaCost;
-                    Player.manaRegenDelay = Items.Accessories.Melee.ManaShield.regenDelay;
+                    Player.statMana -= Items.Accessories.Defensive.ManaShield.manaCost;
+                    Player.manaRegenDelay = Items.Accessories.Defensive.ManaShield.regenDelay;
                 }
             }
             if (manaShield == 2)
             {
-                if (Player.statMana >= Items.Accessories.Celestriad.manaCost)
+                if (Player.statMana >= Items.Accessories.Defensive.Celestriad.manaCost)
                 {
-                    Player.statMana -= Items.Accessories.Celestriad.manaCost;
-                    Player.manaRegenDelay = Items.Accessories.Celestriad.regenDelay;
+                    Player.statMana -= Items.Accessories.Defensive.Celestriad.manaCost;
+                    Player.manaRegenDelay = Items.Accessories.Defensive.Celestriad.regenDelay;
                 }
             }
             // stamina shield code

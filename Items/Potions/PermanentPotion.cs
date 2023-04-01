@@ -711,7 +711,16 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_2346";
         public override int PermanentID => 37;
         public override int BuffType => BuffID.Endurance;
-        public override bool CanScale => true;
+        public override bool CanScale => true; 
+        public override float EffectPotency
+        {
+            get
+            {
+                float potency = (float)ConsumedAmount / (float)ScalingFactor;
+                potency += 0.1f;
+                return Math.Min(potency, 1.1f);
+            }
+        }
 
         public override void PotionEffect(Player player)
         {

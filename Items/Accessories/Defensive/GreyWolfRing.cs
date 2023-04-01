@@ -10,11 +10,11 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("One of the rings worn by Artorias." +
-                                "\nInherits Ring of Clarity effects" +
+                                "\nInherits Ring of Clarity immunities" +
                                 "\nPress Shift and Special Ability to increase life regen and damage taken temporarily" +
                                 "\n+12 defense within the Abyss" +
                                 "\nGrants Magma Stone and Acid Venom imbue effect" +
-                                "\n+6 life Regen. +120 Mana." +
+                                "\nIncreases life regeneration by 4 and maximum mana by 100" +
                                 "\nImbue effect can be toggled by hiding the accessory.");
         }
 
@@ -46,8 +46,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.GetModPlayer<tsorcRevampPlayer>().WolfRing = true;
 
             //Band of Phenomenal Cosmic Power inheritance
-            player.statManaMax2 += 120;
-            player.lifeRegen += 6; //3 from band 3 from ring
+            player.statManaMax2 += 100;
+            player.lifeRegen += 4; 
 
             //Ring of Clarity inheritance
             player.GetDamage(DamageClass.Generic) += 0.03f;

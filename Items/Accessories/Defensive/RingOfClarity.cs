@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Tooltip.SetDefault("Immunity to On Fire, Burning, Chilled, Cursed Inferno, Ichor," +
                                " Gravitation, Bleeding, Poisoned and knockback" +
-                               "\n+3% damage, +4 regeneration");
+                               "\nIncreases damage dealt by 3% and life regeneration by 2");
         }
         public override void SetDefaults()
         {
@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Item.height = 24;
             Item.accessory = true;
             Item.useAnimation = 100;
-            Item.defense = 9;
+            Item.defense = 8;
             Item.useTime = 100;
             Item.maxStack = 1;
             Item.rare = ItemRarityID.Orange;
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.buffImmune[ModContent.BuffType<Chilled>()] = true;
 
             player.GetDamage(DamageClass.Generic) += 0.03f;
-            player.lifeRegen += 4;
+            player.lifeRegen += 2;
         }
     }
 }
