@@ -5,7 +5,6 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Charging;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.TextureColors;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities;
 
@@ -30,10 +29,9 @@ public class SlashPlayerDrawLayer : PlayerDrawLayer
 
 	protected override void Draw(ref PlayerDrawSet drawInfo)
 	{
-		/*if (!EnableMeleeSlashVisualization) {
+		if (!ModContent.GetInstance<tsorcRevampConfig>().BroadswordRework) {
 			return;
-		}*/
-		//TODO config
+		}
 
 		// Wait for the texture to load
 		if (texture?.IsLoaded != true) {
@@ -68,10 +66,6 @@ public class SlashPlayerDrawLayer : PlayerDrawLayer
 		}
 
 		if (!item.TryGetGlobalItem<ItemMeleeAttackAiming>(out var meleeAiming) || !meleeAiming.Enabled) {
-			return;
-		}
-
-		if (item.TryGetGlobalItem<ItemCharging>(out var itemCharging) && itemCharging.IsCharging) {
 			return;
 		}
 

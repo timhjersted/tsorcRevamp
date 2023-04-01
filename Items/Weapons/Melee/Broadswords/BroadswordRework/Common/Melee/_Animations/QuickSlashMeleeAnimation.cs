@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Charging;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Hooks.Items;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities;
 
@@ -37,14 +36,19 @@ public class QuickSlashMeleeAnimation : MeleeAnimation, ICanDoMeleeDamage
 			Utils.Swap(ref minValue, ref maxValue);
 		}
 
-		var animation = new Gradient<float>(
-			(0.0f, minValue),
+		//sword visual rotation
+		//T1 is itemAnimation progress percentage, T2 is sword rotation angle at that percentage
+		//lerps between consecutive angles
+        var animation = new Gradient<float>(
+			(0.0f, MathHelper.Lerp(minValue, maxValue, 0.1f)),
 			(0.1f, minValue),
 			(0.15f, MathHelper.Lerp(minValue, maxValue, 0.125f)),
 			(0.151f, MathHelper.Lerp(minValue, maxValue, 0.8f)),
+			(0.3f, MathHelper.Lerp(minValue, maxValue, 0.95f)),
 			(0.5f, maxValue),
-			(0.8f, MathHelper.Lerp(minValue, maxValue, 0.8f)),
-			(1.0f, MathHelper.Lerp(minValue, maxValue, 0.8f))
+			(0.75f, maxValue),
+			(0.9f, MathHelper.Lerp(minValue, maxValue, 0.96f)),
+			(1.0f, MathHelper.Lerp(minValue, maxValue, 0.9f))
 		);
 
 		return animation.GetValue(step);
@@ -89,8 +93,14 @@ public class QuickSlashMeleeAnimation : MeleeAnimation, ICanDoMeleeDamage
 		if (!Enabled) {
 			return true;
 		}
+        //allows the player to hit multiple targets with one swing
+        player.attackCD = 0;
+        //in practice, because there is one frame between each hit and the weapon's active period is so restricted, the amount depends on the speed of the weapon
+        //in other words, slower weapons have a larger hit window, and thus can hit more targets with each swing, which is exactly what i wanted. convenient
+		//something something "programming by coincidence" i literally dont care
 
-		// Damage will only be applied during the first half of the use. The second half is a cooldown, and the animations reflect that.
-		return player.itemAnimation >= player.itemAnimationMax / 2 && !item.GetGlobalItem<ItemCharging>().IsCharging;
+
+        //only deal melee damage when the swing visually occurs
+        return (player.itemAnimation >= player.itemAnimationMax * 0.8f) && (player.itemAnimation <= player.itemAnimationMax * 0.9f);
 	}
 }
