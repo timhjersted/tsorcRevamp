@@ -348,10 +348,13 @@ namespace tsorcRevamp
             orig(self);
 
             //fix for auto-acceleration post-dash with a high max speed
-            if (wasInDash && self.dashDelay > 0)
+            if (wasInDash && self.dashDelay > 0 && self.eocDash <= 0)
             {
 				//we are no longer mid-dash; it must've just ended this frame.
 				//(we have just passed below 12 / above -12 velocity, and our speed now equals our max speed)
+                
+                //eocDash seems to be a SoC dash hit timer. not sure what it's used for...
+                // but if it's more than 0 then we just hit something and shouldn't reset the speed.
 
 				if ((double)self.velocity.X < 0.0) //not completely sure why the cast, but thats wha
 				{
