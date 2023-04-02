@@ -7,12 +7,18 @@ Chroma Equinox / programmer + spriter
 RecursiveCollapse / programmer
 Vibrent / programmer + sprite editer
 MarfMasterofDesaster / programmer + beta testing
-NephilimDeath / spriter
+NephilimDeath / spriter + translator
 JOI3 / spriter
 W1k / coding help and extensive content contributions
 RustySlave / programmer
+chessbergers1234 / spriter
 RAWTHORN / spriter
+stinky_lizard / programmer
 Logar / spriter
+Raisin / spriter
+Thornstromb / programmer
+HakureiYoru / translator
+urgivhnsd / translator
 JayTeff / programmer
 Linklight2 / programmer
 Blasfah / spriting
@@ -27,6 +33,7 @@ Julian/Jbug / Challenger's Glove sprite
 Indigo / Plasma Whirlwind item sprite
 Zane Little / Theremin sound effects
 Anilmky -Juno- / Sunset Quasar sprite
+BlazeDayzYT / Healing Dusk Crown Ring sprite
 
 ORIGINAL MOD (tConfig Edition)
 Tim Hjersted / Mod Director + Dark Souls concept + New content + Mod Remixing & Compiling
