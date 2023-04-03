@@ -11,7 +11,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Tooltip.SetDefault("One of the rings worn by Artorias." +
                                 "\nInherits Ring of Clarity immunities" +
-                                "\nPress Shift and Special Ability to increase life regen and damage taken temporarily" +
+                                "\nPress the Wolf Ring key to increase life regen and damage taken temporarily" +
+                                "\nRemoves the life regen if hit during the effect and puts it on a long cooldown" +
                                 "\n+12 defense within the Abyss" +
                                 "\nGrants Magma Stone and Acid Venom imbue effect" +
                                 "\nIncreases life regeneration by 4 and maximum mana by 100" +

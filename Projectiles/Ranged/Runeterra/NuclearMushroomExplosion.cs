@@ -24,19 +24,17 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 			Projectile.friendly = true;
 			Projectile.DamageType = DamageClass.Ranged;
 			Projectile.penetrate = -1;
-			Projectile.timeLeft = 10 * 60;
+			Projectile.timeLeft = 80;
 			Projectile.ignoreWater = true;
 			Projectile.tileCollide = false;
-			Projectile.extraUpdates = 0;
-            Projectile.knockBack = 10f;
-
+            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.idStaticNPCHitCooldown = 8;
 		}
 
         public override void AI()
         {
             Player owner = Main.player[Projectile.owner];
-            Projectile.CritChance = owner.GetWeaponCrit(owner.HeldItem);
-            Dust.NewDust(Projectile.TopLeft, 20, 20, DustID.GlowingMushroom, 0, 0, 250, Color.Brown, 0.25f);
+            Projectile.CritChance = 100 + owner.GetWeaponCrit(owner.HeldItem);
             Visuals();
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)

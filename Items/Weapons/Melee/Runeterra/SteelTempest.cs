@@ -82,7 +82,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             } else
             if (player.altFunctionUse == 2 && player.GetModPlayer<tsorcRevampPlayer>().steeltempest < 2)
             {
-
                 Item.useStyle = ItemUseStyleID.Rapier;
                 Item.noUseGraphic = true;
                 Item.noMelee = true; 
