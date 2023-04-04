@@ -140,8 +140,24 @@ namespace tsorcRevamp
                 tsorcRevamp.MarkerSelected = -1;
             }
 
-            if(tsorcRevamp.MarkerSelected > -1) {
-                Main.spriteBatch.Draw(mapTextures[tsorcRevamp.MarkerSelected].texture, new Vector2(Main.MouseScreen.X - 32, Main.MouseScreen.Y - 32), Color.White);
+            else if (MapMarkersUIState.HoveringOver > -1) {
+                string hoverText = "Click to select map marker. Click on the map to place a marker.";
+
+
+                if (MapMarkersUIState.HoveringOver == MapMarkersUIState.REMOVE_ID) {
+                    hoverText = "Click to begin erasing markers.";
+                }
+
+                if (tsorcRevamp.MarkerSelected == MapMarkersUIState.HoveringOver) {
+                    hoverText = "Click to stop editing markers.";
+                }
+
+                mouseText = hoverText;
+
+            }
+
+            if (tsorcRevamp.MarkerSelected > -1) {
+                Main.spriteBatch.Draw(mapTextures[tsorcRevamp.MarkerSelected].texture, new Vector2(Main.MouseScreen.X - 24, Main.MouseScreen.Y + 24), Color.White);
             }
             ModContent.GetInstance<tsorcRevamp>().MarkerInterface.Draw(Main.spriteBatch, new GameTime());
         }

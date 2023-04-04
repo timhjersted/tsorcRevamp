@@ -16,10 +16,14 @@ namespace tsorcRevamp.UI {
         public static bool Visible = false;
         public static bool Switching = false;
 
+        public static int HoveringOver = -1;
+
         const int BUTTON_COUNT = 5;
         const int BUTTON_SIZE = 32;
         const int OUTER_PAD = 10;
         const int INNER_PAD = 4;
+
+        public const int REMOVE_ID = 4;
 
         static readonly int WIDTH = (BUTTON_COUNT * BUTTON_SIZE) + ((BUTTON_COUNT - 1) * INNER_PAD) + OUTER_PAD * 2;
         static readonly int HEIGHT = BUTTON_SIZE + (OUTER_PAD * 2);
@@ -73,6 +77,14 @@ namespace tsorcRevamp.UI {
         public override void Click(UIMouseEvent evt) {
             if (tsorcRevamp.MarkerSelected != _id) tsorcRevamp.MarkerSelected = _id;
             else tsorcRevamp.MarkerSelected = -1;
+        }
+
+        public override void MouseOver(UIMouseEvent evt) {
+            MapMarkersUIState.HoveringOver = _id;
+        }
+
+        public override void MouseOut(UIMouseEvent evt) {
+            MapMarkersUIState.HoveringOver = -1;
         }
     }
 }
