@@ -8,10 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Imbues weapons with fire, providing" +
-                                "\n10% increased melee and whip damage, and all swords and whips inflict fire damage." +
-                                "\nPlus Thorns Effect and +4 Defense." +
-                                "\nFire imbue effect can be toggled by hiding the accessory.");
+            Tooltip.SetDefault("Increases maximum life by 25%");
         }
 
         public override void SetDefaults()
@@ -37,12 +34,11 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.statDefense += 4;
-            player.thorns += 1f;
-        }
-
-        public override void UpdateAccessory(Player player, bool hideVisual) {
-            if (!hideVisual) player.AddBuff(BuffID.WeaponImbueFire, 60, false);
+            player.statLifeMax2 += (player.statLifeMax2 * 2 / 8);
+            if (player.statLifeMax2 > 800)
+            {
+                player.statLifeMax2 = 800;
+            }
         }
     }
 }

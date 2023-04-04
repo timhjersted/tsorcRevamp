@@ -10,14 +10,14 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Tooltip.SetDefault("One of the infamous bite rings commissioned by Sir Arstor of Carim" +
                                 "\nDespite the dreadful rumors surrounding its creation, this ring" +
-                                "\nis an unmistakable asset, due to its ability to prevent bleeding." +
-                                "\n+3 defense");
+                                "\nis an unmistakable asset, due to its ability to prevent bleeding.");
         }
 
         public override void SetDefaults()
         {
             Item.width = 24;
             Item.height = 24;
+            Item.defense = 3;
             Item.accessory = true;
             Item.value = PriceByRarity.Blue_1;
             Item.rare = ItemRarityID.Blue;
@@ -37,7 +37,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void UpdateEquip(Player player)
         {
             player.buffImmune[BuffID.Bleeding] = true;
-            player.statDefense += 3;
         }
 
     }

@@ -254,6 +254,11 @@ namespace tsorcRevamp
             if (Player.HasBuff(ModContent.BuffType<Invincible>()))
                 return false;
             Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s  
+            if (Player.HasBuff(ModContent.BuffType<Rejuvenation>()))
+            {
+                Player.ClearBuff(ModContent.BuffType<Rejuvenation>());
+                Player.AddBuff(ModContent.BuffType<RejuvenationCooldown>(), 40 * 60);
+            }
             if (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienRifle>() | Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>() && !Main.player[Main.myPlayer].HasBuff(ModContent.BuffType<ScoutsBoost2>()))
             {
                 Player.AddBuff(ModContent.BuffType<ScoutsBoostCooldown>(), 3 * 60);
@@ -887,6 +892,15 @@ namespace tsorcRevamp
                     }
                 }
             }
+           if (tsorcRevamp.WolfRing.JustReleased)
+            {
+                if (Player.GetModPlayer<tsorcRevampPlayer>().WolfRing && !Player.HasBuff(ModContent.BuffType<RejuvenationCooldown>()))
+                {
+                    Player.AddBuff(ModContent.BuffType<Rejuvenation>(), 5 * 60);
+                    Player.AddBuff(ModContent.BuffType<RejuvenationCooldown>(), 25 * 60);
+                }
+            }
+
            if (tsorcRevamp.specialAbility.JustReleased)
             {
                 PlasmaWhirlwind thisPlasmaWhirlwind = Player.HeldItem.ModItem as PlasmaWhirlwind;
@@ -894,7 +908,7 @@ namespace tsorcRevamp
 
                 bool holdingControls = Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>()|| Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>();
                 bool hasBuff = Player.HasBuff(ModContent.BuffType<InterstellarCommander>()) || Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
-                if (holdingControls && hasBuff && !(Main.keyState.IsKeyDown(Keys.LeftShift)))
+                if (!holdingControls && hasBuff && !(Main.keyState.IsKeyDown(Keys.LeftShift)))
                 {
                     owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
 
@@ -908,11 +922,6 @@ namespace tsorcRevamp
                         minionPacket.Write(InterstellarBoost);
                         minionPacket.Send();
                     }
-                }
-
-                if (Main.keyState.IsKeyDown(Keys.LeftShift) && owner.GetModPlayer<tsorcRevampPlayer>().WolfRing && !(Player.HeldItem.type == ModContent.ItemType<Nightbringer>()) && !(Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>()) && !(Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>()) && !(Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>()))
-                {
-                    Player.AddBuff(ModContent.BuffType<Rejuvenation>(), 5 * 60);
                 }
 
                 //Only run this update loop if the player is holding one of these
@@ -940,7 +949,8 @@ namespace tsorcRevamp
                 }
                 if (Main.keyState.IsKeyDown(Keys.LeftShift) && !Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Ranged.Runeterra.NuclearMushroom>(), owner.GetWeaponDamage(Player.HeldItem), owner.GetWeaponKnockback(Player.HeldItem), Main.myPlayer);
+                    SoundEngine.PlaySound(SoundID.Item61, owner.Center);
+                    Projectile.NewProjectile(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Ranged.Runeterra.NuclearMushroom>(), owner.GetWeaponDamage(owner.HeldItem), owner.GetWeaponKnockback(owner.HeldItem), Main.myPlayer);
                     Player.AddBuff(ModContent.BuffType<NuclearMushroomCooldown>(), 5 * 60);
                 }
             }
@@ -948,6 +958,7 @@ namespace tsorcRevamp
             {
                 if (Main.keyState.IsKeyDown(Keys.LeftShift))
                 {
+                    SoundEngine.PlaySound(SoundID.Item100, owner.Center);
                     Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), owner.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<Projectiles.Swords.Runeterra.NightbringerWindWall>(), 0, 0, Main.myPlayer);
                     Player.AddBuff(ModContent.BuffType<NightbringerWindwallCooldown>(), 30 * 60);
                 }
@@ -991,18 +1002,18 @@ namespace tsorcRevamp
             base.Hurt(pvp, quiet, damage, hitDirection, crit, cooldownCounter);
             if (manaShield == 1)
             {
-                if (Player.statMana >= Items.Accessories.Melee.ManaShield.manaCost)
+                if (Player.statMana >= Items.Accessories.Defensive.ManaShield.manaCost)
                 {
-                    Player.statMana -= Items.Accessories.Melee.ManaShield.manaCost;
-                    Player.manaRegenDelay = Items.Accessories.Melee.ManaShield.regenDelay;
+                    Player.statMana -= Items.Accessories.Defensive.ManaShield.manaCost;
+                    Player.manaRegenDelay = Items.Accessories.Defensive.ManaShield.regenDelay;
                 }
             }
             if (manaShield == 2)
             {
-                if (Player.statMana >= Items.Accessories.Celestriad.manaCost)
+                if (Player.statMana >= Items.Accessories.Defensive.Celestriad.manaCost)
                 {
-                    Player.statMana -= Items.Accessories.Celestriad.manaCost;
-                    Player.manaRegenDelay = Items.Accessories.Celestriad.regenDelay;
+                    Player.statMana -= Items.Accessories.Defensive.Celestriad.manaCost;
+                    Player.manaRegenDelay = Items.Accessories.Defensive.Celestriad.regenDelay;
                 }
             }
             // stamina shield code

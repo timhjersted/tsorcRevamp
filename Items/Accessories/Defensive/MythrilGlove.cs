@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            if ((player.statLife <= (player.statLifeMax * 0.30f)) && !(player.HasBuff(ModContent.BuffType<Buffs.MagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.MagicBarrier>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicBarrier>())))
+            if ((player.statLife <= (player.statLifeMax2 * 0.30f)) && !(player.HasBuff(ModContent.BuffType<Buffs.MagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.MagicBarrier>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicBarrier>())))
             {
                 player.AddBuff(ModContent.BuffType<Buffs.GreatMagicShield>(), 1, false);
             }
@@ -100,7 +100,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
                         }
                     }
                 }
-                if (player.statLife <= (player.statLifeMax * 0.30f))
+                if (player.statLife <= (player.statLifeMax2 * 0.30f))
                 {
                     for (int num183 = 0; num183 < 2; num183++)
                     {

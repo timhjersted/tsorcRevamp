@@ -671,16 +671,13 @@ namespace tsorcRevamp.NPCs
         {
             if (DarkInferno)
             {
-
+                int DoTPerS = 20;
                 if (npc.lifeRegen > 0)
                 {
                     npc.lifeRegen = 0;
                 }
-                npc.lifeRegen -= 40;
-                if (damage < 2)
-                {
-                    damage = 2;
-                }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
 
                 var N = npc;
                 for (int j = 0; j < 6; j++)
@@ -695,11 +692,13 @@ namespace tsorcRevamp.NPCs
 
             if (PhazonCorruption)
             {
+                int DoTPerS = 15;
                 if (npc.lifeRegen > 0)
                 {
                     npc.lifeRegen = 0;
                 }
-                npc.lifeRegen -= 30;
+                npc.lifeRegen -= DoTPerS * 2;
+                damage = DoTPerS;
 
                 int dust = Dust.NewDust(npc.position, npc.width, npc.height, 185, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
                 Main.dust[dust].noGravity = true;
@@ -710,17 +709,15 @@ namespace tsorcRevamp.NPCs
 
             if (CrimsonBurn)
             {
+                int DoTPerS = 12;
                 if (npc.lifeRegen > 0)
                 {
                     npc.lifeRegen = 0;
                 }
-                npc.lifeRegen -= 24;
-                if (Main.hardMode) npc.lifeRegen -= 48;
-                if (damage < 4)
-                {
-                    damage = 4;
-                }
-
+                npc.lifeRegen -= DoTPerS * 2;
+                if (Main.hardMode) npc.lifeRegen -= DoTPerS * 2 * 2; //this is additive to the one in pre-hm.....so it's tripled, not doubled
+                damage += DoTPerS;
+                if (Main.hardMode) damage += DoTPerS * 2;
             }
 
             if (ToxicCatDrain)
@@ -830,55 +827,39 @@ namespace tsorcRevamp.NPCs
 
             if (ElectrocutedEffect)
             {
+                int DoTPerS = 6;
                 if (npc.lifeRegen > 0)
                 {
                     npc.lifeRegen = 0;
                 }
-                npc.lifeRegen -= 12;
-                if (damage < 2)
-                {
-                    damage = 2;
-                }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
             }
 
             if (PolarisElectrocutedEffect)
             {
+                int DoTPerS = 35;
                 if (npc.lifeRegen > 0)
                 {
                     npc.lifeRegen = 0;
                 }
-                npc.lifeRegen -= 70;
-                if (damage < 10)
-                {
-                    damage = 10;
-                }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
             }
 
             if (CrescentMoonlight)
             {
-                if (!Main.hardMode)
-                {
-                    if (npc.lifeRegen > 0)
-                    {
-                        npc.lifeRegen = 0;
-                    }
-                    npc.lifeRegen -= 14;
-                    if (damage < 2)
-                    {
-                        damage = 2;
-                    }
+                int DoTPerS = 6;
+                if (npc.lifeRegen > 0)
+                { 
+                    npc.lifeRegen = 0;
                 }
-                else
-                { //double the DoT in HM
-                    if (npc.lifeRegen > 0)
-                    {
-                        npc.lifeRegen = 0;
-                    }
-                    npc.lifeRegen -= 28;
-                    if (damage < 2)
-                    {
-                        damage = 2;
-                    }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+                if (Main.hardMode) 
+                {
+                    npc.lifeRegen -= DoTPerS * 2;
+                    damage += DoTPerS;
                 }
             }
         }

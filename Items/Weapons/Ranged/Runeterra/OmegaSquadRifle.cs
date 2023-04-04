@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Item.useAnimation = 22;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.autoReuse = true;
-            Item.UseSound = SoundID.Item64;//63
+            Item.UseSound = SoundID.Item99;
             Item.DamageType = DamageClass.Ranged; 
             Item.damage = 220;
             Item.knockBack = 6f;

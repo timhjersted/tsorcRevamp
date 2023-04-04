@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Increases melee damage by 10%" +
-                "\nSet bonus: A Shadow Cloak activates when life falls below 25%, increasing life regen by 7" +
-                "\nIncreases life regen by 3 otherwise" +
+                "\nSet bonus: A Shadow Cloak activates when life falls below 25%, increasing life regen by 5" +
+                "\nIncreases life regen by 2 otherwise" +
                 "\nGrants Double Jump Skill");
         }
 
@@ -35,11 +35,11 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.lifeRegen += 3;
+            player.lifeRegen += 2;
 
-            if (player.statLife <= (player.statLifeMax / 4))
+            if (player.statLife <= (player.statLifeMax2 / 4))
             {
-                player.lifeRegen += 4;
+                player.lifeRegen += 3;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 245, Color.Violet, 2.0f);
                 Main.dust[dust].noGravity = true;

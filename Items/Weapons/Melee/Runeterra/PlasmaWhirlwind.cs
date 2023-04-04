@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Audio;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Projectiles.Swords.Runeterra;
@@ -65,6 +66,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 {
                     if (DashingTimer > 0)
                     {
+                        SoundEngine.PlaySound(SoundID.Item104, player.Center);
                         player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, other.Center, 15f);
                         player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), 2 * 60);
                         player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>(), 20 * 60);

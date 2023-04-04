@@ -1,5 +1,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
+using Terraria.Audio;
 using Terraria.Enums;
 using Terraria.ModLoader;
 using Terraria.DataStructures;
@@ -8,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 {
 	public class PlasmaWhirlwindThrust : ModProjectile
 	{
-		public int steeltempesthittimer = 0;
+		public int steeltempesthittimer2 = 0;
 		public const int FadeInDuration = 7;
 		public const int FadeOutDuration = 4;
 
@@ -59,7 +61,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			if (Timer >= TotalDuration)
 			{
 				Projectile.Kill();
-				steeltempesthittimer = 0;
+				steeltempesthittimer2 = 0;
 				return;
 			}
 			else
@@ -114,10 +116,15 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		}
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-			if (steeltempesthittimer == 0)
+            Player player = Main.player[Projectile.owner];
+            if (steeltempesthittimer2 == 0)
             {
-				Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().steeltempest += 1;
-				steeltempesthittimer = 1;
+                player.GetModPlayer<tsorcRevampPlayer>().steeltempest += 1;
+                steeltempesthittimer2 = 1;
+                if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().steeltempest == 2)
+                {
+                    SoundEngine.PlaySound(SoundID.Item60, player.Center);
+                }
             }
         }
         private void Visuals()

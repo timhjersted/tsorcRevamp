@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.Enums;
 using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -115,10 +116,15 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		}
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-			if (steeltempesthittimer3 == 0)
+			Player player = Main.player[Projectile.owner];
+            if (steeltempesthittimer3 == 0)
             {
-                Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().steeltempest += 1;
+				player.GetModPlayer<tsorcRevampPlayer>().steeltempest += 1;
 				steeltempesthittimer3 = 1;
+				if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().steeltempest == 2)
+                {
+					SoundEngine.PlaySound(SoundID.Item74, player.Center);
+                }
             }
         }
         private void Visuals()

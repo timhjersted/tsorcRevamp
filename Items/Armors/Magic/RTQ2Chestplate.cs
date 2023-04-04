@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Armors.Magic
             int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 60, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Red, 1.0f);
             Main.dust[dust].noGravity = true;
 
-            if ((player.statLife <= (player.statLifeMax / 5 * 2)))
+            if ((player.statLife <= (player.statLifeMax2 / 5 * 2)))
             {
                 player.statDefense += 15;
                 int dust2 = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 60, (player.velocity.X) + (player.direction * 3), player.velocity.Y, 100, Color.Red, 3.0f);

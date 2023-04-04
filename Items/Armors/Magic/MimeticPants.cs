@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += 0.1f;
-            player.GetCritChance(DamageClass.Magic) += 9;
+            player.GetCritChance(DamageClass.Magic) += 15;
         }
         public override void AddRecipes()
         {

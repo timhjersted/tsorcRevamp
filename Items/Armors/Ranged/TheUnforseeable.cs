@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Increases ranged damage by 15%" +
-                "\nIncreases life regen by 3");
+                "\nIncreases life regen by 2");
         }
 
         public override void SetDefaults()
@@ -25,12 +25,12 @@ namespace tsorcRevamp.Items.Armors.Ranged
         public override void UpdateEquip(Player player)
         {
             player.GetDamage(DamageClass.Ranged) += 0.15f;
-            player.lifeRegen += 3;
+            player.lifeRegen += 2;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
                 player.GetDamage(DamageClass.Ranged) += 0.15f;
-                player.lifeRegen += 3;
+                player.lifeRegen += 2;
             }
         }
 

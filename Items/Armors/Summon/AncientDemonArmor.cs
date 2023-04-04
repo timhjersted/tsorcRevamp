@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.whipRangeMultiplier += 0.3f;
             player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
 
-            if (player.statLife <= (player.statLifeMax / 2))
+            if (player.statLife <= (player.statLifeMax2 / 2))
             {
                 player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
 

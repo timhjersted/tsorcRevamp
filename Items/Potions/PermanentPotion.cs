@@ -221,7 +221,16 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_289";
         public override int PermanentID => 1;
         public override int BuffType => BuffID.Regeneration;
-        public override bool CanScale => true;
+        public override bool CanScale => true; 
+        public override float EffectPotency
+        {
+            get
+            {
+                float potency = (float)ConsumedAmount / (float)ScalingFactor;
+                potency += 0.1f;
+                return Math.Min(potency, 1.25f);
+            }
+        }
         public override void PotionEffect(Player player)
         {
             player.lifeRegen += (int)ApplyScaling(4);
@@ -437,9 +446,9 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
-            player.statDefense -= 4; //:smiling_imp:
+            player.statDefense -= (int)ApplyScaling(4f); //:smiling_imp:
             player.GetDamage(DamageClass.Melee) += ApplyScaling(0.1f);
-            player.GetCritChance(DamageClass.Melee) += 2;
+            player.GetCritChance(DamageClass.Melee) += ApplyScaling(2f);
             player.GetAttackSpeed(DamageClass.Melee) += ApplyScaling(0.1f);
             player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(0.1f);
         }
@@ -452,6 +461,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => BuffID.WeaponImbueVenom;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetFlasks;
         public override bool CanScale => true;
+        public override int ScalingFactor => 30;
 
         public override void PotionEffect(Player player)
         {
@@ -467,6 +477,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => BuffID.WeaponImbueCursedFlames;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetFlasks;
         public override bool CanScale => true;
+        public override int ScalingFactor => 30;
 
         public override void PotionEffect(Player player)
         {
@@ -483,6 +494,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => BuffID.WeaponImbueFire;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetFlasks;
         public override bool CanScale => true;
+        public override int ScalingFactor => 30;
 
         public override void PotionEffect(Player player)
         {
@@ -499,6 +511,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => BuffID.WeaponImbueGold;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetFlasks;
         public override bool CanScale => true;
+        public override int ScalingFactor => 30;
 
         public override void PotionEffect(Player player)
         {
@@ -515,6 +528,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => BuffID.WeaponImbueIchor;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetFlasks;
         public override bool CanScale => true;
+        public override int ScalingFactor => 30;
 
         public override void PotionEffect(Player player)
         {
@@ -531,6 +545,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => BuffID.WeaponImbueNanites;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetFlasks;
         public override bool CanScale => true;
+        public override int ScalingFactor => 30;
 
         public override void PotionEffect(Player player)
         {
@@ -547,6 +562,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => BuffID.WeaponImbueConfetti;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetFlasks;
         public override bool CanScale => true;
+        public override int ScalingFactor => 30;
 
         public override void PotionEffect(Player player)
         {
@@ -563,6 +579,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => BuffID.WeaponImbuePoison;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetFlasks;
         public override bool CanScale => true;
+        public override int ScalingFactor => 30;
 
         public override void PotionEffect(Player player)
         {
@@ -711,7 +728,16 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_2346";
         public override int PermanentID => 37;
         public override int BuffType => BuffID.Endurance;
-        public override bool CanScale => true;
+        public override bool CanScale => true; 
+        public override float EffectPotency
+        {
+            get
+            {
+                float potency = (float)ConsumedAmount / (float)ScalingFactor;
+                potency += 0.1f;
+                return Math.Min(potency, 1.1f);
+            }
+        }
 
         public override void PotionEffect(Player player)
         {
@@ -728,10 +754,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
-            player.GetCritChance(DamageClass.Magic) += ApplyScaling(10);
-            player.GetCritChance(DamageClass.Melee) += ApplyScaling(10);
-            player.GetCritChance(DamageClass.Ranged) += ApplyScaling(10);
-            player.GetCritChance(DamageClass.Throwing) += ApplyScaling(10);
+            player.GetCritChance(DamageClass.Generic) += ApplyScaling(10f);
         }
     }
 

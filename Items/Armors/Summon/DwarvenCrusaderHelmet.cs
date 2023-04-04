@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Armors.Summon
             Tooltip.SetDefault("Increases whip damage and summon attack speed by 18%" +
                 "\nSet Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active" +
                 "\nDefense, minion slots and whip range are not affected by this" +
-                "\nIncreases whip range by 30% and life regen by 4");
+                "\nIncreases whip range by 30% and life regen by 3");
         }
 
         public override void SetDefaults()
@@ -46,11 +46,11 @@ namespace tsorcRevamp.Items.Armors.Summon
 
             player.whipRangeMultiplier += 0.3f;
 
-            player.lifeRegen += 4;
+            player.lifeRegen += 3;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.lifeRegen += 4;
+                player.lifeRegen += 3;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 42, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 105, Color.Gold, 1.0f);
                 Main.dust[dust].noGravity = true;

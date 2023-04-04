@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             DisplayName.SetDefault("Blue Tearstone Ring II");
             Tooltip.SetDefault("The rare gem called tearstone has the uncanny ability to sense imminent death." +
-                                "\nThis enchanted blue tearstone from Catarina boosts the defense of its wearer by 25 and reduces damage taken by 12%" +
+                                "\nThis enchanted blue tearstone from Catarina boosts the defense of its wearer by 25 and reduces damage taken by 9%" +
                                 "\n when life falls below 33%. This also reduces melee damage by 200%.");
         }
 
@@ -38,10 +38,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            if (player.statLife <= (player.statLifeMax / 3))
+            if (player.statLife <= (player.statLifeMax2 / 3))
             {
                 player.statDefense += 25;
-                player.endurance = 0.12f;
+                player.endurance = 0.09f;
                 player.GetDamage(DamageClass.Melee) -= 2f;
             }
         }

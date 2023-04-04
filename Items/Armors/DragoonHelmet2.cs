@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Armors
         {
             DisplayName.SetDefault("Supreme Dragoon Helmet");
             Tooltip.SetDefault("+200 Mana and Philosopher's stone effect" +
-                "\nSet Bonus: Harmonized with the four elements: fire, water, earth and air, including +6 life regen and flight" +
+                "\nSet Bonus: Harmonized with the four elements: fire, water, earth and air, including +5 life regen and flight" +
                 "\nBoosts damage, crit chance, melee and movement speed by 38% and reduces mana costs by 17%");
         }
 
@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Armors
             player.GetAttackSpeed(DamageClass.Melee) += 0.38f;
             player.moveSpeed += 0.38f;
             player.manaCost -= 0.17f;
-            player.lifeRegen += 6;
+            player.lifeRegen += 5;
             player.GetModPlayer<tsorcRevampPlayer>().DarkmoonCloak = true;
 
             //player.wings = 34; // looks like Jim's Wings

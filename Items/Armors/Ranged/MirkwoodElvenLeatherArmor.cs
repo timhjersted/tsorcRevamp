@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         {
             Tooltip.SetDefault("Gifted with healing. High defense not necessary." +
                 "\n25% chance not to consume ammo" +
-                "\nSet Bonus: 20% Ranged Crit, +20 Ranged Dmg, +9 Life Regen");
+                "\nSet Bonus: 20% Ranged Crit, +20 Ranged Dmg, +7 Life Regen");
         }
 
         public override void SetDefaults()
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         {
             player.GetDamage(DamageClass.Ranged) += 0.2f;
             player.GetCritChance(DamageClass.Ranged) += 20;
-            player.lifeRegen += 9;
+            player.lifeRegen += 7;
         }
         public override void UpdateEquip(Player player)
         {

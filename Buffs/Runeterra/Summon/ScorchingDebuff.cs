@@ -37,12 +37,12 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 		public override void UpdateLifeRegen(NPC npc, ref int damage)
 		{
             Player player = Main.player[Main.myPlayer];
-			int DoT = (int)player.GetTotalDamage(DamageClass.Summon).ApplyTo(10);
+			int DoTPerS = (int)player.GetTotalDamage(DamageClass.Summon).ApplyTo(10);
 
             if (Scorched)
 			{
-				npc.lifeRegen -= DoT * 2;
-				damage = DoT;
+				npc.lifeRegen -= DoTPerS * 2;
+				damage += DoTPerS;
 			}
         }
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)

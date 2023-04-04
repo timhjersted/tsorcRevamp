@@ -3,45 +3,43 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
-using Terraria.Audio;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
-	public class NuclearMushroom: ModProjectile
+	public class NuclearMushroomExplosion: ModProjectile
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Nuclear Mushroom");
+			DisplayName.SetDefault("Nuclear Mushroom Explosion");
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5; // The length of old position to be recorded
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // The recording mode
-            Main.projFrames[Projectile.type] = 3;
+            Main.projFrames[Projectile.type] = 16;
         }
 
 		public override void SetDefaults()
 		{
-			Projectile.width = 50;
-			Projectile.height = 50;
+			Projectile.width = 500;
+			Projectile.height = 500;
 
 			Projectile.friendly = true;
 			Projectile.DamageType = DamageClass.Ranged;
-			Projectile.penetrate = 1;
-			Projectile.timeLeft = 100 * 60;
+			Projectile.penetrate = -1;
+			Projectile.timeLeft = 80;
 			Projectile.ignoreWater = true;
 			Projectile.tileCollide = false;
-            Projectile.knockBack = 0f;
+            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.idStaticNPCHitCooldown = 8;
 		}
 
         public override void AI()
         {
             Player owner = Main.player[Projectile.owner];
-            Projectile.CritChance = owner.GetWeaponCrit(owner.HeldItem);
+            Projectile.CritChance = 100 + owner.GetWeaponCrit(owner.HeldItem);
             Visuals();
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            Player owner = Main.player[Projectile.owner];
-            SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, Projectile.Center);
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearMushroomExplosion>(), owner.GetWeaponDamage(owner.HeldItem) / 2, owner.GetWeaponKnockback(owner.HeldItem) * 10, Projectile.owner);
+			target.AddBuff(ModContent.BuffType<IrradiatedByShroomDebuff>(), 600);
         }
         private void Visuals()
         {
@@ -61,7 +59,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
             }
 
             // Some visuals here
-            Lighting.AddLight(Projectile.Center, Color.GreenYellow.ToVector3() * 1f);
+            Lighting.AddLight(Projectile.Center, Color.GreenYellow.ToVector3() * 10f);
         }
     }
 }

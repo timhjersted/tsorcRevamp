@@ -2,6 +2,7 @@ using tsorcRevamp.Projectiles.Swords.Runeterra;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Audio;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using Terraria.DataStructures;
@@ -66,6 +67,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 {
                     if (DashingTimer > 0)
                     {
+                        SoundEngine.PlaySound(SoundID.Item104, player.Center);
                         player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, other.Center, 15f);
                         player.AddBuff(ModContent.BuffType<NightbringerDash>(), 2 * 60);
                         player.AddBuff(ModContent.BuffType<NightbringerDashCooldown>(), 20 * 60);
