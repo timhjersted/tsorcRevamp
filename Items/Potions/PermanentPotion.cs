@@ -73,8 +73,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
                         Item potion = new();
                         potion.SetDefaults(itemID);
                         if (potion.buffType == BuffType) {
-                            consumedAmount = modPlayer.consumedPotions[def];
-                            break;
+                            consumedAmount += modPlayer.consumedPotions[def];
                         }
                     }
                 }
