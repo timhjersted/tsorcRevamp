@@ -12,10 +12,9 @@ namespace tsorcRevamp.Items.Accessories.Expert
         {
             Tooltip.SetDefault("Inherits Mythril Bulwark, Ankh Shield and Frozen Shield effects" +
                                "\nIncludes immunity to Chilled and Stoned" +
-                               "\nSlows down your dogerolling slightly" +
+                               "\nSlows down your dodgeroll slightly" +
                                "\nRolling through an enemy may inflict some debuffs this item grants immunity to");
         }
-
         public override void SetDefaults()
         {
             Item.width = 24;

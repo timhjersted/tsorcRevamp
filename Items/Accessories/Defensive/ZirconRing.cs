@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases maximum life by 25%");
+            Tooltip.SetDefault("Increases maximum life by 20%");
         }
 
         public override void SetDefaults()
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverBar, 1);
             recipe.AddIngredient(ItemID.SoulofNight, 1);
-            //recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 30);
+            recipe.AddIngredient(ItemID.LifeCrystal, 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 9000);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -34,11 +34,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.statLifeMax2 += (player.statLifeMax2 * 2 / 8);
-            if (player.statLifeMax2 > 800)
-            {
-                player.statLifeMax2 = 800;
-            }
+            player.statLifeMax2 += (player.statLifeMax2 / 5);
         }
     }
 }
