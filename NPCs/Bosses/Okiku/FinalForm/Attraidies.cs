@@ -166,28 +166,15 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             if (transitionTimer > 0)
             {
                 transitionTimer--;
-                if (Phase != 2)
+                NPC.velocity *= 0.9f;
+                if (transitionTimer == 30)
                 {
-                    NPC.velocity *= 0.9f;
-                    if (transitionTimer == 30)
-                    {
-                        //Advance to the next aura state
-                        AuraState = Phase + 1;
-                        //Spawn shockwave
-                    }
-                }
-                else
-                {
-                    //For transitioning to the final phase, move above the player first
-                    //Do not allow transitionTimer to progress until it is there
-                    UsefulFunctions.SmoothHoming(NPC, Target.Center + new Vector2(0, -800), 1, 40, null, true, 0.2f);
-                    if (Vector2.Distance(NPC.Center, Target.Center + new Vector2(0, -800)) > 150)
-                    {
-                        transitionTimer++;
-                    }
+                    //Advance to the next aura state
+                    AuraState = Phase + 1;
+                    //Spawn shockwave
                 }
 
-                if (transitionTimer == 0)
+                if (transitionTimer == 1)
                 {
                     NPC.dontTakeDamage = false;
                     Phase++;
@@ -195,17 +182,14 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                     AttackTimer = 0;
                     CurrentAttackMode = 0;
                     StartAura(0.2f);
-                    for(int i = 0; i < Main.maxNPCs; i++)
+                    ClearObstructiveProjectiles();
+                    for (int i = 0; i < Main.maxNPCs; i++)
                     {
                         if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<AttraidiesFragment>())
                         {
                             Main.npc[i].active = false;
                         }
                     }
-                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<VortexOrb>());
-                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>());
-                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<DarkLaser>());
-                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<DarkLaserHost>());
 
                     if (Main.netMode == NetmodeID.Server)
                     {
@@ -230,17 +214,33 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 }
                 if (Phase == 2 && NPC.life < NPC.lifeMax * 0.20f)
                 {
+                    ClearObstructiveProjectiles();
+                    NPC.Center = Target.Center + new Vector2(0, -800);
                     NPC.dontTakeDamage = true;
                     UsefulFunctions.BroadcastText("You feel the dark power of Attraidies flare...", Color.Purple);
                     UsefulFunctions.BroadcastText("And the power of the Earth uplift you from below, giving you the strength to finish him!", Color.Green);
-                    transitionTimer = 45;
+                    transitionTimer = 120;
                 }
                 if (NPC.life == 1)
                 {
+                    attackSwitchDelay = 999;
                     deathTimer++;
                     HandleDeath();
                 }
             }
+        }
+
+        void ClearObstructiveProjectiles()
+        {
+            UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<VortexOrb>());
+            UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<SolarDetonator>());
+            UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<SolarBlast>());
+            UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>());
+            UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<DarkLaser>());
+            UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<DarkLaserHost>());
+            UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<StardustShot>());
+            UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<StardustBeam>());
+            UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<NebulaShot>());
         }
         
 
@@ -330,7 +330,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    if(Phase == 2 && AttackTimer % chargeDelay * 2 == 45)
+                    if(Phase >= 2 && AttackTimer % (chargeDelay * 2) == 45)
                     {
                         for(int i = 0; i < 4; i++)
                         {
@@ -341,7 +341,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                     }
                     for (int i = 0; i < 10; i++)
                     {
-                        Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / 8f);
+                        Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / 10f);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<EnemyAttraidiesBlackFire>(), BlackFireDamage, -1, Main.myPlayer, -1);
                     }
                 }

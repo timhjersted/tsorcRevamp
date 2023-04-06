@@ -75,7 +75,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                     }
                     for (int i = 0; i < trailPositions.Count; i++)
                     {
-                        trailPositions[i] += trailVelocities[i];
+                        trailPositions[i] += fixedSpeed * new Vector2(1, 0).RotatedBy(trailRotations[i] - MathHelper.PiOver2);
                     }
 
                     for (int i = 0; i < trailPositions.Count; i++)
