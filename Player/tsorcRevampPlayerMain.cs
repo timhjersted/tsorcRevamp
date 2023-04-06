@@ -967,7 +967,7 @@ namespace tsorcRevamp
             if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && !owner.HasBuff(ModContent.BuffType<ScoutsBoost2Cooldown>()) && tsorcRevamp.specialAbility.Current && (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienRifle>() | Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>()))
             {
                 owner.AddBuff(ModContent.BuffType<ScoutsBoost2>(), 5 * 60);
-                owner.AddBuff(ModContent.BuffType<ScoutsBoost2Cooldown>(), 20 * 60);
+                owner.AddBuff(ModContent.BuffType<ScoutsBoost2Cooldown>(), 25 * 60);
             }
 
 

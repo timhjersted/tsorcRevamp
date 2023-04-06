@@ -492,7 +492,7 @@ namespace tsorcRevamp
                     {
                         NPC other = Main.npc[i];
 
-                        if (other.active & !other.friendly & other.Hitbox.Intersects(Player.Hitbox))
+                        if (!other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Player.Center, new Vector2(200, 200))))
                         {
                             other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), 5 * 60);
                         }
@@ -504,7 +504,7 @@ namespace tsorcRevamp
                     {
                         NPC other = Main.npc[i];
 
-                        if (other.active & !other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Player.Center, new Vector2(200, 200))))
+                        if (!other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Player.Center, new Vector2(200, 200))))
                         {
                             other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), 5 * 60);
                             other.AddBuff(BuffID.Frostburn2, 5 * 60);
@@ -521,7 +521,6 @@ namespace tsorcRevamp
                             {
                                 other.AddBuff(BuffID.Poisoned, 5 * 60);
                             }
-                            Player.AddBuff(BuffID.IceBarrier, 5 * 60);
                         }
                     }
                 }

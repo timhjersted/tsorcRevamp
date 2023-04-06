@@ -10,6 +10,8 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Throwing;
@@ -547,6 +549,22 @@ namespace tsorcRevamp.NPCs
                     {
                         debuffCounter++;
                     }
+                    if (buffType == ModContent.BuffType<MythrilRamDebuff>())
+                    {
+                        debuffCounter++;
+                    }
+                    if (buffType == ModContent.BuffType<ScorchingDebuff>())
+                    {
+                        debuffCounter++;
+                    }
+                    if (buffType == ModContent.BuffType<ShockedDebuff>())
+                    {
+                        debuffCounter++;
+                    }
+                    if (buffType == ModContent.BuffType<SunburnDebuff>())
+                    {
+                        debuffCounter++;
+                    }
                 }
                 double scalar = Math.Pow(1.15, debuffCounter - 1); //was 1.2 before, then 1.1
                 damage = (int)(damage * scalar);
@@ -562,6 +580,18 @@ namespace tsorcRevamp.NPCs
                 {
 
                     if (Main.debuff[buffType] && !(BuffID.Sets.IsAnNPCWhipDebuff[buffType]))
+                    {
+                        debuffCounter++;
+                    }
+                    if (buffType == ModContent.BuffType<ScorchingDebuff>())
+                    {
+                        debuffCounter++;
+                    }
+                    if (buffType == ModContent.BuffType<ShockedDebuff>())
+                    {
+                        debuffCounter++;
+                    }
+                    if (buffType == ModContent.BuffType<SunburnDebuff>())
                     {
                         debuffCounter++;
                     }

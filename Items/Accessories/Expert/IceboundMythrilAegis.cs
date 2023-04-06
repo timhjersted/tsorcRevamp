@@ -13,7 +13,6 @@ namespace tsorcRevamp.Items.Accessories.Expert
             Tooltip.SetDefault("Inherits Mythril Bulwark, Ankh Shield and Frozen Shield effects" +
                                "\nIncludes immunity to Chilled and Stoned" +
                                "\nSlows down your dogerolling slightly" +
-                               "\nRolling through an enemy also grants the Ice Barrier buff temporarily" +
                                "\nRolling through an enemy may inflict some debuffs this item grants immunity to");
         }
 
@@ -83,10 +82,6 @@ namespace tsorcRevamp.Items.Accessories.Expert
             {
                 player.AddBuff(BuffID.IceBarrier, 1);
             }
-        }
-
-        public override void UpdateAccessory(Player player, bool hideVisual) {
-            if (!hideVisual) player.AddBuff(BuffID.WeaponImbueFire, 60, false);
         }
     }
 }

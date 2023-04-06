@@ -9,7 +9,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			BuffID.Sets.IsAnNPCWhipDebuff[Type] = false;
+			BuffID.Sets.IsAnNPCWhipDebuff[Type] = true;
 		}
 
 		public override void Update(NPC npc, ref int buffIndex)

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Rolling through enemies makes them vulnerable");
+            Tooltip.SetDefault("Rolling through enemies makes them take 25% more damage");
         }
 
         public override void SetDefaults()

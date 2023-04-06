@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                 "\nAlso uses all darts as ammo" +
                 "\nStops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise" +
                 "\nGrants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily" +
-                "\nPress Special Ability to gain an even higher temporary boost" +
+                "\nPress Special Ability to gain an even higher temporary boost and remove the movement penalties" +
                 "\n'That's gotta sting'");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
@@ -62,9 +62,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                     player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
                 }
             }
-            if (player.itemAnimation > 14 && (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()) | player.HasBuff(ModContent.BuffType<ScoutsBoost2>())))
+            if (player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
             {
-                player.moveSpeed *= 0.01f;
+                //nothing
+            }
+            else
+            if (player.itemAnimation > 14 && (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>())))
+            {
+                player.velocity *= 0.92f;
             }
             else if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()))
             {

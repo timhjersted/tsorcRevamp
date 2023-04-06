@@ -11,8 +11,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Shatter the earth" +
-                                "\nBreaks walls with amazing speed" +
-                                "\nHold the cursor away from you to wield only as a weapon" +
                                 "\nSummons electrospheres upon hitting an enemy");
         }
         public override void SetDefaults()
@@ -22,7 +20,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 33;
             Item.useTime = 10;
-            Item.hammer = 120;
             Item.damage = 50;
             Item.knockBack = 15;
             Item.autoReuse = true;

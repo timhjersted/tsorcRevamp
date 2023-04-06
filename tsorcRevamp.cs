@@ -75,6 +75,7 @@ namespace tsorcRevamp
         public static ModKeybind reflectionShiftKey;
         public static ModKeybind specialAbility;
         public static ModKeybind WolfRing;
+        public static ModKeybind WingsOfSeath;
         public static bool isAdventureMap = false;
         public static int DarkSoulCustomCurrencyId;
         internal bool UICooldown = false;
@@ -153,6 +154,7 @@ namespace tsorcRevamp
             DodgerollKey = KeybindLoader.RegisterKeybind(this, "Dodge Roll", Microsoft.Xna.Framework.Input.Keys.LeftAlt);
             specialAbility = KeybindLoader.RegisterKeybind(this, "Special Ability", Microsoft.Xna.Framework.Input.Keys.Q);
             WolfRing = KeybindLoader.RegisterKeybind(this, "Wolf Ring", Microsoft.Xna.Framework.Input.Keys.Y);
+            WingsOfSeath = KeybindLoader.RegisterKeybind(this, "Wings of Seath speed toggle", Microsoft.Xna.Framework.Input.Keys.U);
             //SwordflipKey = KeybindLoader.RegisterKeybind(this, "Sword Flip", Microsoft.Xna.Framework.Input.Keys.P);
 
             DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulCoin>(), 99999L));
@@ -930,6 +932,7 @@ namespace tsorcRevamp
             reflectionShiftKey                                  = null;
             specialAbility                                      = null;
             WolfRing                                            = null;
+            WingsOfSeath                                        = null;
             KillAllowed                                         = null;
             PlaceAllowed                                        = null;
             Unbreakable                                         = null;

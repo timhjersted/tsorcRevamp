@@ -298,7 +298,7 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.BloomShards>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.BloomShards>())); //expert drop
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HeavenPiercer>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheEnd>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfAttraidies>(), 1, 15, 23));
