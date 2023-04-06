@@ -1007,7 +1007,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             //Heavy Impact + lightning sfx to indicate death
             if (deathTimer == 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashPre") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
+                SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Thunder_0"));
+                SoundEngine.PlaySound(SoundID.Item62);
             }
 
             //Attraidies falls
@@ -1020,7 +1021,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
             if(deathTimer == 150)
             {
-                //Booming laugh sfx
+                SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/EvilLaugh") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
                 //Spawn distortion lightning effect aimed 45 degrees offset from nearest player
             }
 
