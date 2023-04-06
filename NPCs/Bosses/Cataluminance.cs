@@ -36,6 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.boss = true;
             NPC.width = 80;
             NPC.height = 80;
+            NPC.HitSound = SoundID.NPCHit42;
 
             NPC.value = 600000;
             NPC.aiStyle = -1;
@@ -432,7 +433,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (laserCountdown == 0)
             {
-                rotationSpeed = 0.4f;
+                rotationSpeed = 0.3f;
                 if (MoveTimer < 400)
                 {
                     UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -700).RotatedBy(targetAngle + (MathHelper.Pi * 4f / 3f)), 1f, 45);
@@ -455,11 +456,11 @@ namespace tsorcRevamp.NPCs.Bosses
                 //Start reducing turn speed
                 if (laserCountdown > 386)
                 {
-                    rotationSpeed = 0.4f;
+                    rotationSpeed = 0.3f;
                 }
                 else
                 {
-                    rotationSpeed = 0.03f;
+                    rotationSpeed = 0.02f;
                 }
 
                 //Start the countdown 30 frames early to make the boss prematurely slow down
@@ -737,6 +738,7 @@ namespace tsorcRevamp.NPCs.Bosses
         float lightCooldown;
         void Transform()
         {
+            NPC.HitSound = SoundID.NPCHit4;
             MoveTimer = 0;
             NPC.velocity *= 0.95f;
             if (Main.netMode != NetmodeID.Server && !Filters.Scene["tsorcRevamp:CatShockwave"].IsActive())

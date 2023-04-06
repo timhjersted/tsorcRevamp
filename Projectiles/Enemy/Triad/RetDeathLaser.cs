@@ -55,10 +55,18 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 playedSound = true;
             }
         }
+        
+        public override float CollisionWidthFunction(float progress)
+        {
+            return 9;
+        }
 
         float timeFactor = 0;
         public override void SetEffectParameters(Effect effect)
         {
+            collisionEndPadding = trailPositions.Count / 3;
+            collisionPadding = trailPositions.Count / 8;
+            visualizeTrail = false;
             timeFactor++;
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture1);
             effect.Parameters["fadeOut"].SetValue(fadeOut);

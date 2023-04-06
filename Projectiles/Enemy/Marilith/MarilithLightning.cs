@@ -50,13 +50,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             FiringDuration = 30;
             MaxCharge = 60;
             LaserLength = 2000;
-            TileCollide = true;
             LaserSize = 1.3f;
             LaserColor = Color.Cyan;
             LaserTexture = TransparentTextureHandler.TransparentTextureType.Lightning;
 
             LaserTextureBody = new Rectangle(0, 0, 10, 4);
             LaserSound = null;
+            TileCollide = true;
 
             LaserDebuffs = new List<int>(BuffID.Electrified);
             DebuffTimers = new List<int>(300);
@@ -69,6 +69,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         public SoundStyle ThunderSound = new SoundStyle("Terraria/Sounds/Thunder_0");
         public override void AI()
         {
+            if (Projectile.ai[0] == 1)
+            {
+                TileCollide = false;
+                segmentCount = 40;
+            }
             System.Diagnostics.Stopwatch thisWatch = new System.Diagnostics.Stopwatch();
             thisWatch.Start();
             if (IsAtMaxCharge)
@@ -176,7 +181,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         }
 
         public bool randomized = false;
-        List<List<Vector2>> branches;
+        public List<List<Vector2>> branches;
         List<List<float>> branchAngles;
         List<List<float>> branchLengths;
         public int segmentCount = 80;
@@ -375,7 +380,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             
             //Restart the spritebatch so the shader doesn't get applied to the rest of the game
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
 
             return false;
         }
@@ -507,18 +512,21 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         }
 
         public void DrawSegments()
-        {            
-            for (int i = 0; i < branches.Count; i++)
+        {
+            if (branches != null)
             {
-                for (int j = 0; j < branches[i].Count - 1; j++)
+                for (int i = 0; i < branches.Count; i++)
                 {
-                    float scale = 0.7f;
-                    if (i == 0)
+                    for (int j = 0; j < branches[i].Count - 1; j++)
                     {
-                        scale = 1;
+                        float scale = 0.7f;
+                        if (i == 0)
+                        {
+                            scale = 1;
+                        }
+                        DrawLightning(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], branches[i][j],
+                                branches[i][j + 1], LaserTargetingHead, LaserTextureBody, LaserTargetingTail, branchLengths[i][j], branchAngles[i][j], scale, LaserColor);
                     }
-                    DrawLightning(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], branches[i][j],
-                            branches[i][j + 1], LaserTargetingHead, LaserTextureBody, LaserTargetingTail, branchLengths[i][j], branchAngles[i][j], scale, LaserColor);
                 }
             }
         }

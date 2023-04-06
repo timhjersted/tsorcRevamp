@@ -41,6 +41,8 @@ namespace tsorcRevamp
         public static Dictionary<NPCDefinition, int> NewSlain;
         public static Dictionary<Vector2, int> MapMarkers;
 
+        public static Vector2 AbyssPortalLocation;
+
         public override void OnWorldLoad()
         {
             DownedVortex = false;
@@ -94,6 +96,7 @@ namespace tsorcRevamp
             MapMarkers ??= new();
             tag.Add("MapMarkerKeys", MapMarkers.Keys.ToList());
             tag.Add("MapMarkerValues", MapMarkers.Values.ToList());
+            tag.Add("AbyssPortal", AbyssPortalLocation);
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -112,6 +115,8 @@ namespace tsorcRevamp
             TheEnd = worldStateList.Contains("TheEnd");
             CustomMap = worldStateList.Contains("CustomMap");
 
+            AbyssPortalLocation = tag.Get<Vector2>("AbyssPortal");
+
             //Faisafe. Checks some blocks near the top of one of the Wyvern Mage's tower that are unlikely to change. Even if they do, this shouldn't be necessary though. It's purely to be safe.
             if (Framing.GetTileSafely(7102, 137).TileType == 54 && Framing.GetTileSafely(7103, 137).TileType == 357 && Framing.GetTileSafely(7104, 136).TileType == 357 && Framing.GetTileSafely(7105, 136).TileType == 197)
             {
@@ -129,6 +134,13 @@ namespace tsorcRevamp
                     if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated)
                     {
                         NPCs.Bosses.SuperHardMode.DarkCloud.ActuatePyramid();
+                    }
+                }
+                if (Main.tile[1365, 280] != null)
+                {
+                    if (Main.tile[1365, 280].HasTile && Main.tile[1365, 280].IsActuated)
+                    {
+                        NPCs.Bosses.Okiku.FinalForm.Attraidies.ActuateAttraidiesArena();
                     }
                 }
             }

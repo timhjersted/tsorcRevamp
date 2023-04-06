@@ -177,7 +177,7 @@ namespace tsorcRevamp.Projectiles.VFX
         /// <summary>
         /// Whether the trail has completed its initialization tasks or not
         /// </summary>
-        bool initialized = false;        
+        public bool initialized = false;        
 
         public float lengthPercent
         {
@@ -187,7 +187,7 @@ namespace tsorcRevamp.Projectiles.VFX
             }
         }
 
-        Vector2 lastPosition = Vector2.Zero;
+        public Vector2 lastPosition = Vector2.Zero;
         public override void AI()
         {            
             if (!initialized)
@@ -492,7 +492,7 @@ namespace tsorcRevamp.Projectiles.VFX
                     Main.spriteBatch.Draw(starTexture, trailPositions[i] - Main.screenPosition - new Vector2(CollisionWidthFunction((float)i / (float)trailPositions.Count), 0).RotatedBy(trailRotations[i] + MathHelper.PiOver2), starSourceRectangle, Color.White, trailRotations[i], starOrigin, Projectile.scale * scaleFactor, SpriteEffects.None, 0);
                 }
                 Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             }
 
             return false;

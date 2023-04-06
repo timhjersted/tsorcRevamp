@@ -1318,6 +1318,26 @@ namespace tsorcRevamp
                     int dust2 = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 54, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1f); //54 was 58
                     Main.dust[dust2].noGravity = true;
                 }
+
+                if (Main.rand.NextBool(3))
+                {
+                    // Render fire particles [every frame]
+                    int particle = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 54, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 160, default(Color), 3f);
+                    Main.dust[particle].noGravity = true;
+                    Main.dust[particle].velocity *= 1.4f;
+                    int lol = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 58, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 160, default(Color), 3f);
+                    Main.dust[lol].noGravity = true;
+                    Main.dust[lol].velocity *= 1.4f;
+                }
+
+                // Render smoke particles [every other frame]
+                if (Main.GameUpdateCount % 2 == 0)
+                {
+                    int particle2 = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 58, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1f + (float)Main.rand.Next(2));
+                    Main.dust[particle2].noGravity = true;
+                    Main.dust[particle2].noLight = true;
+                    Main.dust[particle2].fadeIn = 3f;
+                }
             }
 
             if (PhazonCorruption)

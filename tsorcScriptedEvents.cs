@@ -145,6 +145,7 @@ namespace tsorcRevamp
             MarilithFight,
             KrakenFight,
             GwynTombVision,
+            AbyssPortal,
             GwynFight,
             AbysmalOolacileSorcererFight,
             WitchkingFight,
@@ -286,6 +287,9 @@ namespace tsorcRevamp
 
             //GWYN's TOMB VISIONS
             ScriptedEvent GwynsTombEvent = new ScriptedEvent(new Vector2(670, 1164), 150, ModContent.NPCType<NPCs.Special.GwynBossVision>(), DustID.RedTorch, false, true, true, "default", default, false, GwynsTombVisionCustomCondition);
+            
+            //ABYSS PORTAL
+            ScriptedEvent AbyssPortalEvent = new ScriptedEvent(new Vector2(670, 1164), 9999999, ModContent.NPCType<NPCs.Special.AbyssPortal>(), DustID.RedTorch, false, false, false, "default", default, false, AbyssPortalCustomCondition);
 
             //GWYN
             ScriptedEvent GwynEvent = new ScriptedEvent(new Vector2(832, 1244), 16, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.OrangeTorch, true, true, true, "Gwyn has awoken to bring your journey to its final end...", Color.Red, false);
@@ -454,6 +458,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.SerrisFight, SerrisEvent},
                 {ScriptedEventType.MarilithFight, MarilithEvent},
                 {ScriptedEventType.KrakenFight, KrakenEvent},
+                {ScriptedEventType.AbyssPortal, AbyssPortalEvent},
                 {ScriptedEventType.GwynTombVision, GwynsTombEvent},
                 {ScriptedEventType.GwynFight, GwynEvent},
                 {ScriptedEventType.AbysmalOolacileSorcererFight, AbysmalOolacileSorcererEvent},
@@ -601,7 +606,6 @@ namespace tsorcRevamp
                 return true;
             }
         }
-
         public static bool GwynsTombVisionCustomCondition()
         {
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>())) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Special.GwynBossVision>()))
@@ -611,6 +615,17 @@ namespace tsorcRevamp
             else
             {
                 return true;
+            }
+        }
+        public static bool AbyssPortalCustomCondition()
+        {
+            if (tsorcRevampWorld.SuperHardMode && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Special.AbyssPortal>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 

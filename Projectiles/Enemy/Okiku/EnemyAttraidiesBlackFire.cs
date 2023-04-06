@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -7,7 +8,7 @@ using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy.Okiku
 {
-    class EnemyAttraidiesBlackFire : ModProjectile
+    class EnemyAttraidiesBlackFire : Projectiles.VFX.DynamicTrail
     {
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/EnemyBlackFire";
 
@@ -18,65 +19,84 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         }
         public override void SetDefaults()
         {
-            Projectile.width = 12;
-            Projectile.height = 12;
-            Projectile.scale = 1.5f;
-            Projectile.alpha = 50;
-            Projectile.aiStyle = -1;
-            Projectile.timeLeft = 360;
-            Projectile.friendly = false;
+            Projectile.width = 20;
+            Projectile.height = 20;
+            Projectile.timeLeft = 600;
             Projectile.hostile = true;
-            Projectile.penetrate = 1;
-            Projectile.light = 0.8f;
-            Projectile.DamageType = DamageClass.Magic;
-            Projectile.tileCollide = true;
-            Projectile.damage = 1;
-            Projectile.knockBack = 9;
+            Projectile.friendly = false;
+            Projectile.tileCollide = false;
+
+            trailWidth = 25;
+            trailPointLimit = 150;
+            trailYOffset = 30;
+            trailMaxLength = 150;
+            NPCSource = false;
+            collisionPadding = 0;
+            collisionEndPadding = 1;
+            collisionFrequency = 2;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/BlackFireball", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
+
         public override void AI()
         {
-            if (Main.player[(int)Projectile.ai[0]].position.Y > Projectile.position.Y)
+            base.AI();
+            Lighting.AddLight(Projectile.Center, Color.Purple.ToVector3());
+
+            if ((int)Projectile.ai[0] < 0)
             {
-                Projectile.tileCollide = false;
+                //Let them move slow for a second to telegraph before accelerating off
+                if (Projectile.timeLeft < 540)
+                {
+                    Projectile.velocity *= 1.05f;
+                }
             }
             else
             {
-                Projectile.tileCollide = true;
-            }
+                if (Main.player[(int)Projectile.ai[0]].position.Y > Projectile.position.Y)
+                {
+                    Projectile.tileCollide = false;
+                }
+                else
+                {
+                    Projectile.tileCollide = true;
+                }
 
+                // Determine projectile behavior
+                // Apply half-gravity & clamp downward speed
+                Projectile.velocity.Y = Projectile.velocity.Y > 16f ? 16f : Projectile.velocity.Y + 0.1f;
 
-            // Determine projectile behavior
-            // Apply half-gravity & clamp downward speed
-            Projectile.velocity.Y = Projectile.velocity.Y > 16f ? 16f : Projectile.velocity.Y + 0.1f;
+                if (Projectile.velocity.X < 0f)
+                {    // Dampen left-facing horizontal velocity & clamp to minimum speed
+                    Projectile.velocity.X = Projectile.velocity.X > -1f ? -1f : Projectile.velocity.X + 0.01f;
+                }
+                else if (Projectile.velocity.X > 0f)
+                {    // Dampen right-facing horizontal velocity & clamp to minimum speed
+                    Projectile.velocity.X = Projectile.velocity.X < 1f ? 1f : Projectile.velocity.X - 0.01f;
+                }
 
-            if (Projectile.velocity.X < 0f)
-            {    // Dampen left-facing horizontal velocity & clamp to minimum speed
-                Projectile.velocity.X = Projectile.velocity.X > -1f ? -1f : Projectile.velocity.X + 0.01f;
-            }
-            else if (Projectile.velocity.X > 0f)
-            {    // Dampen right-facing horizontal velocity & clamp to minimum speed
-                Projectile.velocity.X = Projectile.velocity.X < 1f ? 1f : Projectile.velocity.X - 0.01f;
-            }
+                // Align projectile facing with velocity normal
+                Projectile.rotation = (float)Math.Atan2(Projectile.velocity.Y, Projectile.velocity.X) - 2.355f;
 
-            // Align projectile facing with velocity normal
-            Projectile.rotation = (float)Math.Atan2(Projectile.velocity.Y, Projectile.velocity.X) - 2.355f;
-            // Render fire particles [every frame]
-            int particle = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 54, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 160, default(Color), 3f);
-            Main.dust[particle].noGravity = true;
-            Main.dust[particle].velocity *= 1.4f;
-            int lol = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 58, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 160, default(Color), 3f);
-            Main.dust[lol].noGravity = true;
-            Main.dust[lol].velocity *= 1.4f;
+                if (Main.rand.NextBool(3))
+                {
+                    // Render fire particles [every frame]
+                    int particle = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 54, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 160, default(Color), 3f);
+                    Main.dust[particle].noGravity = true;
+                    Main.dust[particle].velocity *= 1.4f;
+                    int lol = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 58, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 160, default(Color), 3f);
+                    Main.dust[lol].noGravity = true;
+                    Main.dust[lol].velocity *= 1.4f;
+                }
 
-
-            // Render smoke particles [every other frame]
-            if (Projectile.timeLeft % 2 == 0)
-            {
-                int particle2 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 1, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f - 1f, 180, default(Color), 1f + (float)Main.rand.Next(2));
-                Main.dust[particle2].noGravity = true;
-                Main.dust[particle2].noLight = true;
-                Main.dust[particle2].fadeIn = 3f;
-            }
+                // Render smoke particles [every other frame]
+                if (Projectile.timeLeft % 2 == 0)
+                {
+                    int particle2 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 1, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f - 1f, 180, default(Color), 1f + (float)Main.rand.Next(2));
+                    Main.dust[particle2].noGravity = true;
+                    Main.dust[particle2].noLight = true;
+                    Main.dust[particle2].fadeIn = 3f;
+                }
+            }            
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
@@ -142,6 +162,31 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             // terminate projectile
             Projectile.active = false;
             return true;
+        }
+
+        
+        public override float CollisionWidthFunction(float progress)
+        {
+            return 12;
+        }
+
+        float timeFactor = 0;
+        public override void SetEffectParameters(Effect effect)
+        {
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/BlackFireball", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/BlackFireball", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            collisionEndPadding = trailPositions.Count / 3;
+            collisionPadding = trailPositions.Count / 8;
+            visualizeTrail = false;
+            timeFactor++;
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture1);
+            effect.Parameters["fadeOut"].SetValue(fadeOut);
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+
+            Color shaderColor = Color.DarkViolet;
+            shaderColor = UsefulFunctions.ShiftColor(shaderColor, timeFactor, 0.03f);
+            effect.Parameters["shaderColor"].SetValue(shaderColor.ToVector4());
+            effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
     }
 }

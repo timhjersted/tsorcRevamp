@@ -43,6 +43,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             TileCollide = false;
             CastLight = false;
             LaserDust = 234;
+            FadeOutFrames = 20;
         }
 
         public override void AI()

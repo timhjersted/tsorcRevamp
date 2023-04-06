@@ -16,24 +16,34 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             Projectile.tileCollide = false;
             Projectile.width = 16;
             Projectile.hostile = false;
-            Projectile.timeLeft = 300;
+            Projectile.timeLeft = 420;
         }
 
 
         bool initialized = false;
         float timer = 60;
+        bool randomize = false;
+        int delay = 0;
         public override void AI()
         {
             timer--;
+
             if (!initialized && timer <= 0)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.player[(int)Projectile.ai[0]].Center, 5) + Main.rand.NextVector2Circular(5, 5);
+                    Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.player[(int)Projectile.ai[0]].Center, 5);
+
+                    targetVector += Main.rand.NextVector2Circular(2, 2);
                     targetVector.Normalize();
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, targetVector, ModContent.ProjectileType<StardustBeam>(), Projectile.damage, 0, Main.myPlayer, Projectile.ai[1], UsefulFunctions.EncodeID(Projectile));
+
+                    if (!randomize)
+                    {
+                        break;
+                    }
                 }
-                Projectile.timeLeft = (int)Projectile.ai[1] + 160;
+                Projectile.timeLeft = (int)delay + 220;
                 initialized = true;
             }
 
@@ -45,30 +55,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
             Projectile.velocity.X *= .95f;
             Projectile.velocity.Y *= .95f;
-            Projectile.rotation++;
-
-            /*
-
-            if (laser == null)
-            {
-                laser = (GenericLaser)Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(0, 5), ModContent.ProjectileType<GenericLaser>(), Projectile.damage, .5f).ModProjectile;
-                laser.LaserOrigin = Projectile.position;
-                laser.LaserTarget = Main.player[(int)Projectile.ai[0]].position;
-                laser.TelegraphTime = 300;
-                laser.FiringDuration = 120;
-                laser.LaserLength = 8000; //What could go wrong? Turns out, plenty!
-                laser.LaserColor = Color.DeepSkyBlue;
-                laser.TileCollide = false;
-                laser.CastLight = false;
-                laser.LaserDust = 234;
-                laser.MaxCharge = ;
-            }
-            else
-            {
-                laser.LaserOrigin = Projectile.Center;
-                laser.LaserTarget = Vector2.Lerp(laser.LaserTarget, Main.player[(int)Projectile.ai[0]].position, 0.02f);
-            }
-            */
+            Projectile.rotation++;                        
         }
         static Texture2D texture;
         public override bool PreDraw(ref Color lightColor)

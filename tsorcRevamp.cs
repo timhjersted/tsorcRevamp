@@ -213,7 +213,6 @@ namespace tsorcRevamp
             Filters.Scene["tsorcRevamp:SpazShockwave"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(SpazShockwaveEffect), "TriadShockwavePass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
             CatShockwaveEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TriadShockwave", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             Filters.Scene["tsorcRevamp:CatShockwave"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(CatShockwaveEffect), "TriadShockwavePass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
-            
 
             tNoiseTexture1 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/TurbulentNoise1", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             tNoiseTexture2 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/TurbulentNoise2", ReLogic.Content.AssetRequestMode.ImmediateLoad);

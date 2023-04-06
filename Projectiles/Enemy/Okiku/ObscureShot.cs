@@ -46,6 +46,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             }
         }
 
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DarkInferno>(), 100);
+        }
+
         //This is too hard to see especially at night, so i'm making it ignore all lighting and always draw at full brightness
         static Texture2D texture;
         public override bool PreDraw(ref Color lightColor)

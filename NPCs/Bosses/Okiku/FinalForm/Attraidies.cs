@@ -1,8 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Graphics.Effects;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 
@@ -14,19 +18,20 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/FirstForm/DarkShogunMask";
         public override void SetDefaults()
         {
+            NPC.aiStyle = -1;
             NPC.npcSlots = 10;
-            NPC.damage = 85;
+            NPC.damage = 0;
             NPC.defense = 25;
-            NPC.height = 44;
-            NPC.width = 28;
+            NPC.height = 100;
+            NPC.width = 100;
             NPC.timeLeft = 22500;
             Music = 12;
-            NPC.lifeMax = 120000;
+            NPC.lifeMax = 250000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath14;
-            NPC.noGravity = false;
+            NPC.noGravity = true;
             NPC.scale = 1.2f;
-            NPC.noTileCollide = false;
+            NPC.noTileCollide = true;
             NPC.boss = true;
             NPC.value = 600000;
             NPC.lavaImmune = true;
@@ -35,640 +40,716 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             Main.npcFrameCount[NPC.type] = 3;
-            despawnHandler = new NPCDespawnHandler("With your death, a dark shadow falls over the world...", Color.DarkMagenta, DustID.PurpleCrystalShard);
+            despawnHandler = new NPCDespawnHandler("With your death a dark shadow falls over the world...", Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
 
-        public int ShadowOrbDamage = 82;
-        public int CrystalShardsDamage = 92;
-        public int DeathBallDamage = 123;
-        public int BlackFireDamage = 82;
-        public int StardustLaserDamage = 102;
-        public int AntiMatterBlastDamage = 92;
-        public int SolarDetonationDamage = 112;
-        public int LightningStrikeDamage = 132;
-        public int DarkLaserDamage = 102;
+        public int ShadowOrbDamage = 35;
+        public int PoisonTrailDamage = 40;
+        public int BlackFireDamage = 35;
+        public int StardustLaserDamage = 45;
+        public int NebulaShotDamage = 35;
+        public int SolarDetonationDamage = 45;
+        public int LightningStrikeDamage = 35;
+        public int DarkLaserDamage = 45;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
-        {
-            ShadowOrbDamage /= 2;
-            CrystalShardsDamage /= 2;
-            DeathBallDamage /= 2;
-            BlackFireDamage /= 2;
-            StardustLaserDamage /= 2;
-            AntiMatterBlastDamage /= 2;
-            SolarDetonationDamage /= 2;
-            LightningStrikeDamage /= 2;
-            DarkLaserDamage /= 2;
-        }        
 
-        public float AttackMode
+        public int CurrentAttackMode
         {
-            get => NPC.ai[0];
+            get => (int)NPC.ai[0];
             set => NPC.ai[0] = value;
         }
-        public float AttackModeCounter
+        public float AttackTimer
         {
             get => NPC.ai[1];
             set => NPC.ai[1] = value;
         }
-        public float TeleportTimer
+        public int Phase
         {
-            get => NPC.ai[2];
+            get => (int)NPC.ai[2];
             set => NPC.ai[2] = value;
         }
-        public float DragonSpawned
+
+        List<Action> CurrentMoveList
         {
-            get => NPC.ai[3];
-            set => NPC.ai[3] = value;
+            get
+            {
+                switch (Phase)
+                {
+                    case 0:
+                        return Phase0MoveList;
+                    case 1:
+                        return Phase1MoveList;
+                    default:
+                        return Phase2MoveList;
+                }
+            }
         }
 
+        Action CurrentMove
+        {
+            get
+            {
+                if(Phase == 3)
+                {
+                    return FinalStand;
+                }
+                else
+                {
+                    return CurrentMoveList[CurrentAttackMode];
+                }
+            }
+        }
 
+        Player Target
+        {
+            get
+            {
+                return Main.player[NPC.target];
+            }
+        }
 
-        public float ShadowShotCount = 0;
-        public float CrystalShardsTimer = 0;
-        public float NPCSummonCooldown = 0;
-        public bool SetVelocity = false;
-        public Vector2 NewVelocity = Vector2.Zero;
-        int TravelDir = 0;
-        Vector2 OrbitOffset = new Vector2(300, 0);
-        float RotationProgress = 0;
-        //The first entry is true here because he always starts with attack 0, and the rest are only set upon changing attacks
-        bool[] UsedAttacks = new bool[7] { true, false, false, false, false, false, false };
+        List<Action> Phase0MoveList;
+        List<Action> Phase1MoveList;
+        List<Action> Phase2MoveList;
+        int AuraState = 0;
+
         bool initialized = false;
-        #region AI
+
+        int introTimer = 0;
+        int attackSwitchDelay = 0;
+        int deathTimer;
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+            //if (NPC.life > 14000)
+            {
+                //NPC.life = 14000;
+            }
             if (!initialized)
             {
                 UsefulFunctions.BroadcastText("I am impressed you've made it this far, Red. But I'm done playing games. It's time to end this...", 175, 75, 255);
+                InitializeMoves();
+                if (!Main.tile[1365,280].IsActuated)
+                {
+                    ActuateAttraidiesArena();
+                }
                 initialized = true;
             }
-            //if(Main.netMode == NetmodeID.Server)
-            //{
-            //     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, this.npc.whoAmI);
-            //}
-
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            TeleportTimer++;
-            //npc.ai[2] = 
-            CrystalShardsTimer++; //Crystal Shards attack
+            if (introTimer < 60)
+            {
+                Intro();
+            }
 
-            //if (Main.netMode != NetmodeID.Server && !Filters.Scene["tsorcRevamp:AttraidiesShader"].IsActive())
-            //{
-            //    Filters.Scene.Activate("tsorcRevamp:AttraidiesShader");
-            //}
+            ManageLife();
+            HandleAura();
+            SpawnDusts();
 
-            //Attacks:
-            //Mode 0, Teleporting Shots: Teleports above the player, dropping down on them while firing an unbreaking stream of Shadow Shots, casting Massive Crystal Shards, and rarely firing Sudden Death Balls. Classic.
-            //Mode 1, Black Fire: Similar to his Phase 2 Obscure Drop attack, except the projectiles are Black Fireballs and there are (thankfully) fewer of them
-            //Maybe the fireballs should fall slower, but there should be more of them? Gotta find a balance. A bit janky to dodge right now even with supersonic wings and dragoon armor movespeed boosts due to acceleration/deceleration still being super slow
-            //Mode 2, Stardust Lasers: Spawns sets of 4 blue spheres, which then fire lasers at the player that persist and slowly move toward them over a few seconds
-            //(Lerps the laser's target Vector2 with the player's right now, meaning tracking slows as it gets closer to give them more of a shot at escaping. If this needs to be made harder to dodge it could just move at them with a set velocity instead)
-            //Maybe instead these should totally aim at unmoving spots randomly all around the player instead of homing on them?
-            //Mode 3, Homing Spheres: Flies past the player firing a large array of homing projectiles.
-            //Maybe he should rotate around the player in a quarter-circle instead if this needs to be made harder? Maybe just if he's low on health
-            //Mode 4, Solar Eruptions: Rapidly spawns floating solar charges all over the battlefield, which detonate a few seconds later scattering projectiles and firing a laser in 5 directions
-            //[TODO]Mode 5: Chain Lightning. Starts at Attraidies and zig-zag's across the screen, telegraphing its path a moment in advance.
-            //Should maybe trap the player in a large ball of lightning too so they can't just run? Like an inverse of Mode 6. May have to use lasers, normal projectiles that big are really janky...
-            //Should also probably be predictive
-            //Mode 6: Fires dark lasers in 5 directions which rotate around him slowly, while he also spams Obscure Shot's in all directions.
+            if (transitionTimer == 0)
+            {
+                if(attackSwitchDelay > 0)
+                {
+                    attackSwitchDelay--;
+                    NPC.velocity *= 0.95f;
+                }
+                else
+                {
+                    CurrentMove();
+                    AttackTimer++;
+                }
+            }
+        }
 
-            #region Dusts
-            //Spawn dusts depending on his max life
-            if (NPC.life > (NPC.lifeMax / 2))
+        float transitionTimer = 0;
+        void ManageLife()
+        {
+            if (transitionTimer > 0)
+            {
+                transitionTimer--;
+                if (Phase != 2)
+                {
+                    NPC.velocity *= 0.9f;
+                    if (transitionTimer == 30)
+                    {
+                        //Advance to the next aura state
+                        AuraState = Phase + 1;
+                        //Spawn shockwave
+                    }
+                }
+                else
+                {
+                    //For transitioning to the final phase, move above the player first
+                    //Do not allow transitionTimer to progress until it is there
+                    UsefulFunctions.SmoothHoming(NPC, Target.Center + new Vector2(0, -800), 1, 40, null, true, 0.2f);
+                    if (Vector2.Distance(NPC.Center, Target.Center + new Vector2(0, -800)) > 150)
+                    {
+                        transitionTimer++;
+                    }
+                }
+
+                if (transitionTimer == 0)
+                {
+                    NPC.dontTakeDamage = false;
+                    Phase++;
+                    AuraState = Phase;
+                    AttackTimer = 0;
+                    CurrentAttackMode = 0;
+                    StartAura(0.2f);
+                    for(int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<AttraidiesFragment>())
+                        {
+                            Main.npc[i].active = false;
+                        }
+                    }
+                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<VortexOrb>());
+                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>());
+                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<DarkLaser>());
+                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<DarkLaserHost>());
+
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, this.NPC.whoAmI);
+                    }
+                }
+
+                return;
+            }
+            else
+            {
+                //Initiate transitions with various durations
+                if (Phase == 0 && NPC.life < NPC.lifeMax * 0.7f)
+                {
+                    NPC.dontTakeDamage = true;
+                    transitionTimer = 120;
+                }
+                if (Phase == 1 && NPC.life < NPC.lifeMax * 0.4f)
+                {
+                    NPC.dontTakeDamage = true;
+                    transitionTimer = 60;
+                }
+                if (Phase == 2 && NPC.life < NPC.lifeMax * 0.20f)
+                {
+                    NPC.dontTakeDamage = true;
+                    UsefulFunctions.BroadcastText("You feel the dark power of Attraidies flare...", Color.Purple);
+                    UsefulFunctions.BroadcastText("And the power of the Earth uplift you from below, giving you the strength to finish him!", Color.Green);
+                    transitionTimer = 45;
+                }
+                if (NPC.life == 1)
+                {
+                    deathTimer++;
+                    HandleDeath();
+                }
+            }
+        }
+        
+
+        //TODO: Create entirely
+        void Intro()
+        {
+            introTimer++;
+            //Distortion bubble collapses above player
+            if (introTimer == 1)
+            {
+                NPC.dontTakeDamage = true;
+                NPC.Center = Target.Center + new Vector2(0, -300);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer);
+                }
+            }
+            //Four loud lightning strikes
+            //A flash, fading into an explosion like the triad death but rotated 45 degrees
+            //The dude appears
+
+            NPC.dontTakeDamage = false;
+        }
+
+        void SpawnDusts()
+        {
+            //Spawn dusts depending on his health
+            if (Phase == 1)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X, NPC.velocity.Y, 200, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;
             }
-            else
+
+            if(Phase == 2)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 140, Color.Red, 2f);
                 Main.dust[dust].noGravity = true;
             }
-            #endregion
+        }
 
-            #region Movement
-            if (AttackMode == 0)
+        
+        void ChargingPoisonTrails()
+        {
+            Lighting.AddLight(NPC.position, Color.DarkOrange.ToVector3());
+
+            if(Phase == 2)
             {
-                Lighting.AddLight(NPC.position, Color.DarkOrange.ToVector3());
-                if ((TeleportTimer >= 190 && NPC.life > 12000) || (TeleportTimer >= 110 && NPC.life <= 12000))
+                for (int i = 0; i < Main.maxPlayers; i++)
                 {
-                    AttraidiesTeleport();
-                    NPC.noGravity = false;
-                    TeleportTimer = 0;
-                    CrystalShardsTimer = 0;
-                    ShadowShotCount = 0;
-                    AttackModeCounter++;
-                    if (AttackModeCounter == 5)
+                    if (Main.player[i] != null && Main.player[i].active)
                     {
-                        ChangeAttackModes();
+                        Main.player[i].AddBuff(ModContent.BuffType<Buffs.EarthAlignment>(), 300);
                     }
                 }
-
-                #region Slow down after teleporting
-                //Shortly after teleporting, slow down to a stop.
-                if (TeleportTimer >= 30)
-                {
-                    NPC.velocity.X *= 0.17f;
-                    NPC.velocity.Y *= 0.17f;
-                }
-                #endregion
             }
 
-            if (AttackMode == 1)
+            float chargeDelay = 60;
+            if(Phase == 1)
             {
-                Lighting.AddLight(NPC.position, Color.Purple.ToVector3());
-                if (!SetVelocity)
+                chargeDelay = 75;
+            }
+            if(Phase == 2)
+            {
+                chargeDelay = 90;
+            }
+
+            //Charging up VFX
+            if(AttackTimer < 120)
+            {
+                return;
+            }
+            if(AttackTimer % chargeDelay == 0)
+            {
+                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 20);
+                if(Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC.noGravity = true;
-                    NPC.noTileCollide = true;
-                    if (Math.Abs((int)Main.player[NPC.target].position.X - (int)NPC.position.X) > 100)
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PoisonTrail>(), PoisonTrailDamage, 1, Main.myPlayer, 1, NPC.whoAmI);
+                }
+            }
+
+            if(AttackTimer % chargeDelay > 45)
+            {
+                NPC.velocity *= 0.9f;
+            }
+
+            if (AttackTimer % chargeDelay == 45 && Phase > 0 && AttackTimer < 860)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    if(Phase == 2 && AttackTimer % chargeDelay * 2 == 45)
                     {
-                        if (NPC.Center.X - Main.player[NPC.target].Center.X < 0)
+                        for(int i = 0; i < 4; i++)
                         {
-                            NPC.velocity = new Vector2(3, 0);
-                        }
-                        else
-                        {
-                            NPC.velocity = new Vector2(-3, 0);
+                            Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / 4f);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<StardustShot>(), StardustLaserDamage, 1, Main.myPlayer, NPC.target, 120);
+
                         }
                     }
-                    NPC.velocity.Y = -0.75f;
-                }
-
-                AttackModeCounter++;
-                if (AttackModeCounter > 600)
-                {
-                    ChangeAttackModes();
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / 8f);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<EnemyAttraidiesBlackFire>(), BlackFireDamage, -1, Main.myPlayer, -1);
+                    }
                 }
             }
-
-            if (AttackMode == 2)
+            
+            if(AttackTimer >= 860)
             {
-                Lighting.AddLight(NPC.position, Color.Cyan.ToVector3());
-                NPC.noGravity = true;
-                NPC.noTileCollide = true;
-
-                //To prevent rapid diretion changes
-                if (Math.Abs((int)Main.player[NPC.target].position.X - (int)NPC.position.X) < 100)
-                {
-                    if (Main.player[NPC.target].position.X > NPC.position.X)
-                    {
-                        NPC.velocity.X = 4;
-                    }
-                    else
-                    {
-                        NPC.velocity.X = -4;
-                    }
-                }
-
-                if (Math.Abs((int)Main.player[NPC.target].position.Y - (int)NPC.position.Y) < 100)
-                {
-                    if (Main.player[NPC.target].position.Y > NPC.position.Y)
-                    {
-                        NPC.velocity.Y = 4;
-                    }
-                    else
-                    {
-                        NPC.velocity.Y = -4;
-                    }
-                }
-
-
-                if (TeleportTimer >= 450)
-                {
-                    AttraidiesTeleport();
-                    TeleportTimer = 0;
-                    AttackModeCounter++;
-                    if (AttackModeCounter == 3)
-                    {
-                        ChangeAttackModes();
-                    }
-                }
+                NPC.velocity *= 0.9f;
             }
 
-            if (AttackMode == 3)
+            if (AttackTimer > 870)
             {
-                Lighting.AddLight(NPC.position, Color.HotPink.ToVector3());
-                NPC.noGravity = true;
-                NPC.noTileCollide = true;
-
-                float speed = 9;
-
-                if (TravelDir == 0)
-                {
-                    TravelDir = 1;
-                    NPC.position = Main.player[NPC.target].position + new Vector2(-1000, -400);
-                    AttackModeCounter = 0;
-                }
-
-                if (AttackModeCounter % 2 == 0)
-                {
-                    NPC.position.X += speed * TravelDir;
-                    NPC.position.Y = Main.player[NPC.target].position.Y - 400;
-                }
-                NPC.velocity = Vector2.Zero;
-
-                if (TeleportTimer >= 300)
-                {
-                    if (AttackModeCounter == 1)
-                    {
-                        TravelDir *= -1;
-                        NPC.position = Main.player[NPC.target].position + new Vector2(-1000 * TravelDir, -400);
-                    }
-                    else
-                    {
-                        AttraidiesTeleport();
-                    }
-                    TeleportTimer = 0;
-                    AttackModeCounter++;
-                    if (AttackModeCounter == 4)
-                    {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath43, NPC.Center);
-                        ChangeAttackModes();
-                    }
-                }
+                NPC.damage = 0;
+                NextAttack();
             }
+        }
 
-            if (AttackMode == 4)
-            {
-                Lighting.AddLight(NPC.position, Color.OrangeRed.ToVector3());
-                NPC.noGravity = true;
-                NPC.noTileCollide = true;
-                NewVelocity = new Vector2(0, 2f).RotatedByRandom(MathHelper.TwoPi);
-                SetVelocity = true;
+        
+        void BlackFireRain()
+        {
+            Lighting.AddLight(NPC.position, Color.Purple.ToVector3());
+            UsefulFunctions.SmoothHoming(NPC, Target.Center + new Vector2(0, -300), 0.05f, 5f);
 
-                NPC.position = Main.player[NPC.target].position + OrbitOffset.RotatedBy(RotationProgress);
-                RotationProgress += 0.01f; AttackModeCounter++;
-                if (AttackModeCounter > 830)
-                {
-                    ChangeAttackModes();
-                }
-            }
-
-            if (AttackMode == 5)
-            {
-                //Unfinished, just skip to the next one
-                ChangeAttackModes();
-            }
-
-            if (AttackMode == 6)
-            {
-                NPC.noTileCollide = true;
-                if (AttackModeCounter == 5)
-                {
-                    NPC.position.X = Main.player[NPC.target].position.X;
-                    NPC.position.Y -= 800;
-
-                    //Gives the player infinite flight for the duration of the attack. Sticks around for a bit afterward as a bonus.                
-                    UsefulFunctions.BroadcastText("You suddenly feel weightless...", Color.DeepSkyBlue);
-                    Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.EarthAlignment>(), 1600);
-                }
-
-                NPC.velocity = Vector2.Zero;
-                for (int i = 0; i < 10; i++)
-                {
-                    Vector2 dustOffset = Main.rand.NextVector2Circular(40, 40);
-                    Vector2 dustPos = dustOffset + NPC.Center;
-                    Dust.NewDustPerfect(dustPos, 54, Vector2.Zero, 250, Color.White, 2.0f).noGravity = true;
-                }
-
-                AttackModeCounter++;
-                if (AttackModeCounter > 1200)
-                {
-                    ChangeAttackModes();
-                }
-
-            }
-            #endregion            
-
-            #region Attacks
-            //These should only ever run on either a single player client or the multiplayer server!
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                #region Mode 0: Teleport and Fire Waves
-                if (AttackMode == 0)
+                if (AttackTimer > 15 && (Main.GameUpdateCount % 45 == 0))
                 {
-                    #region Shadow Orb Attack
-                    if (ShadowShotCount < 60 && (TeleportTimer % 2 == 0))
+                    for (int i = 0; i < 10; i++)
                     {
-                        float num48 = 0.5f;
-                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                        int type = ModContent.ProjectileType<ShadowOrb>();
-                        float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, ShadowOrbDamage, 0f, Main.myPlayer);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                        ShadowShotCount++;
-                        NPC.netUpdate = true; //new
+                        //The first projectile, which he fires into the sky in clumps and is mostly for visual effect (still does damage, though)
+                        Vector2 position = NPC.position + new Vector2(Main.rand.Next(-20, 20), Main.rand.Next(-20, 20));
+                        Vector2 velocity = new Vector2(Main.rand.Next(-2, 2), -50);
+                        Projectile blackFire = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, velocity, ModContent.ProjectileType<EnemyBlackFireVisual>(), BlackFireDamage, .5f, Main.myPlayer);
+                        blackFire.timeLeft = 20;
                     }
-                    #endregion
-
-                    #region Crystal Shard Attack
-                    if (CrystalShardsTimer >= 45) //how often the crystal attack can happen in frames per second
-                    {
-                        float num48 = 8f;
-                        Vector2 startPos = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 520 + (NPC.height / 2));
-                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - startPos.X) + Main.rand.Next(-20, 20);
-                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - startPos.Y) + Main.rand.Next(-20, 20);
-                        float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                        num51 = num48 / num51;
-                        speedX *= num51;
-                        speedY *= num51;
-                        int type = ModContent.ProjectileType<MassiveCrystalShardsSpell>();//44;//0x37; //14;
-                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), startPos.X, startPos.Y, speedX, speedY, type, CrystalShardsDamage, 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 80;
-                        Main.projectile[num54].aiStyle = 0;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
-                        //So he can only cast it once per-teleport
-                        CrystalShardsTimer = -2000;
-                    }
-                    if (CrystalShardsTimer >= 0)
-                    {
-                        if (Main.rand.NextBool(2))
-                        {
-                            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 234, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.White, 2.0f);
-                            Main.dust[dust].noGravity = true;
-                        }
-                    }
-                    #endregion Crystal Shard Attack
-
-                    #region Sudden Death Ball Attack
-                    if (Main.rand.NextBool(100))
-                    {
-                        float num48 = 10f;
-                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
-                        {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<EnemySuddenDeathBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, DeathBallDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 10;
-                            Main.projectile[num54].aiStyle = 1;
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                        }
-                        NPC.netUpdate = true;
-                    }
-                    #endregion
                 }
-                #endregion
 
-                #region Mode 1: Black Fire Rain
-                if (AttackMode == 1)
+                if (AttackTimer > 75 && (Main.GameUpdateCount % 5 == 0))
                 {
-                    if (AttackModeCounter > 15 && (Main.GameUpdateCount % 45 == 0))
+                    //The second projectile, which comes raining down a second later and means business
+                    Vector2 position = Main.player[NPC.target].position + new Vector2(Main.rand.Next(-1400, 1400), -700);
+                    //Very similar to normal Black Fire, but phases through blocks until it reaches the player's height.
+                    //Also the explosion doesn't do damage (for obvious reasons)
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, new Vector2(0, 5), ModContent.ProjectileType<EnemyAttraidiesBlackFire>(), BlackFireDamage, .5f, Main.myPlayer, NPC.target);
+                }
+            }
+
+            if(AttackTimer > 600)
+            {
+                NextAttack();
+            }
+        }
+
+        
+        int clockwise;
+        void DarkLasers()
+        {
+            Lighting.AddLight(NPC.position, Color.Purple.ToVector3());
+            if (AttackTimer < 90)
+            {
+                UsefulFunctions.SmoothHoming(NPC, Target.Center + new Vector2(0, -500), 0.5f, 50f);
+            }
+            else
+            {
+                NPC.velocity *= 0.9f;
+            }
+
+            for(int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i] != null && Main.player[i].active)
+                {
+                    Main.player[i].AddBuff(ModContent.BuffType<Buffs.EarthAlignment>(), 1200);
+                }
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (AttackTimer == 5)
+                {
+                    clockwise = 1;
+                    if (Phase != 2)
                     {
-                        for (int i = 0; i < 10; i++)
+                        UsefulFunctions.BroadcastText("You suddenly feel weightless...", Color.DeepSkyBlue);
+                    }
+
+                    if (Phase != 0)
+                    {
+                        for (int i = 0; i < 5; i++)
                         {
-                            //The first projectile, which he fires into the sky in clumps and is mostly for visual effect (still does damage, though)
-                            Vector2 position = NPC.position + new Vector2(Main.rand.Next(-20, 20), Main.rand.Next(-20, 20));
-                            Vector2 velocity = new Vector2(Main.rand.Next(-2, 2), -50);
-                            Projectile blackFire = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, velocity, ModContent.ProjectileType<EnemyBlackFireVisual>(), BlackFireDamage, .5f, Main.myPlayer);
-                            blackFire.timeLeft = 20;
+                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AttraidiesFragment>(), ai0: NPC.whoAmI, ai1: i, ai3: Phase);
                         }
                     }
 
-                    if (AttackModeCounter > 75 && (Main.GameUpdateCount % 5 == 0))
-                    {
-                        //The second projectile, which comes raining down a second later and means business
-                        Vector2 position = Main.player[NPC.target].position + new Vector2(Main.rand.Next(-1400, 1400), -700);
-                        //Very similar to normal Black Fire, but phases through blocks until it reaches the player's height.
-                        //Also the explosion doesn't do damage (for obvious reasons)
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, new Vector2(0, 5), ModContent.ProjectileType<EnemyAttraidiesBlackFire>(), BlackFireDamage, .5f, Main.myPlayer, NPC.target);
-                    }
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<DarkLaserHost>(), DarkLaserDamage, .5f, Main.myPlayer, NPC.whoAmI);
                 }
-                #endregion
 
-                #region Mode 2: Stardust Lasers
-                if (AttackMode == 2)
+                if (Phase == 0)
                 {
-                    if (TeleportTimer % 90 == 0 && TeleportTimer < 300)
-                    {
-                        int speed = 35;
-                        Vector2 vagueVelocity = new Vector2(Main.rand.Next(-speed, speed), Main.rand.Next(-speed, speed));
-                        for (int i = 0; i < 4; i++)
-                        {
-                            //The first projectile, which he fires into the sky in clumps and is mostly for visual effect (still does damage, though)
-                            Vector2 position = NPC.position;
-                            Vector2 velocity = vagueVelocity + new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5));
-                            int firingDelay = (int)(329 - TeleportTimer);
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, velocity, ModContent.ProjectileType<StardustShot>(), StardustLaserDamage, .5f, Main.myPlayer, NPC.target, firingDelay);
-                        }
-                    }
-                }
-                #endregion
-
-                #region Mode 3: Homing Spheres
-                if (AttackMode == 3)
-                {
-                    if (AttackModeCounter % 2 == 0)
-                    {
-                        if (TeleportTimer % 60 == 0)
-                        {
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position, Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(10, 0), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(-10, 0), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(0, 10), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(0, -10), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                        }
-                    }
-                    else
-                    {
-                        if (TeleportTimer == 90)
-                        {
-                            for (int i = 0; i < 3; i++)
-                            {
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
-                                Vector2 velocity = Main.rand.NextVector2Circular(10, 10);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position, velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(10, 0), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(-10, 0), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(0, 10), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(0, -10), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                            }
-                        }
-                    }
-                }
-                #endregion
-
-                #region Mode 4: Solar Detonators
-                if (AttackMode == 4)
-                {
-                    if (AttackModeCounter % 45 == 0 && AttackModeCounter < 730)
-                    {
-                        Vector2 position = Main.player[NPC.target].position + Main.rand.NextVector2Square(-600, 600);
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, Vector2.Zero, ModContent.ProjectileType<SolarDetonator>(), SolarDetonationDamage, .5f, Main.myPlayer, NPC.target);
-                    }
-                }
-                #endregion
-
-                #region Mode 5: Chain Lightning Strikes
-                if (AttackMode == 5)
-                {
-
-                }
-                #endregion
-
-                #region Mode 6: Dark Lasers
-                if (AttackMode == 6)
-                {
-                    if (AttackModeCounter % 2 == 0 && AttackModeCounter > 120)
+                    if (AttackTimer % 2 == 0 && AttackTimer > 120)
                     {
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(8, 8), ModContent.ProjectileType<ObscureShot>(), DarkLaserDamage, .5f, Main.myPlayer);
                     }
-                    if (AttackModeCounter == 5)
+                }
+                if(Phase == 1)
+                {
+                    if (AttackTimer > 120 && AttackTimer < 1000)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<DarkLaserHost>(), DarkLaserDamage, .5f, Main.myPlayer, NPC.whoAmI);
+                        if (AttackTimer % 140 == 0)
+                        {
+                            for (int i = 0; i < 4; i++)
+                            {
+                                //The first projectile, which he fires into the sky in clumps and is mostly for visual effect (still does damage, though)
+                                Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / 4f);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<StardustShot>(), StardustLaserDamage, .5f, Main.myPlayer, NPC.target, 100);
+                            }
+                        }
+                        if (AttackTimer % 120 == 0)
+                        {
+                            for (int i = 0; i < 16; i++)
+                            {
+                                Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / 16f);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<NebulaShot>(), NebulaShotDamage, 1, Main.myPlayer, clockwise);
+                            }
+                            clockwise *= -1;
+                        }
                     }
                 }
-                #endregion
-
-                #region NPC Spawning
-                NPCSummonCooldown++;
-                if (NPCSummonCooldown >= 3600) //Can summon extra enemies once a minute
+                if (Phase == 2)
                 {
-                    if (NPC.life > (NPC.lifeMax / 2))
+                    //Performs his dark lasers attack but instead of firing obscure drops he traps the player in a vortex with lightning orbs and solar detonators
+                    if (AttackTimer == 5)
                     {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            Vector2 velocity = new Vector2(10, 0).RotatedBy(Math.PI / 2f * i);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<VortexOrb>(), LightningStrikeDamage, .5f, Main.myPlayer, i, Phase);
+                        }
+                    }
+                    if(AttackTimer % 60 == 0 && AttackTimer < 1000)
+                    {
+                        Vector2 position = Target.Center + Main.rand.NextVector2Square(-300, 300);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, Vector2.Zero, ModContent.ProjectileType<SolarDetonator>(), SolarDetonationDamage, .5f, Main.myPlayer, NPC.target);
+                    }
+                }
+            }
+
+            if(AttackTimer > 1200)
+            {
+                NextAttack();
+            }
+        }
+
+        //TODO: Reflect on if this actually rocks or sucks
+        //Add teleport VFX
+        void StardustLasers()
+        {
+            Lighting.AddLight(NPC.position, Color.Cyan.ToVector3());
+            if (AttackTimer == 0)
+            {
+                NPC.Center = Target.Center + new Vector2(-500, 0).RotatedBy(-Math.PI / 3f);
+            }
+            if (AttackTimer == 270)
+            {
+                NPC.Center = Target.Center + new Vector2(-500, 0).RotatedBy(4f * Math.PI / 3f);
+            }
+            if (AttackTimer == 540)
+            {
+                NPC.Center = Target.Center + new Vector2(-500, 0).RotatedBy(Math.PI / 2f);
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (AttackTimer % 45 == 0 && AttackTimer % 270 < 180)
+                {
+                    int speed = 35;
+                    Vector2 vagueVelocity = new Vector2(Main.rand.Next(-speed, speed), Main.rand.Next(-speed, speed));
+                    for (int i = 0; i < 4; i++)
+                    {
+                        //The first projectile, which he fires into the sky in clumps and is mostly for visual effect (still does damage, though)
+                        Vector2 position = NPC.position;
+                        Vector2 velocity = vagueVelocity + new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5));
+                        int firingDelay = (int)(240 - AttackTimer % 270);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, velocity, ModContent.ProjectileType<StardustShot>(), StardustLaserDamage, .5f, Main.myPlayer, NPC.target, firingDelay);
+                    }
+                }
+            }
+
+            if(AttackTimer >= 809)
+            {
+                NextAttack();
+            }
+        }
+
+        //TODO: VFX
+        void VortexLightning()
+        {
+            Lighting.AddLight(NPC.position, Color.Teal.ToVector3());
+            UsefulFunctions.DustRing(NPC.Center, 1000, DustID.ShadowbeamStaff, 100, 2);
+
+            if (AttackTimer > 180)
+            {
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    if (Main.player[i] != null && Main.player[i].active && Main.player[i].Center.Distance(NPC.Center) > 1000)
+                    {
+                        Main.player[i].velocity = UsefulFunctions.GenerateTargetingVector(Main.player[i].Center, NPC.Center, 10);
+                        Main.player[i].AddBuff(BuffID.Electrified, 100);
+                    }
+                }
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (AttackTimer == 5)
+                {
+                    NPC.velocity = Vector2.Zero;
+                    NPC.Center = Target.Center + new Vector2(0, -300);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Vector2 velocity = new Vector2(10, 0).RotatedBy(Math.PI / 2f * i);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<VortexOrb>(), LightningStrikeDamage, .5f, Main.myPlayer, i, Phase);
+                    }
+                }
+            }
+
+            if (AttackTimer > 600)
+            {
+                NextAttack();
+            }
+        }
+
+        
+        float solarDetonatorHoverAngle;
+        void SolarDetonators()
+        {
+            Lighting.AddLight(NPC.position, Color.OrangeRed.ToVector3());
+            Vector2 homingTarget = Target.Center + new Vector2(150, 0).RotatedBy(solarDetonatorHoverAngle);
+            UsefulFunctions.SmoothHoming(NPC, homingTarget, 0.1f, 5f, bufferZone: true);
+            solarDetonatorHoverAngle += 0.01f;
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (AttackTimer % 45 == 0 && AttackTimer < 550)
+                {
+                    Vector2 position = Target.Center + Main.rand.NextVector2Square(-600, 600);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, Vector2.Zero, ModContent.ProjectileType<SolarDetonator>(), SolarDetonationDamage, .5f, Main.myPlayer, NPC.target);
+                }
+            }
+
+            if(AttackTimer > 700)
+            {
+                NextAttack();
+            }
+        }
+
+        
+        void NebulaShitstorm()
+        {
+            Lighting.AddLight(NPC.position, Color.HotPink.ToVector3());
+            NPC.velocity *= 0.95f;
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (AttackTimer == 90)
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AttraidiesFragment>(), ai0: NPC.whoAmI, ai1: i, ai3: Phase);
+                    }
+                }
+                if (AttackTimer % 120 == 0)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / 4f);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<NebulaShot>(), NebulaShotDamage, 1, Main.myPlayer, clockwise);
+                    }
+                }
+            }
+
+            if (AttackTimer == 900)
+            {
+                NextAttack();
+            }
+        }
+
+        void SolarAndVortex()
+        {
+            UsefulFunctions.DustRing(NPC.Center, 1000, DustID.ShadowbeamStaff, 100, 2);
+            if (AttackTimer < 120)
+            {
+                return;
+            }
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (AttackTimer > 300)
+                {
+                    for (int i = 0; i < Main.maxPlayers; i++)
+                    {
+                        if (Main.player[i] != null && Main.player[i].active && Main.player[i].Center.Distance(NPC.Center) > 1000)
+                        {
+                            Main.player[i].velocity = UsefulFunctions.GenerateTargetingVector(Main.player[i].Center, NPC.Center, 10);
+                            Main.player[i].AddBuff(BuffID.Electrified, 100);
+                        }
+                    }
+                }
+                if (AttackTimer == 120)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Vector2 velocity = new Vector2(10, 0).RotatedBy(Math.PI / 2f * i);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<VortexOrb>(), LightningStrikeDamage, .5f, Main.myPlayer, i, Phase);
+                    }
+                }
+
+                if (AttackTimer % 90 == 0 && AttackTimer < 800)
+                {
+                    Vector2 position = Target.Center + Main.rand.NextVector2Square(-600, 600);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, Vector2.Zero, ModContent.ProjectileType<SolarDetonator>(), SolarDetonationDamage, .5f, Main.myPlayer, NPC.target);
+                }
+            }
+            if (AttackTimer > 900)
+            {
+                NextAttack();
+            }
+        }
 
 
-                        int SpawnSelection = Main.rand.Next(4);
-                        if (SpawnSelection == 0)
+        void FinalStand()
+        {
+            NPC.velocity = Vector2.Zero;
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i] != null && Main.player[i].active)
+                {
+                    Main.player[i].AddBuff(ModContent.BuffType<Buffs.EarthAlignment>(), 300);
+                }
+            }
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (AttackTimer == 2)
+                {
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<DarkLaserHost>(), DarkLaserDamage, .5f, Main.myPlayer, NPC.whoAmI, 1);
+                }
+
+                if (AttackTimer == 60)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Vector2 velocity = new Vector2(10, 0).RotatedBy(Math.PI / 2f * i);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<VortexOrb>(), LightningStrikeDamage, .5f, Main.myPlayer, i, Phase);
+                    }
+                }
+
+                if(AttackTimer == 240)
+                {
+                    for(int i = 0; i < 5; i++)
+                    {
+                        NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AttraidiesFragment>(), ai0: NPC.whoAmI, ai1: i, ai3: Phase);
+                    }
+                }
+
+                if (AttackTimer % 240 == 0)
+                {
+                    for (int i = 0; i < 16; i++)
+                    {
+                        Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / 16f);
+                        if (i % 4 == 0)
                         {
-                            NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 406 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, NPCID.ChaosElemental, 0);
-                            NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 406 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, NPCID.ChaosElemental, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<StardustShot>(), StardustLaserDamage, 1, Main.myPlayer, NPC.target, 120);
                         }
-                        if (SpawnSelection == 1)
+                        else
                         {
-                            NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 800 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 500 - this.NPC.width / 2, ModContent.NPCType<Enemies.MindflayerIllusion>());
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<EnemyAttraidiesBlackFire>(), BlackFireDamage, -1, Main.myPlayer, -1);
                         }
-                        if (SpawnSelection == 2)
+                    }
+                }
+                if (AttackTimer % 360 == 120)
+                {
+                    if (AttackTimer % 720 == 120)
+                    {
+                        for (int i = 0; i < 5; i++)
                         {
-                            NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 900 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 500 - this.NPC.width / 2, ModContent.NPCType<AttraidiesMimic>());
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -1600).RotatedBy(2 * Math.PI / 5f * i), Vector2.Zero, ModContent.ProjectileType<SolarDetonator>(), SolarDetonationDamage, .5f, Main.myPlayer, i, Phase);
                         }
-                        if (SpawnSelection == 3)
-                        {
-                            NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 900 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 500 - this.NPC.width / 2, ModContent.NPCType<Enemies.DiscipleOfAttraidies>());
-                        }
-                        NPCSummonCooldown = 0;
+
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Target.Center, Vector2.Zero, ModContent.ProjectileType<SolarDetonator>(), SolarDetonationDamage, .5f, Main.myPlayer, 0, Phase);
                     }
                     else
                     {
-                        #region Dragon Spawning
-                        if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.ShadowDragonHead>()))
-                        {
-                            DragonSpawned = 1;
-                        }
-                        if (DragonSpawned == 0)
-                        {
-                            int OptionId = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<SecondForm.ShadowDragonHead>(), NPC.whoAmI);
-                            Main.npc[OptionId].velocity.Y = -10;
-                            if (Main.netMode == NetmodeID.Server)
-                            {
-                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, OptionId, 0f, 0f, 0f, 0);
-                            }
-
-                            NPCSummonCooldown = 0;
-                            DragonSpawned = 1;
-                        }
-                        #endregion
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PoisonTrail>(), PoisonTrailDamage, 2, Main.myPlayer, 2, NPC.whoAmI);
                     }
                 }
-                #endregion
             }
-            #endregion
-        }
-        #endregion
-
-        void AttraidiesTeleport()
-        {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
-            Vector2 oldPosition = NPC.Center;
-            
-            for (int i = 0; i < 10; i++)
-            {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);
-                Main.dust[dust].noGravity = false;
-            }
-
-            float teleportAngle = (float)(Main.rand.Next(360) * (Math.PI / 180));
-
-            Player Pt = Main.player[NPC.target];
-
-            Vector2 PtC = Pt.position + new Vector2(Pt.width / 2, Pt.height / 2);
-            NPC.position.X = Pt.position.X + (float)((600 * Math.Cos(teleportAngle)) * -1);
-            NPC.position.Y = Pt.position.Y - 35 + (float)((30 * Math.Sin(teleportAngle)) * -1);
-
-            float MinDIST = 560f;
-            float MaxDIST = 610f;
-
-            if (AttackMode == 2)
-            {
-                MinDIST = 700f;
-                MaxDIST = 900f;
-            }
-            Vector2 Diff = NPC.position - Pt.position;
-            if (Diff.Length() > MaxDIST)
-            {
-                Diff *= MaxDIST / Diff.Length();
-            }
-            if (Diff.Length() < MinDIST)
-            {
-                Diff *= MinDIST / Diff.Length();
-            }
-            NPC.position = Pt.position + Diff;
-
-            UsefulFunctions.TeleportEffects(oldPosition, NPC.Center, NPC, DustID.ShadowbeamStaff);
-            Vector2 NC = NPC.Center;
-
-            float rotation = (float)Math.Atan2(NC.Y - PtC.Y, NC.X - PtC.X);
-            NPC.velocity.X = (float)(Math.Cos(rotation) * 20) * -1;
-            NPC.velocity.Y = (float)(Math.Sin(rotation) * 20) * -1;
-            NPC.netUpdate = true;
         }
 
-        void ChangeAttackModes()
+        private void NextAttack()
         {
-            AttraidiesTeleport();
-
-            //Check if every attack has been used, and if so then clear the array
-            for (int i = 0; i < 7; i++)
+            CurrentAttackMode++;
+            if (CurrentAttackMode >= CurrentMoveList.Count)
             {
-                if (UsedAttacks[i] == false)
-                {
-                    break;
-                }
-                if (i == 6)
-                {
-                    UsedAttacks = new bool[7] { false, false, false, false, false, false, false };
-                }
+                CurrentAttackMode = 0;
             }
 
-            bool repeat;
-            //Make sure the new attack chosen isn't a repeat
-            do
-            {
-                repeat = false;
-                AttackMode = Main.rand.Next(7);
-                if (UsedAttacks[(int)AttackMode] == true)
-                {
-                    repeat = true;
-                }
-            } while (repeat == true);
+            attackSwitchDelay = 90;
+            StartAura(0.2f);
 
-            UsedAttacks[(int)AttackMode] = true;
-
-            //Reset all the various nonsense that his other patterns use or set
-            DragonSpawned = 0;
-            AttackModeCounter = 0;
-            SetVelocity = false;
-            NPC.noGravity = false;
-            NPC.noTileCollide = false;
-            TravelDir = 0;
+            AttackTimer = 0;
 
             if (Main.netMode == NetmodeID.Server)
             {
@@ -676,6 +757,338 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             }
         }
 
+        List<List<Color>> Phase0MoveColors;
+        List<List<Color>> Phase1MoveColors;
+        List<List<Color>> Phase2MoveColors;
+        private void InitializeMoves()
+        {
+            Phase0MoveList = new List<Action>
+            {
+                ChargingPoisonTrails,
+                NebulaShitstorm,
+                VortexLightning,
+                BlackFireRain,
+                DarkLasers,
+                StardustLasers,
+                SolarDetonators,
+            };
+
+            Phase1MoveList = new List<Action>
+            {
+                DarkLasers,
+                SolarAndVortex,
+                ChargingPoisonTrails,
+            };
+            Phase2MoveList = new List<Action>
+            {
+                DarkLasers,
+                ChargingPoisonTrails,
+            };           
+        }
+
+        private void InitializeColors()
+        {
+            Phase0MoveColors = new List<List<Color>>
+            {
+                new List<Color>{ Color.YellowGreen },
+                new List<Color>{ Color.Purple * 3 },
+                new List<Color>{ new Color(0, 255, 120) },
+                new List<Color>{ Color.Purple },
+                new List<Color>{ Color.MediumPurple },
+                new List<Color>{ Color.Cyan },
+                new List<Color>{ Color.OrangeRed }
+            };
+
+            Phase1MoveColors = new List<List<Color>>
+            {
+                new List<Color>{ Color.MediumPurple, Color.Cyan, Color.Purple * 3 },
+                new List<Color>{ Color.OrangeRed, Color.Teal },
+                new List<Color>{ Color.YellowGreen, Color.MediumPurple }
+            };
+            Phase2MoveColors = new List<List<Color>>
+            {
+                new List<Color>{ Color.MediumPurple, Color.OrangeRed, Color.Teal  },
+                new List<Color>{ Color.YellowGreen, Color.MediumPurple, Color.Cyan }
+            };
+        }
+
+        float auraRadius;
+        float baseRadius;
+        float collapseSpeed;
+        float baseFade;
+        float fadeSpeed;
+        float fadeInPercent;
+        float currentFadePercent;
+        float ringCollapse;
+        float effectTimer;
+        public static Effect effect;
+        public static Texture2D texture;
+        List<Color> auraColors
+        {
+            get
+            {
+                InitializeColors();
+                if (Phase == 3)
+                {
+                    return new List<Color> { Color.YellowGreen, Color.Purple * 3, Color.Teal, Color.YellowGreen, Color.MediumPurple, Color.Cyan };
+                }
+                else
+                {
+                    switch (Phase)
+                    {
+                        case 1:
+                            return Phase1MoveColors[CurrentAttackMode];
+                        case 2:
+                            return Phase2MoveColors[CurrentAttackMode];
+                        default:
+                            return Phase0MoveColors[CurrentAttackMode];
+                    }
+                }
+            }
+        }
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 1f, 0.4f, 0.4f);
+            auraRadius = 500;            
+
+            if(auraColors == null)
+            {
+                return false;
+            }
+
+            //Apply the shader, caching it as well
+            //if (effect == null)
+            {
+                effect = ModContent.Request<Effect>("tsorcRevamp/Effects/AttraidiesAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            DrawAura();
+
+            if (deathTimer > 150)
+            {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+                DrawDeath();
+
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            }
+            else
+            {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+
+                //if(deathTimer == 0){
+                //Draw the big bad himself
+                if (texture == null || texture.IsDisposed)
+                {
+                    texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
+                }
+
+                Color lightingColor = Color.Lerp(Color.White, auraColors[0], 0.5f);
+                lightingColor = Color.Lerp(drawColor, lightingColor, 0.5f);
+                Rectangle sourceRectangle2 = NPC.frame;
+                Vector2 origin2 = sourceRectangle2.Size() / 2f;
+                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle2, lightingColor, NPC.rotation, origin2, 1, SpriteEffects.None, 0f);
+            }
+            return false;
+        }
+
+        public void DrawDeath()
+        {
+
+        }
+
+        public void DrawAura()
+        {
+            Rectangle baseRectangle = new Rectangle(0, 0, (int)auraRadius, (int)auraRadius);
+            Vector2 baseOrigin = baseRectangle.Size() / 2f;
+
+            for (int i = 0; i < auraColors.Count; i++)
+            {
+                //Pass relevant data to the shader via these parameters
+                effect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+                effect.Parameters["effectSize"].SetValue(baseRectangle.Size());
+                Color primaryColor = auraColors[i];
+                Color secondColor;
+                if (i >= auraColors.Count - 1)
+                {
+                    secondColor = auraColors[0];
+                }
+                else
+                {
+                    secondColor = auraColors[i + 1];
+                }
+
+                if (attackSwitchDelay > 0)
+                {
+                    primaryColor = Color.Lerp(primaryColor, Color.White, attackSwitchDelay / 90f);
+                    secondColor = Color.Lerp(secondColor, Color.White, attackSwitchDelay / 90f);
+                }
+
+                effect.Parameters["effectColor1"].SetValue(UsefulFunctions.ShiftColor(primaryColor, effectTimer / 25f).ToVector4());
+                effect.Parameters["effectColor2"].SetValue(UsefulFunctions.ShiftColor(secondColor, effectTimer / 25f).ToVector4());
+                effect.Parameters["ringProgress"].SetValue(baseRadius);
+                effect.Parameters["fadePercent"].SetValue(baseFade);
+                effect.Parameters["scaleFactor"].SetValue(.5f * 50);
+                effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 0.05f * 0.5f);
+                effect.Parameters["colorSplitAngle"].SetValue(2f * MathHelper.Pi / auraColors.Count);
+
+                //Apply the shader
+                effect.CurrentTechnique.Passes[0].Apply();
+
+                Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, NPC.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.TwoPi * (float)i / (float)auraColors.Count, baseOrigin, NPC.scale, SpriteEffects.None, 0);
+            }
+        }
+
+        public void StartAura(float radius, float ringSpeed = 1.05f, float fadeOutSpeed = 0.05f)
+        {
+            baseRadius = radius;
+            collapseSpeed = ringSpeed;
+            fadeSpeed = fadeOutSpeed;
+            currentFadePercent = 0;
+            ringCollapse = 1;
+            fadeInPercent = 0;
+        }
+
+        void HandleAura()
+        {
+            if (fadeInPercent < 1)
+            {
+                fadeInPercent += 1f / 30f;
+            }
+            if (ringCollapse < 0.1f)
+            {
+                currentFadePercent += fadeSpeed;
+            }
+            else
+            {
+                ringCollapse /= collapseSpeed;
+            }
+
+            float intensityMinimum = 0.77f;
+            float radiusMinimum = 0.06f;
+
+
+            if (Phase == 3)
+            {
+                intensityMinimum = 0.45f;
+                radiusMinimum = 0.25f;
+            }
+
+            if (baseFade < intensityMinimum)
+            {
+                baseFade += 0.02f;
+            }
+            if (baseFade > intensityMinimum)
+            {
+                baseFade = intensityMinimum;
+            }
+            if (baseRadius > radiusMinimum)
+            {
+                baseRadius -= 0.01f;
+            }
+            if (baseRadius < radiusMinimum)
+            {
+                baseRadius = radiusMinimum;
+            }
+        }
+
+        float lightCooldown;
+        void HandleDeath()
+        {
+            NPC.dontTakeDamage = true;
+
+            //Heavy Impact + lightning sfx to indicate death
+            if (deathTimer == 1)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashPre") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
+            }
+
+            //Attraidies falls
+            if(deathTimer > 30)
+            {
+                NPC.noGravity = false;
+                NPC.noTileCollide = false;
+            }
+
+
+            if(deathTimer == 150)
+            {
+                //Booming laugh sfx
+                //Spawn distortion lightning effect aimed 45 degrees offset from nearest player
+            }
+
+            if(deathTimer > 200)
+            {
+                if (deathTimer % 20 == 0)
+                {
+                    //Spawn distortion lightning effects
+                }
+                //Growing X shape aura
+            }
+
+            if(deathTimer > 400)
+            {
+                //Attraidies dies
+                //Flash of white screen shader
+                //Spawn abyss portal NPC
+                NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<NPCs.Special.AbyssPortal>(), ai0: 1);
+                tsorcRevampWorld.AbyssPortalLocation = NPC.Center;
+                NPC.dontTakeDamage = false;
+                NPC.StrikeNPC(999999, 0, 0);
+            }
+        }
+
+        public override bool CheckDead()
+        {
+            if (deathTimer < 300)
+            {
+                NPC.life = 1;
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public override bool? CanBeHitByProjectile(Projectile projectile)
+        {
+            return base.CanBeHitByProjectile(projectile); 
+        }
+        bool collisionAllowed = false;
+
+        //Doomed from the start. The square vs circle collision check code could be useful for other physics stuff later though.
+        void CustomCollision()
+        {
+            collisionAllowed = true;
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].active)
+                {
+                    Projectile projectile = Main.projectile[i];
+                    if (projectile.friendly == true && NPC.immune[projectile.owner] == 0 && projectile.Hitbox.ClosestPointInRect(NPC.Center).Distance(NPC.Center) < 200)
+                    {
+                        NPC.StrikeNPC(projectile.damage, 0, 0);
+                        NPC.immune[projectile.owner] = NPC.immuneTime;
+                    }
+                }
+            }
+            collisionAllowed = false;
+        }//*/
+
+
+        public override void FindFrame(int frameHeight)
+        {
+            base.FindFrame(frameHeight);
+        }
+        
         public override bool CheckActive()
         {
             return false;
@@ -686,7 +1099,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             potionType = ItemID.SuperHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.AttraidiesBag>()));
         }
 
@@ -747,6 +1161,20 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 tsorcRevampWorld.SuperHardMode = true;
                 Main.hardMode = true;
                 tsorcRevampWorld.TheEnd = false;
+            }
+        }
+
+        public static void ActuateAttraidiesArena()
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                for (int x = 1158; x < 1633; x++)
+                {
+                    for (int y = 59; y < 306; y++)
+                    {
+                        Wiring.ActuateForced(x, y);
+                    }
+                }
             }
         }
     }

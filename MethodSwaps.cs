@@ -226,7 +226,7 @@ namespace tsorcRevamp
                         if (Main.projectile[i].ModProjectile is MarilithLightning)
                         {
                             MarilithLightning lightning = (MarilithLightning)Main.projectile[i].ModProjectile;
-                            if (lightning.lightningTarget == null)
+                            if (lightning.lightningTarget == null && lightning.branches != null)
                             {
                                 lightning.CreateRenderTarget();
                             }
@@ -234,7 +234,7 @@ namespace tsorcRevamp
                         if (Main.projectile[i].ModProjectile is MarilithLightning)
                         {
                             MarilithLightning lightning = (MarilithLightning)Main.projectile[i].ModProjectile;
-                            if (lightning.lightningTarget == null)
+                            if (lightning.lightningTarget == null && lightning.branches != null)
                             {
                                 lightning.CreateRenderTarget();
                             }
@@ -258,8 +258,6 @@ namespace tsorcRevamp
                                 lightning.CreateRenderTarget();
                             }
                         }
-
-
                     }
                 }
             }

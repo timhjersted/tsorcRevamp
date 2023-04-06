@@ -279,6 +279,7 @@ namespace tsorcRevamp.Projectiles
                 return false;
             }
 
+
             //If no custom shader has been given then load the generic one
             if (LaserShader == null)
             {
@@ -346,7 +347,6 @@ namespace tsorcRevamp.Projectiles
 
         public void DrawLaser(Texture2D texture, Vector2 start, Vector2 unit, Rectangle headRect, Rectangle bodyRect, Rectangle tailRect, float rotation = 0f, float scale = 1f, Color color = default)
         {
-
             //Defines an area where laser segments should actually draw, 100 pixels larger on each side than the screen
             Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
 
@@ -597,7 +597,14 @@ namespace tsorcRevamp.Projectiles
             }
             else
             {
-                if (!Main.projectile[UsefulFunctions.DecodeID(HostIdentifier)].active)
+                int decodedID = UsefulFunctions.DecodeID(HostIdentifier);
+                if(decodedID == -1)
+                {
+                    Projectile.Kill();
+                    Projectile.active = false;
+                    return;
+                }
+                if (!Main.projectile[decodedID].active)
                 {
                     Projectile.active = false;
                 }
@@ -790,7 +797,15 @@ namespace tsorcRevamp.Projectiles
             {
                 if (ProjectileSource)
                 {
-                    return Main.projectile[UsefulFunctions.DecodeID(HostIdentifier)].Center + LaserOffset;
+                    int decodedID = UsefulFunctions.DecodeID(HostIdentifier);
+                    if(decodedID == -1)
+                    {
+                        Projectile.Kill();
+                        Projectile.active = false;
+                        return Vector2.Zero;
+                    }
+
+                    return Main.projectile[decodedID].Center + LaserOffset;
                 }
                 else
                 {
