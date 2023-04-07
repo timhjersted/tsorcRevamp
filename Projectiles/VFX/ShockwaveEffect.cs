@@ -16,6 +16,9 @@ namespace tsorcRevamp.Projectiles.VFX
         {
             DisplayName.SetDefault("ShockwaveEffect");
         }
+
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
+        
         public override void SetDefaults()
         {
             Projectile.friendly = true;

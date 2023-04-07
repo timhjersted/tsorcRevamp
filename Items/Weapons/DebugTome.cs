@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons
         {
             Main.NewText(player.position / 16);
             //NPC.NewNPC(Item.GetSource_FromThis(), (int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, ModContent.NPCType<NPCs.Special.AbyssPortal>(), ai0: 1);
-            //Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), Main.MouseWorld, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Okiku.SolarDetonator>(), 10, 0, player.whoAmI, 700, 60);
+            Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), Main.MouseWorld, Main.rand.NextVector2CircularEdge(1,1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 10, 0, player.whoAmI, 700, 60);
 
 
             return false;

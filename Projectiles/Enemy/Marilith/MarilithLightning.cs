@@ -27,6 +27,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Laser");
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
         }
 
         public override string Texture => base.Texture;
@@ -524,19 +525,15 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                         {
                             scale = 1;
                         }
-                        DrawLightning(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], branches[i][j],
-                                branches[i][j + 1], LaserTargetingHead, LaserTextureBody, LaserTargetingTail, branchLengths[i][j], branchAngles[i][j], scale, LaserColor);
+                        DrawLightning(TransparentTextureHandler.TransparentTextures[LaserTexture], branches[i][j],
+                                branches[i][j + 1], LaserTextureBody, branchLengths[i][j], branchAngles[i][j], scale, LaserColor);
                     }
                 }
             }
         }
 
-        public void DrawLightning(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 unit, Rectangle headRect, Rectangle bodyRect, Rectangle tailRect, float distance, float rotation = 0f, float scale = 1f, Color color = default)
+        public void DrawLightning(Texture2D texture, Vector2 start, Vector2 unit, Rectangle bodyRect, float distance, float rotation = 0f, float scale = 1f, Color color = default)
         {
-
-            //Defines an area where laser segments should actually draw, 100 pixels larger on each side than the screen
-            Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
-            
             float i = 0;
             Vector2 diff = unit - start;
             diff.Normalize();
@@ -544,11 +541,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Vector2 startPos = start - diff * 3;
             for (; i <= distance; i += (bodyRect.Height) * scale)
             {
-                Vector2 drawStart = startPos + i * diff;
-                //if (screenRect.Contains(drawStart.ToPoint()))
-                {
-                    Main.EntitySpriteDraw(texture, drawStart - Main.screenPosition, bodyRect, color, rotation + MathHelper.PiOver2, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);
-                }
+                Vector2 drawStart = startPos + i * diff;               
+                Main.EntitySpriteDraw(texture, drawStart - Main.screenPosition, bodyRect, color, rotation + MathHelper.PiOver2, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);                
             }
         }
 

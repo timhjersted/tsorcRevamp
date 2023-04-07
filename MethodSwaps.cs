@@ -231,6 +231,7 @@ namespace tsorcRevamp
                                 lightning.CreateRenderTarget();
                             }
                         }
+                        /*
                         if (Main.projectile[i].ModProjectile is MarilithLightning)
                         {
                             MarilithLightning lightning = (MarilithLightning)Main.projectile[i].ModProjectile;
@@ -238,7 +239,7 @@ namespace tsorcRevamp
                             {
                                 lightning.CreateRenderTarget();
                             }
-                        }
+                        }*/
 
                         //I really should just make one "Lightning" class that all these inherit from
                         //But also ¯\_(ツ)_/¯
@@ -250,14 +251,25 @@ namespace tsorcRevamp
                                 lightning.CreateRenderTarget();
                             }
                         }
-                        if (Main.projectile[i].ModProjectile is JellyfishLightning)
+
+                        if (Main.projectile[i].ModProjectile is RealityCrack)
+                        {
+                            RealityCrack lightning = (RealityCrack)Main.projectile[i].ModProjectile;
+                            if (lightning.lightningTarget == null)
+                            {
+                                lightning.CreateRenderTarget();
+                            }
+                        }
+
+
+                        /*if (Main.projectile[i].ModProjectile is JellyfishLightning)
                         {
                             JellyfishLightning lightning = (JellyfishLightning)Main.projectile[i].ModProjectile;
                             if (lightning.lightningTarget == null)
                             {
                                 lightning.CreateRenderTarget();
                             }
-                        }
+                        }*/
                     }
                 }
             }

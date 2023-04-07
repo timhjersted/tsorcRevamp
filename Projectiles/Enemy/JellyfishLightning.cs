@@ -27,6 +27,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Laser");
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
         }
 
         public override string Texture => base.Texture;
