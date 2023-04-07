@@ -74,6 +74,7 @@ namespace tsorcRevamp
         public bool CritDamage250 = false;
         public bool WhipCritDamage250 = false;
 
+        public bool OrbExists = false;
         public int EssenceThief = 0;
 
         public float CrystalDefenseDamage;

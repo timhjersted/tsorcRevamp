@@ -11,8 +11,10 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Throwing;
 
@@ -318,6 +320,11 @@ namespace tsorcRevamp.NPCs
 
         public override void OnKill(NPC npc)
         {
+            if(npc.active && !npc.friendly && Main.player[Main.myPlayer].HeldItem.type == ModContent.ItemType<OrbOfDeception>())
+            {
+                Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
+            }
+
             if(npc.type == NPCID.Golem && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 UsefulFunctions.BroadcastText("Somewhere in the sky a forcefield collapses...", Color.Cyan);
@@ -562,6 +569,10 @@ namespace tsorcRevamp.NPCs
                         debuffCounter++;
                     }
                     if (buffType == ModContent.BuffType<SunburnDebuff>())
+                    {
+                        debuffCounter++;
+                    }
+                    if (buffType == ModContent.BuffType<SunderedDebuff>())
                     {
                         debuffCounter++;
                     }

@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Runeterra.Magic
 {
-    class SpiritRushCooldown : ModBuff
+    class OrbOfSpiritualityDashCooldown : ModBuff
     {
         public override void SetStaticDefaults()
         {

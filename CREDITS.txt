@@ -10,7 +10,7 @@ MarfMasterofDesaster / programmer + beta testing
 NephilimDeath / spriter + translator
 JOI3 / spriter
 W1k / coding help and extensive content contributions
-RustySlave / programmer
+RustySlave / programmer + translator
 chessbergers1234 / spriter
 RAWTHORN / spriter
 stinky_lizard / programmer
@@ -19,6 +19,7 @@ Raisin / spriter
 Thornstromb / programmer
 HakureiYoru / translator
 urgivhnsd / translator
+kirill / translator
 JayTeff / programmer
 Linklight2 / programmer
 Blasfah / spriting
