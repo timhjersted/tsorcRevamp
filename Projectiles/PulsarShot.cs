@@ -56,6 +56,11 @@ namespace tsorcRevamp.Projectiles
                     target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 120);
                 }
 
+                if(Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 50, 30);
+                }
+
                 Projectile.timeLeft = 0;
             }
         }
@@ -99,6 +104,7 @@ namespace tsorcRevamp.Projectiles
                 if (Main.netMode != NetmodeID.Server)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 50, 30);
                 }
                 for (int i = 0; i < 110; i++)
                 {

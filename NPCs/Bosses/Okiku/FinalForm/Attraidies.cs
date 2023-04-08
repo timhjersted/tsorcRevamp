@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             NPC.width = 100;
             NPC.timeLeft = 22500;
             Music = 12;
-            NPC.lifeMax = 250000;
+            NPC.lifeMax = 450000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.noGravity = true;
@@ -229,7 +229,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                     NPC.dontTakeDamage = true;
                     transitionTimer = 120;
                 }
-                if (Phase == 1 && NPC.life < NPC.lifeMax * 0.4f)
+                if (Phase == 1 && NPC.life < NPC.lifeMax * 0.5f)
                 {
                     NPC.dontTakeDamage = true;
                     transitionTimer = 60;
@@ -872,23 +872,23 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             {
                 ChargingPoisonTrails,
                 NebulaShitstorm,
+                SolarDetonators,
+                DarkLasers,
                 VortexLightning,
                 BlackFireRain,
-                DarkLasers,
                 StardustLasers,
-                SolarDetonators,
             };
 
             Phase1MoveList = new List<Action>
             {
                 DarkLasers,
-                SolarAndVortex,
                 ChargingPoisonTrails,
+                SolarAndVortex,
             };
             Phase2MoveList = new List<Action>
             {
-                DarkLasers,
                 ChargingPoisonTrails,
+                DarkLasers,
             };           
         }
 
@@ -898,23 +898,23 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             {
                 new List<Color>{ Color.YellowGreen },
                 new List<Color>{ Color.Purple * 3 },
+                new List<Color>{ Color.OrangeRed },
+                new List<Color>{ Color.MediumPurple },
                 new List<Color>{ new Color(0, 255, 120) },
                 new List<Color>{ Color.Purple },
-                new List<Color>{ Color.MediumPurple },
                 new List<Color>{ Color.Cyan },
-                new List<Color>{ Color.OrangeRed }
             };
 
             Phase1MoveColors = new List<List<Color>>
             {
                 new List<Color>{ Color.MediumPurple, Color.Cyan, Color.Purple * 3 },
+                new List<Color>{ Color.YellowGreen, Color.MediumPurple },
                 new List<Color>{ Color.OrangeRed, Color.Teal },
-                new List<Color>{ Color.YellowGreen, Color.MediumPurple }
             };
             Phase2MoveColors = new List<List<Color>>
             {
+                new List<Color>{ Color.YellowGreen, Color.MediumPurple, Color.Cyan },
                 new List<Color>{ Color.MediumPurple, Color.OrangeRed, Color.Teal  },
-                new List<Color>{ Color.YellowGreen, Color.MediumPurple, Color.Cyan }
             };
         }
 

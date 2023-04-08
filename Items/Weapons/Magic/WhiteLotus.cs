@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Tooltip.SetDefault("Shoots flowers. Each petal hits separately \n'You can hear the cries of angels when you close your eyes'");
         }
         public override void SetDefaults() {
-            Item.damage = 31;
+            Item.damage = 26;
             Item.mana = 14;
             Item.knockBack = 1;
             Item.width = 30;

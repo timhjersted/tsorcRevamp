@@ -76,6 +76,12 @@ namespace tsorcRevamp.Projectiles.VFX
                 } while (index < 10);
             }
 
+            if(filterIndex == null)
+            {
+                Projectile.Kill();
+                return;
+            }
+
             Projectile.timeLeft++;
             effectTimer++;
             float maxRadius = Projectile.ai[0];

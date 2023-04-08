@@ -11,6 +11,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
         public override void SetDefaults(Item item)
         {
+            //Why is this eventide's internal name i'm literally going to go feral
             if (item.type == ItemID.SparkleGuitar)
             {
                 item.mana = 25;
@@ -30,6 +31,15 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.NimbusRod)
             {
                 item.DamageType = DamageClass.MagicSummonHybrid;
+            }
+
+            if (item.type == ItemID.FairyQueenMagicItem)
+            {
+                item.damage = 38;
+            }
+            if (item.type == ItemID.SparkleGuitar)
+            {
+                item.damage = 50;
             }
 
             //Lunar items

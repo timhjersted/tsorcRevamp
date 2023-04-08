@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Graphics.Effects;
 using System;
+using System.Collections.Generic;
 
 namespace tsorcRevamp.Items.Weapons
 {
@@ -43,6 +44,14 @@ namespace tsorcRevamp.Items.Weapons
             //NPC.NewNPC(Item.GetSource_FromThis(), (int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, ModContent.NPCType<NPCs.Special.AbyssPortal>(), ai0: 1);
             Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), Main.MouseWorld, Main.rand.NextVector2CircularEdge(1,1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 10, 0, player.whoAmI, 700, 60);
 
+            //Uncomment this to make the debug tome max out your perma potions
+            return false;
+
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            foreach(KeyValuePair<Terraria.ModLoader.Config.ItemDefinition, int> k in modPlayer.consumedPotions)
+            {
+                modPlayer.consumedPotions[k.Key] = 999;
+            }
 
             return false;
         }

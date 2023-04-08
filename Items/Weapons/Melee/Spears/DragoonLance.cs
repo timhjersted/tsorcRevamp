@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 
         public override void SetDefaults()
         {
-            Item.damage = 100;
+            Item.damage = 140;
             Item.knockBack = 15f;
 
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -44,6 +44,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             recipe.AddIngredient(ModContent.ItemType<GaeBolg>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 1);
+            recipe.AddIngredient(ItemID.SoulofMight, 1);
+            recipe.AddIngredient(ItemID.SoulofFright, 1);
+            recipe.AddIngredient(ItemID.SoulofSight, 1);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

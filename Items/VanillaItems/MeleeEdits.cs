@@ -29,6 +29,10 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.useTime = 30;
                 item.damage = 40;
             }
+            if(item.type == ItemID.PiercingStarlight)
+            {
+                item.damage = 50;
+            }
         }
         public override void UpdateInventory(Item item, Player player)
         {

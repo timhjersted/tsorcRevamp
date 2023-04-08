@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (Projectile.owner == Main.myPlayer && Projectile.timeLeft <= 100)
+            if (Projectile.owner == Main.myPlayer && Projectile.timeLeft <= 107)
             {
                 if (Main.rand.NextBool(2))
                 {
@@ -54,22 +54,35 @@ namespace tsorcRevamp.Projectiles
                 {
                     target.AddBuff(ModContent.BuffType<Buffs.PolarisElectrocutedBuff>(), 240);
                 }
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 200, 30);
+                }
 
                 Projectile.timeLeft = 0;
             }
         }
 
+        float rotation = 0;
         public override bool PreDraw(ref Color lightColor)
         {
+            rotation += 0.1f;
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
-
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
+
+            
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(16, 16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(-16, 16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(16, -16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(-16, -16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
+            
+
 
             return false;
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            if (Projectile.owner == Main.myPlayer && Projectile.timeLeft >= 102)
+            if (Projectile.owner == Main.myPlayer && Projectile.timeLeft >= 109)
             {
                 Projectile.timeLeft = 0;
 
@@ -96,6 +109,7 @@ namespace tsorcRevamp.Projectiles
                 if (Main.netMode != NetmodeID.Server)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 200, 30);
                 }
                 for (int i = 0; i < 100; i++)
                 {
@@ -186,7 +200,7 @@ namespace tsorcRevamp.Projectiles
                 polarisdusttimer = 0;
             }
 
-            if (Projectile.timeLeft >= 102)
+            if (Projectile.timeLeft >= 109)
             {
                 if (++Projectile.frameCounter >= 10)
                 {
@@ -198,7 +212,7 @@ namespace tsorcRevamp.Projectiles
                 }
             }
 
-            if (Projectile.timeLeft <= 101)
+            if (Projectile.timeLeft <= 108)
             {
                 if (Projectile.frame < 5)
                 {
@@ -217,7 +231,7 @@ namespace tsorcRevamp.Projectiles
 
             Vector2 oldSize = Projectile.Size;
 
-            if (Projectile.owner == Main.myPlayer && Projectile.timeLeft <= 100)
+            if (Projectile.owner == Main.myPlayer && Projectile.timeLeft <= 107)
             {
                 Projectile.tileCollide = true;
                 Projectile.width = 22;
@@ -227,7 +241,7 @@ namespace tsorcRevamp.Projectiles
                 Projectile.DamageType = DamageClass.Ranged;
             }
 
-            if (Projectile.owner == Main.myPlayer && Projectile.timeLeft == 101)
+            if (Projectile.owner == Main.myPlayer && Projectile.timeLeft == 108)
             {
                 if (Main.netMode != NetmodeID.Server)
                 {

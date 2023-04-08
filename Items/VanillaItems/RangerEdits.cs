@@ -26,6 +26,17 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 20; //from 14
             }
 
+            if(item.type == ItemID.HolyArrow)
+            {
+                item.damage = 1;
+            }
+
+            //Why is this eventide's internal name i'm literally going to go feral
+            if (item.type == ItemID.FairyQueenRangedItem)
+            {
+                item.damage = 30;
+            }
+
             //Lunar items
             if (item.type == ItemID.Phantasm)
             {

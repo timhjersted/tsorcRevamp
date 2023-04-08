@@ -66,6 +66,11 @@ namespace tsorcRevamp.Projectiles
         private void NormalAI()
         {
             Projectile.damage = 1;
+            int? closestNPC = UsefulFunctions.GetClosestEnemyNPC(Projectile.Center);
+            if(closestNPC.HasValue && Main.npc[closestNPC.Value].Center.Distance(Projectile.Center) < 300)
+            {
+                UsefulFunctions.SmoothHoming(Projectile, Main.npc[closestNPC.Value].Center, 0.5f, 30, bufferZone: false);
+            }
         }
 
         private int biohazardtimer;

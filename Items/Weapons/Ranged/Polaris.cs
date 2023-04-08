@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetDefaults()
         {
-            Item.damage = 175;
+            Item.damage = 90;
             Item.DamageType = DamageClass.Ranged;
             Item.crit = 0;
             Item.width = 56;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.rare = ItemRarityID.Lime;
             Item.autoReuse = true;
             Item.shoot = ModContent.ProjectileType<PolarisShot>();
-            Item.shootSpeed = 8f;
+            Item.shootSpeed = 16f;
         }
 
 
@@ -64,7 +64,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             }
 
             return true;
-
         }
         public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
         {
@@ -98,8 +97,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(ModContent.ItemType<GWPulsar>());
             recipe.AddIngredient(ItemID.LihzahrdPowerCell, 1);
             recipe.AddIngredient(ItemID.ShroomiteBar, 3);
-            recipe.AddIngredient(ItemID.ElectrosphereLauncher);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 125000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 65000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -45,6 +46,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void Kill(int timeLeft)
         {
+            SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
             Projectile.penetrate = 2;
             Projectile.width = 110;
             Projectile.height = 110;
@@ -62,6 +64,11 @@ namespace tsorcRevamp.Projectiles
                 Dust.NewDustPerfect(dustPos(), DustID.InfernoFork, dustVel(), 160, default, 1.5f).noGravity = true;
                 Dust.NewDustPerfect(dustPos(), DustID.Torch, dustVel(), 160, default, 1.5f).noGravity = true;
                 Dust.NewDustPerfect(Main.rand.NextVector2CircularEdge(15, 15), 130, Projectile.Center, 160, default, 1.5f).noGravity = true;
+            }
+
+            if(Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 15, 5);
             }
         }
         Vector2 dustPos()

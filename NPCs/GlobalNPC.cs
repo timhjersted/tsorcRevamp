@@ -973,6 +973,7 @@ namespace tsorcRevamp.NPCs
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetToxicCatBlobs = true;
                 int tags;
 
+                bool shockwaveCreated = false;
                 for (int i = 0; i < 1000; i++)
                 {
                     tags = 0;
@@ -992,9 +993,10 @@ namespace tsorcRevamp.NPCs
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = volume, Pitch = -pitch}, projectile.Center);
 
                         p.timeLeft = 2;
-
-                        Projectile.NewProjectile(npc.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.ToxicCatExplosion>(), (int)(projectile.damage * 1.8f), projectile.knockBack, projectile.owner, tags, 0);
-
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.ToxicCatExplosion>(), (int)(projectile.damage * 1.8f), projectile.knockBack, projectile.owner, tags, 0);
+                        }
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ToxicCatDrain>());
 
                         if (buffindex != -1)
@@ -1002,6 +1004,16 @@ namespace tsorcRevamp.NPCs
                             npc.DelBuff(buffindex);
                         }
                     }
+
+                    if (tags > 0 && !shockwaveCreated)
+                    {
+                        shockwaveCreated = true;
+                        if (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>())
+                        {
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 300 * (tags / 12f), 45 * (tags / 12f));
+                        }
+                    }
+
                 }
             }
 
@@ -1010,6 +1022,7 @@ namespace tsorcRevamp.NPCs
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetViruCatBlobs = true;
                 int tags;
 
+                bool shockwaveCreated = false;
                 for (int i = 0; i < 1000; i++)
                 {
                     tags = 0;
@@ -1030,14 +1043,26 @@ namespace tsorcRevamp.NPCs
 
                         //Main.NewText(pitch);
                         p.timeLeft = 2;
-
-                        Projectile.NewProjectile(npc.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.VirulentCatExplosion>(), (projectile.damage * 2), projectile.knockBack, projectile.owner, tags, 0);
-
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.VirulentCatExplosion>(), (projectile.damage * 2), projectile.knockBack, projectile.owner, tags, 0);
+                        }
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ViruCatDrain>());
 
                         if (buffindex != -1)
                         {
                             npc.DelBuff(buffindex);
+                        }
+                    }
+                    if (tags > 0 && !shockwaveCreated)
+                    {
+                        shockwaveCreated = true;
+                        if (projectile.type == ModContent.ProjectileType<Projectiles.VirulentCatDetonator>())
+                        {
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 400 * (tags / 12f), 50 * (tags / 12f));
+                            }
                         }
                     }
                 }
@@ -1048,6 +1073,8 @@ namespace tsorcRevamp.NPCs
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetBiohazardBlobs = true;
                 int tags;
 
+
+                bool shockwaveCreated = false;
                 for (int i = 0; i < 1000; i++)
                 {
                     tags = 0;
@@ -1068,14 +1095,23 @@ namespace tsorcRevamp.NPCs
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = volume, Pitch = -pitch }, projectile.Center);
 
                         p.timeLeft = 2;
-
-                        Projectile.NewProjectile(npc.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.BiohazardExplosion>(), (projectile.damage * 2), projectile.knockBack, projectile.owner, tags, 0);
-
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.BiohazardExplosion>(), (projectile.damage * 2), projectile.knockBack, projectile.owner, tags, 0);
+                        }
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.BiohazardDrain>());
 
                         if (buffindex != -1)
                         {
                             npc.DelBuff(buffindex);
+                        }
+                    }
+                    if (tags > 0 && !shockwaveCreated)
+                    {
+                        shockwaveCreated = true;
+                        if (projectile.type == ModContent.ProjectileType<Projectiles.BiohazardDetonator>())
+                        {
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 500 * (tags / 12f), 60 * (tags / 12f));
                         }
                     }
                 }

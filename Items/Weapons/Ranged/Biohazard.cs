@@ -12,13 +12,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Biohazard");
-            Tooltip.SetDefault("The addition of the propulsion field allows detonating shots to pierce twice"
+            Tooltip.SetDefault("The addition of the propulsion field allows detonating shots to pierce twice," +
+                                "\nand for sticking shots to home in on their target"
                                 + "\nWarning - perfectly capable of destroying entire ecosystems");
         }
 
         public override void SetDefaults()
         {
-            Item.damage = 60;
+            Item.damage = 170;
             Item.DamageType = DamageClass.Ranged;
             Item.crit = 0;
             Item.width = 52;
@@ -33,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.scale = 0.8f;
             Item.rare = ItemRarityID.Yellow;
             Item.shoot = ModContent.ProjectileType<BiohazardShot>();
-            Item.shootSpeed = 10f;
+            Item.shootSpeed = 15f;
         }
 
         public override Vector2? HoldoutOffset()

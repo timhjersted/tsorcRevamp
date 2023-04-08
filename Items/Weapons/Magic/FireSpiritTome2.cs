@@ -21,13 +21,13 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useAnimation = 7;
             Item.useTime = 7;
             Item.maxStack = 1;
-            Item.damage = 38;
+            Item.damage = 64;
             Item.knockBack = 8;
             Item.autoReuse = true;
             Item.scale = 1.3f;
-            Item.UseSound = SoundID.Item9;
+            Item.UseSound = SoundID.Item20;
             Item.rare = ItemRarityID.Lime;
-            Item.shootSpeed = 12;
+            Item.shootSpeed = 22;
             Item.mana = 5;
             Item.value = PriceByRarity.Lime_7;
             Item.DamageType = DamageClass.Magic;

@@ -47,8 +47,9 @@ namespace tsorcRevamp.Items.BossItems
             }
 
 
-            NPC Attraidies = Main.npc[NPC.NewNPC(NPC.GetBossSpawnSource(player.whoAmI), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())];
+            NPC.NewNPC(NPC.GetBossSpawnSource(player.whoAmI), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>());
 
+            /*
             for (int i = 0; i < 50; i++)
             {
                 vfx = Attraidies.Center;
@@ -61,7 +62,7 @@ namespace tsorcRevamp.Items.BossItems
                 Dust.NewDust(vfx, 30, 30, DustID.Torch, vel.X, vel.Y, 200, default, 3f);
 
                 Dust.NewDustPerfect(player.position, DustType, vel, 100, default, 5f).noGravity = true;
-            }
+            }*/
 
             //Flip it turnways if the player is facing the other way
             spawnPoint.X -= 14 * player.direction;
