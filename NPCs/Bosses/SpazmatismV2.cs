@@ -50,7 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spazmatism v2.14");
+            DisplayName.SetDefault("Spazmatism v2.15");
         }
 
         int FireJetDamage = 40;
@@ -134,14 +134,6 @@ namespace tsorcRevamp.NPCs.Bosses
             if (!HandleLife())
             {
                 return;
-            }
-                        
-            //Teleport if too far away
-            if (NPC.Distance(target.Center) > 4000 && finalStandTimer == 0)
-            {
-                //NPC.Center = target.Center + new Vector2(0, 1000);
-                NPC.netUpdate = true;
-                UsefulFunctions.BroadcastText("Spazmatism Closes In...");
             }
 
             //Initialize move list
