@@ -9,6 +9,7 @@ using Terraria.DataStructures;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
+    [Autoload(false)]
     public class Nightbringer: ModItem
     {
         public int AttackSpeedScalingDuration;

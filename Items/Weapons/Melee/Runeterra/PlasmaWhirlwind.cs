@@ -9,6 +9,7 @@ using tsorcRevamp.Projectiles.Swords.Runeterra;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
+    [Autoload(false)]
     public class PlasmaWhirlwind : ModItem
     {
         public int AttackSpeedScalingDuration;

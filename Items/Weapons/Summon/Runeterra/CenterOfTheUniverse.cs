@@ -11,6 +11,7 @@ using tsorcRevamp.Buffs.Runeterra.Summon;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
+    [Autoload(false)]
     public class CenterOfTheUniverse : ModItem
     {
         public static List<CenterOfTheUniverseStar> projectiles = null;

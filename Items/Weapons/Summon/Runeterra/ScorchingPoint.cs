@@ -12,7 +12,8 @@ using tsorcRevamp.Buffs.Runeterra.Summon;
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
 	[LegacyName("CotUItem1")]
-	public class ScorchingPoint : ModItem
+    [Autoload(false)]
+    public class ScorchingPoint : ModItem
 	{
 		public static List<ScorchingPointFireball> projectiles = null;
 		public static int processedProjectilesCount = 0;

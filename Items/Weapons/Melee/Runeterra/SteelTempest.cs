@@ -8,8 +8,10 @@ using Terraria.DataStructures;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
+    [Autoload(false)]
     public class SteelTempest: ModItem
     {
+        
         public int AttackSpeedScalingDuration;
         public override void SetStaticDefaults()
         {
