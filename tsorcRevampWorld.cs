@@ -116,6 +116,10 @@ namespace tsorcRevamp
             CustomMap = worldStateList.Contains("CustomMap");
 
             AbyssPortalLocation = tag.Get<Vector2>("AbyssPortal");
+            if(AbyssPortalLocation == Vector2.Zero)
+            {
+                AbyssPortalLocation = new Vector2(1400.5f, 256.5f) * 16;
+            }
 
             //Faisafe. Checks some blocks near the top of one of the Wyvern Mage's tower that are unlikely to change. Even if they do, this shouldn't be necessary though. It's purely to be safe.
             if (Framing.GetTileSafely(7102, 137).TileType == 54 && Framing.GetTileSafely(7103, 137).TileType == 357 && Framing.GetTileSafely(7104, 136).TileType == 357 && Framing.GetTileSafely(7105, 136).TileType == 197)
