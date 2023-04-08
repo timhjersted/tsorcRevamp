@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Special
             NPC.value = 600000;
             NPC.dontTakeDamage = true;
             NPC.behindTiles = true;
-            NPC.ShowNameOnHover = false;
+            NPC.ShowNameOnHover = true;
         }
 
         public override void SetStaticDefaults()
@@ -77,7 +77,7 @@ namespace tsorcRevamp.NPCs.Special
 
             for(int i = 0; i < Main.maxPlayers; i++)
             {
-                if (Main.player[i].active && Main.player[i].Center.Distance(NPC.Center) < 400)
+                if (Main.player[i].active && Main.player[i].Center.Distance(NPC.Center) < 400 * tsorcRevampWorld.SHMScale)
                 {
                     Main.player[i].AddBuff(ModContent.BuffType<Buffs.Debuffs.DarkInferno>(), 30);
                     int index = Main.player[i].FindBuffIndex(ModContent.BuffType<Buffs.Debuffs.DarkInferno>());
@@ -101,7 +101,7 @@ namespace tsorcRevamp.NPCs.Special
             if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex].IsActive())
             {
                 float progress = startupPercent;
-                float intensity = tsorcRevampWorld.SHMScale * startupPercent;
+                float intensity = MathHelper.Lerp(1, 1.7f, tsorcRevampWorld.SHMScale / 2f) * startupPercent;
                 Filters.Scene[filterIndex].GetShader().UseTargetPosition(NPC.Center).UseProgress(progress).UseOpacity(0.1f).UseIntensity(intensity).UseColor(new Vector3(flashOpacity, 0,0));
             }
         }
@@ -109,6 +109,13 @@ namespace tsorcRevamp.NPCs.Special
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)        
         {
             return false;
+        }
+
+        public override void ModifyHoverBoundingBox(ref Rectangle boundingBox)
+        {
+            Dust.NewDust(NPC.Center, 10, 10, DustID.ShadowbeamStaff);
+            int bounds = (int)(250 * tsorcRevampWorld.SHMScale);
+            boundingBox = new Rectangle((int)NPC.Center.X - bounds, (int)NPC.Center.Y - bounds, bounds * 2, bounds * 2);
         }
 
         public override void OnKill()

@@ -33,10 +33,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         Vector2 attraidiesPoint = Vector2.Zero;
         public override void AI()
         {
-            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
-            {
-                Projectile.Kill();
-            }
+            
 
             chargeTime++;
             angle += 0.02f;
@@ -73,8 +70,19 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                     chargeTime = 0;
                 }
             }
+
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
+            {
+                Projectile.Kill();
+            }
+            else
+            {
+                originPoint = Main.npc[UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()).Value].Center;
+            }
+
+
             Projectile.Center = originPoint + new Vector2(radius, 0).RotatedBy(angle + Projectile.ai[0] * MathHelper.PiOver2);
-            Dust.NewDust(Projectile.Center, 10, 10, DustID.Vortex);
+
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 if (chargeTime > getChargeLimit())
@@ -122,6 +130,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             trailWidth = 70;
             trailPointLimit = 2000;
             trailMaxLength = 2250;
+            if(Projectile.ai[1] >= 2)
+            {
+                trailPointLimit = 50;
+                trailMaxLength = 200;
+                trailWidth = 100;
+            }
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/VortexOrb", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture1);
             effect.Parameters["fadeOut"].SetValue(fadeOut);

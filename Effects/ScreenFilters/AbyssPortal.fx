@@ -51,6 +51,7 @@ float4 PixelShaderFunction(float4 position : SV_POSITION, float2 coords : TEXCOO
     
     //Scale it
     intensity = scaleFactor / pow(intensity, 1.5);
+    intensity *= uIntensity;
     
     
     float modTime = 1 - frac(uTime / 5);

@@ -102,6 +102,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 if (branches != null && branches.Count > 0)
                 {
                     float pitch = Main.rand.NextFloat(-0.2f, 0.2f);
+                    //Collision.
                     //Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f, Pitch = pitch }, branches[0][0]);
                     //Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f, Pitch = pitch }, branches[0][branches[0].Count / 2]);
                     //Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f, Pitch = pitch }, branches[0][branches[0].Count - 1]);

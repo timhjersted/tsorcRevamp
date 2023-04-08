@@ -161,8 +161,33 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         }
 
         float transitionTimer = 0;
+        float maxTime;
         void ManageLife()
         {
+            if(NPC.life > NPC.lifeMax / 2)
+            {
+                Main.dayTime = false;
+                float life = NPC.life;
+                float maxOver2 = NPC.lifeMax / 2f;
+
+                float ratio = (life - maxOver2) / maxOver2;
+                maxTime = MathHelper.Lerp((float)Main.nightLength, 1, ratio);
+            }
+            else
+            {
+                Main.dayTime = true;
+                maxTime = MathHelper.Lerp((float)Main.dayLength  * 0.3f, 1, (float)NPC.life / (float)(NPC.lifeMax / 2f));
+            }
+
+            if (Main.time < maxTime)
+            {
+                Main.time += 5;
+            }
+            else
+            {
+                Main.time = maxTime;
+            }
+
             if (transitionTimer > 0)
             {
                 transitionTimer--;
@@ -188,12 +213,16 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                         if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<AttraidiesFragment>())
                         {
                             Main.npc[i].active = false;
+                            if (Main.netMode == NetmodeID.Server)
+                            {
+                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, i);
+                            }
                         }
                     }
 
                     if (Main.netMode == NetmodeID.Server)
                     {
-                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, this.NPC.whoAmI);
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, NPC.whoAmI);
                     }
                 }
 
@@ -215,7 +244,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 if (Phase == 2 && NPC.life < NPC.lifeMax * 0.20f)
                 {
                     ClearObstructiveProjectiles();
-                    NPC.Center = Target.Center + new Vector2(0, -800);
+                    NPC.Center = Target.Center + new Vector2(0, -600);
                     NPC.dontTakeDamage = true;
                     UsefulFunctions.BroadcastText("You feel the dark power of Attraidies flare...", Color.Purple);
                     UsefulFunctions.BroadcastText("And the power of the Earth uplift you from below, giving you the strength to finish him!", Color.Green);
@@ -892,7 +921,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 lightingColor = Color.Lerp(drawColor, lightingColor, 0.5f);
                 Rectangle sourceRectangle2 = NPC.frame;
                 Vector2 origin2 = sourceRectangle2.Size() / 2f;
-                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle2, lightingColor, NPC.rotation, origin2, 1, SpriteEffects.None, 0f);
+                float spriteFade = 1;
+                if(deathTimer > 0)
+                {
+                    spriteFade = 1 - (deathTimer / 150f);
+                }
+                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle2, lightingColor * spriteFade, NPC.rotation, origin2, 1, SpriteEffects.None, 0f);
             }
             return false;
         }
@@ -998,35 +1032,48 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         }
 
         float lightCooldown;
+        float auraExpandedSize = 0;
         void HandleDeath()
         {
+            StartAura(0.2f + auraExpandedSize);
+            auraExpandedSize += 0.01f;
             NPC.dontTakeDamage = true;
 
             //Heavy Impact + lightning sfx to indicate death
             if (deathTimer == 1)
             {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<AttraidiesFragment>())
+                    {
+                        Main.npc[i].active = false;
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, i);
+                        }
+                    }
+                }
+                ClearObstructiveProjectiles();
                 SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Thunder_0"));
                 SoundEngine.PlaySound(SoundID.Item62);
-            }
-
-            //Attraidies falls
-            if(deathTimer > 30)
-            {
-                NPC.noGravity = false;
-                NPC.noTileCollide = false;
             }
 
 
             if(deathTimer == 150)
             {
-                SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/EvilLaugh") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
+                SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/EvilLaugh") with { Volume = 2, PlayOnlyIfFocused = false, MaxInstances = 0 });
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
             }
 
             //Spawn distortion lightning effects
             if (deathTimer > 200)
             {
-                if (deathTimer % 20 == 0)
+                float delay = 20;
+                if(deathTimer > 280)
+                {
+                    delay = 10;
+                }
+                if (deathTimer % delay == 0)
                 {
                     Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
                 }
@@ -1036,8 +1083,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             if(deathTimer > 400)
             {
                 //Attraidies dies
-                //Flash of white screen shader
                 //Spawn abyss portal NPC
+                SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/MetalShatter") with { Volume = 0.5f, PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
                 NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<NPCs.Special.AbyssPortal>(), ai0: 1);
                 UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.RealityCrack>());
                 tsorcRevampWorld.AbyssPortalLocation = NPC.Center;

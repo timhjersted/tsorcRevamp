@@ -110,7 +110,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     //Not the vibe i'm going for here, but looks cool as hell and will be useful later:
     //float4 effectColor = noiseColor * noiseColor * pow(intensity, 2) * 8.0;
     
-    return effectColor * fadeOut;
+    return effectColor * fadeOut * 0.2;
 }
 
 technique VortexOrb
