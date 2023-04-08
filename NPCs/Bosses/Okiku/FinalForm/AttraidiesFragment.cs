@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -106,9 +107,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
             if (NPC.ai[3] == 3)
             {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (AttackTimer % 720 == 0)
                 {
-                    if (AttackTimer % 720 == 0)
+                    SoundEngine.PlaySound(SoundID.Item20 with { Volume = 1 }, NPC.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 4; i++)
                         {
@@ -118,12 +120,14 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                         clockwise *= -1;
                     }
                 }
+                
             }
             else
             {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (NPC.ai[3] == 0 && AttackTimer % 120 == 0)
                 {
-                    if (NPC.ai[3] == 0 && AttackTimer % 120 == 0)
+                    SoundEngine.PlaySound(SoundID.Item20 with { Volume = 1 }, NPC.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 4; i++)
                         {
@@ -132,6 +136,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                         }
                     }
                 }
+                
                 
                 if (AttackTimer > timeLimit)
                 {
@@ -270,12 +275,16 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             {
                 texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture);
             }
-
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (NPC.Center.X - 20 < Main.LocalPlayer.Center.X)
+            {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+            }
             Color lightingColor = Color.Lerp(Color.White, rgbColor, 0.5f);
             lightingColor = Color.Lerp(drawColor, lightingColor, 0.5f);
             Rectangle sourceRectangle2 = NPC.frame;
             Vector2 origin2 = sourceRectangle2.Size() / 2f;
-            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle2, lightingColor, NPC.rotation, origin2, 1, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle2, lightingColor, NPC.rotation, origin2, 1, spriteEffects, 0f);
 
             return false;
         }
