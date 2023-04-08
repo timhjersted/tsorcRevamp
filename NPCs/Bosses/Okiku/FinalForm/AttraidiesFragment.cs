@@ -107,8 +107,14 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
             if (NPC.ai[3] == 3)
             {
+                if(AttackTimer % 720 == 690)
+                {
+                    animationState = 1;
+                    animationTimer = 30;
+                }
                 if (AttackTimer % 720 == 0)
                 {
+
                     SoundEngine.PlaySound(SoundID.Item20 with { Volume = 1 }, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -124,6 +130,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             }
             else
             {
+                if (NPC.ai[3] == 0 && AttackTimer % 120 == 90)
+                {
+                    animationState = 1;
+                    animationTimer = 30;
+                }
                 if (NPC.ai[3] == 0 && AttackTimer % 120 == 0)
                 {
                     SoundEngine.PlaySound(SoundID.Item20 with { Volume = 1 }, NPC.Center);
@@ -154,74 +165,34 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             base.OnHitByProjectile(projectile, damage, knockback, crit);
         }
 
+        int animationState;
+        int animationTimer;
         public override void FindFrame(int currentFrame)
         {
-            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X, NPC.velocity.Y, 100, Color.Red, 1f);
-            Main.dust[dust].noGravity = true;
-
-            int num = 1;
-            if (!Main.dedServ)
+            if (texture == null || texture.IsDisposed)
             {
-                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
+                return;
+            }
+            int frameSize = texture.Height / Main.npcFrameCount[NPC.type];
+
+            //Standing there, he realizes
+            if (animationState == 0)
+            {
+                NPC.frame = new Rectangle(0, 0, texture.Width, frameSize);
             }
 
-            if (NPC.velocity.X > 1.5f) NPC.frame.Y = num;
-            if (NPC.velocity.X < -1.5f) NPC.frame.Y = num * 2;
-            if (NPC.velocity.X > -1.5f && NPC.velocity.X < 1.5f) NPC.frame.Y = 0;
-            else
+            //Spreading arms out dramatically
+            if (animationState == 1)
             {
-                if (NPC.alpha < 100) NPC.alpha += 1;
-                if (NPC.alpha > 100) NPC.alpha -= 1;
-            }
+                NPC.frame = new Rectangle(0, frameSize, texture.Width, frameSize);
 
-            if (lookMode == 0)
-            {
-                if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2))
+                if (animationTimer == 0)
                 {
-                    NPC.frameCounter = 0;
-                    NPC.frame.Y = 0;
-                    if (NPC.position.X > Main.player[NPC.target].position.X)
-                    {
-                        NPC.spriteDirection = -1;
-                    }
-                    else
-                    {
-                        NPC.spriteDirection = 1;
-                    }
+                    animationState = 0;
                 }
-            }
-
-            if (lookMode == 1)
-            {
-                if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2))
+                else
                 {
-                    NPC.frameCounter = 0;
-                    NPC.frame.Y = 0;
-                    if (NPC.position.X > Main.player[NPC.target].position.X)
-                    {
-                        NPC.spriteDirection = -1;
-                    }
-                    else
-                    {
-                        NPC.spriteDirection = 1;
-                    }
-                }
-            }
-
-            if (lookMode == 2)
-            {
-                if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2))
-                {
-                    NPC.frameCounter = 0;
-                    NPC.frame.Y = 0;
-                    if (NPC.position.X > Main.player[NPC.target].position.X)
-                    {
-                        NPC.spriteDirection = -1;
-                    }
-                    else
-                    {
-                        NPC.spriteDirection = 1;
-                    }
+                    animationTimer--;
                 }
             }
         }

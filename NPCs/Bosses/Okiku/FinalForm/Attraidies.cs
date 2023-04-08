@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
     [AutoloadBossHead]
     class Attraidies : ModNPC
     {
-        public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/FirstForm/DarkShogunMask";
+        public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/SecondForm/DarkDragonMask";
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
-            Main.npcFrameCount[NPC.type] = 3;
+            Main.npcFrameCount[NPC.type] = 7;
             despawnHandler = new NPCDespawnHandler("With your death a dark shadow falls over the world...", Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
 
@@ -130,7 +130,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 }
                 initialized = true;
             }
+
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
+
             if (introTimer < 120)
             {
                 Intro();
@@ -186,6 +188,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
             if (transitionTimer > 0)
             {
+                animationState = 0;
+                animationTimer = 0;
                 transitionTimer--;
                 NPC.velocity *= 0.9f;
                 if (transitionTimer == 30)
@@ -292,6 +296,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer);
                 }
                 UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.RealityCrack>());
+                animationState = 1;
+                animationTimer = 90;
             }
 
             NPC.dontTakeDamage = false;
@@ -398,6 +404,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         {
             Lighting.AddLight(NPC.position, Color.Purple.ToVector3());
             UsefulFunctions.SmoothHoming(NPC, Target.Center + new Vector2(0, -300), 0.05f, 5f);
+            animationState = 1;
+            animationTimer = 30;
 
             if (AttackTimer > 15 && (Main.GameUpdateCount % 45 == 0))
             {
@@ -440,6 +448,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         void DarkLasers()
         {
             Lighting.AddLight(NPC.position, Color.Purple.ToVector3());
+
             if (AttackTimer < 90)
             {
                 UsefulFunctions.SmoothHoming(NPC, Target.Center + new Vector2(0, -500), 0.5f, 50f);
@@ -448,6 +457,16 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             {
                 StartAura(0.15f);
                 NPC.velocity *= 0.9f;
+                if(AttackTimer == 91)
+                {
+                    animationState = 2;
+                    animationTimer = 149;
+                }
+                if(AttackTimer >= 240)
+                {
+                    animationState = 1;
+                    animationTimer = 30;
+                }
             }
 
             for(int i = 0; i < Main.maxPlayers; i++)
@@ -582,6 +601,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
             if (AttackTimer % 45 == 0 && AttackTimer % 270 < 180)
             {
+                animationState = 1;
+                animationTimer = 30;
                 StartAura(0.15f);
                 SoundEngine.PlaySound(SoundID.Item20 with { Volume = 1 });
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -624,6 +645,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
             if (AttackTimer == 5)
             {
+                animationState = 1;
+                animationTimer = 30;
                 StartAura(0.20f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -676,6 +699,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         {
             Lighting.AddLight(NPC.position, Color.HotPink.ToVector3());
             NPC.velocity *= 0.95f;
+
+            if(AttackTimer == 1)
+            {
+                animationState = 2;
+                animationTimer = 89;
+            }
             
             if (AttackTimer == 90)
             {
@@ -689,7 +718,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                     }
                 }
             }
-            if (AttackTimer % 120 == 0)
+            if (AttackTimer % 120 == 0 && AttackTimer > 120)
             {
                 SoundEngine.PlaySound(SoundID.Item20 with { Volume = 1 }, NPC.Center);
                 StartAura(0.15f);
@@ -701,6 +730,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<NebulaShot>(), NebulaShotDamage, 1, Main.myPlayer, clockwise);
                     }
                 }
+            }
+            if(AttackTimer % 120 == 90)
+            {
+                animationState = 1;
+                animationTimer = 30;
             }
             
 
@@ -729,6 +763,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             }
             if (AttackTimer == 120)
             {
+                animationState = 1;
+                animationTimer = 30;
                 StartAura(0.2f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -760,6 +796,18 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         void FinalStand()
         {
             NPC.velocity = Vector2.Zero;
+
+            if (AttackTimer == 90)
+            {
+                animationState = 2;
+                animationTimer = 150;
+            }
+            if (AttackTimer >= 240)
+            {
+                animationState = 1;
+                animationTimer = 30;
+            }
+
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i] != null && Main.player[i].active)
@@ -856,6 +904,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             StartAura(0.2f);
 
             AttackTimer = 0;
+            animationState = 0;
+            animationTimer = 0;
 
             if (Main.netMode == NetmodeID.Server)
             {
@@ -1004,6 +1054,54 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             return false;
         }
 
+        int animationTimer;
+        int animationState;
+        public override void FindFrame(int frameHeight)
+        {
+            if(texture == null || texture.IsDisposed)
+            {
+                return;
+            }
+            int frameSize = texture.Height / Main.npcFrameCount[NPC.type];
+                        
+
+            //Standing there, he realizes
+            if (animationState == 0)
+            {
+                NPC.frame = new Rectangle(0,0, texture.Width, frameSize); 
+            }
+            
+            //Spreading arms out dramatically
+            if (animationState == 1)
+            {
+                NPC.frame = new Rectangle(0, frameSize, texture.Width, frameSize);
+
+                if(animationTimer == 0)
+                {
+                    animationState = 0;
+                }
+                else
+                {
+                    animationTimer--;
+                }
+            }
+            
+            //Moving his arms weirdly
+            if (animationState == 2)
+            {
+                int animationCounter = (animationTimer / 8) % 3;
+                NPC.frame = new Rectangle(0, frameSize * (3 + animationCounter), texture.Width, frameSize);
+
+                if (animationTimer == 0)
+                {
+                    animationState = 0;
+                }
+                else
+                {
+                    animationTimer--;
+                }
+            }
+        }
 
         float effectTimer;
         public void DrawAura()
@@ -1097,7 +1195,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             }
         }
 
-
         float auraExpandedSize = 0;
         void HandleDeath()
         {
@@ -1171,7 +1268,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             }
         }
 
-                
         public override bool CheckActive()
         {
             return false;
