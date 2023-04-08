@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles.VFX
             //Get an unused copy of the effect from the scene filter dictionary, or create one if they're all in use
             if (!initialized && Main.netMode != NetmodeID.Server)
             {
-                SoundEngine.PlaySound(SoundID.Shatter);
+                SoundEngine.PlaySound(SoundID.Shatter  with { Volume = 0.5f });
                 int index = 0;
                 do
                 {

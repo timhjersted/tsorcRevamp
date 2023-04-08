@@ -1084,7 +1084,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             {
                 //Attraidies dies
                 //Spawn abyss portal NPC
-                SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/MetalShatter") with { Volume = 0.5f, PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
+                SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/MetalShatter") with { Volume = 1f, PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
                 NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<NPCs.Special.AbyssPortal>(), ai0: 1);
                 UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.RealityCrack>());
                 tsorcRevampWorld.AbyssPortalLocation = NPC.Center;

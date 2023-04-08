@@ -33,6 +33,8 @@ namespace tsorcRevamp
 
         };
 
+        public static ForceLoadTexture fissureTexture = new ForceLoadTexture("tsorcRevamp/UI/MinimapFissure");
+
         public override void PostDrawFullscreenMap(ref string mouseText)
         {
             foreach (ForceLoadTexture texture in mapTextures) {
@@ -120,6 +122,23 @@ namespace tsorcRevamp
             }
             MapMarkersUIState.Visible = true;
 
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                Vector2 abyssFissureCoords = tsorcRevampWorld.AbyssPortalLocation / 16;
+                abyssFissureCoords.X += 1.5f;
+                abyssFissureCoords.Y += 1f;
+                abyssFissureCoords *= mapScale;
+                abyssFissureCoords += scaledMapCoords;
+                fissureTexture.KeepLoaded();
+                Texture2D minimapFissureTexture = fissureTexture.texture;
+                Main.spriteBatch.Draw(minimapFissureTexture, abyssFissureCoords, null, Color.White, 0, minimapFissureTexture.Size() / 2, 0.85f, SpriteEffects.None, 1);
+                if((mouseTile - tsorcRevampWorld.AbyssPortalLocation / 16).Length() <= hoverRange)
+                {
+                    mouseText = "Abyssal Fissure";
+                }
+            }
+
+
             foreach (KeyValuePair<Vector2, int> marker in tsorcRevampWorld.MapMarkers) {
                 Vector2 markerDrawCoords = marker.Key;
                 markerDrawCoords.X += 1.5f;
@@ -135,6 +154,7 @@ namespace tsorcRevamp
                     tsorcRevampWorld.MapMarkers.Remove(marker.Key);
                 }
             }
+
             if (!MapMarkersUIState.Switching && tsorcRevamp.MarkerSelected > -1 && tsorcRevamp.MarkerSelected != 4 && Main.mouseLeft && !tsorcRevampWorld.MapMarkers.ContainsKey(mouseTile)) {
                 tsorcRevampWorld.MapMarkers.Add(mouseTile, tsorcRevamp.MarkerSelected);
                 tsorcRevamp.MarkerSelected = -1;
