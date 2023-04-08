@@ -39,6 +39,10 @@ namespace tsorcRevamp.Projectiles.VFX
         bool initialized = false;
         public override void AI()
         {
+            Projectile.timeLeft++;
+            effectTimer++;
+
+            //Get an unused copy of the effect from the scene filter dictionary, or create one if they're all in use
             if (!initialized && Main.netMode != NetmodeID.Server)
             {
                 SoundEngine.PlaySound(SoundID.Shatter);
@@ -82,9 +86,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 return;
             }
 
-            Projectile.timeLeft++;
-            effectTimer++;
-           
+            //Apply it
             if (Main.netMode != NetmodeID.Server && !Filters.Scene[filterIndex].IsActive() && lightningTarget != null && !lightningTarget.IsDisposed)
             {
                 Filters.Scene.Activate(filterIndex, Projectile.Center).GetShader().UseTargetPosition(storedPosition).UseProgress(1).UseOpacity(1).UseIntensity(1).UseColor(Color.White.ToVector3()).UseImage(lightningTarget, samplerState: SamplerState.LinearClamp).UseDirection(-Projectile.velocity);
@@ -95,15 +97,23 @@ namespace tsorcRevamp.Projectiles.VFX
                 Filters.Scene[filterIndex].GetShader().UseTargetPosition(storedPosition).UseProgress(1).UseOpacity(1).UseIntensity(1).UseColor(Color.White.ToVector3()).UseImage(lightningTarget, samplerState: SamplerState.LinearClamp).UseDirection(-Projectile.velocity);
             }
 
+
             if (effectTimer > 1000)
-            {
-                if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex].IsActive())
-                {
-                    //Set its 'useimage' to this so that it doesn't hold onto a reference to the soon to be disposed rendertarget
-                    Filters.Scene[filterIndex].GetShader().UseOpacity(0).UseImage(tsorcRevamp.tNoiseTexture1);
-                    Filters.Scene[filterIndex].Deactivate();
-                }
+            {                
                 Projectile.Kill();
+            }
+        }
+
+        public override void Kill(int timeLeft)
+        {
+            if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex].IsActive())
+            {
+                //Set its 'useimage' to this so that it doesn't hold onto a reference to the soon to be disposed rendertarget
+                Filters.Scene[filterIndex].GetShader().UseOpacity(0).UseImage(tsorcRevamp.tNoiseTexture1);
+                Filters.Scene[filterIndex].Deactivate();
+            }
+            if (lightningTarget != null && !lightningTarget.IsDisposed)
+            {
                 lightningTarget.Dispose();
             }
         }

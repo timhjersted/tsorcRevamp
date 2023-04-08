@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -22,6 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 600;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/VortexOrb", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         Vector2 originPoint = Vector2.Zero;
@@ -39,7 +41,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             chargeTime++;
             angle += 0.02f;
             float maxRadius = 1000;
-            if(Projectile.ai[1] >= 2)
+
+            base.AI();
+            Lighting.AddLight(Projectile.Center, Color.Teal.ToVector3());
+
+            if (Projectile.ai[1] >= 2)
             {
                 maxRadius = 1300;
             }
@@ -49,6 +55,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             }
             if(originPoint == Vector2.Zero)
             {
+                SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Thunder_0"), Projectile.Center);
                 if (Projectile.ai[1] == 2)
                 {
                     Projectile.timeLeft = 1200;
@@ -97,9 +104,29 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             }
         }
 
+        int timeFactor;
         public override void SetEffectParameters(Effect effect)
         {
-            base.SetEffectParameters(effect);
+            collisionEndPadding = (int)(trailPositions.Count * 23f / 32f);
+            collisionPadding = trailPositions.Count / 8;
+            visualizeTrail = false;
+            timeFactor++;
+            if (CalculateLength() < 500)
+            {
+                trailWidth = (int)trailCurrentLength / 2;
+            }
+            else
+            {
+                trailWidth = 50;
+            }
+            trailWidth = 70;
+            trailPointLimit = 2000;
+            trailMaxLength = 2250;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/VortexOrb", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture1);
+            effect.Parameters["fadeOut"].SetValue(fadeOut);
+            effect.Parameters["time"].SetValue(timeFactor);
+            effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
         public override bool PreDraw(ref Color lightColor)
         {
@@ -126,6 +153,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             }
 
             return 0;
+        }
+
+        public override bool? CanDamage()
+        {
+            return false;
         }
     }
 }

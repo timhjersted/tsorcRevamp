@@ -21,16 +21,8 @@ float2 uImageOffset;
 float4 uSourceRect;
 float2 uZoom;
 
-const float PI = 3.141592;
-const float SQRTTwoOverTwo = 0.707107;
 float4 PixelShaderFunction(float4 position : SV_POSITION, float2 coords : TEXCOORD0) : COLOR0
-{
-    //Various Constants
-    float distortionStrength = 0.05f;
-    float abberationStrength = 1.1;
-    float ringSize = 300;
-    float PIOver4 = PI / 4;
-    
+{    
     //Offset and scale it
     float2 currentPixel = coords * uScreenResolution;
     float2 focusPoint = uTargetPosition - uScreenPosition;

@@ -539,7 +539,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         void VortexLightning()
         {
             Lighting.AddLight(NPC.position, Color.Teal.ToVector3());
-            UsefulFunctions.DustRing(NPC.Center, 1000, DustID.ShadowbeamStaff, 100, 2);
 
             if (AttackTimer > 180)
             {
@@ -630,7 +629,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
         void SolarAndVortex()
         {
-            UsefulFunctions.DustRing(NPC.Center, 1000, DustID.ShadowbeamStaff, 100, 2);
             if (AttackTimer < 120)
             {
                 return;
@@ -1022,14 +1020,15 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             if(deathTimer == 150)
             {
                 SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/EvilLaugh") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
-                //Spawn distortion lightning effect aimed 45 degrees offset from nearest player
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
             }
 
-            if(deathTimer > 200)
+            //Spawn distortion lightning effects
+            if (deathTimer > 200)
             {
                 if (deathTimer % 20 == 0)
                 {
-                    //Spawn distortion lightning effects
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
                 }
                 //Growing X shape aura
             }
@@ -1040,6 +1039,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 //Flash of white screen shader
                 //Spawn abyss portal NPC
                 NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<NPCs.Special.AbyssPortal>(), ai0: 1);
+                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.RealityCrack>());
                 tsorcRevampWorld.AbyssPortalLocation = NPC.Center;
                 NPC.dontTakeDamage = false;
                 NPC.StrikeNPC(999999, 0, 0);

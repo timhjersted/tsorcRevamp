@@ -77,7 +77,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 // Align projectile facing with velocity normal
                 Projectile.rotation = (float)Math.Atan2(Projectile.velocity.Y, Projectile.velocity.X) - 2.355f;
 
-                if (Main.rand.NextBool(3))
+                if (Main.rand.NextBool(5))
                 {
                     // Render fire particles [every frame]
                     int particle = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 54, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 160, default(Color), 3f);
@@ -89,7 +89,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 }
 
                 // Render smoke particles [every other frame]
-                if (Projectile.timeLeft % 2 == 0)
+                if (Projectile.timeLeft % 4 == 0)
                 {
                     int particle2 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 1, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f - 1f, 180, default(Color), 1f + (float)Main.rand.Next(2));
                     Main.dust[particle2].noGravity = true;
