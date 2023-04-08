@@ -37,7 +37,7 @@ namespace tsorcRevamp.NPCs.Special
             NPC.noGravity = true;
             NPC.knockBackResist = 0f;
             NPC.lavaImmune = true;
-            NPC.value = 600000;
+            NPC.value = 0;
             NPC.dontTakeDamage = true;
             NPC.behindTiles = true;
             NPC.ShowNameOnHover = true;
@@ -55,6 +55,17 @@ namespace tsorcRevamp.NPCs.Special
         string filterIndex = "tsorcRevamp:abyssportal";
         public override void AI()
         {
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
+            {
+                NPC.life = 0;
+                if (Filters.Scene[filterIndex] != null && Filters.Scene[filterIndex].IsActive())
+                {
+                    Filters.Scene[filterIndex].Deactivate();
+                }
+                NPC.active = false;
+                return;
+            }
+
             if (NPC.ai[0] == 1)
             {
                 //First creation mode
@@ -101,7 +112,7 @@ namespace tsorcRevamp.NPCs.Special
             if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex].IsActive())
             {
                 float progress = startupPercent;
-                float intensity = MathHelper.Lerp(1, 1.7f, tsorcRevampWorld.SHMScale / 2f) * startupPercent;
+                float intensity = MathHelper.Lerp(1, 1.7f, tsorcRevampWorld.SHMScale - 1) * startupPercent;
                 Filters.Scene[filterIndex].GetShader().UseTargetPosition(NPC.Center).UseProgress(progress).UseOpacity(0.1f).UseIntensity(intensity).UseColor(new Vector3(flashOpacity, 0,0));
             }
         }

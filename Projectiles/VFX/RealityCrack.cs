@@ -106,7 +106,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
         public override void Kill(int timeLeft)
         {
-            if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex].IsActive())
+            if (Main.netMode != NetmodeID.Server && filterIndex != null && Filters.Scene[filterIndex].IsActive())
             {
                 //Set its 'useimage' to this so that it doesn't hold onto a reference to the soon to be disposed rendertarget
                 Filters.Scene[filterIndex].GetShader().UseOpacity(0).UseImage(tsorcRevamp.tNoiseTexture1);

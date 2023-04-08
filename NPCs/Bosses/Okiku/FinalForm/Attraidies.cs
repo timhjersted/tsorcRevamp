@@ -121,10 +121,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
-            //if (NPC.life > 14000)
-            {
-                //NPC.life = 14000;
-            }
             if (!initialized)
             {
                 UsefulFunctions.BroadcastText("I am impressed you've made it this far, Red. But I'm done playing games. It's time to end this...", 175, 75, 255);
@@ -136,9 +132,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 initialized = true;
             }
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            if (introTimer < 60)
+            if (introTimer < 120)
             {
                 Intro();
+                return;
             }
 
             ManageLife();
@@ -277,19 +274,29 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         void Intro()
         {
             introTimer++;
-            //Distortion bubble collapses above player
+
             if (introTimer == 1)
             {
                 NPC.dontTakeDamage = true;
                 NPC.Center = Target.Center + new Vector2(0, -300);
+            }
+
+            if(introTimer >= 60 && introTimer % 10 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
+            }
+
+            if(introTimer == 120)
+            {
+                SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Thunder_0") with { Volume = 2f });
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer);
                 }
+                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.RealityCrack>());
             }
-            //Four loud lightning strikes
-            //A flash, fading into an explosion like the triad death but rotated 45 degrees
-            //The dude appears
 
             NPC.dontTakeDamage = false;
         }
@@ -904,7 +911,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             }
-            else
+            else if(introTimer >= 120)
             {
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
@@ -938,7 +945,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
         public void DrawAura()
         {
-            Rectangle baseRectangle = new Rectangle(0, 0, (int)auraRadius, (int)auraRadius);
+            float introFactor = introTimer / 120f;
+            Rectangle baseRectangle = new Rectangle(0, 0, (int)(auraRadius * introFactor), (int)(auraRadius * introFactor));
             Vector2 baseOrigin = baseRectangle.Size() / 2f;
 
             for (int i = 0; i < auraColors.Count; i++)
@@ -965,9 +973,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
                 effect.Parameters["effectColor1"].SetValue(UsefulFunctions.ShiftColor(primaryColor, effectTimer / 25f).ToVector4());
                 effect.Parameters["effectColor2"].SetValue(UsefulFunctions.ShiftColor(secondColor, effectTimer / 25f).ToVector4());
-                effect.Parameters["ringProgress"].SetValue(baseRadius);
-                effect.Parameters["fadePercent"].SetValue(baseFade);
-                effect.Parameters["scaleFactor"].SetValue(.5f * 50);
+                effect.Parameters["ringProgress"].SetValue(baseRadius * introFactor);
+                effect.Parameters["fadePercent"].SetValue(baseFade / introFactor);
+                effect.Parameters["scaleFactor"].SetValue(.5f * 50 * introFactor);
                 effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 0.05f * 0.5f);
                 effect.Parameters["colorSplitAngle"].SetValue(2f * MathHelper.Pi / auraColors.Count);
 

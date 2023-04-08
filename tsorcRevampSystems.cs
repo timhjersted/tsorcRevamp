@@ -131,7 +131,7 @@ namespace tsorcRevamp
                 abyssFissureCoords += scaledMapCoords;
                 fissureTexture.KeepLoaded();
                 Texture2D minimapFissureTexture = fissureTexture.texture;
-                Main.spriteBatch.Draw(minimapFissureTexture, abyssFissureCoords, null, Color.White, 0, minimapFissureTexture.Size() / 2, 0.85f, SpriteEffects.None, 1);
+                Main.spriteBatch.Draw(minimapFissureTexture, abyssFissureCoords, null, Color.White, 0, minimapFissureTexture.Size() / 2, 1, SpriteEffects.None, 1);
                 if((mouseTile - tsorcRevampWorld.AbyssPortalLocation / 16).Length() <= hoverRange)
                 {
                     mouseText = "Abyssal Fissure";
