@@ -18,6 +18,7 @@ namespace tsorcRevamp.Items.BossBags
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Treasure Bag");
+            ItemID.Sets.BossBag[Type] = true;
             Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
         }
 
