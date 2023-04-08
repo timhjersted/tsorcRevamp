@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("15% increased movement speed" +
-                                "\n20% increased melee speed");
+                                "\n20% increased melee speed" +
+                                "\nGrants autoswing to melee weapons and whips");
         }
 
         public override void SetDefaults()
@@ -37,6 +38,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         {
             player.moveSpeed += 0.15f;
             player.GetAttackSpeed(DamageClass.Melee) += 0.2f;
+            player.autoReuseGlove = true;
         }
 
     }
