@@ -60,11 +60,16 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
+        float rotation;
         public override bool PreDraw(ref Color lightColor)
         {
+            rotation += 0.1f;
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
+
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(16, 16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(-16, -16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
 
             return false;
         }

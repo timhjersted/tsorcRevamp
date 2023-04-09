@@ -613,6 +613,12 @@ namespace tsorcRevamp
                     }
                 }
             }
+
+
+            if(proj.type == ModContent.ProjectileType<Projectiles.Ranged.PiercingPlasma>())
+            {
+                PiercingGazeCharge++;
+            }
         }
 
         public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit)

@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.IchorTrail>(), 0, 0, Main.myPlayer, 0, NPC.whoAmI);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorTrail>(), 0, 0, Main.myPlayer, 0, NPC.whoAmI);
                 }
                 spawnedTrail = true;
             }

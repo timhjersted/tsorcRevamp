@@ -242,7 +242,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (finalStandTimer == 0 && finalStandLevel == 0)
                 {
                     UsefulFunctions.BroadcastText("The Triad prepares to take you down with them...", Color.Cyan);
-                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.CataluminanceTrail>());
+                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.CataluminanceTrail>());
                 }
 
                 if (finalStandLevel == 0 && !NPC.AnyNPCs(ModContent.NPCType<RetinazerV2>()))
@@ -354,7 +354,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (MoveTimer == 1 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.CataluminanceTrail>(), TrailDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Enemy.Triad.CataluminanceTrail>(), TrailDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
             }
             float homingStrength = 0.17f;
             if (PhaseTwo)
@@ -488,7 +488,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (finalStandTimer == 61 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.CataluminanceTrail>(), TrailDamage, 0, Main.myPlayer, 2, NPC.whoAmI);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Enemy.Triad.CataluminanceTrail>(), TrailDamage, 0, Main.myPlayer, 2, NPC.whoAmI);
             }
 
             UsefulFunctions.SmoothHoming(NPC, target.Center, 0.2f, 20, bufferZone: false);
@@ -554,7 +554,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.CataluminanceTrail>(), TrailDamage, 0, Main.myPlayer, 5);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.CataluminanceTrail>(), TrailDamage, 0, Main.myPlayer, 5);
                 }
             }
 

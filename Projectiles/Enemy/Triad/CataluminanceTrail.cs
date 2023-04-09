@@ -7,9 +7,9 @@ using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.VFX
+namespace tsorcRevamp.Projectiles.Enemy.Triad
 {
-    class CataluminanceTrail : DynamicTrail
+    class CataluminanceTrail : Projectiles.VFX.DynamicTrail
     {
         public override void SetStaticDefaults()
         {
