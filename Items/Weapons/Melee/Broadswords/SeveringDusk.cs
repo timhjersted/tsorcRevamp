@@ -17,13 +17,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Blue;
-            Item.damage = 32;
+            Item.damage = 100;
             Item.width = 50;
             Item.height = 52;
             Item.knockBack = 5;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 23;
-            Item.useTime = 23;
+            Item.useAnimation = 12;
+            Item.useTime = 12;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Blue_1;
@@ -36,12 +36,12 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             if(player.altFunctionUse == 2)
             {
                 tsorcRevampStaminaPlayer playerStamina = player.GetModPlayer<tsorcRevampStaminaPlayer>();
-                if (playerStamina.staminaResourceCurrent > 20)
+                if (playerStamina.staminaResourceCurrent > 30)
                 {
-                    playerStamina.staminaResourceCurrent -= 20;
-                    player.velocity = velocity * 15;
+                    playerStamina.staminaResourceCurrent -= 30;
+                    player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.MouseWorld, 45);
                     player.immuneTime = 30;
-                    dashTimer = 30;
+                    dashTimer = 20;
                 }
             }
             return base.Shoot(player, source, position, velocity, type, damage, knockback);
@@ -49,10 +49,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
         {
-            if(dashTimer > 0)
-            {
-                //Create demon spirit
-            }
             base.OnHitNPC(player, target, damage, knockBack, crit);
         }
 
@@ -60,18 +56,26 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             if(dashTimer > 0)
             {
+                player.immune = true;
                 dashTimer--;
                 if(dashTimer == 0)
                 {
                     player.velocity *= 0.1f;
                 }
+                for(int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && !Main.npc[i].friendly && Main.npc[i].Distance(player.Center) < 70)
+                    {
+                        Main.npc[i].StrikeNPC((int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), 0, 0, true);
+                    }
+                }
             }
             base.HoldItem(player);
         }
 
-        public override bool CanRightClick()
+        public override bool AltFunctionUse(Player player)
         {
-            return base.CanRightClick();
+            return true;
         }
     }
 }

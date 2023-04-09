@@ -19,9 +19,10 @@ namespace tsorcRevamp.Projectiles.Ranged
             Projectile.width = 20;
             Projectile.height = 20;
             Projectile.timeLeft = 1200;
-            Projectile.hostile = true;
-            Projectile.friendly = false;
+            Projectile.hostile = false;
+            Projectile.friendly = true;
             Projectile.tileCollide = false;
+            Projectile.penetrate = 999;
 
             trailWidth = 25;
             trailPointLimit = 150;
@@ -34,6 +35,11 @@ namespace tsorcRevamp.Projectiles.Ranged
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/SolarBlast", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
+        /*
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            target.AddBuff(BuffID.OnFire, 100)
+        }*/
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             target.AddBuff(BuffID.OnFire, 100);

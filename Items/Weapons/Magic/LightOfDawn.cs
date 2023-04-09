@@ -12,8 +12,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Light of Dawn");
-            Tooltip.SetDefault("Fires illuminant streaks of hallowed light");
-
+            Tooltip.SetDefault("Day finally breaks" +
+                "Fires illuminant streaks of hallowed light");
         }
 
         public override void SetDefaults()
@@ -22,17 +22,17 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.height = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useTurn = true;
-            Item.useAnimation = 30;
-            Item.useTime = 30;
+            Item.useAnimation = 10;
+            Item.useTime = 10;
             Item.maxStack = 1;
-            Item.damage = 170;
+            Item.damage = 50;
             Item.autoReuse = true;
             Item.knockBack = 4;
             Item.UseSound = SoundID.Item34;
             Item.rare = ItemRarityID.Red;
             Item.shootSpeed = 10;
             Item.crit = 2;
-            Item.mana = 14;
+            Item.mana = 8;
             Item.noMelee = true;
             Item.value = PriceByRarity.Red_10;
             Item.DamageType = DamageClass.Magic;

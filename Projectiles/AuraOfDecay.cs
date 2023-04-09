@@ -44,15 +44,16 @@ namespace tsorcRevamp.Projectiles
         public bool FinalStandMode = false;
         public override void AI()
         {
-            timer++; if (timer == 1)
+            timer++;
+            if (timer == 1)
             {
                 Projectile.timeLeft = 800;
                 fadeOut = 0;
                 trailPositions = new List<Vector2>();
                 trailRotations = new List<float>();
-                for (int i = 0; i < 110; i++)
+                for (int i = 0; i < 102; i++)
                 {
-                    float angle = MathHelper.TwoPi * i / 95;
+                    float angle = (MathHelper.Pi / 2.5f) + MathHelper.TwoPi * i / 95;
                     trailPositions.Add(Projectile.Center + new Vector2(5, 0).RotatedBy(angle));
                     trailRotations.Add(angle + MathHelper.PiOver2);
                 }
@@ -87,6 +88,13 @@ namespace tsorcRevamp.Projectiles
             behindNPCs.Add(index);
         }
 
+        /*
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            target.AddBuff(BuffID.Poisoned, 120);
+            target.AddBuff(BuffID.Venom, 120);
+        }*/
+
         bool PreSetTrail = false;
         Color trailColor = new Color(0.2f, 0.7f, 1f);
         float timeFactor = 0;
@@ -94,8 +102,6 @@ namespace tsorcRevamp.Projectiles
         {
             collisionFrequency = 2;
             visualizeTrail = false;
-            collisionPadding = 8;
-            collisionEndPadding = trailPositions.Count / 24;
             trailWidth = 25;
 
             timeFactor++;
@@ -106,7 +112,7 @@ namespace tsorcRevamp.Projectiles
             Color rgbColor = Main.hslToRgb(hslColor);
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
-            effect.Parameters["fadeOut"].SetValue(0.5f);
+            effect.Parameters["fadeOut"].SetValue(0.2f);
             effect.Parameters["finalStand"].SetValue(FinalStandMode.ToInt());
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
             effect.Parameters["shaderColor"].SetValue(rgbColor.ToVector4());

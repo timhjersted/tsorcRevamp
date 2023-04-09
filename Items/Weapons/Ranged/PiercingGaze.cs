@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetDefaults()
         {
-            Item.damage = 45;
+            Item.damage = 125;
             Item.DamageType = DamageClass.Ranged;
             Item.width = 48;
             Item.height = 34;
@@ -40,6 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             return new Vector2(-6, 0);
         }
 
+        int lockoutTimer = 0;
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
             if (player.altFunctionUse == 2)
@@ -48,13 +49,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged
                 if (modPlayer.PiercingGazeCharge > 15)
                 {
                     modPlayer.PiercingGazeCharge = 0;
-                    type = ModContent.ProjectileType<Projectiles.Ranged.PiercingPlasma>();
+                    type = ModContent.ProjectileType<Projectiles.Ranged.PiercingGaze>();
+                    damage = (int)(damage * 1.5f);
+                    lockoutTimer = 120;
                 }
             }
-            base.ModifyShootStats(player, ref position, ref velocity, ref type, ref damage, ref knockback);
         }
 
-        public override bool CanRightClick()
+        public override bool AltFunctionUse(Player player)
         {
             return true;
         }

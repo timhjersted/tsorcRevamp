@@ -24,10 +24,12 @@ namespace tsorcRevamp.Projectiles.Magic
             Projectile.height = 20;
             Projectile.scale = 1.1f;
             Projectile.timeLeft = 600;
-            Projectile.hostile = true;
+            Projectile.hostile = false;
             Projectile.tileCollide = false;
-            Projectile.friendly = false;
-
+            Projectile.friendly = true;
+            Projectile.penetrate = 999;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 10;
 
             trailWidth = 35;
             trailPointLimit = 900;
@@ -35,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Magic
             NPCSource = false;
             collisionFrequency = 5;
             trailYOffset = 50;
-            trailMaxLength = 700;
+            trailMaxLength = 500;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
@@ -57,13 +59,13 @@ namespace tsorcRevamp.Projectiles.Magic
             base.AI();
 
             //Stop homing after a few seconds
-            if (hasHitNPC)
+            if (!hasHitNPC)
             {
                 int? target = UsefulFunctions.GetClosestEnemyNPC(Projectile.Center);
                 if (target.HasValue && Main.npc[target.Value].Distance(Projectile.Center) < 300)
                 {
                     //Perform homing
-                    UsefulFunctions.SmoothHoming(Projectile, Main.npc[target.Value].Center, homingAcceleration, 20, Main.npc[target.Value].velocity, false);
+                    UsefulFunctions.SmoothHoming(Projectile, Main.npc[target.Value].Center, 0.5f, 20, Main.npc[target.Value].velocity, false);
                 }
             }
         }
@@ -72,7 +74,6 @@ namespace tsorcRevamp.Projectiles.Magic
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
             hasHitNPC = true;
-            base.OnHitNPC(target, damage, knockback, crit);
         }
 
         public override float CollisionWidthFunction(float progress)
@@ -93,9 +94,9 @@ namespace tsorcRevamp.Projectiles.Magic
             float trueFadeOut = fadeOut;
             trueFadeOut += trueFadeOut * ((float)Main.timeForVisualEffects / 120f);
 
-            Color shaderColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Main.timeForVisualEffects / 120f);
+            Color shaderColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
             float intensity = 0.07f + 0.03f * ((float)Main.timeForVisualEffects / 120f);
-            Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, (float)Main.timeForVisualEffects, intensity);
+            Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, (float)Main.timeForVisualEffects, 0.03f);
 
             collisionEndPadding = (int)trailCurrentLength / 30;
             visualizeTrail = false;
@@ -103,7 +104,7 @@ namespace tsorcRevamp.Projectiles.Magic
             //Shifts its color slightly over time
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture1);
-            effect.Parameters["fadeOut"].SetValue(trueFadeOut);
+            effect.Parameters["fadeOut"].SetValue(0.5f);
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 100f);
             effect.Parameters["shaderColor"].SetValue(rgbColor.ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());

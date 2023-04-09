@@ -18,16 +18,16 @@ namespace tsorcRevamp.Projectiles.Ranged
         {
             Projectile.width = 10;
             Projectile.height = 10;
-            Projectile.friendly = false;
-            Projectile.hostile = true;
+            Projectile.friendly = true;
+            Projectile.hostile = false;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.timeLeft = 999;
 
-            FollowHost = true;
-            LaserOrigin = Main.npc[HostIdentifier].Center;
-            FiringDuration = 120;
+
+            LaserName = "Piercing Gaze";
+            FiringDuration = 90;
             TelegraphTime = 30;
             MaxCharge = 30;
             LaserLength = 5000;
@@ -58,31 +58,24 @@ namespace tsorcRevamp.Projectiles.Ranged
         bool rapid = false;
         public override void AI()
         {
-            //Hacky way to pass one more bit of data through ai[0], but it works
-            if(Projectile.ai[0] >= 1000)
+            if (Main.player[Projectile.owner].active)
             {
-                rapid = true;
-                Projectile.ai[0] -= 1000;
-            }
+                Projectile.Center = Main.player[Projectile.owner].Center;
 
-            if (Main.player[(int)Projectile.ai[0]] != null && Main.player[(int)Projectile.ai[0]].active)
-            {
-                if (Main.npc[(int)Projectile.ai[1]] != null && Main.npc[(int)Projectile.ai[1]].active && Main.npc[(int)Projectile.ai[1]].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>())
+                if (Main.myPlayer == Projectile.owner)
                 {
-                    Projectile.velocity = (Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2).ToRotationVector2() ;
+                    Projectile.velocity = -Vector2.Normalize(Main.player[Projectile.owner].Center - Main.MouseWorld);
+                    Projectile.rotation = MathHelper.Pi + Projectile.velocity.ToRotation();
+                    int dir = 1;
+                    if (Projectile.velocity.X < 0)
+                    {
+                        dir = -1;
+                    }
+                    Main.player[Projectile.owner].ChangeDir(dir);
                 }
 
-                LaserName = "Piercing Gaze";
 
-                if (rapid)
-                {
-                    TelegraphTime = 90;
-                    FiringDuration = 15;
-                }
-                else
-                {
-                    FiringDuration = 60;
-                }
+
                 LineDust = true;
                 LaserDust = DustID.OrangeTorch;
                 if (targetPlayer == null)
@@ -111,15 +104,7 @@ namespace tsorcRevamp.Projectiles.Ranged
 
         public override Vector2 GetOrigin()
         {
-            if (Main.npc[(int)Projectile.ai[1]] != null && Main.npc[(int)Projectile.ai[1]].active && Main.npc[(int)Projectile.ai[1]].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>())
-            {
-                return Main.npc[(int)Projectile.ai[1]].Center + new Vector2(90, 0).RotatedBy(Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2);
-            }
-            else
-            {
-                Projectile.Kill();
-                return Vector2.Zero;
-            }
+            return Main.player[Projectile.owner].Center;
         }
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
@@ -141,7 +126,6 @@ namespace tsorcRevamp.Projectiles.Ranged
 
             //Gives the laser its 'flowing' effect
             timeFactor++;
-            LaserShader.Parameters["Time"].SetValue(timeFactor);
 
             //Shifts its color slightly over time
             Vector3 hslColor = Main.rgbToHsl(LaserColor);
@@ -154,6 +138,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             //Fade in and out, and pulse while targeting
             if ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2))
             {
+                LaserShader.Parameters["Time"].SetValue(timeFactor * 2);
                 if (FiringTimeLeft < FadeOutFrames)
                 {
                     fadePercent = (float)FiringTimeLeft / (float)FadeOutFrames;
@@ -174,6 +159,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             }
             else if (TelegraphTime + Charge >= MaxCharge || TargetingMode == 1)
             {
+                LaserShader.Parameters["Time"].SetValue(timeFactor);
                 modifiedSize /= 2;
                 fadePercent = (float)Math.Cos(timeFactor / 30f);
                 fadePercent = Math.Abs(fadePercent) * 0.2f;
@@ -199,6 +185,14 @@ namespace tsorcRevamp.Projectiles.Ranged
 
             //Draw the laser
             Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.velocity.ToRotation(), origin, Projectile.scale, SpriteEffects.None, 0);
+
+            if(Charge >= MaxCharge)
+            {
+                for(int i = 0; i < 3; i++)
+                {
+                    Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.velocity.ToRotation(), origin, Projectile.scale, SpriteEffects.None, 0);
+                }
+            }
 
             return false;
         }

@@ -24,9 +24,12 @@ namespace tsorcRevamp.Projectiles.Ranged
             Projectile.width = 20;
             Projectile.height = 20;
             Projectile.timeLeft = 600;
-            Projectile.hostile = true;
-            Projectile.friendly = false;
+            Projectile.hostile = false;
+            Projectile.friendly = true;
             Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 10;
 
             trailWidth = 25;
             trailPointLimit = 150;

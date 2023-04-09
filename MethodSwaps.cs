@@ -204,6 +204,14 @@ namespace tsorcRevamp
                             jet.PreDraw(ref color);
                             jet.additiveContext = false;
                         }
+                        if (Main.projectile[i].ModProjectile is Projectiles.Spears.FetidExhaust)
+                        {
+                            Projectiles.Spears.FetidExhaust jet = (Projectiles.Spears.FetidExhaust)Main.projectile[i].ModProjectile;
+                            jet.additiveContext = true;
+                            Color color = Color.White;
+                            jet.PreDraw(ref color);
+                            jet.additiveContext = false;
+                        }
                     }
                 }
                 Main.spriteBatch.End();

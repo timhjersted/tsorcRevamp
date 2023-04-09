@@ -29,11 +29,11 @@ namespace tsorcRevamp.Items.Accessories
                 return;
             }
 
-            if (Main.GameUpdateCount % 120 == 0)
+            if (Main.GameUpdateCount % 180 == 0)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.AuraOfDecay>(), 100, 0, Main.myPlayer, player.whoAmI);
+                    Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.AuraOfDecay>(), 300, 0, Main.myPlayer, player.whoAmI);
                 }
             }
         }

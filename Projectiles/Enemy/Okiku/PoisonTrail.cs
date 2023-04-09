@@ -239,7 +239,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             Color rgbColor = Main.hslToRgb(hslColor);
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
-            effect.Parameters["fadeOut"].SetValue(0.5f);
+            effect.Parameters["fadeOut"].SetValue(0.85f);
             effect.Parameters["finalStand"].SetValue(FinalStandMode.ToInt());
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
             effect.Parameters["shaderColor"].SetValue(rgbColor.ToVector4());

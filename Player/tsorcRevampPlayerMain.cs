@@ -618,6 +618,10 @@ namespace tsorcRevamp
             if(proj.type == ModContent.ProjectileType<Projectiles.Ranged.PiercingPlasma>())
             {
                 PiercingGazeCharge++;
+                if(PiercingGazeCharge == 15)
+                {
+                    UsefulFunctions.DustRing(Player.Center, 70, DustID.FireworkFountain_Red, 100, 18);
+                }
             }
         }
 

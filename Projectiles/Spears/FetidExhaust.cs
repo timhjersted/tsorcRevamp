@@ -46,15 +46,24 @@ namespace tsorcRevamp.Projectiles.Spears
         List<float> lastRotations;
         public override void AI()
         {
-
-            Projectile.Center = Main.LocalPlayer.Center;
-            Projectile.rotation = MathHelper.Pi + (Main.LocalPlayer.Center - Main.MouseWorld).ToRotation();
-
-            //Stick to spazmatism and rotate to face wherever it is looking
-            if (Main.npc[(int)Projectile.ai[0]] != null && Main.npc[(int)Projectile.ai[0]].active && Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.SpazmatismV2>())
+            Projectile.Center = Main.player[Projectile.owner].Center;
+            if (Main.myPlayer == Projectile.owner)
             {
-                Projectile.rotation = Main.npc[(int)Projectile.ai[0]].rotation + MathHelper.PiOver2;
-                Projectile.Center = Main.npc[(int)Projectile.ai[0]].Center + new Vector2(40, 0).RotatedBy(Projectile.rotation);
+                Vector2 angleVector = Main.player[Projectile.owner].Center - Main.MouseWorld;
+                Projectile.rotation = MathHelper.Pi + angleVector.ToRotation();
+                int dir = 1;
+                if (angleVector.X > 0)
+                {
+                    dir = -1;
+                }
+                Main.player[Projectile.owner].ChangeDir(dir);
+            }
+
+            
+
+            if (Main.player[Projectile.owner].channel && Projectile.timeLeft > 30)
+            {
+                Projectile.timeLeft++;
             }
 
             if (!initialized)

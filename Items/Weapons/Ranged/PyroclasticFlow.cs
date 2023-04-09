@@ -17,8 +17,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             Item.DamageType = DamageClass.Ranged;
             Item.noMelee = true;
-            Item.useTime = Item.useAnimation = 30; //brrrrrr
-            Item.damage = 200;
+            Item.useTime = Item.useAnimation = 15; //brrrrrr
+            Item.damage = 150;
             Item.knockBack = 1;
             Item.autoReuse = true;
             Item.shootSpeed = 16;

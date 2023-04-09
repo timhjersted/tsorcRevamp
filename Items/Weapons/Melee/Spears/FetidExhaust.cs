@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 
         public override void SetDefaults()
         {
-            Item.damage = 140;
+            Item.damage = 160;
             Item.knockBack = 15f;
 
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -29,7 +29,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 
             Item.DamageType = DamageClass.Melee;
             Item.noMelee = true;
-            //Item.noUseGraphic = true;
+            Item.noUseGraphic = true;
+            Item.channel = true;
+            Item.useTurn = true;
 
             Item.value = PriceByRarity.Yellow_8;
             Item.rare = ItemRarityID.Yellow;
@@ -41,6 +43,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
+            if(player.ownedProjectileCounts[type] > 0)
+            {
+                return false;
+            }
             return base.Shoot(player, source, position, velocity, type, damage, knockback);
         }
 
