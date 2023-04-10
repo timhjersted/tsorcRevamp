@@ -13,7 +13,10 @@ namespace tsorcRevamp
     {
         internal static void ApplyILs()
         {
-            
+
+            //Fix lihzahrd power cell being consumed
+            IL.Terraria.Player.TileInteractionsUse += PowerCell_Patch;
+
             IL.Terraria.Player.Update += Player_Update;
             //IL.Terraria.Player.Update += Chest_Patch;
             IL.Terraria.Recipe.FindRecipes += SoulSlotRecipesPatch;
@@ -74,6 +77,38 @@ namespace tsorcRevamp
         internal static void UnloadILs()
         {
 
+        }
+
+        internal static void PowerCell_Patch(ILContext il)
+        {
+            var c = new ILCursor(il);
+            var label = il.DefineLabel();
+
+            //go to where the item id for power cell (1293) is added to the stack
+            if (!c.TryGotoNext(instr => instr.MatchLdcI4(1293)))
+            {
+                throw new Exception("Could not find instruction to patch (PowerCell_Patch) (1)");
+            }
+
+            //go to the next instance of 'stack--' (item stack, not eval stack)
+            if (!c.TryGotoNext(instr => instr.Previous.MatchLdfld<Item>("stack") && instr.MatchLdcI4(1) && instr.Next.MatchSub()))
+            {
+                throw new Exception("Could not find instruction to patch (PowerCell_Patch) (2)");
+            }
+            //we're now before the instruction to add 1 to the eval stack (which will then be used to subtract from the item stack)
+
+            //jump to our label
+            //(skipping past ldc.i4.1 (add 1 to eval stack) and sub (subtract last two values from stack))
+            c.Emit(OpCodes.Br, label);
+
+            //move the cursor, this doesnt actually change anything in game
+            c.Index++;
+            c.Index++;
+            
+            //set the label to after the offending op codes
+            c.MarkLabel(label);
+
+            //outcome: sets 'stack' to 'stack', instead of setting 'stack' to 'stack - 1'.
         }
 
         internal static void DrawWires_Patch(ILContext il)
