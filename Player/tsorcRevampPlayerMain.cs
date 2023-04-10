@@ -673,8 +673,11 @@ namespace tsorcRevamp
                     damage /= 4;
                 }
             }
+
             if (crit)
+            {
                 DoMultiCrits(ref damage, Player.GetTotalCritChance(proj.DamageType));
+            }
         }
 
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit)
@@ -1223,18 +1226,6 @@ namespace tsorcRevamp
         {
             int critLevel = (int)(Math.Floor(Player.GetWeaponCrit(Player.HeldItem) / 100f));
 
-            /*SteelTempest thisSteelTempest = Player.HeldItem.ModItem as SteelTempest;
-            if (thisSteelTempest != null && thisSteelTempest.doublecritchance)
-            {
-                critLevel *= 2;
-                swordboost = true;
-            }*/
-            
-            /*if(DoubleCritChance)
-            {
-               critLevel = (int)(Math.Floor(critType / 50f));
-            }*/
-
             if (critLevel != 0)
             {
                 if (critLevel > 1)
@@ -1244,14 +1235,6 @@ namespace tsorcRevamp
                         damage *= 2;
                     }
                 }
-               /*if (DoubleCritChance)
-                {
-                    if (Main.rand.Next(1, 101) <= (critType * 2) - (100 * critLevel))
-                    {
-                        damage *= 2;
-                    }
-                } */
-                //else
                 if (Main.rand.Next(1, 101) <= (float)Player.GetWeaponCrit(Player.HeldItem) - (100 * critLevel))
                 {
                     damage *= 2;

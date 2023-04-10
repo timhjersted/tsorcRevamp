@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra.Melee
 {
@@ -17,8 +18,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
         {
             int dustID = Dust.NewDust(player.position, player.width, player.height, DustID.Torch, Scale: 3);
             Main.dust[dustID].noGravity = true;
-            player.immune = true;
-            player.GetDamage(DamageClass.Melee) *= 3f;
+            if (player.HeldItem.type == ModContent.ItemType<Nightbringer>())
+            {
+                player.GetDamage(DamageClass.Melee) *= 3f;
+            }
         }
     }
 }

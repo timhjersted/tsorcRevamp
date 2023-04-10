@@ -8,15 +8,15 @@ using tsorcRevamp.Buffs.Runeterra.Ranged;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
-    [Autoload(false)]
+    [Autoload(true)]
     public class OmegaSquadRifle : ModItem
     {
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Omega Squad Rifle");
             Tooltip.SetDefault("Converts seeds into Radioactive Darts and allows you to gather Seeds from grass" +
-                "\nRadioactive Darts apply a short burst of Irradiated and home into enemies" +
-                "\nAlso uses all darts as ammo" +
+                "\nRadioactive Darts apply a short burst of Irradiated home into enemies" +
+                "\nAlso uses all darts as ammo, but Poison Darts deal double damage" +
                 "\nStops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise" +
                 "\nGrants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily" +
                 "\nPress Special Ability to gain an even higher temporary boost and remove the movement penalties" +
@@ -55,8 +55,17 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             {
                 type = ModContent.ProjectileType<RadioactiveDart>();
             }
+            if (type == ProjectileID.PoisonDartBlowgun)
+            {
+                damage *= 4;
+                damage /= 3;
+            }
             if (player.altFunctionUse == 2)
             {
+                if (type == ProjectileID.Seed)
+                {
+                    damage /= 2;
+                }
                 type = ModContent.ProjectileType<RadioactiveBlindingLaser>();
             }
         }

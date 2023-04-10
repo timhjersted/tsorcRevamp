@@ -8,7 +8,7 @@ using Terraria.DataStructures;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
-    [Autoload(false)]
+    [Autoload(true)]
     public class SteelTempest: ModItem
     {
         

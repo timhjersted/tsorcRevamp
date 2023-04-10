@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
             Projectile.friendly = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 10 * 60;
+            Projectile.timeLeft = 5 * 60;
             Projectile.DamageType = DamageClass.Default;
         }
         public override void OnSpawn(IEntitySource source)

@@ -36,8 +36,9 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             var player = Main.player[Projectile.owner];
-            player.AddBuff(ModContent.BuffType<RadioactiveBlindingLaserCooldown>(), 300);
-			Projectile.damage *= 3;
+            player.AddBuff(ModContent.BuffType<RadioactiveBlindingLaserCooldown>(), 5 * 60);
+			Projectile.damage *= 4;
+			Projectile.CritChance += 100;
         }
 
         public override void AI()
@@ -47,8 +48,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            target.AddBuff(ModContent.BuffType<IrradiatedDebuff>(), 120);
-            target.AddBuff(BuffID.Confused, 120);
+            target.AddBuff(ModContent.BuffType<IrradiatedDebuff>(), 2 * 60);
+            target.AddBuff(BuffID.Confused, 2 * 60);
         }
     }
 }

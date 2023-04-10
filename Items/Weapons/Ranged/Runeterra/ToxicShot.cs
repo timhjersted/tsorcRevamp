@@ -8,7 +8,7 @@ using tsorcRevamp.Buffs.Runeterra.Ranged;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
-    [Autoload(false)]
+    [Autoload(true)]
     public class ToxicShot : ModItem
     {
         public override void SetStaticDefaults()
@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             DisplayName.SetDefault("Toxic Shot");
             Tooltip.SetDefault("Converts seeds into Toxic Shots and allows you to gather Seeds from grass" +
                 "\nToxic Shots apply a short burst of venom and home into enemies" +
-                "\nAlso uses all darts as ammo" +
+                "\nAlso uses all darts as ammo, but Poison Darts deal double damage" +
                 "\nStops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise" +
                 "\nGrants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily" +
                 "\nPress Special Ability to gain an even higher temporary boost and remove the movement penalties" +
@@ -52,6 +52,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             if (type == ProjectileID.Seed)
             {
                 type = ModContent.ProjectileType<ToxicShotDart>();
+            }
+            if (type == ProjectileID.PoisonDartBlowgun)
+            {
+                damage *= 2;
             }
         }
         public override void HoldItem(Player player)

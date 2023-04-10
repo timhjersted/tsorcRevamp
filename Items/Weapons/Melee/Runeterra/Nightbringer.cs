@@ -6,10 +6,11 @@ using Terraria.Audio;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using Terraria.DataStructures;
+using tsorcRevamp.Buffs;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
-    [Autoload(false)]
+    [Autoload(true)]
     public class Nightbringer: ModItem
     {
         public int AttackSpeedScalingDuration;
@@ -22,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 "\nUpon reaching 2 stacks, the next right click will release a chaotic tempest" +
                 "\nHover your mouse over an enemy and press Special Ability to dash through the enemy" +
                 "\nThis grants you brief invulnerability and a huge melee damage boost" +
-                "\nPress Shift + Special Ability to create a stationary firewall which blocks most enemy projectiles for 10 seconds" +
+                "\nPress Shift + Special Ability to create a stationary firewall which blocks most enemy projectiles for 5 seconds" +
                 "\n'Harmony is a lie told to force Obedience'");
         }
         public override void SetDefaults()
@@ -70,7 +71,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     {
                         SoundEngine.PlaySound(SoundID.Item104, player.Center);
                         player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, other.Center, 15f);
-                        player.AddBuff(ModContent.BuffType<NightbringerDash>(), 2 * 60);
+                        player.AddBuff(ModContent.BuffType<Invincible>(), 2 * 60);
+                        player.AddBuff(ModContent.BuffType<NightbringerDash>(), 5 * 60);
                         player.AddBuff(ModContent.BuffType<NightbringerDashCooldown>(), 20 * 60);
                     }
                     break;

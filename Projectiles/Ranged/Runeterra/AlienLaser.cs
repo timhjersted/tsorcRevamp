@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-			target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 60);
+			target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 2 * 60);
         }
 		public override bool PreDraw(ref Color lightColor)
 		{

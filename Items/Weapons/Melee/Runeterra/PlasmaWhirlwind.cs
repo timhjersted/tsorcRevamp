@@ -6,10 +6,11 @@ using Terraria.Audio;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Projectiles.Swords.Runeterra;
+using tsorcRevamp.Buffs;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
-    [Autoload(false)]
+    [Autoload(true)]
     public class PlasmaWhirlwind : ModItem
     {
         public int AttackSpeedScalingDuration;
@@ -69,7 +70,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     {
                         SoundEngine.PlaySound(SoundID.Item104, player.Center);
                         player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, other.Center, 15f);
-                        player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), 2 * 60);
+                        player.AddBuff(ModContent.BuffType<Invincible>(), 2 * 60);
+                        player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), 5 * 60);
                         player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>(), 20 * 60);
                     }
                     break;

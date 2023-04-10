@@ -8,15 +8,15 @@ using tsorcRevamp.Buffs.Runeterra.Ranged;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
-    [Autoload(false)]
+    [Autoload(true)]
     public class AlienRifle : ModItem
     {
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Alien Rifle");
             Tooltip.SetDefault("Converts seeds into Alien Lasers and allows you to gather Seeds from grass" +
-                "\nAlien Lasers apply a short burst of Electrified and home into enemies" +
-                "\nAlso uses all darts as ammo" +
+                "\nAlien Lasers apply a short burst of Electrified home into enemies" +
+                "\nAlso uses all darts as ammo, but Poison Darts deal double damage" +
                 "\nStops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise" +
                 "\nGrants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily" +
                 "\nPress Special Ability to gain an even higher temporary boost and remove the movement penalties" +
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item157;
             Item.DamageType = DamageClass.Ranged; 
-            Item.damage = 60;
+            Item.damage = 90;
             Item.knockBack = 5f;
             Item.noMelee = true;
             Item.shoot = ProjectileID.Seed;
@@ -54,8 +54,16 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             {
                 type = ModContent.ProjectileType<AlienLaser>();
             }
+            if (type == ProjectileID.PoisonDartBlowgun)
+            {
+                damage *= 2;
+            }
             if (player.altFunctionUse == 2)
             {
+                if (type == ProjectileID.Seed)
+                {
+                    damage *= 2;
+                }
                 type = ModContent.ProjectileType<AlienBlindingLaser>();
             }
         }
