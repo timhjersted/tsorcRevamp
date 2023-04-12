@@ -111,7 +111,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 Main.playerInventory = true;
                 Main.npcChatText = "";
                 ModContent.GetInstance<tsorcRevamp>().EmeraldHeraldUserInterface.SetState(new UI.EmeraldHeraldUI());
-                shop = false; // no shop
+                //shop = false; // no shop
                 return;
             }
             else

@@ -73,8 +73,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 buffLengthMod = 2;
             }
-
-            base.OnHitPlayer(target, damage, crit);
             target.AddBuff(BuffID.Weak, 1200 / buffLengthMod, false);
 
         }

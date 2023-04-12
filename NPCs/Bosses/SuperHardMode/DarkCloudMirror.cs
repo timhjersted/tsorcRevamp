@@ -305,16 +305,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (Main.rand.NextBool(4))
             {
-                player.AddBuff(BuffID.BrokenArmor, 600 / expertScale, false);
-                player.AddBuff(BuffID.Poisoned, 1800 / expertScale, false);
-                player.AddBuff(BuffID.Bleeding, 1800 / expertScale, false);
+                target.AddBuff(BuffID.BrokenArmor, 10 * 60 / expertScale, false);
+                target.AddBuff(BuffID.Poisoned, 30 * 60 / expertScale, false);
+                target.AddBuff(BuffID.Bleeding, 30 * 60 / expertScale, false);
 
             }
             if (Main.rand.NextBool(2))
             {
-                player.AddBuff(BuffID.BrokenArmor, 120 / expertScale, false); //broken armor
-                player.AddBuff(BuffID.OnFire, 180 / expertScale, false); //on fire!
-                player.AddBuff(ModContent.BuffType<FracturingArmor>(), 3600, false); //defense goes time on every hit
+                target.AddBuff(BuffID.BrokenArmor, 2 * 60 / expertScale, false);
+                target.AddBuff(BuffID.OnFire, 3 * 60 / expertScale, false); 
+                target.AddBuff(ModContent.BuffType<FracturingArmor>(), 60 * 60, false); //defense goes time on every hit
             }
         }
         #endregion
@@ -331,15 +331,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //Takes double damage from melee weapons
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
-            damage *= 2;
-            crit = true;
+            modifiers.FinalDamage *= 2;
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (projectile.DamageType == DamageClass.Melee)
             {
-                damage *= 2;
-                crit = true;
+                modifiers.FinalDamage *= 2;
             }
         }
 

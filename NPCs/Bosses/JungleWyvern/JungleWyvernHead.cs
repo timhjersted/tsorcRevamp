@@ -364,8 +364,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
         }
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            damage *= 2;
-            base.OnHitByItem(player, item, damage, knockback, crit);
+            hit.Damage *= 2;
         }
         public override void OnKill()
         {

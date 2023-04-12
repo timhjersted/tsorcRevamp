@@ -103,13 +103,13 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void OnChatButtonClicked(bool firstButton, ref string shopName)
         {
-            shop = true;
+            shopName = "Shop";
             return;
         }
 
         #region Setup Shop
         public override void ModifyActiveShop(string shopName, Item[] items)
-        {
+        {/*
             chest.item[index].SetDefaults(ModContent.ItemType<DwarvenContract>());
             chest.item[index].shopCustomPrice = 100;
             chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
@@ -185,7 +185,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 chest.item[index].shopCustomPrice = 6000;
                 chest.item[index].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 index++;
-            }
+            }*/
         }
         #endregion
 

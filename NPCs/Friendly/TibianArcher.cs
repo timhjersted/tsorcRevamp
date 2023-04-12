@@ -73,13 +73,13 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             if (firstButton)
             {
-                shop = true;
+                shopName = "Shop";
                 return;
             }
         }
 
         public override void ModifyActiveShop(string shopName, Item[] items)
-        {
+        {/*
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.BoltCrate>());
             shop.item[nextSlot].shopCustomPrice = 8;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
@@ -177,7 +177,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shop.item[nextSlot].shopCustomPrice = 1;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
-            }
+            }*/
         }
 
         public override void HitEffect(NPC.HitInfo hit)
@@ -216,9 +216,9 @@ namespace tsorcRevamp.NPCs.Friendly
         }
         public override void DrawTownAttackGun(ref Texture2D item, ref Rectangle itemFrame, ref float scale, ref int horizontalHoldoutOffset)/* tModPorter Note: closeness is now horizontalHoldoutOffset, use 'horizontalHoldoutOffset = Main.DrawPlayerItemPos(1f, itemtype) - originalClosenessValue' to adjust to the change. See docs for how to use hook with an item type. */
         {
-            item = ModContent.ItemType<Items.Weapons.Ranged.Bows.ElfinBow>();
+            //item = ModContent.ItemType<Items.Weapons.Ranged.Bows.ElfinBow>();
             scale = 1f;
-            closeness = 20;
+            horizontalHoldoutOffset = 20;
         }
 
         public override void TownNPCAttackProj(ref int projType, ref int attackDelay)

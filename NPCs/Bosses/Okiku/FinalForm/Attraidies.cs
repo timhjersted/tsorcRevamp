@@ -1251,7 +1251,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.RealityCrack>());
                 tsorcRevampWorld.AbyssPortalLocation = NPC.Center;
                 NPC.dontTakeDamage = false;
-                NPC.StrikeNPC(999999, 0, 0);
+                //NPC.StrikeNPC(999999, 0, 0);
             }
         }
 

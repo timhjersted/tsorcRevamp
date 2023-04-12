@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             shootstacks += 1;
             if (shootstacks >= 3)
             {
-                Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Main.MouseWorld - player.Center, ProjectileID.DD2SquireSonicBoom, damage * 3, knockBack, Main.myPlayer);
+                Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Main.MouseWorld - player.Center, ProjectileID.DD2SquireSonicBoom, damageDone * 3, hit.Knockback, Main.myPlayer);
                 shootstacks = 0;
             }
         }
@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 || target.type == ModContent.NPCType<MindflayerServant>()
                 )
             {
-                damage *= 8;
+                modifiers.FinalDamage *= 8;
             }
             if (target.type == NPCID.Tim
                 || target.type == ModContent.NPCType<DungeonMage>()
@@ -63,7 +63,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()
                 )
             {
-                damage *= 4;
+                modifiers.FinalDamage *= 4;
             }
             if (target.type == ModContent.NPCType<CrazedDemonSpirit>()
 
@@ -79,7 +79,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingDisciple>()
                 )
             {
-                damage *= 8;
+                modifiers.FinalDamage *= 8;
             }
         }
         public override void AddRecipes()

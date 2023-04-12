@@ -38,7 +38,8 @@ namespace tsorcRevamp.Items.Armors
             player.GetCritChance(DamageClass.Generic) += 30;
             if(player.statDefense >=60)
             {
-                player.statDefense = 60;
+                player.statDefense *= 0;
+                player.statDefense += 60;
             }
             player.lifeRegen += 30;
             player.moveSpeed += player.endurance;

@@ -61,14 +61,14 @@ namespace tsorcRevamp.Projectiles.Summon
 			{
 				ragestacks = 20;
 			}
-			if (crit)
+			if (hit.Crit)
 			{
 				Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoomCrit>(), (int)((Projectile.damage * 0.075 * (ragestacks - 5)) * 2), 1f, Main.myPlayer);
 			}
 			if (ragestacks > 5)
 			{
 
-				if (!crit)
+				if (!hit.Crit)
                 {
 					Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 0.075 * (ragestacks - 5)), 1f, Main.myPlayer);
 				}

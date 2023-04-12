@@ -88,13 +88,13 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             if (firstButton)
             {
-                shop = true;
+                shopName = "Shop";
                 return;
             }
         }
 
         public override void ModifyActiveShop(string shopName, Item[] items)
-        {
+        {/*
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.WandOfDarkness>());
             shop.item[nextSlot].shopCustomPrice = 80;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
@@ -182,7 +182,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shop.item[nextSlot].shopCustomPrice = 5000;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
-            }
+            }*/
         }
 
         public override void HitEffect(NPC.HitInfo hit)
@@ -239,15 +239,15 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             if (weaponChoice < 8)
             {
-                item = ModContent.ItemType<Items.Weapons.Magic.GreatSoulArrowStaff>();
+                //item = ModContent.ItemType<Items.Weapons.Magic.GreatSoulArrowStaff>();
                 scale = 1f;
-                closeness = 4;
+                horizontalHoldoutOffset = 4;
             }
             if (weaponChoice >= 8)
             {
-                item = ModContent.ItemType<Items.Weapons.Magic.TheBlackenedFlames>();
+                //item = ModContent.ItemType<Items.Weapons.Magic.TheBlackenedFlames>();
                 scale = 1f;
-                closeness = 4;
+                horizontalHoldoutOffset = 4;
             }
         }
 

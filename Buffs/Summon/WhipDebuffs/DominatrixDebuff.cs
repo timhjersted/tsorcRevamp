@@ -39,7 +39,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			{
 				if (Main.rand.NextBool(14))
 				{
-					crit = true;
+					modifiers.SetCrit();
 				}
 			}
 		}

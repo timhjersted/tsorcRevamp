@@ -37,10 +37,10 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
 			if (markedByPyrosulfate && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
-				damage += 8;
+				modifiers.FlatBonusDamage += 8;
 				if (Main.rand.NextBool(33))
 				{
-					crit = true;
+					modifiers.SetCrit();
 				}
 			}
 		}

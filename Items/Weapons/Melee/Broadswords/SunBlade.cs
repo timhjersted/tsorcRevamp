@@ -62,7 +62,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                     || target.type == ModContent.NPCType<NPCs.Enemies.ZombieWormTail>()
                     )
             {
-                damage *= 4;
+                modifiers.FinalDamage *= 4;
             }
         }
     }

@@ -133,8 +133,8 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 for (int i = 0; i < 80; i++)
                 {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 54, 2.5f * (float)hitDirection, -1.5f, 70, default(Color), 1f);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 5, 1.5f * (float)hitDirection, -2.5f, 50, default(Color), 1f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 54, 2.5f * hit.HitDirection, -1.5f, 70, default(Color), 1f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 5, 1.5f * hit.HitDirection, -2.5f, 50, default(Color), 1f);
                 }
             }
         }

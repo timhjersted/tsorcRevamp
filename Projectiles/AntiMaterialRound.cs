@@ -183,7 +183,7 @@ namespace tsorcRevamp.Projectiles
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath43, Projectile.Center);
-            damage = target.defense + Projectile.damage;
+            modifiers.DefenseEffectiveness *= 0;
             if (Projectile.penetrate <= 0)
             {
                 Projectile.Kill();

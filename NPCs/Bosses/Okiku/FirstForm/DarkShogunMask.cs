@@ -87,7 +87,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             }
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
-        {
+        {/*
             if (damage > NPC.life || damage * 2 > NPC.life)
             {
                 crit = false;
@@ -100,7 +100,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             {
                 crit = false;
                 damage = NPC.life - 50;
-            }
+            }*/
         }
 
         int firstSoul = -1;

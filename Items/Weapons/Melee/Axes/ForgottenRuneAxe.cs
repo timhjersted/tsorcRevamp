@@ -58,7 +58,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
                 || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingDisciple>()
                 )
             {
-                damage *= 4;
+                modifiers.FinalDamage *= 4;
             }
         }
         public override void AddRecipes()

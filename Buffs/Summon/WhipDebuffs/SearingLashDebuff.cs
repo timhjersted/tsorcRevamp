@@ -83,7 +83,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
                 {
                     tagbonusdamage += Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 5;
                 }
-                damage += (int)((projectile.damage + tagbonusdamage) * 0.66f * whipDamage * 0.01);
+                modifiers.FlatBonusDamage += (int)((projectile.damage + tagbonusdamage) * 0.66f * whipDamage * 0.01);
 			}
 		}
 	}

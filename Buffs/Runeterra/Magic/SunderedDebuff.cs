@@ -27,19 +27,11 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
 		{
 			Sundered = false;
 		}
-
-        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
+        public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers)
         {
-            if (Sundered && !projectile.npcProj && !projectile.trap && projectile.DamageType == DamageClass.Magic)
+			if (Sundered && modifiers.DamageType == DamageClass.Magic)
             {
-                    damage += (int)((float)projectile.damage * 0.2f);
-            }
-        }
-        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
-        {
-            if (Sundered && item.DamageType == DamageClass.Magic)
-            {
-                    damage += (int)((float)item.damage * 0.2f);
+                modifiers.TargetDamageMultiplier *= 1.2f;
             }
         }
     }

@@ -242,7 +242,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (deathAnimationProgress == deathAnimationDuration)
             {
                 NPC.dontTakeDamage = false;
-                NPC.StrikeNPC(999999, 0, 0);
+                //NPC.StrikeNPC(999999, 0, 0);
             }
         }
 

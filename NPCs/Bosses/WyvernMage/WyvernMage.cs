@@ -81,8 +81,8 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            player.AddBuff(BuffID.WitheredWeapon, 180, false);
-            player.AddBuff(BuffID.WitheredArmor, 180, false);
+            target.AddBuff(BuffID.WitheredWeapon, 3 * 60, false);
+            target.AddBuff(BuffID.WitheredArmor, 3 * 60, false);
         }
 
         #region AI
@@ -310,7 +310,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         }
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
-            damage *= 2;
+            modifiers.FinalDamage *= 2;
         }
         public override void FindFrame(int currentFrame)
         {

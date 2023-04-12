@@ -699,7 +699,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashCut") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
 
                 NPC.dontTakeDamage = false;
-                NPC.StrikeNPC(999999, 0, 0);
+                //NPC.StrikeNPC(999999, 0, 0);
                 NPC.downedMechBoss2 = true;
                 if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.Spazmatism)))
                 {

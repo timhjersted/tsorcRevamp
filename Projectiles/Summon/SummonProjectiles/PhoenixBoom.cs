@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Summon.SummonProjectiles
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Dust.NewDust(target.Center, 30, 30, DustID.GoldFlame, 0f, 0f, 150, Color.Red, 1.5f);
-            if (crit == true)
+            if (hit.Crit == true)
             {
                 Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<PhoenixBoomCrit>(), Projectile.damage * 2, 1f, Main.myPlayer);
             }
@@ -59,7 +59,7 @@ namespace tsorcRevamp.Projectiles.Summon.SummonProjectiles
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            crit = true;
+            modifiers.SetCrit();
         }
     }
 }

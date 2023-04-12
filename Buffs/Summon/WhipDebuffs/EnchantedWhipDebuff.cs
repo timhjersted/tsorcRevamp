@@ -57,7 +57,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 
                 }
 			}
-			damage += 4;
+			modifiers.FlatBonusDamage += 4;
 		}
 	}
 }

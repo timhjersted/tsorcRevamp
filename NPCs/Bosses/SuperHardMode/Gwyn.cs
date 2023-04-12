@@ -160,15 +160,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            player.AddBuff(24, 600, false); //on fire
-            player.AddBuff(ModContent.BuffType<FracturingArmor>(), 1200, false); //lose defense on hit
-            player.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 1200, false); //slowed life regen
-            player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 1200, false); //you lose knockback resistance
+            target.AddBuff(BuffID.OnFire, 10 * 60, false);
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 20 * 60, false); //lose defense on hit
+            target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 20 * 60, false); //slowed life regen
+            target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 20 * 60, false); //you lose knockback resistance
             
             if (Main.rand.NextBool(2))
             {
-                player.AddBuff(33, 600, false); //weak
-                player.AddBuff(36, 180, false); //broken armor
+                target.AddBuff(BuffID.Weak, 10 * 60, false); 
+                target.AddBuff(BuffID.BrokenArmor, 3 * 60, false); 
 
             }
         }
@@ -1777,8 +1777,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (swordDead)
             {
-               damage = (int)(damage * 1.2f);
-               herosArrowDamage = (int)(herosArrowDamage * 1.25f);
+                modifiers.FinalDamage *= 1.2f;
+                herosArrowDamage = (int)(herosArrowDamage * 1.25f);
             }
         }
 
@@ -1786,13 +1786,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (swordDead)
             {
-                damage = (int)(damage * 1.15f);
+                modifiers.FinalDamage *= 1.15f;
                 herosArrowDamage = (int)(herosArrowDamage * 1.25f);
             }
 
             if (projectile.minion)
             {
-                knockback = 0;
+                modifiers.Knockback *= 0;
             }
         }
 

@@ -40,34 +40,34 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 || target.type == ModContent.NPCType<NPCs.Enemies.BasiliskShifter>()
                 )
             {
-                damage *= 3;
+                modifiers.FinalDamage *= 3;
                 if (Main.rand.NextBool(20))
                 {
-                    player.statLife += damage;
-                    player.HealEffect(damage);
+                    player.statLife += modifiers.GetDamage(Item.damage, true);
+                    player.HealEffect(modifiers.GetDamage(Item.damage, true));
                 }
             }
             else
             {
                 if (Main.rand.NextBool(10))
                 {
-                    player.statLife += damage;
-                    player.HealEffect(damage);
+                    player.statLife += modifiers.GetDamage(Item.damage, true);
+                    player.HealEffect(modifiers.GetDamage(Item.damage, true));
                 }
             }
             if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.GuardianCorruptor>())     
             {
                 //please *DO* use this on a guardian corruptor!
-                crit = false;
-                damage = 100074;//reduced to 99999 after defense
+                modifiers.SetCrit(); //let it crit!
+                modifiers.FlatBonusDamage += 100074;//reduced to 99999 after defense
             }
             if (target.type == ModContent.NPCType<NPCs.Enemies.BasiliskWalker>())
             {
-                damage *= 2;
+                modifiers.FinalDamage *= 2;
             }
             if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.BasiliskHunter>())
             {
-                damage *= 11;
+                modifiers.FinalDamage *= 11;
             }
 
         }

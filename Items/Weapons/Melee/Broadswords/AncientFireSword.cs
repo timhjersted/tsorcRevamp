@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             if (Main.rand.NextBool(2))
             { //50% chance to occur
-                npc.AddBuff(BuffID.OnFire, 360, false);
+                target.AddBuff(BuffID.OnFire, 6 * 60, false);
             }
         }
 

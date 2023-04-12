@@ -50,10 +50,10 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             watchTimer = 60;
-            damageCounter += damage;
-            if (crit)
+            damageCounter += damageDone;
+            if (hit.Crit)
             {
-                damageCounter += damage;
+                damageCounter += damageDone;
             }
             lastTimer = (float)thisWatch.Elapsed.TotalSeconds;
         }
@@ -97,7 +97,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             watchTimer = 120;
-            damageCounter += damage;
+            damageCounter += damageDone;
             lastTimer = (float)thisWatch.Elapsed.TotalSeconds;
         }
 

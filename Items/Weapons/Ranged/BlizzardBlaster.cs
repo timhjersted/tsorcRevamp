@@ -193,8 +193,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(BuffID.Frostburn2, 120);
-            base.OnHitNPC(target, damage, knockback, crit);
+            target.AddBuff(BuffID.Frostburn2, 2 * 60);
         }
     }
 }

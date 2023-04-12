@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         {
             //if (Main.rand.NextBool(2))
             //{ //50% chance to occur
-                npc.AddBuff(BuffID.OnFire, 720, false);
+                target.AddBuff(BuffID.OnFire, 12 * 60, false);
             //}
         }
 

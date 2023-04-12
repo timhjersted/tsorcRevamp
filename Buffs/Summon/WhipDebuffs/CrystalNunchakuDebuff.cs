@@ -89,7 +89,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			{
 				if (proc)
 				{
-					damage += (int)((float)projectile.damage * (stacks / 20f));
+					modifiers.FlatBonusDamage += (int)((float)projectile.damage * (stacks / 20f));
 				}
 			}
 		}
@@ -99,7 +99,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
             {
                 if (proc)
                 {
-                    damage += (int)((float)item.damage * (stacks / 40f));
+                    modifiers.FlatBonusDamage += (int)((float)item.damage * (stacks / 40f));
                 }
             }
         }

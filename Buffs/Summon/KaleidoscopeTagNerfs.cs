@@ -30,15 +30,15 @@ namespace tsorcRevamp.Buffs.Summon
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
 			if (markedByKaleidoscope && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
-				damage -= 10;
-				if(crit)
-				{
-					if (Main.rand.NextBool(2))
-					{
-						crit = false;
-					}
-				}
-			}
-		}
-	}
+				modifiers.FinalDamage.Flat -= 10;
+            }
+        }
+        public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            if (hit.Crit && Main.rand.NextBool(2))
+            {
+                hit.Crit = false;
+            }
+        }
+    }
 }

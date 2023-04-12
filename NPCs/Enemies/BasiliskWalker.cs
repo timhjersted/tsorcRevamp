@@ -255,20 +255,20 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            player.AddBuff(17, 180, false); //hunter
+            target.AddBuff(BuffID.Hunter, 3 * 60, false);
 
             if (Main.rand.NextBool(2))
             {
-                player.AddBuff(20, 300, false); //poisoned
+                target.AddBuff(BuffID.Poisoned, 5 * 60, false);
             }
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EaterofWorldsHead)))
             {
-                player.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 life if counter hits 100
-                player.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 5;
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false); //-20 life if counter hits 100
+                target.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 5;
             }
             if (Main.rand.NextBool(10))
             {
-                player.AddBuff(36, 600, false); //broken armor
+                target.AddBuff(BuffID.BrokenArmor, 10 * 60, false);
             }
 
         }

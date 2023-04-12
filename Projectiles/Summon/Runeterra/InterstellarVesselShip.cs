@@ -56,7 +56,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             Player owner = Main.player[Projectile.owner];
             if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
-                damage += (Projectile.damage / 4);
+                modifiers.SourceDamage *= 1.25f;
             }
         }
         public override void OnSpawn(IEntitySource source) 
@@ -82,7 +82,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 		public override void AI()
 		{
-			base.AI();
 
 			if (angularSpeed2 > 0.03f)
 			{
@@ -224,7 +223,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		}
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-			if (crit)
+			if (hit.Crit)
 			{
 				target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 80);
 			}

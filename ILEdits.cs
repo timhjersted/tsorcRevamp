@@ -19,7 +19,6 @@ namespace tsorcRevamp
 
             Terraria.IL_Player.Update += Player_Update;
             //IL.Terraria.Player.Update += Chest_Patch;
-            Terraria.IL_Recipe.FindRecipes += SoulSlotRecipesPatch;
 
             //Disable drawing of wires when in adventure mode
             //editing a get accessor of a property and built in hooks don't have any of those
@@ -58,7 +57,7 @@ namespace tsorcRevamp
 
                 //Aiming
                 //TODO: portal gun (needed?)
-                Terraria.IL_Player.ItemCheck_UseRodOfDiscord += GravPatch_ReplaceOne;
+                //Terraria.IL_Player.ItemCheck_UseRodOfDiscord += GravPatch_ReplaceOne;
                 Terraria.IL_Player.ItemCheck_Shoot += GravPatch_ReplaceAll;
                 Terraria.IL_Player.Update += GravPatch_TileAim;
 
@@ -241,28 +240,5 @@ namespace tsorcRevamp
             throw new NotImplementedException();
         }
         */
-        //allow soul slot to be included in recipes
-        internal static void SoulSlotRecipesPatch(ILContext il) {
-            ILCursor c = new ILCursor(il);
-            //grab the dictionary right after it's made, before it gets stored in a local
-            if (!c.TryGotoNext(MoveType.After, instr => instr.MatchNewobj<Dictionary<int, int>>())) {
-                throw new Exception("Could not find instruction to patch (SoulSlotRecipesPatch)");
-            }
-            c.EmitDelegate<Func<Dictionary<int, int>, Dictionary<int, int>>>(AddSoulSlotRecipes);
-        }
-
-        internal static Dictionary<int, int> AddSoulSlotRecipes(Dictionary<int, int> dictionary) {
-            Item item = Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().SoulSlot.Item;
-            if (item.stack > 0) {
-                if (dictionary.ContainsKey(item.netID)) {
-                    dictionary[item.netID] += item.stack;
-                }
-                else {
-                    dictionary[item.netID] = item.stack;
-                }
-            }
-            //so we dont just eat it off the stack
-            return dictionary;
-        }
     }
 }

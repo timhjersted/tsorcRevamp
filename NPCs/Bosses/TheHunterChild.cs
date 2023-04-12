@@ -62,7 +62,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo) 
         {
-            player.AddBuff(BuffID.Bleeding, 1800, false);
+            target.AddBuff(BuffID.Bleeding, 30 * 60, false);
         }
 
         NPCDespawnHandler despawnHandler;
@@ -305,7 +305,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
         {
             hitTime = 0;
-            NPC.ai[0] += (float)damage;
+            //NPC.ai[0] += (float)damage;
             if (NPC.ai[0] > (NPC.lifeMax / 10))
             {
                 NPC.ai[3] = 1;
@@ -321,7 +321,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.ai[1] = -200;
                 NPC.ai[0] = 0;
             }
-            return true;
         }
 
         public override void BossLoot(ref string name, ref int potionType)

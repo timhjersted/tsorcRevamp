@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
                 || target.type == ModContent.NPCType<NPCs.Enemies.BlackKnight>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.Dunlending>())
             {
-                damage *= 2;
+                modifiers.FinalDamage *= 2;
             }
         }
     }

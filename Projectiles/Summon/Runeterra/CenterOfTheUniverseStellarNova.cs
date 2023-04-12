@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 0.4f, PitchVariance = 0.1f });
             Dust.NewDust(target.Center, 100, 100, DustID.MagicMirror, 0f, 0f, 250, Color.DarkRed, 2.5f);
-            if (crit)
+            if (hit.Crit)
             {
                 target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 600);
             }

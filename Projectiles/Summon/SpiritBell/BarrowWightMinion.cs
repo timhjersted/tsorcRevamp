@@ -63,7 +63,7 @@ namespace tsorcRevamp.Projectiles.Summon.SpiritBell
                 target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000);
             }
 
-            if (crit == true)
+            if (hit.Crit == true)
             {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 45, 0.3f, 0.3f, 200, default, 1f);
                 Dust.NewDust(Projectile.position, Projectile.height, Projectile.width, 45, 0.2f, 0.2f, 200, default, 2f);

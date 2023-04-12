@@ -63,7 +63,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             if (target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>())
             {
-                damage *= 3;
+                modifiers.FinalDamage *= 3;
             }
         }
     }

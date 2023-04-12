@@ -498,14 +498,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (Main.rand.NextBool(2))
             {
-                player.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false); //-20 HP curse
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false); //-20 HP curse
             }
 
             if (Main.rand.NextBool(4))
             {
 
-                player.AddBuff(ModContent.BuffType<FracturingArmor>(), 3600, false); //armor reduced on hit
-                player.AddBuff(ModContent.BuffType<Chilled>(), 300, false); //chilled
+                target.AddBuff(ModContent.BuffType<FracturingArmor>(), 3600, false); //armor reduced on hit
+                target.AddBuff(ModContent.BuffType<Chilled>(), 300, false); //chilled
 
             }
 

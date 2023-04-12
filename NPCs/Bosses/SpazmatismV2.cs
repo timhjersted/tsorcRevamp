@@ -676,7 +676,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 OnKill();
                 NPC.dontTakeDamage = false;
-                NPC.StrikeNPC(999999, 0, 0);
+                //NPC.StrikeNPC(999999, 0, 0);
                 for (int i = 0; i < 10; i++)
                 {
                     CombatText.NewText(NPC.Hitbox, CombatText.DamagedHostile, 9999999, true);

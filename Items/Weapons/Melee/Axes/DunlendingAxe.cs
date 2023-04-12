@@ -42,15 +42,15 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
                 || target.type == ModContent.NPCType<NPCs.Enemies.Assassin>()
                 )
             {
-                damage *= 4; // *2 > *4, lets make it actually useful shall we
+                modifiers.FinalDamage *= 4; // *2 > *4, lets make it actually useful shall we
             }
             if (target.type == ModContent.NPCType<NPCs.Enemies.BlackKnight>())
             {
-                damage *= 6;
+                modifiers.FinalDamage *= 6;
             }
             if (target.type == ModContent.NPCType<NPCs.Enemies.Dunlending>())
             {
-                damage *= 4;
+                modifiers.FinalDamage *= 4;
             }
         }
 

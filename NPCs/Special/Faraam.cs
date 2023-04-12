@@ -595,15 +595,13 @@ namespace tsorcRevamp.NPCs.Special
         {
             if (projectile.type == ProjectileID.Boulder) //Rewarding those who are sneaky enough to use the boulder in the cave to hurt him
             {
-                damage *= 5; //340 damage +/-
+                modifiers.FinalDamage *= 5; //340 damage +/-
             }
 
             if (projectile.minion)
             {
-                knockback = 0; //to prevent slime staff from stunlocking him
+                modifiers.Knockback *= 0; //to prevent slime staff from stunlocking him
             }
-
-            base.ModifyHitByProjectile(projectile, ref damage, ref knockback, ref crit, ref hitDirection);
         }
 
         #endregion

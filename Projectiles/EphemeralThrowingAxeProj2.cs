@@ -49,7 +49,7 @@ namespace tsorcRevamp.Projectiles
                 //|| target.type == ModContent.NPCType<BarrowWight>()
                 )
             {
-                damage *= 2;
+                modifiers.FinalDamage *= 2;
             }
         }
         public override void AI()

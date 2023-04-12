@@ -1110,11 +1110,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         damage *= (1 - p.endurance);
                         if (Main.expertMode)
                         {
-                            damage += (int)Math.Ceiling(p.statDefense * 0.75f);
+                            //damage += (int)Math.Ceiling(p.statDefense * 0.75f);
                         }
                         else
                         {
-                            damage += (int)Math.Ceiling(p.statDefense * 0.5f);
+                            //damage += (int)Math.Ceiling(p.statDefense * 0.5f);
                         }
 
                         p.immuneTime = 0;
@@ -1528,11 +1528,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 damage *= (1 - p.endurance);
                                 if (Main.expertMode)
                                 {
-                                    damage += (int)Math.Ceiling(p.statDefense * 0.75f);
+                                    //damage += (int)Math.Ceiling(p.statDefense * 0.75f);
                                 }
                                 else
                                 {
-                                    damage += (int)Math.Ceiling(p.statDefense * 0.5f);
+                                    //damage += (int)Math.Ceiling(p.statDefense * 0.5f);
                                 }
 
                                 p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + " was shattered."), (int)damage, 1);
@@ -2108,9 +2108,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Main.expertMode) expertScale = 2;
 
 
-            player.AddBuff(BuffID.BrokenArmor, 120 / expertScale, false); //broken armor
-            player.AddBuff(BuffID.OnFire, 180 / expertScale, false); //on fire!
-            player.AddBuff(ModContent.BuffType<FracturingArmor>(), 3600, false); //defense goes time on every hit
+            target.AddBuff(BuffID.BrokenArmor, 2 * 60 / expertScale, false);
+            target.AddBuff(BuffID.OnFire, 3 * 60 / expertScale, false);
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 60 * 60, false); //defense goes time on every hit
 
         }
         #endregion

@@ -74,13 +74,13 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             if (firstButton)
             {
-                shop = true;
+                shopName = "Shop";
                 return;
             }
         }
 
         public override void ModifyActiveShop(string shopName, Item[] items)
-        {
+        {/*
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.MysteriousIdol>());
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ItemID.MeteorShot);
@@ -110,7 +110,7 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.CosmicWatch>());
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ItemID.TinkerersWorkshop);
-            nextSlot++;
+            nextSlot++;*/
         }
 
         public override void HitEffect(NPC.HitInfo hit)
@@ -149,9 +149,9 @@ namespace tsorcRevamp.NPCs.Friendly
         }
         public override void DrawTownAttackGun(ref Texture2D item, ref Rectangle itemFrame, ref float scale, ref int horizontalHoldoutOffset)/* tModPorter Note: closeness is now horizontalHoldoutOffset, use 'horizontalHoldoutOffset = Main.DrawPlayerItemPos(1f, itemtype) - originalClosenessValue' to adjust to the change. See docs for how to use hook with an item type. */
         {
-            item = ItemID.RopeCoil;
+            //item = ItemID.RopeCoil;
             scale = .7f;
-            closeness = 26;
+            horizontalHoldoutOffset = 26;
         }
 
         public override void TownNPCAttackProj(ref int projType, ref int attackDelay)

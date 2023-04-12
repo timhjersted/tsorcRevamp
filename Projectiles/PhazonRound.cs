@@ -54,11 +54,11 @@ namespace tsorcRevamp.Projectiles
             //Only the explosion does damage. Without this, both the impact *and* explosion do damage (annoying to balance, requires toning down explosion damage which makes it less useful)
             if (!hasExploded)
             {
-                damage = 0;
+                modifiers.FinalDamage *= 0;
             }
             else
             {
-                damage = storedDamage;
+                modifiers.SetMaxDamage(storedDamage);
             }
         }
 

@@ -409,13 +409,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (Main.rand.NextBool(2))
             {
-                player.AddBuff(24, 600, false); //on fire
+                target.AddBuff(BuffID.OnFire, 10 * 60, false);
             }
 
             if (Main.rand.NextBool(4))
             {
 
-                player.AddBuff(36, 600, false); //broken armor
+                target.AddBuff(BuffID.BrokenArmor, 10 * 60, false);
                                                 //player.AddBuff(23, 120, false); //cursed
 
             }

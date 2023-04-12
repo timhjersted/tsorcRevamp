@@ -368,16 +368,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            player.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false); //-20 life after several hits
+            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 600 * 60, false); //-20 life after several hits
                                                                                      //player.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false); //-100 life after several hits	
 
 
             if (Main.rand.NextBool(4))
             {
 
-                player.AddBuff(36, 150, false); //broken armor
-                player.AddBuff(BuffID.Chilled, 600, false); //Chilled
-                player.AddBuff(BuffID.Frostburn, 600, false); //Frostburn
+                target.AddBuff(BuffID.BrokenArmor, 2 * 60 + 30, false);
+                target.AddBuff(BuffID.Chilled, 10 * 60, false);
+                target.AddBuff(BuffID.Frostburn, 10 * 60, false);
 
             }
 

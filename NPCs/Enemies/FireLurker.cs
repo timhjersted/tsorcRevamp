@@ -170,14 +170,14 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (Main.rand.NextBool(2))
             {
-                player.AddBuff(24, 600, false); //on fire!
+                target.AddBuff(BuffID.OnFire, 10 * 60, false);
             }
 
             if (Main.rand.NextBool(10))
             {
-                player.AddBuff(36, 600, false); //broken armor
-                player.AddBuff(22, 180, false); //darkness
-                player.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 life if counter hits 100
+                target.AddBuff(BuffID.BrokenArmor, 10 * 60, false);
+                target.AddBuff(BuffID.Darkness, 3 * 60, false);
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false); //-20 life if counter hits 100
             }
         }
         #endregion

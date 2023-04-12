@@ -422,16 +422,16 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            player.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 life if counter hits 100
-            player.AddBuff(BuffID.Poisoned, 600, false); //poisoned
+            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 life if counter hits 100
+            target.AddBuff(BuffID.Poisoned, 10 * 60, false);
 
             if (Main.rand.NextBool(2))
             {
-                player.AddBuff(BuffID.BrokenArmor, 600, false); //broken armor 
+                target.AddBuff(BuffID.BrokenArmor, 10 * 60, false);
             }
             if (Main.rand.NextBool(4))
             {
-                player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 1800, false);   
+                target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 300 * 60, false);   
             }
         }
         #endregion

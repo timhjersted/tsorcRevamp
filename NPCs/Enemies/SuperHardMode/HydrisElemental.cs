@@ -66,8 +66,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             if (Main.rand.NextBool(2))
             {
-                player.AddBuff(13, 1800, false); //battle
-                player.AddBuff(33, 1800, false); //weak
+                target.AddBuff(13, 1800, false); //battle
+                target.AddBuff(33, 1800, false); //weak
             }
 
         }

@@ -91,13 +91,13 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             if (firstButton)
             {
-                shop = true;
+                shopName = "Shop";
                 return;
             }
         }
 
         public override void ModifyActiveShop(string shopName, Item[] items)
-        {
+        {/*
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.MysteriousIdol>());
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ItemID.MeteorShot);
@@ -127,7 +127,7 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.CosmicWatch>());
             nextSlot++;
             shop.item[nextSlot].SetDefaults(ItemID.TinkerersWorkshop);
-            nextSlot++;
+            nextSlot++;*/
         }
 
         public override void HitEffect(NPC.HitInfo hit)

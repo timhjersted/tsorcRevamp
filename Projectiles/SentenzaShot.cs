@@ -64,7 +64,7 @@ namespace tsorcRevamp.Projectiles
         {
             if ((target.type == NPCID.SandsharkHallow) | (target.type == NPCID.Pixie) | (target.type == NPCID.Unicorn) | (target.type == NPCID.RainbowSlime) | (target.type == NPCID.Gastropod) | (target.type == NPCID.LightMummy) | (target.type == NPCID.DesertGhoulHallow) | (target.type == NPCID.IlluminantSlime) | (target.type == NPCID.IlluminantBat) | (target.type == NPCID.EnchantedSword) | (target.type == NPCID.BigMimicHallow) | (target.type == NPCID.DesertLamiaLight))
             {
-                damage += 10;
+                modifiers.FlatBonusDamage += 10;
             }
         }
 

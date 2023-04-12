@@ -87,7 +87,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
                 || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessTail>()
                 )
             {
-                damage *= 8;
+                modifiers.FinalDamage *= 8;
             }
         }
     }

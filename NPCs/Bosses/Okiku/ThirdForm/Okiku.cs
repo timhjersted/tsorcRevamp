@@ -48,7 +48,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             despawnHandler = new NPCDespawnHandler("You've been slain at the hand of Attraidies...", Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
-        {
+        {/*
             if (damage > NPC.life || damage * 2 > NPC.life)
             {
                 crit = false;
@@ -61,7 +61,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             {
                 crit = false;
                 damage = NPC.life - 50;
-            }
+            }*/
         }
         public override void SetStaticDefaults()
         {

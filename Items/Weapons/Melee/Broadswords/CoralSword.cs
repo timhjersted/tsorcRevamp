@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 //|| target.type == ModContent.NPCType<QuaraPredator>()
                 )
             {
-                damage *= 4;
+                modifiers.FinalDamage *= 4;
             }
         }
         public override void AddRecipes()

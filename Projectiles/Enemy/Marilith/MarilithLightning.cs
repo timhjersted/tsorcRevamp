@@ -632,7 +632,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         {
             if (!IsAtMaxCharge)
             {
-                damage /= 3;
+                modifiers.FinalDamage /= 3;
             }
             target.AddBuff(BuffID.Electrified, 300);
             target.AddBuff(BuffID.Slow, 150);

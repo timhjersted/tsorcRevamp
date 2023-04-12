@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -542,11 +543,10 @@ namespace tsorcRevamp.NPCs
             #endregion
         }
 
-        
 
-        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
+        public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers)
         {
-            if (Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>().ConditionOverload)
+            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().ConditionOverload)
             {
                 int debuffCounter = 1;
                 foreach (int buffType in npc.buffType)
@@ -578,38 +578,16 @@ namespace tsorcRevamp.NPCs
                     }
                 }
                 double scalar = Math.Pow(1.15, debuffCounter - 1); //was 1.2 before, then 1.1
-                damage = (int)(damage * scalar);
+                modifiers.FinalDamage *= (float)scalar;
             }
+        }
+
+        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
         }
 
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
-            if (player.GetModPlayer<tsorcRevampPlayer>().ConditionOverload)
-            {
-                int debuffCounter = 1;
-                foreach (int buffType in npc.buffType)
-                {
-
-                    if (Main.debuff[buffType] && !(BuffID.Sets.IsAnNPCWhipDebuff[buffType]))
-                    {
-                        debuffCounter++;
-                    }
-                    if (buffType == ModContent.BuffType<ScorchingDebuff>())
-                    {
-                        debuffCounter++;
-                    }
-                    if (buffType == ModContent.BuffType<ShockedDebuff>())
-                    {
-                        debuffCounter++;
-                    }
-                    if (buffType == ModContent.BuffType<SunburnDebuff>())
-                    {
-                        debuffCounter++;
-                    }
-                }
-                double scalar = Math.Pow(1.15, debuffCounter - 1); //was 1.2 before, then 1.1
-                damage = (int)(damage * scalar);
-            }
         }
 
         public override void ModifyGlobalLoot(GlobalLoot globalLoot) {
@@ -906,7 +884,7 @@ namespace tsorcRevamp.NPCs
         }
 
         public override void ModifyActiveShop(NPC npc, string shopName, Item[] items)
-        {
+        {/*
             if (type == NPCID.Merchant)
             {
                 shop.item[nextSlot].SetDefaults(ItemID.Bottle); //despite being able to find the archeologist right after (who sells bottled water), it's nice to have
@@ -964,7 +942,7 @@ namespace tsorcRevamp.NPCs
                 shop.item[25].SetDefaults(ModContent.ItemType<DisabledSale>());      // 1 Second Timer
                 shop.item[26].SetDefaults(ModContent.ItemType<DisabledSale>());      // 1/2 Second Timer
                 shop.item[27].SetDefaults(ModContent.ItemType<DisabledSale>());      // 1/4 Second Timer
-            }
+            }*/
         }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {

@@ -508,7 +508,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             if (slograDead)
             {
-                damage = (int)(damage * 1.5f);
+                modifiers.FinalDamage *= 1.5f;
             }
         }
 
@@ -516,11 +516,11 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             if (slograDead)
             {
-                damage = (int)(damage * 1.5f);
+                modifiers.FinalDamage *= 1.5f;
             }
             if (projectile.minion)
             {
-                knockback = 0;
+                modifiers.Knockback *= 0;
             }
         }
 

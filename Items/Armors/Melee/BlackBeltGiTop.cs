@@ -39,7 +39,8 @@ namespace tsorcRevamp.Items.Armors.Melee
             player.GetAttackSpeed(DamageClass.Melee) += 0.20f;
             if (player.statDefense >= 30)
             {
-                player.statDefense = 30;
+                player.statDefense *= 0;
+                player.statDefense += 30;
             }
             player.lifeRegen += 13;
             player.moveSpeed += player.endurance;

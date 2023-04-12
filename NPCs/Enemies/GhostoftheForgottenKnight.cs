@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (Main.rand.NextBool(2))
             {
-                player.AddBuff(33, 3600, false); //weak
+                target.AddBuff(BuffID.Weak, 60 * 60, false);
             }
         }
 

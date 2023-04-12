@@ -547,7 +547,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
         {
             hitTime = 0;
-            NPC.ai[0] += (float)damage;
+            //NPC.ai[0] += (float)damage;
             if (NPC.ai[0] > (NPC.lifeMax / 10))
             {
                 UsefulFunctions.BroadcastText("The Rage has taken damage too fast, its natural defenses activate...", Color.Orange);
@@ -564,7 +564,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.ai[1] = -250;
                 NPC.ai[0] = 0;
             }
-            return true;
         }
         public override void BossLoot(ref string name, ref int potionType)
         {

@@ -60,7 +60,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             if (Main.rand.NextBool(2))
             {
-                player.AddBuff(31, 180, false); //confused!
+                target.AddBuff(31, 180, false); //confused!
             }
         }
 

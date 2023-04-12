@@ -348,11 +348,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 || (item.type == ItemID.ShroomiteDiggingClaw) || item.ModItem.Name.Contains("Axe") || item.ModItem.Name.Contains("Halberd") && !item.ModItem.Name.Contains("Pick") && !item.Name.Contains("Pick"))
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
-                damage *= 2; //I never want to see or hear the word "axe" again in my life
-                if (damage < 20)
+                modifiers.FinalDamage *= 2; //I never want to see or hear the word "axe" again in my life
+                /*if (damage < 20)
                 {
                     damage = 20; //damage before defence
-                }
+                }*/
                 if (Main.rand.NextBool(2) && wooddropped < 5)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.RichMahogany);
@@ -367,11 +367,11 @@ namespace tsorcRevamp.NPCs.Enemies
                  || item.type == ItemID.FieryGreatsword || item.type == ItemID.MoltenHamaxe || item.type == ItemID.MoltenPickaxe || item.type == ModContent.ItemType<SunBlade>())
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
-                damage *= 2;
-                if (damage < 20)
+                modifiers.FinalDamage *= 2;
+                /*if (damage < 20)
                 {
                     damage = 20; //damage before defence
-                }
+                }*/
                 if (Main.rand.NextBool(3) && resindropped < 1)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ModContent.ItemType<CharcoalPineResin>());
@@ -385,7 +385,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (projectile.DamageType != DamageClass.Melee)
             {
-                damage -= 5; //because lets face it, no one ever uprooted a tree with a bullet... A missle? Perhaps
+                modifiers.FinalDamage.Flat -= 5; //because lets face it, no one ever uprooted a tree with a bullet... A missle? Perhaps
             }
             //However... If it is a fire projectile...
             if (projectile.Name.Contains("Fire") || projectile.Name.Contains("fire") || projectile.Name.Contains("Flame") || projectile.Name.Contains("flame") || projectile.Name.Contains("Curse") ||
@@ -397,11 +397,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 (projectile.DamageType == DamageClass.Melee && player.meleeEnchant == 3))
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
-                damage *= 2;
-                if (damage < 20)
+                modifiers.FinalDamage *= 2;
+                /*if (damage < 20)
                 {
                     damage = 20; //damage before defence
-                }
+                }*/
                 if (Main.rand.NextBool(20) && resindropped < 1)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ModContent.ItemType<CharcoalPineResin>());

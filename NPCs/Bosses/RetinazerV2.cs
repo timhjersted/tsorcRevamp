@@ -559,7 +559,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //Recoil
                 if (laserCountdown == 376)
                 {
-                    NPC.StrikeNPC(999, 0, 0, true);
+                    //NPC.StrikeNPC(999, 0, 0, true);
                     NPC.velocity += new Vector2(7, 0).RotatedBy(NPC.rotation - MathHelper.PiOver2);
                 }
             }

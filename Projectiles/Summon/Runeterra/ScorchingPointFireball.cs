@@ -191,7 +191,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
-			if (crit)
+			if (hit.Crit)
 			{
                 target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 80);
             }

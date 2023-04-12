@@ -988,7 +988,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
-        {
+        {/*
             //intentionally lower
             peaceouttimer -= (int)(20 + (damage * 0.2f));
             if (Main.rand.NextBool(2) && immuneframe >= 1 && !crit)
@@ -1005,17 +1005,17 @@ namespace tsorcRevamp.NPCs.Enemies
                 damage = 2;
                 NPC.defense = 0;
                 immuneframe = 0;
-            }
+            }*/
         }
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
-        {
+        {/*
             peaceouttimer -= (int)(25 + (damage * 0.2f));
             if (crit && immuneframe >= 1)
             {
                 damage = 2;
                 NPC.defense = 0;
                 immuneframe = 0;
-            }
+            }*/
         }
         public override void OnKill()
         {

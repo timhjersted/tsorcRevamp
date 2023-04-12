@@ -112,7 +112,7 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             if (firstButton)
             {
-                shop = true;
+                shopName = "Shop";
                 return;
             }
             else
@@ -217,7 +217,7 @@ namespace tsorcRevamp.NPCs.Friendly
         }
 
         public override void ModifyActiveShop(string shopName, Item[] items)
-        {
+        {/*
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Summon.OldChainCoif>());
             shop.item[nextSlot].shopCustomPrice = 50;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
@@ -238,12 +238,12 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.item[nextSlot].shopCustomPrice = 5;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
             nextSlot++;
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>())) || tsorcRevampWorld.SuperHardMode /*just in case*/)
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>())) || tsorcRevampWorld.SuperHardMode /*just in case)
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>());
                 shop.item[nextSlot].shopCustomPrice = 4000;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            }
+            }*/
         }
 
         public override void HitEffect(NPC.HitInfo hit)

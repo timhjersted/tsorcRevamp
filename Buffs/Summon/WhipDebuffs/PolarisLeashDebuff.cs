@@ -55,7 +55,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 				{
                     Projectile.NewProjectile(Projectile.GetSource_None(), starvector3, starmove3, ModContent.ProjectileType<Projectiles.Summon.Whips.PolarisLeashFallingStar>(), whipDamage, 1f, Main.myPlayer);
                 }
-				damage += 6;
+				modifiers.FlatBonusDamage += 6;
 			}
 		}
 	}

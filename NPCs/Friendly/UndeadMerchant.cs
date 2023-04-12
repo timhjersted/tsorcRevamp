@@ -66,13 +66,13 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             if (firstButton)
             {
-                shop = true;
+                shopName = "Shop";
                 return;
             }
         }
 
         public override void ModifyActiveShop(string shopName, Item[] items)
-        {
+        {/*
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.CharcoalPineResin>());
             shop.item[nextSlot].shopCustomPrice = 20;
             shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
@@ -171,7 +171,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 nextSlot++;
             }
 
-                if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition((ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>()))) || tsorcRevampWorld.SuperHardMode /*just in case*/)
+                if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition((ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>()))) || tsorcRevampWorld.SuperHardMode /*just in case)
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.PurgingStone>());
                 shop.item[nextSlot].shopCustomPrice = 10000;
@@ -193,7 +193,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shop.item[nextSlot].shopCustomPrice = 1000;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
-            }
+            }*/
         }
 
         public override void TownNPCAttackStrength(ref int damage, ref float knockback)

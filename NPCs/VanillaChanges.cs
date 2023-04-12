@@ -5598,13 +5598,10 @@ namespace tsorcRevamp.NPCs
                     }
                 }
             }
-            base.OnHitByProjectile(npc, projectile, damage, knockback, crit);
         }
 
         public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            
-            base.OnHitByItem(npc, player, item, damage, knockback, crit);
         }
 
         public override bool CheckDead(NPC npc)
@@ -5870,7 +5867,7 @@ namespace tsorcRevamp.NPCs
         {
             if (npc.type == NPCID.WallofFlesh || npc.type == NPCID.WallofFleshEye || npc.type == NPCID.TheHungry || npc.type == NPCID.TheHungryII)
             {
-                damage *= 2;
+                modifiers.FinalDamage *= 2;
             }
         }
 
@@ -5881,7 +5878,7 @@ namespace tsorcRevamp.NPCs
                 //Spears
                 if (projectile.aiStyle == 19 && projectile.DamageType == DamageClass.Melee == true)
                 {
-                    damage *= 2;
+                    modifiers.FinalDamage *= 2;
                 }
             }
         }

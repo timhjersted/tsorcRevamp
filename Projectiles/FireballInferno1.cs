@@ -73,7 +73,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            damage += target.defense / 2;
+            modifiers.DefenseEffectiveness /= 2;
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

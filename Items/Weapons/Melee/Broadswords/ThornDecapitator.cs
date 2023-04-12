@@ -38,10 +38,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             //player.Center + Main.rand.NextVector2CircularEdge(100, 100)
-            if (crit)
-            Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), target.Center, Vector2.Zero, ProjectileID.SporeTrap, (int)(damage * 0.375f), 0, Main.myPlayer);
+            if (hit.Crit)
+            Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), target.Center, Vector2.Zero, ProjectileID.SporeTrap, (int)(damageDone * 0.375f), 0, Main.myPlayer);
             else 
-            Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), target.Center, Vector2.Zero, ProjectileID.SporeTrap, (int)(damage * 0.5f), 0, Main.myPlayer);
+            Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), target.Center, Vector2.Zero, ProjectileID.SporeTrap, (int)(damageDone * 0.5f), 0, Main.myPlayer);
         }
         public override void AddRecipes()
         {

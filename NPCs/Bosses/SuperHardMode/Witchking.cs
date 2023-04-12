@@ -628,7 +628,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (!defenseBroken)
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Immune!", true, false);
-                damage = 1;
+                modifiers.SetMaxDamage(1);
             }
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
@@ -640,7 +640,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (!defenseBroken)
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Immune!", true, false);
-                damage = 1;
+                modifiers.SetMaxDamage(1);
             }
         }
 

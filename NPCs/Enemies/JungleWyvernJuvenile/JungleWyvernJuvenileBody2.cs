@@ -87,8 +87,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
         }
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            damage *= 2;
-            base.OnHitByItem(player, item, damage, knockback, crit);
+            hit.Damage *= 2;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

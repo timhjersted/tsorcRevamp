@@ -49,7 +49,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            base.OnHitNPC(player, target, damage, knockBack, crit);
         }
 
         public override void HoldItem(Player player)
@@ -66,7 +65,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 {
                     if (Main.npc[i].active && !Main.npc[i].friendly && Main.npc[i].Distance(player.Center) < 70)
                     {
-                        Main.npc[i].StrikeNPC((int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), 0, 0, true);
+                        //Main.npc[i].StrikeNPC((int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), 0, 0, true);
                     }
                 }
             }

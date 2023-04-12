@@ -205,14 +205,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (Main.rand.NextBool(2))
             {
-                player.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false); //-20 HP curse
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false); //-20 HP curse
             }
 
             if (Main.rand.NextBool(4))
             {
 
-                player.AddBuff(36, 600, false); //broken armor
-                player.AddBuff(23, 300, false); //cursed
+                target.AddBuff(36, 600, false); //broken armor
+                target.AddBuff(23, 300, false); //cursed
 
             }
 

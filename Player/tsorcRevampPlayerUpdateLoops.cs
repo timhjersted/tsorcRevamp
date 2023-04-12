@@ -1160,7 +1160,7 @@ namespace tsorcRevamp
             if (REDUCE != 0)
             {
                 REDUCE = 1f - REDUCE;
-                Player.statDefense = (int)(Player.statDefense * REDUCE);
+                Player.statDefense *= REDUCE;
             }
             #endregion
             #region boss zen

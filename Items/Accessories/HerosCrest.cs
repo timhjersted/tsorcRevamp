@@ -32,7 +32,7 @@ public class HerosCrest : ModItem {
             Player.GetDamage(DamageClass.Generic) *= 1.06f;
             Player.GetCritChance(DamageClass.Generic) += 6;
             Player.statLifeMax2 = (int)(Player.statLifeMax2 * 1.06f);
-            Player.statDefense = (int)(Player.statDefense * 1.06);
+            Player.statDefense *= 1.06f;
             Player.luck += 0.06f;
         }
         public override void ResetEffects() {

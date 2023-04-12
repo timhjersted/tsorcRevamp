@@ -71,7 +71,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 for (int i = 0; i < 20; i++)
                 {
-                    int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, 27, 2 * hitDirection, -1.75f);
+                    int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, 27, 2 * hit.HitDirection, -1.75f);
                 }
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
 

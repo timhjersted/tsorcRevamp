@@ -51,7 +51,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 			{
 				if (Main.rand.NextBool(100 / (int)MathF.Round(Main.player[Main.myPlayer].GetTotalCritChance(DamageClass.Generic) / 5f)))
 				{
-					crit = true;
+					modifiers.SetCrit();
 				}
 			}
 		}

@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         {
             if (Main.rand.NextBool(2))
             {
-                npc.AddBuff(BuffID.Poisoned, 360, false);
+                target.AddBuff(BuffID.Poisoned, 6 * 60, false);
             }
         }
     }

@@ -1091,13 +1091,13 @@ namespace tsorcRevamp.NPCs.Bosses
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 3600, false); //1 minute
-            player.AddBuff(ModContent.BuffType<Crippled>(), 1200, false); // loss of flight mobility for 20 seconds, down from 4 minutes moohahaha... cough cough
+            target.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60 * 60, false); //1 minute
+            target.AddBuff(ModContent.BuffType<Crippled>(), 20 * 60, false); // loss of flight mobility for 20 seconds, down from 4 minutes moohahaha... cough cough
 
 
             if (Main.rand.NextBool(2))
             {
-                player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 1800, false);
+                target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30 * 60, false);
             }
         }
         #endregion

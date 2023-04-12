@@ -78,7 +78,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            base.OnHitByItem(player, item, damage, .09f, crit);
 
 
             //Insert whatever you want to happen on-hit here

@@ -94,7 +94,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            damage += target.defense / 2;
+            modifiers.DefenseEffectiveness /= 2;
             if (!target.boss && !target.dontTakeDamage && !target.immortal && target.type != ModContent.NPCType<NPCs.Bosses.TestBoss>())
             {
                 Vector2 diff = target.Center - Projectile.Center;

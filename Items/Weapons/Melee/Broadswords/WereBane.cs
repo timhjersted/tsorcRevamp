@@ -43,7 +43,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
-            if (target.type == NPCID.Werewolf) damage *= 16;
+            if (target.type == NPCID.Werewolf)
+            {
+                modifiers.FinalDamage *= 16;
+            }
         }
     }
 }

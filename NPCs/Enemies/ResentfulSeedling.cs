@@ -45,11 +45,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 || (item.type == ItemID.ShroomiteDiggingClaw) || item.ModItem.Name.Contains("Axe") || item.ModItem.Name.Contains("Halberd") && !item.ModItem.Name.Contains("Pick") && !item.Name.Contains("Pick"))
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
-                damage *= 2; //I never want to see or hear the word "axe" again in my life
-                if (damage < 10)
+                modifiers.FinalDamage *= 2; //I never want to see or hear the word "axe" again in my life
+                /*if (damage < 10)
                 {
                     damage = 10;
-                }
+                }*/
 
             }
             //fire melee
@@ -58,11 +58,11 @@ namespace tsorcRevamp.NPCs.Enemies
                  || item.type == ItemID.FieryGreatsword || item.type == ItemID.MoltenHamaxe || item.type == ItemID.MoltenPickaxe || item.type == ModContent.ItemType<SunBlade>())
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
-                damage *= 2;
-                if (damage < 10)
+                modifiers.FinalDamage *= 2;
+                /*if (damage < 10)
                 {
                     damage = 10; //damage before defence
-                }
+                }*/
                 if (Main.rand.NextBool(20) && resindropped < 1)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ModContent.ItemType<CharcoalPineResin>());
@@ -84,7 +84,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 projectile.type == ModContent.ProjectileType<DevilSickle>() || projectile.type == ModContent.ProjectileType<RedLaserBeam>() ||
                 (projectile.DamageType == DamageClass.Melee && player.meleeEnchant == 3))
             {
-                damage *= 2;
+                modifiers.FinalDamage *= 2;
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
                 if (Main.rand.NextBool(30) && resindropped < 1)
                 {

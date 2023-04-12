@@ -45,14 +45,16 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
             recipe.Register();
         }
-
-        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(15))
             {
-                P.HealEffect(damage / 2);
-                P.statLife += (damage / 2);
+                player.HealEffect(damageDone / 2);
+                player.statLife += (damageDone / 2);
             }
+        }
+        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
+        {
         }
 
         public override void MeleeEffects(Player player, Rectangle rectangle)

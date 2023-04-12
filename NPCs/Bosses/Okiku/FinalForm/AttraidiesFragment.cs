@@ -157,12 +157,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         }
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            base.OnHitByItem(player, item, damage, knockback, crit);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            base.OnHitByProjectile(projectile, damage, knockback, crit);
         }
 
         int animationState;
