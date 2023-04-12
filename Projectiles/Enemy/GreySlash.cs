@@ -105,7 +105,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             if (Projectile.ai[0] >= 10 && Projectile.ai[0] < 20)
             {

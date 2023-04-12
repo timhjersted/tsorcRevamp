@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles
         int storedDamage = 0;
         bool hasExploded = false;
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(ModContent.BuffType<Buffs.PhazonContamination>(), 600);
         }
@@ -49,7 +49,7 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             //Only the explosion does damage. Without this, both the impact *and* explosion do damage (annoying to balance, requires toning down explosion damage which makes it less useful)
             if (!hasExploded)

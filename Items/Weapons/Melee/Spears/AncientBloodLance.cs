@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ancient Blood Lance");
-            Tooltip.SetDefault("Pierces multiple times on every hit.");
+            // DisplayName.SetDefault("Ancient Blood Lance");
+            // Tooltip.SetDefault("Pierces multiple times on every hit.");
         }
 
         public override void SetDefaults()

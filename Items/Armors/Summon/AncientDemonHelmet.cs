@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("You hear an evil whispering from inside" +
-                "\n+27% minion damage");
+            /* Tooltip.SetDefault("You hear an evil whispering from inside" +
+                "\n+27% minion damage"); */
         }
 
         public override void SetDefaults()

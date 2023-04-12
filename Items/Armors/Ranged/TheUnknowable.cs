@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("25% chance to not consume ammo" +
+            /* Tooltip.SetDefault("25% chance to not consume ammo" +
                 "\nIncreases ranged critical strike chance by 17%" +
                 "\nSet Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active" +
-                "\nDefense and ammo consumption chance are not affected by this");
+                "\nDefense and ammo consumption chance are not affected by this"); */
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
         }
         public override void SetDefaults()

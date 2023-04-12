@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ancient Great Bow");
+            // DisplayName.SetDefault("Ancient Great Bow");
         }
 
         public override void SetDefaults()

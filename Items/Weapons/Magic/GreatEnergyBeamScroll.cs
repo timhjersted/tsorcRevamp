@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The scroll reads \"Exevo gran vix lux.\"");
+            // Tooltip.SetDefault("The scroll reads \"Exevo gran vix lux.\"");
         }
         public override void SetDefaults()
         {

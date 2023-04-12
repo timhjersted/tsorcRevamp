@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crystal Bolt");
+            // DisplayName.SetDefault("Crystal Bolt");
         }
         public override void SetDefaults()
         {
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             thisDust.velocity = Vector2.Zero;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             if (Main.expertMode)
             {

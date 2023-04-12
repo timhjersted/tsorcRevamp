@@ -58,8 +58,8 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Fading soul");
-            Tooltip.SetDefault("Consume to gain a mere 50 souls");
+            // DisplayName.SetDefault("Fading soul");
+            // Tooltip.SetDefault("Consume to gain a mere 50 souls");
         }
         public override void PostUpdate()
         {
@@ -95,8 +95,8 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Soul of a Lost Undead");
-            Tooltip.SetDefault("Consume to gain 200 souls");
+            // DisplayName.SetDefault("Soul of a Lost Undead");
+            // Tooltip.SetDefault("Consume to gain 200 souls");
         }
         public override void UseStyle(Player player, Rectangle rectangle)
         {
@@ -128,8 +128,8 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Soul of a Nameless Soldier");
-            Tooltip.SetDefault("Consume to gain 800 souls");
+            // DisplayName.SetDefault("Soul of a Nameless Soldier");
+            // Tooltip.SetDefault("Consume to gain 800 souls");
         }
         public override void UseStyle(Player player, Rectangle rectangle)
         {
@@ -177,8 +177,8 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Soul of a Proud Knight");
-            Tooltip.SetDefault("Consume to gain 2000 souls");
+            // DisplayName.SetDefault("Soul of a Proud Knight");
+            // Tooltip.SetDefault("Consume to gain 2000 souls");
         }
         public override void PostUpdate()
         {
@@ -231,8 +231,8 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Soul of a Brave Warrior");
-            Tooltip.SetDefault("Consume to gain 5000 souls");
+            // DisplayName.SetDefault("Soul of a Brave Warrior");
+            // Tooltip.SetDefault("Consume to gain 5000 souls");
             ItemID.Sets.ItemIconPulse[Item.type] = true; // Makes item pulsate in world.
             ItemID.Sets.ItemNoGravity[Item.type] = true; // Makes item float in world.
         }
@@ -322,8 +322,8 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Soul of a Hero");
-            Tooltip.SetDefault("Consume to gain 10000 souls");
+            // DisplayName.SetDefault("Soul of a Hero");
+            // Tooltip.SetDefault("Consume to gain 10000 souls");
             ItemID.Sets.ItemIconPulse[Item.type] = true; // Makes item pulsate in world.
             ItemID.Sets.ItemNoGravity[Item.type] = true; // Makes item float in world.
         }

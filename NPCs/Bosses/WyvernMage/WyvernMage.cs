@@ -42,7 +42,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wyvern Mage");
+            // DisplayName.SetDefault("Wyvern Mage");
         }
 
         int frozenSawDamage = 60;
@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         int lifeTimer = 0;
 
         int holdTimer = 0;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             frozenSawDamage = (int)(frozenSawDamage / 2);
             lightningDamage = (int)(lightningDamage / 2);
@@ -79,7 +79,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             set => NPC.ai[2] = value;
         }
 
-        public override void OnHitPlayer(Player player, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             player.AddBuff(BuffID.WitheredWeapon, 180, false);
             player.AddBuff(BuffID.WitheredArmor, 180, false);
@@ -308,7 +308,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             nextWarpPoint = Main.rand.NextVector2CircularEdge(640, 640);
             NPC.netUpdate = true;
         }
-        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             damage *= 2;
         }

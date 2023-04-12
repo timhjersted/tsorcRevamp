@@ -106,7 +106,7 @@ namespace tsorcRevamp.Projectiles.Ranged
         {
             return Main.player[Projectile.owner].Center;
         }
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.OnFire, 300);
         }

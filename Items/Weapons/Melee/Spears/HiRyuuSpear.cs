@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("HiRyuu Spear");
+            // DisplayName.SetDefault("HiRyuu Spear");
         }
 
         public override void SetDefaults()

@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases crit chance by 5%");
+            // Tooltip.SetDefault("Increases crit chance by 5%");
         }
         public override void SetDefaults()
         {

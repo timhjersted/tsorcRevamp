@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A lost prince's armor." +
+            /* Tooltip.SetDefault("A lost prince's armor." +
                 "\n11% increased melee speed" +
                 "\nSet bonus: Increases melee damage by 3 flat" +
-                "\nA gi will also proc this set bonus");
+                "\nA gi will also proc this set bonus"); */
         }
         public override void SetDefaults()
         {

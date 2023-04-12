@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Dazzling armor cut from crystal" +
+            /* Tooltip.SetDefault("Dazzling armor cut from crystal" +
                 "\nIncreases damage reduction by 3%" +
                 "\nSet Bonus: Increases critical strike damage by 25%" +
-                "\nIncreases damage reduction by another 8% when under 40% life");
+                "\nIncreases damage reduction by another 8% when under 40% life"); */
         }
         public override void SetDefaults()
         {

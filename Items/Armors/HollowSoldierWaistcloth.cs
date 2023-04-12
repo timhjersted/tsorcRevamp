@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases dodgeroll agility, especially on solid ground");
+            // Tooltip.SetDefault("Increases dodgeroll agility, especially on solid ground");
         }
         public override void SetDefaults()
         {

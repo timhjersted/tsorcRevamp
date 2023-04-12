@@ -9,11 +9,11 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+30% melee speed" +
+            /* Tooltip.SetDefault("+30% melee speed" +
                 "\nThe legends of Arradius spoke of the one who would wear this" +
                 "\nYou are a master of all forces, the protector of Earth, the Hero of the age." +
                 "\nSet Bonus: Harmonized with the four elements: fire, water, earth and air, including +2 life regen and flight" +
-                "\nBoosts damage, crit chance and movement speed by 30%");
+                "\nBoosts damage, crit chance and movement speed by 30%"); */
         }
         public override void SetDefaults()
         {

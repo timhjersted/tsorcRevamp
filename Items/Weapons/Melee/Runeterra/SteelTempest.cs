@@ -15,11 +15,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public int AttackSpeedScalingDuration;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Steel Tempest");
-            Tooltip.SetDefault("Thrusts on right click, cooldown scales down with attack speed" +
+            // DisplayName.SetDefault("Steel Tempest");
+            /* Tooltip.SetDefault("Thrusts on right click, cooldown scales down with attack speed" +
                 "\nGain a stack of Steel Tempest upon thrusting any enemy" +
                 "\nUpon reaching 2 stacks, the next right click will release a tornado" +
-                "\n'Death is like the wind, always by my side'");
+                "\n'Death is like the wind, always by my side'"); */
         }
         public override void SetDefaults()
         {

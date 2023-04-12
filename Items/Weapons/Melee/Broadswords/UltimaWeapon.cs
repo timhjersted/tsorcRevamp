@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Ultimate sword drawing power from the wielder" +
-                                "\nDamage scales directly with life");
+            /* Tooltip.SetDefault("Ultimate sword drawing power from the wielder" +
+                                "\nDamage scales directly with life"); */
         }
 
         public override void SetDefaults()

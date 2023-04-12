@@ -11,12 +11,12 @@ namespace tsorcRevamp.Items.Weapons.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Phoenix Egg");
-			Tooltip.SetDefault("Summons a raging Phoenix Juvenile to fight for you" +
+			// DisplayName.SetDefault("Phoenix Egg");
+			/* Tooltip.SetDefault("Summons a raging Phoenix Juvenile to fight for you" +
                 "\nWarms up by dealing damage to enemies, speeding up its movements" +
                 "\nDeals increased damage after warming up sufficiently" +
                 "\nAlso benefits more from summon tag bonuses" +
-                "\nUses 2 minion slots");
+                "\nUses 2 minion slots"); */
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller

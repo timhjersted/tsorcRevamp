@@ -10,12 +10,12 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Powerful Curse Buildup");
+            // DisplayName.SetDefault("Powerful Curse Buildup");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }
 
-        public override void ModifyBuffTip(ref string tip, ref int rare)
+        public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
             tip = "When the counter reaches 500, something terrible happens. Curse buildup is at " + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel;
         }

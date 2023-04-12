@@ -10,12 +10,12 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-            DisplayName.SetDefault("Crystal Nunchaku");
-            Tooltip.SetDefault("Tags hit enemies with a parasytic crystal for 15 seconds" +
+            // DisplayName.SetDefault("Crystal Nunchaku");
+            /* Tooltip.SetDefault("Tags hit enemies with a parasytic crystal for 15 seconds" +
 				"\nAfter 5 seconds this will either increase your own defense or increase the enemies damage taken from all sources" +
 				"\nHitting the enemy during infection will decrease the damage bonus and increase your defensive bonus(except for the whip itself)" +
 				"\nDamage bonus ranges from 25% to 0%, Defense bonus ranges from 0 to 15" +
-				"\n'The best defense is a good offense, or was it the other way around?'");
+				"\n'The best defense is a good offense, or was it the other way around?'"); */
 		}
 
 		public override void SetDefaults()

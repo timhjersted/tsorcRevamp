@@ -52,7 +52,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             noFadeOut = true;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Player owner = Main.player[Projectile.owner];
             if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
@@ -179,7 +179,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
             return true;
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (crit)
             {

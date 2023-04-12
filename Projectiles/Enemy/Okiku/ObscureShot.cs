@@ -46,7 +46,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DarkInferno>(), 100);
         }

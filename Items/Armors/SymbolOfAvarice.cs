@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases Dark soul absorption from defeated enemies by 40%"
-                                + "\nbut the curse of the branded also [c/FF0000:drains HP].");
+            /* Tooltip.SetDefault("Increases Dark soul absorption from defeated enemies by 40%"
+                                + "\nbut the curse of the branded also [c/FF0000:drains HP]."); */
         }
         public override void SetDefaults()
         {

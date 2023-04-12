@@ -544,7 +544,7 @@ namespace tsorcRevamp.NPCs
 
         
 
-        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>().ConditionOverload)
             {
@@ -582,7 +582,7 @@ namespace tsorcRevamp.NPCs
             }
         }
 
-        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             if (player.GetModPlayer<tsorcRevampPlayer>().ConditionOverload)
             {
@@ -905,7 +905,7 @@ namespace tsorcRevamp.NPCs
             }
         }
 
-        public override void SetupShop(int type, Chest shop, ref int nextSlot)
+        public override void ModifyActiveShop(NPC npc, string shopName, Item[] items)
         {
             if (type == NPCID.Merchant)
             {
@@ -966,7 +966,7 @@ namespace tsorcRevamp.NPCs
                 shop.item[27].SetDefaults(ModContent.ItemType<DisabledSale>());      // 1/4 Second Timer
             }
         }
-        public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>()))
             {
@@ -1144,7 +1144,7 @@ namespace tsorcRevamp.NPCs
         }
 
         //This method lets us scale the stats of NPC's in expert mode.
-        public override void ScaleExpertStats(NPC npc, int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(NPC npc, int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp") && npc.boss)
             {

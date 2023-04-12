@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Immunity to On Fire, Burning, Chilled, Cursed Inferno, Ichor," +
+            /* Tooltip.SetDefault("Immunity to On Fire, Burning, Chilled, Cursed Inferno, Ichor," +
                                " Gravitation, Bleeding, Poisoned and knockback" +
-                               "\nIncreases damage dealt by 3% and life regeneration by 2");
+                               "\nIncreases damage dealt by 3% and life regeneration by 2"); */
         }
         public override void SetDefaults()
         {

@@ -94,19 +94,15 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 			}
 			Visuals();
 		}
-        public override void ModifyDamageScaling(ref float damageScale)
-		{
-			damageScale *= 2f;
-			if (CurrentAIState  == AIState.Retracting)
-				damageScale *= 2f;
-		}
-
-		public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
-		{
-			hitDirection = (Main.player[Projectile.owner].Center.X < target.Center.X) ? 1 : (-1);
-
-			base.ModifyHitNPC(target, ref damage, ref knockback, ref crit, ref hitDirection);
-		}
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+			modifiers.FinalDamage *= 2;
+            if (CurrentAIState == AIState.Retracting)
+            {
+                modifiers.FinalDamage *= 2;
+            }
+            modifiers.HitDirectionOverride = (Main.player[Projectile.owner].Center.X < target.Center.X) ? 1 : (-1);
+        }
 
         public override bool PreDraw(ref Color lightColor)
 		{

@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Nuclear Mushroom Cooldown");
-            Description.SetDefault("You can't deploy another Nuclear Mushroom until this runs out");
+            // DisplayName.SetDefault("Nuclear Mushroom Cooldown");
+            // Description.SetDefault("You can't deploy another Nuclear Mushroom until this runs out");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

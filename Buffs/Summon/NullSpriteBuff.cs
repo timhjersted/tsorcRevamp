@@ -8,8 +8,8 @@ namespace tsorcRevamp.Buffs.Summon
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Null Sprite");
-            Description.SetDefault("The null sprite will fight for you");
+            // DisplayName.SetDefault("Null Sprite");
+            // Description.SetDefault("The null sprite will fight for you");
             Main.buffNoSave[Type] = true;
             Main.buffNoTimeDisplay[Type] = true;
         }

@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("RTQ2 Chestplate");
-            Tooltip.SetDefault("Increases magic critical strike chance by 7%" +
+            // DisplayName.SetDefault("RTQ2 Chestplate");
+            /* Tooltip.SetDefault("Increases magic critical strike chance by 7%" +
                 "\nSet Bonus: +10% magic attack speed, space gun effect" +
-                "\nEmergency shield kicks in when life is less than 40%, increasing defense by 15");
+                "\nEmergency shield kicks in when life is less than 40%, increasing defense by 15"); */
         }
         public override void SetDefaults()
         {

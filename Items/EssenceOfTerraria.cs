@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Essence of Terraria");
-            Tooltip.SetDefault("Summons almost every boss at once." + "\nYou will never survive this.");
+            // DisplayName.SetDefault("Essence of Terraria");
+            // Tooltip.SetDefault("Summons almost every boss at once." + "\nYou will never survive this.");
         }
 
         public override void SetDefaults()

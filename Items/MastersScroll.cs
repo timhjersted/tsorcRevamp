@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Turns on Master Mode or turns it off" +
+            /* Tooltip.SetDefault("Turns on Master Mode or turns it off" +
                 "\nMaster Mode has not been tuned yet whatsoever, don't expect it to be well balanced" +
-                "\nAlpha mode in testing starting now. [c/00ffd4:For a more polished, unique challenge, try the Dark Sign]");
+                "\nAlpha mode in testing starting now. [c/00ffd4:For a more polished, unique challenge, try the Dark Sign]"); */
         }
 
         public override void SetDefaults()

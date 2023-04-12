@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The fading Crystal of Water. \n" + "Will summon Kraken. \n" + "Item is non-consumable");
+            // Tooltip.SetDefault("The fading Crystal of Water. \n" + "Will summon Kraken. \n" + "Item is non-consumable");
         }
 
         public override void SetDefaults()

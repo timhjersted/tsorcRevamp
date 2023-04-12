@@ -36,12 +36,12 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ice Storm Shards");
+            // DisplayName.SetDefault("Ice Storm Shards");
 
         }
         
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             //target.AddBuff(BuffID.Blackout, 360, false); //darkness
             target.AddBuff(ModContent.BuffType<Chilled>(), 180, false);

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("It is made of razor sharp dragon scales.\nThorns Effect");
+            // Tooltip.SetDefault("It is made of razor sharp dragon scales.\nThorns Effect");
         }
         public override void SetDefaults()
         {

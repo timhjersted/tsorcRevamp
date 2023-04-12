@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Illuminant Trail");
+            // DisplayName.SetDefault("Illuminant Trail");
         }
         public override void SetDefaults()
         {

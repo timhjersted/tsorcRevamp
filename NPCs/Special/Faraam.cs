@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Special
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Faraam");
+            // DisplayName.SetDefault("Faraam");
             Main.npcFrameCount[NPC.type] = 27; //27 for ???
             NPCID.Sets.TrailCacheLength[NPC.type] = 5; //How many copies of shadow/trail
             NPCID.Sets.TrailingMode[NPC.type] = 0;
@@ -50,7 +50,7 @@ namespace tsorcRevamp.NPCs.Special
         }
 
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 5; i++) //Blood splatter from being hit
             {
@@ -591,7 +591,7 @@ namespace tsorcRevamp.NPCs.Special
 
         }
 
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (projectile.type == ProjectileID.Boulder) //Rewarding those who are sneaky enough to use the boulder in the cave to hurt him
             {

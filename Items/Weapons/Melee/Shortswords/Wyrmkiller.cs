@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A sword used to kill wyverns and dragons." +
-                                "\nDoes 8x damage against flying beasts.");
+            /* Tooltip.SetDefault("A sword used to kill wyverns and dragons." +
+                                "\nDoes 8x damage against flying beasts."); */
         }
         public override void SetDefaults()
         {
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
 
             recipe.Register();
         }
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
             //what a mess lmao, should probably be a switch but im lazy
             if (target.type == NPCID.WyvernBody

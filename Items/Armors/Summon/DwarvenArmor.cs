@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases your max number of minions by 1" +
-                "\nIncreases minion damage by 16%");
+            /* Tooltip.SetDefault("Increases your max number of minions by 1" +
+                "\nIncreases minion damage by 16%"); */
         }
 
         public override void SetDefaults()

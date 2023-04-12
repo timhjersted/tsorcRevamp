@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Poison Smog");
+            // DisplayName.SetDefault("Poison Smog");
         }
         public override void SetDefaults()
         {
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             Projectile.type = 44; //killpretendtype
             return true;
         }
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.Poisoned, 600, false);
             target.AddBuff(BuffID.Tipsy, 1800, false);

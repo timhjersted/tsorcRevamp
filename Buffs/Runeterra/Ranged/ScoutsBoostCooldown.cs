@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Scouts Boost Cooldown");
-            Description.SetDefault("Movement bonus nullified");
+            // DisplayName.SetDefault("Scouts Boost Cooldown");
+            // Description.SetDefault("Movement bonus nullified");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

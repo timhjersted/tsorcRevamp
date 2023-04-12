@@ -12,9 +12,9 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("\nCrush in your hand to send out Glintstone Specks" +
+            /* Tooltip.SetDefault("\nCrush in your hand to send out Glintstone Specks" +
                 "\nGlintstone Specks hover a moment before firing off toward the closest enemy" +
-                "\nGreat for setting up ambushes on unsuspecting foes. Scales with magic damage");
+                "\nGreat for setting up ambushes on unsuspecting foes. Scales with magic damage"); */
         }
 
         public override void SetDefaults()

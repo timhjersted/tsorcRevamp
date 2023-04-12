@@ -197,14 +197,9 @@ Mods: {
 				Tooltip: Nearby players get a bonus against: Ghost Of The Forgotten Warrior
 			}
 
-			GreatRedKnightOfArtoriasBanner: {
-				DisplayName: Great Red Knight Of Artorias Banner
-				Tooltip: Nearby players get a bonus against: Great Red Knight of Artorias
-			}
-
-			GreatRedKnightOfTheAbyssBanner: {
-				DisplayName: Great Red Knight Of The Abyss Banner
-				Tooltip: Nearby players get a bonus against: Great Red Knight Of The Abyss
+			GreatRedKnightBanner: {
+				DisplayName: Great Red Knight Banner
+				Tooltip: Nearby players get a bonus against: Great Red Knight
 			}
 
 			GuardianCorruptorBanner: {
@@ -342,9 +337,9 @@ Mods: {
 				Tooltip: Nearby players get a bonus against: Red Cloud Hunter
 			}
 
-			RedKnightofArtoriasBanner: {
-				DisplayName: Red Knight of Artorias Banner
-				Tooltip: Nearby players get a bonus against: Red Knight of Artorias
+			RedKnightBanner: {
+				DisplayName: Red Knight Banner
+				Tooltip: Nearby players get a bonus against: Red Knight
 			}
 
 			ResentfulSeedlingBanner: {
@@ -445,15 +440,14 @@ Mods: {
 					'''
 			}
 
-			Celestriad: {
-				DisplayName: Celestriad
-				Tooltip:
-					'''
-					[c/ffbf00:Focuses the user's mana into a protective shield when below 200 HP]
-					Mana Shield reduces incoming damage by 50%, but drains 95 mana per hit
-					Inhibits both natural and artificial mana regen for a period of time
-					[c/00ffd4:Doubles max mana and decreases stamina usage by 15%]
-					'''
+			AuraOfDecay: {
+				DisplayName: Aura of Decay
+				Tooltip: Periodically releases a wave of poison
+			}
+
+			AuraOfIlluminance: {
+				DisplayName: Aura of Illuminance
+				Tooltip: Creates a glowing trail behind you
 			}
 
 			ConditionOverload: {
@@ -480,8 +474,8 @@ Mods: {
 				DisplayName: Darkmoon Cloak
 				Tooltip:
 					'''
-					Rapid mana regen, +15% magic crit & +15% magic dmg when health falls below 150
-					Provides Star Cloak, +5% magic crit & +5% magic damage boost normally
+					Inherits the Star Cloaks effect and grants 5% increased damage and critical strike chance
+					When life falls below 40%, also increases mana regeneration by 5, damage and critical strike chance by 10%
 					Magic Imbues no longer need to go on cooldown
 					'''
 			}
@@ -498,19 +492,19 @@ Mods: {
 
 			BandOfGreatCosmicPower: {
 				DisplayName: Band of Great Cosmic Power
-				Tooltip: +3 life regen and increases max mana by 60
+				Tooltip: Increases life regeneration by 3 and maximum mana by 60
 			}
 
-			BandOfSupremeCosmicPower: {
-				DisplayName: Band of Supreme Cosmic Power
-				Tooltip: +4 life regen and increases max mana by 80
+			BandOfPhenomenalCosmicPower: {
+				DisplayName: Band of Phenomenal Cosmic Power
+				Tooltip: Increases life regeneration by 4 and maximum mana by 80
 			}
 
 			BarrierRing: {
 				DisplayName: Barrier Ring
 				Tooltip:
 					'''
-					Casts Magic Barrier when the wearer is critically wounded
+					Casts Magic Barrier when life falls below 25%
 					Magic Barrier increases defense by 20
 					Does not stack with other barrier or shield spells
 					'''
@@ -523,7 +517,6 @@ Mods: {
 					One of the infamous bite rings commissioned by Sir Arstor of Carim
 					Despite the dreadful rumors surrounding its creation, this ring
 					is an unmistakable asset, due to its ability to prevent bleeding.
-					+3 defense
 					'''
 			}
 
@@ -532,9 +525,8 @@ Mods: {
 				Tooltip:
 					'''
 					The rare gem called tearstone has the uncanny ability to sense imminent death.
-					This blue tearstone from Catarina boosts the defense of its wearer by 50 when in danger.
-					When the ring is active, melee damage is reduced by 200%, making it a ring ideal for mages
-					and other ranged classes. However, the ring provides 8 defense under normal circumstances.
+					This blue tearstone from Catarina boosts the defense of its wearer by 12 and reduces damage taken by 8%
+					 when life falls below 33%. This also reduces melee damage by 200%.
 					'''
 			}
 
@@ -543,10 +535,20 @@ Mods: {
 				Tooltip:
 					'''
 					The rare gem called tearstone has the uncanny ability to sense imminent death.
-					This enchanted blue tearstone from Catarina boosts the defence of its wearer by 85 when in danger.
-					Otherwise, the ring gifts the wearer a normal +30 defense boost.
-					While worn, melee damage is reduced by 200%, making it a ring 
-					only suited to mages and other ranged classes.
+					This enchanted blue tearstone from Catarina boosts the defense of its wearer by 25 and reduces damage taken by 9%
+					 when life falls below 33%. This also reduces melee damage by 200%.
+					'''
+			}
+
+			Celestriad: {
+				DisplayName: Celestriad
+				Tooltip:
+					'''
+					[c/ffbf00:Focuses the user's mana into a protective shield]
+					Mana Shield reduces incoming damage by 35%, but drains 90 mana per hit
+					Inhibits both natural and artificial mana regen for a period of time
+					[c/00ffd4:Doubles max mana and decreases stamina usage by 15%]
+					Reduces ranged, magic and summon damage by 25% multiplicatively
 					'''
 			}
 
@@ -558,29 +560,13 @@ Mods: {
 					[c/ffbf00:The Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous in this realm.]
 					[c/00ffd4:Grants immunity to particular dangers caused by the Abyss and foes empowered by it, such as Crippled, Poisoned, On Fire and Oiled]
 					Also grants protection from lava, knockback, and fire blocks, but increases enemy spawn rates.
-					+7% Melee speed
-					+7% Move speed
-					+7% Damage
-					+7% Critical strike chance
-					'''
-			}
-
-			CrackedDragonStone: {
-				DisplayName: Cracked Dragon Stone
-				Tooltip:
-					'''
-					[c/ffbf00:Provides immunity to catching on fire, burning, slow, frostbite and becoming chilled]
-					Also raises damage dealt by 3% and prevents knockback
+					Increases damage, critical strike chance, movement and attack speed(melee speed bonus doubled) by 7% multiplicatively
 					'''
 			}
 
 			DarkCloak: {
 				DisplayName: Dark Cloak
-				Tooltip:
-					'''
-					[c/ffbf00:Dark Cloak gives +15 defense when health falls below 150]
-					+5 defense normally
-					'''
+				Tooltip: "[c/ffbf00:Dark Cloak gives +10 defense when life falls below 40%]"
 			}
 
 			GreyWolfRing: {
@@ -588,10 +574,12 @@ Mods: {
 				Tooltip:
 					'''
 					One of the rings worn by Artorias.
-					Inherits Ring of Clarity effects
-					+22 defense within the Abyss, +10 defense otherwise
+					Inherits Ring of Clarity immunities
+					Press the Wolf Ring key to increase life regen and damage taken temporarily
+					Removes the life regen if hit during the effect and puts it on a long cooldown
+					+12 defense within the Abyss
 					Grants Magma Stone and Acid Venom imbue effect
-					+4 HP Regen. +120 Mana.
+					Increases life regeneration by 4 and maximum mana by 100
 					Imbue effect can be toggled by hiding the accessory.
 					'''
 			}
@@ -608,10 +596,18 @@ Mods: {
 
 			LightCloak: {
 				DisplayName: Light Cloak
+				Tooltip: Light Cloak grants 3 increased life regenerationWhen life falls below 40%, increases life regeneration by 11 total
+			}
+
+			ManaShield: {
+				DisplayName: Mana Shield
 				Tooltip:
 					'''
-					Light Cloak activates +12 Life Regen when health falls below 150
-					+4 life regen normally
+					Focuses the user's mana into a protective shield
+					Reduces incoming damage by 35%, but drains 100 mana per hit
+					Inhibits both natural and artificial mana regen
+					[c/ffbf00:Useful for those who do not specialize in magic]
+					Reduces ranged, magic summon damage by 25% multiplicatively
 					'''
 			}
 
@@ -632,7 +628,6 @@ Mods: {
 					One of the infamous bite rings commissioned by Sir Arstor of Carim.
 					Despite the dreadful rumors surrounding its creation, this ring is an unmistakable asset,
 					due to its ability to prevent becoming poisoned.
-					+3 defense
 					'''
 			}
 
@@ -643,7 +638,7 @@ Mods: {
 					One of the infamous bite rings commissioned by Sir Arstor of Carim.
 					Despite the dreadful rumors surrounding its creation, this ring is an unmistakable asset,
 					due to its ability to prevent bleeding and becoming poisoned.
-					+2 HP Regeneration and 6 defense
+					Increases life regeneration by 1
 					'''
 			}
 
@@ -660,8 +655,8 @@ Mods: {
 				DisplayName: Ring Of Clarity
 				Tooltip:
 					'''
-					Prevents a wide variety of debuffs, including many DoT effects. 
-					+3% damage, +4 regeneration, and 9 defense
+					Immunity to On Fire, Burning, Chilled, Cursed Inferno, Ichor, Gravitation, Bleeding, Poisoned and knockback
+					Increases damage dealt by 3% and life regeneration by 2
 					'''
 			}
 
@@ -696,8 +691,9 @@ Mods: {
 				Tooltip:
 					'''
 					One of the rings worn by Artorias.
-					Immunity to the on-fire and broken-armor debuffs.
-					+18 defense within the Abyss, +6 defense otherwise.
+					Press the Wolf Ring key to increase life regen and damage taken temporarily
+					Removes the life regen if hit during the effect and puts it on a long cooldown
+					+12 defense within the Abyss
 					Grants Acid Venom imbue effect
 					Imbue effect can be toggled by hiding the accessory.
 					'''
@@ -705,13 +701,7 @@ Mods: {
 
 			ZirconRing: {
 				DisplayName: Zircon Ring
-				Tooltip:
-					'''
-					Imbues weapons with fire, providing
-					10% increased melee and whip damage, and all swords and whips inflict fire damage.
-					Plus Thorns Effect and +4 Defense.
-					Fire imbue effect can be toggled by hiding the accessory.
-					'''
+				Tooltip: Increases maximum life by 20%
 			}
 
 			DragoonCloak: {
@@ -803,6 +793,15 @@ Mods: {
 					'''
 			}
 
+			CrackedDragonStone: {
+				DisplayName: Cracked Dragon Stone
+				Tooltip:
+					'''
+					[c/ffbf00:Provides immunity to catching on fire, burning, frostbite and becoming chilled]
+					Also raises damage dealt by 3% and prevents knockback
+					'''
+			}
+
 			DragonCrestShield: {
 				DisplayName: Dragon Crest Shield
 				Tooltip:
@@ -884,8 +883,24 @@ Mods: {
 					The ringstone doubles magic damage and boosts magic crit by 50%,
 					but at the cost of 50% max HP. 
 					Your previous max HP is restored when the ring is removed. 
-					Healing enchantment provides +9 Life Regen.
+					Healing enchantment provides +7 Life Regen.
 					'''
+			}
+
+			IceboundMythrilAegis: {
+				DisplayName: Icebound Mythril Aegis
+				Tooltip:
+					'''
+					Inherits Mythril Bulwark, Ankh Shield and Frozen Shield effects
+					Includes immunity to Chilled and Stoned
+					Slows down your dodgeroll slightly
+					Rolling through an enemy may inflict some debuffs this item grants immunity to
+					'''
+			}
+
+			MythrilBulwark: {
+				DisplayName: Mythril Bulwark
+				Tooltip: Rolling through enemies makes them take 25% more damage
 			}
 
 			ReflectionShift: {
@@ -926,6 +941,7 @@ Mods: {
 					The wings of Seath the Scaleless
 					Allow for superior control of movement in the air, including walking on air
 					Walking on air follows hovering controls
+					Press hotkey to toggle speed levels and featherfall
 					Provide immunity to all fire and lava damage, as well as perfect sight and hunting abilities.
 					Also provide immunity to knockback
 					'''
@@ -953,7 +969,7 @@ Mods: {
 				DisplayName: Hero's Crest
 				Tooltip:
 					'''
-					Damage, crit chance, health, and defense
+					Damage, crit chance, life, and defense
 					increased by 6%. Luck increased by 0.06
 					"Proof of the hero's accomplishments"
 					'''
@@ -1063,17 +1079,6 @@ Mods: {
 					'''
 			}
 
-			ManaShield: {
-				DisplayName: Mana Shield
-				Tooltip:
-					'''
-					Focuses the user's mana into a protective shield
-					Reduces incoming damage by 35%, but drains 75 mana per hit
-					Inhibits both natural and artificial mana regen
-					[c/ffbf00:Useful for those who do not specialize in magic]
-					'''
-			}
-
 			MoltenRing: {
 				DisplayName: Molten Ring
 				Tooltip:
@@ -1144,6 +1149,7 @@ Mods: {
 					'''
 					15% increased movement speed
 					20% increased melee speed
+					Grants autoswing to melee weapons and whips
 					'''
 			}
 
@@ -1227,8 +1233,8 @@ Mods: {
 				DisplayName: Challenger's Glove
 				Tooltip:
 					'''
-					Increases whip knockback
-					12% increased whip damage and speed
+					Increases whip knockback and grants autoswing effect
+					12% increased minion damage and speed
 					Increases the size of whips by 10%
 					Enemies are more likely to target you
 					Increases the damage of whip crits by 25%
@@ -1437,7 +1443,7 @@ Mods: {
 					A reforged upgrade to the legendary Dragoon Armor.
 					You are a master of all forces, the protector of Earth, the Hero of the age.
 					The powers of the Dragoon Cloak are embedded within its blue-plated chest piece.
-					Dragoon Cloak effects kick in at 160 HP.
+					Dragoon Cloak effects kick in at 40% life.
 					'''
 			}
 
@@ -1469,7 +1475,7 @@ Mods: {
 				Tooltip:
 					'''
 					+200 Mana and Philosopher's stone effect
-					Set Bonus: Harmonized with the four elements: fire, water, earth and air, including +6 life regen and flight
+					Set Bonus: Harmonized with the four elements: fire, water, earth and air, including +5 life regen and flight
 					Boosts damage, crit chance, melee and movement speed by 38% and reduces mana costs by 17%
 					'''
 			}
@@ -1542,7 +1548,7 @@ Mods: {
 					'''
 					A powerful magic/low defense set chosen by skilled Paladins with a taste for high risk/reward combat
 					Set bonus: 20% magic crit, +30% magic damage, +60 mana, -9% mana cost + Darkmoon Cloak skill
-					Darkmoon Cloak activates rapid mana regen, Star Cloak & Doubles magic crit and damage when life falls below 100
+					Darkmoon Cloak activates rapid mana regen, Star Cloak & Doubles magic crit and damage when life falls below 25%
 					'''
 			}
 
@@ -1569,7 +1575,7 @@ Mods: {
 				DisplayName: Genji Helmet
 				Tooltip:
 					'''
-					Amor from the East
+					Armor from the East
 					+25% magic damage
 					'''
 			}
@@ -1593,7 +1599,7 @@ Mods: {
 				Tooltip:
 					'''
 					Increases magic damage by 11%
-					Set Bonus: Burning Mana Skill activates when health falls below 50%, increasing mana regen by 5
+					Set Bonus: Burning Mana Skill activates when life falls below 50%, increasing mana regen by 5
 					'''
 			}
 
@@ -1622,7 +1628,7 @@ Mods: {
 					'''
 					Increases magic critical strike chance by 7%
 					Set Bonus: +10% magic attack speed, space gun effect
-					Emergency shield kicks in when health is less than 141, increasing defense by 15
+					Emergency shield kicks in when life is less than 40%, increasing defense by 15
 					'''
 			}
 
@@ -1645,8 +1651,9 @@ Mods: {
 				Tooltip:
 					'''
 					A lost prince's armor.
-					Increases melee damage by 3 flat
-					Set bonus: +11% melee speed
+					11% increased melee speed
+					Set bonus: Increases melee damage by 3 flat
+					A gi will also proc this set bonus
 					'''
 			}
 
@@ -1708,9 +1715,9 @@ Mods: {
 				Tooltip:
 					'''
 					Dazzling armor cut from crystal
-					Increases damage reduction by 5%
+					Increases damage reduction by 3%
 					Set Bonus: Increases critical strike damage by 25%
-					Increases damage reduction by another 10% when under 166 health
+					Increases damage reduction by another 8% when under 40% life
 					'''
 			}
 
@@ -1730,7 +1737,7 @@ Mods: {
 					Dazzling armor cut from crystal
 					Increases melee damage by 6%
 					Set Bonus: Increases critical strike damage by 25%
-					Increases melee speed by 18%, doubled when under 166 health
+					Increases melee speed by 18%, doubled when under 40% life
 					'''
 			}
 
@@ -1828,8 +1835,8 @@ Mods: {
 				Tooltip:
 					'''
 					Increases melee damage by 10%
-					Set bonus: A Shadow Cloak activates when health falls below 100, increasing life regen by 7
-					Increases life regen by 3 otherwise
+					Set bonus: A Shadow Cloak activates when life falls below 25%, increasing life regen by 5
+					Increases life regen by 2 otherwise
 					Grants Double Jump Skill
 					'''
 			}
@@ -1882,7 +1889,7 @@ Mods: {
 					A powerful armor forged by the god of chaos.
 					Increases ranged damage by 17% and magic damage by 9%
 					Reduces chance of consuming ammo by 20%, increases max mana by 80 and decreases mana costs by 10%
-					Set Bonus: +20% attack speed(doubled for melee), +10 life regen/20 in water
+					Set Bonus: +20% attack speed(doubled for melee), +8 life regen/15 in water
 					Increases maximum stamina and stamina regen by 15%
 					'''
 			}
@@ -1945,7 +1952,7 @@ Mods: {
 					'''
 					Gifted with healing. High defense not necessary.
 					25% chance not to consume ammo
-					Set Bonus: 20% Ranged Crit, +20 Ranged Dmg, +9 Life Regen
+					Set Bonus: 20% Ranged Crit, +20 Ranged Dmg, +7 Life Regen
 					'''
 			}
 
@@ -1982,7 +1989,7 @@ Mods: {
 					'''
 					Armor made from the shell of a legendary creature
 					Increases ranged critical strike chance by 16%
-					Set Bonus: Ranged Critical Strike Chance is doubled under 50% max health
+					Set Bonus: Ranged Critical Strike Chance is doubled under 50% life
 					Reduces chance to consume ammo by 25%
 					'''
 			}
@@ -1992,7 +1999,7 @@ Mods: {
 				Tooltip:
 					'''
 					Increases ranged damage by 15%
-					Increases life regen by 3
+					Increases life regen by 2
 					'''
 			}
 
@@ -2059,7 +2066,7 @@ Mods: {
 					Plus extended breath, water and lava walk, & swim
 					Boosts damage, crit, melee and movement speed by 14%
 					Reduces mana costs by 11%
-					+4 life regen while in lava & +2 in water
+					+3 life regen while in lava & +2 in water
 					'''
 			}
 
@@ -2134,7 +2141,7 @@ Mods: {
 					Forged by those who brave Annihilation
 					+27% whip damage
 					Set bonus: Increases whip range by 30%
-					Increases summon attack speed by 25%, this gets doubled when under 50% health
+					Increases summon attack speed by 25%, this gets doubled when under 50% life
 					'''
 			}
 
@@ -2172,7 +2179,7 @@ Mods: {
 					Increases whip damage and summon attack speed by 18%
 					Set Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
 					Defense, minion slots and whip range are not affected by this
-					Increases whip range by 30% and life regen by 4
+					Increases whip range by 30% and life regen by 3
 					'''
 			}
 
@@ -2202,18 +2209,27 @@ Mods: {
 					'''
 					+1 flat minion damage
 					Set Bonus: Increases your max number of minions by 1
+					Can be bought
 					A Flinx Fur Coat will also proc this set bonus
 					'''
 			}
 
 			OldChainCoif: {
 				DisplayName: Old Chain Coif
-				Tooltip: +9% summon attack speed
+				Tooltip:
+					'''
+					+9% summon attack speed
+					Can be bought
+					'''
 			}
 
 			OldChainGreaves: {
 				DisplayName: Old Chain Greaves
-				Tooltip: +12% movement speed
+				Tooltip:
+					'''
+					+12% movement speed
+					Can be bought
+					'''
 			}
 
 			TarantulaCarapace: {
@@ -3027,7 +3043,7 @@ Mods: {
 				DisplayName: Eternal Crystal
 				Tooltip:
 					'''
-					[i:5627][c/4949c2:A mysterious crystal][i:5627]
+					[i:5643][c/4949c2:A mysterious crystal][i:5643]
 					Looking into it is like peering into the infinite expanse of [c/4949c2:space]
 					'''
 			}
@@ -4035,6 +4051,11 @@ Mods: {
 				Tooltip: A lost tome known to cure blindness.
 			}
 
+			LightOfDawn: {
+				DisplayName: Light of Dawn
+				Tooltip: Day finally breaksFires illuminant streaks of hallowed light
+			}
+
 			MagicBarrierScroll: {
 				DisplayName: Magic Barrier
 				Tooltip:
@@ -4140,49 +4161,6 @@ Mods: {
 				Tooltip: A lost tome known to cure all but the rarest of ailments.
 			}
 
-			OrbofDeception: {
-				DisplayName: Orb of Deception
-				Tooltip:
-					'''
-					Throws a magic orb which will return to you after a certain distance
-					You cannot throw more than one orb at a time
-					You can recast with mana to force it to return early
-					The orb deals more damage on the way back
-					Each hit gathers a stack of Essence Thief, crits gather 2
-					Upon reaching 9 stacks, the next cast will have 10% lifesteal
-					'''
-			}
-
-			OrbofFlame: {
-				DisplayName: Orb of Flame
-				Tooltip:
-					'''
-					Throws a flaming orb which will return to you after a certain distance
-					You cannot throw more than one orb at a time
-					You can recast with mana to force it to return early
-					The orb deals more damage on the way back
-					Each hit gathers a stack of Essence Thief, crits gather 2
-					Upon reaching 9 stacks, the next cast will have 10% lifesteal
-					and spawn a homing flame on-hit(2 on-crit)
-					'''
-			}
-
-			OrbofSpirituality: {
-				DisplayName: Orb of Spirituality
-				Tooltip:
-					'''
-					Throws a magic orb which will return to you after a certain distance
-					You cannot throw more than one orb at a time
-					You can recast with mana to force it to return early
-					The orb deals more damage on the way back
-					Each hit gathers a stack of Essence Thief, crits gather 2
-					Upon reaching 9 stacks, the next cast will have 10% lifesteal
-					and spawn a homing flame on-hit(2 on-crit)
-					Right click to dash in mouse direction and spawn homing flames while dashing
-					This has a 60 second cooldown and consumes double the mana
-					'''
-			}
-
 			ShatteredPrism: {
 				DisplayName: Shattered Prism
 				Tooltip:
@@ -4217,7 +4195,7 @@ Mods: {
 
 			TheBlackenedFlames: {
 				DisplayName: The Blackened Flames
-				Tooltip: Has a chance to burn enemies' health away
+				Tooltip: Has a chance to burn enemies' life away
 			}
 
 			TomeOfHealth: {
@@ -4342,7 +4320,7 @@ Mods: {
 				Tooltip:
 					'''
 					A sword that draws power from the wielder.
-					Deals maximum damage at full health
+					Deals maximum damage at full life
 					'''
 			}
 
@@ -4481,6 +4459,16 @@ Mods: {
 					'''
 			}
 
+			SeveringDusk: {
+				DisplayName: Severing Dusk
+				Tooltip:
+					'''
+					A blade honed sharp by the magic of the coming night.
+					Right click to dash, consuming stamina and making you immune for a moment
+					Striking enemies while dashing creates a demon spirit from their torn soul
+					'''
+			}
+
 			ShadowSickle: {
 				DisplayName: Shadow Sickle
 				Tooltip: A curiously simple but deadly weapon - its short reach seems to be its only weakness.
@@ -4505,7 +4493,7 @@ Mods: {
 				Tooltip:
 					'''
 					Ultimate sword drawing power from the wielder
-					Damage scales directly with health
+					Damage scales directly with life
 					'''
 			}
 
@@ -4601,8 +4589,6 @@ Mods: {
 				Tooltip:
 					'''
 					Shatter the earth
-					Breaks walls with amazing speed
-					Hold the cursor away from you to wield only as a weapon
 					Summons electrospheres upon hitting an enemy
 					'''
 			}
@@ -4628,12 +4614,13 @@ Mods: {
 				DisplayName: Nightbringer
 				Tooltip:
 					'''
-					Doubled crit chance scaling
-					Thrusts on right click dealing double damage, cooldown scales down with attack speed
+					Thrusts on right click, cooldown scales down with attack speed
 					Gain a stack of Steel Tempest upon thrusting any enemy
-					Upon reaching 2 stacks, the next right click will release a chaotic tornado dealing double damage
+					Upon reaching 2 stacks, the next right click will release a chaotic tempest
 					Hover your mouse over an enemy and press Special Ability to dash through the enemy
-					Press Special Ability to create a stationary windwall which blocks most enemy projectiles for 4 seconds
+					This grants you brief invulnerability and a huge melee damage boost
+					Press Shift + Special Ability to create a stationary firewall which blocks most enemy projectiles for 5 seconds
+					'Harmony is a lie told to force Obedience'
 					'''
 			}
 
@@ -4641,11 +4628,12 @@ Mods: {
 				DisplayName: Plasma Whirlwind
 				Tooltip:
 					'''
-					Doubled crit chance scaling
-					Thrusts on right click dealing double damage, cooldown scales down with attack speed
+					Thrusts on right click, cooldown scales down with attack speed
 					Gain a stack of Steel Tempest upon thrusting any enemy
-					Upon reaching 2 stacks, the next right click will release a plasma whirlwind dealing double damage
+					Upon reaching 2 stacks, the next right click will release a plasma whirlwind
 					Hover your mouse over an enemy and press Special Ability to dash through the enemy
+					This grants you brief invulnerability and a huge melee damage boost
+					'A companion for this Odyssey'
 					'''
 			}
 
@@ -4653,10 +4641,10 @@ Mods: {
 				DisplayName: Steel Tempest
 				Tooltip:
 					'''
-					Doubled crit chance scaling
-					Thrusts on right click dealing double damage, cooldown scales down with attack speed
+					Thrusts on right click, cooldown scales down with attack speed
 					Gain a stack of Steel Tempest upon thrusting any enemy
-					Upon reaching 2 stacks, the next right click will release a tornado dealing double damage
+					Upon reaching 2 stacks, the next right click will release a tornado
+					'Death is like the wind, always by my side'
 					'''
 			}
 
@@ -4761,6 +4749,11 @@ Mods: {
 				Tooltip: A spear forged from the fang of the Dragoon Serpent.
 			}
 
+			FetidExhaust: {
+				DisplayName: Fetid Exhaust
+				Tooltip: Expel a close-range blast of searing noxious gas
+			}
+
 			ForgottenImpHalberd: {
 				DisplayName: Forgotten Imp Halberd
 				Tooltip: A crescent shaped spear used by imps.
@@ -4819,7 +4812,8 @@ Mods: {
 				DisplayName: Biohazard
 				Tooltip:
 					'''
-					The addition of the propulsion field allows detonating shots to pierce twice
+					The addition of the propulsion field allows detonating shots to pierce twice,
+					and for sticking shots to home in on their target
 					Warning - perfectly capable of destroying entire ecosystems
 					'''
 			}
@@ -5066,6 +5060,16 @@ Mods: {
 					'''
 			}
 
+			PiercingGaze: {
+				DisplayName: Piercing Gaze
+				Tooltip:
+					'''
+					Fires blasts of scorching plasma
+					Dealing damage charges its capacitor
+					When full, right-click to fire a massive laser
+					'''
+			}
+
 			Polaris: {
 				DisplayName: Polaris
 				Tooltip: Batteries included
@@ -5082,13 +5086,23 @@ Mods: {
 					'''
 			}
 
+			PyroclasticFlow: {
+				DisplayName: Pyroclastic Flow
+				Tooltip: Precision rifle that launches an explosive fireball every 3 shots
+			}
+
 			AlienRifle: {
 				DisplayName: Alien Rifle
 				Tooltip:
 					'''
-					Converts seeds into Plasma Shots, these scale with magic damage too
-					Also uses all darts as ammo
-					Right click on a cd to shoot a homing blinding shot which inflicts confusion, also scales with magic damage
+					Converts seeds into Alien Lasers and allows you to gather Seeds from grass
+					Alien Lasers apply a short burst of Electrified home into enemies
+					Also uses all darts as ammo, but Poison Darts deal double damage
+					Stops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise
+					Grants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily
+					Press Special Ability to gain an even higher temporary boost and remove the movement penalties
+					Right click to shoot a homing blinding shot which inflicts confusion
+					'Armed and ready'
 					'''
 			}
 
@@ -5096,10 +5110,15 @@ Mods: {
 				DisplayName: Omega Squad Rifle
 				Tooltip:
 					'''
-					Converts seeds into Toxic Shots, these scale with magic damage too
-					Also uses all darts as ammo
-					Right click on a cd to shoot a homing blind dart which inflicts confusion, also scales with magic damage
-					Press Q hotkey on a cd to drop a miniature nuclear bomb, scaling with magic damage too
+					Converts seeds into Radioactive Darts and allows you to gather Seeds from grass
+					Radioactive Darts apply a short burst of Irradiated home into enemies
+					Also uses all darts as ammo, but Poison Darts deal double damage
+					Stops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise
+					Grants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily
+					Press Special Ability to gain an even higher temporary boost and remove the movement penalties
+					Right click to shoot a homing blinding dart which inflicts confusion
+					Press Shift and Special Ability to drop a Nuclear Mushroom
+					'There's a mushroom out there with your name on it'
 					'''
 			}
 
@@ -5107,8 +5126,13 @@ Mods: {
 				DisplayName: Toxic Shot
 				Tooltip:
 					'''
-					Converts seeds into Toxic Shots, these scale with magic damage too
-					Also uses all darts as ammo
+					Converts seeds into Toxic Shots and allows you to gather Seeds from grass
+					Toxic Shots apply a short burst of venom and home into enemies
+					Also uses all darts as ammo, but Poison Darts deal double damage
+					Stops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise
+					Grants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily
+					Press Special Ability to gain an even higher temporary boost and remove the movement penalties
+					'That's gotta sting'
 					'''
 			}
 
@@ -5209,38 +5233,19 @@ Mods: {
 					'''
 			}
 
-			InterstellarVesselControls: {
-				DisplayName: Interstellar Vessel Controls
-				Tooltip:
-					'''
-					Summons spaceships to rotate around you and damage enemies in their way
-					Uses half a minion slot
-					While holding this item, increase their radius by holding the Special Ability hotkey
-					Or hold Shift + Special Ability to shrink their radius
-					Press Special Ability while not holding the remote to activate Turboboost
-					This increases the spaceships damage and movement speed
-					Turboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness
-					Applies the Shocked debuff, which grants minions crit chance based on a fraction of your critical strike chance
-					'Adjusting trajectory for ASOL-13!'
-					'''
-			}
-
-			ScorchingPoint: {
-				DisplayName: Scorching Point
-				Tooltip:
-					'''
-					Summons fireballs to rotate around you and damage enemies in their way
-					Uses half a minion slot
-					While holding this item, increase their radius by holding the Special Ability hotkey
-					Or hold Shift + Special Ability to shrink their radius
-					Applies the Scorching debuff, which grants minions crit chance based on a fraction of your critical strike chance
-					'By the Ashen Lord of Runeterra!'
-					'''
-			}
-
 			GaleForce: {
 				DisplayName: Gale Force
 				Tooltip: Summons a wind spirit which shoots a gust of wind towards your cursor
+			}
+
+			ShatteredReflection: {
+				DisplayName: Shattered Reflection
+				Tooltip:
+					'''
+					What will you see next time you look?
+					Splits off a fragment of your soul to fight for you
+					Uses 2 minion slots
+					'''
 			}
 
 			SpiritBell: {
@@ -5264,6 +5269,23 @@ Mods: {
 					Summons a glowing Tetsujin to fight for you
 					Orbits an enemy, bombarding them with light and fire
 					Uses 2 minion slots
+					'''
+			}
+
+			TripleThreat: {
+				DisplayName: Triple Threat
+				Tooltip: Summons a miniature Triad to fight for youUses one slot for each of them
+			}
+
+			CrystalNunchaku: {
+				DisplayName: Crystal Nunchaku
+				Tooltip:
+					'''
+					Tags hit enemies with a parasytic crystal for 15 seconds
+					After 5 seconds this will either increase your own defense or increase the enemies damage taken from all sources
+					Hitting the enemy during infection will decrease the damage bonus and increase your defensive bonus(except for the whip itself)
+					Damage bonus ranges from 25% to 0%, Defense bonus ranges from 0 to 15
+					'The best defense is a good offense, or was it the other way around?'
 					'''
 			}
 
@@ -5558,21 +5580,6 @@ Mods: {
 				Description: The active boss is blocking enemy spawns!
 			}
 
-			BrokenSpirit: {
-				DisplayName: Broken Spirit
-				Description: You feel like giving up!
-			}
-
-			Chilled: {
-				DisplayName: Frostbite
-				Description: Defense and speed reduced
-			}
-
-			CowardsAffliction: {
-				DisplayName: Coward's Affliction
-				Description: Do not flee from the Lord of Cinder.
-			}
-
 			CrescentMoonlight: {
 				DisplayName: Crescent Moonlight
 				Description: Losing life
@@ -5588,14 +5595,29 @@ Mods: {
 				Description: Enemies within a ten tile radius receive Crimson Burn.
 			}
 
-			Crippled: {
-				DisplayName: Crippled
-				Description: Your mobility has been crippled!
-			}
-
 			CrystalMagicWeapon: {
 				DisplayName: Crystal Magic Weapon
 				Description: Your weapon is imbued with crystalline magic!
+			}
+
+			BrokenSpirit: {
+				DisplayName: Broken Spirit
+				Description: You feel like giving up!
+			}
+
+			Chilled: {
+				DisplayName: Frostbite
+				Description: Defense and speed reduced
+			}
+
+			CowardsAffliction: {
+				DisplayName: Coward's Affliction
+				Description: Do not flee from the Lord of Cinder.
+			}
+
+			Crippled: {
+				DisplayName: Crippled
+				Description: Your mobility has been crippled!
 			}
 
 			CurseBuildup: {
@@ -5606,6 +5628,56 @@ Mods: {
 			DarkInferno: {
 				DisplayName: Dark Inferno
 				Description: The black flames eat away at your skin
+			}
+
+			FracturingArmor: {
+				DisplayName: Fracturing Armor
+				Description: Mods.tsorcRevamp.BuffDescription.FracturingArmor
+			}
+
+			GrappleMalfunction: {
+				DisplayName: Grapple Malfunction
+				Description: Something is causing your grapple to sieze up!
+			}
+
+			Hold: {
+				DisplayName: Held
+				Description: You're being held in position!
+			}
+
+			InCombat: {
+				DisplayName: In Combat
+				Description: You are in combat.
+			}
+
+			MythrilRamDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.MythrilRamDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.MythrilRamDebuff
+			}
+
+			PowerfulCurseBuildup: {
+				DisplayName: Powerful Curse Buildup
+				Description: Mods.tsorcRevamp.BuffDescription.PowerfulCurseBuildup
+			}
+
+			RejuvenationCooldown: {
+				DisplayName: Rejuvenation Cooldown
+				Description: Rejuvenation is on cooldown
+			}
+
+			SlowedLifeRegen: {
+				DisplayName: Slowed Life Regeneration
+				Description: Life regen is weaker
+			}
+
+			TornWings: {
+				DisplayName: Torn Wings
+				Description: You can't fly!
+			}
+
+			WeightOfShadow: {
+				DisplayName: Weight of Shadow
+				Description: The gravity of what you might become sets in...
 			}
 
 			DemonDrug: {
@@ -5628,7 +5700,7 @@ Mods: {
 				Description:
 					'''
 					The world's gravity offers no resistance to your flight 
-					It's as if the entire planet is lifting you up in counter to Attraidies' dark power...
+					The entire planet's energy is lifting you up to face to Attraidies' dark power...
 					'''
 			}
 
@@ -5650,16 +5722,6 @@ Mods: {
 			FasterThanSight: {
 				DisplayName: Faster Than Sight
 				Description: Latent illuminant energy lets you defy gravity!
-			}
-
-			FracturingArmor: {
-				DisplayName: Fracturing Armor
-				Description: Mods.tsorcRevamp.BuffDescription.FracturingArmor
-			}
-
-			GrappleMalfunction: {
-				DisplayName: Grapple Malfunction
-				Description: Something is causing your grapple to sieze up!
 			}
 
 			GravityAlignment: {
@@ -5701,19 +5763,9 @@ Mods: {
 				Description: You cannot use Healing Elixirs!
 			}
 
-			Hold: {
-				DisplayName: Held
-				Description: You're being held in position!
-			}
-
 			Hollowed: {
 				DisplayName: Hollowed
 				Description: Max HP reduced by 20%
-			}
-
-			InCombat: {
-				DisplayName: In Combat
-				Description: You are in combat.
 			}
 
 			Invincible: {
@@ -5800,11 +5852,6 @@ Mods: {
 				Description: Losing life
 			}
 
-			PowerfulCurseBuildup: {
-				DisplayName: Powerful Curse Buildup
-				Description: Mods.tsorcRevamp.BuffDescription.PowerfulCurseBuildup
-			}
-
 			PowerWithin: {
 				DisplayName: Power Within
 				Description: Excessive power is eating away at you!
@@ -5820,23 +5867,48 @@ Mods: {
 				Description: Health is slowly being restored
 			}
 
+			Rejuvenation: {
+				DisplayName: Rejuvenation
+				Description: Healing wounds... so they may not open again
+			}
+
 			RTQ2: {
 				DisplayName: RTQ2
 				Description: RTQ2 is following you
 			}
 
-			CenterOfTheHeat: {
-				DisplayName: Center of the Heat
-				Description: You're in a hot center
+			OrbOfFlameFireballCooldown: {
+				DisplayName: Fireball Cooldown
+				Description: You can't cast another Fireball until this runs out
 			}
 
-			InterstellarCommander: {
-				DisplayName: Interstellar Commander
-				Description: You're the commander of these ships!
+			OrbOfSpiritualityCharmCooldown: {
+				DisplayName: Charm Cooldown
+				Description: You can't cast another Charm until this runs out
+			}
+
+			OrbOfSpiritualityDash: {
+				DisplayName: Spirit Rush Cooldown
+				Description: You can't dash until this runs out
+			}
+
+			OrbOfSpiritualityDashCooldown: {
+				DisplayName: Spirit Rush Cooldown
+				Description: You can't dash until this runs out
+			}
+
+			SunderedDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.SunderedDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.SunderedDebuff
+			}
+
+			NightbringerDash: {
+				DisplayName: Sweeping Blade
+				Description: Invulnerability and melee damage boost
 			}
 
 			NightbringerDashCooldown: {
-				DisplayName: Dashing Cooldown
+				DisplayName: Sweeping Blade Cooldown
 				Description: You can't dash until this runs out
 			}
 
@@ -5850,14 +5922,94 @@ Mods: {
 				Description: You can't windwall until this runs out
 			}
 
+			PlasmaWhirlwindDash: {
+				DisplayName: Sweeping Blade
+				Description: Invulnerability and melee damage boost
+			}
+
 			PlasmaWhirlwindDashCooldown: {
-				DisplayName: Dash Cooldown
+				DisplayName: Sweeping Blade Cooldown
 				Description: You can't dash until this runs out
 			}
 
 			PlasmaWhirlwindThrustCooldown: {
 				DisplayName: Thrusting Cooldown
 				Description: You can't thrust until this runs out
+			}
+
+			SteelTempestThrustCooldown: {
+				DisplayName: Thrusting Cooldown
+				Description: You can't thrust until this runs out
+			}
+
+			AlienBlindingLaserCooldown: {
+				DisplayName: Alien Blinding Laser Cooldown
+				Description: You can't fire another Blinding Laser until this runs out
+			}
+
+			ElectrifiedDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.ElectrifiedDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.ElectrifiedDebuff
+			}
+
+			IrradiatedByShroomDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.IrradiatedByShroomDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.IrradiatedByShroomDebuff
+			}
+
+			IrradiatedDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.IrradiatedDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.IrradiatedDebuff
+			}
+
+			NuclearMushroomCooldown: {
+				DisplayName: Nuclear Mushroom Cooldown
+				Description: You can't deploy another Nuclear Mushroom until this runs out
+			}
+
+			RadioactiveBlindingLaserCooldown: {
+				DisplayName: Radioactive Blinding Laser Cooldown
+				Description: You can't fire another Blinding Laser until this runs out
+			}
+
+			ScoutsBoost: {
+				DisplayName: Scouts Boost
+				Description: Multiplies movement speed by 20% and stamina regen by 10%
+			}
+
+			ScoutsBoost2: {
+				DisplayName: Scouts Boost II
+				Description: Multiplies movement speed by 40% and stamina regen by 20%
+			}
+
+			ScoutsBoost2Cooldown: {
+				DisplayName: Scouts Boost II Cooldown
+				Description: You can't trigger the movement speed bonus again until this runs out
+			}
+
+			ScoutsBoostCooldown: {
+				DisplayName: Scouts Boost Cooldown
+				Description: Movement bonus nullified
+			}
+
+			VenomDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.VenomDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.VenomDebuff
+			}
+
+			CenterOfTheHeat: {
+				DisplayName: Center of the Heat
+				Description: You're in a hot center
+			}
+
+			CenterOfTheUniverseBuff: {
+				DisplayName: Center of the Universe
+				Description: You're the center of the Universe!
+			}
+
+			InterstellarCommander: {
+				DisplayName: Interstellar Commander
+				Description: You're the commander of these ships!
 			}
 
 			ScorchingDebuff: {
@@ -5870,9 +6022,9 @@ Mods: {
 				Description: Mods.tsorcRevamp.BuffDescription.ShockedDebuff
 			}
 
-			SteelTempestThrustCooldown: {
-				DisplayName: Thrusting Cooldown
-				Description: You can't thrust until this runs out
+			SunburnDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.SunburnDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.SunburnDebuff
 			}
 
 			ShieldCooldown: {
@@ -5883,11 +6035,6 @@ Mods: {
 			Shockwave: {
 				DisplayName: Shockwave
 				Description: Release a damaging shockwave when you land while holding DOWN.
-			}
-
-			SlowedLifeRegen: {
-				DisplayName: Slowed Life Regeneration
-				Description: Life regen is weaker
 			}
 
 			SoulSiphon: {
@@ -5917,6 +6064,11 @@ Mods: {
 			BarrowWightBuff: {
 				DisplayName: Barrow Wight
 				Description: The Barrow Wight will fight for you
+			}
+
+			CrystalShield: {
+				DisplayName: Crystal Shield
+				Description: Defense increased
 			}
 
 			DragoonLashBuff: {
@@ -5954,6 +6106,11 @@ Mods: {
 				Description: The Beetle will fight for you
 			}
 
+			ShatteredReflectionBuff: {
+				DisplayName: Shattered Reflection
+				Description: Fragments of your soul haunt your enemies
+			}
+
 			SunsetQuasarBuff: {
 				DisplayName: Sunset Quasar
 				Description: The small creature will fight to protect you
@@ -5971,6 +6128,16 @@ Mods: {
 			TetsujinBuff: {
 				DisplayName: Tetsujin Minion
 				Description: The Tetsujin will fight for you
+			}
+
+			TripleThreatBuff: {
+				DisplayName: Triple Threat
+				Description: The Triad will fight for you
+			}
+
+			CrystalNunchakuDebuff: {
+				DisplayName: Mods.tsorcRevamp.BuffName.CrystalNunchakuDebuff
+				Description: Mods.tsorcRevamp.BuffDescription.CrystalNunchakuDebuff
 			}
 
 			DetonationSignalDebuff: {
@@ -6023,11 +6190,6 @@ Mods: {
 				Description: Heat from the lasers is extending your flight!
 			}
 
-			TornWings: {
-				DisplayName: Torn Wings
-				Description: You can't fly!
-			}
-
 			ToxicCatDrain: {
 				DisplayName: Toxic Catalyzer Drain
 				Description: Losing life
@@ -6036,11 +6198,6 @@ Mods: {
 			ViruCatDrain: {
 				DisplayName: Virulent Catalyzer Drain
 				Description: Losing life
-			}
-
-			WeightOfShadow: {
-				DisplayName: Weight of Shadow
-				Description: The gravity of what you might become sets in...
 			}
 		}
 
@@ -6051,6 +6208,8 @@ Mods: {
 			ArcheologistWhip.DisplayName: Archeologist Whip
 			ArrowOfBard.DisplayName: Arrow of Bard
 			ArtemisBowHeld.DisplayName: Charged Bow
+			AuraOfDecay.DisplayName: Aura of Decay
+			AuraOfIlluminance.DisplayName: Illuminant Trail
 			Barrier.DisplayName: Barrier
 			BiohazardDetonator.DisplayName: Biohazard Detonator
 			BiohazardExplosion.DisplayName: Biohazard Explosion
@@ -6252,17 +6411,21 @@ Mods: {
 			EnergyPulse.DisplayName: Energy Pulse
 			MassiveCrystalShards.DisplayName: Massive Crystal Shards
 			MassiveCrystalShardsSpell.DisplayName: Massive Crystal Shards Spell
+			NebulaShot.DisplayName: Nebula Shot
 			ObscureDrop.DisplayName: Obscure Drop
 			ObscureSaw.DisplayName: Wave Attack
 			ObscureShot.DisplayName: Obscure Shot
 			PhasedMatterBlast.DisplayName: Phased Matter Blast
 			PoisonSmog.DisplayName: Poison Smog
+			PoisonTrail.DisplayName: Poison Wave
 			ShadowOrb.DisplayName: Shadow Orb
 			SolarBeam.DisplayName: DefaultLaserName
+			SolarBlast.DisplayName: Solar Blast
 			SolarDetonator.DisplayName: Solar Detonator
 			SolarFireball.DisplayName: Solar Fireball
 			StardustBeam.DisplayName: DefaultLaserName
 			StardustShot.DisplayName: Stardust Shot
+			VortexOrb.DisplayName: Vortex Orb
 			OolacileDarkBead.DisplayName: Oolacile Dark Bead
 			OolacileDarkOrb.DisplayName: Oolacile's Dark Orb
 			OolacileSeeker.DisplayName: Oolacile Seeker
@@ -6281,10 +6444,12 @@ Mods: {
 			TetsujinLaser.DisplayName: Tetsujin Laser
 			TheOracle.DisplayName: The Oracle
 			BlindingGaze.DisplayName: Blinding Gaze
+			CataluminanceTrail.DisplayName: Illuminant Trail
 			CursedMalestrom.DisplayName: Cursed Malestrom
 			HomingStar.DisplayName: Seeking Star
 			IchorFragment.DisplayName: Ichor Fragment
 			IchorShockwave.DisplayName: Ichor Shockwave
+			IchorTrail.DisplayName: Ichor Trail
 			IncineratingGaze.DisplayName: Incinerating Gaze
 			MaliciousGaze.DisplayName: Malicious Gaze
 			RetDeathLaser.DisplayName: Death Laser
@@ -6358,13 +6523,21 @@ Mods: {
 			ArcaneLightrifle.DisplayName: Arcane Lightrifle
 			CelestialShard.DisplayName: Celestial Shard
 			CelestialStrike.DisplayName: Celestial Strike
+			LightOfDawn.DisplayName: Light of Dawn
 			LightrifleFire.DisplayName: Lightrifle Fire
 			RadiantGlimmer.DisplayName: Radiant Glimmer
-			OrbofDeceptionProj.DisplayName: Orbof Deception Proj
-			OrbofFlameFlame.DisplayName: Orbof Flame Flame
-			OrbofFlameProj.DisplayName: Orbof Flame Proj
-			OrbofSpiritualityFlame.DisplayName: Orbof Spirituality Flame
-			OrbofSpiritualityProj.DisplayName: Orbof Spirituality Proj
+			OrbOfDeceptionFlame.DisplayName: Orb Of Deception Flame
+			OrbOfDeceptionOrb.DisplayName: Orb Of Deception Orb
+			OrbOfDeceptionOrbFilled.DisplayName: Orb Of Deception Orb Filled
+			OrbOfFlameFireball.DisplayName: Orb Of Flame Fireball
+			OrbOfFlameFlame.DisplayName: Orb Of Flame Flame
+			OrbOfFlameOrb.DisplayName: Orb Of Flame Orb
+			OrbOfFlameOrbFilled.DisplayName: Orb Of Flame Orb Filled
+			OrbOfSpiritualityCharm.DisplayName: Orb Of Spirituality Charm
+			OrbOfSpiritualityFlame.DisplayName: Orb Of Spirituality Flame
+			OrbOfSpiritualityFlameNoMana.DisplayName: Orb Of Spirituality Flame No Mana
+			OrbOfSpiritualityOrb.DisplayName: Orb Of Spirituality Orb
+			OrbOfSpiritualityOrbFilled.DisplayName: Orb Of Spirituality Orb Filled
 			ShatteredPrism.DisplayName: Shattered Prism
 			MagicalBall.DisplayName: Magical Ball
 			MagicShield.DisplayName: Magic Shield
@@ -6397,10 +6570,17 @@ Mods: {
 			BarrageBlast.DisplayName: Barrage Blast
 			CrystalRay.DisplayName: Crystal Ray
 			PhoenixFlame.DisplayName: Phoenix Flame
+			PiercingGaze.DisplayName: DefaultLaserName
+			PiercingPlasma.DisplayName: PiecingPlasma
+			PyroclasticFlow.DisplayName: Pyroclastic Flow
 			RadiantStrand.DisplayName: Radiant Strand
-			AlienRifleBlindingLaser.DisplayName: Blinding Laser
-			OmegaSquadRifleToxicMine.DisplayName: Toxic Mine
-			ToxicShotProj.DisplayName: Toxic Shot
+			AlienBlindingLaser.DisplayName: Alien Blinding Laser
+			AlienLaser.DisplayName: Alien Laser
+			NuclearMushroom.DisplayName: Nuclear Mushroom
+			NuclearMushroomExplosion.DisplayName: Nuclear Mushroom Explosion
+			RadioactiveBlindingLaser.DisplayName: Radioactive Blinding Laser
+			RadioactiveDart.DisplayName: Radioactive Dart
+			ToxicShotDart.DisplayName: Toxic Shot
 			RedLaserBeam.DisplayName: Red Laser Beam
 			RoyalThrowingSpear.DisplayName: Royal Throwing Spear
 			SagittariusBowHeld.DisplayName: Charged Bow
@@ -6433,6 +6613,7 @@ Mods: {
 			DarkTridentPoke.DisplayName: Dark Trident Poke
 			DarkTridentThrown.DisplayName: Dark Trident Thrown
 			DragoonLanceProj.DisplayName: Dragoon Lance Proj
+			FetidExhaust.DisplayName: Noxious Jet
 			ForgottenImpHalberdProj.DisplayName: Forgotten Imp Halberd Proj
 			ForgottenPearlSpearProj.DisplayName: Forgotten Pearl Spear Proj
 			ForgottenPolearmProj.DisplayName: Forgotten Polearm Proj
@@ -6448,15 +6629,21 @@ Mods: {
 			ArcherToken.DisplayName: Archer
 			NondescriptOwlProjectile.DisplayName: Owl Archer
 			OwlsArrow.DisplayName: Owls Arrow
+			FriendlyCataluminance.DisplayName: Friendly Cataluminance
 			FriendlyDragonsBreath.DisplayName: Friendly Dragons Breath
 			FriendlyRedLaser.DisplayName: Laser
+			FriendlyRetinazer.DisplayName: Friendly Retinazer
+			FriendlySpazmatism.DisplayName: Friendly Spazmatism
 			FriendlyTetsujinLaser.DisplayName: Friendly Tetsujin Laser
 			NullSprite.DisplayName: Null Sprite
 			PhoenixProjectile.DisplayName: Phoenix Juvenile
+			CenterOfTheUniverseStar.DisplayName: Center Of The Universe Star
+			CenterOfTheUniverseStellarNova.DisplayName: Center Of The Universe Stellar Nova
 			InterstellarVesselShip.DisplayName: Interstellar Vessel Ship
 			ScorchingPointFireball.DisplayName: Scorching Point Fireball
 			SamuraiBeetle.DisplayName: Samurai Beetle
 			GaleForceProjectile.DisplayName: Gale Force Projectile
+			ShatteredReflectionProjectile.DisplayName: Shattered Reflection Projectile
 			BarrowWightMinion.DisplayName: Barrow Wight Minion
 			NullSpriteBeam.DisplayName: Null Beam
 			PhoenixBoom.DisplayName: Phoenix Boom
@@ -6464,6 +6651,7 @@ Mods: {
 			SunsetQuasarMinion.DisplayName: Sunset Quasar
 			SunsetQuasarToken.DisplayName: Sunset Quasar
 			TetsujinProjectile.DisplayName: Tetsujin Projectile
+			CrystalNunchakuProjectile.DisplayName: Crystal Nunchaku Projectile
 			DetonationSignalProjectile.DisplayName: Detonation Signal Projectile
 			DominatrixProjectile.DisplayName: Dominatrix Projectile
 			DragoonLashProjectile.DisplayName: Dragoon Lash Projectile
@@ -6482,7 +6670,7 @@ Mods: {
 			DrakarthusDagger2.DisplayName: Drakarthus Dagger2
 			NightbringerThrust.DisplayName: Nightbringer Thrust
 			NightbringerTornado.DisplayName: Nightbringer Tornado
-			NightbringerWindWall.DisplayName: Nightbringer Wind Wall
+			NightbringerWindWall.DisplayName: Nightbringer Firewall
 			PlasmaWhirlwindThrust.DisplayName: Plasma Whirlwind Thrust
 			PlasmaWhirlwindTornado.DisplayName: Plasma Whirlwind Tornado
 			SteelTempestThrust.DisplayName: Steel Tempest Thrust
@@ -6495,10 +6683,10 @@ Mods: {
 			ToxicCatShot.DisplayName: Toxic Cat Shot
 			Ultima.DisplayName: Ultima
 			UltimaExplosion.DisplayName: Ultima Explosion
-			CataluminanceTrail.DisplayName: Illuminant Trail
 			DynamicTrail.DisplayName: Dynamic Trail
-			IchorTrail.DisplayName: Ichor Trail
 			LightRay.DisplayName: Light Ray
+			RealityCrack.DisplayName: RealityCrack
+			ShockwaveEffect.DisplayName: ShockwaveEffect
 			VirulentCatDetonator.DisplayName: Virulent Cat Detonator
 			VirulentCatExplosion.DisplayName: Virulent Cat Explosion
 			VirulentCatShot.DisplayName: Virulent Cat Shot
@@ -6511,6 +6699,7 @@ Mods: {
 			AncientOolacileDemon.DisplayName: Ancient Oolacile Demon
 			Cataluminance.DisplayName: Cataluminance v1.08
 			Death.DisplayName: Death
+			ExampleBoss.DisplayName: Example Boss
 			EarthFiendLich.DisplayName: Earth Fiend Lich
 			FireFiendMarilith.DisplayName: Fire Fiend Marilith
 			LichKingDisciple.DisplayName: Lich King Disciple
@@ -6529,6 +6718,7 @@ Mods: {
 			JungleWyvernLegs.DisplayName: Ancient Jungle Wyvern
 			JungleWyvernTail.DisplayName: Ancient Jungle Wyvern
 			Attraidies.DisplayName: Attraidies
+			AttraidiesFragment.DisplayName: Attraidies Fragment
 			AttraidiesMimic.DisplayName: Attraidies
 			DamnedSoul.DisplayName: Damned Soul
 			DarkShogunMask.DisplayName: Mindflayer King
@@ -6547,7 +6737,7 @@ Mods: {
 			SerrisTail.DisplayName: Serris
 			SerrisX.DisplayName: Serris-X
 			Slogra.DisplayName: Slogra, Lost Soul of the Depths
-			SpazmatismV2.DisplayName: Spazmatism v2.14
+			SpazmatismV2.DisplayName: Spazmatism v2.15
 			AbysmalOolacileSorcerer.DisplayName: Abysmal Oolacile Sorcerer
 			Artorias.DisplayName: Artorias
 			Blight.DisplayName: Blight
@@ -6707,6 +6897,7 @@ Mods: {
 			TibianArcher.DisplayName: Tibian Archer
 			TibianMage.DisplayName: Tibian Mage
 			UndeadMerchant.DisplayName: Undead Merchant
+			AbyssPortal.DisplayName: Abyssal Fissure
 			AttraidiesApparition.DisplayName: Attraidies
 			Bonfirefly.DisplayName: Bonfirefly
 			Faraam.DisplayName: Faraam

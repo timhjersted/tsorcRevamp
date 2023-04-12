@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         public int CrystalFireDamage = 42;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wyvern Mage Disciple");
+            // DisplayName.SetDefault("Wyvern Mage Disciple");
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
                 Hide = true
             };
@@ -58,12 +58,12 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             return false;
         }
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             CrystalFireDamage /= 2;
         }
 
-        public override void OnHitPlayer(Player player, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             player.AddBuff(BuffID.WitheredWeapon, 180, false);
             player.AddBuff(BuffID.WitheredArmor, 180, false);

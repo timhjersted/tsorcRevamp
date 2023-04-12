@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Aura of Decay");
+            // DisplayName.SetDefault("Aura of Decay");
         }
         public override void SetDefaults()
         {

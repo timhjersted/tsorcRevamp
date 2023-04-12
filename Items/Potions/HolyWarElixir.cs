@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Will make you invincible.\nCannot be used again for 60 seconds after wearing off.\n" +
-                "Your supply of these is finite, so they are never used by Quick Buff");
+            /* Tooltip.SetDefault("Will make you invincible.\nCannot be used again for 60 seconds after wearing off.\n" +
+                "Your supply of these is finite, so they are never used by Quick Buff"); */
         }
 
         public override void SetDefaults()

@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("[c/ffbf00:Striking an enemy may temporarily make you deflect attacks.]");
+            // Tooltip.SetDefault("[c/ffbf00:Striking an enemy may temporarily make you deflect attacks.]");
         }
 
         public override void SetDefaults()
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(20))
             {

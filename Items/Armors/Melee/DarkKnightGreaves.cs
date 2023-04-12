@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Forsaken by the one who turned Paladin." +
-                "\nIncreases movement and melee speed by 17%");
+            /* Tooltip.SetDefault("Forsaken by the one who turned Paladin." +
+                "\nIncreases movement and melee speed by 17%"); */
         }
         public override void SetDefaults()
         {

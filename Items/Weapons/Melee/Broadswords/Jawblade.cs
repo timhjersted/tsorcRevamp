@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("'A blade of bone and fangs'" +
-                "\nShoots out a homing skull upon hitting enemies with the blade");
+            /* Tooltip.SetDefault("'A blade of bone and fangs'" +
+                "\nShoots out a homing skull upon hitting enemies with the blade"); */
         }
         public bool canitshoot = false;
 
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.shoot = ProjectileID.BookOfSkullsSkull;
             Item.shootSpeed = 10f;
         }
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             canitshoot = true;
         }

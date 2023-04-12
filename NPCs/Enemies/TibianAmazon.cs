@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Tibian Amazon");
+            // DisplayName.SetDefault("Tibian Amazon");
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Skeleton];
         }
 
@@ -116,7 +116,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
 
-        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             tsorcRevampAIs.RedKnightOnHit(NPC, true);
             if (Main.rand.NextBool(3))
@@ -125,7 +125,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             //if (projectile.DamageType == DamageClass.Melee)
             //{
@@ -158,7 +158,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         #region Gore
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 25; i++)
             {

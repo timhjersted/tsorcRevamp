@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Incredible damage at the cost of 2.5 second cooldown between shots" +
-                                "\nRemember to hold your breath.");
+            /* Tooltip.SetDefault("Incredible damage at the cost of 2.5 second cooldown between shots" +
+                                "\nRemember to hold your breath."); */
         }
 
         public override void SetDefaults()

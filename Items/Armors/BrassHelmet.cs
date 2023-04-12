@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
-            Tooltip.SetDefault("Decreases damage dealt by 15%\nIncreases life regen by 4");
+            // Tooltip.SetDefault("Decreases damage dealt by 15%\nIncreases life regen by 4");
         }
 
         public override void SetDefaults()

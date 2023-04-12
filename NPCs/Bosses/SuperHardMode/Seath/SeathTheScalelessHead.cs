@@ -56,7 +56,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
         public static int seathPieceSeperation = -5;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = (int)(NPC.damage / 2);
             breathDamage = (int)(breathDamage / 2);
@@ -67,7 +67,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Seath the Scaleless");
+            // DisplayName.SetDefault("Seath the Scaleless");
         }
 
 
@@ -77,7 +77,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         bool secondCrystalSpawned = false;
         bool finalCrystalsSpawned = false;
         float customspawn1;
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(ModContent.BuffType<Chilled>(), 60, false);
             target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false);
@@ -502,7 +502,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
         }
 
-        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             SetImmune(projectile, NPC);
         }

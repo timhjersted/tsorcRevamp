@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 200;
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(Terraria.ID.BuffID.Slow, 240);
             if (Main.rand.NextBool(30))

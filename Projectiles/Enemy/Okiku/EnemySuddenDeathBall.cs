@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sudden Death Ball");
+            // DisplayName.SetDefault("Sudden Death Ball");
         }
         #region AI
         public override void AI()

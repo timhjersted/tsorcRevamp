@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Accessories.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+8% Ranged damage" +
-                                "\n+8% Ranged critical strike chance");
+            /* Tooltip.SetDefault("+8% Ranged damage" +
+                                "\n+8% Ranged critical strike chance"); */
         }
         public override void SetDefaults()
         {

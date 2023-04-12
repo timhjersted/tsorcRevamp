@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dwarf");
+            // DisplayName.SetDefault("Dwarf");
             Main.npcFrameCount[NPC.type] = 25;
             NPCID.Sets.ExtraFramesCount[NPC.type] = 9;
             NPCID.Sets.AttackFrameCount[NPC.type] = 4;
@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Friendly
         }
 
         #region Town Spawn
-        public override bool CanTownNPCSpawn(int numTownNPCs, int money)
+        public override bool CanTownNPCSpawn(int numTownNPCs)/* tModPorter Suggestion: Copy the implementation of NPC.SpawnAllowed_Merchant in vanilla if you to count money, and be sure to set a flag when unlocked, so you don't count every tick. */
         {
             foreach (Player p in Main.player)
             {
@@ -101,14 +101,14 @@ namespace tsorcRevamp.NPCs.Friendly
             button = Language.GetTextValue("LegacyInterface.28");
         }
 
-        public override void OnChatButtonClicked(bool firstButton, ref bool shop)
+        public override void OnChatButtonClicked(bool firstButton, ref string shopName)
         {
             shop = true;
             return;
         }
 
         #region Setup Shop
-        public override void SetupShop(Chest chest, ref int index)
+        public override void ModifyActiveShop(string shopName, Item[] items)
         {
             chest.item[index].SetDefaults(ModContent.ItemType<DwarvenContract>());
             chest.item[index].shopCustomPrice = 100;
@@ -201,7 +201,7 @@ namespace tsorcRevamp.NPCs.Friendly
             randExtraCooldown = 30;
         }
 
-        public override void DrawTownAttackSwing(ref Texture2D item, ref int itemSize, ref float scale, ref Vector2 offset)
+        public override void DrawTownAttackSwing(ref Texture2D item, ref Rectangle itemFrame, ref int itemSize, ref float scale, ref Vector2 offset)
         {
             item = (Texture2D)TextureAssets.Item[ModContent.ItemType<Items.Weapons.Melee.Hammers.AncientWarhammer>()];
             itemSize = 38;

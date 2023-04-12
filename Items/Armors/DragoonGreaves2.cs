@@ -12,8 +12,8 @@ namespace tsorcRevamp.Items.Armors
         public override string Texture => "tsorcRevamp/Items/Armors/DragoonGreaves";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Supreme Dragoon Greaves");
-            Tooltip.SetDefault("Grants an extra double jump and Shiny Red Balloon effect\nIncreases your max number of minions by 3");
+            // DisplayName.SetDefault("Supreme Dragoon Greaves");
+            // Tooltip.SetDefault("Grants an extra double jump and Shiny Red Balloon effect\nIncreases your max number of minions by 3");
         }
 
         public override void SetDefaults()

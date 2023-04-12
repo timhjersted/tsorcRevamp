@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 
         //Turn into the spore cloud by expanding and changing sprites
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             Projectile.width += 20;
             Projectile.height += 20;

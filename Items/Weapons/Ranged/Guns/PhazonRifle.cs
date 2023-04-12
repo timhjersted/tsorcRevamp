@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Three round burst \nOnly the first shot consumes ammo\nPhazon rounds are extremely volatile");
+            // Tooltip.SetDefault("Three round burst \nOnly the first shot consumes ammo\nPhazon rounds are extremely volatile");
         }
         public override void SetDefaults()
         {

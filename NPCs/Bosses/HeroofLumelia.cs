@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Hero of Lumelia");
+            // DisplayName.SetDefault("Hero of Lumelia");
 
         }
 
@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses
             despawnHandler = new NPCDespawnHandler("The hero of Lumelia stands victorious...", Color.Gold, DustID.GoldFlame);
         }
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 1.25);
             NPC.damage = (int)(NPC.damage / 2);
@@ -1089,7 +1089,7 @@ namespace tsorcRevamp.NPCs.Bosses
         #endregion
 
         #region Debuffs
-        public override void OnHitPlayer(Player player, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 3600, false); //1 minute
             player.AddBuff(ModContent.BuffType<Crippled>(), 1200, false); // loss of flight mobility for 20 seconds, down from 4 minutes moohahaha... cough cough

@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("It is the famous Helmet of the Stars." +
-                "\nIncreases melee crit chance by 4%");
+            /* Tooltip.SetDefault("It is the famous Helmet of the Stars." +
+                "\nIncreases melee crit chance by 4%"); */
         }
         public override void SetDefaults()
         {

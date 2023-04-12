@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.localNPCHitCooldown = 25;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(Terraria.ID.BuffID.Slow, 180);
             target.AddBuff(Terraria.ID.BuffID.Electrified, 360);

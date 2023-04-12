@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Accessories.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases your max minions by 2" +
+            /* Tooltip.SetDefault("Increases your max minions by 2" +
                                "\nIncreases your minion damage by 1.5% multiplicatively for each minion slot you have" +
                                "\nDecreases whip range by 33%" +
-                               "\n\"A magical substance found only in the Crystalline Dimension\"");
+                               "\n\"A magical substance found only in the Crystalline Dimension\""); */
 
         }
 

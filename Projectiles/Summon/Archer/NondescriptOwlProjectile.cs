@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Summon.Archer {
     public class NondescriptOwlProjectile : ModProjectile {
         public override void SetStaticDefaults() {
-            DisplayName.SetDefault("Owl Archer");
+            // DisplayName.SetDefault("Owl Archer");
             Main.projFrames[Projectile.type] = 33;
             Main.projPet[Projectile.type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;

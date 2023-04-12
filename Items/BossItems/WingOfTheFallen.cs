@@ -9,11 +9,11 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wing of the Fallen");
-            Tooltip.SetDefault("Summons the Wyvern Mage, a powerful demon adept with the forces of magic and lightning\n" +
+            // DisplayName.SetDefault("Wing of the Fallen");
+            /* Tooltip.SetDefault("Summons the Wyvern Mage, a powerful demon adept with the forces of magic and lightning\n" +
                 "The Wyvern Mage is known to command the loyalty of a fiery Wyvern with white scales as strong as steel\n" +
                 "If you cannot defeat the Wyvern Mage after several tries, it would be wise\n" +
-                "to return later when you've become stronger and possess greater abilities.");
+                "to return later when you've become stronger and possess greater abilities."); */
         }
 
         public override void SetDefaults()

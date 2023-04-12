@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Scouts Boost II Cooldown");
-            Description.SetDefault("You can't trigger the movement speed bonus again until this runs out");
+            // DisplayName.SetDefault("Scouts Boost II Cooldown");
+            // Description.SetDefault("You can't trigger the movement speed bonus again until this runs out");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

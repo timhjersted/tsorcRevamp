@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sword of Lord Gwyn");
+            // DisplayName.SetDefault("Sword of Lord Gwyn");
         }
 
         public override void SetDefaults()
@@ -32,7 +32,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.buffImmune[BuffID.OnFire] = true;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false);
         }

@@ -8,12 +8,12 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Great Magic Weapon");
-            Tooltip.SetDefault("Imbues melee weapons with powerful magic,\n" +
+            // DisplayName.SetDefault("Great Magic Weapon");
+            /* Tooltip.SetDefault("Imbues melee weapons with powerful magic,\n" +
                                 "allowing for greater magic damage scaling" +
                                 "\nAdds 75% of bonus magic damage" +
                                 "\nLasts 1 minute, 2 minute cooldown" +
-                                "\nNot compatible with other weapon imbues");
+                                "\nNot compatible with other weapon imbues"); */
 
         }
 

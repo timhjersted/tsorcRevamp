@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Aura of Decay");
-            Tooltip.SetDefault("Periodically releases a wave of poison");
+            // DisplayName.SetDefault("Aura of Decay");
+            // Tooltip.SetDefault("Periodically releases a wave of poison");
         }
 
         public override void SetDefaults()

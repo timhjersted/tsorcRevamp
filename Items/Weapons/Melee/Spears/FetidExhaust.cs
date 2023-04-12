@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Expel a close-range blast of searing noxious gas");
+            // Tooltip.SetDefault("Expel a close-range blast of searing noxious gas");
         }
 
         public override void SetDefaults()

@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Freezing Crystal Bolt");
+            // DisplayName.SetDefault("Freezing Crystal Bolt");
         }
         public override void SetDefaults()
         {
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             int num40 = Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, 15, Projectile.velocity.X, Projectile.velocity.Y, 250, default(Color), 1f);
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             //Main.player[Main.myPlayer].AddBuff(4, 1200, false); //gills. Which used to make you suffocate out of water. Guess this evil was too deep for modern Terraria...
 

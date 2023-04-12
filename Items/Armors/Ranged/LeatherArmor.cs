@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases ranged damage by 2 flat" +
-                "\nSet bonus: 20% less chance to consume ammo");
+            /* Tooltip.SetDefault("Increases ranged damage by 2 flat" +
+                "\nSet bonus: 20% less chance to consume ammo"); */
         }
         public override void SetDefaults()
         {

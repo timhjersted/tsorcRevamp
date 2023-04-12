@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Magic Barrier");
-            Tooltip.SetDefault("A lost scroll for artisans\n" +
+            // DisplayName.SetDefault("Magic Barrier");
+            /* Tooltip.SetDefault("A lost scroll for artisans\n" +
                                 "[c/ffbf00:Casts Magic Barrier on the user, which adds 20 defense for 20 seconds]\n" +
-                                "\nDoes not stack with other barrier or shield spells");
+                                "\nDoes not stack with other barrier or shield spells"); */
 
         }
         public override void SetDefaults()

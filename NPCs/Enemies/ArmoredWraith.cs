@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Unarmored Wraith");
+            // DisplayName.SetDefault("Unarmored Wraith");
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Wraith];
         }
 
@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Enemies
             return chance;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             if (Main.rand.NextBool(5))
             {
@@ -60,7 +60,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 25; i++)
             {

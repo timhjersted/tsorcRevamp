@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Drax EX");
-            Tooltip.SetDefault("[c/ffbf00:Congratulations on beating the game as the Bearer of the Curse!]" +
+            // DisplayName.SetDefault("Drax EX");
+            /* Tooltip.SetDefault("[c/ffbf00:Congratulations on beating the game as the Bearer of the Curse!]" +
                                 "\n[c/00ffd4:You are truly a hero of the ages!]" +
                                 //"\nPlease enjoy this symbolic reward, as a small token to remember this accomplishment." +
                                 //"\nThis game has been in active development for over 4 years" +
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items
                                 "\n..." +
                                 "\nWe hope you enjoyed the experience." +
                                 "\nAs always, we'd love to hear your comments, suggestions and feedback on our Steam page or Discord." +
-                                "\n- Tim Hjersted, aka Vibrent, and the rest of the Revamp Team");
+                                "\n- Tim Hjersted, aka Vibrent, and the rest of the Revamp Team"); */
         }
         public override void SetDefaults()
         {

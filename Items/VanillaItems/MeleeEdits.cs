@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             return true;
         }
-        public override void OnHitNPC(Item item, Player player, NPC target, int damage, float knockBack, bool crit)
+        public override void OnHitNPC(Item item, Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand 
                 | item.type == ItemID.TrueExcalibur | item.type == ItemID.TrueNightsEdge | item.type == ItemID.TerraBlade 

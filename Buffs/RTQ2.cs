@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("RTQ2");
-            Description.SetDefault("RTQ2 is following you");
+            // DisplayName.SetDefault("RTQ2");
+            // Description.SetDefault("RTQ2 is following you");
             Main.buffNoTimeDisplay[Type] = true;
             Main.vanityPet[Type] = true;
         }

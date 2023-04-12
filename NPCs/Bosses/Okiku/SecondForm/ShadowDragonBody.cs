@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 
         public override void SetStaticDefaults()
         {
-            base.DisplayName.SetDefault("Shadow Dragon");
+            // base.DisplayName.SetDefault("Shadow Dragon");
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
                 Hide = true
             };
@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
         }
 
         int ObscureSawDamage = 55;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             ObscureSawDamage /= 2;
         }

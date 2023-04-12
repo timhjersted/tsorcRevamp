@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crazed Demon Spirit");
+            // DisplayName.SetDefault("Crazed Demon Spirit");
         }
 
         public override void SetDefaults()

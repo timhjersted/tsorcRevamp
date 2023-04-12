@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Windwall Cooldown");
-            Description.SetDefault("You can't windwall until this runs out");
+            // DisplayName.SetDefault("Windwall Cooldown");
+            // Description.SetDefault("You can't windwall until this runs out");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

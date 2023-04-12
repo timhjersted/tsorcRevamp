@@ -8,10 +8,10 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("An ancient and powerful tool seems to have been stripped for parts\n" +
+            /* Tooltip.SetDefault("An ancient and powerful tool seems to have been stripped for parts\n" +
                         "[c/00ffd4:The remnants have been drained of their power, and quietly hum with Attraidies' dark magic.]\n" +
                         "[c/ffbf00:It seems if you want the power to break Lihzahrd bricks you'll have to take it from him]...\n" +
-                        "This item no longer serves any purpose, and should be discarded");
+                        "This item no longer serves any purpose, and should be discarded"); */
         }
 
         public override void SetDefaults()

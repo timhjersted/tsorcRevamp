@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases minion damage by 24%" +
+            /* Tooltip.SetDefault("Increases minion damage by 24%" +
                 "\nIncreases your max number of minions by 1" +
-                "\nSet Bonus: Increases hornet minions pierce by 5 and increases stinger movement speed");
+                "\nSet Bonus: Increases hornet minions pierce by 5 and increases stinger movement speed"); */
         }
         public override void SetDefaults()
         {

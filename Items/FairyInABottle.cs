@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A fairy can be seen trapped in the bottle.\n" + "Using this will free the fairy.");
+            // Tooltip.SetDefault("A fairy can be seen trapped in the bottle.\n" + "Using this will free the fairy.");
         }
         public override void SetDefaults()
         {

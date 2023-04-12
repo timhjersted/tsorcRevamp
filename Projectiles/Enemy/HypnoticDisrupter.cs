@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Hypnotic Disrupter");
+            // DisplayName.SetDefault("Hypnotic Disrupter");
         }
 
         public override void AI()
@@ -70,7 +70,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Lighting.AddLight((int)(Projectile.position.X / 16f), (int)(Projectile.position.Y / 16f), 0.7f, 0.2f, 0.2f);
             }
         }
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             int buffLengthMod = 1;
             if (!Main.expertMode) //surely that was the wrong way round

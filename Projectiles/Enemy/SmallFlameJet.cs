@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.width = 10;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.OnFire, 300);
         }

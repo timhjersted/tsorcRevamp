@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
     {
         public override void SetStaticDefaults() 
         {
-            DisplayName.SetDefault("Peculiar Sphere");
-            Tooltip.SetDefault("Summons a friendly Owl Archer to fight for you.");
+            // DisplayName.SetDefault("Peculiar Sphere");
+            // Tooltip.SetDefault("Summons a friendly Owl Archer to fight for you.");
 
             ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;

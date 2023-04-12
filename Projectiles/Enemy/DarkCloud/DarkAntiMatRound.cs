@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Anti-Material Round");
+            // DisplayName.SetDefault("Anti-Material Round");
         }
 
         bool reposition = true;
@@ -117,7 +117,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             return false;
         }
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath43, Projectile.Center);
             damage = target.defense + Projectile.damage;

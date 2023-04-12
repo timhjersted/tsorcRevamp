@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Invincible");
-            Description.SetDefault("You are invincible!");
+            // DisplayName.SetDefault("Invincible");
+            // Description.SetDefault("You are invincible!");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

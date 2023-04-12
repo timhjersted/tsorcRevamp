@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A mace made of a large diamond. Has a 1 in 15 chance to heal 20 life.");
+            // Tooltip.SetDefault("A mace made of a large diamond. Has a 1 in 15 chance to heal 20 life.");
         }
 
         public override void SetDefaults()
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.useStyle = ItemUseStyleID.Swing;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(15))
             {

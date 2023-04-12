@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Magic throwing spear that passes through walls and is created with mana on each throw");
+            // Tooltip.SetDefault("Magic throwing spear that passes through walls and is created with mana on each throw");
         }
         public override void SetDefaults()
         {

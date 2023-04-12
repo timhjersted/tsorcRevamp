@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Wave Storm");
+            // DisplayName.SetDefault("Dark Wave Storm");
         }
 
         public override void SetDefaults()
@@ -78,7 +78,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             if (Main.expertMode)
             {

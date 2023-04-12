@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Does random damage from 0 to 35" +
+            /* Tooltip.SetDefault("Does random damage from 0 to 35" +
                                 "\nMaximum damage is increased by damage modifiers." +
-                                "\nLeft-click to stab like a spear, right-click to swing");
+                                "\nLeft-click to stab like a spear, right-click to swing"); */
         }
 
         public override void SetDefaults()

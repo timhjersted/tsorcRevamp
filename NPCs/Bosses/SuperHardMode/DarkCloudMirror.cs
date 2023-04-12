@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int divineSparkDamage = 150;
         int darkFlowDamage = 100;
         int antiMatDamage = 200;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage /= 2;
             divineSparkDamage /= 2;
@@ -298,7 +298,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         #region Debuffs
-        public override void OnHitPlayer(Player player, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             int expertScale = 1;
             if (Main.expertMode) expertScale = 2;
@@ -329,12 +329,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             potionType = ItemID.SuperHealingPotion;
         }
         //Takes double damage from melee weapons
-        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             damage *= 2;
             crit = true;
         }
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (projectile.DamageType == DamageClass.Melee)
             {

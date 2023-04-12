@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A cruel hill-man's axe fashioned to kill men" +
-                 "\nDeals massive damage to humans");
+            /* Tooltip.SetDefault("A cruel hill-man's axe fashioned to kill men" +
+                 "\nDeals massive damage to humans"); */
         }
         public override void SetDefaults()
         {
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.shoot = ModContent.ProjectileType<Nothing>();
         }
 
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
 
             if (target.type == ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()

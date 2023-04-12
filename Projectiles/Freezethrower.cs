@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -24,19 +25,18 @@ namespace tsorcRevamp.Projectiles
             Projectile.DamageType = DamageClass.Ranged;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if ((Main.rand.Next(5)) == 0)
             {
                 target.AddBuff(BuffID.Frozen, 120);
             }
         }
-
-        public override void OnHitPvp(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if ((Main.rand.Next(5)) == 0)
+            if (Main.rand.NextBool(5) && info.PvP)
             {
-                target.AddBuff(BuffID.Frozen, 120);
+                target.AddBuff(BuffID.Frozen, 2 * 60);
             }
         }
 

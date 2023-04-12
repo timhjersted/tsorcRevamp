@@ -44,7 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Earth Fiend Lich");
+            // DisplayName.SetDefault("Earth Fiend Lich");
         }
         public float ProjectileTimer
         {
@@ -60,7 +60,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         int lightningDamage = 95;
         int oracleDamage = 85;
         //We can override this even further on a per-NPC basis here
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);

@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Light of Dawn");
-            Tooltip.SetDefault("Day finally breaks" +
-                "Fires illuminant streaks of hallowed light");
+            // DisplayName.SetDefault("Light of Dawn");
+            /* Tooltip.SetDefault("Day finally breaks" +
+                "Fires illuminant streaks of hallowed light"); */
         }
 
         public override void SetDefaults()

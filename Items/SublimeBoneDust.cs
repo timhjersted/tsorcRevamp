@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Charred, ashen bones" +
+            /* Tooltip.SetDefault("Charred, ashen bones" +
                              "\nCast into the flames of a Bonfire to increase Estus" +
-                             "\nFlask potency, increasing the amount of HP healed");
+                             "\nFlask potency, increasing the amount of HP healed"); */
         }
 
         public override void SetDefaults()

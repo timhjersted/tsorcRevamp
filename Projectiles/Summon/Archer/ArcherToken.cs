@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
 {
     internal class ArcherToken : ModProjectile {
         public override void SetStaticDefaults() {
-            DisplayName.SetDefault("Archer");
+            // DisplayName.SetDefault("Archer");
             Main.projPet[Projectile.type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
         }

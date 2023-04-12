@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
 
-            DisplayName.SetDefault("{TROUBLESHOOTING ITEM!!} World ID Reset");
+            // DisplayName.SetDefault("{TROUBLESHOOTING ITEM!!} World ID Reset");
 
-            Tooltip.SetDefault("Debug Item used for restoring corrupted maps. Can cause minimap corruption if you are not trying to do that!!" +
+            /* Tooltip.SetDefault("Debug Item used for restoring corrupted maps. Can cause minimap corruption if you are not trying to do that!!" +
                     "\nHere are the steps to restore your map. It may not work, but there is a chance it will:" +
                     "\n1) Use this item" +
                     "\n2) Leave the world" +
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items
                     "\nThis works by temporarily editing your World ID to trick Terraria into recognizing your old minimap as correct." +
                     "\nThis is completely unteseted with other mods. Tred very lightly." +
                     "\nIf you have entered other copies of the the custom map on this character since the update, there is a nonzero chance your minimap was overwritten" +
-                    "\nIf so it will not be recoverable.");
+                    "\nIf so it will not be recoverable."); */
         }
 
         public override void SetDefaults()

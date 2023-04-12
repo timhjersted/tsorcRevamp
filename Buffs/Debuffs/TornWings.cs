@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs.Debuffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Torn Wings");
-            Description.SetDefault("You can't fly!");
+            // DisplayName.SetDefault("Torn Wings");
+            // Description.SetDefault("You can't fly!");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

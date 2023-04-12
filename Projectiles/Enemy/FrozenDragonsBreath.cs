@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Frozen Dragon's Breath");
+            // DisplayName.SetDefault("Frozen Dragon's Breath");
 
         }
 
@@ -109,7 +109,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.rotation += 0.3f * (float)Projectile.direction;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         { 
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())))
             {

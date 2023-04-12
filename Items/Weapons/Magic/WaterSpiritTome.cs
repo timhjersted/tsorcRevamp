@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Summons frost spirits that can pass through walls." +
-                                "\nDamage grows as the spirits grow larger");
+            /* Tooltip.SetDefault("Summons frost spirits that can pass through walls." +
+                                "\nDamage grows as the spirits grow larger"); */
         }
 
         public override void SetDefaults()

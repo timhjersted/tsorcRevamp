@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Vortex Orb");
+            // DisplayName.SetDefault("Vortex Orb");
         }
 
         public override void SetDefaults()

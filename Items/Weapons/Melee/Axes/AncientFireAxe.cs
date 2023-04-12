@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The blade hits with a powerful magic flame.\n" +
-                                "Knocks back foes with a force that also sets them ablaze, doing damage over time.");
+            /* Tooltip.SetDefault("The blade hits with a powerful magic flame.\n" +
+                                "Knocks back foes with a force that also sets them ablaze, doing damage over time."); */
 
         }
 
@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             recipe.Register();
         }
 
-        public override void OnHitNPC(Terraria.Player player, NPC npc, int damage, float knockBack, bool crit)
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             //if (Main.rand.NextBool(2))
             //{ //50% chance to occur

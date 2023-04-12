@@ -64,7 +64,7 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             //Give hit targets a debuff that "marks" them as hit, so they can't chain it twice
             target.AddBuff(ModContent.BuffType<Buffs.BoltChainImmunity>(), 60);

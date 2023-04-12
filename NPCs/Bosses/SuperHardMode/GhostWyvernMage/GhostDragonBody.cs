@@ -36,13 +36,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         }
 
         int fireDamage = 50;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = (int)(NPC.damage / 2);
             fireDamage = (int)(fireDamage / 2);
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false);
             target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
@@ -51,7 +51,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ghost Wyvern");
+            // DisplayName.SetDefault("Ghost Wyvern");
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
                 Hide = true
             };

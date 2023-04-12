@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Tome of Health");
-            Tooltip.SetDefault("Spell tome that heals 220 HP" +
+            // DisplayName.SetDefault("Tome of Health");
+            /* Tooltip.SetDefault("Spell tome that heals 220 HP" +
                                 "\nShares cooldown with potions" +
-                                "\nCannot be used with \"Quick Heal\"");
+                                "\nCannot be used with \"Quick Heal\""); */
         }
 
         public override void SetDefaults()

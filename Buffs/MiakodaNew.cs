@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Miakoda - New Moon Form");
-            Description.SetDefault("An ancient being freed from Skeletron.");
+            // DisplayName.SetDefault("Miakoda - New Moon Form");
+            // Description.SetDefault("An ancient being freed from Skeletron.");
             Main.buffNoTimeDisplay[Type] = true;
             Main.vanityPet[Type] = true;
         }

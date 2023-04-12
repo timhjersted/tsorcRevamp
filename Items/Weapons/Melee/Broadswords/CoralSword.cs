@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Edged to slay those of the sea. Deals 4x damage to water enemies.");
+            // Tooltip.SetDefault("Edged to slay those of the sea. Deals 4x damage to water enemies.");
         }
         public override void SetDefaults()
         {
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.value = PriceByRarity.Blue_1;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
             //todo add mod NPCs to this list
             if (target.type == NPCID.Shark

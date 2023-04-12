@@ -9,12 +9,12 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Covenant of Artorias");
-            Tooltip.SetDefault("[c/ffbf00:Allows you to safely enter The Abyss when worn. Remove the ring to escape from The Abyss!]" +
+            // DisplayName.SetDefault("Covenant of Artorias");
+            /* Tooltip.SetDefault("[c/ffbf00:Allows you to safely enter The Abyss when worn. Remove the ring to escape from The Abyss!]" +
                                 "\n[c/ffbf00:The Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous in this realm.]" +
                                 "\n[c/00ffd4:Grants immunity to particular dangers caused by the Abyss and foes empowered by it, such as Crippled, Poisoned, On Fire and Oiled]" +
                                 "\nAlso grants protection from lava, knockback, and fire blocks, but increases enemy spawn rates." +
-                                "\nIncreases damage, critical strike chance, movement and attack speed(melee speed bonus doubled) by 7% multiplicatively");
+                                "\nIncreases damage, critical strike chance, movement and attack speed(melee speed bonus doubled) by 7% multiplicatively"); */
         }
 
         public override void SetDefaults()

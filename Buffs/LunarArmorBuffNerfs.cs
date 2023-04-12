@@ -47,7 +47,7 @@ namespace tsorcRevamp.Buffs
             }
         }
 
-        public override void ModifyBuffTip(int type, ref string tip, ref int rare)
+        public override void ModifyBuffText(int type, ref string buffName, ref string tip, ref int rare)
         {
             if (type == BuffID.SolarShield1)
             {

@@ -10,8 +10,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Center of the Universe");
-            Description.SetDefault("You're the center of the Universe!");
+            // DisplayName.SetDefault("Center of the Universe");
+            // Description.SetDefault("You're the center of the Universe!");
 
             Main.buffNoSave[Type] = true;
             Main.buffNoTimeDisplay[Type] = true;

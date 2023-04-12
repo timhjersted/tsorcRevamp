@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The rare gem called tearstone has the uncanny ability to sense imminent death." +
+            /* Tooltip.SetDefault("The rare gem called tearstone has the uncanny ability to sense imminent death." +
                                 "\nThis blue tearstone from Catarina boosts the defense of its wearer by 12 and reduces damage taken by 8%" +
-                                "\n when life falls below 33%. This also reduces melee damage by 200%.");
+                                "\n when life falls below 33%. This also reduces melee damage by 200%."); */
         }
 
         public override void SetDefaults()

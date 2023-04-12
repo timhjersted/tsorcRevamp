@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ice Crystal");
+            // DisplayName.SetDefault("Ice Crystal");
 
         }
         public override void AI()

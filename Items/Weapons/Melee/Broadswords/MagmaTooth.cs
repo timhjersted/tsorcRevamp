@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Chance to light enemies on hellish fire.");
+            // Tooltip.SetDefault("Chance to light enemies on hellish fire.");
         }
         public override void SetDefaults()
         {
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(2))
             {

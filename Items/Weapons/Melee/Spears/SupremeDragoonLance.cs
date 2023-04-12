@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/Spears/DragoonLance";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Supreme Dragoon Lance");
-            Tooltip.SetDefault("An all-powerful spear forged from the fang of the Dragoon Serpent.");
+            // DisplayName.SetDefault("Supreme Dragoon Lance");
+            // Tooltip.SetDefault("An all-powerful spear forged from the fang of the Dragoon Serpent.");
         }
 
         public override void SetDefaults()

@@ -10,9 +10,9 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Story Time");
-            Description.SetDefault("Stay a moment... gain knowledge. \n" +
-                                   "Enemy spawns disabled");
+            // DisplayName.SetDefault("Story Time");
+            /* Description.SetDefault("Stay a moment... gain knowledge. \n" +
+                                   "Enemy spawns disabled"); */
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = true;
         }

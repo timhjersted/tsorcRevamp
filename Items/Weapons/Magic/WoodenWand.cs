@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("An unenchanted wooden wand \nCan be upgraded many different ways");
+            // Tooltip.SetDefault("An unenchanted wooden wand \nCan be upgraded many different ways");
         }
 
         public override void SetDefaults()

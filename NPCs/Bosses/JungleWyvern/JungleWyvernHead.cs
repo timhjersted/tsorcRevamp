@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ancient Jungle Wyvern");
+            // DisplayName.SetDefault("Ancient Jungle Wyvern");
         }
         public override void SetDefaults()
         {
@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
         }
 
         public int CursedFlamesDamage = 23;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
         }
 
@@ -362,7 +362,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.JungleWyvernBag>()));
         }
-        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             damage *= 2;
             base.OnHitByItem(player, item, damage, knockback, crit);

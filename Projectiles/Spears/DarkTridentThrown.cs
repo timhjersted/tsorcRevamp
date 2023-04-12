@@ -69,7 +69,7 @@ namespace tsorcRevamp.Projectiles.Spears
             Projectile.velocity.Y += 0.1f;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Projectile.ai[0] == 1)
             {
@@ -77,7 +77,7 @@ namespace tsorcRevamp.Projectiles.Spears
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gaibon>()))
             {

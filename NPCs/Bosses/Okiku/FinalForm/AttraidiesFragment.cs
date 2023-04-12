@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Attraidies Fragment");
+            // DisplayName.SetDefault("Attraidies Fragment");
         }
 
         NPC HostNPC
@@ -155,12 +155,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 }
             }
         }
-        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             base.OnHitByItem(player, item, damage, knockback, crit);
         }
 
-        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             base.OnHitByProjectile(projectile, damage, knockback, crit);
         }

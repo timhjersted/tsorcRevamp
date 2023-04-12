@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs.Summon
     {
         public override void SetStaticDefaults() 
         {
-            DisplayName.SetDefault("Owl Archer");
-            Description.SetDefault("The owl will fire at your enemies!");
+            // DisplayName.SetDefault("Owl Archer");
+            // Description.SetDefault("The owl will fire at your enemies!");
             Main.buffNoSave[Type] = true;
             Main.buffNoTimeDisplay[Type] = true;
         }

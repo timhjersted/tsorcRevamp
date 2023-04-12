@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jungle Wyvern Juvenile");
+            // DisplayName.SetDefault("Jungle Wyvern Juvenile");
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
                 Hide = true
             };
@@ -85,7 +85,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
                 Main.dust[dust].noGravity = true;
             }
         }
-        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             damage *= 2;
             base.OnHitByItem(player, item, damage, knockback, crit);

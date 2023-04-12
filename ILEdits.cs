@@ -15,59 +15,59 @@ namespace tsorcRevamp
         {
 
             //Fix lihzahrd power cell being consumed
-            IL.Terraria.Player.TileInteractionsUse += PowerCell_Patch;
+            Terraria.IL_Player.TileInteractionsUse += PowerCell_Patch;
 
-            IL.Terraria.Player.Update += Player_Update;
+            Terraria.IL_Player.Update += Player_Update;
             //IL.Terraria.Player.Update += Chest_Patch;
-            IL.Terraria.Recipe.FindRecipes += SoulSlotRecipesPatch;
+            Terraria.IL_Recipe.FindRecipes += SoulSlotRecipesPatch;
 
             //Disable drawing of wires when in adventure mode
             //editing a get accessor of a property and built in hooks don't have any of those
-            HookEndpointManager.Modify(typeof(Terraria.GameContent.UI.WiresUI.Settings).GetProperty("DrawWires").GetGetMethod(), new ILContext.Manipulator(DrawWires_Patch));
+            MonoModHooks.Modify(typeof(Terraria.GameContent.UI.WiresUI.Settings).GetProperty("DrawWires").GetGetMethod(), new ILContext.Manipulator(DrawWires_Patch));
 
 
             if (ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
             {
                 //main screen flip
-                IL.Terraria.Main.DoDraw += GravPatch_ReplaceAll;
-                IL.Terraria.Main.DoDraw += GravPatch_Rasterizer;
+                Terraria.IL_Main.DoDraw += GravPatch_ReplaceAll;
+                Terraria.IL_Main.DoDraw += GravPatch_Rasterizer;
 
                 //text & health bars
-                IL.Terraria.CombatText.NewText_Rectangle_Color_string_bool_bool += GravPatch_ReplaceOne;
-                IL.Terraria.Main.DrawHealthBar += GravPatch_ReplaceOne;
-                IL.Terraria.Main.DrawItemTextPopups += GravPatch_ReplaceOne;
-                IL.Terraria.Main.DrawInterface_1_2_DrawEntityMarkersInWorld += GravPatch_ReplaceOne;
+                Terraria.IL_CombatText.NewText_Rectangle_Color_string_bool_bool += GravPatch_ReplaceOne;
+                Terraria.IL_Main.DrawHealthBar += GravPatch_ReplaceOne;
+                Terraria.IL_Main.DrawItemTextPopups += GravPatch_ReplaceOne;
+                Terraria.IL_Main.DrawInterface_1_2_DrawEntityMarkersInWorld += GravPatch_ReplaceOne;
 
                 //Emote bubbles, chat bubbles that appear when hovering over NPCs,
                 //NPC house indicators, mouse over text
-                IL.Terraria.Main.DrawNPCChatBubble += GravPatch_ReplaceOne;
-                IL.Terraria.GameContent.UI.EmoteBubble.Draw += GravPatch_ReplaceOne;
-                IL.Terraria.Main.DrawMouseOver += GravPatch_ReplaceOne;
-                IL.Terraria.Main.DrawNPCHousesInWorld += GravPatch_ReplaceOne;
+                Terraria.IL_Main.DrawNPCChatBubble += GravPatch_ReplaceOne;
+                Terraria.GameContent.UI.IL_EmoteBubble.Draw += GravPatch_ReplaceOne;
+                Terraria.IL_Main.DrawMouseOver += GravPatch_ReplaceOne;
+                Terraria.IL_Main.DrawNPCHousesInWorld += GravPatch_ReplaceOne;
 
-                IL.Terraria.GameInput.SmartSelectGamepadPointer.SmartSelectLookup_GetTargetTile += GravPatch_ReplaceAll;
+                Terraria.GameInput.IL_SmartSelectGamepadPointer.SmartSelectLookup_GetTargetTile += GravPatch_ReplaceAll;
 
                 //Screencap mode stuff
                 //TODO: snapshot boundaries still borked
-                IL.Terraria.Graphics.Capture.CaptureInterface.ModeEdgeSelection.DrawCursors += GravPatch_ReplaceOne;
-                IL.Terraria.Graphics.Capture.CaptureInterface.ModeDragBounds.DragBounds += GravPatch_ReplaceOne;
-                IL.Terraria.Graphics.Effects.FilterManager.EndCapture += GravPatch_ReplaceAll;
+                Terraria.Graphics.Capture.IL_CaptureInterface.ModeEdgeSelection.DrawCursors += GravPatch_ReplaceOne;
+                Terraria.Graphics.Capture.IL_CaptureInterface.ModeDragBounds.DragBounds += GravPatch_ReplaceOne;
+                Terraria.Graphics.Effects.IL_FilterManager.EndCapture += GravPatch_ReplaceAll;
 
                 //MouseWorld property
-                HookEndpointManager.Modify(typeof(Main).GetProperty("MouseWorld").GetGetMethod(), new ILContext.Manipulator(GravPatch_ReplaceOne));
+                MonoModHooks.Modify(typeof(Main).GetProperty("MouseWorld").GetGetMethod(), new ILContext.Manipulator(GravPatch_ReplaceOne));
 
                 //Aiming
                 //TODO: portal gun (needed?)
-                IL.Terraria.Player.ItemCheck_UseRodOfDiscord += GravPatch_ReplaceOne;
-                IL.Terraria.Player.ItemCheck_Shoot += GravPatch_ReplaceAll;
-                IL.Terraria.Player.Update += GravPatch_TileAim;
+                Terraria.IL_Player.ItemCheck_UseRodOfDiscord += GravPatch_ReplaceOne;
+                Terraria.IL_Player.ItemCheck_Shoot += GravPatch_ReplaceAll;
+                Terraria.IL_Player.Update += GravPatch_TileAim;
 
                 //Smart cursor
-                IL.Terraria.Main.DrawSmartCursor += GravPatch_ReplaceOne;
-                IL.Terraria.Main.DrawSmartInteract += GravPatch_ReplaceOne;
+                Terraria.IL_Main.DrawSmartCursor += GravPatch_ReplaceOne;
+                Terraria.IL_Main.DrawSmartInteract += GravPatch_ReplaceOne;
 
                 //grappling
-                IL.Terraria.Player.QuickGrapple += GravPatch_ReplaceOne;
+                Terraria.IL_Player.QuickGrapple += GravPatch_ReplaceOne;
             }
 
             //IL.Terraria.Main.DrawPlayer_DrawAllLayers += Rotate_Patch;

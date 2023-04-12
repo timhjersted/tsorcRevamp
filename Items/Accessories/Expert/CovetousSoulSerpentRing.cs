@@ -8,10 +8,10 @@ namespace tsorcRevamp.Items.Accessories.Expert
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("An ancient relic forged and lost many centuries ago" +
+            /* Tooltip.SetDefault("An ancient relic forged and lost many centuries ago" +
                                 "\n[c/ffbf00:Increases the number of Dark Souls dropped by fallen creatures by 50% but reduces defense by 40]" +
                                 "\nAll souls are drawn to the wearer from a large distance" +
-                                "\nThe ring glows with a bright white light");
+                                "\nThe ring glows with a bright white light"); */
         }
 
         public override void SetDefaults()

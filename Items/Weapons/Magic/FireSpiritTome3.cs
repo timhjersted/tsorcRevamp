@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Incineration Tome");
-            Tooltip.SetDefault("Summons a barrage of solar flares that combust into lingering explosions" +
-                "\nShatters enemy defense");
+            // DisplayName.SetDefault("Incineration Tome");
+            /* Tooltip.SetDefault("Summons a barrage of solar flares that combust into lingering explosions" +
+                "\nShatters enemy defense"); */
         }
 
         public override void SetDefaults()

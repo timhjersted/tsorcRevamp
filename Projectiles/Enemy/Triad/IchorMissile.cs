@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ichor Missile");
+            // DisplayName.SetDefault("Ichor Missile");
         }
 
         public override void SetDefaults()
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             NPC.life = 0;
             NPC.netUpdate = true;

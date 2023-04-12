@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Soul Siphon");
-            Description.SetDefault("Soul gain increased!");
+            // DisplayName.SetDefault("Soul Siphon");
+            // Description.SetDefault("Soul gain increased!");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

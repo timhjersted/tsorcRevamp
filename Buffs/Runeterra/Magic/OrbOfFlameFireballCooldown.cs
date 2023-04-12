@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fireball Cooldown");
-            Description.SetDefault("You can't cast another Fireball until this runs out");
+            // DisplayName.SetDefault("Fireball Cooldown");
+            // Description.SetDefault("You can't cast another Fireball until this runs out");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

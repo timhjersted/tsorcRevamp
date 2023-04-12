@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Elfin Targeting");
+            // DisplayName.SetDefault("Elfin Targeting");
         }
         public override void SetDefaults()
         {

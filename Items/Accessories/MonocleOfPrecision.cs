@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Monocle of Precision");
-            Tooltip.SetDefault("Increases critical strike chance by 5%");
+            // DisplayName.SetDefault("Monocle of Precision");
+            // Tooltip.SetDefault("Increases critical strike chance by 5%");
         }
         public override void SetDefaults()
         {

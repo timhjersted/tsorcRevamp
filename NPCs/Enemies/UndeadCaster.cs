@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Undead Caster");
+            // DisplayName.SetDefault("Undead Caster");
             //Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.GoblinSorcerer];
         }
 
@@ -65,7 +65,7 @@ namespace tsorcRevamp.NPCs.Enemies
             return chance;
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             if (NPC.life <= 0)
             {

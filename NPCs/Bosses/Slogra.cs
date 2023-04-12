@@ -40,13 +40,13 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Slogra, Lost Soul of the Depths");
+            // DisplayName.SetDefault("Slogra, Lost Soul of the Depths");
         }
 
         int tridentDamage = 40;
         //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
         int burningSphereDamage = 120;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = (int)(NPC.damage * 1.3 / 2);
             NPC.defense = NPC.defense += 22;
@@ -370,7 +370,7 @@ namespace tsorcRevamp.NPCs.Bosses
             
         }
 
-        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             if (gaibonDead)
             {
@@ -378,7 +378,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (gaibonDead)
             {

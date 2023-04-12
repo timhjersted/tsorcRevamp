@@ -69,7 +69,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.type = ProjectileID.DemonScythe;
             return true;
         }
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             int buffMod = 1;
             if (Main.expertMode)

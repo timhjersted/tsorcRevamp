@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Omega Blast");
+            // DisplayName.SetDefault("Omega Blast");
         }
 
         public override bool PreKill(int timeLeft)
@@ -66,7 +66,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             int buffLengthMod = 1;
             if (Main.expertMode)

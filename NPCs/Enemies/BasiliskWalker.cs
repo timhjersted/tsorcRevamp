@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);
@@ -253,7 +253,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
         #region Debuffs
-        public override void OnHitPlayer(Player player, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             player.AddBuff(17, 180, false); //hunter
 

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using On.Terraria.Utilities;
 using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
@@ -16,6 +15,7 @@ using Terraria.GameContent.Personalities;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.UI;
+using Terraria.Utilities;
 using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Enemy;
@@ -33,79 +33,79 @@ namespace tsorcRevamp
     {
         internal static void ApplyMethodSwaps()
         {
-            On.Terraria.Player.Spawn += SpawnPatch;
+            Terraria.On_Player.Spawn += SpawnPatch;
 
-            On.Terraria.WorldGen.TriggerLunarApocalypse += StopLunarApocalypse;
+            Terraria.On_WorldGen.TriggerLunarApocalypse += StopLunarApocalypse;
 
-            On.Terraria.WorldGen.UpdateLunarApocalypse += StopMoonLord;
+            Terraria.On_WorldGen.UpdateLunarApocalypse += StopMoonLord;
 
-            On.Terraria.Player.TileInteractionsCheckLongDistance += SignTextPatch;
+            Terraria.On_Player.TileInteractionsCheckLongDistance += SignTextPatch;
 
-            On.Terraria.NPC.SpawnNPC += BossZenPatch;
+            Terraria.On_NPC.SpawnNPC += BossZenPatch;
 
-            On.Terraria.Main.DrawMenu += DownloadMapButton;
+            Terraria.On_Main.DrawMenu += DownloadMapButton;
 
-            On.Terraria.Main.StartInvasion += BlockInvasions;
+            Terraria.On_Main.StartInvasion += BlockInvasions;
 
-            On.Terraria.NPC.AI_037_Destroyer += DestroyerAIRevamp;
+            Terraria.On_NPC.AI_037_Destroyer += DestroyerAIRevamp;
 
-            NPCUtils.TargetClosestOldOnesInvasion += OldOnesArmyPatch;
+            On_NPCUtils.TargetClosestOldOnesInvasion += OldOnesArmyPatch;
 
-            On.Terraria.NPC.AI_111_DD2LightningBug += LightningBugTeleport;
+            Terraria.On_NPC.AI_111_DD2LightningBug += LightningBugTeleport;
 
-            On.Terraria.Player.QuickBuff += CustomQuickBuff;
-            On.Terraria.Player.QuickMana += CustomQuickMana;
-            On.Terraria.Player.QuickHeal += CustomQuickHeal;
-            On.Terraria.Player.QuickGrapple_GetItemToUse += Player_QuickGrapple_GetItemToUse;
-            On.Terraria.Player.QuickMount_GetItemToUse += Player_QuickMount_GetItemToUse; ;
+            Terraria.On_Player.QuickBuff += CustomQuickBuff;
+            Terraria.On_Player.QuickMana += CustomQuickMana;
+            Terraria.On_Player.QuickHeal += CustomQuickHeal;
+            Terraria.On_Player.QuickGrapple_GetItemToUse += Player_QuickGrapple_GetItemToUse;
+            Terraria.On_Player.QuickMount_GetItemToUse += Player_QuickMount_GetItemToUse; ;
 
-            On.Terraria.UI.ChestUI.LootAll += PotionBagLootAllPatch;
+            Terraria.UI.On_ChestUI.LootAll += PotionBagLootAllPatch;
 
-            On.Terraria.Player.HasUnityPotion += HasWormholePotion;
-            On.Terraria.Player.TakeUnityPotion += ConsumeWormholePotion;
+            Terraria.On_Player.HasUnityPotion += HasWormholePotion;
+            Terraria.On_Player.TakeUnityPotion += ConsumeWormholePotion;
 
-            On.Terraria.Main.DrawNPCs += DrawNPCsPatch;
+            Terraria.On_Main.DrawNPCs += DrawNPCsPatch;
 
-            On.Terraria.GameContent.ShopHelper.GetShoppingSettings += ShopHelper_GetShoppingSettings;
+            Terraria.GameContent.On_ShopHelper.GetShoppingSettings += ShopHelper_GetShoppingSettings;
 
-            On.Terraria.GameContent.UI.States.UIWorldSelect.NewWorldClick += UIWorldSelect_NewWorldClick;
+            Terraria.GameContent.UI.States.On_UIWorldSelect.NewWorldClick += UIWorldSelect_NewWorldClick;
 
-            On.Terraria.Player.HandleBeingInChestRange += Player_HandleBeingInChestRange;
+            Terraria.On_Player.HandleBeingInChestRange += Player_HandleBeingInChestRange;
 
-            On.Terraria.Wiring.DeActive += Wiring_DeActive;
+            Terraria.On_Wiring.DeActive += Wiring_DeActive;
 
-            On.Terraria.WorldGen.StartHardmode += WorldGen_StartHardmode;
+            Terraria.On_WorldGen.StartHardmode += WorldGen_StartHardmode;
 
-            On.Terraria.Projectile.FishingCheck += Projectile_FishingCheck;
+            Terraria.On_Projectile.FishingCheck += Projectile_FishingCheck;
 
-            On.Terraria.Main.CraftItem += Main_CraftItem;
+            Terraria.On_Main.CraftItem += Main_CraftItem;
 
-            On.Terraria.Main.DrawInterface_35_YouDied += Main_DrawInterface_35_YouDied;
+            Terraria.On_Main.DrawInterface_35_YouDied += Main_DrawInterface_35_YouDied;
 
-            On.Terraria.Player.InZonePurity += Player_InZonePurity;
+            Terraria.On_Player.InZonePurity += Player_InZonePurity;
 			//On.Terraria.GameContent.ItemDropRules.ItemDropResolver.ResolveRule += ItemDropResolver_ResolveRule;
 
-			On.Terraria.Player.DashMovement += Player_DashMovement;
+			Terraria.On_Player.DashMovement += Player_DashMovement;
 
-			On.Terraria.Player.DropTombstone += Player_DropTombstone;
+			//Terraria.On_Player.DropTombstone += Player_DropTombstone;
 
-            On.Terraria.DataStructures.PlayerDrawLayers.DrawPlayer_TransformDrawData += PaperMarioMode;
-            On.Terraria.Player.VanillaPreUpdateInventory += Player_VanillaPreUpdateInventory;
+            Terraria.DataStructures.On_PlayerDrawLayers.DrawPlayer_TransformDrawData += PaperMarioMode;
+            //Terraria.On_Player.VanillaPreUpdateInventory += Player_VanillaPreUpdateInventory;
 
-            On.Terraria.Main.Draw += Main_Draw;
+            Terraria.On_Main.Draw += Main_Draw;
 
-            On.Terraria.Main.DrawProjectiles += Main_DrawProjectiles;
+            Terraria.On_Main.DrawProjectiles += Main_DrawProjectiles;
 
-            On.Terraria.Main.DrawCachedProjs += Main_DrawCachedProjs;
+            Terraria.On_Main.DrawCachedProjs += Main_DrawCachedProjs;
         }
 
-        private static void StopLunarApocalypse(On.Terraria.WorldGen.orig_TriggerLunarApocalypse orig)
+        private static void StopLunarApocalypse(Terraria.On_WorldGen.orig_TriggerLunarApocalypse orig)
         {
             return;
         }
 
         public static bool fixRainbowRod = true;
-        private static void Main_DrawCachedProjs(On.Terraria.Main.orig_DrawCachedProjs orig, Main self, List<int> projCache, bool startSpriteBatch)
+        private static void Main_DrawCachedProjs(Terraria.On_Main.orig_DrawCachedProjs orig, Main self, List<int> projCache, bool startSpriteBatch)
         {
             if (Main.IsGraphicsDeviceAvailable)
             {
@@ -169,7 +169,7 @@ namespace tsorcRevamp
             orig(self, projCache, startSpriteBatch);
         }
 
-        private static void Main_DrawProjectiles(On.Terraria.Main.orig_DrawProjectiles orig, Main self)
+        private static void Main_DrawProjectiles(Terraria.On_Main.orig_DrawProjectiles orig, Main self)
         {
             orig(self);
             if (Main.IsGraphicsDeviceAvailable)
@@ -220,7 +220,7 @@ namespace tsorcRevamp
 
         //Changing the rendertarget destroys everything currently in it
         //So we have to do it here, before the game draws anything else
-        private static void Main_Draw(On.Terraria.Main.orig_Draw orig, Main self, GameTime gameTime)
+        private static void Main_Draw(Terraria.On_Main.orig_Draw orig, Main self, GameTime gameTime)
         {
             fixRainbowRod = true;
             if (Main.IsGraphicsDeviceAvailable)
@@ -289,13 +289,13 @@ namespace tsorcRevamp
        
 
         //I hate that this required a method swap, but unfortunately this does in fact require a method swap. It checks this *right* before applying the movement update.
-        private static void Player_VanillaPreUpdateInventory(On.Terraria.Player.orig_VanillaPreUpdateInventory orig, Player self)
+        /*private static void Player_VanillaPreUpdateInventory(Terraria.On_Player.orig_VanillaPreUpdateInventory orig, Player self)
         {
             if ((self.inventory[self.selectedItem].type == 277 || self.inventory[self.selectedItem].type == ModContent.ItemType<Items.Weapons.Melee.Spears.AncientDragonLance>()) && (!self.mount.Active || !self.mount.Cart))
                 self.trident = true;
-        }
+        }*/
 
-        private static Item Player_QuickMount_GetItemToUse(On.Terraria.Player.orig_QuickMount_GetItemToUse orig, Player self)
+        private static Item Player_QuickMount_GetItemToUse(Terraria.On_Player.orig_QuickMount_GetItemToUse orig, Player self)
         {
             Item item = null;
             if (item == null && self.miscEquips[3].mountType != -1 && !MountID.Sets.Cart[self.miscEquips[3].mountType] && CombinedHooks.CanUseItem(self, self.miscEquips[3]))
@@ -347,7 +347,7 @@ namespace tsorcRevamp
             return item;
         }
 
-        private static void Player_DropTombstone(On.Terraria.Player.orig_DropTombstone orig, Player self, int coinsOwned, Terraria.Localization.NetworkText deathText, int hitDirection)
+        private static void Player_DropTombstone(Terraria.On_Player.orig_DropTombstone orig, Player self, int coinsOwned, Terraria.Localization.NetworkText deathText, int hitDirection)
 		{
 			//thank you DarkLight66's NoMoreTombs
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
@@ -355,7 +355,7 @@ namespace tsorcRevamp
             
 		}
 
-		private static void Player_DashMovement(On.Terraria.Player.orig_DashMovement orig, Player self)
+		private static void Player_DashMovement(Terraria.On_Player.orig_DashMovement orig, Player self)
 		{
             float originalVelocity = self.velocity.X;
             bool wasInDash = false;
@@ -399,7 +399,7 @@ namespace tsorcRevamp
 
 		//The reason the dungeon code is getting inserted here isn't because it has anything to do with ZonePurity
 		//It's just because this is a function that has the player as a parameter, and is called in UpdateBiomes *after* ZoneDungeon is set but before it is used.
-		private static bool Player_InZonePurity(On.Terraria.Player.orig_InZonePurity orig, Player self)
+		private static bool Player_InZonePurity(Terraria.On_Player.orig_InZonePurity orig, Player self)
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && NPC.downedBoss3)
             {
@@ -425,7 +425,7 @@ namespace tsorcRevamp
             return orig(self);
         }
 
-        private static void Main_DrawInterface_35_YouDied(On.Terraria.Main.orig_DrawInterface_35_YouDied orig)
+        private static void Main_DrawInterface_35_YouDied(Terraria.On_Main.orig_DrawInterface_35_YouDied orig)
         {
             orig();
             if (Main.player[Main.myPlayer].dead)
@@ -457,7 +457,7 @@ namespace tsorcRevamp
             return itemDropAttemptResult3;
         }*/
 
-        private static void Main_CraftItem(On.Terraria.Main.orig_CraftItem orig, Recipe r)
+        private static void Main_CraftItem(Terraria.On_Main.orig_CraftItem orig, Recipe r)
         {
             orig(r);
 
@@ -486,7 +486,7 @@ namespace tsorcRevamp
             }
         }
 
-        private static void Projectile_FishingCheck(On.Terraria.Projectile.orig_FishingCheck orig, Projectile self)
+        private static void Projectile_FishingCheck(Terraria.On_Projectile.orig_FishingCheck orig, Projectile self)
         {
             Terraria.DataStructures.FishingAttempt fisher = default(Terraria.DataStructures.FishingAttempt);
             fisher.X = (int)(self.Center.X / 16f);
@@ -516,7 +516,7 @@ namespace tsorcRevamp
             }
         }
 
-        private static Item Player_QuickGrapple_GetItemToUse(On.Terraria.Player.orig_QuickGrapple_GetItemToUse orig, Player self)
+        private static Item Player_QuickGrapple_GetItemToUse(Terraria.On_Player.orig_QuickGrapple_GetItemToUse orig, Player self)
         {
             Item item = null;
 
@@ -557,7 +557,7 @@ namespace tsorcRevamp
             return item;
         }
 
-        private static void WorldGen_StartHardmode(On.Terraria.WorldGen.orig_StartHardmode orig)
+        private static void WorldGen_StartHardmode(Terraria.On_WorldGen.orig_StartHardmode orig)
         {
             Main.hardMode = true;
             /* Hallow the spawn
@@ -570,14 +570,14 @@ namespace tsorcRevamp
             }*/
         }
 
-        private static void Wiring_DeActive(On.Terraria.Wiring.orig_DeActive orig, int i, int j)
+        private static void Wiring_DeActive(Terraria.On_Wiring.orig_DeActive orig, int i, int j)
         {
             tsorcRevamp.ActuationBypassActive = true;
             orig(i, j);
             tsorcRevamp.ActuationBypassActive = false;
         }
 
-        private static void Player_HandleBeingInChestRange(On.Terraria.Player.orig_HandleBeingInChestRange orig, Player self) {
+        private static void Player_HandleBeingInChestRange(Terraria.On_Player.orig_HandleBeingInChestRange orig, Player self) {
             if (self.chest != -1) {
                 if (self.chest != -2) {
                     self.piggyBankProjTracker.Clear();
@@ -656,7 +656,7 @@ namespace tsorcRevamp
             }
         }
 
-        private static void UIWorldSelect_NewWorldClick(On.Terraria.GameContent.UI.States.UIWorldSelect.orig_NewWorldClick orig, Terraria.GameContent.UI.States.UIWorldSelect self, UIMouseEvent evt, UIElement listeningElement)
+        private static void UIWorldSelect_NewWorldClick(Terraria.GameContent.UI.States.On_UIWorldSelect.orig_NewWorldClick orig, Terraria.GameContent.UI.States.UIWorldSelect self, UIMouseEvent evt, UIElement listeningElement)
         {
             SoundEngine.PlaySound(SoundID.MenuOpen);
 
@@ -667,7 +667,7 @@ namespace tsorcRevamp
         static FieldInfo currentNPC = null;
         static FieldInfo currentPlayer = null;
         //Hijacks the vanilla method and just sets the NPC price to default and happiness to "", which signals the game to not draw the button
-        private static ShoppingSettings ShopHelper_GetShoppingSettings(On.Terraria.GameContent.ShopHelper.orig_GetShoppingSettings orig, ShopHelper self, Player player, NPC npc)
+        private static ShoppingSettings ShopHelper_GetShoppingSettings(Terraria.GameContent.On_ShopHelper.orig_GetShoppingSettings orig, ShopHelper self, Player player, NPC npc)
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
@@ -695,7 +695,7 @@ namespace tsorcRevamp
 
        
 
-        private static void DrawNPCsPatch(On.Terraria.Main.orig_DrawNPCs orig, Main self, bool behindTiles)
+        private static void DrawNPCsPatch(Terraria.On_Main.orig_DrawNPCs orig, Main self, bool behindTiles)
         {
             orig(self, behindTiles);
             if (NPCs.VanillaChanges.drawingDestroyer)
@@ -707,7 +707,7 @@ namespace tsorcRevamp
         }
 
 
-        private static void PotionBagLootAllPatch(On.Terraria.UI.ChestUI.orig_LootAll orig)
+        private static void PotionBagLootAllPatch(Terraria.UI.On_ChestUI.orig_LootAll orig)
         {
             if (Main.LocalPlayer.HasItem(ModContent.ItemType<PotionBag>()))
             {
@@ -747,7 +747,7 @@ namespace tsorcRevamp
             orig();
         }
 
-        private static void CustomQuickBuff(On.Terraria.Player.orig_QuickBuff orig, Player player)
+        private static void CustomQuickBuff(Terraria.On_Player.orig_QuickBuff orig, Player player)
         {
             if (player.noItems || player.dead)
                 return;
@@ -852,7 +852,7 @@ namespace tsorcRevamp
             }
         }
 
-        private static void CustomQuickMana(On.Terraria.Player.orig_QuickMana orig, Player player)
+        private static void CustomQuickMana(Terraria.On_Player.orig_QuickMana orig, Player player)
         {
             if (player.noItems || player.statMana == player.statManaMax2)
             {
@@ -891,7 +891,7 @@ namespace tsorcRevamp
             UsePotion(selectedItem, player);
         }
 
-        private static void CustomQuickHeal(On.Terraria.Player.orig_QuickHeal orig, Player player)
+        private static void CustomQuickHeal(Terraria.On_Player.orig_QuickHeal orig, Player player)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
@@ -1002,7 +1002,7 @@ namespace tsorcRevamp
             Recipe.FindRecipes();
         }
 
-        private static void OldOnesArmyPatch(NPCUtils.orig_TargetClosestOldOnesInvasion orig, NPC searcher, bool faceTarget, Vector2? checkPosition)
+        private static void OldOnesArmyPatch(On_NPCUtils.orig_TargetClosestOldOnesInvasion orig, NPC searcher, bool faceTarget, Vector2? checkPosition)
         {
             if (!Terraria.GameContent.Events.DD2Event.Ongoing)
             {
@@ -1014,7 +1014,7 @@ namespace tsorcRevamp
             }
         }
 
-        private static void LightningBugTeleport(On.Terraria.NPC.orig_AI_111_DD2LightningBug orig, NPC self)
+        private static void LightningBugTeleport(Terraria.On_NPC.orig_AI_111_DD2LightningBug orig, NPC self)
         {
             //Put extra things you want it to do before it runs its normal ai code here
             orig(self); //Run its normal ai
@@ -1023,7 +1023,7 @@ namespace tsorcRevamp
 
 
         //allow spawns to be set outside a valid house (for bonfires)
-        internal static void SpawnPatch(On.Terraria.Player.orig_Spawn orig, Player self, PlayerSpawnContext context)
+        internal static void SpawnPatch(Terraria.On_Player.orig_Spawn orig, Player self, PlayerSpawnContext context)
         {
             Main.LocalPlayer.creativeInterface = false;
             self._funkytownAchievementCheckCooldown = 100;
@@ -1372,7 +1372,7 @@ namespace tsorcRevamp
             return false;
         }
         //stop moon lord from spawning after pillars are killed (adventure mode only)
-        internal static void StopMoonLord(On.Terraria.WorldGen.orig_UpdateLunarApocalypse orig)
+        internal static void StopMoonLord(Terraria.On_WorldGen.orig_UpdateLunarApocalypse orig)
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
@@ -1446,7 +1446,7 @@ namespace tsorcRevamp
         }
 
         //stop sign text from drawing when the player is too far away / does not have line of sight to the sign
-        internal static void SignTextPatch(On.Terraria.Player.orig_TileInteractionsCheckLongDistance orig, Player self, int myX, int myY)
+        internal static void SignTextPatch(Terraria.On_Player.orig_TileInteractionsCheckLongDistance orig, Player self, int myX, int myY)
         {
             if(myX >= Main.tile.Width || myY >= Main.tile.Height || myX < 0 || myY < 0)
             {
@@ -1503,7 +1503,7 @@ namespace tsorcRevamp
         }
 
         //boss zen actually zens
-        internal static void BossZenPatch(On.Terraria.NPC.orig_SpawnNPC orig)
+        internal static void BossZenPatch(Terraria.On_NPC.orig_SpawnNPC orig)
         {
             bool BossZen = false;
 
@@ -1528,7 +1528,7 @@ namespace tsorcRevamp
             }
         }
 
-        internal static void DownloadMapButton(On.Terraria.Main.orig_DrawMenu orig, Main self, GameTime gameTime)
+        internal static void DownloadMapButton(Terraria.On_Main.orig_DrawMenu orig, Main self, GameTime gameTime)
         {
             orig(self, gameTime);
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
@@ -1638,7 +1638,7 @@ namespace tsorcRevamp
             }
         }
 
-        internal static void BlockInvasions(On.Terraria.Main.orig_StartInvasion orig, int type)
+        internal static void BlockInvasions(Terraria.On_Main.orig_StartInvasion orig, int type)
         {
             //The game sets time to 0 at the start of the day *right* before it checks to naturally spawn invasions.
             //Only applies to adventure mode
@@ -1653,7 +1653,7 @@ namespace tsorcRevamp
         }
 
 
-        private static void DestroyerAIRevamp(On.Terraria.NPC.orig_AI_037_Destroyer orig, NPC npc)
+        private static void DestroyerAIRevamp(Terraria.On_NPC.orig_AI_037_Destroyer orig, NPC npc)
         {
             if (npc.ai[3] > 0f)
                 npc.realLife = (int)npc.ai[3];
@@ -2021,7 +2021,7 @@ namespace tsorcRevamp
         }
 
 
-        internal static bool HasWormholePotion(On.Terraria.Player.orig_HasUnityPotion orig, Player self)
+        internal static bool HasWormholePotion(Terraria.On_Player.orig_HasUnityPotion orig, Player self)
         {
             bool hasWormhole = false;
             for (int i = 0; i < 58; i++)
@@ -2048,7 +2048,7 @@ namespace tsorcRevamp
             return hasWormhole;
         }
 
-        internal static void ConsumeWormholePotion(On.Terraria.Player.orig_TakeUnityPotion orig, Player self)
+        internal static void ConsumeWormholePotion(Terraria.On_Player.orig_TakeUnityPotion orig, Player self)
         {
             int wormholeSlot = 0;
             bool potionBag = false;
@@ -2098,7 +2098,7 @@ namespace tsorcRevamp
         }
 
         
-        private static void PaperMarioMode(On.Terraria.DataStructures.PlayerDrawLayers.orig_DrawPlayer_TransformDrawData orig, ref Terraria.DataStructures.PlayerDrawSet drawinfo) {
+        private static void PaperMarioMode(Terraria.DataStructures.On_PlayerDrawLayers.orig_DrawPlayer_TransformDrawData orig, ref Terraria.DataStructures.PlayerDrawSet drawinfo) {
             orig(ref drawinfo);
             for (int k = 0; k < drawinfo.DrawDataCache.Count; k++) {
                 drawinfo.DrawDataCache[k] = ManipulateDrawInfo(drawinfo.DrawDataCache[k], drawinfo.drawPlayer);

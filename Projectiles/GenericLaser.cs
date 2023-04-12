@@ -245,7 +245,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("DefaultLaserName");
+            // DisplayName.SetDefault("DefaultLaserName");
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
 
         }
@@ -558,7 +558,7 @@ namespace tsorcRevamp.Projectiles
             return false;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             for (int i = 0; i < LaserDebuffs.Count; i++)
             {

@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Poison Wave");
+            // DisplayName.SetDefault("Poison Wave");
         }
         public override void SetDefaults()
         {

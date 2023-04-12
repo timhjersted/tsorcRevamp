@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Soul Arrow");
-            Tooltip.SetDefault("Shoots a lightly homing soul arrow" +
-                                "\nCan be upgraded"); // with 3000 Dark Souls and a Soul Siphon potion
+            // DisplayName.SetDefault("Soul Arrow");
+            /* Tooltip.SetDefault("Shoots a lightly homing soul arrow" +
+                                "\nCan be upgraded"); */ // with 3000 Dark Souls and a Soul Siphon potion
         }
         public override void SetDefaults()
         {

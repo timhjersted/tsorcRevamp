@@ -10,7 +10,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Slogra");
+            // DisplayName.SetDefault("Slogra");
         }
         public override void SetDefaults()
         {
@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         int tridentDamage = 50;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);
@@ -76,7 +76,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #endregion
 
 
-        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             base.OnHitByItem(player, item, damage, .09f, crit);
 

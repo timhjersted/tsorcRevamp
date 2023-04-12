@@ -11,8 +11,8 @@ namespace tsorcRevamp.Buffs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Soulstruck");
-            Description.SetDefault("Will drop 10% more souls if killed while buff is active");
+            // DisplayName.SetDefault("Soulstruck");
+            // Description.SetDefault("Will drop 10% more souls if killed while buff is active");
         }
 
         public override void Update(NPC npc, ref int buffIndex)

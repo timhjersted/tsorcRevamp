@@ -47,11 +47,11 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Serris-X");
+            // DisplayName.SetDefault("Serris-X");
         }
 
         int plasmaOrbDamage = 100;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = (int)(NPC.damage * 1.3 / tsorcRevampGlobalNPC.expertScale);
             plasmaOrbDamage /= 2;
@@ -263,7 +263,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             return false;
         }
 
-        public override void HitEffect(int hitDirection, double damage) {
+        public override void HitEffect(NPC.HitInfo hit) {
             if (NPC.life <= 0) {
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                 if (!Main.dedServ)

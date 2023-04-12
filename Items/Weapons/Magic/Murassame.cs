@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A sword crafted for magic users" +
-                               "\nDeals +1 damage for every 10 mana the user has over 200");
+            /* Tooltip.SetDefault("A sword crafted for magic users" +
+                               "\nDeals +1 damage for every 10 mana the user has over 200"); */
         }
 
         public override void SetDefaults()

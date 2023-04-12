@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Black Fire");
+            // DisplayName.SetDefault("Black Fire");
         }
 
         public override void SetDefaults()
@@ -89,19 +89,19 @@ namespace tsorcRevamp.Projectiles
             }
             return false;
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(5))
             {
-                target.AddBuff(ModContent.BuffType<DarkInferno>(), 240);
+                target.AddBuff(ModContent.BuffType<DarkInferno>(), 4 * 60);
             }
         }
 
-        public override void OnHitPvp(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if (Main.rand.NextBool(5))
+            if (Main.rand.NextBool(5) && info.PvP)
             {
-                target.AddBuff(ModContent.BuffType<DarkInferno>(), 240);
+                target.AddBuff(ModContent.BuffType<DarkInferno>(), 4 * 60);
             }
         }
     }

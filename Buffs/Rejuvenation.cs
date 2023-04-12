@@ -9,8 +9,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Rejuvenation");
-            Description.SetDefault("Healing wounds... so they may not open again");
+            // DisplayName.SetDefault("Rejuvenation");
+            // Description.SetDefault("Healing wounds... so they may not open again");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

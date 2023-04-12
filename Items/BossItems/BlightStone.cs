@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Summons The Blight, one of six guardians of The Abyss." +
+            /* Tooltip.SetDefault("Summons The Blight, one of six guardians of The Abyss." +
                                 "\nYou must fight this battle on the surface." +
-                                "\nThe Blight cannot be fought with the Covenant of Artorias ring equipped.");
+                                "\nThe Blight cannot be fought with the Covenant of Artorias ring equipped."); */
         }
         public override void SetDefaults()
         {

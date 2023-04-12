@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Snow Owl");
+            // DisplayName.SetDefault("Snow Owl");
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.GiantBat];
         }
 
@@ -49,7 +49,7 @@ namespace tsorcRevamp.NPCs.Enemies
             return chance;
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 5; i++)
             {

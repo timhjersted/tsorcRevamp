@@ -54,7 +54,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             Visuals();
 		}
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
 			target.AddBuff(ModContent.BuffType<SunderedDebuff>(), 5 * 60);

@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Barrow Wight Phantom");
+            // DisplayName.SetDefault("Barrow Wight Phantom");
         }
         public override void SetDefaults()
         {
@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         int dragonsBreathDamage = 33;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);
@@ -366,7 +366,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 
-        public override void OnHitPlayer(Player player, int target, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             player.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false); //-20 life after several hits
                                                                                      //player.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false); //-100 life after several hits	

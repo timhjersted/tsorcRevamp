@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A bow forged to slay demon-gods.\nHold FIRE to charge\nArrows are faster and more accurate when the bow is charged");
+            // Tooltip.SetDefault("A bow forged to slay demon-gods.\nHold FIRE to charge\nArrows are faster and more accurate when the bow is charged");
 
         }
 

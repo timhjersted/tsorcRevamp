@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Archer of Lumelia Hairstyle");
-            Tooltip.SetDefault("Gifted with bows, repeaters, and other long range weapons");
+            // DisplayName.SetDefault("Archer of Lumelia Hairstyle");
+            // Tooltip.SetDefault("Gifted with bows, repeaters, and other long range weapons");
         }
 
         public override void SetDefaults()

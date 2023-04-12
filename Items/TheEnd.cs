@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items
         public override string Texture => "tsorcRevamp/Items/Weapons/Magic/DeathStrikeScroll";
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("This item is from the future, and its text is obscured. You will have to progress further in your adventure to reveal it...");
+            // Tooltip.SetDefault("This item is from the future, and its text is obscured. You will have to progress further in your adventure to reveal it...");
         }
 
         public override void SetDefaults()

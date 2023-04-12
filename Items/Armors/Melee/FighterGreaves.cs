@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Adept at close combat\nAdds double jump and jump boost, +12% movement speed");
+            // Tooltip.SetDefault("Adept at close combat\nAdds double jump and jump boost, +12% movement speed");
         }
         public override void SetDefaults()
         {

@@ -81,7 +81,7 @@ namespace tsorcRevamp.Projectiles
         private const int MAX_STICKY_JAVELINS = 8; // This is the max. amount of javelins being able to attach
         private readonly Point[] _stickingJavelins = new Point[MAX_STICKY_JAVELINS]; // The point array holding for sticking javelins
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             IsStickingToTarget = true; // we are sticking to a target
             TargetWhoAmI = target.whoAmI; // Set the target whoAmI
@@ -229,7 +229,7 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath9 with { Volume = 0.8f }, Projectile.Center);
             for (int d = 0; d < 20; d++)

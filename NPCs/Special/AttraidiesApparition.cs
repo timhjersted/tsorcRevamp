@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Special
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Attraidies");
+            // DisplayName.SetDefault("Attraidies");
             Main.npcFrameCount[NPC.type] = 2;
         }
 

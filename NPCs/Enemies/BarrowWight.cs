@@ -286,7 +286,7 @@ namespace tsorcRevamp.NPCs.Enemies
             return;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             if (Main.rand.NextBool(2))
             {
@@ -334,7 +334,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             if (NPC.life <= 0)
             {

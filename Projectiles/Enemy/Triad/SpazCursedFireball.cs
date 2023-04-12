@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cursed Fireball");
+            // DisplayName.SetDefault("Cursed Fireball");
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
         public override void SetDefaults()
@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             Projectile.tileCollide = false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.CursedInferno, 300);
         }

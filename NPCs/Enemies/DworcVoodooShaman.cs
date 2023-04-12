@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dworc Shaman");
+            // DisplayName.SetDefault("Dworc Shaman");
         }
         //yes i tweaked the drop rates. Fight Me
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
@@ -188,7 +188,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 5; i++)
             {

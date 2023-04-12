@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Casts a fast-moving bolt of ice");
+            // Tooltip.SetDefault("Casts a fast-moving bolt of ice");
         }
 
         public override void SetDefaults()

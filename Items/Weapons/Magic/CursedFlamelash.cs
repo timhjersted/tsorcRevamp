@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cursed Tormentor");
-            Tooltip.SetDefault("Summons a lash of cursed flame to blight your foes" +
-                "\nDeals more damage the faster it is moving when it strikes an enemy");
+            // DisplayName.SetDefault("Cursed Tormentor");
+            /* Tooltip.SetDefault("Summons a lash of cursed flame to blight your foes" +
+                "\nDeals more damage the faster it is moving when it strikes an enemy"); */
         }
 
         public override void SetDefaults()

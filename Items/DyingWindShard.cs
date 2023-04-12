@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A shard of the fading Crystal of Wind.");
+            // Tooltip.SetDefault("A shard of the fading Crystal of Wind.");
         }
 
         public override void SetDefaults()

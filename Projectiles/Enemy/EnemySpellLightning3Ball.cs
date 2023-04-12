@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Enemy Spell Lightning 3");
+            // DisplayName.SetDefault("Enemy Spell Lightning 3");
 
         }
 

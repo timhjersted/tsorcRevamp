@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.TestCheat
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Grants damage reduction");
+            // Tooltip.SetDefault("Grants damage reduction");
         }
 
         public override void SetDefaults()

@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Summons 9 electric energy orbs in a square at the point of impact.");
+            // Tooltip.SetDefault("Summons 9 electric energy orbs in a square at the point of impact.");
         }
         public override void SetDefaults()
         {

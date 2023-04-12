@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A sword used to kill magic users." +
+            /* Tooltip.SetDefault("A sword used to kill magic users." +
                                 "\n[c/ffbf00:Does up to 8x damage to mages]" +
-                                "\nEvery third hit with the Blade generates a magic slash");
+                                "\nEvery third hit with the Blade generates a magic slash"); */
         }
         public int shootstacks = 0;
         public override void SetDefaults()
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             Item.shootSpeed = 7.5f;
         }
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             shootstacks += 1;
             if (shootstacks >= 3)
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 shootstacks = 0;
             }
         }
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
             if (target.type == NPCID.DarkCaster
                 || target.type == NPCID.GoblinSorcerer

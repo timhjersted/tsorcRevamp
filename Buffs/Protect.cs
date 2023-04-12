@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Protect");
-            Description.SetDefault("Defense is increased by 30!");
+            // DisplayName.SetDefault("Protect");
+            // Description.SetDefault("Defense is increased by 30!");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

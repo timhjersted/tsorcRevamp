@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Pyroclastic Detonation");
+            // DisplayName.SetDefault("Pyroclastic Detonation");
         }
 
         public override void SetDefaults()
@@ -90,7 +90,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             if (Main.expertMode)
             {

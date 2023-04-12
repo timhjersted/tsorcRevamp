@@ -9,11 +9,11 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Soul Reaper II");
-            Tooltip.SetDefault("Greatly increases Dark Soul pick-up range and" +
+            // DisplayName.SetDefault("Soul Reaper II");
+            /* Tooltip.SetDefault("Greatly increases Dark Soul pick-up range and" +
                                "\nincreases consumable soul drop chance by 50%" +
                                "\nLashes out with a sickle in retaliation" +
-                               "\nGives off an eerie aura");
+                               "\nGives off an eerie aura"); */
         }
 
         public override void SetDefaults()

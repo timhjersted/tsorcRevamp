@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Silversix");
-            Tooltip.SetDefault("Deals extra damage to corrupt/crimson creatures"
-                                + "\nDoesn't require ammo");
+            // DisplayName.SetDefault("Silversix");
+            /* Tooltip.SetDefault("Deals extra damage to corrupt/crimson creatures"
+                                + "\nDoesn't require ammo"); */
         }
 
         public override void SetDefaults()

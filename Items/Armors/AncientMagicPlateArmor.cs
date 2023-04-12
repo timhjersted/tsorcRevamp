@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Fueled by a magical gem in the chest\nIncreases all attack speed by 12%(doubled for melee)" +
+            /* Tooltip.SetDefault("Fueled by a magical gem in the chest\nIncreases all attack speed by 12%(doubled for melee)" +
                                "\nSet Bonus: Chance to gain stacks upon damaging anything" +
-                               "\nCollect stacks to gain up to 28% damage reduction against the next hit");
+                               "\nCollect stacks to gain up to 28% damage reduction against the next hit"); */
         }
         public override void SetDefaults()
         {

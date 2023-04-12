@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar {
     internal class SunsetQuasarToken : ModProjectile {
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Gwyn/Petal";
         public override void SetStaticDefaults() {
-            DisplayName.SetDefault("Sunset Quasar");
+            // DisplayName.SetDefault("Sunset Quasar");
             Main.projPet[Projectile.type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
         }

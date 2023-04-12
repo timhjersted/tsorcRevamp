@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             int gravDamage = (int)(target.statLifeMax2 * 0.05f);
             target.statLife -= gravDamage;

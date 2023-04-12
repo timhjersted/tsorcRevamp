@@ -63,7 +63,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(ModContent.BuffType<Crippled>(), 600);
             target.AddBuff(BuffID.OnFire, 300);

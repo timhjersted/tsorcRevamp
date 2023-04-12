@@ -17,13 +17,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public float DashingTimer = 0f;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Plasma Whirlwind");
-            Tooltip.SetDefault("Thrusts on right click, cooldown scales down with attack speed" +
+            // DisplayName.SetDefault("Plasma Whirlwind");
+            /* Tooltip.SetDefault("Thrusts on right click, cooldown scales down with attack speed" +
                 "\nGain a stack of Steel Tempest upon thrusting any enemy" +
                 "\nUpon reaching 2 stacks, the next right click will release a plasma whirlwind" +
                 "\nHover your mouse over an enemy and press Special Ability to dash through the enemy" +
                 "\nThis grants you brief invulnerability and a huge melee damage boost" +
-                "\n'A companion for this Odyssey'");
+                "\n'A companion for this Odyssey'"); */
         }
         public override void SetDefaults()
         {

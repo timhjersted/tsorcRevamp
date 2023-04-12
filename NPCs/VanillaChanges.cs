@@ -5583,7 +5583,7 @@ namespace tsorcRevamp.NPCs
             spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, Color.Orange * 0.2f, npc.rotation, origin, npc.scale, effects, 0f);
         }
 
-        public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             if (projectile.DamageType != DamageClass.Melee)
             {
@@ -5601,7 +5601,7 @@ namespace tsorcRevamp.NPCs
             base.OnHitByProjectile(npc, projectile, damage, knockback, crit);
         }
 
-        public override void OnHitByItem(NPC npc, Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             
             base.OnHitByItem(npc, player, item, damage, knockback, crit);
@@ -5866,7 +5866,7 @@ namespace tsorcRevamp.NPCs
             }
         }
 
-        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             if (npc.type == NPCID.WallofFlesh || npc.type == NPCID.WallofFleshEye || npc.type == NPCID.TheHungry || npc.type == NPCID.TheHungryII)
             {
@@ -5874,7 +5874,7 @@ namespace tsorcRevamp.NPCs
             }
         }
 
-        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (npc.type == NPCID.WallofFlesh || npc.type == NPCID.WallofFleshEye || npc.type == NPCID.TheHungry || npc.type == NPCID.TheHungryII)
             {

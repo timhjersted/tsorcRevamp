@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Praise the sun!" +
-                                "\nDoes quadruple damage against the heartless");
+            /* Tooltip.SetDefault("Praise the sun!" +
+                                "\nDoes quadruple damage against the heartless"); */
         }
 
         public override void SetDefaults()
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
             //todo add mod NPCs to this list
             if (NPCID.Sets.Skeletons[target.type]

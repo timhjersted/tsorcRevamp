@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Redirects curse, restoring all of your lost max HP" +
+            /* Tooltip.SetDefault("Redirects curse, restoring all of your lost max HP" +
                                "\nWon't increase max HP over the maximum achieved" +
-                               "\nvia Life Crystals or Life Fruit");
+                               "\nvia Life Crystals or Life Fruit"); */
         }
 
         public override void SetDefaults()

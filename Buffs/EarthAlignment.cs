@@ -7,9 +7,9 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Alignment of the Earth");
-            Description.SetDefault("The world's gravity offers no resistance to your flight \n" +
-                                   "The entire planet's energy is lifting you up to face to Attraidies' dark power...");
+            // DisplayName.SetDefault("Alignment of the Earth");
+            /* Description.SetDefault("The world's gravity offers no resistance to your flight \n" +
+                                   "The entire planet's energy is lifting you up to face to Attraidies' dark power..."); */
 
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;

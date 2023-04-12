@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Explosion");
+            // DisplayName.SetDefault("Dark Explosion");
         }
 
         public override void SetDefaults()
@@ -77,7 +77,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 36000, false);
 

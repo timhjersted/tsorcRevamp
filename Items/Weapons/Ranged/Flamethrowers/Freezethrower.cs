@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Flamethrowers
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Uses Gel as ammo." +
-                                "\nHas a chance to freeze");
+            /* Tooltip.SetDefault("Uses Gel as ammo." +
+                                "\nHas a chance to freeze"); */
         }
         public override void SetDefaults()
         {

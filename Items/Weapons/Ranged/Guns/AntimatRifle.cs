@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Antimat Rifle");
-            Tooltip.SetDefault("Unbelievable damage at the cost of a 2.5 second cooldown between shots \n" +
+            // DisplayName.SetDefault("Antimat Rifle");
+            /* Tooltip.SetDefault("Unbelievable damage at the cost of a 2.5 second cooldown between shots \n" +
                                 "Fires piercing high-velocity rounds that punch through thin walls\n" +
-                                "Damage increases with enemy armor");
+                                "Damage increases with enemy armor"); */
         }
 
         public override void SetDefaults()

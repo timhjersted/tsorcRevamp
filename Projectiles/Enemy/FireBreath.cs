@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fire Breath");
+            // DisplayName.SetDefault("Fire Breath");
 
         }
         public override void SetDefaults()

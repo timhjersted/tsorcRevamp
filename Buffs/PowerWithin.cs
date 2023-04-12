@@ -8,8 +8,8 @@ namespace tsorcRevamp.Buffs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Power Within");
-            Description.SetDefault("Excessive power is eating away at you!");
+            // DisplayName.SetDefault("Power Within");
+            // Description.SetDefault("Excessive power is eating away at you!");
             Main.buffNoTimeDisplay[Type] = false;
             Main.debuff[Type] = true;
             Terraria.ID.BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;

@@ -90,7 +90,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             int buffLengthMod = 1;
             if (Main.expertMode)

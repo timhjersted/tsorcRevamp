@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases melee damage by 15%" +
+            /* Tooltip.SetDefault("Increases melee damage by 15%" +
                 "\nSet bonus: Increases melee damage by 10% multiplicatively" +
-                "\nGrants the Magma Stone effect");
+                "\nGrants the Magma Stone effect"); */
         }
         public override void SetDefaults()
         {

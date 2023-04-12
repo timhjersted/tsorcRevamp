@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             return true;
         }
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.Poisoned, 2400);
             target.AddBuff(BuffID.Bleeding, 2400);

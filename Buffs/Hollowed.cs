@@ -5,8 +5,8 @@ namespace tsorcRevamp.Buffs;
 public class Hollowed : ModBuff {
     public override string Texture => "tsorcRevamp/Buffs/EmptyBuff_Grey";
     public override void SetStaticDefaults() {
-        DisplayName.SetDefault("Hollowed");
-        Description.SetDefault("Max HP reduced by 20%");
+        // DisplayName.SetDefault("Hollowed");
+        // Description.SetDefault("Max HP reduced by 20%");
         Main.debuff[Type] = true;
         Main.buffNoTimeDisplay[Type] = true;
     }

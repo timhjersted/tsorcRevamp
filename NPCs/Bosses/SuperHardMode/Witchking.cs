@@ -51,13 +51,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         bool defenseBroken = false;
 
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = (int)(NPC.damage / 2);
             blackBreathDamage = (int)(blackBreathDamage / 2);
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             
                 target.AddBuff(BuffID.Weak, 7200);
@@ -66,7 +66,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             
         }
 
-        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             if (NPC.justHit && Main.rand.NextBool(12))
             {
@@ -83,7 +83,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         }
 
-        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(8))
             {
@@ -618,7 +618,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             if (//item.type == ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() see artorias for an explanation
                 item.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenGaiaSword>())
@@ -631,7 +631,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 damage = 1;
             }
         }
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (projectile.type == ModContent.ProjectileType<Projectiles.Shortswords.BarrowBladeProjectile>())
             {
@@ -644,7 +644,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             if (NPC.life <= 0)
             {

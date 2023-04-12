@@ -60,7 +60,7 @@ namespace tsorcRevamp.Projectiles
                 Dust.NewDust(projPosition, Projectile.width, Projectile.height, 245, 0f, 0f, 0, default, 1f);
             }
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             for (int d = 0; d < 20; d++)
             {

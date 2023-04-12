@@ -433,36 +433,25 @@ namespace tsorcRevamp.Projectiles.Flails
 			return base.Colliding(projHitbox, targetHitbox);
 		}
 
-		public override void ModifyDamageScaling(ref float damageScale)
-		{
-			// Flails do 50% damage while spinning
-			if (CurrentAIState == AIState.Spinning)
-				damageScale *= 0.5f;
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            if (CurrentAIState == AIState.Spinning)
+            {
+                modifiers.FinalDamage *= 0.5f;
+            }
+            modifiers.HitDirectionOverride = (Main.player[Projectile.owner].Center.X < target.Center.X) ? 1 : (-1);
+            if (CurrentAIState == AIState.Spinning)
+            {
+                modifiers.Knockback *= 0.25f;
+            }
+            if (CurrentAIState == AIState.Dropping)
+            {
+                modifiers.Knockback *= 0.5f;
+            }
+        }
 
-			// Flails do 100% damage while launched or retracting. (This is the damage the item tooltip for flails aim to match, as this is the most common mode of attack. This is why the item has ItemID.Sets.ToolTipDamageMultiplier[Type] = 2f;) ?????? Vanilla Flails deal 1x while thrown and .5x while spinning, just increase the actual damage to be 1 to 1 and spare yourself this crap
-			if (CurrentAIState == AIState.LaunchingForward || CurrentAIState == AIState.Retracting)
-				damageScale *= 1f;
-		}
-
-		public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
-		{
-			// Flails do a few custom things, you'll want to keep these to have the same feel as vanilla flails.
-
-			// The hitDirection is always set to hit away from the player, even if the flail damages the npc while returning
-			hitDirection = (Main.player[Projectile.owner].Center.X < target.Center.X) ? 1 : (-1);
-
-			// Knockback is only 50% as powerful when in spin mode
-			if (CurrentAIState == AIState.Spinning)
-				knockback *= 0.5f;
-			// Knockback is 100% as powerful when in drop down mode
-			if (CurrentAIState == AIState.Dropping)
-				knockback *= 1f;
-
-			base.ModifyHitNPC(target, ref damage, ref knockback, ref crit, ref hitDirection);
-		}
-
-		// PreDraw is used to draw a chain and trail before the projectile is drawn normally.
-		public override bool PreDraw(ref Color lightColor)
+        // PreDraw is used to draw a chain and trail before the projectile is drawn normally.
+        public override bool PreDraw(ref Color lightColor)
 		{
 			Vector2 playerArmPosition = Main.GetPlayerArmPosition(Projectile);
 

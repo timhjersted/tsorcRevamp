@@ -10,7 +10,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ancient Demon of the Abyss");
+            // DisplayName.SetDefault("Ancient Demon of the Abyss");
         }
 
         public override void SetDefaults()
@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int blackFireDamage = 147;
         int greatAttackDamage = 162;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);
@@ -68,7 +68,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(20, 1200, false); //poisoned
             target.AddBuff(30, 1200, false); //bleeding
@@ -120,7 +120,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             get => Main.player[NPC.target];
         }
         //PROJECTILE HIT LOGIC
-        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             tsorcRevampAIs.RedKnightOnHit(NPC, true);
 
@@ -147,7 +147,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         }
 
-        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
 
             //TELEPORT RANGED
@@ -528,7 +528,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             if (NPC.life <= 0)
             {

@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     {
         public override void SetStaticDefaults()
         { 
-            Tooltip.SetDefault("Fires blasts of scorching plasma"
+            /* Tooltip.SetDefault("Fires blasts of scorching plasma"
                                 + "\nDealing damage charges its capacitor" +
-                                "\nWhen full, right-click to fire a massive laser");
+                                "\nWhen full, right-click to fire a massive laser"); */
         }
 
         public override void SetDefaults()

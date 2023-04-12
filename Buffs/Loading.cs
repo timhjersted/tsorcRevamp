@@ -9,8 +9,8 @@ namespace tsorcRevamp.Buffs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Loading");
-            Description.SetDefault("You're being held in position while the world finishes loading!");
+            // DisplayName.SetDefault("Loading");
+            // Description.SetDefault("You're being held in position while the world finishes loading!");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

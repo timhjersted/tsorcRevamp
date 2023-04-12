@@ -9,11 +9,11 @@ namespace tsorcRevamp.Items.Accessories.Expert
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth." +
+            /* Tooltip.SetDefault("This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth." +
                                 "\nThe ringstone doubles magic damage and boosts magic crit by 50%," +
                                 "\nbut at the cost of 50% max HP. " +
                                 "\nYour previous max HP is restored when the ring is removed. " +
-                                "\nHealing enchantment provides +7 Life Regen.");
+                                "\nHealing enchantment provides +7 Life Regen."); */
         }
 
         public override void SetDefaults()

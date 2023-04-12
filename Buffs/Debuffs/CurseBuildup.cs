@@ -9,12 +9,12 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Curse Buildup");
+            // DisplayName.SetDefault("Curse Buildup");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }
 
-        public override void ModifyBuffTip(ref string tip, ref int rare)
+        public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
             tip = "When the counter reaches 100, something bad happens. Curse buildup is at " + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().CurseLevel;
         }

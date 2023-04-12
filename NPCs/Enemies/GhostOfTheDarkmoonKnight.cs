@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ghost of the Darkmoon Knight");
+            // DisplayName.SetDefault("Ghost of the Darkmoon Knight");
         }
 
         public override void SetDefaults()
@@ -69,7 +69,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(BuffID.Slow, 300);
 
@@ -80,7 +80,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             if (NPC.life <= 0)
             {

@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wand of Frost");
-            Tooltip.SetDefault("A powerful wand made for fighting magic users that can shoot through walls." +
-                                "\nCan be upgraded with 25,000 Dark Souls, 60 Crystal Shards, and 5 Souls of Light");
+            // DisplayName.SetDefault("Wand of Frost");
+            /* Tooltip.SetDefault("A powerful wand made for fighting magic users that can shoot through walls." +
+                                "\nCan be upgraded with 25,000 Dark Souls, 60 Crystal Shards, and 5 Souls of Light"); */
             Item.staff[Item.type] = true;
         }
 
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.width = 30;
             Item.shoot = ModContent.ProjectileType<Projectiles.Icicle>();
         }
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.Frostburn, 360);
         }

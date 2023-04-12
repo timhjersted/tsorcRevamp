@@ -125,28 +125,23 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			return false; // still charging
 		}
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Player player = Main.player[Main.myPlayer];
             Vector2 WhipTip = new Vector2(11, 14) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
             List<Vector2> points = Projectile.WhipPointsForCollision;
             if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
             {
-                crit = true;
-                if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
-                {
-                    damage *= 5;
-                    damage /= 4;
-                }
+				modifiers.SetCrit();
             }
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
             TerraCharges = (int)ChargeTime / 40 + 1;
             Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.TerraFallBuff>(), TerraCharges * 150);
 			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.TerraFallDebuff>(), TerraCharges * 150);
             Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
-			Projectile.damage = (int)(damage * ((float)TerraCharges / 10 + 0.6f)); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
+			Projectile.damage = (int)(Projectile.damage * ((float)TerraCharges / 10 + 0.6f)); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
 		}
 
 		// This method draws a line between all points of the whip, in case there's empty space between the sprites.

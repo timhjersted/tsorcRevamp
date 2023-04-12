@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Radioactive Blinding Laser");
+			// DisplayName.SetDefault("Radioactive Blinding Laser");
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5; // The length of old position to be recorded
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // The recording mode
 		}
@@ -46,7 +46,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             //Dust.NewDust(Projectile.Center + new Vector2(-5, -5), 10, 10, DustID.PoisonStaff, 0, 0, 0, Color.LimeGreen, 0.75f);
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(ModContent.BuffType<IrradiatedDebuff>(), 2 * 60);
             target.AddBuff(BuffID.Confused, 2 * 60);

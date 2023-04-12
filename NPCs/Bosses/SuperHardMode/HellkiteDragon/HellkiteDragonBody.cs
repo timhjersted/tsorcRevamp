@@ -35,20 +35,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         }
         
         int fireDamage = 100;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = (int)(NPC.damage / 2);
             fireDamage = (int)(fireDamage / 2);
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false);
         }
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Hellkite Dragon");
+            // DisplayName.SetDefault("Hellkite Dragon");
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
                 Hide = true
             };
@@ -86,7 +86,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 NPC.active = false;
             }
         }
-        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             if (projectile.DamageType != DamageClass.Melee)
             {

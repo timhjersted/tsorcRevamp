@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Laser Probe");
+            // DisplayName.SetDefault("Laser Probe");
         }
 
         public override void SetDefaults()

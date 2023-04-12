@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Emits blue light, longer invincibility and starcloak effect.");
+            // Tooltip.SetDefault("Emits blue light, longer invincibility and starcloak effect.");
         }
 
         public override void SetDefaults()

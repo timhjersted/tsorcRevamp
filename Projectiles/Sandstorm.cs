@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sandstorm");
+            // DisplayName.SetDefault("Sandstorm");
         }
         public override void SetDefaults()
         {

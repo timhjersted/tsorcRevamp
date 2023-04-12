@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Thorn Decapitator");
-            Tooltip.SetDefault("Creates spore clouds on top of struck enemies");
+            // DisplayName.SetDefault("Thorn Decapitator");
+            // Tooltip.SetDefault("Creates spore clouds on top of struck enemies");
 
         }
         public int shootstacks = 0;
@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             Item.shootSpeed = 1f;
         }
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             //player.Center + Main.rand.NextVector2CircularEdge(100, 100)
             if (crit)

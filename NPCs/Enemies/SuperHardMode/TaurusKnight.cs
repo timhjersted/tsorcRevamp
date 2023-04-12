@@ -10,7 +10,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Taurus Knight");
+            // DisplayName.SetDefault("Taurus Knight");
         }
         public override void SetDefaults()
         {
@@ -41,7 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int tridentDamage = 25;
         int crystalFireDamage = 50;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);

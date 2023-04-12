@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Owls Arrow");
+            // DisplayName.SetDefault("Owls Arrow");
             ProjectileID.Sets.MinionShot[Projectile.type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
             Main.projFrames[Projectile.type] = 6;
@@ -68,7 +68,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
 
             return false;
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             for (int d = 0; d < 15; d++)
             {

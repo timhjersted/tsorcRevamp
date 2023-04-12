@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("[c/ffbf00:Dark Cloak gives +10 defense when life falls below 40%]");
+            // Tooltip.SetDefault("[c/ffbf00:Dark Cloak gives +10 defense when life falls below 40%]");
         }
 
         public override void SetDefaults()

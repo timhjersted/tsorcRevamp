@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Accessories.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Enchanted Wizard's Hat");
-            Tooltip.SetDefault("Increases magic damage by 13% multiplicatively" +
-                "\n+80 max Mana");
+            // DisplayName.SetDefault("Enchanted Wizard's Hat");
+            /* Tooltip.SetDefault("Increases magic damage by 13% multiplicatively" +
+                "\n+80 max Mana"); */
         }
 
         public override void SetDefaults()

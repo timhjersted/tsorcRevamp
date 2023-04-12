@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 6;
-			DisplayName.SetDefault("Plasma Whirlwind Thrust");
+			// DisplayName.SetDefault("Plasma Whirlwind Thrust");
         }
 
 
@@ -114,7 +114,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			float collisionPoint = 0f;
 			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
 		}
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
             if (steeltempesthittimer2 == 0)

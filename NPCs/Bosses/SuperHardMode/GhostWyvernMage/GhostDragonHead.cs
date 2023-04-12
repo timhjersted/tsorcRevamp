@@ -41,13 +41,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         int lightningDamage = 50;
 
         public static int drawOffset = 52;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             
             target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false);
@@ -56,7 +56,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ghost Wyvern");
+            // DisplayName.SetDefault("Ghost Wyvern");
         }
 
         NPCDespawnHandler despawnHandler;

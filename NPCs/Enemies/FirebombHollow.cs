@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Firebomb Hollow");
+            // DisplayName.SetDefault("Firebomb Hollow");
             Main.npcFrameCount[NPC.type] = 14;
         }
 
@@ -117,7 +117,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(new DropMultiple(armorIDs, 30, 1, !NPC.downedBoss1));
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 10; i++)
             {
@@ -540,7 +540,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             if (AI_State == State_Firebombing && AI_State_Timer_1 < 45)
             {
@@ -548,7 +548,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             if (AI_State == State_Firebombing && AI_State_Timer_1 < 45)
             {

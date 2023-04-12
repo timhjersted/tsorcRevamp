@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Purple Crush");
+            // DisplayName.SetDefault("Purple Crush");
         }
 
         public override bool PreKill(int timeLeft)
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.velocity.Y *= 1.01f;
             }
         }
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(22, 18000, false);
             target.AddBuff(30, 600, false);

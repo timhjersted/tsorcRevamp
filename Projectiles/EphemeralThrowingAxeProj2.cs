@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.timeLeft = 50;
         }
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             //todo add mod NPCs to this list
             if (target.type == NPCID.Tim

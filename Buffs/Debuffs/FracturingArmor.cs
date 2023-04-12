@@ -8,12 +8,12 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fracturing Armor");
+            // DisplayName.SetDefault("Fracturing Armor");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }
 
-        public override void ModifyBuffTip(ref string tip, ref int rare)
+        public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
             tip = "Your armor is crumbling away. Defense reduced by " + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().FracturingArmor;
         }

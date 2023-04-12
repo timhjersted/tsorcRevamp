@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+12% movement speed" +
-                "\nCan be bought");
+            /* Tooltip.SetDefault("+12% movement speed" +
+                "\nCan be bought"); */
         }
         public override void SetDefaults()
         {

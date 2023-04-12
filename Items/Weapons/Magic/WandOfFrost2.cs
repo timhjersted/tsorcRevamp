@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wand of Frost II");
-            Tooltip.SetDefault("Reforged to reveal the full power of this ancient ice spell" +
-                                "\nCan pass through walls");
+            // DisplayName.SetDefault("Wand of Frost II");
+            /* Tooltip.SetDefault("Reforged to reveal the full power of this ancient ice spell" +
+                                "\nCan pass through walls"); */
             Item.staff[Item.type] = true;
         }
 
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.width = 30;
             Item.shoot = ModContent.ProjectileType<Projectiles.Icicle>();
         }
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.Frostburn2, 360);
         }

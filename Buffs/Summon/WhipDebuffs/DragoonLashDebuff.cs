@@ -34,7 +34,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 		}
 
 		// TODO: Inconsistent with vanilla, increasing damage AFTER it is randomised, not before. Change to a different hook in the future.
-		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
 		{
             var owner = Main.player[projectile.owner];
             int whipDamage = (int)owner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(90); //90 is the bsae damage of the Dragoon Lash

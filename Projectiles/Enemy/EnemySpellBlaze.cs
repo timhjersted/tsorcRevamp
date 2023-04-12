@@ -60,7 +60,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         #endregion
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             int expertScaling = 1;
             if (Main.expertMode) expertScaling = 2;

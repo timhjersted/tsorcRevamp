@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Barbarous Thorn Blade");
-            Tooltip.SetDefault("A blade that lashes out with the fury of a mythical beast"
-            + "\nRight-click to shoot briars");
+            // DisplayName.SetDefault("Barbarous Thorn Blade");
+            /* Tooltip.SetDefault("A blade that lashes out with the fury of a mythical beast"
+            + "\nRight-click to shoot briars"); */
         }
         public override void SetDefaults()
         {

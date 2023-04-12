@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Accessories.Mobility
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("15% increased movement speed" +
+            /* Tooltip.SetDefault("15% increased movement speed" +
                                 "\n20% increased melee speed" +
-                                "\nGrants autoswing to melee weapons and whips");
+                                "\nGrants autoswing to melee weapons and whips"); */
         }
 
         public override void SetDefaults()

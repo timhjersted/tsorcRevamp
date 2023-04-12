@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Obsidian Jellyfish");
+            // DisplayName.SetDefault("Obsidian Jellyfish");
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.PinkJellyfish];
         }
 
@@ -62,7 +62,7 @@ namespace tsorcRevamp.NPCs.Enemies
             return chance;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(BuffID.ObsidianSkin, 1800, true);
 
@@ -76,7 +76,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 target.AddBuff(BuffID.Bleeding, 3600, true);
             }
         }
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 15; i++)
             {

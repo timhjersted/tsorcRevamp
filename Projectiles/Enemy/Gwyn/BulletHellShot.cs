@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Lightning Spear");
+            // DisplayName.SetDefault("Lightning Spear");
         }
         public override void SetDefaults()
         {
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn
             Projectile.rotation = Projectile.velocity.ToRotation();
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(ModContent.BuffType<FracturingArmor>(), 1500);
         }

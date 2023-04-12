@@ -58,7 +58,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             Main.player[Main.myPlayer].AddBuff(BuffID.Frozen, 15, false);
         }

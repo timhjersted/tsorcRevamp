@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Ring that guards against death." +
-                                "\nPuts \"protect\" on wearer (+30 defense).");
+            /* Tooltip.SetDefault("Ring that guards against death." +
+                                "\nPuts \"protect\" on wearer (+30 defense)."); */
         }
 
         public override void SetDefaults()

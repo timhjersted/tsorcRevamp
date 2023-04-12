@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
 {
     internal class SunsetQuasarMinion : ModProjectile {
         public override void SetStaticDefaults() {
-            DisplayName.SetDefault("Sunset Quasar");
+            // DisplayName.SetDefault("Sunset Quasar");
             Main.projFrames[Projectile.type] = 27;
             Main.projPet[Projectile.type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;

@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Breath of the Jungle");
+            // DisplayName.SetDefault("Breath of the Jungle");
 
         }
         public override void SetDefaults()
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)))
             {

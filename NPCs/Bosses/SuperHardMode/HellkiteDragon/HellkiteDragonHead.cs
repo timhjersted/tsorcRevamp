@@ -63,7 +63,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
         public float CollisionTimer;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = (int)(NPC.damage / 2);
             breathDamage = (int)(breathDamage / 2);
@@ -72,7 +72,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Hellkite Dragon");
+            // DisplayName.SetDefault("Hellkite Dragon");
         }
 
         int breathCD = 90;
@@ -227,7 +227,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 }
             }
         }
-        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             if(projectile.DamageType != DamageClass.Melee)
             {

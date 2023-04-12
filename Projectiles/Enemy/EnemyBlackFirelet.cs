@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Black Fire");
+            // DisplayName.SetDefault("Black Fire");
 
         }
         public override void SetDefaults()
@@ -88,7 +88,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(ModContent.BuffType<DarkInferno>(), 240, false);
         }

@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Weapons.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			Tooltip.SetDefault("What will you see next time you look?" +
+			/* Tooltip.SetDefault("What will you see next time you look?" +
 				"\nSplits off a fragment of your soul to fight for you" +
-                "\nUses 2 minion slots");
+                "\nUses 2 minion slots"); */
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller

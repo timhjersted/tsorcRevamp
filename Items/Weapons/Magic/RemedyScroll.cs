@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Remedy");
-            Tooltip.SetDefault("A lost tome known to cure all but the rarest of ailments.");
+            // DisplayName.SetDefault("Remedy");
+            // Tooltip.SetDefault("A lost tome known to cure all but the rarest of ailments.");
         }
         public override void SetDefaults()
         {

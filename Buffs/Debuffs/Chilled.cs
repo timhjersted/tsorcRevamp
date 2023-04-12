@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs.Debuffs
     { //every instance of the Chilled buff in the original source should be this one, not the vanilla one
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Frostbite");
-            Description.SetDefault("Defense and speed reduced");
+            // DisplayName.SetDefault("Frostbite");
+            // Description.SetDefault("Defense and speed reduced");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

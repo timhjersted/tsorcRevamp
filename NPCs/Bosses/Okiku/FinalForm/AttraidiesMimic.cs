@@ -44,7 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Attraidies");
+            // DisplayName.SetDefault("Attraidies");
         }
 
 
@@ -285,7 +285,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             }
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             if (NPC.life <= 0)
             {

@@ -9,11 +9,11 @@ namespace tsorcRevamp.Items
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("[c/ffbf00:Heals 30 HP, with only 5 seconds of potion sickness.]" +
+            /* Tooltip.SetDefault("[c/ffbf00:Heals 30 HP, with only 5 seconds of potion sickness.]" +
                                 "\n[c/ffbf00:Removes bleeding and poisoned.]" +
                                 "\nA supply of these may be essential for exploring some areas." +                            
                                 "\nCan still be used to remove poison and bleeding while under the" +
-                                "\neffect of potion sickness. However, it will not heal any HP.");
+                                "\neffect of potion sickness. However, it will not heal any HP."); */
         }
         public override void SetDefaults()
         {

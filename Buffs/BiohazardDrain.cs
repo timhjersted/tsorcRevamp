@@ -11,8 +11,8 @@ namespace tsorcRevamp.Buffs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Biohazard Drain");
-            Description.SetDefault("Rapidly losing life");
+            // DisplayName.SetDefault("Biohazard Drain");
+            // Description.SetDefault("Rapidly losing life");
         }
 
         public override void Update(NPC npc, ref int buffIndex)

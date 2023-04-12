@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Red Hero's hat");
-            Tooltip.SetDefault("Skill: Longer invincibility after being hit, +80 max mana" +
-                "\nCan be upgraded to it's master form with 80,000 Dark Souls");
+            // DisplayName.SetDefault("Red Hero's hat");
+            /* Tooltip.SetDefault("Skill: Longer invincibility after being hit, +80 max mana" +
+                "\nCan be upgraded to it's master form with 80,000 Dark Souls"); */
         }
         public override void SetDefaults()
         {

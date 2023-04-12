@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Main.dust[dust].noGravity = true;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(ModContent.BuffType<Hold>(), 30, false); //was 120
         }

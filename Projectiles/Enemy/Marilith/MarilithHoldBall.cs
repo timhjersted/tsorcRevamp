@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(ModContent.BuffType<Buffs.MarilithHold>(), 30, false);
         }

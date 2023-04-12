@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Frozen Orb");
+            // DisplayName.SetDefault("Frozen Orb");
 
         }
         public override void SetDefaults()
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, 15, Projectile.velocity.X, Projectile.velocity.Y, 250, default(Color), 1f);
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             int expertMultiplier = 1;
             if (Main.expertMode) expertMultiplier = 2;

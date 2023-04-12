@@ -84,7 +84,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             Dust.NewDust(Projectile.TopLeft, 16, 16, DustID.HeatRay, 0, 0, 200, Color.Firebrick, 1f);
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
             player.statMana += player.GetManaCost(player.HeldItem) / 2;

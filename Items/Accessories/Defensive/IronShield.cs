@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Reduces damage taken by 4% " +
+            /* Tooltip.SetDefault("Reduces damage taken by 4% " +
                                 "\nbut also reduces movement speed by 10%" +
-                                "\nCan be upgraded with 500 Dark Souls.");
+                                "\nCan be upgraded with 500 Dark Souls."); */
         }
 
         public override void SetDefaults()

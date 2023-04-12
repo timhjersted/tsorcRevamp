@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Tibian Valkyrie");
+            // DisplayName.SetDefault("Tibian Valkyrie");
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Skeleton];
         }
 
@@ -129,7 +129,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
 
             tsorcRevampAIs.RedKnightOnHit(NPC, true);
@@ -140,7 +140,7 @@ namespace tsorcRevamp.NPCs.Enemies
             
         }
 
-        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
 
             tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
@@ -172,7 +172,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
         #region Gore
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 5; i++)
             {

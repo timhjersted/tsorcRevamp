@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Charm Cooldown");
-            Description.SetDefault("You can't cast another Charm until this runs out");
+            // DisplayName.SetDefault("Charm Cooldown");
+            // Description.SetDefault("You can't cast another Charm until this runs out");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

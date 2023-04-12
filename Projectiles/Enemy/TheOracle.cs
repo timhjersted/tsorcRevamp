@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.type = ProjectileID.Grenade;
             return true;
         }
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             int buffLengthMod = 1;
             if (Main.expertMode)

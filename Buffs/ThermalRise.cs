@@ -9,8 +9,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Updraft");
-            Description.SetDefault("Heat from the lasers is extending your flight!");
+            // DisplayName.SetDefault("Updraft");
+            // Description.SetDefault("Heat from the lasers is extending your flight!");
 
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;

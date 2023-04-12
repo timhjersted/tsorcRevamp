@@ -99,26 +99,22 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 			}
 			Visuals();
 		}
-        public override void ModifyDamageScaling(ref float damageScale)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 		{
 			if (CurrentAIState  == AIState.Retracting)
-				damageScale *= 2f;
-		}
+			{
+				modifiers.FinalDamage *= 2;
+            }
+            modifiers.HitDirectionOverride = (Main.player[Projectile.owner].Center.X < target.Center.X) ? 1 : (-1);
+        }
 
-		public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
-		{
-			hitDirection = (Main.player[Projectile.owner].Center.X < target.Center.X) ? 1 : (-1);
-
-			base.ModifyHitNPC(target, ref damage, ref knockback, ref crit, ref hitDirection);
-		}
-
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
 			if (EssenceThiefTimer1 == 0)
             {
                 player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
-                if (crit)
+                if (hit.Crit)
                 {
                     player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
                 }

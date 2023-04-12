@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases maximum life by 20%");
+            // Tooltip.SetDefault("Increases maximum life by 20%");
         }
 
         public override void SetDefaults()

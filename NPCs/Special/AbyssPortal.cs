@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Special
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Abyssal Fissure");
+            // DisplayName.SetDefault("Abyssal Fissure");
         }
 
         bool initialized;

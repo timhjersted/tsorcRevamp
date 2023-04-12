@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.light = 0.6f;
 
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(5))
             {

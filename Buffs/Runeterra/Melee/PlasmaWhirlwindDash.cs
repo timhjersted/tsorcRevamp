@@ -9,8 +9,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sweeping Blade");
-            Description.SetDefault("Invulnerability and melee damage boost");
+            // DisplayName.SetDefault("Sweeping Blade");
+            // Description.SetDefault("Invulnerability and melee damage boost");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

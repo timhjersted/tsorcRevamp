@@ -8,11 +8,11 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Heals 150 HP and applies 30 seconds of Potion Sickness\n"
+            /* Tooltip.SetDefault("Heals 150 HP and applies 30 seconds of Potion Sickness\n"
                 + "Potion sickness is only 20 seconds with the Philosopher's Stone effect\n"
                 + "Gives Well Fed buff for 15 minutes"
                 + "While the [c/6d8827:Bearer of the Curse] wont be healed by this,\n"
-                + "they still gain some healing items' other effects such as buffs");
+                + "they still gain some healing items' other effects such as buffs"); */
         }
 
         public override void SetDefaults()

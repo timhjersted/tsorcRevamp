@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Summon
 		
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Phoenix Juvenile");
+			// DisplayName.SetDefault("Phoenix Juvenile");
 			Main.projFrames[Projectile.type] = 7;
 			// This is necessary for right-click targeting
 			ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
@@ -48,7 +48,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			Projectile.localNPCHitCooldown = 20;
 		}
 
-		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
 			ragestacksfallofftimer = 0;
 			ragestackstimer = 0;

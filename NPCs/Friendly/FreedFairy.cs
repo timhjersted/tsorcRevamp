@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Friendly
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Freed Fairy");
+            // DisplayName.SetDefault("Freed Fairy");
             Main.npcFrameCount[NPC.type] = 6;
             //NPCID.Sets.HatOffsetY[npc.type] = 4;
         }
@@ -87,7 +87,7 @@ namespace tsorcRevamp.NPCs.Friendly
         }
 
         bool droppedCrystallineShard = false;
-        public override void OnChatButtonClicked(bool firstButton, ref bool shop)
+        public override void OnChatButtonClicked(bool firstButton, ref string shopName)
         {
             if (!droppedCrystallineShard)
             {

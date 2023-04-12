@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jungle Wyvern Juvenile");
+            // DisplayName.SetDefault("Jungle Wyvern Juvenile");
         }
         public override void SetDefaults()
         {
@@ -311,7 +311,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
             }
         }
 
-        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             damage *= 2;
             base.OnHitByItem(player, item, damage, knockback, crit);

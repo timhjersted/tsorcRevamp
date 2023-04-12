@@ -35,7 +35,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.buffImmune[BuffID.Confused] = true;
         }
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);
@@ -420,7 +420,7 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
         #region Debuffs
-        public override void OnHitPlayer(Player player, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             player.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 life if counter hits 100
             player.AddBuff(BuffID.Poisoned, 600, false); //poisoned

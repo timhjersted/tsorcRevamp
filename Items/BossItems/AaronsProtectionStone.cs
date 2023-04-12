@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The volcanic stoned etched in Aaron's image" +
+            /* Tooltip.SetDefault("The volcanic stoned etched in Aaron's image" +
                                 "\nSaid to protect the one who carries it in times of despair" +
                                 "\n[c/00ffd4:It's true use may reveal itself in time...or at a particular location...]" +
-                                "\nNot MP compatible currently");
+                                "\nNot MP compatible currently"); */
             //"\n[c/00ffd4:Use this at the top of The Temple Shrine of The Wall] if your first attempt" +
             //"\ndoes not succeed. (Use it, don't drop it in lava.)"); //+
             //"\nBut first: save, quit and reload before each time you resummon him.");

@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Enemy Spell Ice 3");
+            // DisplayName.SetDefault("Enemy Spell Ice 3");
 
         }
         public override void AI()

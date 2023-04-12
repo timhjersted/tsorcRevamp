@@ -13,10 +13,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Great Soul Arrow");
-            Tooltip.SetDefault("Shoots a lightly homing great soul arrow" +
+            // DisplayName.SetDefault("Great Soul Arrow");
+            /* Tooltip.SetDefault("Shoots a lightly homing great soul arrow" +
                                 "\nwhich can leave enemies Soulstruck" +
-                                "\nSoulstruck enemies drop 10% more souls");
+                                "\nSoulstruck enemies drop 10% more souls"); */
         }
         public override void SetDefaults()
         {

@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The blade is a magic flame, slicing quickly. \n" +
-                                "Will set enemies ablaze and do damage over time.");
+            /* Tooltip.SetDefault("The blade is a magic flame, slicing quickly. \n" +
+                                "Will set enemies ablaze and do damage over time."); */
 
         }
 
@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             recipe.Register();
         }
 
-        public override void OnHitNPC(Player player, NPC npc, int damage, float knockBack, bool crit)
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(2))
             { //50% chance to occur

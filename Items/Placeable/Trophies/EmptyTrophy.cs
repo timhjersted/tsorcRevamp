@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Placeable.Trophies
 	{
 		public override void SetStaticDefaults() 
 		{
-			DisplayName.SetDefault("Empty Trophy");
+			// DisplayName.SetDefault("Empty Trophy");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 		}

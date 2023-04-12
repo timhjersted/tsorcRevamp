@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A blade honed sharp by the magic of the coming night." +
+            /* Tooltip.SetDefault("A blade honed sharp by the magic of the coming night." +
                 "\nRight click to dash, consuming stamina and making you immune for a moment" +
-                "\nStriking enemies while dashing creates a demon spirit from their torn soul");
+                "\nStriking enemies while dashing creates a demon spirit from their torn soul"); */
         }
         public override void SetDefaults()
         {
@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             return base.Shoot(player, source, position, velocity, type, damage, knockback);
         }
 
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             base.OnHitNPC(player, target, damage, knockBack, crit);
         }

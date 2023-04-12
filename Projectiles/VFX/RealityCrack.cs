@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.VFX
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("RealityCrack");
+            // DisplayName.SetDefault("RealityCrack");
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
         }
 

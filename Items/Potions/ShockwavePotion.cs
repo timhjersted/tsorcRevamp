@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Potions
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Hold DOWN to increase fall speed \nCreate a damaging shockwave when you land \nwhich grows in strength based on distance fallen");
+            // Tooltip.SetDefault("Hold DOWN to increase fall speed \nCreate a damaging shockwave when you land \nwhich grows in strength based on distance fallen");
         }
         public override void SetDefaults()
         {

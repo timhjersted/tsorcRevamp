@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ancient Oolacile Demon");
+            // DisplayName.SetDefault("Ancient Oolacile Demon");
         }
 
         public override void SetDefaults()
@@ -49,7 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses
         int blackFireDamage = 50;
         int greatAttackDamage = 65;
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EyeofCthulhu)))
             {
@@ -71,7 +71,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 1.25);
             NPC.damage = (int)(NPC.damage / 2);
@@ -126,7 +126,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         //PROJECTILE HIT LOGIC
-        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             tsorcRevampAIs.RedKnightOnHit(NPC, true);
 
@@ -155,7 +155,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         }
 
-        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
 
             //TELEPORT RANGED
@@ -561,7 +561,7 @@ namespace tsorcRevamp.NPCs.Bosses
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.OolacileDemonBag>()));
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             if (!Main.dedServ)
             {

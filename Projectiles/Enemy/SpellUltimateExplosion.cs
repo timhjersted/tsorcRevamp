@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spell Ultimate Explosion");
+            // DisplayName.SetDefault("Spell Ultimate Explosion");
             Main.projFrames[Projectile.type] = 9;
         }
         public override void SetDefaults()

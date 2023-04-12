@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The scroll reads \"Exori flam.\"");
+            // Tooltip.SetDefault("The scroll reads \"Exori flam.\"");
         }
         public override void SetDefaults()
         {

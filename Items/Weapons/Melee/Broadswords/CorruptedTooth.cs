@@ -8,10 +8,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("[c/ffbf00:A green ooze dribbles from the tooth, which deals]" +
+            /* Tooltip.SetDefault("[c/ffbf00:A green ooze dribbles from the tooth, which deals]" +
                                 "\n[c/ffbf00:triple damage to enemies of a similar nature, potentially more.]" +
                                 "\nHas a chance to heal the player on hit." +
-                                "\nHeal chance is doubled on non-corrupted enemies.");
+                                "\nHeal chance is doubled on non-corrupted enemies."); */
         }
         public override void SetDefaults()
         {
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.rare = ItemRarityID.Blue;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
             if (target.type == NPCID.EaterofSouls
                 || target.type == NPCID.BigEater

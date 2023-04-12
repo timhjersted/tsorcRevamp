@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Ranged
         
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("PiecingPlasma");
+            // DisplayName.SetDefault("PiecingPlasma");
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
         public override void SetDefaults()
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.OnFire, 100);
         }

@@ -78,7 +78,7 @@ namespace tsorcRevamp.NPCs.Bosses
         bool announcedDebuffs = false;
         float ice3Timer;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = NPC.damage / 2;
             NPC.defense = NPC.defense += 10;
@@ -543,7 +543,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.alpha = 200;
             }
         }
-        public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
         {
             hitTime = 0;
             NPC.ai[0] += (float)damage;

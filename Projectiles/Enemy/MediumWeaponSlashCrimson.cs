@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/ThrowingAxe"; //invis so doesnt matter
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crimson Medium Weapon Slash");
+            // DisplayName.SetDefault("Crimson Medium Weapon Slash");
         }
         public override void SetDefaults()
         {
@@ -63,7 +63,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(ModContent.BuffType<Crippled>(), 1000);
             target.AddBuff(BuffID.Bleeding, 1000);

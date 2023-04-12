@@ -72,7 +72,7 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             if (Projectile.ai[0] == 0)
             {

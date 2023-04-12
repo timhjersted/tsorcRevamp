@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Friendly
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Living Shroom");
+            // DisplayName.SetDefault("Living Shroom");
             Main.npcFrameCount[NPC.type] = 8;
         }
 
@@ -248,7 +248,7 @@ namespace tsorcRevamp.NPCs.Friendly
             }
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 15; i++)
             {

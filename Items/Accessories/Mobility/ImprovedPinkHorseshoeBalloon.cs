@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items.Accessories.Mobility
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Improved Sharkron Balloon");
-            Tooltip.SetDefault("Allows the holder to double jump" +
+            // DisplayName.SetDefault("Improved Sharkron Balloon");
+            /* Tooltip.SetDefault("Allows the holder to double jump" +
                                 "\nIncreases jump height + 50% jump speed" +
-                                "\nGrants immunity to fall damage");
+                                "\nGrants immunity to fall damage"); */
         }
 
         public override void SetDefaults()

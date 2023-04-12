@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Friendly
         };
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shaman Elder");
+            // DisplayName.SetDefault("Shaman Elder");
             Main.npcFrameCount[NPC.type] = 25;
             NPCID.Sets.ExtraFramesCount[NPC.type] = 10;
             NPCID.Sets.AttackFrameCount[NPC.type] = 5;
@@ -108,7 +108,7 @@ namespace tsorcRevamp.NPCs.Friendly
         }
 
         int chatState = 0;
-        public override void OnChatButtonClicked(bool firstButton, ref bool shop)
+        public override void OnChatButtonClicked(bool firstButton, ref string shopName)
         {
             if (firstButton)
             {
@@ -216,7 +216,7 @@ namespace tsorcRevamp.NPCs.Friendly
             }
         }
 
-        public override void SetupShop(Chest shop, ref int nextSlot)
+        public override void ModifyActiveShop(string shopName, Item[] items)
         {
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Summon.OldChainCoif>());
             shop.item[nextSlot].shopCustomPrice = 50;
@@ -246,7 +246,7 @@ namespace tsorcRevamp.NPCs.Friendly
             }
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             if (base.NPC.life <= 0)
             {
@@ -295,7 +295,7 @@ namespace tsorcRevamp.NPCs.Friendly
             multiplier = 2f;
         }
 
-        public override bool CanTownNPCSpawn(int numTownNPCs, int money)
+        public override bool CanTownNPCSpawn(int numTownNPCs)/* tModPorter Suggestion: Copy the implementation of NPC.SpawnAllowed_Merchant in vanilla if you to count money, and be sure to set a flag when unlocked, so you don't count every tick. */
         {
             foreach (Player p in Main.player)
             {

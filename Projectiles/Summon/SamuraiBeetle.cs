@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Summon
         bool IsFlinx = true;
         public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Samurai Beetle");
+			// DisplayName.SetDefault("Samurai Beetle");
 			Main.projFrames[Projectile.type] = 12; //Flinx: 12, Pirate: 15, Frog: 24
 			ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
 
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Summon
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10;
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (IsFlinx)
             {

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wave Attack");
+            // DisplayName.SetDefault("Wave Attack");
         }
 
         public override void SetDefaults()
@@ -86,7 +86,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             int expertScale = 1;
             if (Main.expertMode) expertScale = 2;

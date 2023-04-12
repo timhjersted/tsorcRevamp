@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Gifted with ranged combat. High defense not necessary." +
-                "\n+35% Movement Speed and Jump Boost");
+            /* Tooltip.SetDefault("Gifted with ranged combat. High defense not necessary." +
+                "\n+35% Movement Speed and Jump Boost"); */
         }
         public override void SetDefaults()
         {

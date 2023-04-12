@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {    
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+20% minion damage\nIncreases your max number of minions and turrets by 1\n+44% movement speed");
+            // Tooltip.SetDefault("+20% minion damage\nIncreases your max number of minions and turrets by 1\n+44% movement speed");
         }
         public override void SetDefaults()
         {

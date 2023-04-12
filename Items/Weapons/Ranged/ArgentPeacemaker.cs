@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Argent Peacemaker");
-            Tooltip.SetDefault("Deals extra damage to corrupt/crimson creatures");
+            // DisplayName.SetDefault("Argent Peacemaker");
+            // Tooltip.SetDefault("Deals extra damage to corrupt/crimson creatures");
         }
 
         public override void SetDefaults()

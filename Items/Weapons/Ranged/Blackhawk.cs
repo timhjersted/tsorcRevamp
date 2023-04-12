@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Blackhawk");
-            Tooltip.SetDefault("Deals extra damage to hallowed creatures"
-                                + "\nDoesn't require ammo");
+            // DisplayName.SetDefault("Blackhawk");
+            /* Tooltip.SetDefault("Deals extra damage to hallowed creatures"
+                                + "\nDoesn't require ammo"); */
         }
 
         public override void SetDefaults()

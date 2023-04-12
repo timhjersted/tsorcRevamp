@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             NPC.buffImmune[70] = true;
             despawnHandler = new NPCDespawnHandler("You've been slain at the hand of Attraidies...", Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (damage > NPC.life || damage * 2 > NPC.life)
             {
@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
                 damage = NPC.life - 50;
             }
         }
-        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             if (damage > NPC.life || damage * 2 > NPC.life)
             {
@@ -66,10 +66,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
-            DisplayName.SetDefault("Mindflayer Illusion");
+            // DisplayName.SetDefault("Mindflayer Illusion");
         }
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
         }
 

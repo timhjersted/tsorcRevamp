@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Nuclear Mushroom");
+			// DisplayName.SetDefault("Nuclear Mushroom");
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5; // The length of old position to be recorded
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // The recording mode
             Main.projFrames[Projectile.type] = 3;
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
             Projectile.CritChance = owner.GetWeaponCrit(owner.HeldItem);
             Visuals();
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player owner = Main.player[Projectile.owner];
             SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, Projectile.Center);

@@ -12,8 +12,8 @@ namespace tsorcRevamp.Buffs.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Shattered Reflection");
-			Description.SetDefault("Fragments of your soul haunt your enemies");
+			// DisplayName.SetDefault("Shattered Reflection");
+			// Description.SetDefault("Fragments of your soul haunt your enemies");
 
 			Main.buffNoSave[Type] = true; // This buff won't save when you exit the world
 			Main.buffNoTimeDisplay[Type] = true; // The time remaining won't display on this buff

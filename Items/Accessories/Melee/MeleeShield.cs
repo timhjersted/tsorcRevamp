@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Accessories.Melee
         //i dont feel like writing the same thing 4 times. does it make the code less readable? yeah. i dont give a shit
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("For melee warriors only" +
+            /* Tooltip.SetDefault("For melee warriors only" +
                                 "\nGrants immunity to knockback and fire blocks" +
-                                "\nReduces movement speed by 20% and increased mana cost by 7%");
+                                "\nReduces movement speed by 20% and increased mana cost by 7%"); */
         }
         public override void SetDefaults()
         {
@@ -151,7 +151,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Beholder Shield II");
+            // DisplayName.SetDefault("Beholder Shield II");
             base.SetStaticDefaults();
         }
 
@@ -204,11 +204,11 @@ namespace tsorcRevamp.Items.Accessories.Melee
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Enchanted Beholder Shield II");
-            Tooltip.SetDefault("A legendary shield for melee warriors only" +
+            // DisplayName.SetDefault("Enchanted Beholder Shield II");
+            /* Tooltip.SetDefault("A legendary shield for melee warriors only" +
                 "\nGrants immunity to knockback and nearly all debuffs, plus 12% damage reduction" +
                 "\nReduces Ranged, Magic and Summoner Damage by 300%. +70% mana cost" +
-                "\nReduces movement speed by 20%");
+                "\nReduces movement speed by 20%"); */
         }
 
         public override void SetDefaults()

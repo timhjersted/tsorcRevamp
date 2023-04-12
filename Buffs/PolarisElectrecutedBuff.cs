@@ -11,8 +11,8 @@ namespace tsorcRevamp.Buffs
         public override string Texture => "tsorcRevamp/Buffs/ArmorDrug";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Electrocuted!");
-            Description.SetDefault("Losing life");
+            // DisplayName.SetDefault("Electrocuted!");
+            // Description.SetDefault("Losing life");
             Main.debuff[Type] = true;
             Main.pvpBuff[Type] = true;
             Main.buffNoSave[Type] = true;

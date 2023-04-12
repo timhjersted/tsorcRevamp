@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A legendary spell tome that calls down a meteor storm");
+            // Tooltip.SetDefault("A legendary spell tome that calls down a meteor storm");
         }
         public override void SetDefaults()
         {

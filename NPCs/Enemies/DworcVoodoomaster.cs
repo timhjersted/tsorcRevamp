@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dworc Alchemist");
+            // DisplayName.SetDefault("Dworc Alchemist");
         }
         public override void OnKill()
         {
@@ -205,7 +205,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         #region Gore
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 5; i++)
             {

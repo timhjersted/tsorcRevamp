@@ -11,10 +11,10 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases whip damage and summon attack speed by 18%" +
+            /* Tooltip.SetDefault("Increases whip damage and summon attack speed by 18%" +
                 "\nSet Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active" +
                 "\nDefense, minion slots and whip range are not affected by this" +
-                "\nIncreases whip range by 30% and life regen by 3");
+                "\nIncreases whip range by 30% and life regen by 3"); */
         }
 
         public override void SetDefaults()

@@ -13,8 +13,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Omega Squad Rifle");
-            Tooltip.SetDefault("Converts seeds into Radioactive Darts and allows you to gather Seeds from grass" +
+            // DisplayName.SetDefault("Omega Squad Rifle");
+            /* Tooltip.SetDefault("Converts seeds into Radioactive Darts and allows you to gather Seeds from grass" +
                 "\nRadioactive Darts apply a short burst of Irradiated home into enemies" +
                 "\nAlso uses all darts as ammo, but Poison Darts deal double damage" +
                 "\nStops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise" +
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                 "\nPress Special Ability to gain an even higher temporary boost and remove the movement penalties" +
                 "\nRight click to shoot a homing blinding dart which inflicts confusion" +
                 "\nPress Shift and Special Ability to drop a Nuclear Mushroom" +
-                "\n'There's a mushroom out there with your name on it'");
+                "\n'There's a mushroom out there with your name on it'"); */
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 

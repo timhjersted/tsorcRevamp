@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Ranged
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Pyroclastic Flow");
+            // DisplayName.SetDefault("Pyroclastic Flow");
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
         public override void SetDefaults()
@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Ranged
         {
             target.AddBuff(BuffID.OnFire, 100)
         }*/
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.OnFire, 100);
         }

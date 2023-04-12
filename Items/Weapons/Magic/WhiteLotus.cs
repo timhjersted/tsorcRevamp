@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
     class WhiteLotus : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Shoots flowers. Each petal hits separately \n'You can hear the cries of angels when you close your eyes'");
+            // Tooltip.SetDefault("Shoots flowers. Each petal hits separately \n'You can hear the cries of angels when you close your eyes'");
         }
         public override void SetDefaults() {
             Item.damage = 26;

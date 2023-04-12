@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ragnarok");
+            // DisplayName.SetDefault("Ragnarok");
 
         }
 

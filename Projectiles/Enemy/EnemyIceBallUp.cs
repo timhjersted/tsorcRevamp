@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ice Spell");
+            // DisplayName.SetDefault("Ice Spell");
 
         }
         public override void AI()

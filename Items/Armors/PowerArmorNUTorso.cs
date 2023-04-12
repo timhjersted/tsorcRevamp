@@ -10,12 +10,12 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Power Armor NU Torso");
-            Tooltip.SetDefault("A powerful armor forged by the god of chaos." +
+            // DisplayName.SetDefault("Power Armor NU Torso");
+            /* Tooltip.SetDefault("A powerful armor forged by the god of chaos." +
                 "\nIncreases ranged damage by 17% and magic damage by 9%" +
                 "\nReduces chance of consuming ammo by 20%, increases max mana by 80 and decreases mana costs by 10%" +
                 "\nSet Bonus: +20% attack speed(doubled for melee), +8 life regen/15 in water" +
-                "\nIncreases maximum stamina and stamina regen by 15%");
+                "\nIncreases maximum stamina and stamina regen by 15%"); */
         }
         public override void SetDefaults()
         {

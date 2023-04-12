@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cursed Breath");
+            // DisplayName.SetDefault("Cursed Breath");
         }
 
         public override void SetDefaults()
@@ -50,7 +50,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			return true;
 		}
 		*/
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
 
 

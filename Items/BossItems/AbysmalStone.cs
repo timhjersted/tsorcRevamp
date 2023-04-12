@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Summons the Abysmal Oolacile Sorcerer." +
-                                "\nCan only be used at night.");
+            /* Tooltip.SetDefault("Summons the Abysmal Oolacile Sorcerer." +
+                                "\nCan only be used at night."); */
         }
         public override void SetDefaults()
         {

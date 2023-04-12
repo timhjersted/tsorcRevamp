@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Archer Bolt"); //Used by DworcVenomsniper
+            // DisplayName.SetDefault("Archer Bolt"); //Used by DworcVenomsniper
         }
         public override void SetDefaults()
         {

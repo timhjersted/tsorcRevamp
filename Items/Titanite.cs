@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A rare and valuable ore");
+            // Tooltip.SetDefault("A rare and valuable ore");
         }
 
         public override void SetDefaults()

@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cobalt Halberd");
-            Tooltip.SetDefault("Left-click to stab like a spear, right-click to swing" +
-                                "\nSwing strike does 25% more damage");
+            // DisplayName.SetDefault("Cobalt Halberd");
+            /* Tooltip.SetDefault("Left-click to stab like a spear, right-click to swing" +
+                                "\nSwing strike does 25% more damage"); */
 
         }
 

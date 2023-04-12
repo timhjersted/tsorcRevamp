@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Friendly
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Undead Merchant");
+            // DisplayName.SetDefault("Undead Merchant");
             Main.npcFrameCount[NPC.type] = 26;
             NPCID.Sets.ExtraFramesCount[NPC.type] = 9;
             NPCID.Sets.AttackFrameCount[NPC.type] = 4;
@@ -62,7 +62,7 @@ namespace tsorcRevamp.NPCs.Friendly
             button = Language.GetTextValue("LegacyInterface.28");
         }
 
-        public override void OnChatButtonClicked(bool firstButton, ref bool shop)
+        public override void OnChatButtonClicked(bool firstButton, ref string shopName)
         {
             if (firstButton)
             {
@@ -71,7 +71,7 @@ namespace tsorcRevamp.NPCs.Friendly
             }
         }
 
-        public override void SetupShop(Chest shop, ref int nextSlot)
+        public override void ModifyActiveShop(string shopName, Item[] items)
         {
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.CharcoalPineResin>());
             shop.item[nextSlot].shopCustomPrice = 20;
@@ -229,7 +229,7 @@ namespace tsorcRevamp.NPCs.Friendly
             randomOffset = 0f;
         }
 
-        public override bool CanTownNPCSpawn(int numTownNPCs, int money)
+        public override bool CanTownNPCSpawn(int numTownNPCs)/* tModPorter Suggestion: Copy the implementation of NPC.SpawnAllowed_Merchant in vanilla if you to count money, and be sure to set a flag when unlocked, so you don't count every tick. */
         {
             int type = ModContent.ItemType<Items.SoulCoin>();
 

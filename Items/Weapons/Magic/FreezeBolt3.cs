@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override string Texture => "tsorcRevamp/Items/Weapons/Magic/FreezeBolt2";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Freeze Bolt III");
-            Tooltip.SetDefault("Casts a super fast-moving bolt of ice");
+            // DisplayName.SetDefault("Freeze Bolt III");
+            // Tooltip.SetDefault("Casts a super fast-moving bolt of ice");
         }
 
         public override void SetDefaults()

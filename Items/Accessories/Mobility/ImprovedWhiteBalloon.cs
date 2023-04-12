@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Accessories.Mobility
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Improved Blizzard in a Balloon");
-            Tooltip.SetDefault("Allows the holder to double jump" +
-                                "\nIncreases jump height + 60% jump speed");
+            // DisplayName.SetDefault("Improved Blizzard in a Balloon");
+            /* Tooltip.SetDefault("Allows the holder to double jump" +
+                                "\nIncreases jump height + 60% jump speed"); */
         }
 
         public override void SetDefaults()

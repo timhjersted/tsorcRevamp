@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Inherits the Star Cloaks effect and grants 5% increased damage and critical strike chance" +
+            /* Tooltip.SetDefault("Inherits the Star Cloaks effect and grants 5% increased damage and critical strike chance" +
                                "\nWhen life falls below 40%, also increases mana regeneration by 5, damage and critical strike chance by 10%" +
-                                "\nMagic Imbues no longer need to go on cooldown");
+                                "\nMagic Imbues no longer need to go on cooldown"); */
         }
 
         public override void SetDefaults()

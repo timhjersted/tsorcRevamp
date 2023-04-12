@@ -48,10 +48,10 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Serris");
+            // DisplayName.SetDefault("Serris");
         }
         int distortionDamage = 90;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = (int)(NPC.damage * 1.3 / 2);
             NPC.defense = NPC.defense += 12;

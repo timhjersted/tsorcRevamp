@@ -40,8 +40,8 @@ namespace tsorcRevamp.Items
             ItemID.Sets.AnimatesAsSoul[Item.type] = true;
             ItemID.Sets.ItemIconPulse[Item.type] = true;
             ItemID.Sets.ItemNoGravity[Item.type] = true;
-            Tooltip.SetDefault("Soul of a fallen creature." +
-                "\nCan be used at Demon Altars to forge new weapons, items, and armors.");
+            /* Tooltip.SetDefault("Soul of a fallen creature." +
+                "\nCan be used at Demon Altars to forge new weapons, items, and armors."); */
         }
         public override void SetDefaults()
         {
@@ -138,8 +138,8 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            Tooltip.SetDefault("Soul of an ancient guardian." +
-                "\nCan be used at Demon Altars to forge powerful weapons and items.");
+            /* Tooltip.SetDefault("Soul of an ancient guardian." +
+                "\nCan be used at Demon Altars to forge powerful weapons and items."); */
         }
 
         public override void PostUpdate()
@@ -152,9 +152,9 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Soul of Attraidies");
-            Tooltip.SetDefault("The essence of Attraidies' power burns within this soul." +
-                "\nYou question whether you should even hold such a thing in your possession.");
+            // DisplayName.SetDefault("Soul of Attraidies");
+            /* Tooltip.SetDefault("The essence of Attraidies' power burns within this soul." +
+                "\nYou question whether you should even hold such a thing in your possession."); */
         }
 
         public override void PostUpdate()
@@ -168,8 +168,8 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Soul of Artorias");
-            Tooltip.SetDefault("The essence of Artorias of the Abyss.");
+            // DisplayName.SetDefault("Soul of Artorias");
+            // Tooltip.SetDefault("The essence of Artorias of the Abyss.");
         }
 
         public override void PostUpdate()
@@ -183,8 +183,8 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Soul of Blight");
-            Tooltip.SetDefault("The essence of destruction.");
+            // DisplayName.SetDefault("Soul of Blight");
+            // Tooltip.SetDefault("The essence of destruction.");
         }
 
         public override void PostUpdate()
@@ -199,8 +199,8 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Soul of Chaos");
-            Tooltip.SetDefault("The essence of chaos.");
+            // DisplayName.SetDefault("Soul of Chaos");
+            // Tooltip.SetDefault("The essence of chaos.");
         }
 
         public override void PostUpdate()
@@ -215,11 +215,11 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Bequeathed Lord Soul Shard");
-            Tooltip.SetDefault("Soul of the albino Seath the Scaleless." +
+            // DisplayName.SetDefault("Bequeathed Lord Soul Shard");
+            /* Tooltip.SetDefault("Soul of the albino Seath the Scaleless." +
                 "\nA fragment of a Lord Soul discovered at the dawn of the Age of Fire." +
                 "\nSeath allied with Lord Gwyn and turned upon the dragons, and for this he was" +
-                "\nawarded dukedom, embraced by the royalty, and given a fragment of a great soul.");
+                "\nawarded dukedom, embraced by the royalty, and given a fragment of a great soul."); */
         }
 
         public override void PostUpdate()
@@ -234,8 +234,8 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Soul of the Ghost Wyvern");
-            Tooltip.SetDefault("The essence of the Ghost Wyvern.");
+            // DisplayName.SetDefault("Soul of the Ghost Wyvern");
+            // Tooltip.SetDefault("The essence of the Ghost Wyvern.");
         }
 
         public override void PostUpdate()
@@ -250,7 +250,7 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            Tooltip.SetDefault("Soul of a cursed being.");
+            // Tooltip.SetDefault("Soul of a cursed being.");
         }
         public override void PostUpdate()
         {
@@ -262,8 +262,8 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("Soul of Life");
-            Tooltip.SetDefault("The essence of growth, deeply connected to the Earth.");
+            // DisplayName.SetDefault("Soul of Life");
+            // Tooltip.SetDefault("The essence of growth, deeply connected to the Earth.");
         }
 
         public override void PostUpdate()

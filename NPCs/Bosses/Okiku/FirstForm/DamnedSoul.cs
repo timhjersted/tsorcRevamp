@@ -38,11 +38,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Damned Soul");
+            // DisplayName.SetDefault("Damned Soul");
         }
 
         public int ObscureShotDamage = 30;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
         }
 
@@ -176,7 +176,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             }
         }
 
-        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             if (NPC.life - damage <= 1000)
             {
@@ -186,7 +186,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             }
         }
 
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (NPC.life - damage <= 1000)
             {

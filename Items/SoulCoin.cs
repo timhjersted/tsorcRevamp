@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A mysterious coin formed out of dark souls" +
-                "\nUsed as a currency among certain merchants");
+            /* Tooltip.SetDefault("A mysterious coin formed out of dark souls" +
+                "\nUsed as a currency among certain merchants"); */
             ItemID.Sets.ItemNoGravity[Item.type] = true;
             //Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(4, 8));
 

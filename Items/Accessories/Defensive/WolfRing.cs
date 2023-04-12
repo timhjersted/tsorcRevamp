@@ -8,12 +8,12 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("One of the rings worn by Artorias." +
+            /* Tooltip.SetDefault("One of the rings worn by Artorias." +
                                 "\nPress the Wolf Ring key to increase life regen and damage taken temporarily" +
                                 "\nRemoves the life regen if hit during the effect and puts it on a long cooldown" +
                                 "\n+12 defense within the Abyss" +
                                 "\nGrants Acid Venom imbue effect" +
-                                "\nImbue effect can be toggled by hiding the accessory.");
+                                "\nImbue effect can be toggled by hiding the accessory."); */
         }
 
         public override void SetDefaults()

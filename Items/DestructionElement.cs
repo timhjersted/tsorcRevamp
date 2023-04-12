@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Used for making high damage guns\n" +
-                               "The strange way it feels warm to the touch reminds you of somewhere...");
+            /* Tooltip.SetDefault("Used for making high damage guns\n" +
+                               "The strange way it feels warm to the touch reminds you of somewhere..."); */
         }
 
         public override void SetDefaults()

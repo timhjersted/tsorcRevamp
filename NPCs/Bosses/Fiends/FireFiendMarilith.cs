@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fire Fiend Marilith");
+            // DisplayName.SetDefault("Fire Fiend Marilith");
         }
 
         int holdBallDamage = 50;
@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         int lightningDamage = 55;
         int fireStormDamage = 50;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = (int)(NPC.damage * 1.3 / 2);
             NPC.defense = NPC.defense += 12;

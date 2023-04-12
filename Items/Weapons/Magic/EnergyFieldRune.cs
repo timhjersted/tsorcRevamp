@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Creates an electric energy orb at the point of impact." +
-                                "\nLasts for a few seconds.");
+            /* Tooltip.SetDefault("Creates an electric energy orb at the point of impact." +
+                                "\nLasts for a few seconds."); */
         }
         public override void SetDefaults()
         {

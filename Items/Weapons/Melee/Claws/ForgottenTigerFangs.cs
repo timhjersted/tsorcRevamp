@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Long and extremely sharp fighting claws.");
+            // Tooltip.SetDefault("Long and extremely sharp fighting claws.");
         }
 
         public override void SetDefaults()

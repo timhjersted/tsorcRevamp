@@ -10,11 +10,11 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Harness the power of flame to actualize the inner-self" +
+            /* Tooltip.SetDefault("Harness the power of flame to actualize the inner-self" +
                                 "\nIncreases damage by 20% and stamina regeneration by 30%" +
                                 "\nExcessive power eats away the life-force of its caster" +
                                 "\nLasts 30 seconds, can't be cancelled" +
-                                "\nEffect potency doubled for the [c/6d8827:Bearer of the Curse]");
+                                "\nEffect potency doubled for the [c/6d8827:Bearer of the Curse]"); */
         }
 
         public override void SetDefaults()

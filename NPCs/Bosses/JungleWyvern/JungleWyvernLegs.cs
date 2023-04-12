@@ -37,7 +37,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ancient Jungle Wyvern");
+            // DisplayName.SetDefault("Ancient Jungle Wyvern");
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
                 Hide = true
             };
@@ -50,7 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
         }
 
         public int PoisonFlamesDamage = 25;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
 
         }
@@ -88,7 +88,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             int mainDust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y + 10), NPC.width, NPC.height, 62, 0, 0, 100, default, 1.0f);
             Main.dust[mainDust].noGravity = true;
         }
-        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             damage *= 2;
             base.OnHitByItem(player, item, damage, knockback, crit);

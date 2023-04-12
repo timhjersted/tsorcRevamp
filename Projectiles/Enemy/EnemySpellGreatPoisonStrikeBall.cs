@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Enemy Spell Great Poison Strike Ball");
+            // DisplayName.SetDefault("Enemy Spell Great Poison Strike Ball");
         }
         public override void SetDefaults()
         {

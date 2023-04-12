@@ -47,7 +47,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             return Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2()) < projRadius;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.CursedInferno, 300);
         }

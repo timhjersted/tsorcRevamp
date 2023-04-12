@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -14,7 +15,7 @@ namespace tsorcRevamp.NPCs.Friendly
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Tibian Mage");
+            // DisplayName.SetDefault("Tibian Mage");
             Main.npcFrameCount[NPC.type] = 26;
             NPCID.Sets.ExtraFramesCount[NPC.type] = 10;
             NPCID.Sets.AttackFrameCount[NPC.type] = 5;
@@ -83,7 +84,7 @@ namespace tsorcRevamp.NPCs.Friendly
             button = Language.GetTextValue("LegacyInterface.28");
         }
 
-        public override void OnChatButtonClicked(bool firstButton, ref bool shop)
+        public override void OnChatButtonClicked(bool firstButton, ref string shopName)
         {
             if (firstButton)
             {
@@ -92,7 +93,7 @@ namespace tsorcRevamp.NPCs.Friendly
             }
         }
 
-        public override void SetupShop(Chest shop, ref int nextSlot)
+        public override void ModifyActiveShop(string shopName, Item[] items)
         {
             shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.WandOfDarkness>());
             shop.item[nextSlot].shopCustomPrice = 80;
@@ -184,7 +185,7 @@ namespace tsorcRevamp.NPCs.Friendly
             }
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             if (base.NPC.life <= 0) //even though npcs are immortal
             {
@@ -234,7 +235,7 @@ namespace tsorcRevamp.NPCs.Friendly
             cooldown = 30;
             randExtraCooldown = 30;
         }
-        public override void DrawTownAttackGun(ref float scale, ref int item, ref int closeness)
+        public override void DrawTownAttackGun(ref Texture2D item, ref Rectangle itemFrame, ref float scale, ref int horizontalHoldoutOffset)/* tModPorter Note: closeness is now horizontalHoldoutOffset, use 'horizontalHoldoutOffset = Main.DrawPlayerItemPos(1f, itemtype) - originalClosenessValue' to adjust to the change. See docs for how to use hook with an item type. */
         {
             if (weaponChoice < 8)
             {
@@ -280,7 +281,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         }
 
-        public override bool CanTownNPCSpawn(int numTownNPCs, int money)
+        public override bool CanTownNPCSpawn(int numTownNPCs)/* tModPorter Suggestion: Copy the implementation of NPC.SpawnAllowed_Merchant in vanilla if you to count money, and be sure to set a flag when unlocked, so you don't count every tick. */
         {
             foreach (Player p in Main.player)
             {

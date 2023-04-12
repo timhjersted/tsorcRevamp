@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Gifted with healing. High defense not necessary." +
+            /* Tooltip.SetDefault("Gifted with healing. High defense not necessary." +
                 "\n25% chance not to consume ammo" +
-                "\nSet Bonus: 20% Ranged Crit, +20 Ranged Dmg, +7 Life Regen");
+                "\nSet Bonus: 20% Ranged Crit, +20 Ranged Dmg, +7 Life Regen"); */
         }
 
         public override void SetDefaults()

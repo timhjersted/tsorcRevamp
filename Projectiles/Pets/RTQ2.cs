@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Pets
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("RTQ2");
+            // DisplayName.SetDefault("RTQ2");
             Main.projFrames[Projectile.type] = 4;
             Main.projPet[Projectile.type] = true;
         }

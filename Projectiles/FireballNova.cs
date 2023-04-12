@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.penetrate = 999;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.OnFire, 300);
         }

@@ -42,7 +42,7 @@ namespace tsorcRevamp.Projectiles {
 		}
 
         public override void SetStaticDefaults() {
-			DisplayName.SetDefault("Charged Bow");
+			// DisplayName.SetDefault("Charged Bow");
 			ProjectileID.Sets.NeedsUUID[Projectile.type] = true;
         }
 		public sealed override void SetDefaults() {

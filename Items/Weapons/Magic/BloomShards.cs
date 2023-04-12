@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bloom Shards");
-            Tooltip.SetDefault("Evokes blooming shards of radiant light\n" +
-                                "Close range");
+            // DisplayName.SetDefault("Bloom Shards");
+            /* Tooltip.SetDefault("Evokes blooming shards of radiant light\n" +
+                                "Close range"); */
 
         }
 
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.value = PriceByRarity.Cyan_9;
         }
 
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             int healEffect = damage / 10;
 
@@ -49,7 +49,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             player.HealEffect(healEffect);
         }
 
-        public override void OnHitPvp(Player player, Player target, int damage, bool crit)
+        public override void OnHitPvp(Player player, Player target, Player.HurtInfo hurtInfo)
         {
             int healEffect = damage / 20;
 

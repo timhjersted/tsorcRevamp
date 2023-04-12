@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Boost");
-            Description.SetDefault("Increased movement speed");
+            // DisplayName.SetDefault("Boost");
+            // Description.SetDefault("Increased movement speed");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

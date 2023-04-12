@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Void Toxin");
+            // DisplayName.SetDefault("Void Toxin");
         }
 
         public override bool PreKill(int timeLeft)
@@ -58,7 +58,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             int buffLengthMod = 1;
             if (Main.expertMode)

@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Magic Weapon");
-            Description.SetDefault("Your weapon is imbued with magic!");
+            // DisplayName.SetDefault("Magic Weapon");
+            // Description.SetDefault("Your weapon is imbued with magic!");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

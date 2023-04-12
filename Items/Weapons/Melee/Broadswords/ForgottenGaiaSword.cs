@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A blade made to slay the Witchking.\n" + "[c/ffbf00:Does 3x damage to the Witchking and dispels the defensive shield of the Witchking and Artorias]");
+            // Tooltip.SetDefault("A blade made to slay the Witchking.\n" + "[c/ffbf00:Does 3x damage to the Witchking and dispels the defensive shield of the Witchking and Artorias]");
         }
 
         public override void SetDefaults()
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             recipe.Register();
         }*/
 
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>())
             {
@@ -59,7 +59,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             }
         }
 
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
             if (target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>())
             {

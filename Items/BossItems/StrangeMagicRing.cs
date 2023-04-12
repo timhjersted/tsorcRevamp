@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A strange magic ring that Miakoda tells you will summon Artorias, the Abysswalker." +
-                               "\nOne of Gwyn's Four Knights, Artorias is a holy warrior with an unbendable will of steel.");
+            /* Tooltip.SetDefault("A strange magic ring that Miakoda tells you will summon Artorias, the Abysswalker." +
+                               "\nOne of Gwyn's Four Knights, Artorias is a holy warrior with an unbendable will of steel."); */
             // "and unmatched skills with both melee combat and sorceries.\n" +
             // "Miakoda: \"Take heart Red, he will be like nothing you have ever faced before, but if you are successful in defeating him\n" +
             // "it will surely make the rest of our journey to close the seal of the Abyss more easy.\n" +

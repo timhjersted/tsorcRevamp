@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Grants an extra double jump and Shiny Red Balloon effect\nIncreases your max number of minions by 2");
+            // Tooltip.SetDefault("Grants an extra double jump and Shiny Red Balloon effect\nIncreases your max number of minions by 2");
         }
         public override void SetDefaults()
         {

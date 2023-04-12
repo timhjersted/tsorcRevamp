@@ -16,11 +16,11 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("[c/ffbf00:Focuses the user's mana into a protective shield]" +
+            /* Tooltip.SetDefault("[c/ffbf00:Focuses the user's mana into a protective shield]" +
                                 $"\nMana Shield reduces incoming damage by {damageResistance * 100}%, but drains {manaCost} mana per hit" +
                                 "\nInhibits both natural and artificial mana regen for a period of time" +
                                 "\n[c/00ffd4:Doubles max mana and decreases stamina usage by 15%]" +
-                                "\nReduces ranged, magic and summon damage by 25% multiplicatively");
+                                "\nReduces ranged, magic and summon damage by 25% multiplicatively"); */
                                 
         }
 

@@ -82,7 +82,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
                 TornadoSound.Stop();
             }
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Projectile.damage = (int)(Projectile.damage * 0.95f); //Multihit penalty
         }

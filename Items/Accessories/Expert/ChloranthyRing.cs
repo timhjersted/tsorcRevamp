@@ -10,13 +10,13 @@ namespace tsorcRevamp.Items.Accessories.Expert
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Chloranthy Ring I");
-            Tooltip.SetDefault("Increases Stamina recovery speed by 15%," +
+            // DisplayName.SetDefault("Chloranthy Ring I");
+            /* Tooltip.SetDefault("Increases Stamina recovery speed by 15%," +
                                 "\n[c/ffbf00:Enhances your agility and evasiveness when dodge rolling]" +
                                "\nIncreases Stamina Droplet pickup range" +  
                                "\nThis old ring is named for its decorative green" +
                                "\nblossom, but its luster is long since faded" +
-                               "\n+2 defense");
+                               "\n+2 defense"); */
 
                                // [c/ffbf00:text] is a great yellow for highlights
         }

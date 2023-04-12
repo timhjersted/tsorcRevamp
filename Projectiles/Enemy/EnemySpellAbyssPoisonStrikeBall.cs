@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = true;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(20, 600, false);
             target.AddBuff(22, 600, false);

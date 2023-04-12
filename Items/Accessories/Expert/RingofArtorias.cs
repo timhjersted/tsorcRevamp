@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Accessories.Expert
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ring of Artorias");
-            Tooltip.SetDefault("The great Ring of Artorias." +
+            // DisplayName.SetDefault("Ring of Artorias");
+            /* Tooltip.SetDefault("The great Ring of Artorias." +
                                 "\nOnce held strength too great for this world to bear." +
-                                "\n[c/ffbf00:It now grants immunity to Powerful Curse Buildup, Slow and Freezing.]");
+                                "\n[c/ffbf00:It now grants immunity to Powerful Curse Buildup, Slow and Freezing.]"); */
         }
 
         public override void SetDefaults()

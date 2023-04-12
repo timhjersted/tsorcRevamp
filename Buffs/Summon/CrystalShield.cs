@@ -9,8 +9,8 @@ namespace tsorcRevamp.Buffs.Summon
         public int damage;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crystal Shield");
-            Description.SetDefault("Defense increased");
+            // DisplayName.SetDefault("Crystal Shield");
+            // Description.SetDefault("Defense increased");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Buffs.Summon
                 player.endurance -= (25f - (player.GetModPlayer<tsorcRevampPlayer>().CrystalDefenseDamage) * 1.67f) / 100f;
             }
         }
-        public override void ModifyBuffTip(ref string tip, ref int rare)
+        public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
             tip = $"Defense increased by {defense}, damage dealt increased by {damage}";
         }

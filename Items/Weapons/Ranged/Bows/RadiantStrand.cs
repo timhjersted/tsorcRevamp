@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Fires arrows of light which leave a damaging trail of energy as they fly");
+            // Tooltip.SetDefault("Fires arrows of light which leave a damaging trail of energy as they fly");
         }
         public override void SetDefaults()
         {

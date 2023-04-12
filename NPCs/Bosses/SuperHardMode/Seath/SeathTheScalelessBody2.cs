@@ -35,7 +35,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         int breathDamage = 33;
         int flameRainDamage = 27;
         int meteorDamage = 33;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = (int)(NPC.damage / 2);
             breathDamage = (int)(breathDamage / 2);
@@ -44,7 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Seath the Scaleless");
+            // DisplayName.SetDefault("Seath the Scaleless");
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
                 Hide = true
             };
@@ -72,7 +72,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         {
             return false;
         }
-        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             SeathTheScalelessHead.SetImmune(projectile, NPC);
         }

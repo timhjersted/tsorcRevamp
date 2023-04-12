@@ -7,7 +7,7 @@ namespace tsorcRevamp.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bloodsign");
+            // DisplayName.SetDefault("Bloodsign");
             Main.projFrames[Projectile.type] = 25;
         }
         public override void SetDefaults()

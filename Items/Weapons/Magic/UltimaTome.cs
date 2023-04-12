@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Ultimate tome guarded by the Omega Weapon.");
+            // Tooltip.SetDefault("Ultimate tome guarded by the Omega Weapon.");
         }
         public override void SetDefaults()
         {

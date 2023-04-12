@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Living Shroom Thief");
+            // DisplayName.SetDefault("Living Shroom Thief");
             Main.npcFrameCount[NPC.type] = 8;
         }
 
@@ -303,7 +303,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
         public int coinsdropped = 0;
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 15; i++)
             {

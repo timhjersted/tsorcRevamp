@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Firestorm Detonator");
+            // DisplayName.SetDefault("Firestorm Detonator");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
         }
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.DamageType = DamageClass.Magic;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.OnFire, 300);
         }

@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Great Magic Barrier");
+            // DisplayName.SetDefault("Great Magic Barrier");
         }
         public override void SetDefaults()
         {

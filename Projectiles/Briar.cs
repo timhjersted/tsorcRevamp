@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles
             Main.dust[dust].noGravity = true;
             Projectile.ai[0]++;
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             for (int d = 0; d < 20; d++)
             {

@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cataluminance v1.08");
+            // DisplayName.SetDefault("Cataluminance v1.08");
         }
 
         int StarBlastDamage = 35;

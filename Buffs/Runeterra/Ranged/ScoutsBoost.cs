@@ -8,8 +8,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Scouts Boost");
-            Description.SetDefault("Multiplies movement speed by 20% and stamina regen by 10%");
+            // DisplayName.SetDefault("Scouts Boost");
+            // Description.SetDefault("Multiplies movement speed by 20% and stamina regen by 10%");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

@@ -10,9 +10,9 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bonfire");
-            Description.SetDefault("Stay a little while... Let your soul heal \n" +
-                                   "Enemy spawns disabled");
+            // DisplayName.SetDefault("Bonfire");
+            /* Description.SetDefault("Stay a little while... Let your soul heal \n" +
+                                   "Enemy spawns disabled"); */
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = true;
         }

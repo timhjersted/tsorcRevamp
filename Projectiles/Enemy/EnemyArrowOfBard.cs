@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Arrow of Bard");
+            // DisplayName.SetDefault("Arrow of Bard");
         }
         public override void SetDefaults()
         {

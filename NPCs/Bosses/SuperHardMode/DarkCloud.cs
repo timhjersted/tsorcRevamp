@@ -73,7 +73,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public static int arrowRainDamage = 50;
         #endregion
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = 200;
         }
@@ -2102,7 +2102,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         #region Debuffs
-        public override void OnHitPlayer(Player player, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             int expertScale = 1;
             if (Main.expertMode) expertScale = 2;

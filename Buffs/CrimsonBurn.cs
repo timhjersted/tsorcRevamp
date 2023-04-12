@@ -13,8 +13,8 @@ namespace tsorcRevamp.Buffs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crimson Burn");
-            Description.SetDefault("Your flesh is burning");
+            // DisplayName.SetDefault("Crimson Burn");
+            // Description.SetDefault("Your flesh is burning");
         }
 
         public override void Update(NPC npc, ref int buffIndex)

@@ -12,8 +12,8 @@ namespace tsorcRevamp.Buffs.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Triple Threat");
-			Description.SetDefault("The Triad will fight for you");
+			// DisplayName.SetDefault("Triple Threat");
+			// Description.SetDefault("The Triad will fight for you");
 
 			Main.buffNoSave[Type] = true; // This buff won't save when you exit the world
 			Main.buffNoTimeDisplay[Type] = true; // The time remaining won't display on this buff

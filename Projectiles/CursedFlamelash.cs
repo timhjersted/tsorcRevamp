@@ -4,6 +4,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles
@@ -69,25 +70,24 @@ namespace tsorcRevamp.Projectiles
         }
 
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
-        {
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {/*
             int originalDamage = damage;
             damage *= (int)Projectile.velocity.Length() / 6;
-            damage += originalDamage / 3;
+            damage += originalDamage / 3;*/
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(5))
             {
-                target.AddBuff(BuffID.CursedInferno, 300);
+                target.AddBuff(BuffID.CursedInferno, 5 * 60);
             }
         }
-
-        public override void OnHitPvp(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if (Main.rand.NextBool(5))
+            if (Main.rand.NextBool(5) && info.PvP)
             {
-                target.AddBuff(BuffID.CursedInferno, 300);
+                target.AddBuff(BuffID.CursedInferno, 5 * 60);
             }
         }
         Vector2 samplePointOffset1;

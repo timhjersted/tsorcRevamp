@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Ranged
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crystal Ray");
+            // DisplayName.SetDefault("Crystal Ray");
         }
 
         public override string Texture => base.Texture;
@@ -217,7 +217,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             //Projectile.damage = 0;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             switch (Projectile.ai[0])
             {

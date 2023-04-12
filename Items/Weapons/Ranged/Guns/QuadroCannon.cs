@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Four shot burst" +
+            /* Tooltip.SetDefault("Four shot burst" +
                                 "\nOnly the first shot consumes ammo" +
-                                "\nFires a spread of four bullets with each shot");
+                                "\nFires a spread of four bullets with each shot"); */
         }
         public override void SetDefaults()
         {

@@ -9,11 +9,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords {
 
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Right click to throw a dagger that\n" +
+            /* Tooltip.SetDefault("Right click to throw a dagger that\n" +
                                "sticks to enemies and tiles it hits\n" + 
                                "Right click again to teleport towards the\n" +
                                "dagger, destroying it and firing homing blades\n" +
-                               $"Throwing a dagger costs {MANA_COST} mana");
+                               $"Throwing a dagger costs {MANA_COST} mana"); */
         }
 
         const int MANA_COST = 100;

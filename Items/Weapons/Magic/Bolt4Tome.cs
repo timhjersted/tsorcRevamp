@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bolt 4 Tome");
-            Tooltip.SetDefault("A lost legendary tome. You command the forces of the sky.\n" +
+            // DisplayName.SetDefault("Bolt 4 Tome");
+            /* Tooltip.SetDefault("A lost legendary tome. You command the forces of the sky.\n" +
                                 "\nElectrifies and paralyzes enemies" +
-                                "\nOnly the most powerful mages will be able to cast this spell.");
+                                "\nOnly the most powerful mages will be able to cast this spell."); */
 
         }
 

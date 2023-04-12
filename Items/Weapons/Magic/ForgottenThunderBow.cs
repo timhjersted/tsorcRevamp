@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Casts a bolt of lightning from your bow, doing massive damage over time. ");
+            // Tooltip.SetDefault("Casts a bolt of lightning from your bow, doing massive damage over time. ");
         }
         public override void SetDefaults()
         {

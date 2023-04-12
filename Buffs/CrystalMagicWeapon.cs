@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crystal Magic Weapon");
-            Description.SetDefault("Your weapon is imbued with crystalline magic!");
+            // DisplayName.SetDefault("Crystal Magic Weapon");
+            // Description.SetDefault("Your weapon is imbued with crystalline magic!");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

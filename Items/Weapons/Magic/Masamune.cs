@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("The blade almost cannot be seen it cuts so fast, ripping enemies to shreds in seconds." +
-                                "\nHas the power to shoot a magical water flame from its blade yet it uses no mana.");
+            /* Tooltip.SetDefault("The blade almost cannot be seen it cuts so fast, ripping enemies to shreds in seconds." +
+                                "\nHas the power to shoot a magical water flame from its blade yet it uses no mana."); */
         }
 
         public override void SetDefaults()

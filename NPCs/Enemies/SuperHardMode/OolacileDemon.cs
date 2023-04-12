@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ephemeral Oolacile Demon");
+            // DisplayName.SetDefault("Ephemeral Oolacile Demon");
         }
         public override void SetDefaults()
         {
@@ -41,7 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int cursedBreathDamage = 35;
         int bioSpitDamage = 40;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);
@@ -493,7 +493,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
         #region Debuffs
-        public override void OnHitPlayer(Player player, int target, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
 
             if (Main.rand.NextBool(2))

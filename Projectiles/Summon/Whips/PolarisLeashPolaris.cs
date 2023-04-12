@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			}
 			Dust.NewDust(Projectile.Center, 10, 10, DustID.IceRod, 0f, 0f, 150, default(Color), 1f);
 		}
-		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
 			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.PolarisLeashDebuff>(), 240);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;

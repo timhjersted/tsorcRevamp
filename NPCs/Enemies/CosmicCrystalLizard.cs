@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cosmic Crystal Lizard");
+            // DisplayName.SetDefault("Cosmic Crystal Lizard");
             Main.npcFrameCount[NPC.type] = 29;
         }
 
@@ -966,7 +966,7 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 5; i++)
             {
@@ -987,7 +987,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
         }
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             //intentionally lower
             peaceouttimer -= (int)(20 + (damage * 0.2f));
@@ -1007,7 +1007,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 immuneframe = 0;
             }
         }
-        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             peaceouttimer -= (int)(25 + (damage * 0.2f));
             if (crit && immuneframe >= 1)

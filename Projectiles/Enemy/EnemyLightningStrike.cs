@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Laser");
+            // DisplayName.SetDefault("Laser");
         }
 
         public override string Texture => base.Texture;
@@ -735,7 +735,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             if (!IsAtMaxCharge)
             {
@@ -745,7 +745,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             target.AddBuff(BuffID.Slow, 150);
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.Electrified, 300);
             target.AddBuff(BuffID.Slow, 150);

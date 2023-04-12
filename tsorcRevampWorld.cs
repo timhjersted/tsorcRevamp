@@ -17,6 +17,7 @@ using Terraria.ModLoader.IO;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Textures;
 using tsorcRevamp.Tiles;
+using Terraria.Localization;
 
 namespace tsorcRevamp
 {
@@ -1281,58 +1282,58 @@ namespace tsorcRevamp
         //Chaos
         //Dark Cloud
 
-        static Recipe.Condition internalDisabled;
-        public static Recipe.Condition AdventureModeDisabled
+        static Condition internalDisabled;
+        public static Condition AdventureModeDisabled
         {
             get
             {
                 if (internalDisabled == null)
                 {
-                    internalDisabled = new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Only craftable outside of Adventure Mode"), r => !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode);
+                    internalDisabled = new Condition(Language.GetText("Only craftable outside of Adventure Mode"), () => !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode);
                 }
                 return internalDisabled;
             }
         }
-        static Recipe.Condition internalEnabled;
-        public static Recipe.Condition AdventureModeEnabled
+        static Condition internalEnabled;
+        public static Condition AdventureModeEnabled
         {
             get
             {
                 if (internalEnabled == null)
                 {
-                    internalEnabled = new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Adventure Mode-only recipe"), r => ModContent.GetInstance<tsorcRevampConfig>().AdventureMode);
+                    internalEnabled = new Condition(Language.GetText("Adventure Mode-only recipe"), () => ModContent.GetInstance<tsorcRevampConfig>().AdventureMode);
                 }
                 return internalEnabled;
             }
         }
 
 
-        public static Recipe.Condition SHM1Downed
+        public static Condition SHM1Downed
         {
             get
             {
-                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("One Guardian of the Abyss Slain"), r => SHMDowned > 0);
+                return new Condition(Language.GetText("One Guardian of the Abyss Slain"), () => SHMDowned > 0);
             }
         }
-        public static Recipe.Condition SHM3Downed
+        public static Condition SHM3Downed
         {
             get
             {
-                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Three Guardians of the Abyss Slain"), r => SHMDowned >= 3);
+                return new Condition(Language.GetText("Three Guardians of the Abyss Slain"), () => SHMDowned >= 3);
             }
         }
-        public static Recipe.Condition SHM6Downed
+        public static Condition SHM6Downed
         {
             get
             {
-                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Six Guardians of the Abyss Slain"), r => SHMDowned >= 6);
+                return new Condition(Language.GetText("Six Guardians of the Abyss Slain"), () => SHMDowned >= 6);
             }
         }
-        public static Recipe.Condition SHM9Downed
+        public static Condition SHM9Downed
         {
             get
             {
-                return new Recipe.Condition(Terraria.Localization.NetworkText.FromKey("Nine Guardians of the Abyss Slain"), r => SHMDowned >= 9);
+                return new Condition(Language.GetText("Nine Guardians of the Abyss Slain"), () => SHMDowned >= 9);
             }
         }
 

@@ -48,7 +48,7 @@ namespace tsorcRevamp.Projectiles
             if (lastposindex > 19) lastposindex = 0;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             int expertScaling = 1;
             if (Main.expertMode) expertScaling = 2;

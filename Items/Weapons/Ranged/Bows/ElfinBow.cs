@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Never miss again\n" +
-                "Unleashes a storm of enchanted arrows that hunt down any enemy you select");
+            /* Tooltip.SetDefault("Never miss again\n" +
+                "Unleashes a storm of enchanted arrows that hunt down any enemy you select"); */
         }
         public override void SetDefaults()
         {

@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Water Fiend Kraken");
+            // DisplayName.SetDefault("Water Fiend Kraken");
         }
 
         int hypnoticDisruptorDamage = 35;

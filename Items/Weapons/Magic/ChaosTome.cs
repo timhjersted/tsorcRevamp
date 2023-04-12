@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Casts a purple flame that can pass through solid objects.");
+            // Tooltip.SetDefault("Casts a purple flame that can pass through solid objects.");
         }
         public override void SetDefaults()
         {

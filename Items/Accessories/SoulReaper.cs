@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Increases Dark Soul pick-up range and increases" +
+            /* Tooltip.SetDefault("Increases Dark Soul pick-up range and increases" +
                                 "\nconsumable soul drop chance by 25%" +
                                 "\nGives off a faint glow" +
-                                "\nCan be upgraded with 7000 Dark Souls");
+                                "\nCan be upgraded with 7000 Dark Souls"); */
         }
 
         public override void SetDefaults()

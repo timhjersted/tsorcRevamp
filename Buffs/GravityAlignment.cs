@@ -7,9 +7,9 @@ namespace tsorcRevamp.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Gravitional Alignment");
-            Description.SetDefault("Attuned with the magical energy of the area\n" +
-                "Press 'up' to reverse gravity");
+            // DisplayName.SetDefault("Gravitional Alignment");
+            /* Description.SetDefault("Attuned with the magical energy of the area\n" +
+                "Press 'up' to reverse gravity"); */
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = true;
         }

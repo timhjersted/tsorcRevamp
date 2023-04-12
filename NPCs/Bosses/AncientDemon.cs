@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ancient Demon");
+            // DisplayName.SetDefault("Ancient Demon");
         }
 
         public override void SetDefaults()
@@ -104,7 +104,7 @@ namespace tsorcRevamp.NPCs.Bosses
         int blackFireDamage = 47;
         int greatAttackDamage = 62;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
         
             NPC.damage = (int)(NPC.damage / 2);
@@ -119,7 +119,7 @@ namespace tsorcRevamp.NPCs.Bosses
             greatAttackDamage = (int)(greatAttackDamage / 2);
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
                 target.AddBuff(20, 600, false); //poisoned
                 target.AddBuff(30, 600, false); //bleeding
@@ -139,7 +139,7 @@ namespace tsorcRevamp.NPCs.Bosses
             get => Main.player[NPC.target];
         }
         //PROJECTILE HIT LOGIC
-        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             tsorcRevampAIs.RedKnightOnHit(NPC, true);
 
@@ -166,7 +166,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         }
 
-        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
 
             //TELEPORT RANGED
@@ -510,7 +510,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             if (NPC.life <= 0)
             {

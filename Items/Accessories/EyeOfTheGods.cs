@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Eye of the Gods");
-            Tooltip.SetDefault("Lights up the cursor of you and your allies when equipped" +
-                "\nAlso works in vanity slots");
+            // DisplayName.SetDefault("Eye of the Gods");
+            /* Tooltip.SetDefault("Lights up the cursor of you and your allies when equipped" +
+                "\nAlso works in vanity slots"); */
 
         }
 

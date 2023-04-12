@@ -9,12 +9,12 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Stone of Seath");
-            Tooltip.SetDefault("Summons Seath the Scaleless, a great dragon granted the title of Duke by Lord Gwyn for his \n" +
+            // DisplayName.SetDefault("Stone of Seath");
+            /* Tooltip.SetDefault("Summons Seath the Scaleless, a great dragon granted the title of Duke by Lord Gwyn for his \n" +
                 "assistance in defeating the Everlasting Dragons and given a fragment of a Lord Soul. Seath \n" +
                 "was driven insane during his research on the Scales of Immortality, which he could never \n" +
                 "obtain. Ironically, he is now an immortal himself, a true Undead by means of his research \n" +
-                "into the Primordial Crystal, which he stole from the dragons when he defected.");
+                "into the Primordial Crystal, which he stole from the dragons when he defected."); */
         }
 
         public override void SetDefaults()

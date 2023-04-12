@@ -115,7 +115,7 @@ namespace tsorcRevamp.Projectiles
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.6f }, Projectile.position);
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Projectile.owner == Main.myPlayer)
             {

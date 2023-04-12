@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Blue Hero's Pants");
-            Tooltip.SetDefault("Worn by the hero himself!\nIncreases max minions by 1");
+            // DisplayName.SetDefault("Blue Hero's Pants");
+            // Tooltip.SetDefault("Worn by the hero himself!\nIncreases max minions by 1");
         }
         public override void SetDefaults()
         {

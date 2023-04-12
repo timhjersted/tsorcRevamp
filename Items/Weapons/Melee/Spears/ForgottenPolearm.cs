@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Forgotten Polearm");
-            Tooltip.SetDefault("Shimmering ephemeral energy.");
+            // DisplayName.SetDefault("Forgotten Polearm");
+            // Tooltip.SetDefault("Shimmering ephemeral energy.");
         }
 
         public override void SetDefaults()

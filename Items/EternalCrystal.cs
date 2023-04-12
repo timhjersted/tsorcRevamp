@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault($"[i:{Item.type}][c/4949c2:A mysterious crystal][i:{Item.type}]" +
-                "\nLooking into it is like peering into the infinite expanse of [c/4949c2:space]");
+            /* Tooltip.SetDefault($"[i:{Item.type}][c/4949c2:A mysterious crystal][i:{Item.type}]" +
+                "\nLooking into it is like peering into the infinite expanse of [c/4949c2:space]"); */
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(4, 25));
 
         }

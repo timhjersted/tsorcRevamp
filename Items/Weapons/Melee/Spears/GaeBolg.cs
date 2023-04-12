@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Gae Bolg");
-            Tooltip.SetDefault("Pierce reality \nCan be upgraded into its mythical form with 70,000 Dark Souls");
+            // DisplayName.SetDefault("Gae Bolg");
+            // Tooltip.SetDefault("Pierce reality \nCan be upgraded into its mythical form with 70,000 Dark Souls");
         }
 
         public override void SetDefaults()

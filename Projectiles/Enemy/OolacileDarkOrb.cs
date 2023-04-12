@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Oolacile's Dark Orb");
+            // DisplayName.SetDefault("Oolacile's Dark Orb");
         }
 
         public override void SetDefaults()
@@ -75,7 +75,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             return base.PreKill(timeLeft);
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             if (Main.expertMode)
             {

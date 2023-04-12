@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("4 times as effective against magic users.");
+            // Tooltip.SetDefault("4 times as effective against magic users.");
         }
         public override void SetDefaults()
         {
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.shoot = ModContent.ProjectileType<Nothing>();
         }
 
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
             //todo add mod NPCs to this list
             if (target.type == NPCID.DarkCaster

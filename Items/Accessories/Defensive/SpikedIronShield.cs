@@ -12,10 +12,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("'Everyone will stay away from you'" +
+            /* Tooltip.SetDefault("'Everyone will stay away from you'" +
                              "\nReduces damage taken by 4% and gives thorns buff" +
                              "\nbut also reduces movement speed by 5%" +
-                             "\nCan be upgraded with an Obsidian Shield and 5000 Dark Souls");
+                             "\nCan be upgraded with an Obsidian Shield and 5000 Dark Souls"); */
 
         }
 

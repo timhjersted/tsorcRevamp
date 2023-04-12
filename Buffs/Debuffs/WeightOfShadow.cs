@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs.Debuffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Weight of Shadow");
-            Description.SetDefault("The gravity of what you might become sets in...");
+            // DisplayName.SetDefault("Weight of Shadow");
+            // Description.SetDefault("The gravity of what you might become sets in...");
             Main.buffNoTimeDisplay[Type] = true;
             Main.debuff[Type] = true;
         }

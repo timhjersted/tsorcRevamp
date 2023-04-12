@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Accessories.Expert
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A great ring of power gifted to men." +
+            /* Tooltip.SetDefault("A great ring of power gifted to men." +
                                 "\nCasts darkness and battle potion effects on wearer." +
-                                "\n+25% crit chance. ");
+                                "\n+25% crit chance. "); */
         }
 
         public override void SetDefaults()

@@ -106,7 +106,7 @@ namespace tsorcRevamp.Projectiles
 
             return false;
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             // change the hitbox size, centered about the original projectile center. This makes the projectile have small aoe.
             Projectile.position.X = Projectile.position.X + (float)(Projectile.width / 2);

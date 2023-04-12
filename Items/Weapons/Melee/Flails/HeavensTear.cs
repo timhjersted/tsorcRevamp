@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Heaven's Tear");
-            Tooltip.SetDefault("Heaven splits with each swing" +
-                "\nDeals double damage to mages and ghosts");
+            // DisplayName.SetDefault("Heaven's Tear");
+            /* Tooltip.SetDefault("Heaven splits with each swing" +
+                "\nDeals double damage to mages and ghosts"); */
 
         }
 
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             recipe.Register();
         }
 
-        public override void ModifyHitNPC(Player player, NPC npc, ref int damage, ref float knockBack, ref bool crit)
+        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
             //damage = (int) ((Main.rand.Next(26)) * (P.GetDamage(DamageClass.Melee)));
             if (npc.FullName == "Tim"

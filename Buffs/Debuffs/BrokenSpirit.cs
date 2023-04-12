@@ -7,8 +7,8 @@ namespace tsorcRevamp.Buffs.Debuffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Broken Spirit");
-            Description.SetDefault("You feel like giving up!");
+            // DisplayName.SetDefault("Broken Spirit");
+            // Description.SetDefault("You feel like giving up!");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

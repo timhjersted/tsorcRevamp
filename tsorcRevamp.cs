@@ -1,6 +1,5 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using On.System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -999,7 +998,7 @@ namespace tsorcRevamp
         }
 
         [Obsolete]
-        public override void AddRecipes()
+        public override void AddRecipes()/* tModPorter Note: Removed. Use ModSystem.AddRecipes */
         {
             foreach (var recipe in Main.recipe)
             {
@@ -1284,7 +1283,7 @@ namespace tsorcRevamp
             return base.Call(args);
         }
 
-        public override void PostAddRecipes()
+        public override void PostAddRecipes()/* tModPorter Note: Removed. Use ModSystem.PostAddRecipes */
         {
             tsorcGlobalItem.populateSoulRecipes();
         }

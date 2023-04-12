@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Light of Dawn");
+            // DisplayName.SetDefault("Light of Dawn");
         }
         public override void SetDefaults()
         {
@@ -71,7 +71,7 @@ namespace tsorcRevamp.Projectiles.Magic
         }
 
         bool hasHitNPC = false;
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             hasHitNPC = true;
         }

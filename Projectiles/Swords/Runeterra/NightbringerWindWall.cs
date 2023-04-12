@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 7;
-            DisplayName.SetDefault("Nightbringer Firewall");
+            // DisplayName.SetDefault("Nightbringer Firewall");
         }
         public override void SetDefaults()
         {

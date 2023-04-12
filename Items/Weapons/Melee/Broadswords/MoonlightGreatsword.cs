@@ -12,10 +12,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("[c/ffbf00:The Moonlight Greatsword, the sword of legend...]" +
+            /* Tooltip.SetDefault("[c/ffbf00:The Moonlight Greatsword, the sword of legend...]" +
                                 "\nGlows and gains piercing projectiles at night" +
                                 "\nScales with your magic or melee stats, whichever is higher" +
-                                "\nLaunches glimmering waves of moonlight");
+                                "\nLaunches glimmering waves of moonlight"); */
         }
         public override void SetDefaults()
         {
@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             }
         }
 
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
         }
 

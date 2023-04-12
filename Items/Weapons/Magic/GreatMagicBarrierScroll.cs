@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Great Magic Barrier");
-            Tooltip.SetDefault("A lost legendary scroll\n" +
+            // DisplayName.SetDefault("Great Magic Barrier");
+            /* Tooltip.SetDefault("A lost legendary scroll\n" +
                                 "[c/ffbf00:Casts Great Magic Barrier on the player, raising defense by 60 for 30 seconds]\n" +
-                                "2 minute cooldown. Does not stack with other barrier or shield spells");
+                                "2 minute cooldown. Does not stack with other barrier or shield spells"); */
         }
         public override void SetDefaults()
         {

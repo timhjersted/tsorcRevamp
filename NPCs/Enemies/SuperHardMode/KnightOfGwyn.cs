@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         bool defenseBroken = false;
 
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.damage = (int)(NPC.damage / 2);
             holdBallDamage = (int)(holdBallDamage * tsorcRevampWorld.SubtleSHMScale);
@@ -63,7 +63,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             //gravityBallDamage = (int)(gravityBallDamage * tsorcRevampWorld.SubtleSHMScale);
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
 
             int expertScale = 1;
@@ -262,7 +262,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                                 WorldGen.KillTile(num32, num33 - 1, false, false, false);
                                 if (Main.netMode == NetmodeID.Server)
                                 {
-                                    NetMessage.SendData(MessageID.TileChange, -1, -1, null, 0, (float)num32, (float)(num33 - 1), 0f, 0);
+                                    NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, (float)num32, (float)(num33 - 1), 0f, 0);
                                 }
                             }
                             else
@@ -275,7 +275,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                                 }
                                 if (Main.netMode == NetmodeID.Server && flag6)
                                 {
-                                    NetMessage.SendData(MessageID.ChangeDoor, -1, -1, null, 0, (float)num32, (float)num33, (float)NPC.direction, 0);
+                                    NetMessage.SendData(MessageID.ToggleDoorState, -1, -1, null, 0, (float)num32, (float)num33, (float)NPC.direction, 0);
                                 }
                             }
                         }

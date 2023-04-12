@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles
         public override string Texture => "tsorcRevamp/Items/Ammo/ArrowOfBard";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Elfin Arrow");
+            // DisplayName.SetDefault("Elfin Arrow");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 10;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }

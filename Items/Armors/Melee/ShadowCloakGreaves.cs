@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("18% increased movement speed" +
-                "\nIncreases melee speed by 27%");
+            /* Tooltip.SetDefault("18% increased movement speed" +
+                "\nIncreases melee speed by 27%"); */
         }
         public override void SetDefaults()
         {

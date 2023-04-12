@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Acid Spit");
+            // DisplayName.SetDefault("Acid Spit");
 
         }
         public override void SetDefaults()
@@ -63,7 +63,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             
             target.AddBuff(BuffID.Blackout, 120, false); //darkness

@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Polaris");
-            Tooltip.SetDefault("Batteries included");
+            // DisplayName.SetDefault("Polaris");
+            // Tooltip.SetDefault("Batteries included");
         }
 
         public override void SetDefaults()

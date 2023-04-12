@@ -13,8 +13,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Farron Dart");
-            Tooltip.SetDefault("Rapidly shoots controllable farron darts");
+            // DisplayName.SetDefault("Farron Dart");
+            // Tooltip.SetDefault("Rapidly shoots controllable farron darts");
         }
         public override void SetDefaults()
         {

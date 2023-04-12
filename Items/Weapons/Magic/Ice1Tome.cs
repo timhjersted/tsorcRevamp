@@ -8,13 +8,13 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ice 1 Tome");
-            Tooltip.SetDefault("A lost beginner's tome" +
+            // DisplayName.SetDefault("Ice 1 Tome");
+            /* Tooltip.SetDefault("A lost beginner's tome" +
                 "\nMultiple shots can be controlled and stacked" +
                 "\nallowing for high burst damage" +
                 "\nDrops a small icicle upon collision" +
                 "\nSlows enemies" +
-                "\nCan be upgraded");
+                "\nCan be upgraded"); */
         }
 
         //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing

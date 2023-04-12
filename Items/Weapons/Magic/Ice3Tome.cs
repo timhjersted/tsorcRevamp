@@ -9,11 +9,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ice 3 Tome");
-            Tooltip.SetDefault("A lost tome fabled to deal great damage.\n" +
+            // DisplayName.SetDefault("Ice 3 Tome");
+            /* Tooltip.SetDefault("A lost tome fabled to deal great damage.\n" +
                                 "\nSlows and occasionally freezes enemies" +
                                 "\nOnly mages will be able to realize this tome's full potential. \n" +
-                                "Can be upgraded");
+                                "Can be upgraded"); */
 
         }
 

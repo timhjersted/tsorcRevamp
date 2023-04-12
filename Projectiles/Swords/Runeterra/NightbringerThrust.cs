@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 12;
-            DisplayName.SetDefault("Nightbringer Thrust");
+            // DisplayName.SetDefault("Nightbringer Thrust");
         }
 
 
@@ -114,7 +114,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			float collisionPoint = 0f;
 			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
 		}
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
 			Player player = Main.player[Projectile.owner];
             if (steeltempesthittimer3 == 0)

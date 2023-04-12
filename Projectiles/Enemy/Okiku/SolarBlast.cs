@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Solar Blast");
+            // DisplayName.SetDefault("Solar Blast");
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
         public override void SetDefaults()
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/SolarBlast", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.OnFire, 100);
         }

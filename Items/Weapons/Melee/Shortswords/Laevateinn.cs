@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Strike true." + "\nWielded like a shortsword");
+            // Tooltip.SetDefault("Strike true." + "\nWielded like a shortsword");
         }
 
         public override void SetDefaults()

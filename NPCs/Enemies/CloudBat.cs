@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cloud Bat");
+            // DisplayName.SetDefault("Cloud Bat");
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.GiantBat];
         }
 
@@ -38,14 +38,14 @@ namespace tsorcRevamp.NPCs.Enemies
             return chance;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             if (Main.rand.NextBool(8))
             {
                 target.AddBuff(BuffID.Confused, 600, true);
             }
         }
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 15; i++)
             {

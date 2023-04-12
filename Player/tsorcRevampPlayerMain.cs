@@ -26,6 +26,7 @@ using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Runeterra.Magic;
+using System.Diagnostics.Contracts;
 
 namespace tsorcRevamp
 {
@@ -60,7 +61,7 @@ namespace tsorcRevamp
             bagsOpened = new List<int>();
         }
 
-        public override void clientClone(ModPlayer clientClone)
+        public override void CopyClientState(ModPlayer clientClone)/* tModPorter Suggestion: Replace Item.Clone usages with Item.CopyNetStateTo */
         {
             tsorcRevampPlayer clone = clientClone as tsorcRevampPlayer;
             if (clone == null) { return; }
@@ -251,9 +252,62 @@ namespace tsorcRevamp
             }
         }
 
-        public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource, ref int cooldownCounter) {
+        public override bool ImmuneTo(PlayerDeathReason damageSource, int cooldownCounter, bool dodgeable)
+        {
             if (Player.HasBuff(ModContent.BuffType<Invincible>()))
+            {
+                return true;
+            }
+            int NT = Main.npc[damageSource.SourceNPCIndex].type;
+            if (DragonStone)
+            {
+                if (NT == 2 || NT == 6 || NT == 34 || NT == 42 || NT == 48 || NT == 49 || NT == 51 || NT == 60 || NT == 61 || NT == 62 || NT == 66 || NT == 75 || NT == 87 || NT == 88 || NT == 89 || NT == 90 || NT == 91 || NT == 92 || NT == 93 || NT == 94 || NT == 112 || NT == 122 || NT == 133 || NT == 137
+                    || NT == NPCID.Probe
+                    || NT == NPCID.IceBat
+                    || NT == NPCID.Lavabat
+                    || NT == NPCID.GiantFlyingFox
+                    || NT == NPCID.RedDevil
+                    || NT == NPCID.VampireBat
+                    || NT == NPCID.IceElemental
+                    || NT == NPCID.PigronCorruption
+                    || NT == NPCID.PigronHallow
+                    || NT == NPCID.PigronCrimson
+                    || NT == NPCID.Crimera
+                    || NT == NPCID.MossHornet
+                    || NT == NPCID.CrimsonAxe
+                    || NT == NPCID.FloatyGross
+                    || NT == NPCID.Moth
+                    || NT == NPCID.Bee
+                    || NT == NPCID.FlyingFish
+                    || NT == NPCID.FlyingSnake
+                    || NT == NPCID.AngryNimbus
+                    || NT == NPCID.Parrot
+                    || NT == NPCID.Reaper
+                    || NT == NPCID.IchorSticker
+                    || NT == NPCID.DungeonSpirit
+                    || NT == NPCID.Ghost
+                    || NT == NPCID.ElfCopter
+                    || NT == NPCID.Flocko
+                    || NT == NPCID.MartianDrone
+                    || NT == NPCID.MartianProbe
+                    || NT == NPCID.ShadowFlameApparition
+                    || NT == NPCID.MothronSpawn
+                    || NT == NPCID.GraniteFlyer
+                    || NT == NPCID.FlyingAntlion
+                    || NT == NPCID.DesertDjinn
+                    || NT == NPCID.WyvernHead
+                    || NT == NPCID.Harpy
+                    || NT == NPCID.CultistDragonHead
+                    || NT == NPCID.SandElemental)
+                {
+                    return true;
+                }
+            }
                 return false;
+        }
+
+        public override void ModifyHurt(ref Player.HurtModifiers modifiers) 
+        {
             Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s  
             if (Player.HasBuff(ModContent.BuffType<Rejuvenation>()))
             {
@@ -264,8 +318,8 @@ namespace tsorcRevamp
             {
                 Player.AddBuff(ModContent.BuffType<ScoutsBoostCooldown>(), 3 * 60);
             }
-            return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource, ref cooldownCounter);
         }
+
         public override void OnHitAnything(float x, float y, Entity victim)
         {
             bool hasCelestialCloak = false;
@@ -473,7 +527,7 @@ namespace tsorcRevamp
             return startingItems;
         }
 
-        public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (MeleeArmorVamp10)
             {
@@ -487,15 +541,15 @@ namespace tsorcRevamp
             {
                 if (Main.rand.NextBool(5))
                 {
-                    Player.HealEffect(damage / 4);
-                    Player.statLife += (damage / 4);
+                    Player.HealEffect(damageDone / 4);
+                    Player.statLife += (damageDone / 4);
                 }
             }
             if (MiakodaFull)
             { //Miakoda Full Moon
                 if (MiakodaEffectsTimer > 720)
                 {
-                    if (crit)
+                    if (hit.Crit)
                     {
 
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
@@ -520,7 +574,7 @@ namespace tsorcRevamp
             { //Miakoda Crescent Moon
                 if (MiakodaEffectsTimer > 720)
                 {
-                    if (crit)
+                    if (hit.Crit)
                     {
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
@@ -537,7 +591,7 @@ namespace tsorcRevamp
             { //Miakoda New Moon
                 if (MiakodaEffectsTimer > 720)
                 {
-                    if (crit)
+                    if (hit.Crit)
                     {
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
@@ -551,13 +605,17 @@ namespace tsorcRevamp
             }
         }
 
-        public override void OnHitNPCWithProj(Projectile proj, NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
+        {
+        }
+
+        public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
         {
             if (MiakodaFull)
             { //Miakoda Full Moon
                 if (MiakodaEffectsTimer > 720)
                 {
-                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.DamageType == DamageClass.Summon))
+                    if (hit.Crit) //summoner has decent options for crits now
                     {
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
@@ -584,7 +642,7 @@ namespace tsorcRevamp
             { //Miakoda Crescent Moon
                 if (MiakodaEffectsTimer > 720)
                 {
-                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.DamageType == DamageClass.Summon))
+                    if (hit.Crit) //summoner has decent options for crits now
                     {
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
@@ -601,7 +659,7 @@ namespace tsorcRevamp
             { //Miakoda New Moon
                 if (MiakodaEffectsTimer > 720)
                 {
-                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.CountsAsClass(DamageClass.Summon)))
+                    if (hit.Crit || (proj.minion && Main.player[proj.owner].HeldItem.CountsAsClass(DamageClass.Summon)))
                     {
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
@@ -624,109 +682,58 @@ namespace tsorcRevamp
                 }
             }
         }
-
-        public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
+            int critLevel = (int)(Math.Floor(Player.GetWeaponCrit(Player.HeldItem) / 100f));
             if ((BurningAura || BurningStone) && target.onFire == true)
             {
-                damage = (int)(damage * 1.05f);
+                modifiers.TargetDamageMultiplier *= 1.05f;
             }
 
             if (OldWeapon)
             {
                 float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
-                damage = (int)(damage * damageMult);
+                modifiers.TargetDamageMultiplier *= damageMult;
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().CritDamage250)
             {
-                if(crit)
+                modifiers.CritDamage *= 1.25f;
+            }
+            if (critLevel != 0)
+            {
+                if (critLevel > 1)
                 {
-                    damage *= 5;
-                    damage /= 4;
+                    for (int i = 1; i < critLevel; i++)
+                    {
+                        modifiers.CritDamage *= 2;
+                    }
+                }
+                if (Main.rand.Next(1, 101) <= (float)Player.GetWeaponCrit(Player.HeldItem) - (100 * critLevel))
+                {
+                    modifiers.CritDamage *= 2;
                 }
             }
-            if (crit)
-                DoMultiCrits(ref damage, Player.GetTotalCritChance(item.DamageType));
         }
 
-        public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Item, consider using ModifyHitNPC instead */
         {
-            damage -= 4;
-            if (BurningAura || BurningStone)
-            {
-                damage = (int)(damage * 1.05f);
-            }
-            if (OldWeapon)
-            {
-                float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
-                damage = (int)(damage * damageMult);
-            }
+        }
+
+        public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Projectile, consider using ModifyHitNPC instead */
+        {
+            modifiers.FinalDamage.Flat -= 4;
             if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>())
             {
-                damage = (int)(damage * 0.55);
+                modifiers.FinalDamage *= 0.55f;
             }
-            if (Player.GetModPlayer<tsorcRevampPlayer>().CritDamage250)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250 && proj.DamageType == DamageClass.SummonMeleeSpeed)
             {
-                if (crit)
-                {
-                    damage *= 5;
-                    damage /= 4;
-                }
-            }
-
-            if (crit)
-            {
-                DoMultiCrits(ref damage, Player.GetTotalCritChance(proj.DamageType));
+                modifiers.CritDamage *= 1.25f;
             }
         }
 
-        public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit)
+        public override void ModifyHitByNPC(NPC npc, ref Player.HurtModifiers modifiers)
         {
-            int NT = npc.type;
-            if (DragonStone)
-            {
-                if (NT == 2 || NT == 6 || NT == 34 || NT == 42 || NT == 48 || NT == 49 || NT == 51 || NT == 60 || NT == 61 || NT == 62 || NT == 66 || NT == 75 || NT == 87 || NT == 88 || NT == 89 || NT == 90 || NT == 91 || NT == 92 || NT == 93 || NT == 94 || NT == 112 || NT == 122 || NT == 133 || NT == 137
-                    || NT == NPCID.Probe
-                    || NT == NPCID.IceBat
-                    || NT == NPCID.Lavabat
-                    || NT == NPCID.GiantFlyingFox
-                    || NT == NPCID.RedDevil
-                    || NT == NPCID.VampireBat
-                    || NT == NPCID.IceElemental
-                    || NT == NPCID.PigronCorruption
-                    || NT == NPCID.PigronHallow
-                    || NT == NPCID.PigronCrimson
-                    || NT == NPCID.Crimera
-                    || NT == NPCID.MossHornet
-                    || NT == NPCID.CrimsonAxe
-                    || NT == NPCID.FloatyGross
-                    || NT == NPCID.Moth
-                    || NT == NPCID.Bee
-                    || NT == NPCID.FlyingFish
-                    || NT == NPCID.FlyingSnake
-                    || NT == NPCID.AngryNimbus
-                    || NT == NPCID.Parrot
-                    || NT == NPCID.Reaper
-                    || NT == NPCID.IchorSticker
-                    || NT == NPCID.DungeonSpirit
-                    || NT == NPCID.Ghost
-                    || NT == NPCID.ElfCopter
-                    || NT == NPCID.Flocko
-                    || NT == NPCID.MartianDrone
-                    || NT == NPCID.MartianProbe
-                    || NT == NPCID.ShadowFlameApparition
-                    || NT == NPCID.MothronSpawn
-                    || NT == NPCID.GraniteFlyer
-                    || NT == NPCID.FlyingAntlion
-                    || NT == NPCID.DesertDjinn
-                    || NT == NPCID.WyvernHead
-                    || NT == NPCID.Harpy
-                    || NT == NPCID.CultistDragonHead
-                    || NT == NPCID.SandElemental)
-                {
-                    damage = 0;
-                }
-            }
             if (UndeadTalisman)
             {
                 if (NPCID.Sets.Skeletons[npc.type]
@@ -753,15 +760,13 @@ namespace tsorcRevamp
                     || npc.type == NPCID.SkeletronHead
                     /* || NT == mod.NPCType("MagmaSkeleton") || NT == mod.NPCType("Troll") || NT == mod.NPCType("HeavyZombie") || NT == mod.NPCType("IceSkeleton") || NT == mod.NPCType("IrateBones")*/)
                 {
-                    damage -= 15;
-
-                    if (damage < 0) damage = 0;
+                    modifiers.FinalDamage.Flat -= 15;
                 }
             }
 
         }
 
-        public override void OnHitByNPC(NPC npc, int damage, bool crit)
+        public override void OnHitByNPC(NPC npc, Player.HurtInfo hurtInfo)
         {
             //Todo: All of these accessories should use Player.GetSource_Accessory() as their source
             //They don't because that requires getting the inventory item casuing this effect. I'll do it later if I remember.
@@ -800,7 +805,7 @@ namespace tsorcRevamp
                 Player.AddBuff(BuffID.OnFire, 600);
             }
 
-            if (damage >= Player.statLife || (crit && damage * 2 >= Player.statLife))
+            //if (damage >= Player.statLife || (crit && damage * 2 >= Player.statLife))
             {
                 DeathText = PickDeathText();
             }
@@ -810,7 +815,7 @@ namespace tsorcRevamp
             }
         }
 
-        public override void OnHitByProjectile(Projectile projectile, int damage, bool crit)
+        public override void OnHitByProjectile(Projectile proj, Player.HurtInfo hurtInfo)
         {
             if (Player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
             {
@@ -841,22 +846,22 @@ namespace tsorcRevamp
                     Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 60, 8f, 0, 0, 0);
                 }
             }
-            if (projectile.type == ProjectileID.DeathLaser && Main.rand.NextBool(2))
+            if (proj.type == ProjectileID.DeathLaser && Main.rand.NextBool(2))
             {
                 Player.AddBuff(BuffID.BrokenArmor, 180);
                 Player.AddBuff(BuffID.OnFire, 180);
             }
 
 
-            if (damage >= Player.statLife || (crit && damage * 2 >= Player.statLife))
+            //if (damage >= Player.statLife || (crit && damage * 2 >= Player.statLife))
             {
-                DeathText = PickDeathText(projectile);
+                DeathText = PickDeathText(proj);
             }
         }
 
         
 
-        public override void ModifyHitByProjectile(Projectile proj, ref int damage, ref bool crit)
+        public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)
         {
             if (UndeadTalisman)
             {
@@ -864,14 +869,12 @@ namespace tsorcRevamp
                 {
                     if (!Main.expertMode)
                     {
-                        damage -= 8;
+                        modifiers.FinalDamage.Flat -= 8;
                     }
                     if (Main.expertMode)
                     {
-                        damage -= 4;
+                        modifiers.FinalDamage.Flat -= 4;
                     }
-
-                    if (damage < 0) damage = 0;
                 }
             }
         }
@@ -1020,9 +1023,8 @@ namespace tsorcRevamp
         //The latter is absolutely necessary, because natural mana regen scales with your base mana
         //Even as melee there are mana boosting accessories you can stack, as well as armor like Dragoon that makes mana regen obscenely powerful.
         //This means you can tank until your mana bar is exhausted, then have to back off for a bit and actually dodge
-        public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit, int cooldownCounter)
+        public override void OnHurt(Player.HurtInfo info)
         {
-            base.Hurt(pvp, quiet, damage, hitDirection, crit, cooldownCounter);
             if (manaShield == 1)
             {
                 if (Player.statMana >= Items.Accessories.Defensive.ManaShield.manaCost)
@@ -1059,11 +1061,11 @@ namespace tsorcRevamp
             }
         }
 
-        public override void OnEnterWorld(Player player)
+        public override void OnEnterWorld()
         {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !gotPickaxe)
             { //sandbox mode only, and only once
-                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DiamondPickaxe>());
+                Player.QuickSpawnItem(Player.GetSource_Loot(), ModContent.ItemType<DiamondPickaxe>());
                 gotPickaxe = true;
             }
             DeathText = PickDeathText();
@@ -1071,11 +1073,11 @@ namespace tsorcRevamp
 
 
 
-        public override void OnRespawn(Player player)
+        public override void OnRespawn()
         {
-            player.statLife = player.statLifeMax2;
-            if (BearerOfTheCurse) player.AddBuff(ModContent.BuffType<Hollowed>(), 2);
-            player.AddBuff(ModContent.BuffType<Invincible>(), 360);
+            Player.statLife = Player.statLifeMax2;
+            if (BearerOfTheCurse) Player.AddBuff(ModContent.BuffType<Hollowed>(), 2);
+            Player.AddBuff(ModContent.BuffType<Invincible>(), 360);
             DeathText = PickDeathText();
         }
 
@@ -1220,26 +1222,6 @@ namespace tsorcRevamp
             packet.Write((byte)Player.whoAmI);
             ItemIO.Send(item, packet);
             packet.Send(toWho, fromWho);
-        }
-
-        public void DoMultiCrits(ref int damage, float critType)
-        {
-            int critLevel = (int)(Math.Floor(Player.GetWeaponCrit(Player.HeldItem) / 100f));
-
-            if (critLevel != 0)
-            {
-                if (critLevel > 1)
-                {
-                    for (int i = 1; i < critLevel; i++)
-                    {
-                        damage *= 2;
-                    }
-                }
-                if (Main.rand.Next(1, 101) <= (float)Player.GetWeaponCrit(Player.HeldItem) - (100 * critLevel))
-                {
-                    damage *= 2;
-                }
-            }
         }
     }
 }

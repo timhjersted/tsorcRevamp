@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ichor Glob");
+            // DisplayName.SetDefault("Ichor Glob");
         }
 
         public override void SetDefaults()
@@ -58,7 +58,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 UsefulFunctions.SmoothHoming(NPC, target.Center, 1f, 12, target.velocity, false);
             }
         }
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             NPC.life = 0;
             NPC.netUpdate = true;

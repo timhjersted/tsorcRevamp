@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("(O_O;)");
+            // DisplayName.SetDefault("(O_O;)");
         }
         public override void SetDefaults()
         {
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             return true;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/im-sorry") with { Volume = 0.3f }, Projectile.Center);
         }

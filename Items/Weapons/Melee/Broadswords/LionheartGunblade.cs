@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("\"Of gunblades, the finest model is the Lionheart.\"");
+            // Tooltip.SetDefault("\"Of gunblades, the finest model is the Lionheart.\"");
         }
         public override void SetDefaults()
         {

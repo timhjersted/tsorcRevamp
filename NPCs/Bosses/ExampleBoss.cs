@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Example Boss");
+            // DisplayName.SetDefault("Example Boss");
         }
 
         public override void SetDefaults()

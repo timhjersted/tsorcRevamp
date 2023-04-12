@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Gifted with ranged combat. High defense not necessary" +
-                "\nWith eyes of a hunter you can spot enemies in the dark");
+            /* Tooltip.SetDefault("Gifted with ranged combat. High defense not necessary" +
+                "\nWith eyes of a hunter you can spot enemies in the dark"); */
         }
         public override void SetDefaults()
         {

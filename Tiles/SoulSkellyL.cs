@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -23,8 +24,8 @@ namespace tsorcRevamp.Tiles
             TileObjectData.newTile.Origin = new Point16(2, 0);
             TileObjectData.newTile.StyleHorizontal = true;
             TileObjectData.addTile(Type);
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Soul Skelly");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Soul Skelly");
             AddMapEntry(new Color(120, 250, 0), name);
             DustType = 30;
             TileID.Sets.DisableSmartCursor[Type] = true; 
@@ -165,10 +166,10 @@ namespace tsorcRevamp.Tiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Soul Skelly Left");
-            Tooltip.SetDefault("Right-Click once placed to acquire a Soul of a Nameless Soldier (800 souls)" +
+            // DisplayName.SetDefault("Soul Skelly Left");
+            /* Tooltip.SetDefault("Right-Click once placed to acquire a Soul of a Nameless Soldier (800 souls)" +
             "\nGives Soul of a Proud Knight (2000 souls) outside of Pre-HM" +
-            "\nUsed by mapmakers for placing around the map as loot");
+            "\nUsed by mapmakers for placing around the map as loot"); */
         }
 
         public override void SetDefaults()

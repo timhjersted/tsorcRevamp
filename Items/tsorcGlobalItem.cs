@@ -205,7 +205,7 @@ namespace tsorcRevamp.Items
             //Let all accessories be used in vanity slots (Remove in 1.4.4 where this becomes vanilla behavior)
             if (item.accessory)
             {
-                item.canBePlacedInVanityRegardlessOfConditions = true;
+                item.hasVanityEffects = true;
             }
 
             //Let all items be auto-used (Remove in 1.4.4 where this becomes toggleable vanilla behavior)
@@ -360,7 +360,7 @@ namespace tsorcRevamp.Items
             }
         }
 
-        public override void OnHitNPC(Item item, Player player, NPC target, int damage, float knockBack, bool crit)
+        public override void OnHitNPC(Item item, Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 

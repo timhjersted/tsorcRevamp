@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/EphemeralThrowingAxe";
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("An enchanted melee weapon that can be thrown through walls.\n" + "It does double damage against mages and other magic users.");
+            // Tooltip.SetDefault("An enchanted melee weapon that can be thrown through walls.\n" + "It does double damage against mages and other magic users.");
         }
         public override void SetDefaults()
         {

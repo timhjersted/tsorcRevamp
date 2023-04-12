@@ -61,7 +61,7 @@ namespace tsorcRevamp.Projectiles
 
             return false;
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             for (int d = 0; d < 15; d++)
             {
@@ -79,7 +79,7 @@ namespace tsorcRevamp.Projectiles
 
             return true;
         }
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             if ((target.type == NPCID.SandsharkCorrupt) | (target.type == NPCID.SandsharkCrimson) | (target.type == NPCID.EaterofSouls) | (target.type == NPCID.BigEater) | (target.type == NPCID.LittleEater) | (target.type == NPCID.CorruptGoldfish) | (target.type == NPCID.DevourerBody) | (target.type == NPCID.DevourerHead) | (target.type == NPCID.DevourerTail) | (target.type == NPCID.EaterofWorldsBody) | (target.type == NPCID.EaterofWorldsHead) | (target.type == NPCID.EaterofWorldsTail) | (target.type == NPCID.Corruptor) | (target.type == NPCID.CorruptSlime) | (target.type == NPCID.Slimeling) | (target.type == NPCID.Slimer) | (target.type == NPCID.Slimer2) | (target.type == NPCID.SeekerBody) | (target.type == NPCID.SeekerHead) | (target.type == NPCID.SeekerTail) | (target.type == NPCID.DarkMummy) | (target.type == NPCID.CorruptPenguin) | (target.type == NPCID.CursedHammer) | (target.type == NPCID.Clinger) | (target.type == NPCID.BigMimicCorruption) | (target.type == NPCID.DesertGhoulCorruption) | (target.type == NPCID.DesertLamiaDark) | (target.type == NPCID.CrimsonGoldfish) | (target.type == NPCID.CrimsonPenguin) | (target.type == NPCID.BloodCrawler) | (target.type == NPCID.BloodCrawlerWall) | (target.type == NPCID.FaceMonster) | (target.type == NPCID.Crimera) | (target.type == NPCID.BigCrimera) | (target.type == NPCID.LittleCrimera) | (target.type == NPCID.Creeper) | (target.type == NPCID.BrainofCthulhu) | (target.type == NPCID.Herpling) | (target.type == NPCID.Crimslime) | (target.type == NPCID.BigCrimslime) | (target.type == NPCID.LittleCrimslime) | (target.type == NPCID.BloodJelly) | (target.type == NPCID.BloodFeeder) | (target.type == NPCID.CrimsonAxe) | (target.type == NPCID.IchorSticker) | (target.type == NPCID.FloatyGross) | (target.type == NPCID.BigMimicCrimson) | (target.type == NPCID.DesertGhoulCrimson) | (target.type == NPCID.DesertDjinn))
             {

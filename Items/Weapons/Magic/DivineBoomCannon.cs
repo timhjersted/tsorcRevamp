@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override string Texture => "tsorcRevamp/Items/Weapons/Magic/DivineSpark";
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Obliterates everything upon contact.");
+            // Tooltip.SetDefault("Obliterates everything upon contact.");
         }
         public override void SetDefaults()
         {

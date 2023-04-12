@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Charges a focused beam of piercing light" +
-                "\nReflects up to two times, massively amplifying its damage with each");
+            /* Tooltip.SetDefault("Charges a focused beam of piercing light" +
+                "\nReflects up to two times, massively amplifying its damage with each"); */
         }
 
         public override void SetDefaults()

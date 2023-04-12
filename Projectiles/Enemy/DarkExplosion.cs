@@ -72,7 +72,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             //Vanilla Debuffs cut in half to counter expert mode doubling them
             target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 36000, false);

@@ -60,7 +60,7 @@ namespace tsorcRevamp.Projectiles
             return false;
         }
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             if ((target.type == NPCID.SandsharkHallow) | (target.type == NPCID.Pixie) | (target.type == NPCID.Unicorn) | (target.type == NPCID.RainbowSlime) | (target.type == NPCID.Gastropod) | (target.type == NPCID.LightMummy) | (target.type == NPCID.DesertGhoulHallow) | (target.type == NPCID.IlluminantSlime) | (target.type == NPCID.IlluminantBat) | (target.type == NPCID.EnchantedSword) | (target.type == NPCID.BigMimicHallow) | (target.type == NPCID.DesertLamiaLight))
             {
@@ -68,7 +68,7 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             for (int d = 0; d < 15; d++)
             {

@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Gwyn, Lord of Cinder");
+            // DisplayName.SetDefault("Gwyn, Lord of Cinder");
         }
         public override void SetDefaults()
         {
@@ -125,7 +125,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int lifeTimer = 0;
         int swordTimer = 0;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2.3);
             NPC.damage = (int)(NPC.damage / 2);
@@ -158,7 +158,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         
 
         #region debuffs
-        public override void OnHitPlayer(Player player, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             player.AddBuff(24, 600, false); //on fire
             player.AddBuff(ModContent.BuffType<FracturingArmor>(), 1200, false); //lose defense on hit
@@ -1773,7 +1773,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
 
-        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             if (swordDead)
             {
@@ -1782,7 +1782,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (swordDead)
             {

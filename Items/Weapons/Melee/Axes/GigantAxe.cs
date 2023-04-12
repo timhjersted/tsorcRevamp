@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("An axe used to kill humans.");
+            // Tooltip.SetDefault("An axe used to kill humans.");
         }
         public override void SetDefaults()
         {
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.width = 84;
             Item.shoot = ModContent.ProjectileType<Nothing>();
         }
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
             //todo add mod NPCs to this list
             if (target.type == ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()

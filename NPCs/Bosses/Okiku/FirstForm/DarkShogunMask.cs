@@ -45,9 +45,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
-            DisplayName.SetDefault("Mindflayer King");
+            // DisplayName.SetDefault("Mindflayer King");
         }
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
         }
         public override void FindFrame(int frameHeight)
@@ -86,7 +86,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                 if (NPC.alpha > 200) NPC.alpha -= 1;
             }
         }
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (damage > NPC.life || damage * 2 > NPC.life)
             {
@@ -94,7 +94,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                 damage = NPC.life - 50;
             }
         }
-        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             if (damage > NPC.life || damage * 2 > NPC.life)
             {

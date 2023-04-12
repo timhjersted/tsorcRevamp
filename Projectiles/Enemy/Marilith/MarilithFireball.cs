@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Pyroclastic Detonator");
+            // DisplayName.SetDefault("Pyroclastic Detonator");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
         }
@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Projectile.DamageType = DamageClass.Magic;
         }
         
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.OnFire, 300);
         }

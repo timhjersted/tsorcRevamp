@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("TriadDeath");
+            // DisplayName.SetDefault("TriadDeath");
         }
         public override void SetDefaults()
         {

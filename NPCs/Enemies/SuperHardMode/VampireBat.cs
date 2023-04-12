@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Vampire Bat");
+            // DisplayName.SetDefault("Vampire Bat");
             Main.npcFrameCount[NPC.type] = 8;
         }
 
@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             BannerItem = ModContent.ItemType<Banners.VampireBatBanner>();
         }
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             NPC.lifeMax = (int)(NPC.lifeMax / 2);
             NPC.damage = (int)(NPC.damage / 2);
@@ -87,7 +87,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             base.OnKill();
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 3600);
             target.AddBuff(BuffID.Poisoned, 3600);

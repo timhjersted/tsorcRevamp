@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Demon Drug");
-            Tooltip.SetDefault("Multiplies damage by 22%, lowers defense by 15\n" +
-                               "Does not stack with Armor Drug, Strength, or Battlefront Potions.");
+            // DisplayName.SetDefault("Demon Drug");
+            /* Tooltip.SetDefault("Multiplies damage by 22%, lowers defense by 15\n" +
+                               "Does not stack with Armor Drug, Strength, or Battlefront Potions."); */
         }
 
         public override void SetDefaults()

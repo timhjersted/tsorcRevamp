@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+12% minion damage, +1 minion and turret slot");
+            // Tooltip.SetDefault("+12% minion damage, +1 minion and turret slot");
         }
 
         public override void SetDefaults()

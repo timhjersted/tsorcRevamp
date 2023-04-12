@@ -33,7 +33,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 		}
 
 		// TODO: Inconsistent with vanilla, increasing damage AFTER it is randomised, not before. Change to a different hook in the future.
-		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
 		{
 			int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(9)); //9 is half of the base dmg of the Enchanted Whip
             Vector2 starvector1 = new Vector2(-640, -800) + npc.Center;

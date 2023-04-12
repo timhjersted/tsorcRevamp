@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wand of Darkness");
-            Tooltip.SetDefault("Shoots a piercing bolt of darkness");
+            // DisplayName.SetDefault("Wand of Darkness");
+            // Tooltip.SetDefault("Shoots a piercing bolt of darkness");
             Item.staff[Item.type] = true;
         }
         public override void SetDefaults()

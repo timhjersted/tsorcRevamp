@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Enemy Spell Poison Storm");
+            // DisplayName.SetDefault("Enemy Spell Poison Storm");
             Main.projFrames[Projectile.type] = 7;
         }
         public override void SetDefaults()
@@ -78,7 +78,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             return false;
         }
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.Poisoned, 900, false);
         }

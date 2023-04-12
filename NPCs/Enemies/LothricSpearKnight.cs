@@ -728,7 +728,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             if (AI_State == State_Shielding || AI_State == State_Thrusting)
             {
@@ -780,7 +780,7 @@ namespace tsorcRevamp.NPCs.Enemies
             AI_Timer_Shielding += 10;
         }
 
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             Player player = Main.player[NPC.target];
             if (projectile.type != ModContent.ProjectileType<Items.Weapons.Ranged.BlizzardBlasterShot>())
