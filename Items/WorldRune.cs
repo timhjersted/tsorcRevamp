@@ -9,6 +9,7 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("An otherworldy artifact of great power" +
+                "\nMight come in handy in the future..." +
                 "\nIt seems to react to dark souls...");
 
             ItemID.Sets.ItemNoGravity[Item.type] = true;
