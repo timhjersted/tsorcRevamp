@@ -8,7 +8,7 @@ using tsorcRevamp.Buffs.Runeterra.Ranged;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
-    [Autoload(true)]
+    [Autoload(false)]
     public class OmegaSquadRifle : ModItem
     {
         public override void SetStaticDefaults()
