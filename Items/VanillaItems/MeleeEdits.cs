@@ -36,8 +36,7 @@ namespace tsorcRevamp.Items.VanillaItems
         }
         public override void UpdateInventory(Item item, Player player)
         {
-            if (item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand
-                | item.type == ItemID.TrueExcalibur | item.type == ItemID.TrueNightsEdge | item.type == ItemID.TerraBlade
+            if (item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand | item.type == ItemID.TrueNightsEdge //| item.type == ItemID.TerraBlade
                 | item.type == ItemID.Meowmere | item.type == ItemID.StarWrath)
             {
                 if (Main.GameUpdateCount % 20 == 0)
@@ -48,8 +47,7 @@ namespace tsorcRevamp.Items.VanillaItems
         }
         public override bool CanShoot(Item item, Player player)
         {
-            if ((item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand 
-                | item.type == ItemID.TrueExcalibur | item.type == ItemID.TrueNightsEdge | item.type == ItemID.TerraBlade
+            if ((item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand | item.type == ItemID.TrueNightsEdge //| item.type == ItemID.TerraBlade
                 | item.type == ItemID.Meowmere | item.type == ItemID.StarWrath) & SwordHit <= 0)
             {
                 return false;
@@ -58,8 +56,7 @@ namespace tsorcRevamp.Items.VanillaItems
         }
         public override void OnHitNPC(Item item, Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand 
-                | item.type == ItemID.TrueExcalibur | item.type == ItemID.TrueNightsEdge | item.type == ItemID.TerraBlade 
+            if (item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand | item.type == ItemID.TrueNightsEdge //| item.type == ItemID.TerraBlade 
                 | item.type == ItemID.Meowmere | item.type == ItemID.StarWrath)
             {
                 SwordHit = 2;
@@ -69,8 +66,7 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             base.ModifyItemScale(item, player, ref scale);
 
-            if (item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand
-                | item.type == ItemID.TrueExcalibur | item.type == ItemID.TrueNightsEdge | item.type == ItemID.TerraBlade
+            if (item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand | item.type == ItemID.TrueNightsEdge //| item.type == ItemID.TerraBlade
                 | item.type == ItemID.Meowmere | item.type == ItemID.StarWrath)
             {
                 scale *= 1.25f;
