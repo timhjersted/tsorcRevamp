@@ -17,8 +17,12 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 		}
 		public override void Update(Player player, ref int buffIndex)
 		{
-      // If the minions exist reset the buff time, otherwise remove the buff from the player
-      if (player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointFireball>()] > 0)
+			if (player.HeldItem.type == ModContent.ItemType<ScorchingPoint>())
+			{
+				player.maxMinions += 1;
+			}
+			// If the minions exist reset the buff time, otherwise remove the buff from the player
+			if (player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointFireball>()] > 0)
 			{
 				// update projectiles
 				ScorchingPoint.ReposeProjectiles(player);

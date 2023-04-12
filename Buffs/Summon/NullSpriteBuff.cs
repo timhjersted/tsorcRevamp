@@ -1,5 +1,7 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 
 namespace tsorcRevamp.Buffs.Summon
 {
@@ -16,6 +18,10 @@ namespace tsorcRevamp.Buffs.Summon
 
         public override void Update(Player player, ref int buffIndex)
         {
+            if (player.HeldItem.type == ModContent.ItemType<NullSpriteStaff>())
+            {
+                player.maxMinions += 1;
+            }
             if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.NullSprite>()] > 0)
             {
                 player.buffTime[buffIndex] = 18000;

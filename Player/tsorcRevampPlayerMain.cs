@@ -924,7 +924,7 @@ namespace tsorcRevamp
                 Nightbringer thisNightbringer = Player.HeldItem.ModItem as Nightbringer;
                 OrbOfSpirituality thisOrbOfSpirituality = Player.HeldItem.ModItem as OrbOfSpirituality;
 
-                bool holdingControls = Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>()|| Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>();
+                bool holdingControls = Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>()|| Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>();
                 bool hasBuff = Player.HasBuff(ModContent.BuffType<InterstellarCommander>()) || Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
                 if (!holdingControls && hasBuff && !(Main.keyState.IsKeyDown(Keys.LeftShift)))
                 {
@@ -997,7 +997,7 @@ namespace tsorcRevamp
             }
 
 
-            if (tsorcRevamp.specialAbility.Current && (Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>() || Player.HeldItem.type == ModContent.ItemType<InterstellarVesselControls>()))
+            if (tsorcRevamp.specialAbility.Current && (Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>() || Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>()))
             {
                 if (Main.keyState.IsKeyDown(Keys.LeftShift))
                 {

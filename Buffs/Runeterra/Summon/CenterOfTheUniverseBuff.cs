@@ -18,6 +18,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
         }
         public override void Update(Player player, ref int buffIndex)
         {
+            if (player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>())
+            {
+                player.maxMinions += 1;
+            }
             // If the minions exist reset the buff time, otherwise remove the buff from the player
             if (player.ownedProjectileCounts[ModContent.ProjectileType<CenterOfTheUniverseStar>()] > 0)
             {

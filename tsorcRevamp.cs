@@ -1316,7 +1316,7 @@ namespace tsorcRevamp
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
-                    ModContent.ItemType<InterstellarVesselControls>(),
+                    ModContent.ItemType<InterstellarVesselGauntlet>(),
                     ModContent.BuffType<InterstellarCommander>(),
                     ModContent.ProjectileType<InterstellarVesselShip>(),
                     0.5f

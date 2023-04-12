@@ -20,13 +20,14 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
         public override void SetStaticDefaults()
 		{
-			Main.projPet[Projectile.type] = true; 
+            Main.projFrames[Projectile.type] = 2;
+            Main.projPet[Projectile.type] = true; 
 			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; 
 		}
 		public sealed override void SetDefaults()
 		{
 			Projectile.width = 98;
-			Projectile.height = 54;
+			Projectile.height = 50;
 			Projectile.tileCollide = false;
 
 			Projectile.friendly = true; 
@@ -61,7 +62,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         }
         public override void OnSpawn(IEntitySource source) 
 		{
-			InterstellarVesselControls.projectiles.Add(this);
+			InterstellarVesselGauntlet.projectiles.Add(this);
 		}
 		public override bool? CanCutTiles()
 		{
@@ -77,7 +78,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		}
 		public override void Kill(int timeLeft) 
 		{
-			InterstellarVesselControls.projectiles.Remove(this);
+			InterstellarVesselGauntlet.projectiles.Remove(this);
 		}
 
 		public override void AI()
@@ -211,7 +212,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			if (!owner.HasBuff(ModContent.BuffType<InterstellarCommander>()))
 			{
 				currentAngle2 = 0;
-				InterstellarVesselControls.projectiles.Clear();
+				InterstellarVesselGauntlet.projectiles.Clear();
 			}
 
 			if (owner.HasBuff(ModContent.BuffType<InterstellarCommander>()))
@@ -234,9 +235,24 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         }
 		private void Visuals()
 		{
-			Projectile.rotation = currentAngle2 * -1f;
+			Projectile.rotation = currentAngle2 * -1f; 
 
-			Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
+			float frameSpeed = 5f;
+
+            Projectile.frameCounter++;
+
+            if (Projectile.frameCounter >= frameSpeed)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
+                {
+                    Projectile.frame = 0;
+                }
+            }
+
+            Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
 		}
 
 		public static Texture2D texture;

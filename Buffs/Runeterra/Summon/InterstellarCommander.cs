@@ -16,10 +16,14 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 			Main.buffNoTimeDisplay[Type] = true;
 		}
 		public override void Update(Player player, ref int buffIndex)
-		{
-			if (player.ownedProjectileCounts[ModContent.ProjectileType<InterstellarVesselShip>()] > 0)
+        {
+            if (player.HeldItem.type == ModContent.ItemType<ScorchingPoint>())
+            {
+                player.maxMinions += 1;
+            }
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<InterstellarVesselShip>()] > 0)
 			{
-				InterstellarVesselControls.ReposeProjectiles(player);
+				InterstellarVesselGauntlet.ReposeProjectiles(player);
 				player.buffTime[buffIndex] = 18000;
 			}
 			else

@@ -11,8 +11,9 @@ using tsorcRevamp.Buffs.Runeterra.Summon;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
-    [Autoload(false)]
-    public class InterstellarVesselControls : ModItem
+	[LegacyName("InterstellarVesselControls")]
+    [Autoload(true)]
+    public class InterstellarVesselGauntlet : ModItem
 	{
 		public static List<InterstellarVesselShip> projectiles = null;
 		public static int processedProjectilesCount = 0;

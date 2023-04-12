@@ -5847,6 +5847,35 @@ Mods: {
 					Used by mapmakers for placing around the map as loot
 					'''
 			}
+
+			InterstellarVesselGauntlet: {
+				DisplayName: Interstellar Vessel Gauntlet
+				Tooltip:
+					'''
+					Summons spaceships to rotate around you and damage enemies in their way
+					Uses half a minion slot
+					While holding this item, increase their radius by holding Special Ability
+					Or hold Shift + Special Ability to shrink their radius
+					Press Special Ability while not holding the remote to activate Turboboost
+					This increases the spaceships damage and movement speed
+					Turboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness                        
+					Applies the Shocked debuff, which grants minions crit chance based on a fraction of your critical strike chance
+					'Adjusting trajectory for ASOL-13!'
+					'''
+			}
+
+			ScorchingPoint: {
+				DisplayName: Scorching Point
+				Tooltip:
+					'''
+					Summons fireballs to rotate around you and damage enemies in their way
+					Uses half a minion slot
+					While holding this item, increase their radius by holding Special Ability
+					Or hold Shift + Special Ability to shrink their radius
+					Applies the Scorching debuff, which grants minions crit chance based on a fraction of your critical strike chance
+					'By the Ashen Lord of Runeterra!'
+					'''
+			}
 		}
 
 		Buffs: {
