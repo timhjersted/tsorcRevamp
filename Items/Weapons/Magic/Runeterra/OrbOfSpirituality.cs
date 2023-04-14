@@ -8,7 +8,7 @@ using Terraria.Audio;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
-    [Autoload(false)]
+    [Autoload(true)]
     public class OrbOfSpirituality : ModItem
     {
         public float DashingTimer = 0f;

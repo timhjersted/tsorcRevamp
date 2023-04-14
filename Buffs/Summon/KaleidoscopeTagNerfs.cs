@@ -28,7 +28,7 @@ namespace tsorcRevamp.Buffs.Summon
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
 		{
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
-			if (markedByKaleidoscope && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
+			if (markedByKaleidoscope && !projectile.npcProj && !projectile.trap && projectile.IsMinionOrSentryRelated)
 			{
 				modifiers.FinalDamage.Flat -= 10; 
 				if (Main.rand.NextBool(2))

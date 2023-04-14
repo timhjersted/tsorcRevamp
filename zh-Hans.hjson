@@ -5876,6 +5876,26 @@ Mods: {
 					'By the Ashen Lord of Runeterra!'
 					'''
 			}
+
+			OrbOfDeception: {
+				// DisplayName: Orb Of Deception
+				// Tooltip: ""
+			}
+
+			OrbOfFlame: {
+				// DisplayName: Orb Of Flame
+				// Tooltip: ""
+			}
+
+			OrbOfSpirituality: {
+				// DisplayName: Orb Of Spirituality
+				// Tooltip: ""
+			}
+
+			CenterOfTheUniverse: {
+				// DisplayName: Center Of The Universe
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {

@@ -36,6 +36,7 @@ namespace tsorcRevamp.Items.Accessories.Ranged
         {
             player.GetDamage(DamageClass.Ranged) += 0.15f;
             player.GetDamage(DamageClass.Ranged).Flat = 5;
+            player.magicQuiver = true;
         }
 
     }

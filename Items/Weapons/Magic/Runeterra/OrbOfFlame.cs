@@ -12,7 +12,7 @@ using tsorcRevamp.Projectiles.Ranged.Runeterra;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
-    [Autoload(false)]
+    [Autoload(true)]
     public class OrbOfFlame : ModItem
     {
         public override void SetStaticDefaults()

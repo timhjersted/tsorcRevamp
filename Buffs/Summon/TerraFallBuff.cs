@@ -32,7 +32,7 @@ namespace tsorcRevamp.Buffs.Summon
         }
         public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
-            tip = $"+{attackspeed}% summon attack speed\nTerra Energy fights for you(Unimplemented)";
+            tip = $"+{attackspeed}% summon attack speed\nTerra Energy fights for you";
         }
     }
 }

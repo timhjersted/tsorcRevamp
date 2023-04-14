@@ -35,7 +35,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
 		{
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
-			if (markedByPyrosulfate && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
+			if (markedByPyrosulfate && !projectile.npcProj && !projectile.trap && projectile.IsMinionOrSentryRelated)
 			{
 				modifiers.FlatBonusDamage += 8;
 				if (Main.rand.NextBool(33))

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
-    [Autoload(false)]
+    [Autoload(true)]
     public class OrbOfDeception : ModItem
     {
         public override void SetStaticDefaults()

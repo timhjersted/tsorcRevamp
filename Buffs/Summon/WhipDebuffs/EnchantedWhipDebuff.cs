@@ -43,7 +43,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
             Vector2 starmove2 = new Vector2(-32, 40);
             Vector2 starmove3 = new Vector2(0, 40);
             // Only player attacks should benefit from this buff, hence the NPC and trap checks.
-            if (markedByEnchantedWhip && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
+            if (markedByEnchantedWhip && !projectile.npcProj && !projectile.trap && projectile.IsMinionOrSentryRelated)
 			{
 				if (Main.rand.NextBool(3))
 				{
