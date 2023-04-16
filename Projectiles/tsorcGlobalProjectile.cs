@@ -72,6 +72,11 @@ namespace tsorcRevamp.Projectiles
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
+                if (projectile.type == ProjectileID.TerraBlade2Shot)
+                {
+                    projectile.damage -= (int)(player.GetTotalDamage(DamageClass.Melee).ApplyTo(3f));
+                }
+
                 if (modPlayer.WaspPower & projectile.type == ProjectileID.HornetStinger)
                 {
                     projectile.penetrate = 6;
