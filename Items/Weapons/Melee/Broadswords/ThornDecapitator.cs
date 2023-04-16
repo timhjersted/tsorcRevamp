@@ -21,11 +21,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.width = 70;
             Item.height = 80;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 33;
+            Item.useAnimation = 25;
             Item.autoReuse = true;
-            Item.useTime = 33;
+            Item.useTime = 25;
             Item.maxStack = 1;
-            Item.damage = 40;
+            Item.damage = 35;
             Item.knockBack = 5;
             Item.useTurn = false;
             Item.UseSound = SoundID.Item1;
@@ -37,11 +37,16 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
+            target.AddBuff(BuffID.Poisoned, 3 * 60);
             //player.Center + Main.rand.NextVector2CircularEdge(100, 100)
             if (hit.Crit)
-            Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), target.Center, Vector2.Zero, ProjectileID.SporeTrap, (int)(damageDone * 0.375f), 0, Main.myPlayer);
-            else 
-            Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), target.Center, Vector2.Zero, ProjectileID.SporeTrap, (int)(damageDone * 0.5f), 0, Main.myPlayer);
+            {
+                Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), target.Center, Vector2.Zero, ProjectileID.SporeTrap, (int)(damageDone * 0.375f), 0, Main.myPlayer);
+            }
+            else
+            {
+                Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), target.Center, Vector2.Zero, ProjectileID.SporeTrap, (int)(damageDone * 0.5f), 0, Main.myPlayer);
+            }
         }
         public override void AddRecipes()
         {

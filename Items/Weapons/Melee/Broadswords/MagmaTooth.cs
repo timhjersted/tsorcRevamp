@@ -17,11 +17,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.width = 58;
             Item.height = 58;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 25;
+            Item.useAnimation = 32;
             Item.scale = 1.2f;
-            Item.useTime = 25;
+            Item.useTime = 32;
             Item.maxStack = 1;
-            Item.damage = 50;
+            Item.damage = 44;
             Item.knockBack = 8;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Orange;
@@ -32,6 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
+            Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ProjectileID.Volcano, damageDone, hit.Knockback, Main.myPlayer);
             if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.OnFire3, 600, false);
