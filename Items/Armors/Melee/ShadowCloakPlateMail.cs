@@ -10,10 +10,6 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases melee damage by 10%" +
-                "\nSet bonus: A Shadow Cloak activates when life falls below 25%, increasing life regen by 5" +
-                "\nIncreases life regen by 2 otherwise" +
-                "\nGrants Double Jump Skill"); */
         }
 
         public override void SetDefaults()
@@ -27,7 +23,7 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.10f;
+            player.GetDamage(DamageClass.Melee) += 0.1f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -54,6 +50,7 @@ namespace tsorcRevamp.Items.Armors.Melee
             }
 
             player.hasJumpOption_Santank = true; //so it stacks with commonly used Cloud in a Bottle
+            player.shadowArmor = true;
         }
 
         public override void AddRecipes()

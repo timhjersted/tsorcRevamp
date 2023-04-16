@@ -29,7 +29,8 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.MythrilGreaves, 1);
+            recipe.AddIngredient(ItemID.NinjaPants);
+            recipe.AddIngredient(ItemID.PalladiumBar, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 

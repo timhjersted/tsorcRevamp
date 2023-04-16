@@ -1837,14 +1837,14 @@ Mods: {
 				DisplayName: Shadow Cloak Greaves
 				Tooltip:
 					'''
-					18% increased movement speed
-					Increases melee speed by 27%
+					7% increased movement speed
+					Increases melee speed by 9%
 					'''
 			}
 
 			ShadowCloakPlateHelm: {
 				DisplayName: Shadow Cloak Helm
-				Tooltip: Increases melee critical strike chance by 6%
+				Tooltip: Increases melee critical strike chance by 21%
 			}
 
 			ShadowCloakPlateMail: {
@@ -1855,6 +1855,7 @@ Mods: {
 					Set bonus: A Shadow Cloak activates when life falls below 25%, increasing life regen by 5
 					Increases life regen by 2 otherwise
 					Grants Double Jump Skill
+					Increases movement speed and acceleration
 					'''
 			}
 
