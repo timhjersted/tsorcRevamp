@@ -11,16 +11,11 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon
 {
-	// This minion shows a few mandatory things that make it behave properly.
-	// Its attack pattern is simple: If an enemy is in range of 43 tiles, it will fly to it and deal contact damage
-	// If the player targets a certain NPC with right-click, it will fly through tiles to it
-	// If it isn't attacking, it will float near the player with minimal movement
 	public class ShatteredReflectionProjectile : ModProjectile
 	{
 		public override void SetStaticDefaults()
 		{
-			// This is necessary for right-click targeting
-			ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+			ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true; // This is necessary for right-click targeting
 			Main.projPet[Projectile.type] = true; // Denotes that this projectile is a pet or minion
 			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; // This is needed so your minion can properly spawn when summoned and replaced when other minions are summoned
 		}
@@ -36,20 +31,18 @@ namespace tsorcRevamp.Projectiles.Summon
 			Projectile.friendly = true; // Only controls if it deals damage to enemies on contact (more on that later)
 			Projectile.minion = true; // Declares this as a minion (has many effects)
 			Projectile.DamageType = DamageClass.Summon; // Declares the damage type (needed for it to deal damage)
-			Projectile.minionSlots = 2f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
+			Projectile.minionSlots = 2; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
 			Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
 
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = 15;
 		}
 
-		// Here you can decide if your minion breaks things like grass or pots
 		public override bool? CanCutTiles()
 		{
-			return false;
+			return true;
 		}
 
-		// This is mandatory if your minion deals contact damage (further related stuff in AI() in the Movement region)
 		public override bool MinionContactDamage()
 		{
 			return true;
@@ -57,8 +50,6 @@ namespace tsorcRevamp.Projectiles.Summon
 
 		bool indexSet = false;
 		List<float> foundIndicies = new List<float>();
-		// The AI of this minion is split into multiple methods to avoid bloat. This method just passes values between calls actual parts of the AI.
-
 		int timer = 0;
 		public override void AI()
 		{
