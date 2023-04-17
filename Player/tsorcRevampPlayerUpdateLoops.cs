@@ -206,6 +206,8 @@ namespace tsorcRevamp
         public bool PowerWithin;
         public int StaminaReaper = 0;
 
+        public bool AuraOfIlluminance;
+
         public List<int> ActivePermanentPotions;
 
         public Vector2[] oldPos = new Vector2[60];
@@ -218,6 +220,8 @@ namespace tsorcRevamp
         public bool startedQuest;
         public bool finishedQuest;
         public bool touchedSurface;
+
+        public tsorcAuraState CurrentAuraState;
 
         public float rotation3d;
         public static Vector2 RealMouseWorld;
@@ -350,13 +354,16 @@ namespace tsorcRevamp
             DragoonHorn = false;
             if (!Player.channel) rotation3d = 0;
             MeleeArmorVamp10 = false;
+            AuraOfIlluminance = false;
+            CurrentAuraState = tsorcAuraState.None;
         }
         
         public override void PreUpdate()
         {
             RealMouseWorld = Main.MouseWorld;
+            tsorcRevampPlayerAuraDrawLayers.HandleAura(this);
             //Fixes bug where switching from a better to a worse pair of wings keeps the previous wing time cap
-            if(Player.wingTime > Player.wingTimeMax)
+            if (Player.wingTime > Player.wingTimeMax)
             {
                 Player.wingTime = Player.wingTimeMax;
             }

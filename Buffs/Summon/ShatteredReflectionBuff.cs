@@ -25,6 +25,7 @@ namespace tsorcRevamp.Buffs.Summon
 			if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.ShatteredReflectionProjectile>()] > 0)
 			{
 				player.buffTime[buffIndex] = 18000;
+				player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.Nebula);
 			}
 			else
 			{

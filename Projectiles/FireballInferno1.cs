@@ -35,6 +35,10 @@ namespace tsorcRevamp.Projectiles
         {
             if (!randomDelaySet && Projectile.ai[0] != -999)
             {
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 15, 10);
+                }
                 Projectile.ai[0] = Main.rand.Next(0, 19);
                 randomDelaySet = true;
             }

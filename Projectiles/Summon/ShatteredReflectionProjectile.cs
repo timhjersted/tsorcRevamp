@@ -62,8 +62,11 @@ namespace tsorcRevamp.Projectiles.Summon
 		bool indexSet = false;
 		List<float> foundIndicies = new List<float>();
 		// The AI of this minion is split into multiple methods to avoid bloat. This method just passes values between calls actual parts of the AI.
+
+		int timer = 0;
 		public override void AI()
 		{
+			timer++;
 			Player owner = Main.player[Projectile.owner];
 
 			if (!indexSet)
@@ -91,17 +94,43 @@ namespace tsorcRevamp.Projectiles.Summon
 				indexSet = true;
 			}
 
-			if (!CheckActive(owner))
-			{
-				return;
-			}
+			CheckActive(owner);
 
-			GeneralBehavior(owner, out Vector2 vectorToIdlePosition, out float distanceToIdlePosition);
-			SearchForTargets(owner, out bool foundTarget, out float distanceFromTarget);
-			Movement(foundTarget, distanceFromTarget, distanceToIdlePosition, vectorToIdlePosition);
-			Attack();
-			Visuals();
+			float rotationTime = 820;
+			float percentage = MathHelper.TwoPi * ((Main.GameUpdateCount % rotationTime) / rotationTime);
+
+			float radius = 300;
+			float offset = 0;
+			if (timer < 60)
+			{
+				radius *= timer / 60f;
+				offset = 1 - timer / 60f;
+			}
+			if (Projectile.timeLeft < 60)
+			{
+				radius *= (Projectile.timeLeft) / 60f;
+				offset = 1 - (Projectile.timeLeft) / 60f;
+			}
+			int ownedCount = owner.ownedProjectileCounts[ModContent.ProjectileType<ShatteredReflectionProjectile>()];
+			Vector2 target = owner.Center + new Vector2(radius, 0).RotatedBy(offset + percentage + MathHelper.TwoPi * Projectile.ai[0] / ownedCount);
+			UsefulFunctions.SmoothHoming(Projectile, target, 0.5f, 20);
+
+			//Just skip the smoothing if it's in the despawn animation
+			if(Projectile.timeLeft < 60)
+            {
+				Projectile.Center = target;
+            }
 			
+
+			if (owner.whoAmI == Main.myPlayer && Main.GameUpdateCount % 60 == Projectile.ai[0] * 60f / ownedCount)
+            {
+				int? closest = UsefulFunctions.GetClosestEnemyNPC(Projectile.Center);
+                if (closest.HasValue && (Main.npc[closest.Value].type != NPCID.TargetDummy || Main.npc[closest.Value].Distance(Projectile.Center) < 2000))
+                {
+					Vector2 velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.npc[closest.Value].Center, 3);
+					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, velocity, ModContent.ProjectileType<Projectiles.BlackFire>(), Projectile.damage, 0, Main.myPlayer, 1);
+				}
+            }
 		}
 
 		private void Attack()
@@ -130,14 +159,14 @@ namespace tsorcRevamp.Projectiles.Summon
 		{
 			if (owner.dead || !owner.active)
 			{
-				owner.ClearBuff(ModContent.BuffType<Buffs.Summon.TetsujinBuff>());
+				owner.ClearBuff(ModContent.BuffType<Buffs.Summon.ShatteredReflectionBuff>());
 
 				return false;
 			}
 
-			if (owner.HasBuff(ModContent.BuffType<Buffs.Summon.TetsujinBuff>()))
+			if (owner.HasBuff(ModContent.BuffType<Buffs.Summon.ShatteredReflectionBuff>()))
 			{
-				Projectile.timeLeft = 2;
+				Projectile.timeLeft = 60;
 			}
 
 			return true;
@@ -363,40 +392,49 @@ namespace tsorcRevamp.Projectiles.Summon
 						Projectile.frame = 0;
 					}
 				}
-
-				if (Projectile.direction == -1)
-				{
-					int dust = Dust.NewDust(Projectile.Center + new Vector2(Projectile.direction == 1 ? Projectile.width * 0.5f : +15, -22), Projectile.width / 8, Projectile.height / 2, 15, Projectile.velocity.X, Projectile.velocity.Y + 6f, 150, Color.Blue, 1f);
-					Main.dust[dust].noGravity = false;
-				}
-				if (Projectile.direction == 1)
-				{
-					int dust = Dust.NewDust(Projectile.Center + new Vector2(Projectile.direction == -1 ? Projectile.width * -0.5f : -26, -22), Projectile.width / 8, Projectile.height / 2, 15, Projectile.velocity.X, Projectile.velocity.Y + 6f, 150, Color.Blue, 1f);
-					Main.dust[dust].noGravity = false;
-				}
 			}
 
 			// Some visuals here
 			Lighting.AddLight(Projectile.Center, Color.OrangeRed.ToVector3() * 0.78f);
 		}
 
+		public static Effect attraidiesEffect;
+		float effectTimer;
         public override bool PreDraw(ref Color lightColor)
         {
-			SpriteEffects spriteEffects = SpriteEffects.None;
-			if (Projectile.direction == 1)
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+			Color color = Color.Purple * 3;
+			Lighting.AddLight(Projectile.Center, color.ToVector3());
+			Rectangle baseRectangle = new Rectangle(0, 0, 200, 200);
+			Vector2 baseOrigin = baseRectangle.Size() / 2f;
+			effectTimer++;
+
+			//Apply the shader, caching it as well
+			if (attraidiesEffect == null)
 			{
-				spriteEffects = SpriteEffects.FlipHorizontally;
+				attraidiesEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/AttraidiesAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 			}
 
-			int frameHeight = ((Texture2D)TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
-			int startY = frameHeight * Projectile.frame;
-			Rectangle sourceRectangle = new Rectangle(0, startY, TextureAssets.Projectile[Projectile.type].Value.Width, frameHeight);
-			Vector2 origin = sourceRectangle.Size() / 2f;
-			Color drawColor = Projectile.GetAlpha(lightColor);			
-			Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value,
-				Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
-				sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
+			//Pass relevant data to the shader via these parameters
+			attraidiesEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+			attraidiesEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
 
+			attraidiesEffect.Parameters["effectColor1"].SetValue(UsefulFunctions.ShiftColor(color, effectTimer / 25f).ToVector4());
+			attraidiesEffect.Parameters["effectColor2"].SetValue(UsefulFunctions.ShiftColor(color, effectTimer / 25f).ToVector4());
+			attraidiesEffect.Parameters["ringProgress"].SetValue(0.1f);
+			attraidiesEffect.Parameters["fadePercent"].SetValue(0);
+			attraidiesEffect.Parameters["scaleFactor"].SetValue(.5f * 150);
+			attraidiesEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 0.05f);
+			attraidiesEffect.Parameters["colorSplitAngle"].SetValue(MathHelper.TwoPi);
+
+			//Apply the shader
+			attraidiesEffect.CurrentTechnique.Passes[0].Apply();
+
+			Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, Projectile.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.TwoPi, baseOrigin, 1, SpriteEffects.None, 0);
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 			return false;
 		}
     }

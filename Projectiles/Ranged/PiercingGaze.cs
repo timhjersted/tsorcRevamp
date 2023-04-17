@@ -72,6 +72,12 @@ namespace tsorcRevamp.Projectiles.Ranged
                         dir = -1;
                     }
                     Main.player[Projectile.owner].ChangeDir(dir);
+                    
+                    Main.player[Projectile.owner].itemRotation = Projectile.rotation;
+                    if(dir == 1)
+                    {
+                        Main.player[Projectile.owner].itemRotation += MathHelper.Pi;
+                    }
                 }
 
 

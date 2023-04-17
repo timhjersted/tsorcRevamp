@@ -35,6 +35,10 @@ namespace tsorcRevamp.Projectiles
         {
             if(Projectile.timeLeft == 5)
             {
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
+                }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62, Projectile.Center);
             }
 

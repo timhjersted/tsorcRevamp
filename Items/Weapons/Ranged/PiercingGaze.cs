@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.scale = 0.9f;
             Item.rare = ItemRarityID.LightRed;
             Item.crit = 5;
-            Item.UseSound = SoundID.Item40;
+            //Item.UseSound = SoundID.Item40;
             Item.shoot = ModContent.ProjectileType<Projectiles.Ranged.PiercingPlasma>();
             Item.shootSpeed = 22f;
         }
@@ -40,20 +40,29 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             return new Vector2(-6, 0);
         }
 
-        int lockoutTimer = 0;
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
             if (player.altFunctionUse == 2)
             {
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-                if (modPlayer.PiercingGazeCharge > 15)
+                if (modPlayer.PiercingGazeCharge >= 16)
                 {
                     modPlayer.PiercingGazeCharge = 0;
                     type = ModContent.ProjectileType<Projectiles.Ranged.PiercingGaze>();
                     damage = (int)(damage * 1.5f);
-                    lockoutTimer = 120;
+                    player.itemTime = 120;
+                    player.itemAnimation = 120;
                 }
             }
+        }
+        public override void HoldItem(Player player)
+        {
+            player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.Retinazer);
+        }
+
+        public override bool CanUseItem(Player player)
+        {
+            return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Ranged.PiercingGaze>()] == 0;
         }
 
         public override bool AltFunctionUse(Player player)

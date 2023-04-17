@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Spears
         {
             Projectile.friendly = true;
             Projectile.hostile = false;
-            Projectile.penetrate = 50;
+            Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
@@ -111,7 +111,7 @@ namespace tsorcRevamp.Projectiles.Spears
         {
             float point = 0;
             if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center,
-                    Projectile.Center + Projectile.rotation.ToRotationVector2() * laserWidth * 0.7f, Projectile.height / 3f, ref point))
+                    Projectile.Center + Projectile.rotation.ToRotationVector2() * laserWidth, Projectile.height / 3f, ref point))
             {
                 return true;
             }

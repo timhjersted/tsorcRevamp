@@ -142,6 +142,8 @@ namespace tsorcRevamp
         public static int MarkerSelected = -1;
 
         public static SoapstoneTileEntity NearbySoapstone;
+        public static bool NearbySoapstoneMouse;
+        public static float NearbySoapstoneMouseDistance;
 
         public static Texture2D tNoiseTexture1;
         public static Texture2D tNoiseTexture2;
@@ -2696,7 +2698,8 @@ namespace tsorcRevamp
             BulletHellLaser,
             HeavenPiercerGlowmask,
             SoapstoneMessage,
-            CrystalRay
+            CrystalRay,
+            SeveringDuskGlowmask
         }
 
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -2750,6 +2753,7 @@ namespace tsorcRevamp
                 {TransparentTextureType.HeavenPiercerGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/HeavenPiercerGlowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.SoapstoneMessage, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Tiles/SoapstoneMessage_1", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.CrystalRay, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ranged/CrystalRayTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.SeveringDuskGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/SeveringDuskGlowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
 
             };
 

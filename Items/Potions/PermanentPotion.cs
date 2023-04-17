@@ -1014,6 +1014,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         }
     }
 
+    
+
     public class PermanentSoup : PermanentPotion
     {
         public override string Texture => "tsorcRevamp/Items/Potions/VanillaTextures/BowlOfSoup";
@@ -1100,5 +1102,31 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(0.3f);
         }
     }
+    public class PermanentGreenBlossom : PermanentPotion
+    {
+        public override string Texture => "tsorcRevamp/Items/Potions/GreenBlossom";
+        public override int PermanentID => 56;
+        public override int BuffType => ModContent.BuffType<Buffs.GreenBlossom>();
+        public override bool CanScale => true;
+        public override int ScalingFactor => 15;
+        public override float EffectPotency
+        {
+            get
+            {
+                float potency = (float)ConsumedAmount / (float)ScalingFactor;
+                potency += 0.25f;
+                return Math.Min(potency, 1.5f);
+            }
+        }
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.ItemIconPulse[Item.type] = true; // Makes item pulsate in world.
+        }
 
+        public override void PotionEffect(Player player)
+        {
+            tsorcRevampStaminaPlayer modPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.3f  * EffectPotency;
+        }
+    }
 }

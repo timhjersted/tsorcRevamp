@@ -29,7 +29,10 @@ namespace tsorcRevamp.Items.Accessories
                 return;
             }
 
-            //If no projectile exists for this player, spawn it
+            player.GetModPlayer<tsorcRevampPlayer>().AuraOfIlluminance = true;
+            player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.Cataluminance);
+
+            //If a projectile exists for this player, return as soon as it is found
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 if(Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<Projectiles.AuraOfIlluminance>() && Main.projectile[i].ai[0] == player.whoAmI)
@@ -38,6 +41,7 @@ namespace tsorcRevamp.Items.Accessories
                 }
             }
 
+            //If not, spawn it
             Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.AuraOfIlluminance>(), 50, 0, Main.myPlayer, player.whoAmI);
         }
     }

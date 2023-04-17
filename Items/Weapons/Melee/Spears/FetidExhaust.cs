@@ -50,6 +50,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             return base.Shoot(player, source, position, velocity, type, damage, knockback);
         }
 
+        public override void HoldItem(Player player)
+        {
+            player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.Spazmatism);
+        }
+
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

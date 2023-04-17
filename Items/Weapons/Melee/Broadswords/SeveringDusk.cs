@@ -18,8 +18,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Item.rare = ItemRarityID.Blue;
             Item.damage = 100;
-            Item.width = 50;
-            Item.height = 52;
+            Item.width = 78;
+            Item.height = 78;
             Item.knockBack = 5;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 12;
@@ -39,9 +39,12 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 if (playerStamina.staminaResourceCurrent > 30)
                 {
                     playerStamina.staminaResourceCurrent -= 30;
-                    player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.MouseWorld, 45);
+                    player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.MouseWorld, 30);
                     player.immuneTime = 30;
                     dashTimer = 20;
+
+                    tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                    modPlayer.effectRadius = 350;
                 }
             }
             return base.Shoot(player, source, position, velocity, type, damage, knockback);
@@ -54,7 +57,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void HoldItem(Player player)
         {
-            if(dashTimer > 0)
+            player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.Darkness);
+            if (dashTimer > 0)
             {
                 player.immune = true;
                 dashTimer--;

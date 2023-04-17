@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			Item.value = Item.buyPrice(1, 50, 0, 0);
 			Item.rare = ItemRarityID.Expert;
 			Item.expert = true;
-			Item.UseSound = SoundID.Item44;
+			Item.UseSound = SoundID.Shatter;
 
 
 			Item.noMelee = true;
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 		public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
 		{
 			// Here you can change where the minion is spawned. Most vanilla minions spawn at the cursor position
-			position = Main.MouseWorld;
+			position = player.Center;
 		}
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)

@@ -1128,6 +1128,8 @@ namespace tsorcRevamp
         }
         public override void PostUpdateEverything()
         {
+            tsorcRevamp.NearbySoapstoneMouse = false;
+            tsorcRevamp.NearbySoapstoneMouseDistance = float.MaxValue;
             if (JustPressed(Keys.Home) && JustPressed(Keys.NumPad0)) //they have to be pressed *on the same tick*. you can't hold one and then press the other.
                 PlaceModdedTiles();
 

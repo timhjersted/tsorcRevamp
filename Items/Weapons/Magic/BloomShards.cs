@@ -62,5 +62,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
             player.HealEffect(healEffect);
         }
 
+        public override void HoldItem(Player player)
+        {
+            player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.Light);
+        }
+
     }
 }

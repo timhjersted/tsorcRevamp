@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             Tooltip.SetDefault("An array of meteorite shards, floating in a slow orbit" +
                                 "\nPassively launches homing fireballs at nearby enemies" +
                                 "\nFireballs scale in power with each boss you kill" +
-                                "\nAlso increases damage dealt to burning foes by 5%"); ;
+                                "\nBurning foes take 5% more damage from other attacks"); ;
         }
 
         public override void SetDefaults()

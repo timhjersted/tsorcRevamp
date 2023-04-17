@@ -149,7 +149,7 @@ namespace tsorcRevamp.Projectiles.VFX
         /// <summary>
         /// A reference to the host entity
         /// </summary>
-        public Entity HostEntity
+        public virtual Entity HostEntity
         {
             get
             {
@@ -335,7 +335,7 @@ namespace tsorcRevamp.Projectiles.VFX
             return calculatedLength;
         }
 
-        public bool HostEntityValid()
+        public virtual bool HostEntityValid()
         {
             if (HostEntity == null)
             {

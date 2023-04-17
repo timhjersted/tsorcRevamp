@@ -618,8 +618,9 @@ namespace tsorcRevamp
             if(proj.type == ModContent.ProjectileType<Projectiles.Ranged.PiercingPlasma>())
             {
                 PiercingGazeCharge++;
-                if(PiercingGazeCharge == 15)
+                if(PiercingGazeCharge == 16)
                 {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item113, Player.Center);
                     UsefulFunctions.DustRing(Player.Center, 70, DustID.FireworkFountain_Red, 100, 18);
                 }
             }
@@ -652,7 +653,7 @@ namespace tsorcRevamp
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             damage -= 4;
-            if (BurningAura || BurningStone)
+            if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
             {
                 damage = (int)(damage * 1.05f);
             }
