@@ -29,10 +29,6 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.damage = 24;
             }
-            if (item.type == ItemID.Smolstar) //Blade Staff
-            {
-                item.damage = 1;//Powerful tag whips were added, so nerf
-            }
 
             if (item.type == ItemID.StaffoftheFrostHydra) //buff so it's an actually decent reward
             {
