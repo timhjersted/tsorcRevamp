@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Tooltip.SetDefault("[c/ffbf00:Allows you to safely enter The Abyss when worn. Remove the ring to escape from The Abyss!]" +
                                 "\n[c/ffbf00:The Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous in this realm.]" +
                                 "\n[c/00ffd4:Grants immunity to particular dangers caused by the Abyss and foes empowered by it, such as Crippled, Poisoned, On Fire and Oiled]" +
-                                "\nAlso grants protection from lava, knockback, and fire blocks, but increases enemy spawn rates." +
+                                "\nAlso grants protection from lava, knockback, Blackened Flames, and fire blocks, but increases enemy spawn rates." +
                                 "\nIncreases damage, critical strike chance, movement and attack speed(melee speed bonus doubled) by 7% multiplicatively");
         }
 
@@ -52,6 +52,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.buffImmune[BuffID.OnFire] = true;
             player.buffImmune[BuffID.Oiled] = true;
             player.buffImmune[ModContent.BuffType<Crippled>()] = true;
+            player.buffImmune[ModContent.BuffType<Buffs.Debuffs.DarkInferno>()] = true;
         }
 
 
