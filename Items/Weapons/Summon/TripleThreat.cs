@@ -7,7 +7,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-	public class TripleThreat : ModItem
+    [Autoload(false)]
+    public class TripleThreat : ModItem
 	{
 		public override void SetStaticDefaults()
 		{

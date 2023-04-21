@@ -7,11 +7,11 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Sentry
 {
-	public class GaleForce : ModItem
+    [Autoload(false)]
+    public class GaleForce : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
-			// Tooltip.SetDefault("Summons a wind spirit which shoots a gust of wind towards your cursor");
 			Item.ResearchUnlockCount = 1;
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
@@ -19,21 +19,19 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
 		}
 		public override void SetDefaults()
 		{
-			Item.damage = 24;
-			Item.knockBack = 3f;
+			Item.damage = 18;
+			Item.knockBack = 6f;
 			Item.mana = 10;
 			Item.width = 32;
 			Item.height = 32;
 			Item.useTime = 30;
 			Item.useAnimation = 30;
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.value = Item.buyPrice(0, 50, 0, 0);
-			Item.rare = ItemRarityID.Expert;
+			Item.value = Item.buyPrice(0, 10, 0, 0);
+			Item.rare = ItemRarityID.Blue;
 			Item.expert = true;
-			Item.UseSound = SoundID.Item44;
-			Item.sentry = true;
-
 			Item.UseSound = SoundID.DD2_DefenseTowerSpawn;
+			Item.sentry = true;
 			Item.noMelee = true;
 			Item.DamageType = DamageClass.Summon;
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Sentry.GaleForceProjectile>();
@@ -52,6 +50,15 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
 			player.UpdateMaxTurrets();
 
 			return false;
-		}
-	}
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.GoldBow);
+            recipe.AddIngredient(ItemID.Feather, 2);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.Register();
+        }
+    }
 }

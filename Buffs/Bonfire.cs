@@ -18,7 +18,6 @@ namespace tsorcRevamp.Buffs
         }
 
         int bonfireEffectTimer = 0;
-
         public override void Update(Player player, ref int buffIndex)
         {
             if (player == Main.LocalPlayer)
@@ -44,7 +43,14 @@ namespace tsorcRevamp.Buffs
                 {
                     if (bonfireEffectTimer > 0 && bonfireEffectTimer <= 60 && (player.velocity.X == 0 && player.velocity.Y == 0)) //wind up 1
                     {
-                        player.lifeRegen = player.statLifeMax2 / 80;
+                        foreach (int buffType in player.buffType)
+                        {
+                            if (Main.debuff[buffType])
+                            {
+                                player.buffImmune[buffType] = true;
+                            }
+                        }
+                        player.lifeRegen += player.statLifeMax2 / 80;
 
                         if (Main.rand.NextBool(8))
                         {
@@ -65,7 +71,14 @@ namespace tsorcRevamp.Buffs
 
                     if (bonfireEffectTimer > 60 && bonfireEffectTimer <= 100 && (player.velocity.X == 0 && player.velocity.Y == 0)) //wind up 2
                     {
-                        player.lifeRegen = player.statLifeMax2 / 60;
+                        foreach (int buffType in player.buffType)
+                        {
+                            if (Main.debuff[buffType])
+                            {
+                                player.buffImmune[buffType] = true;
+                            }
+                        }
+                        player.lifeRegen += player.statLifeMax2 / 60;
 
                         if (Main.rand.NextBool(4))
                         {
@@ -86,7 +99,14 @@ namespace tsorcRevamp.Buffs
 
                     if (bonfireEffectTimer > 100 && bonfireEffectTimer <= 140 && (player.velocity.X == 0 && player.velocity.Y == 0)) //wind up 3
                     {
-                        player.lifeRegen = player.statLifeMax2 / 30;
+                        foreach (int buffType in player.buffType)
+                        {
+                            if (Main.debuff[buffType])
+                            {
+                                player.buffImmune[buffType] = true;
+                            }
+                        }
+                        player.lifeRegen += player.statLifeMax2 / 30;
 
                         if (Main.rand.NextBool(2))
                         {
@@ -107,7 +127,14 @@ namespace tsorcRevamp.Buffs
 
                     if (bonfireEffectTimer > 140 && (player.velocity.X == 0 && player.velocity.Y == 0))//full effect
                     {
-                        player.lifeRegen = player.statLifeMax2 / 15;
+                        foreach (int buffType in player.buffType)
+                        {
+                            if (Main.debuff[buffType])
+                            {
+                                player.buffImmune[buffType] = true;
+                            }
+                        }
+                        player.lifeRegen += player.statLifeMax2 / 15;
 
                         int z = Dust.NewDust(player.position, player.width, player.height, 270, 0f, 0f, 120, default(Color), 1f);
                         Main.dust[z].noGravity = true;

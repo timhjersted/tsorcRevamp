@@ -12,12 +12,6 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("\nSmall stone made up of crystallized souls" +
-                "\nGradually restores a small amount of HP" +
-                "\nOften found near abandoned corpses," +
-                "\nas if it were what remains of the soul" +
-                "\nRestores 120 HP over the course of 12 seconds" +
-                "\nInflicts potion sickness"); */
         }
 
         public override void SetDefaults()
@@ -111,8 +105,8 @@ namespace tsorcRevamp.Items.Potions
                     }
                 }
 
-                player.AddBuff(ModContent.BuffType<Buffs.LifegemHealing>(), 720);
-                player.AddBuff(BuffID.PotionSickness, player.pStone ? 1800 : 3600);
+                player.AddBuff(ModContent.BuffType<Buffs.LifegemHealing>(), 12 * 60);
+                player.AddBuff(BuffID.PotionSickness, player.pStone ? (30 * 60) : (60 * 60));
 
                 //if (Main.mouseItem == null) // Not sure why but seems like it's not null if you're using something
                 //{

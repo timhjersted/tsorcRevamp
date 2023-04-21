@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
+    [Autoload(false)]
     public class PeculiarSphere : ModItem 
     {
         public override void SetStaticDefaults() 
@@ -42,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Main.projectile[p].originalDamage = Item.damage;
             return true;
         }
-        /*public override void AddRecipes()
+        public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedBar, 6);
@@ -51,6 +52,6 @@ namespace tsorcRevamp.Items.Weapons.Summon
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }*/
+        }
     }
 }

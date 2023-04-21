@@ -7,7 +7,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-	public class BeetleIdol : ModItem
+    [Autoload(false)]
+    public class BeetleIdol : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
@@ -57,6 +58,15 @@ namespace tsorcRevamp.Items.Weapons.Summon
 
 			// Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
 			return false;
-		}
-	}
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.BeetleWings);
+            recipe.AddIngredient(ItemID.BeetleHusk, 4);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 36000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.Register();
+        }
+    }
 }

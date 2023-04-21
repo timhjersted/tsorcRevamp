@@ -117,7 +117,8 @@ namespace tsorcRevamp.UI
                     }
                     tickPlayed = true;
                     Main.LocalPlayer.mouseInterface = true;
-                    if (Main.mouseLeftRelease && Main.mouseLeft && Main.LocalPlayer.CanBuyItem(Price, -1) && ItemLoader.PreReforge(_vanillaItemSlot.Item))
+                    ItemLoader.PreReforge(_vanillaItemSlot.Item);
+                    if (Main.mouseLeftRelease && Main.mouseLeft && Main.LocalPlayer.CanAfford(Price, -1))
                     {
                         Main.LocalPlayer.BuyItem(Price, -1);
                         bool favorited = _vanillaItemSlot.Item.favorited;

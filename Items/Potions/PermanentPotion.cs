@@ -1021,11 +1021,11 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => BuffID.WellFed2;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetWellFed;
         public override bool CanScale => true;
-        public override int ScalingFactor => 22; 
+        public override int ScalingFactor => 14; 
         public override float EffectPotency {
             get {
                 float potency = (float)ConsumedAmount / (float)ScalingFactor; 
-                potency += 0.25f; //with how long these things last, decent base values is basically required
+                potency += 0.75f; //with how long these things last, decent base values is basically required
                 //theres probably some math about "break points" and "decimal rounding" that makes these numbers bad, but whatever, it's 6 am, fight me
                 //they last 8 minutes..... not 30 anymore
                 return Math.Min(potency, 1.5f);
@@ -1054,7 +1054,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override float EffectPotency {
             get {
                 float potency = (float)ConsumedAmount / (float)ScalingFactor;
-                potency += 0.25f;
+                potency += 1f;
                 return Math.Min(potency, 1.5f);
             }
         }
@@ -1079,7 +1079,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => BuffID.WellFed3;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetWellFed;
         public override bool CanScale => true;
-        public override int ScalingFactor => 6; //very few of these on the map
+        public override int ScalingFactor => 7;
         public override float EffectPotency {
             get {
                 float potency = (float)ConsumedAmount / (float)ScalingFactor;

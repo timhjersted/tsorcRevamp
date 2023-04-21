@@ -7,7 +7,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-	public class ShatteredReflection : ModItem
+    [Autoload(false)]
+    public class ShatteredReflection : ModItem
 	{
 		public override void SetStaticDefaults()
 		{

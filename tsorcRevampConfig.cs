@@ -36,6 +36,12 @@ namespace tsorcRevamp
         [DefaultValue(true)]
         public bool BossZenConfig { get; set; }
 
+        [Label("Disable Melee/Whip Glove's Autoswing")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(false)]
+        [Tooltip("Disable the Melee/Whip Autoswing feature provided by the Feral Claws and it's upgrades, the Autofire option overrides this. Useful for whip stacking. Defaults to Off.")]
+        public bool DisableGloveAutoswing { get; set; }
+
 
         [Header("Visual")]
 

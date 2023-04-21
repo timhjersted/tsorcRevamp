@@ -13,19 +13,17 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 		{
 
 			Projectile.CloneDefaults(ProjectileID.FallingStar);
-
-			AIType = ProjectileID.Starfury;
+			Projectile.friendly = true;
 			Projectile.width = 22;
 			Projectile.height = 18;
 			Projectile.tileCollide = false;
 			Projectile.DamageType = DamageClass.SummonMeleeSpeed;
-			Projectile.penetrate += 3;
-			Projectile.usesLocalNPCImmunity = true;
-			Projectile.localNPCHitCooldown = 30;
+			Projectile.penetrate = 3;
+			Projectile.usesIDStaticNPCImmunity = true;
+			Projectile.idStaticNPCHitCooldown = 15;
 		}
 		public override void AI()
 		{
-			base.AI();
 			Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, 15, 0f, 0f, 10, Color.AliceBlue, 0.5f);
 		}
 	}

@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
         public override void SetStaticDefaults()
 		{
-            Main.projFrames[Projectile.type] = 2;
+            //Main.projFrames[Projectile.type] = 2;
             Main.projPet[Projectile.type] = true; 
 			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; 
 		}
@@ -224,6 +224,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		}
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+			
 			if (hit.Crit)
 			{
 				target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 80);
@@ -237,7 +238,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		{
 			Projectile.rotation = currentAngle2 * -1f; 
 
-			float frameSpeed = 5f;
+			/*float frameSpeed = 5f;
 
             Projectile.frameCounter++;
 
@@ -250,7 +251,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
                 {
                     Projectile.frame = 0;
                 }
-            }
+            }*/
 
             Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
 		}

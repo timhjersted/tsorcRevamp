@@ -7,7 +7,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-	public class SpiritBell : ModItem
+    [Autoload(false)]
+    public class SpiritBell : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
@@ -50,6 +51,16 @@ namespace tsorcRevamp.Items.Weapons.Summon
             projectile.originalDamage = Item.damage;
 
             return false;
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.AbigailsFlower);
+            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 10);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
         }
     }
 }

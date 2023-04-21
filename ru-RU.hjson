@@ -1,4 +1,3 @@
-
 Mods: {
 	tsorcRevamp: {
 		Items: {
@@ -4887,44 +4886,6 @@ Mods: {
 				Tooltip: Randomly casts Bolt 2.
 			}
 
-			Nightbringer: {
-				DisplayName: Nightbringer
-				Tooltip:
-					'''
-					Thrusts on right click, cooldown scales down with attack speed
-					Gain a stack of Steel Tempest upon thrusting any enemy
-					Upon reaching 2 stacks, the next right click will release a chaotic tempest
-					Hover your mouse over an enemy and press Special Ability to dash through the enemy
-					This grants you brief invulnerability and a huge melee damage boost
-					Press Shift + Special Ability to create a stationary firewall which blocks most enemy projectiles for 5 seconds
-					'Harmony is a lie told to force Obedience'
-					'''
-			}
-
-			PlasmaWhirlwind: {
-				DisplayName: Plasma Whirlwind
-				Tooltip:
-					'''
-					Thrusts on right click, cooldown scales down with attack speed
-					Gain a stack of Steel Tempest upon thrusting any enemy
-					Upon reaching 2 stacks, the next right click will release a plasma whirlwind
-					Hover your mouse over an enemy and press Special Ability to dash through the enemy
-					This grants you brief invulnerability and a huge melee damage boost
-					'A companion for this Odyssey'
-					'''
-			}
-
-			SteelTempest: {
-				DisplayName: Steel Tempest
-				Tooltip:
-					'''
-					Thrusts on right click, cooldown scales down with attack speed
-					Gain a stack of Steel Tempest upon thrusting any enemy
-					Upon reaching 2 stacks, the next right click will release a tornado
-					'Death is like the wind, always by my side'
-					'''
-			}
-
 			ShatteredMoonlight: {
 				DisplayName: Shattered Moonlight
 				Tooltip:
@@ -5387,51 +5348,6 @@ Mods: {
 				Tooltip: Precision rifle that launches an explosive fireball every 3 shots
 			}
 
-			AlienRifle: {
-				DisplayName: Alien Rifle
-				Tooltip:
-					'''
-					Converts seeds into Alien Lasers and allows you to gather Seeds from grass
-					Alien Lasers apply a short burst of Electrified home into enemies
-					Also uses all darts as ammo, but Poison Darts deal double damage
-					Stops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise
-					Grants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily
-					Press Special Ability to gain an even higher temporary boost and remove the movement penalties
-					Right click to shoot a homing blinding shot which inflicts confusion
-					'Armed and ready'
-					'''
-			}
-
-			OmegaSquadRifle: {
-				DisplayName: Omega Squad Rifle
-				Tooltip:
-					'''
-					Converts seeds into Radioactive Darts and allows you to gather Seeds from grass
-					Radioactive Darts apply a short burst of Irradiated home into enemies
-					Also uses all darts as ammo, but Poison Darts deal double damage
-					Stops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise
-					Grants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily
-					Press Special Ability to gain an even higher temporary boost and remove the movement penalties
-					Right click to shoot a homing blinding dart which inflicts confusion
-					Press Shift and Special Ability to drop a Nuclear Mushroom
-					'There's a mushroom out there with your name on it'
-					'''
-			}
-
-			ToxicShot: {
-				DisplayName: Toxic Shot
-				Tooltip:
-					'''
-					Converts seeds into Toxic Shots and allows you to gather Seeds from grass
-					Toxic Shots apply a short burst of venom and home into enemies
-					Also uses all darts as ammo, but Poison Darts deal double damage
-					Stops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise
-					Grants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily
-					Press Special Ability to gain an even higher temporary boost and remove the movement penalties
-					'That's gotta sting'
-					'''
-			}
-
 			Sentenza: {
 				DisplayName: Sentenza
 				Tooltip: Deals extra damage to hallowed creatures
@@ -5848,6 +5764,144 @@ Mods: {
 					'''
 			}
 
+			SteelTempest: {
+				DisplayName: Steel Tempest
+				Tooltip:
+					'''
+					Thrusts on right click, cooldown scales down with attack speed
+					Gain a stack of Steel Tempest upon thrusting any enemy
+					Upon reaching 2 stacks, the next right click will release a tornado
+					'Death is like the wind, always by my side'
+					'''
+			}
+
+			PlasmaWhirlwind: {
+				DisplayName: Plasma Whirlwind
+				Tooltip:
+					'''
+					Thrusts on right click, cooldown scales down with attack speed
+					Gain a stack of Steel Tempest upon thrusting any enemy
+					Upon reaching 2 stacks, the next right click will release a plasma whirlwind
+					Hover your mouse over an enemy and press Special Ability to dash through the enemy
+					This grants you brief invulnerability and a huge melee damage boost
+					'A companion for this Odyssey'
+					'''
+			}
+
+			Nightbringer: {
+				DisplayName: Nightbringer
+				Tooltip:
+					'''
+					Thrusts on right click, cooldown scales down with attack speed
+					Gain a stack of Steel Tempest upon thrusting any enemy
+					Upon reaching 2 stacks, the next right click will release a chaotic tempest
+					Hover your mouse over an enemy and press Special Ability to dash through the enemy
+					This grants you brief invulnerability and a huge melee damage boost
+					Press Shift + Special Ability to create a stationary firewall which blocks most enemy projectiles for 5 seconds
+					'Harmony is a lie told to force Obedience'
+					'''
+			}
+
+			ToxicShot: {
+				DisplayName: Toxic Shot
+				Tooltip:
+					'''
+					Converts seeds into Toxic Shots and allows you to gather Seeds from grass
+					Toxic Shots apply a short burst of venom and home into enemies
+					Also uses all darts as ammo, but Poison Darts deal double damage
+					Stops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise
+					Grants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily
+					Press Special Ability to gain an even higher temporary boost and remove the movement penalties
+					'That's gotta sting'
+					'''
+			}
+
+			AlienRifle: {
+				DisplayName: Alien Rifle
+				Tooltip:
+					'''
+					Converts seeds into Alien Lasers and allows you to gather Seeds from grass
+					Alien Lasers apply a short burst of Electrified home into enemies
+					Also uses all darts as ammo, but Poison Darts deal double damage
+					Stops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise
+					Grants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily
+					Press Special Ability to gain an even higher temporary boost and remove the movement penalties
+					Right click to shoot a homing blinding shot which inflicts confusion
+					'Armed and ready'
+					'''
+			}
+
+			OmegaSquadRifle: {
+				DisplayName: Omega Squad Rifle
+				Tooltip:
+					'''
+					Converts seeds into Radioactive Darts and allows you to gather Seeds from grass
+					Radioactive Darts apply a short burst of Irradiated home into enemies
+					Also uses all darts as ammo, but Poison Darts deal double damage
+					Stops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise
+					Grants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily
+					Press Special Ability to gain an even higher temporary boost and remove the movement penalties
+					Right click to shoot a homing blinding dart which inflicts confusion
+					Press Shift and Special Ability to drop a Nuclear Mushroom
+					'There's a mushroom out there with your name on it'
+					'''
+			}
+
+			OrbOfDeception: {
+				// DisplayName: Orb of Deception
+				/* Tooltip:
+					'''
+					Throws a magical Orb which will return to you after a certain distance
+					Casts homing flames while the Orb is sent out which restore half their mana cost on-hit
+					The Orb deals double damage on the way back
+					Gathers stacks of Essence Thief on most Orb hits and enemy kills, doubled on crits
+					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal double damage
+					Heal scales with maximum mana and magic damage
+					''' */
+			}
+
+			OrbOfFlame: {
+				// DisplayName: Orb of Flame
+				/* Tooltip:
+					'''
+					Throws a magical Orb which will return to you after a certain distance
+					Casts homing flames while the Orb is sent out which restore half their mana cost on-hit
+					The Orb deals double damage on the way back
+					Gathers stacks of Essence Thief on most Orb hits and enemy kills, doubled on crits
+					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal double damage
+					Heal scales with maximum mana and magic damage
+					Right click to cast a fireball which sunders enemies, increasing their vulnerability to magic damage
+					''' */
+			}
+
+			OrbOfSpirituality: {
+				// DisplayName: Orb of Spirituality
+				/* Tooltip:
+					'''
+					Throws a magical Orb which will return to you after a certain distance
+					Casts homing flames while the Orb is sent out which restore half their mana cost on-hit
+					The Orb deals double damage on the way back
+					Gathers stacks of Essence Thief on most Orb hits and enemy kills, doubled on crits
+					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal double damage
+					Heal scales with maximum mana and magic damage
+					Right click to cast a charm which sunders enemies, increasing their vulnerability to magic damage
+					Press Special Ability to dash towards the mouse, casting homing flames along the way
+					''' */
+			}
+
+			ScorchingPoint: {
+				DisplayName: Scorching Point
+				Tooltip:
+					'''
+					Summons fireballs to rotate around you and damage enemies in their way
+					Uses half a minion slot
+					While holding this item, increase their radius by holding Special Ability
+					Or hold Shift + Special Ability to shrink their radius
+					Applies the Scorching debuff, which grants minions crit chance based on a fraction of your critical strike chance
+					'By the Ashen Lord of Runeterra!'
+					'''
+			}
+
 			InterstellarVesselGauntlet: {
 				DisplayName: Interstellar Vessel Gauntlet
 				Tooltip:
@@ -5864,37 +5918,22 @@ Mods: {
 					'''
 			}
 
-			ScorchingPoint: {
-				DisplayName: Scorching Point
-				Tooltip:
-					'''
-					Summons fireballs to rotate around you and damage enemies in their way
-					Uses half a minion slot
-					While holding this item, increase their radius by holding Special Ability
-					Or hold Shift + Special Ability to shrink their radius
-					Applies the Scorching debuff, which grants minions crit chance based on a fraction of your critical strike chance
-					'By the Ashen Lord of Runeterra!'
-					'''
-			}
-
-			OrbOfDeception: {
-				// DisplayName: Orb Of Deception
-				// Tooltip: ""
-			}
-
-			OrbOfFlame: {
-				// DisplayName: Orb Of Flame
-				// Tooltip: ""
-			}
-
-			OrbOfSpirituality: {
-				// DisplayName: Orb Of Spirituality
-				// Tooltip: ""
-			}
-
 			CenterOfTheUniverse: {
-				// DisplayName: Center Of The Universe
-				// Tooltip: ""
+				// DisplayName: Center of the Universe
+				/* Tooltip:
+					'''
+					Summons stars to rotate around you and damage enemies in their way
+					Uses half a minion slot
+					While holding this item, increase their radius by holding the Special Ability hotkey
+					Or hold Shift + Special Ability to shrink their radius
+					Press Special Ability while not holding the remote to activate Turboboost
+					This increases the stars damage and movement speed
+					Turboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness
+					Every 20 hits, rightclick with this item in hand to call in the Star Forger
+					The Star Forger will breathe cosmic dust at the mouse location
+					Applies the Sunburn debuff, which grants minions crit chance based on a fraction of your critical strike chance
+					'Leave them in awe at the sight of the Star Forger'
+					''' */
 			}
 		}
 

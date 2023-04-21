@@ -12,6 +12,8 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.UI;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.ModLoader.Config;
+using System.Linq;
 
 namespace tsorcRevamp
 {
@@ -241,6 +243,7 @@ namespace tsorcRevamp
              "If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction",
              "Signs offer many important hints",
              "If you go above 100% crit chance, you have a chance to multicrit, allowing you to deal 4 or more times the damage.",
+             "Hitting enemies with the tip of a whip will always result in a crit",
              "Teal Pressure Pads can only be activated with ranged attacks",
              "Some vanilla recipes have been removed. You must find these items in the world by exploring",
              "Get a bad modifier on a weapon? Talk to Jade, the Emerald Herald. She can remove it with her Blessing",
@@ -824,22 +827,22 @@ namespace tsorcRevamp
             #region Lifegem Healing
 
 
-            if (LifegemHealing) // 120 hp over 12 seconds
+            if (LifegemHealing) // 90 hp over 12 seconds
             {
                 healingTimer++;
 
-                if (healingTimer == 6)
+                if (healingTimer == 8)
                 {
                     Player.statLife += 1;
                     healingTimer = 0;
                 }
             }
 
-            if (RadiantLifegemHealing) // 200 hp over 13.33 seconds
+            if (RadiantLifegemHealing) // 140 hp over 14 seconds
             {
                 healingTimer++;
 
-                if (healingTimer == 4)
+                if (healingTimer == 6)
                 {
                     Player.statLife += 1;
                     healingTimer = 0;
@@ -886,20 +889,30 @@ namespace tsorcRevamp
                 PowerfulCurseLevel = 1; //Not sure why 1 is the default
             }
         }
-
         public override void PostUpdateEquips()
         {
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                Player.GetDamage(DamageClass.Melee) *= 1.2f;
-                Player.GetDamage(DamageClass.Ranged) *= 1.2f;
-                Player.GetDamage(DamageClass.Magic) *= 1.2f;
-                Player.GetDamage(DamageClass.SummonMeleeSpeed) *= 1.2f;
+                Player.GetDamage(DamageClass.Generic) *= 1.2f;
+
+                Player.GetDamage(DamageClass.Summon) -= 1f;
+                Player.GetDamage(DamageClass.SummonMeleeSpeed) += 1f; //this sets whip damage to not be 1 because it also scales with minion damage
+                Player.GetDamage(DamageClass.MagicSummonHybrid) += 1f; //these weapons interfere with whip-stacking anyways
+
+                if (Player.HeldItem.DamageType == DamageClass.Summon | Player.HeldItem.DamageType == DamageClass.SummonMeleeSpeed)
+                {
+                    Player.GetDamage(DamageClass.Summon).Flat += 1f;
+                }
+
 
                 if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().minionStaminaCap)
                 {
                     Player.lifeRegen /= 2;
                 }
+            }
+            if (ModContent.GetInstance<tsorcRevampConfig>().DisableGloveAutoswing)
+            {
+                Player.autoReuseGlove = false;
             }
             if (manaShield > 0)
             {
@@ -1348,7 +1361,7 @@ namespace tsorcRevamp
                 {
                     Player.lifeRegen = 0;
                 }
-                Player.lifeRegenTime = 0; 
+                Player.lifeRegenTime = 0;
                 Player.lifeRegen = -7;
                 for (int j = 0; j < 4; j++)
                 {
@@ -1385,6 +1398,7 @@ namespace tsorcRevamp
                 Player.lifeRegenTime = 0;
                 Player.lifeRegen -= 240;
             }
+
         }
 
 

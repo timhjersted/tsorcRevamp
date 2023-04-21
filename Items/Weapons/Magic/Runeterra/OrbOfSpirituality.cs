@@ -14,15 +14,6 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         public float DashingTimer = 0f;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Orb of Spirituality");
-            /* Tooltip.SetDefault("Throws a fiery Orb which will return to you after a certain distance" +
-                "\nCasts homing flames while the Orb is sent out which restore half their mana cost on-hit" +
-                "\nThe Orb deals more damage on the way back" +
-                "\nGathers stacks of Essence Thief on Orb hits and enemy kills, doubled on crits" +
-                "\nUpon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal double damage" +
-                "\nHeal scales based on maximum mana and magic damage" +
-                "\nRight click to cast a charm which sunders enemies, increasing their vulnerability to magic damage" +
-                "\nPress Special Ability to dash towards the mouse, casting homing flames along the way"); */
         }
 
         public override void SetDefaults()

@@ -569,7 +569,6 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.Antlion):
                     {
-                        npc.lifeMax = 50;
                         npc.damage = 46;
                         npc.value = 360;
                         break;
@@ -583,30 +582,22 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.GiantWalkingAntlion):
                     {
-                        npc.lifeMax = 60;
-                        npc.defense = 10;
                         npc.value = 430;
                         break;
                     }
                 case (NPCID.WalkingAntlion):
                     {
-                        npc.lifeMax = 55;
-                        npc.defense = 6;
                         npc.value = 380;
                         break;
                     }
                 case (NPCID.GiantFlyingAntlion):
                     {
-                        npc.defense = 8;
-                        npc.lifeMax = 50;
                         npc.value = 420;
                         break;
                     }
 
                 case (NPCID.FlyingAntlion):
                     {
-                        npc.defense = 4;
-                        npc.lifeMax = 45;
                         npc.value = 370;
                         break;
                     }

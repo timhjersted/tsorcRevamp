@@ -19,19 +19,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Center of the Universe");
-            /* Tooltip.SetDefault("Summons stars to rotate around you and damage enemies in their way" +
-                                "\nUses half a minion slot" +
-                                "\nWhile holding this item, increase their radius by holding the Special Ability hotkey" +
-                                "\nOr hold Shift + Special Ability to shrink their radius" +
-                                "\nPress Special Ability while not holding the remote to activate Turboboost" +
-                                "\nThis increases the stars damage and movement speed" +
-                                "\nTurboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness" +
-                                "\nEvery third critical hit will spawn an Arcanum" +
-                                "\nApplies the Sunburn debuff, which grants minions crit chance based on a fraction of your critical strike chance" +
-                                "\n'Leave them in awe at the sight of the Star Forger'"); */
-
-
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
         }

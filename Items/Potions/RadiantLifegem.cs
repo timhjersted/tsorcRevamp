@@ -11,14 +11,6 @@ namespace tsorcRevamp.Items.Potions
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("\nStone made up of crystallized souls" +
-                "\nGradually restores HP" +
-                "\nThe dull glimmer of these mysterious" +
-                "\nstones brightens with the passage of time" +
-                "\nRestores 200 HP over the course of 13 seconds" +
-                "\nInflicts potions sickness"); */
-
-
         }
 
         public override void SetDefaults()
@@ -110,8 +102,8 @@ namespace tsorcRevamp.Items.Potions
                     }
                 }
 
-                player.AddBuff(ModContent.BuffType<Buffs.RadiantLifegemHealing>(), 800); //just over 13 seconds
-                player.AddBuff(BuffID.PotionSickness, player.pStone ? 1800 : 3600);
+                player.AddBuff(ModContent.BuffType<Buffs.RadiantLifegemHealing>(), 14 * 60); 
+                player.AddBuff(BuffID.PotionSickness, player.pStone ? (30 * 60) : (60 * 60));
 
                 if (Item.stack == 1) Item.TurnToAir();
                 else Item.stack--;

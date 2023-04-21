@@ -258,9 +258,9 @@ namespace tsorcRevamp
             {
                 return true;
             }
-            int NT = Main.npc[damageSource.SourceNPCIndex].type;
             if (DragonStone)
             {
+                int NT = Main.npc[damageSource.SourceNPCIndex].type;
                 if (NT == 2 || NT == 6 || NT == 34 || NT == 42 || NT == 48 || NT == 49 || NT == 51 || NT == 60 || NT == 61 || NT == 62 || NT == 66 || NT == 75 || NT == 87 || NT == 88 || NT == 89 || NT == 90 || NT == 91 || NT == 92 || NT == 93 || NT == 94 || NT == 112 || NT == 122 || NT == 133 || NT == 137
                     || NT == NPCID.Probe
                     || NT == NPCID.IceBat
