@@ -858,15 +858,15 @@ namespace tsorcRevamp
 
             if (Player.HasBuff(BuffID.WellFed))
             {
-                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f;
+                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.05f;
             }
             if (Player.HasBuff(BuffID.WellFed2))
             {
-                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.2f;
+                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f;
             }
             if (Player.HasBuff(BuffID.WellFed3))
             {
-                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.3f;
+                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.15f;
             }
 
 

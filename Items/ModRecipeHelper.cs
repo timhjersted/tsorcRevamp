@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items
             PermaPotionRecipeA(mod, ItemID.SpelunkerPotion, ModContent.ItemType<PermanentSpelunkerPotion>());
             PermaPotionRecipeA(mod, ItemID.SwiftnessPotion, ModContent.ItemType<PermanentSwiftnessPotion>());
             PermaPotionRecipeA(mod, ItemID.SummoningPotion, ModContent.ItemType<PermanentSummoningPotion>());
-            PermaPotionRecipeA(mod, ItemID.BowlofSoup, ModContent.ItemType<PermanentSoup>());
+            PermaPotionRecipeA(mod, ModContent.ItemType<GreenBlossom>(), ModContent.ItemType<BottomlessGreenTeaPot>());
 
             #endregion
             #region add b tier recipes
@@ -65,7 +65,7 @@ namespace tsorcRevamp.Items
             PermaPotionRecipeB(mod, ItemID.WaterWalkingPotion, ModContent.ItemType<PermanentWaterWalkingPotion>());
             PermaPotionRecipeB(mod, ItemID.FlaskofParty, ModContent.ItemType<PermanentFlaskOfParty>());
             PermaPotionRecipeB(mod, ItemID.FlaskofPoison, ModContent.ItemType<PermanentFlaskOfPoison>());
-            PermaPotionRecipeB(mod, ItemID.Teacup, ModContent.ItemType<Infinitea>());
+            PermaPotionRecipeB(mod, ItemID.BowlofSoup, ModContent.ItemType<PermanentSoup>());
 
             #endregion
             #region add c tier recipes
@@ -79,6 +79,7 @@ namespace tsorcRevamp.Items
             PermaPotionRecipeC(mod, ItemID.NightOwlPotion, ModContent.ItemType<PermanentNightOwlPotion>());
             PermaPotionRecipeC(mod, ItemID.ThornsPotion, ModContent.ItemType<PermanentThornsPotion>());
             PermaPotionRecipeC(mod, ItemID.WarmthPotion, ModContent.ItemType<PermanentWarmthPotion>());
+            PermaPotionRecipeC(mod, ItemID.Teacup, ModContent.ItemType<Infinitea>());
             #endregion
             #region special perma recipes
             Recipe recipe = Recipe.Create(ModContent.ItemType<PermanentGravitationPotion>(), 1)

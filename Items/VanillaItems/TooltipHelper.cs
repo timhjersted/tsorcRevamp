@@ -104,17 +104,17 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.buffType == BuffID.WellFed)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, "Increases stamina regen by 10% for the [c/6d8827:Bearer of the Curse]");
+                SimpleGlobalModTooltip(Mod, tooltips, "Increases stamina regen by 5% for the [c/6d8827:Bearer of the Curse]");
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.buffType == BuffID.WellFed2)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, "Increases stamina regen by 20% for the [c/6d8827:Bearer of the Curse]");
+                SimpleGlobalModTooltip(Mod, tooltips, "Increases stamina regen by 10% for the [c/6d8827:Bearer of the Curse]");
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.buffType == BuffID.WellFed3)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, "Increases stamina regen by 30% for the [c/6d8827:Bearer of the Curse]");
+                SimpleGlobalModTooltip(Mod, tooltips, "Increases stamina regen by 15% for the [c/6d8827:Bearer of the Curse]");
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ModContent.ItemType<CrystalNunchaku>())

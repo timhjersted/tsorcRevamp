@@ -3513,6 +3513,11 @@ Mods: {
 				Tooltip: ""
 			}
 
+			BottomlessGreenTeaPot: {
+				DisplayName: Bottomless Green Tea Pot
+				Tooltip: ""
+			}
+
 			PermanentAle: {
 				DisplayName: Permanent Ale
 				Tooltip: ""

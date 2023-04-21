@@ -1042,7 +1042,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetKnockback(DamageClass.Summon) += ApplyScaling(0.75f);
             player.moveSpeed += ApplyScaling(0.30f);
             player.pickSpeed += ApplyScaling(0.1f);
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(0.2f);
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(0.1f);
         }
     }
     public class Infinitea : PermanentPotion {
@@ -1068,7 +1068,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetKnockback(DamageClass.Summon) += ApplyScaling(0.5f);
             player.moveSpeed += ApplyScaling(0.2f);
             player.pickSpeed -= ApplyScaling(0.05f);
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(0.1f);
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(0.05f);
         }
     }
 
@@ -1088,7 +1088,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             }
         }
 
-        public override void PotionEffect(Player player) {
+        public override void PotionEffect(Player player) 
+        {
             player.wellFed = true;
             player.statDefense += (int)ApplyScaling(4);
             player.GetCritChance(DamageClass.Generic) += ApplyScaling(4);
@@ -1097,6 +1098,19 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetKnockback(DamageClass.Summon) += ApplyScaling(1f);
             player.moveSpeed += ApplyScaling(0.4f);
             player.pickSpeed -= ApplyScaling(0.15f);
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(0.15f);
+        }
+    }
+    public class BottomlessGreenTeaPot : PermanentPotion
+    {
+        public override string Texture => "tsorcRevamp/Items/Potions/BottomlessGreenTeaPot";
+        public override int PermanentID => 56;
+        public override int BuffType => ModContent.BuffType<Buffs.GreenBlossom>();
+        public override bool CanScale => true;
+        public override int ScalingFactor => 15;
+
+        public override void PotionEffect(Player player)
+        {
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(0.3f);
         }
     }
