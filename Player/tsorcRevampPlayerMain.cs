@@ -699,7 +699,7 @@ namespace tsorcRevamp
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationPotion)
             {
-                modifiers.CritDamage += 0.1f;
+                modifiers.CritDamage += Player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationDamageScaling * 0.1f;
             }
 
             if (OldWeapon)
@@ -778,6 +778,10 @@ namespace tsorcRevamp
             if (proj.type == ProjectileID.RainbowWhip)
             {
                 modifiers.SourceDamage *= 1.112f;
+            }
+            if (proj.type == ProjectileID.Bullet)
+            {
+                Player.HeldItem.damage = 93;
             }
         }
 

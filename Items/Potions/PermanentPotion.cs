@@ -778,7 +778,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.ammoPotion = true;
-            player.GetArmorPenetration(DamageClass.Ranged) *= 2f;
+            player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationPotion = true;
+            player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationDamageScaling = ApplyScaling(1f);
         }
     }
 

@@ -111,6 +111,7 @@ namespace tsorcRevamp
         public bool Sharpened = false;
         public bool AmmoBox = false;
         public bool AmmoReservationPotion = false;
+        public float AmmoReservationDamageScaling = 1f;
 
         public bool SOADrain = false;
 
@@ -339,6 +340,7 @@ namespace tsorcRevamp
             Sharpened = false;
             AmmoBox = false;
             AmmoReservationPotion = false;
+            AmmoReservationDamageScaling = 1f;
 
             PhazonCorruption = false;
             LifegemHealing = false;
