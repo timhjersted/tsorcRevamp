@@ -31,6 +31,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 1;
             }
 
+
             //Why is this eventide's internal name i'm literally going to go feral
             if (item.type == ItemID.FairyQueenRangedItem)
             {
@@ -41,6 +42,13 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.Phantasm)
             {
                 item.damage = 35;
+            }
+        }
+        public override void ModifyWeaponCrit(Item item, Player player, ref float crit)
+        {
+            if (item.ammo != AmmoID.None && player.GetModPlayer<tsorcRevampPlayer>().AmmoBox)
+            {
+                crit += item.damage;
             }
         }
     }

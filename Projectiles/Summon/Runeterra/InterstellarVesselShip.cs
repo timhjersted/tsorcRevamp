@@ -83,7 +83,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 		public override void AI()
 		{
-
 			if (angularSpeed2 > 0.03f)
 			{
 				trailIntensity = 2;
@@ -107,10 +106,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
                 angularSpeed2 = 0.075f;
-				owner.statMana -= 1;
-				owner.manaRegenDelay = 10;
             }
-            if (!owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost || (owner.statMana <= 0) || owner.HasBuff(BuffID.ManaSickness))
+            if (!owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost || (owner.statMana <= 0))
             {
                 angularSpeed2 = 0.03f;
 				owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = false;
@@ -224,7 +221,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		}
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-			
 			if (hit.Crit)
 			{
 				target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 80);
@@ -260,7 +256,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		public static Texture2D glowTexture;
 		public override bool PreDraw(ref Color lightColor)
         {
-			base.PreDraw(ref lightColor);
 			if (additiveContext)
 			{
 				Main.spriteBatch.End();

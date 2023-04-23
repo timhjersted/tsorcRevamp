@@ -3506,18 +3506,28 @@ Mods: {
 					'''
 			}
 
-			Infinitea: {
-				DisplayName: Infinitea
+			PermanentWellFed: {
+				// DisplayName: Infinitea
 				// Tooltip: ""
 			}
 
-			BottomlessGreenTeaPot: {
+			PermanentPlentySatisfied: {
+				// DisplayName: Perma-Soup
+				// Tooltip: ""
+			}
+
+			PermanentExquisitelyStuffed: {
+				// DisplayName: Permanent Delight
+				// Tooltip: ""
+			}
+
+			PermanentGreenBlossom: {
 				// DisplayName: Bottomless Green Tea Pot
 				// Tooltip: ""
 			}
 
-			PermanentAle: {
-				DisplayName: Permanent Ale
+			PermanentTipsy: {
+				// DisplayName: Permanent Ale
 				// Tooltip: ""
 			}
 
@@ -3596,33 +3606,33 @@ Mods: {
 				// Tooltip: ""
 			}
 
-			PermanentFlaskOfCursedFlames: {
-				DisplayName: Permanent Flask Of Cursed Flames
+			PermanentCursedFlamesImbuement: {
+				// DisplayName: Permanent Flask Of Cursed Flames
 				// Tooltip: ""
 			}
 
-			PermanentFlaskOfFire: {
-				DisplayName: Permanent Flask Of Fire
+			PermanentFireImbuement: {
+				// DisplayName: Permanent Flask Of Fire
 				// Tooltip: ""
 			}
 
-			PermanentFlaskOfGold: {
-				DisplayName: Permanent Flask Of Gold
+			PermanentGoldImbuement: {
+				// DisplayName: Permanent Flask Of Gold
 				// Tooltip: ""
 			}
 
-			PermanentFlaskOfIchor: {
-				DisplayName: Permanent Flask Of Ichor
+			PermanentIchorImbuement: {
+				// DisplayName: Permanent Flask Of Ichor
 				// Tooltip: ""
 			}
 
-			PermanentFlaskOfNanites: {
-				DisplayName: Permanent Flask Of Nanites
+			PermanentNanitesImbuement: {
+				// DisplayName: Permanent Flask Of Nanites
 				// Tooltip: ""
 			}
 
-			PermanentFlaskOfParty: {
-				DisplayName: Permanent Flask Of Party
+			PermanentPartyImbuement: {
+				// DisplayName: Permanent Flask Of Party
 				// Tooltip: ""
 			}
 
@@ -5939,6 +5949,21 @@ Mods: {
 					Applies the Sunburn debuff, which grants minions crit chance based on a fraction of your critical strike chance
 					'Leave them in awe at the sight of the Star Forger'
 					''' */
+			}
+
+			PermanentPoisonImbuement: {
+				// DisplayName: Permanent Poison Imbuement
+				// Tooltip: ""
+			}
+
+			PermanentVenomImbuement: {
+				// DisplayName: Permanent Venom Imbuement
+				// Tooltip: ""
+			}
+
+			DamageDebugTome: {
+				// DisplayName: Damage Debug Tome
+				// Tooltip: Enables/disables damage spread
 			}
 		}
 

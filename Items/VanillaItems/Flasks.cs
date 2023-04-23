@@ -10,21 +10,39 @@ namespace tsorcRevamp.Items.VanillaItems
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
-            if (item.type == ItemID.FlaskofVenom
-                || item.type == ItemID.FlaskofCursedFlames
-                || item.type == ItemID.FlaskofFire
-                || item.type == ItemID.FlaskofGold
+            if (item.type == ItemID.FlaskofPoison
                 || item.type == ItemID.FlaskofIchor
-                || item.type == ItemID.FlaskofNanites
-                || item.type == ItemID.FlaskofParty
-                || item.type == ItemID.FlaskofPoison
                 )
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", "Adds 10% melee and whip damage"));
+                tooltips.Insert(3, new TooltipLine(Mod, "", "Increases melee and whip damage by 10%"));
+            }
+            if (item.type == ItemID.FlaskofGold)
+            {
+                tooltips.Insert(3, new TooltipLine(Mod, "", "Increases melee and whip damage by 15%"));
+            }
+            if (item.type == ItemID.FlaskofParty)
+            {
+                tooltips.Insert(3, new TooltipLine(Mod, "", "Increases melee and whip damage by 17%"));
+            }
+            if (item.type == ItemID.FlaskofFire)
+            {
+                tooltips.Insert(3, new TooltipLine(Mod, "", "Increases melee and whip damage by 12%"));
             }
             if (item.type == ItemID.FlaskofFire)
             {
                 tooltips.Insert(4, new TooltipLine(Mod, "", "All fire damage does 2x damage to woody enemies"));
+            }
+            if (item.type == ItemID.FlaskofCursedFlames)
+            {
+                tooltips.Insert(3, new TooltipLine(Mod, "", "Increases melee and whip damage by 16%"));
+            }
+            if (item.type == ItemID.FlaskofVenom)
+            {
+                tooltips.Insert(3, new TooltipLine(Mod, "", "Increases melee critical strike chance by 8%, increases whip damage by 8% multiplicatively"));
+            }
+            if (item.type == ItemID.FlaskofNanites)
+            {
+                tooltips.Insert(3, new TooltipLine(Mod, "", "Increases melee critical strike chance by 14%, increases whip damage by 14% multiplicatively"));
             }
         }
         public override void AddRecipes()

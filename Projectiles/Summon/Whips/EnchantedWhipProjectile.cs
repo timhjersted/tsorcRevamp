@@ -125,7 +125,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 		{
 			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.EnchantedWhipDebuff>(), 240);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
-			Projectile.damage = (int)(Projectile.damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
+			Projectile.damage = (int)(damageDone * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
 		}
 
 		// This method draws a line between all points of the whip, in case there's empty space between the sprites.

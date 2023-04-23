@@ -4,11 +4,18 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs
 {
-    class LunarArmorBuffNerfs : GlobalBuff
+    class tsorcGlobalBuff : GlobalBuff
     {
 
         public override void Update(int type, Player player, ref int buffIndex)
         {
+            if (type == BuffID.ManaSickness) //-5% damage per second of mana sickness multiplicatively
+            {
+                player.GetDamage(DamageClass.Melee) *= (1f) - (0.05f * ((float)player.buffTime[buffIndex] / 60f));
+                player.GetDamage(DamageClass.Ranged) *= (1f) - (0.05f * ((float)player.buffTime[buffIndex] / 60f));
+                player.GetDamage(DamageClass.Summon) *= (1f) - (0.05f * ((float)player.buffTime[buffIndex] / 60f));
+                player.GetDamage(DamageClass.Throwing) *= (1f) - (0.05f * ((float)player.buffTime[buffIndex] / 60f));
+            }
             if (type == BuffID.SolarShield1)
             {
                 player.endurance -= 0.15f;
@@ -32,18 +39,6 @@ namespace tsorcRevamp.Buffs
             if (type == BuffID.NebulaUpDmg3)
             {
                 player.GetDamage(DamageClass.Generic) -= 0.21f;
-            }
-            if (type == BuffID.NebulaUpLife1)
-            {
-                player.lifeRegen -= 2;
-            }
-            if (type == BuffID.NebulaUpLife2)
-            {
-                player.lifeRegen -= 4;
-            }
-            if (type == BuffID.NebulaUpLife3)
-            {
-                player.lifeRegen -= 5;
             }
         }
 
@@ -75,15 +70,15 @@ namespace tsorcRevamp.Buffs
             }
             if (type == BuffID.NebulaUpLife1)
             {
-                tip = "+1 Life Regeneration";
+                tip = "+2 Life Regeneration per second";
             }
             if (type == BuffID.NebulaUpLife2)
             {
-                tip = "+2 Life Regeneration";
+                tip = "+4 Life Regeneration per second";
             }
             if (type == BuffID.NebulaUpLife3)
             {
-                tip = "+4 Life Regeneration";
+                tip = "+6 Life Regeneration per second";
             }
         }
 

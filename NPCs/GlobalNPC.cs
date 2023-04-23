@@ -584,10 +584,12 @@ namespace tsorcRevamp.NPCs
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
+
         }
 
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
+
         }
 
         public override void ModifyGlobalLoot(GlobalLoot globalLoot) {

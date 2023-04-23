@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
+using static Humanizer.In;
 
 namespace tsorcRevamp.Buffs.Runeterra.Summon
 {
@@ -30,6 +31,11 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 			{
 				player.DelBuff(buffIndex);
 				buffIndex--;
+            }
+            if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+            {
+                player.statMana -= 1;
+                player.manaRegenDelay = 10;
             }
         }
 	}

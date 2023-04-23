@@ -200,19 +200,6 @@ namespace tsorcRevamp.Items
 
         public override void SetDefaults(Item item)
         {
-            base.SetDefaults(item);
-
-            //Let all accessories be used in vanity slots (Remove in 1.4.4 where this becomes vanilla behavior)
-            if (item.accessory)
-            {
-                item.hasVanityEffects = true;
-            }
-
-            //Let all items be auto-used (Remove in 1.4.4 where this becomes toggleable vanilla behavior)
-            if (item.damage >= 1 && !item.channel)
-            {
-                item.autoReuse = true;
-            }
 
             if (potionList == null)
             {

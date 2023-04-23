@@ -132,7 +132,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             List<Vector2> points = Projectile.WhipPointsForCollision;
             if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
             {
-				modifiers.SetCrit();
+                modifiers.CritDamage *= 1.5f;
+                modifiers.SetCrit();
             }
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

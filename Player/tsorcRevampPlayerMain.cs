@@ -685,9 +685,21 @@ namespace tsorcRevamp
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             int critLevel = (int)(Math.Floor(Player.GetWeaponCrit(Player.HeldItem) / 100f));
+            if (Player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread)
+            {
+                modifiers.DamageVariationScale *= 0;
+            }
             if ((BurningAura || BurningStone) && target.onFire == true)
             {
                 modifiers.TargetDamageMultiplier *= 1.05f;
+            }
+            if (Player.GetModPlayer<tsorcRevampPlayer>().Sharpened)
+            {
+                modifiers.ScalingArmorPenetration += 0.5f;
+            }
+            if (Player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationPotion)
+            {
+                modifiers.CritDamage += 0.1f;
             }
 
             if (OldWeapon)
@@ -697,7 +709,7 @@ namespace tsorcRevamp
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().CritDamage250)
             {
-                modifiers.CritDamage *= 1.25f;
+                modifiers.CritDamage += 0.25f;
             }
             if (critLevel != 0)
             {
@@ -722,13 +734,50 @@ namespace tsorcRevamp
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Projectile, consider using ModifyHitNPC instead */
         {
             modifiers.FinalDamage.Flat -= 4;
+            modifiers.CritDamage.Flat -= 4;
             if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>())
             {
                 modifiers.FinalDamage *= 0.55f;
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250 && proj.DamageType == DamageClass.SummonMeleeSpeed)
             {
-                modifiers.CritDamage *= 1.25f;
+                modifiers.CritDamage += 0.5f;
+            }
+            if (proj.type == ProjectileID.BlandWhip)
+            {
+                modifiers.SourceDamage *= 2;
+            }
+            if (proj.type == ProjectileID.ThornWhip)
+            {
+                modifiers.SourceDamage *= 1.667f;
+            }
+            if (proj.type == ProjectileID.BoneWhip)
+            {
+                modifiers.SourceDamage *= 1.112f;
+            }
+            if (proj.type == ProjectileID.FireWhip)
+            {
+                modifiers.SourceDamage *= 1.516f;
+            }
+            if (proj.type == ProjectileID.CoolWhip)
+            {
+                modifiers.SourceDamage *= 1.429f;
+            }
+            if (proj.type == ProjectileID.SwordWhip)
+            {
+                modifiers.SourceDamage *= 1.25f;
+            }
+            if (proj.type == ProjectileID.MaceWhip)
+            {
+                modifiers.SourceDamage *= 1.053f;
+            }
+            if (proj.type == ProjectileID.ScytheWhip)
+            {
+                modifiers.SourceDamage *= 1.112f;
+            }
+            if (proj.type == ProjectileID.RainbowWhip)
+            {
+                modifiers.SourceDamage *= 1.112f;
             }
         }
 
@@ -997,7 +1046,7 @@ namespace tsorcRevamp
             }
 
 
-            if (tsorcRevamp.specialAbility.Current && (Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>() || Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>()))
+            if (tsorcRevamp.specialAbility.Current && (Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>() || Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() || Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>()))
             {
                 if (Main.keyState.IsKeyDown(Keys.LeftShift))
                 {

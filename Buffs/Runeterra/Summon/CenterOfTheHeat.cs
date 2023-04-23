@@ -33,6 +33,6 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 				player.DelBuff(buffIndex);
 				buffIndex--;
 			}
-		}
+        }
 	}
 }

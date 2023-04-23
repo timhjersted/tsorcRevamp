@@ -127,10 +127,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
                 angularSpeed3 = 0.075f;
-                owner.statMana -= 1;
-                owner.manaRegenDelay = 10;
             }
-            if (!owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost || (owner.statMana <= 0) || owner.HasBuff(BuffID.ManaSickness))
+            if (!owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost || (owner.statMana <= 0))
             {
                 angularSpeed3 = 0.03f;
                 owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = false;

@@ -20,18 +20,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 
 		public override void SetStaticDefaults()
 		{
-			// DisplayName.SetDefault("Interstellar Vessel Controls");
-			/* Tooltip.SetDefault("Summons spaceships to rotate around you and damage enemies in their way" +
-                                "\nUses half a minion slot" +
-                                "\nWhile holding this item, increase their radius by holding Special Ability" +
-                                "\nOr hold Shift + Special Ability to shrink their radius" +
-                                "\nPress Special Ability while not holding the remote to activate Turboboost" +
-                                "\nThis increases the spaceships damage and movement speed" +
-                                "\nTurboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness" +                           
-								"\nApplies the Shocked debuff, which grants minions crit chance based on a fraction of your critical strike chance" +
-								"\n'Adjusting trajectory for ASOL-13!'"); */
-
-
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
         }

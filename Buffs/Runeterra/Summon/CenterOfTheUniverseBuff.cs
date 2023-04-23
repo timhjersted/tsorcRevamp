@@ -39,6 +39,11 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
                 Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.One, ModContent.ProjectileType<CenterOfTheUniverseStellarNova>(), 100, 1f, Main.myPlayer);
                 player.GetModPlayer<tsorcRevampPlayer>().CritCounter = 0;
             }
+            if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+            {
+                player.statMana -= 1;
+                player.manaRegenDelay = 10;
+            }
         }
     }
 }

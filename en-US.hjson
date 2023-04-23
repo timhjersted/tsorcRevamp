@@ -1236,7 +1236,7 @@ Mods: {
 					12% increased minion damage and speed
 					Increases the size of whips by 10%
 					Enemies are more likely to target you
-					Increases the damage of whip crits by 25%
+					Increases the damage of whip crits by 50%
 					'''
 			}
 
@@ -3508,17 +3508,27 @@ Mods: {
 					'''
 			}
 
-			Infinitea: {
+			PermanentWellFed: {
 				DisplayName: Infinitea
 				Tooltip: ""
 			}
 
-			BottomlessGreenTeaPot: {
+			PermanentPlentySatisfied: {
+				DisplayName: Perma-Soup
+				Tooltip: ""
+			}
+
+			PermanentExquisitelyStuffed: {
+				DisplayName: Permanent Delight
+				Tooltip: ""
+			}
+
+			PermanentGreenBlossom: {
 				DisplayName: Bottomless Green Tea Pot
 				Tooltip: ""
 			}
 
-			PermanentAle: {
+			PermanentTipsy: {
 				DisplayName: Permanent Ale
 				Tooltip: ""
 			}
@@ -3598,32 +3608,32 @@ Mods: {
 				Tooltip: ""
 			}
 
-			PermanentFlaskOfCursedFlames: {
+			PermanentCursedFlamesImbuement: {
 				DisplayName: Permanent Flask Of Cursed Flames
 				Tooltip: ""
 			}
 
-			PermanentFlaskOfFire: {
+			PermanentFireImbuement: {
 				DisplayName: Permanent Flask Of Fire
 				Tooltip: ""
 			}
 
-			PermanentFlaskOfGold: {
+			PermanentGoldImbuement: {
 				DisplayName: Permanent Flask Of Gold
 				Tooltip: ""
 			}
 
-			PermanentFlaskOfIchor: {
+			PermanentIchorImbuement: {
 				DisplayName: Permanent Flask Of Ichor
 				Tooltip: ""
 			}
 
-			PermanentFlaskOfNanites: {
+			PermanentNanitesImbuement: {
 				DisplayName: Permanent Flask Of Nanites
 				Tooltip: ""
 			}
 
-			PermanentFlaskOfParty: {
+			PermanentPartyImbuement: {
 				DisplayName: Permanent Flask Of Party
 				Tooltip: ""
 			}
@@ -5534,7 +5544,8 @@ Mods: {
 				Tooltip:
 					'''
 					7% summon tag critical strike chance
-					Inflicts bleeding debuff(Unimplemented)
+					Inflicts Blood Butcherer debuff
+					Critical strikes deal 2x damage
 					Your summons will focus struck enemies
 					'''
 			}
@@ -5569,6 +5580,7 @@ Mods: {
 					Stats of this whip scale with how long you've charged it
 					2-8 summon tag damage
 					Inherits Searing Lash's effect at up to half of its strength
+					Critical strikes deal 1.5x damage
 					1-4% summon tag critical strike chance
 					Gain 6-24% summon attack speed upon striking an enemy
 					Performs better against multiple targets than most whips
@@ -5621,6 +5633,7 @@ Mods: {
 					Summons a Terraprisma after striking an enemy
 					5-20 summon tag damage
 					Inherits Searing Lash's effect at up to an eighth of it's strength
+					Critical strikes deal 1.5x damage
 					4-12% summon tag crit
 					Gain 12-48% summon attack speed upon striking an enemy
 					This whip performs better against multiple targets than most whips
@@ -5942,6 +5955,21 @@ Mods: {
 					Applies the Sunburn debuff, which grants minions crit chance based on a fraction of your critical strike chance
 					'Leave them in awe at the sight of the Star Forger'
 					'''
+			}
+
+			PermanentPoisonImbuement: {
+				DisplayName: Permanent Poison Imbuement
+				Tooltip: ""
+			}
+
+			PermanentVenomImbuement: {
+				DisplayName: Permanent Venom Imbuement
+				Tooltip: ""
+			}
+
+			DamageDebugTome: {
+				DisplayName: Damage Debug Tome
+				Tooltip: Enables/disables damage spread
 			}
 		}
 

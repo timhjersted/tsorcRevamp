@@ -59,7 +59,7 @@ namespace tsorcRevamp.Projectiles
         {
             Player player = Main.player[Main.myPlayer];
 
-            if (projectile.type == ProjectileID.CrystalDart && !Main.hardMode)
+            if (projectile.type == ProjectileID.CrystalDart)
             {
                 projectile.damage = 1 + player.GetWeaponDamage(player.HeldItem);
             }
@@ -71,6 +71,11 @@ namespace tsorcRevamp.Projectiles
             {
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+
+                if (projectile.DamageType == DamageClass.SummonMeleeSpeed)
+                {
+                    projectile.damage = player.GetWeaponDamage(player.HeldItem);
+                }
 
                 if (projectile.type == ProjectileID.TerraBlade2Shot)
                 {
@@ -237,12 +242,12 @@ namespace tsorcRevamp.Projectiles
 
             if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaCrescentBoost && projectile.type != (int)ModContent.ProjectileType<MiakodaCrescent>())
             {
-                target.AddBuff(ModContent.BuffType<Buffs.CrescentMoonlight>(), 180); // Adds the ExampleJavelin debuff for a very small DoT
+                target.AddBuff(ModContent.BuffType<Buffs.CrescentMoonlight>(), 3 * 60); // Adds the ExampleJavelin debuff for a very small DoT
             }
 
             if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaNewBoost && projectile.type != (int)ModContent.ProjectileType<MiakodaNew>())
             {
-                target.AddBuff(BuffID.Midas, 300);
+                target.AddBuff(BuffID.Midas, 5 * 60);
             }
 
             if (projectile.owner == Main.myPlayer && (modPlayer.MagicWeapon || modPlayer.GreatMagicWeapon) && projectile.DamageType == DamageClass.Melee)
@@ -256,7 +261,7 @@ namespace tsorcRevamp.Projectiles
 
             if (projectile.type >= ProjectileID.MonkStaffT3 && projectile.type <= ProjectileID.DD2BetsyArrow || projectile.type == ProjectileID.DD2SquireSonicBoom)
             {
-                target.AddBuff(BuffID.BetsysCurse, 600);
+                target.AddBuff(BuffID.BetsysCurse, 10 * 60);
             }
         }
 
@@ -264,21 +269,20 @@ namespace tsorcRevamp.Projectiles
         {
             if (projectile.type == ProjectileID.EyeLaser && projectile.ai[0] == 1)
             {
-                target.AddBuff(BuffID.Slow, 180);
+                target.AddBuff(BuffID.Slow, 3 * 60);
             }
 
             if (projectile.type == ProjectileID.DemonSickle)
             {
                 target.AddBuff(ModContent.BuffType<Crippled>(), 15);
-                target.AddBuff(BuffID.Slow, 180);
-                target.AddBuff(BuffID.Darkness, 180);
+                target.AddBuff(BuffID.Slow, 3 * 60);
+                target.AddBuff(BuffID.Darkness, 3 * 60);
 
             }
         }
         public override void ModifyHitNPC(Projectile projectile, NPC target, ref NPC.HitModifiers modifiers)
         {
             Player player = Main.player[projectile.owner];
-
             #region Vanilla Whip crits
 
             Vector2 LeatherTip = new Vector2(10, 18) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier;
@@ -296,21 +300,13 @@ namespace tsorcRevamp.Projectiles
                 if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], LeatherTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], LeatherTip).Intersects(target.Hitbox))
                 {
                     modifiers.SetCrit();
-                    if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
-                    {
-                        modifiers.CritDamage *= 1.25f;
-                    }
                 }
             }
             if (projectile.type == ProjectileID.ThornWhip)
             {
                 if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], SnapTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], SnapTip).Intersects(target.Hitbox))
                 {
-                    modifiers.SetCrit(); 
-                    if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
-                    {
-                        modifiers.CritDamage *= 1.25f;
-                    }
+                    modifiers.SetCrit();
                 }
             }
             if (projectile.type == ProjectileID.BoneWhip)
@@ -318,10 +314,6 @@ namespace tsorcRevamp.Projectiles
                 if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], SpinalTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], SpinalTip).Intersects(target.Hitbox))
                 {
                     modifiers.SetCrit();
-                    if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
-                    {
-                        modifiers.CritDamage *= 1.25f;
-                    }
                 }
             }
             if (projectile.type == ProjectileID.CoolWhip)
@@ -329,10 +321,6 @@ namespace tsorcRevamp.Projectiles
                 if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], CoolTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], CoolTip).Intersects(target.Hitbox))
                 {
                     modifiers.SetCrit();
-                    if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
-                    {
-                        modifiers.CritDamage *= 1.25f;
-                    }
                 }
             }
             if (projectile.type == ProjectileID.FireWhip)
@@ -340,10 +328,6 @@ namespace tsorcRevamp.Projectiles
                 if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], FireTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], FireTip).Intersects(target.Hitbox))
                 {
                     modifiers.SetCrit();
-                    if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
-                    {
-                        modifiers.CritDamage *= 1.25f;
-                    }
                 }
             }
             if (projectile.type == ProjectileID.SwordWhip)
@@ -351,10 +335,6 @@ namespace tsorcRevamp.Projectiles
                 if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], DurenTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], DurenTip).Intersects(target.Hitbox))
                 {
                     modifiers.SetCrit();
-                    if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
-                    {
-                        modifiers.CritDamage *= 1.25f;
-                    }
                 }
             }
             if (projectile.type == ProjectileID.MaceWhip)
@@ -362,10 +342,6 @@ namespace tsorcRevamp.Projectiles
                 if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], MorningTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], MorningTip).Intersects(target.Hitbox))
                 {
                     modifiers.SetCrit();
-                    if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
-                    {
-                        modifiers.CritDamage *= 1.25f;
-                    }
                 }
             }
             if (projectile.type == ProjectileID.ScytheWhip)
@@ -373,10 +349,6 @@ namespace tsorcRevamp.Projectiles
                 if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], DarkTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], DarkTip).Intersects(target.Hitbox))
                 {
                     modifiers.SetCrit();
-                    if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
-                    {
-                        modifiers.CritDamage *= 1.25f;
-                    }
                 }
             }
             if (projectile.type == ProjectileID.RainbowWhip)
@@ -384,10 +356,6 @@ namespace tsorcRevamp.Projectiles
                 if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], KaleidoTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], KaleidoTip).Intersects(target.Hitbox))
                 {
                     modifiers.SetCrit();
-                    if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
-                    {
-                        modifiers.CritDamage *= 1.25f;
-                    }
                 }
             }
 

@@ -68,7 +68,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 		public override void AI()
 		{
-			base.AI();
 
 			Player owner = Main.player[Projectile.owner];
 			tsorcRevampPlayer modPlayer = owner.GetModPlayer<tsorcRevampPlayer>();

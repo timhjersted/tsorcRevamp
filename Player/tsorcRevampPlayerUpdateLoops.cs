@@ -20,6 +20,7 @@ namespace tsorcRevamp
     //update loops that run every frame
     public partial class tsorcRevampPlayer
     {
+        public bool NoDamageSpread = false;
 
         public int warpX;
         public int warpY;
@@ -106,6 +107,10 @@ namespace tsorcRevamp
 
         public bool BurningAura = false;
         public bool BurningStone = false;
+
+        public bool Sharpened = false;
+        public bool AmmoBox = false;
+        public bool AmmoReservationPotion = false;
 
         public bool SOADrain = false;
 
@@ -330,6 +335,10 @@ namespace tsorcRevamp
             Crippled = false;
             ShadowWeight = false;
             ReflectionShiftEnabled = false;
+
+            Sharpened = false;
+            AmmoBox = false;
+            AmmoReservationPotion = false;
 
             PhazonCorruption = false;
             LifegemHealing = false;
@@ -1317,6 +1326,18 @@ namespace tsorcRevamp
 
         public override void UpdateBadLifeRegen()
         {
+            if (Player.HasBuff(BuffID.NebulaUpLife1))
+            {
+                Player.lifeRegen -= 2;
+            }
+            if (Player.HasBuff(BuffID.NebulaUpLife2))
+            {
+                Player.lifeRegen -= 4;
+            }
+            if (Player.HasBuff(BuffID.NebulaUpLife3))
+            {
+                Player.lifeRegen -= 6;
+            }
             if (DarkInferno)
             {
                 if (Player.lifeRegen > 0)
