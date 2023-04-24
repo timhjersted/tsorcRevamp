@@ -1194,7 +1194,7 @@ Mods: {
 
 			ArchmenEmblem: {
 				DisplayName: Archmen Emblem
-				Tooltip: 15% increased ranged damage + 5 flat
+				Tooltip: 15% increased ranged damage + 5 flat and increased arrow speed
 			}
 
 			BoneRing: {
@@ -1236,7 +1236,7 @@ Mods: {
 					12% increased minion damage and speed
 					Increases the size of whips by 10%
 					Enemies are more likely to target you
-					Increases the damage of whip crits by 25%
+					Increases the damage of whip crits by 50%
 					'''
 			}
 
@@ -1277,7 +1277,7 @@ Mods: {
 
 			Bolt: {
 				DisplayName: Bolt
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			CruelArrow: {
@@ -1292,7 +1292,7 @@ Mods: {
 
 			PowerBolt: {
 				DisplayName: Power Bolt
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			TeslaBolt: {
@@ -1649,17 +1649,17 @@ Mods: {
 
 			MaskOfTheChild: {
 				DisplayName: Mask Of The Child
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			MaskOfTheFather: {
 				DisplayName: Mask Of The Father
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			MaskOfTheMother: {
 				DisplayName: Mask Of The Mother
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			AncientGoldenArmor: {
@@ -1836,14 +1836,14 @@ Mods: {
 				DisplayName: Shadow Cloak Greaves
 				Tooltip:
 					'''
-					18% increased movement speed
-					Increases melee speed by 27%
+					7% increased movement speed
+					Increases melee speed by 9%
 					'''
 			}
 
 			ShadowCloakPlateHelm: {
 				DisplayName: Shadow Cloak Helm
-				Tooltip: Increases melee critical strike chance by 6%
+				Tooltip: Increases melee critical strike chance by 21%
 			}
 
 			ShadowCloakPlateMail: {
@@ -1854,6 +1854,7 @@ Mods: {
 					Set bonus: A Shadow Cloak activates when life falls below 25%, increasing life regen by 5
 					Increases life regen by 2 otherwise
 					Grants Double Jump Skill
+					Increases movement speed and acceleration
 					'''
 			}
 
@@ -2575,7 +2576,7 @@ Mods: {
 
 			DarkMirror: {
 				DisplayName: Dark Mirror
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			DeathBringer: {
@@ -2918,8 +2919,10 @@ Mods: {
 					Use to become the [c/6d8827:Bearer of the Curse]
 					Playing as the [c/6d8827:Bearer of the Curse] has the following effects:
 					You deal +20% damage(multiplicative), receive +20% more souls and your stamina recovers much faster
-					However, [c/dd3333:using weapons drains stamina], life regen is halved while stamina isn't at max,
-					minions do not benefit from the damage bonus and cap your stamina at 70%,
+					However, [c/dd3333:using weapons drains stamina], life regen is halved while stamina isn't at it's maximum,
+					minions base damage is reduced by 100%(damage increases work as normal),
+					their final damage is also reduced by 80%, this reduction is lowered by 20% for each whip debuff active on the enemy,
+					but all minions gain 1 flat damage whilst a summoning staff or whip is being held,
 					and dying reduces your max HP by 20% until you return to where you died.
 					Greater Magic Mirror use is prohibited, and instant-heal items won't heal you
 					[c/ca1e00:This mode is intended for players experienced with the mod]
@@ -3035,7 +3038,7 @@ Mods: {
 
 			EphemeralDust: {
 				DisplayName: Ephemeral Dust
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			Epilogue: {
@@ -3352,7 +3355,7 @@ Mods: {
 
 			EmptyTrophy: {
 				DisplayName: Empty Trophy
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PotionBag: {
@@ -3489,7 +3492,7 @@ Mods: {
 					Gradually restores a small amount of HP
 					Often found near abandoned corpses,
 					as if it were what remains of the soul
-					Restores 120 HP over the course of 12 seconds
+					Restores 90 HP over the course of 12 seconds
 					Inflicts potion sickness
 					'''
 			}
@@ -3507,298 +3510,298 @@ Mods: {
 			}
 
 			PermanentWellFed: {
-				// DisplayName: Infinitea
-				// Tooltip: ""
+				DisplayName: Infinitea
+				Tooltip: ""
 			}
 
 			PermanentPlentySatisfied: {
-				// DisplayName: Perma-Soup
-				// Tooltip: ""
+				DisplayName: Perma-Soup
+				Tooltip: ""
 			}
 
 			PermanentExquisitelyStuffed: {
-				// DisplayName: Permanent Delight
-				// Tooltip: ""
+				DisplayName: Permanent Delight
+				Tooltip: ""
 			}
 
 			PermanentGreenBlossom: {
-				// DisplayName: Bottomless Green Tea Pot
-				// Tooltip: ""
+				DisplayName: Bottomless Green Tea Pot
+				Tooltip: ""
 			}
 
 			PermanentTipsy: {
-				// DisplayName: Permanent Ale
-				// Tooltip: ""
+				DisplayName: Permanent Ale
+				Tooltip: ""
 			}
 
 			PermanentAmmoReservationPotion: {
 				DisplayName: Permanent Ammo Reservation Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentArcheryPotion: {
 				DisplayName: Permanent Archery Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentArmorDrug: {
 				DisplayName: Permanent Armor Drug
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentBattlefrontPotion: {
 				DisplayName: Permanent Battlefront Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentBattlePotion: {
 				DisplayName: Permanent Battle Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentBoostPotion: {
 				DisplayName: Permanent Boost Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentBuilderPotion: {
 				DisplayName: Permanent Builder Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentCalmingPotion: {
 				DisplayName: Permanent Calming Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentCratePotion: {
 				DisplayName: Permanent Crate Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentCrimsonPotion: {
 				DisplayName: Permanent Crimson Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentDangersensePotion: {
 				DisplayName: Permanent Dangersense Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentDemonDrug: {
 				DisplayName: Permanent Demon Drug
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentEndurancePotion: {
 				DisplayName: Permanent Endurance Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentFeatherfallPotion: {
 				DisplayName: Permanent Featherfall Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentFishingPotion: {
 				DisplayName: Permanent Fishing Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentCursedFlamesImbuement: {
-				// DisplayName: Permanent Flask Of Cursed Flames
-				// Tooltip: ""
+				DisplayName: Permanent Flask Of Cursed Flames
+				Tooltip: ""
 			}
 
 			PermanentFireImbuement: {
-				// DisplayName: Permanent Flask Of Fire
-				// Tooltip: ""
+				DisplayName: Permanent Flask Of Fire
+				Tooltip: ""
 			}
 
 			PermanentGoldImbuement: {
-				// DisplayName: Permanent Flask Of Gold
-				// Tooltip: ""
+				DisplayName: Permanent Flask Of Gold
+				Tooltip: ""
 			}
 
 			PermanentIchorImbuement: {
-				// DisplayName: Permanent Flask Of Ichor
-				// Tooltip: ""
+				DisplayName: Permanent Flask Of Ichor
+				Tooltip: ""
 			}
 
 			PermanentNanitesImbuement: {
-				// DisplayName: Permanent Flask Of Nanites
-				// Tooltip: ""
+				DisplayName: Permanent Flask Of Nanites
+				Tooltip: ""
 			}
 
 			PermanentPartyImbuement: {
-				// DisplayName: Permanent Flask Of Party
-				// Tooltip: ""
+				DisplayName: Permanent Flask Of Party
+				Tooltip: ""
 			}
 
 			PermanentFlaskOfPoison: {
 				DisplayName: Permanent Flask Of Poison
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentFlaskOfVenom: {
 				DisplayName: Permanent Flask Of Venom
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentFlipperPotion: {
 				DisplayName: Permanent Flipper Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentGillsPotion: {
 				DisplayName: Permanent Gills Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentGoldenDelight: {
 				DisplayName: Permanent Golden Delight
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentGravitationPotion: {
 				DisplayName: Permanent Gravitation Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentHeartreachPotion: {
 				DisplayName: Permanent Heartreach Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentHunterPotion: {
 				DisplayName: Permanent Hunter Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentInfernoPotion: {
 				DisplayName: Permanent Inferno Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentInvisibilityPotion: {
 				DisplayName: Permanent Invisibility Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentIronskinPotion: {
 				DisplayName: Permanent Ironskin Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentLifeforcePotion: {
 				DisplayName: Permanent Lifeforce Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentMagicPowerPotion: {
 				DisplayName: Permanent Magic Power Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentManaRegenerationPotion: {
 				DisplayName: Permanent Mana Regeneration Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentMiningPotion: {
 				DisplayName: Permanent Mining Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentNightOwlPotion: {
 				DisplayName: Permanent Night Owl Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentObsidianSkinPotion: {
 				DisplayName: Permanent Obsidian Skin Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentRagePotion: {
 				DisplayName: Permanent Rage Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentRegenerationPotion: {
 				DisplayName: Permanent Regeneration Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentShinePotion: {
 				DisplayName: Permanent Shine Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentShockwavePotion: {
 				DisplayName: Permanent Shockwave Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentSonarPotion: {
 				DisplayName: Permanent Sonar Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentSoulSiphonPotion: {
 				DisplayName: Permanent Soul Siphon Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentSoup: {
 				DisplayName: Permanent Soup
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentSpelunkerPotion: {
 				DisplayName: Permanent Spelunker Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentStrengthPotion: {
 				DisplayName: Permanent Strength Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentSummoningPotion: {
 				DisplayName: Permanent Summoning Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentSwiftnessPotion: {
 				DisplayName: Permanent Swiftness Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentThornsPotion: {
 				DisplayName: Permanent Thorns Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentTitanPotion: {
 				DisplayName: Permanent Titan Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentWarmthPotion: {
 				DisplayName: Permanent Warmth Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentWaterWalkingPotion: {
 				DisplayName: Permanent Water Walking Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			PermanentWrathPotion: {
 				DisplayName: Permanent Wrath Potion
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			RadiantLifegem: {
@@ -3810,7 +3813,7 @@ Mods: {
 					Gradually restores HP
 					The dull glimmer of these mysterious
 					stones brightens with the passage of time
-					Restores 200 HP over the course of 13 seconds
+					Restores 140 HP over the course of 14 seconds
 					Inflicts potions sickness
 					'''
 			}
@@ -3933,7 +3936,7 @@ Mods: {
 
 			StaminaDroplet: {
 				DisplayName: Stamina Droplet
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			StaminaVessel: {
@@ -4491,12 +4494,12 @@ Mods: {
 
 			WandOfFire: {
 				DisplayName: Wand of Fire
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			WandOfFire2: {
 				DisplayName: Wand of Fire II
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			WandOfFrost: {
@@ -4537,7 +4540,7 @@ Mods: {
 
 			WoodenFlute: {
 				DisplayName: Wooden Flute
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			WoodenWand: {
@@ -4716,7 +4719,7 @@ Mods: {
 
 			Ragnarok: {
 				DisplayName: Ragnarok
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			RTQ2Sword: {
@@ -4831,7 +4834,7 @@ Mods: {
 
 			BerserkerNightmare: {
 				DisplayName: Berserker Nightmare
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			HeavensTear: {
@@ -4845,7 +4848,7 @@ Mods: {
 
 			Moonfury: {
 				DisplayName: Moonfury
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			SunderingLight: {
@@ -4859,7 +4862,7 @@ Mods: {
 
 			ForgottenRisingSun: {
 				DisplayName: Forgotten Rising Sun
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			AncientWarhammer: {
@@ -4883,7 +4886,7 @@ Mods: {
 
 			Limit: {
 				DisplayName: Limit
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			ForgottenIceRod: {
@@ -5014,7 +5017,7 @@ Mods: {
 
 			ForgottenPearlSpear: {
 				DisplayName: Forgotten Pearl Spear
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			ForgottenPolearm: {
@@ -5033,7 +5036,7 @@ Mods: {
 
 			HiRyuuSpear: {
 				DisplayName: HiRyuu Spear
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			Longinus: {
@@ -5062,7 +5065,7 @@ Mods: {
 
 			ThrowingAxe: {
 				DisplayName: Throwing Axe
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			ArgentPeacemaker: {
@@ -5105,7 +5108,7 @@ Mods: {
 
 			AncientGreatBow: {
 				DisplayName: Ancient Great Bow
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			ArtemisBow: {
@@ -5304,12 +5307,12 @@ Mods: {
 
 			RTQ2Rifle: {
 				DisplayName: RTQ2 Rifle
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			GWPulsar: {
 				DisplayName: Gigawatt Pulsar
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			Marksman: {
@@ -5379,7 +5382,7 @@ Mods: {
 
 			SuperBlaster: {
 				DisplayName: Super Blaster
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			Crissaegrim: {
@@ -5410,12 +5413,12 @@ Mods: {
 
 			RoyalThrowingSpear: {
 				DisplayName: Royal Throwing Spear
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			ThrowingSpear: {
 				DisplayName: Throwing Spear
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			ToxicCatalyzer: {
@@ -5471,7 +5474,7 @@ Mods: {
 			}
 
 			GaleForce: {
-				DisplayName: Gale Force
+				DisplayName: Galeforce
 				Tooltip: Summons a wind spirit which shoots a gust of wind towards your cursor
 			}
 
@@ -5542,7 +5545,8 @@ Mods: {
 				Tooltip:
 					'''
 					7% summon tag critical strike chance
-					Inflicts bleeding debuff(Unimplemented)
+					Inflicts Blood Butcherer debuff
+					Critical strikes deal 1.66x damage
 					Your summons will focus struck enemies
 					'''
 			}
@@ -5577,6 +5581,7 @@ Mods: {
 					Stats of this whip scale with how long you've charged it
 					2-8 summon tag damage
 					Inherits Searing Lash's effect at up to half of its strength
+					Critical strikes deal 1.33x damage
 					1-4% summon tag critical strike chance
 					Gain 6-24% summon attack speed upon striking an enemy
 					Performs better against multiple targets than most whips
@@ -5629,6 +5634,7 @@ Mods: {
 					Summons a Terraprisma after striking an enemy
 					5-20 summon tag damage
 					Inherits Searing Lash's effect at up to an eighth of it's strength
+					Critical strikes deal 1.33x damage
 					4-12% summon tag crit
 					Gain 12-48% summon attack speed upon striking an enemy
 					This whip performs better against multiple targets than most whips
@@ -5652,7 +5658,7 @@ Mods: {
 
 			SporePowder: {
 				DisplayName: Spore Powder
-				// Tooltip: ""
+				Tooltip: ""
 			}
 
 			WhiteTitanite: {
@@ -5695,6 +5701,7 @@ Mods: {
 				Tooltip:
 					'''
 					An otherworldy artifact of great power
+					Might come in handy in the future...
 					It seems to react to dark souls...
 					'''
 			}
@@ -5863,8 +5870,8 @@ Mods: {
 			}
 
 			OrbOfDeception: {
-				// DisplayName: Orb of Deception
-				/* Tooltip:
+				DisplayName: Orb of Deception
+				Tooltip:
 					'''
 					Throws a magical Orb which will return to you after a certain distance
 					Casts homing flames while the Orb is sent out which restore half their mana cost on-hit
@@ -5872,12 +5879,12 @@ Mods: {
 					Gathers stacks of Essence Thief on most Orb hits and enemy kills, doubled on crits
 					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal double damage
 					Heal scales with maximum mana and magic damage
-					''' */
+					'''
 			}
 
 			OrbOfFlame: {
-				// DisplayName: Orb of Flame
-				/* Tooltip:
+				DisplayName: Orb of Flame
+				Tooltip:
 					'''
 					Throws a magical Orb which will return to you after a certain distance
 					Casts homing flames while the Orb is sent out which restore half their mana cost on-hit
@@ -5886,12 +5893,12 @@ Mods: {
 					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal double damage
 					Heal scales with maximum mana and magic damage
 					Right click to cast a fireball which sunders enemies, increasing their vulnerability to magic damage
-					''' */
+					'''
 			}
 
 			OrbOfSpirituality: {
-				// DisplayName: Orb of Spirituality
-				/* Tooltip:
+				DisplayName: Orb of Spirituality
+				Tooltip:
 					'''
 					Throws a magical Orb which will return to you after a certain distance
 					Casts homing flames while the Orb is sent out which restore half their mana cost on-hit
@@ -5901,7 +5908,7 @@ Mods: {
 					Heal scales with maximum mana and magic damage
 					Right click to cast a charm which sunders enemies, increasing their vulnerability to magic damage
 					Press Special Ability to dash towards the mouse, casting homing flames along the way
-					''' */
+					'''
 			}
 
 			ScorchingPoint: {
@@ -5934,8 +5941,8 @@ Mods: {
 			}
 
 			CenterOfTheUniverse: {
-				// DisplayName: Center of the Universe
-				/* Tooltip:
+				DisplayName: Center of the Universe
+				Tooltip:
 					'''
 					Summons stars to rotate around you and damage enemies in their way
 					Uses half a minion slot
@@ -5948,22 +5955,22 @@ Mods: {
 					The Star Forger will breathe cosmic dust at the mouse location
 					Applies the Sunburn debuff, which grants minions crit chance based on a fraction of your critical strike chance
 					'Leave them in awe at the sight of the Star Forger'
-					''' */
+					'''
 			}
 
 			PermanentPoisonImbuement: {
-				// DisplayName: Permanent Poison Imbuement
-				// Tooltip: ""
+				DisplayName: Permanent Poison Imbuement
+				Tooltip: ""
 			}
 
 			PermanentVenomImbuement: {
-				// DisplayName: Permanent Venom Imbuement
-				// Tooltip: ""
+				DisplayName: Permanent Venom Imbuement
+				Tooltip: ""
 			}
 
 			DamageDebugTome: {
-				// DisplayName: Damage Debug Tome
-				// Tooltip: Enables/disables damage spread
+				DisplayName: Damage Debug Tome
+				Tooltip: Enables/disables damage spread
 			}
 		}
 
@@ -7364,12 +7371,12 @@ Mods: {
 		}
 
 		Keybinds: {
-			// "Dragoon Boots.DisplayName": Mods.tsorcRevamp.Keybinds.Dragoon Boots.DisplayName
-			// "Reflection Shift.DisplayName": Mods.tsorcRevamp.Keybinds.Reflection Shift.DisplayName
-			// "Dodge Roll.DisplayName": Mods.tsorcRevamp.Keybinds.Dodge Roll.DisplayName
-			// "Special Ability.DisplayName": Mods.tsorcRevamp.Keybinds.Special Ability.DisplayName
-			// "Wolf Ring.DisplayName": Mods.tsorcRevamp.Keybinds.Wolf Ring.DisplayName
-			// "Wings of Seath speed toggle.DisplayName": Mods.tsorcRevamp.Keybinds.Wings of Seath speed toggle.DisplayName
+			"Dragoon Boots.DisplayName": Mods.tsorcRevamp.Keybinds.Dragoon Boots.DisplayName
+			"Reflection Shift.DisplayName": Mods.tsorcRevamp.Keybinds.Reflection Shift.DisplayName
+			"Dodge Roll.DisplayName": Mods.tsorcRevamp.Keybinds.Dodge Roll.DisplayName
+			"Special Ability.DisplayName": Mods.tsorcRevamp.Keybinds.Special Ability.DisplayName
+			"Wolf Ring.DisplayName": Mods.tsorcRevamp.Keybinds.Wolf Ring.DisplayName
+			"Wings of Seath speed toggle.DisplayName": Mods.tsorcRevamp.Keybinds.Wings of Seath speed toggle.DisplayName
 		}
 	}
 }
