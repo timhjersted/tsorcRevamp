@@ -119,7 +119,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             List<Vector2> points = Projectile.WhipPointsForCollision;
             if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
             {
-				modifiers.CritDamage *= 2f;
+				modifiers.CritDamage *= 1.66f;
 				modifiers.SetCrit();
             }
         }

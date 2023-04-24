@@ -297,10 +297,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
                 modifiers.FinalDamage *= 2; //I never want to see or hear the word "axe" again in my life
-                /*if (damage < 20)
+                if (modifiers.GetDamage(item.damage, false) < 20)
                 {
-                    damage = 20; //damage before defence
-                }*/
+                    modifiers.FinalDamage += 20 - modifiers.GetDamage(item.damage, false);
+                }
                 if (Main.rand.NextBool(2) && wooddropped < 5)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.Wood);
@@ -316,10 +316,10 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
                 modifiers.FinalDamage *= 2;
-                /*if (damage < 20)
+                if (modifiers.GetDamage(item.damage, false) < 20)
                 {
-                    damage = 20; //damage before defence
-                }*/
+                    modifiers.FinalDamage += 20 - modifiers.GetDamage(item.damage, false);
+                }
                 if (Main.rand.NextBool(3) && resindropped < 1)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ModContent.ItemType<CharcoalPineResin>());
@@ -346,10 +346,10 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
                 modifiers.FinalDamage *= 2;
-                /*if (damage < 20)
+                if (modifiers.GetDamage(projectile.damage, false) < 20)
                 {
-                    damage = 20; //damage before defence
-                }*/
+                    modifiers.FinalDamage += 20 - modifiers.GetDamage(projectile.damage, false);
+                }
                 if (Main.rand.NextBool(20) && resindropped < 1)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ModContent.ItemType<CharcoalPineResin>());

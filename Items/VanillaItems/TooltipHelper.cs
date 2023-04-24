@@ -61,7 +61,6 @@ namespace tsorcRevamp.Items.VanillaItems
             SimpleModTooltip(Mod, item, tooltips, ItemID.CobaltDrill, "[c/ffbf00:Use this to gain entry to the Wyvern Mage's]", "[c/ffbf00:Fortress above the hallowed caverns to the East]");
             SimpleModTooltip(Mod, item, tooltips, ItemID.DivingHelmet, "Can be placed in an accessory slot or in your head slot.");
             SimpleModTooltip(Mod, item, tooltips, ItemID.GoldHelmet, "Can be upgraded with Dark Souls");
-            SimpleModTooltip(Mod, item, tooltips, ItemID.HerosHat, "Can be upgraded eventually with the flippers", "and diving helmet, when you acquire them");
             SimpleModTooltip(Mod, item, tooltips, ItemID.ManaCrystal, "Can be used with Dark Souls to create a Mana Bomb");
             SimpleModTooltip(Mod, item, tooltips, ItemID.MechanicalSkull, "Item is non-consumable.");
             SimpleModTooltip(Mod, item, tooltips, ItemID.MechanicalWorm, "It's heavier than you expected.\nYou get the feeling a way to stay in the air may be key...\nItem is non-consumable.");

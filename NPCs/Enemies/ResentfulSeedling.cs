@@ -46,10 +46,10 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
                 modifiers.FinalDamage *= 2; //I never want to see or hear the word "axe" again in my life
-                /*if (damage < 10)
+                if (modifiers.GetDamage(item.damage, false) < 10)
                 {
-                    damage = 10;
-                }*/
+                    modifiers.FinalDamage += 10 - modifiers.GetDamage(item.damage, false);
+                }
 
             }
             //fire melee
@@ -59,10 +59,10 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
                 modifiers.FinalDamage *= 2;
-                /*if (damage < 10)
+                if (modifiers.GetDamage(item.damage, false) < 10)
                 {
-                    damage = 10; //damage before defence
-                }*/
+                    modifiers.FinalDamage += 10 - modifiers.GetDamage(item.damage, false);
+                }
                 if (Main.rand.NextBool(20) && resindropped < 1)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ModContent.ItemType<CharcoalPineResin>());
@@ -84,7 +84,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 projectile.type == ModContent.ProjectileType<DevilSickle>() || projectile.type == ModContent.ProjectileType<RedLaserBeam>() ||
                 (projectile.DamageType == DamageClass.Melee && player.meleeEnchant == 3))
             {
-                modifiers.FinalDamage *= 2;
+                modifiers.FinalDamage *= 2; 
+                if (modifiers.GetDamage(projectile.damage, false) < 10)
+                {
+                    modifiers.FinalDamage += 10 - modifiers.GetDamage(projectile.damage, false);
+                }
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
                 if (Main.rand.NextBool(30) && resindropped < 1)
                 {

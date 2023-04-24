@@ -116,10 +116,9 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
                 Timer = -200 - Main.rand.Next(200);
             }
         }
-
-        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
-            hit.Damage *= 2;
+            modifiers.FinalDamage *= 2;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

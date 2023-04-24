@@ -584,7 +584,37 @@ namespace tsorcRevamp.NPCs
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-
+            int WhipDebuffCounter = 0;
+            if(projectile.IsMinionOrSentryRelated && Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                foreach (int buffType in npc.buffType)
+                {
+                    if (BuffID.Sets.IsAnNPCWhipDebuff[buffType])
+                    {
+                        WhipDebuffCounter++;
+                    }
+                    if (WhipDebuffCounter == 0) 
+                    {
+                        modifiers.FinalDamage *= 0.2f;
+                    }
+                    if (WhipDebuffCounter == 1) 
+                    {
+                        modifiers.FinalDamage *= 0.4f;
+                    }
+                    if (WhipDebuffCounter == 2)
+                    { 
+                        modifiers.FinalDamage *= 0.6f;
+                    }
+                    if (WhipDebuffCounter == 3)
+                    {
+                        modifiers.FinalDamage *= 0.8f;
+                    }
+                    if (WhipDebuffCounter >= 4)
+                    {
+                        modifiers.FinalDamage *= 1f;
+                    }
+                }
+            }
         }
 
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)

@@ -1193,5 +1193,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(0.3f);
         }
     }
+    //increase PermanentBuffCount in tsorcRevampPlayerMain by 1 for each new potion added
 
 }

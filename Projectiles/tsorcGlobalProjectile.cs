@@ -86,7 +86,7 @@ namespace tsorcRevamp.Projectiles
                 {
                     projectile.penetrate = 6;
                     projectile.usesLocalNPCImmunity = true;
-                    projectile.localNPCHitCooldown = 10;
+                    projectile.localNPCHitCooldown = 20;
                     projectile.extraUpdates = 5;
                 } 
                 else if (!modPlayer.WaspPower & projectile.type == ProjectileID.HornetStinger)

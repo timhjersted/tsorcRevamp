@@ -5545,7 +5545,7 @@ Mods: {
 					'''
 					7% summon tag critical strike chance
 					Inflicts Blood Butcherer debuff
-					Critical strikes deal 2x damage
+					Critical strikes deal 1.66x damage
 					Your summons will focus struck enemies
 					'''
 			}
@@ -5580,7 +5580,7 @@ Mods: {
 					Stats of this whip scale with how long you've charged it
 					2-8 summon tag damage
 					Inherits Searing Lash's effect at up to half of its strength
-					Critical strikes deal 1.5x damage
+					Critical strikes deal 1.33x damage
 					1-4% summon tag critical strike chance
 					Gain 6-24% summon attack speed upon striking an enemy
 					Performs better against multiple targets than most whips
@@ -5633,7 +5633,7 @@ Mods: {
 					Summons a Terraprisma after striking an enemy
 					5-20 summon tag damage
 					Inherits Searing Lash's effect at up to an eighth of it's strength
-					Critical strikes deal 1.5x damage
+					Critical strikes deal 1.33x damage
 					4-12% summon tag crit
 					Gain 12-48% summon attack speed upon striking an enemy
 					This whip performs better against multiple targets than most whips

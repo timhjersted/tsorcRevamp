@@ -26,13 +26,12 @@ using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Runeterra.Magic;
-using System.Diagnostics.Contracts;
 
 namespace tsorcRevamp
 {
     public partial class tsorcRevampPlayer : ModPlayer
     {
-        public static readonly int PermanentBuffCount = 56;
+        public static readonly int PermanentBuffCount = 57;
         public static List<int> startingItemsList;
         public List<int> bagsOpened;
         public Dictionary<ItemDefinition, int> consumedPotions;

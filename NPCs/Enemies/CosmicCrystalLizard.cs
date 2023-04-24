@@ -987,35 +987,34 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
         }
-        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
-        {/*
-            //intentionally lower
-            peaceouttimer -= (int)(20 + (damage * 0.2f));
-            if (Main.rand.NextBool(2) && immuneframe >= 1 && !crit)
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            peaceouttimer -= (int)(25 + (damageDone * 0.1f));
+            if (hit.Crit && immuneframe >= 1)
+            {
+                NPC.defense = 0;
+                immuneframe = 0;
+            }
+        }
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            peaceouttimer -= (int)(20 + (damageDone * 0.2f));
+            if (Main.rand.NextBool(2) && immuneframe >= 1 && !hit.Crit)
             {
                 NPC.immortal = true;
                 immuneframe = 0;
             }
-            else
+            if (hit.Crit && immuneframe >= 1)
             {
-                damage = 1;
+                NPC.defense = 0;
+                immuneframe = 0;
             }
-            if (crit && immuneframe >= 1)
-            {
-                damage = 2;
-                NPC.defense = 0;
-                immuneframe = 0;
-            }*/
         }
-        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
-        {/*
-            peaceouttimer -= (int)(25 + (damage * 0.2f));
-            if (crit && immuneframe >= 1)
-            {
-                damage = 2;
-                NPC.defense = 0;
-                immuneframe = 0;
-            }*/
+        public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
+        {
+            modifiers.FinalDamage *= 0;
+            modifiers.FlatBonusDamage += 1;
+            modifiers.CritDamage *= 2;
         }
         public override void OnKill()
         {

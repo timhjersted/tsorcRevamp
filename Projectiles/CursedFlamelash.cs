@@ -75,6 +75,8 @@ namespace tsorcRevamp.Projectiles
             int originalDamage = damage;
             damage *= (int)Projectile.velocity.Length() / 6;
             damage += originalDamage / 3;*/
+            modifiers.SourceDamage *= Projectile.velocity.Length() / 6;
+            modifiers.FinalDamage += modifiers.GetDamage(Projectile.damage, false) / 3;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
