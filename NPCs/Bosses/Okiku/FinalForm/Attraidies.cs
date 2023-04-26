@@ -162,19 +162,19 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         float maxTime;
         void ManageLife()
         {
-            if(NPC.life > NPC.lifeMax / 2)
+            if(NPC.life > NPC.lifeMax * (1f/4f))
             {
                 Main.dayTime = false;
                 float life = NPC.life;
-                float maxOver2 = NPC.lifeMax / 2f;
+                float maxOver2 = NPC.lifeMax * (1f / 4f);
 
-                float ratio = (life - maxOver2) / maxOver2;
+                float ratio = (life - maxOver2) / (NPC.lifeMax - maxOver2);
                 maxTime = MathHelper.Lerp((float)Main.nightLength, 1, ratio);
             }
             else
             {
                 Main.dayTime = true;
-                maxTime = MathHelper.Lerp((float)Main.dayLength  * 0.3f, 1, (float)NPC.life / (float)(NPC.lifeMax / 2f));
+                maxTime = MathHelper.Lerp((float)Main.dayLength  * 0.1f, 1, (float)NPC.life / (float)(NPC.lifeMax * (1f / 4f)));
             }
 
             if (Main.time < maxTime)
