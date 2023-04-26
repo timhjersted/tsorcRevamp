@@ -71,6 +71,7 @@ namespace tsorcRevamp
 
         public bool MeleeArmorVamp10 = false;
         public bool NUVamp = false;
+        public bool HasShadowSickle = false;
 
         public bool OldWeapon = false;
 
@@ -276,6 +277,8 @@ namespace tsorcRevamp
             UndeadTalisman = false;
 
             DuskCrownRing = false;
+
+            HasShadowSickle = false;
 
             ChloranthyRing1 = false;
             ChloranthyRing2 = false;

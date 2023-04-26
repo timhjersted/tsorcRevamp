@@ -4753,7 +4753,12 @@ Mods: {
 
 			ShadowSickle: {
 				DisplayName: Shadow Sickle
-				Tooltip: A curiously simple but deadly weapon - its short reach seems to be its only weakness.
+				Tooltip:
+					'''
+					A curiously simple but deadly weapon - its short reach seems to be its only weakness.
+					Uses mana to slash enemy multiple times on-hit
+					Refunds 25 mana on-hit
+					'''
 			}
 
 			SunBlade: {
@@ -6632,6 +6637,11 @@ Mods: {
 			ViruCatDrain: {
 				DisplayName: Virulent Catalyzer Drain
 				Description: Losing life
+			}
+
+			SickleSlashes: {
+				DisplayName: Sickle Slashes
+				Description: Mods.tsorcRevamp.Buffs.SickleSlashes.Description
 			}
 		}
 

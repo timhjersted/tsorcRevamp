@@ -14,6 +14,10 @@ namespace tsorcRevamp.Projectiles
 {
     class tsorcGlobalProjectile : GlobalProjectile
     {
+        static readonly int ManaBase1 = 20;
+        static readonly int ManaBase2 = 10;
+        static readonly int ManaBase3 = 25;
+        static readonly int ManaDelay = 1200;
         /*
         public override bool InstancePerEntity => true;
         public float UniqueIdentifier = -1;
@@ -58,10 +62,29 @@ namespace tsorcRevamp.Projectiles
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
             Player player = Main.player[Main.myPlayer];
+            int manaCost1 = (int)(ManaBase1 * player.manaCost);
+            int manaCost2 = (int)(ManaBase2 * player.manaCost);
+            int manaCost3 = (int)(ManaBase3 * player.manaCost);
 
             if (projectile.type == ProjectileID.CrystalDart)
             {
                 projectile.damage = 1 + player.GetWeaponDamage(player.HeldItem);
+            }
+
+            if (projectile.type == ProjectileID.IceBolt | projectile.type == ProjectileID.EnchantedBeam | projectile.type == ProjectileID.SwordBeam | projectile.type == ProjectileID.FrostBoltSword | projectile.type == ProjectileID.Starfury)
+            {
+                player.statMana -= manaCost1;
+                player.manaRegenDelay = ManaDelay;
+            }
+            if (projectile.type == ProjectileID.LightsBane | projectile.type == ProjectileID.BladeOfGrass)
+            {
+                player.statMana -= manaCost2;
+                player.manaRegenDelay = ManaDelay;
+            }
+            if (projectile.type == ProjectileID.Meowmere | projectile.type == ProjectileID.StarWrath)
+            {
+                player.statMana -= manaCost3;
+                player.manaRegenDelay = ManaDelay;
             }
         }
 
@@ -72,14 +95,15 @@ namespace tsorcRevamp.Projectiles
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-                if (projectile.DamageType == DamageClass.SummonMeleeSpeed)
+                if (projectile.type == ProjectileID.Terrarian && player.statMana >= (int)(player.manaCost * 2f))
                 {
-                    projectile.damage = player.GetWeaponDamage(player.HeldItem);
-                }
-
-                if (projectile.type == ProjectileID.TerraBlade2Shot)
+                    player.statMana -= (int)(player.manaCost * 2f);
+                } else
                 {
-                    projectile.damage -= (int)(player.GetTotalDamage(DamageClass.Melee).ApplyTo(3f));
+                    if (projectile.type == ProjectileID.Terrarian)
+                    {
+                        projectile.Kill();
+                    }
                 }
 
                 if (modPlayer.WaspPower & projectile.type == ProjectileID.HornetStinger)
@@ -89,6 +113,7 @@ namespace tsorcRevamp.Projectiles
                     projectile.localNPCHitCooldown = 20;
                     projectile.extraUpdates = 5;
                 } 
+
                 else if (!modPlayer.WaspPower & projectile.type == ProjectileID.HornetStinger)
                 {
                     projectile.penetrate = 1;

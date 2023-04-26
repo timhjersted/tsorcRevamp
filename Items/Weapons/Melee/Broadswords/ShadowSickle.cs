@@ -1,6 +1,8 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
+using tsorcRevamp.Projectiles;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -17,14 +19,25 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.damage = 50;
             Item.width = 32;
             Item.height = 32;
-            Item.knockBack = 1;
+            Item.knockBack = 6f;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 40;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 40;
             Item.value = 13500;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            Item.shoot = ModContent.ProjectileType<Nothing>();
+        }
+
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(ModContent.BuffType<SickleSlashes>(), 5 * 60);
+            player.statMana += 25;
+        }
+
+        public override void UpdateInventory(Player player)
+        {
+            player.GetModPlayer<tsorcRevampPlayer>().HasShadowSickle = true;
         }
 
         public override void AddRecipes()

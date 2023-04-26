@@ -6633,6 +6633,11 @@ Mods: {
 				DisplayName: Virulent Catalyzer Drain
 				Description: Losing life
 			}
+
+			SickleSlashes: {
+				// DisplayName: Sickle Slashes
+				// Description: Mods.tsorcRevamp.Buffs.SickleSlashes.Description
+			}
 		}
 
 		Projectiles: {
