@@ -674,7 +674,8 @@ namespace tsorcRevamp
         Spazmatism,
         Nebula,
         Darkness,
-        Light
+        Light,
+        TripleThreat
     };
 
     public class tsorcRevampPlayerAuraDrawLayers : PlayerDrawLayer
@@ -789,6 +790,11 @@ namespace tsorcRevamp
                 case tsorcAuraState.Light:
                     {
                         DrawAttraidiesAura(drawInfo, Color.White);
+                        break;
+                    }
+                case tsorcAuraState.TripleThreat:
+                    {
+                        DrawTripleThreatAura(drawInfo);
                         break;
                     }
             }
@@ -908,7 +914,7 @@ namespace tsorcRevamp
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //Apply the shader, caching it as well
-            //if (effect == null)
+            if (retEffect == null)
             {
                 retEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/RetAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
@@ -1038,5 +1044,62 @@ namespace tsorcRevamp
 
             Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, 1, SpriteEffects.None, 0);
         }        
+
+        void DrawTripleThreatAura(PlayerDrawSet drawInfo)
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            Lighting.AddLight(drawInfo.drawPlayer.Center, Color.White.ToVector3());
+
+            Vector3 spazColorPre = Main.rgbToHsl(Color.GreenYellow);
+            spazColorPre.X += 0.01f * (float)Math.Cos(effectTimer / 25f);
+            Color spazColor = Main.hslToRgb(spazColorPre);
+
+            Vector3 retColorPre = Main.rgbToHsl(Color.Red);
+            retColorPre.X += 0.01f * (float)Math.Cos(effectTimer / 250f);
+            effectTimer++;
+            Color retColor = Main.hslToRgb(retColorPre);
+
+            Color catColorPre = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
+            Color catColor = UsefulFunctions.ShiftColor(catColorPre, (float)Main.timeForVisualEffects, 0.01f);
+
+            tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
+            Rectangle baseRectangle = new Rectangle(0, 0, (int)modPlayer.effectRadius * 2, (int)modPlayer.effectRadius * 2);
+            Vector2 baseOrigin = baseRectangle.Size() / 2f;
+            effectTimer++;
+
+            //Apply the shader, caching it as well
+            if (attraidiesEffect == null)
+            {
+                attraidiesEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/AttraidiesAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            //Pass relevant data to the shader via these parameters
+            attraidiesEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+            attraidiesEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
+            attraidiesEffect.Parameters["effectColor1"].SetValue(spazColor.ToVector4());
+            attraidiesEffect.Parameters["effectColor2"].SetValue(retColor.ToVector4());
+            attraidiesEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
+            attraidiesEffect.Parameters["fadePercent"].SetValue(0);
+            attraidiesEffect.Parameters["scaleFactor"].SetValue(.5f * 150);
+            attraidiesEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 0.05f);
+            attraidiesEffect.Parameters["colorSplitAngle"].SetValue(MathHelper.TwoPi / 3f);
+
+            //Apply the shader
+            attraidiesEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, (float)Main.timeForVisualEffects / 25f, baseOrigin, 1, SpriteEffects.None, 0);
+
+
+            attraidiesEffect.Parameters["effectColor1"].SetValue(UsefulFunctions.ShiftColor(retColor, effectTimer / 25f).ToVector4());
+            attraidiesEffect.Parameters["effectColor2"].SetValue(UsefulFunctions.ShiftColor(catColor, effectTimer / 25f).ToVector4());
+            attraidiesEffect.CurrentTechnique.Passes[0].Apply();
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, ((float)Main.timeForVisualEffects / 25f) + MathHelper.TwoPi / 3f, baseOrigin, 1, SpriteEffects.None, 0);
+
+            attraidiesEffect.Parameters["effectColor1"].SetValue(UsefulFunctions.ShiftColor(catColor, effectTimer / 25f).ToVector4());
+            attraidiesEffect.Parameters["effectColor2"].SetValue(UsefulFunctions.ShiftColor(spazColor, effectTimer / 25f).ToVector4());
+            attraidiesEffect.CurrentTechnique.Passes[0].Apply();
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, ((float)Main.timeForVisualEffects / 25f) + MathHelper.TwoPi / 1.5f, baseOrigin, 1, SpriteEffects.None, 0);
+        }
     }
 }

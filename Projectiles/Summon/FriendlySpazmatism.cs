@@ -40,11 +40,11 @@ namespace tsorcRevamp.Projectiles.Summon
 			Projectile.friendly = true; // Only controls if it deals damage to enemies on contact (more on that later)
 			Projectile.minion = true; // Declares this as a minion (has many effects)
 			Projectile.DamageType = DamageClass.Summon; // Declares the damage type (needed for it to deal damage)
-			Projectile.minionSlots = 2f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
+			Projectile.minionSlots = 1; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
 			Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
 
 			Projectile.usesLocalNPCImmunity = true;
-			Projectile.localNPCHitCooldown = 15;
+			Projectile.localNPCHitCooldown = 60;
 		}
 
 		// Here you can decide if your minion breaks things like grass or pots
@@ -61,6 +61,15 @@ namespace tsorcRevamp.Projectiles.Summon
 
 		bool indexSet = false;
 		List<float> foundIndicies = new List<float>();
+		int totalTriadProjectiles
+		{
+			get
+			{
+				return Main.player[Projectile.owner].ownedProjectileCounts[ModContent.ProjectileType<FriendlySpazmatism>()] +
+					Main.player[Projectile.owner].ownedProjectileCounts[ModContent.ProjectileType<FriendlyRetinazer>()] +
+					Main.player[Projectile.owner].ownedProjectileCounts[ModContent.ProjectileType<FriendlyCataluminance>()];
+			}
+		}
 		// The AI of this minion is split into multiple methods to avoid bloat. This method just passes values between calls actual parts of the AI.
 		public override void AI()
 		{
@@ -70,13 +79,16 @@ namespace tsorcRevamp.Projectiles.Summon
 			{
 				for (int i = 0; i < Main.maxProjectiles; i++)
 				{
-					if (Main.projectile[i].active && Main.projectile[i].type == Projectile.type && Main.projectile[i].owner == Projectile.owner && Main.projectile[i].whoAmI != Projectile.whoAmI)
+					if (Main.projectile[i].active && Main.projectile[i].owner == Projectile.owner && Main.projectile[i].whoAmI != Projectile.whoAmI)
 					{
-						foundIndicies.Add(Main.projectile[i].ai[0]);
+						if (Main.projectile[i].type == ModContent.ProjectileType<FriendlySpazmatism>() || Main.projectile[i].type == ModContent.ProjectileType<FriendlyRetinazer>() || Main.projectile[i].type == ModContent.ProjectileType<FriendlyCataluminance>())
+						{
+							foundIndicies.Add(Main.projectile[i].ai[0]);
+						}
 					}
 				}
 
-				for (int i = 0; i < 6; i++)
+				for (int i = 0; i < totalTriadProjectiles + 1; i++)
 				{
 					if (foundIndicies.Contains(i))
 					{
@@ -108,20 +120,7 @@ namespace tsorcRevamp.Projectiles.Summon
         {
 			if (target != null && target.active && target.Distance(Projectile.Center) < 1000)
 			{
-				Vector2 projVel = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target.Center, 1);
-				if (Main.GameUpdateCount % 240 == 0) {
-					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, projVel, ModContent.ProjectileType<Projectiles.Summon.FriendlyRedLaser>(), Projectile.damage * 4, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);
-				}
-
-				if (Main.GameUpdateCount % 240 >= 180 && Main.GameUpdateCount % 240 <= 220 && Main.GameUpdateCount % 3 == 0)
-				{
-					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, target.velocity + projVel * 10, ModContent.ProjectileType<Projectiles.Summon.FriendlyDragonsBreath>(), Projectile.damage / 4, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);
-				}
-
-				if (Main.GameUpdateCount % 60 < 15 && Main.GameUpdateCount % 4 == 0)
-                {
-					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, target.velocity + projVel * 17, ModContent.ProjectileType<Projectiles.Summon.FriendlyTetsujinLaser>(), Projectile.damage, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);					
-				}
+				UsefulFunctions.SmoothHoming(Projectile, target.Center, 0.5f, 25, bufferZone: false);
 			}
 		}
 
@@ -130,12 +129,12 @@ namespace tsorcRevamp.Projectiles.Summon
 		{
 			if (owner.dead || !owner.active)
 			{
-				owner.ClearBuff(ModContent.BuffType<Buffs.Summon.TetsujinBuff>());
+				owner.ClearBuff(ModContent.BuffType<Buffs.Summon.TripleThreatBuff>());
 
 				return false;
 			}
 
-			if (owner.HasBuff(ModContent.BuffType<Buffs.Summon.TetsujinBuff>()))
+			if (owner.HasBuff(ModContent.BuffType<Buffs.Summon.TripleThreatBuff>()))
 			{
 				Projectile.timeLeft = 2;
 			}
@@ -199,6 +198,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			}
 		}
 
+
 		Vector2 targetCenter;
 		NPC target;
 		private void SearchForTargets(Player owner, out bool foundTarget, out float distanceFromTarget)
@@ -253,9 +253,9 @@ namespace tsorcRevamp.Projectiles.Summon
 			}
 
 			float angle = 0;
-			if(owner.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.TetsujinProjectile>()] > 0)
+			if(totalTriadProjectiles > 0)
             {
-				angle = (Main.GameUpdateCount / 120f) + (int)(Main.GameUpdateCount / 480f) + MathHelper.TwoPi * (Projectile.ai[0] / owner.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.TetsujinProjectile>()]);
+				angle = (Main.GameUpdateCount / 120f) + (int)(Main.GameUpdateCount / 480f) + MathHelper.TwoPi * (Projectile.ai[0] / totalTriadProjectiles);
 
 			}
 			targetCenter += new Vector2(300, 0).RotatedBy(angle);
@@ -274,35 +274,7 @@ namespace tsorcRevamp.Projectiles.Summon
 		float flyingTime = 0;
 		private void Movement(bool foundTarget, float distanceFromTarget, float distanceToIdlePosition, Vector2 vectorToIdlePosition)
 		{
-			if (foundTarget)
-			{
-				float distance = Vector2.Distance(Projectile.Center, targetCenter);
-				if (distance > 35)
-				{
-					accelerationMagnitude = 0.7f + flyingTime / 60;
-					acceleration = UsefulFunctions.GenerateTargetingVector(Projectile.Center, targetCenter, accelerationMagnitude);
-					if(distance < 100)
-                    {
-						acceleration *= 5;
-                    }
-
-					if (!acceleration.HasNaNs())
-					{
-						Projectile.velocity += acceleration;
-					}
-					if (Projectile.velocity.Length() > topSpeed)
-					{
-						Projectile.velocity.Normalize();
-						Projectile.velocity *= topSpeed;
-					}
-                }
-                else
-				{
-					Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, targetCenter, 1).RotatedBy(0);
-					Projectile.Center = targetCenter;
-                }
-			}
-			else
+			if (!foundTarget)
 			{
 				float speed;
 				float inertia;
@@ -380,8 +352,46 @@ namespace tsorcRevamp.Projectiles.Summon
 			Lighting.AddLight(Projectile.Center, Color.OrangeRed.ToVector3() * 0.78f);
 		}
 
+		public static Effect spazEffect;
         public override bool PreDraw(ref Color lightColor)
         {
+			Lighting.AddLight((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16, 0f, 0.4f, 0.8f);
+
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+			//Apply the shader, caching it as well
+			if (spazEffect == null)
+			{
+				spazEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/SpazAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+			}
+
+			Rectangle auraSourceRectangle = new Rectangle(0, 0, (int)(100 / 0.7f), (int)(100 / 0.7f));
+			Vector2 auraOrigin = auraSourceRectangle.Size() / 2f;
+
+			Vector3 hslColor = Main.rgbToHsl(Color.GreenYellow);
+
+			hslColor.X += 0.03f * (float)Math.Cos(Main.timeForVisualEffects / 25f);
+			Color rgbColor = Main.hslToRgb(hslColor);
+
+			//Pass relevant data to the shader via these parameters
+			spazEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+			spazEffect.Parameters["effectSize"].SetValue(auraSourceRectangle.Size());
+			spazEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
+			spazEffect.Parameters["ringProgress"].SetValue(0.1f);
+			spazEffect.Parameters["fadePercent"].SetValue(0);
+			spazEffect.Parameters["scaleFactor"].SetValue(0.3f);
+			spazEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly / 4f);
+
+			//Apply the shader
+			spazEffect.CurrentTechnique.Passes[0].Apply();
+
+			Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, Projectile.Center - Main.screenPosition, auraSourceRectangle, Color.White, 0, auraOrigin, 1, SpriteEffects.None, 0);
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+
+
 			SpriteEffects spriteEffects = SpriteEffects.None;
 			if (Projectile.direction == 1)
 			{
