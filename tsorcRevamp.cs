@@ -802,7 +802,7 @@ namespace tsorcRevamp
                 {   ItemID.PlanteraBossBag          ,   new List<IItemDropRule>()                           
                                                         {
                                                             ItemDropRule.Common(ModContent.ItemType<CrestOfLife>()),
-                                                            ItemDropRule.Common(ModContent.ItemType<SoulOfLife>(), 1, 4, 4)
+                                                            ItemDropRule.Common(ModContent.ItemType<SoulOfLife>(), 1, 30, 30)
                                                         }                                                                                },
                 {   ItemID.GolemBossBag             ,   new List<IItemDropRule>()                           
                                                         {

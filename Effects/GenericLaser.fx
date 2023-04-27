@@ -11,6 +11,7 @@ float TextureSize;
 
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
+
     //const float4 redLaser = float4(1.0, 0.1, 0.1, 1.0);
     //const float4 blueLaser = float4(0.1, 0.75, 1, 1);
     const float centerIntensity = 1.5;
@@ -91,7 +92,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     noiseColor.g = sampleIntensity * laserColor.g;
 
     //Mix it with 'intensity' to make it more intense near the center
-    float4 effectColor = noiseColor * intensity * 2.0 * FadeOut;
+    float4 effectColor = noiseColor * pow(intensity, 1.5) * 2.0 * FadeOut;
     
     if (FadeOut == 1)
     {

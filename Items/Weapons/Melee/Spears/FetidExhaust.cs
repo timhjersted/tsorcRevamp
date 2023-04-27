@@ -58,12 +58,12 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<GaeBolg>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
-            recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 1);
-            recipe.AddIngredient(ItemID.SoulofMight, 1);
-            recipe.AddIngredient(ItemID.SoulofFright, 1);
-            recipe.AddIngredient(ItemID.SoulofSight, 1);
+            recipe.AddIngredient(ModContent.ItemType<DamagedFlameNozzle>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 5);
+            recipe.AddIngredient(ItemID.SoulofMight, 5);
+            recipe.AddIngredient(ItemID.SoulofFright, 5);
+            recipe.AddIngredient(ItemID.SoulofSight, 5);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

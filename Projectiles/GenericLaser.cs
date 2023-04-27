@@ -281,7 +281,7 @@ namespace tsorcRevamp.Projectiles
 
 
             //If no custom shader has been given then load the generic one
-            if (LaserShader == null)
+            //if (LaserShader == null)
             {
                 LaserShader = ModContent.Request<Effect>("tsorcRevamp/Effects/GenericLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }

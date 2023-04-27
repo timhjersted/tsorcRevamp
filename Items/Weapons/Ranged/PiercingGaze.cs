@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override Vector2? HoldoutOffset()
         {
-            return new Vector2(-6, 0);
+            return new Vector2(-10, 0);
         }
 
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
@@ -68,6 +68,19 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override bool AltFunctionUse(Player player)
         {
             return true;
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<DamagedLaser>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 5);
+            recipe.AddIngredient(ItemID.SoulofMight, 5);
+            recipe.AddIngredient(ItemID.SoulofFright, 5);
+            recipe.AddIngredient(ItemID.SoulofSight, 5);
+
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.Register();
         }
     }
 }

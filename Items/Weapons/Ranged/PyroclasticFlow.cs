@@ -32,6 +32,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.UseSound = SoundID.Item40;
         }
 
+        public override Vector2? HoldoutOffset()
+        {
+            return new Vector2(-6, 0);
+        }
+
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

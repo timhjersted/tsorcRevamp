@@ -223,6 +223,11 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfSky>(), 1, 3, 3));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DamagedCrystal>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DamagedFlameNozzle>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DamagedLaser>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DamagedRemote>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.AuraOfIlluminance>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.MechanicalWheelPiece));
             itemLoot.Add(ItemDropRule.Common(ItemID.HallowedBar, 1, 15, 30));
             itemLoot.Add(ItemDropRule.Common(ItemID.SoulofSight, 1, 25, 40));
@@ -299,7 +304,11 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.BloomShards>())); //expert drop
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.BloomShards>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Summon.ShatteredReflection>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.SeveringDusk>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.PyroclasticFlow>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.AuraOfDecay>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HeavenPiercer>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheEnd>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfAttraidies>(), 1, 15, 23));

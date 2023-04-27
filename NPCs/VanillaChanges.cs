@@ -5824,7 +5824,7 @@ namespace tsorcRevamp.NPCs
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SoulOfLife>(), 6);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SoulOfLife>(), 30);
             }
             if (npc.type == NPCID.Golem && !Main.expertMode)
             {

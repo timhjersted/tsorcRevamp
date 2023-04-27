@@ -944,7 +944,7 @@ namespace tsorcRevamp
             Vector2 origin = sourceRectangle.Size() / 2f;
 
             Vector3 hslColor = Main.rgbToHsl(Color.Red);
-            hslColor.X += 0.03f * (float)Math.Cos(effectTimer / 25f);
+            hslColor.X += 0.03f * (float)Math.Cos(effectTimer / 250f);
             effectTimer++;
             Color rgbColor = Main.hslToRgb(hslColor);
 

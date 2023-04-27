@@ -58,6 +58,13 @@ namespace tsorcRevamp.Projectiles.Ranged
         bool rapid = false;
         public override void AI()
         {
+            if (IsAtMaxCharge && !Main.dedServ)
+            {
+                if (Main.GameUpdateCount % 8 == 0)
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/MasterBuster"), Projectile.Center);
+                }
+            }
             if (Main.player[Projectile.owner].active)
             {
                 Projectile.Center = Main.player[Projectile.owner].Center;
@@ -134,7 +141,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             timeFactor++;
 
             //Shifts its color slightly over time
-            Vector3 hslColor = Main.rgbToHsl(LaserColor);
+            Vector3 hslColor = Main.rgbToHsl(new Color(1, 0.2f, 0.1f));
             hslColor.X += 0.03f * (float)Math.Cos(timeFactor / 50f);
             Color rgbColor = Main.hslToRgb(hslColor);
             LaserShader.Parameters["Color"].SetValue(rgbColor.ToVector3());

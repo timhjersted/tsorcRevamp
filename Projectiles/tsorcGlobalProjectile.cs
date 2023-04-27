@@ -57,6 +57,17 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
+            /*Entitysource experiments
+             * if (projectile.type == ModContent.ProjectileType<Projectiles.Spears.FetidExhaust>())
+            {
+                EntitySource_ItemUse_WithAmmo itemSource = source as EntitySource_ItemUse_WithAmmo;
+
+                if (itemSource != null && itemSource.Item.type == ModContent.ItemType<Items.Weapons.Melee.Spears.FetidExhaust>())
+                {
+                    Main.NewText("a");
+                }
+            }*/
+
             Player player = Main.player[Main.myPlayer];
 
             if (projectile.type == ProjectileID.CrystalDart && !Main.hardMode)
