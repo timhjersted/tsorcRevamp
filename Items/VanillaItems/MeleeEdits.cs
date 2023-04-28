@@ -29,30 +29,31 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.NightsEdge)
             {
-                item.mana = 15;
+                item.mana = 10;
             }
             if (item.type == ItemID.TrueNightsEdge)
             {
                 item.damage = 85;
-                item.mana = 20;
+                item.mana = 15;
             }
             if (item.type == ItemID.Excalibur)
             {
-                item.mana = 10;
+                item.mana = 8;
             }
             if (item.type == ItemID.TrueExcalibur)
             {
                 item.damage = 75;
-                item.mana = 15;
+                item.mana = 12;
             }
             if (item.type == ItemID.TerraBlade)
             {
-                item.mana = 30;
+                item.mana = 20;
             }
             if (item.type == ItemID.TheHorsemansBlade)
             {
-                item.useTime = 22;
-                item.useAnimation = 22;
+                item.damage = 200;
+                item.useTime = 20;
+                item.useAnimation = 20;
                 item.mana = 12;
             }
         }

@@ -10,10 +10,6 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Forged by those who brave Annihilation" +
-                "\n+27% whip damage" +
-                "\nSet bonus: Increases whip range by 30%" +
-                "\nIncreases summon attack speed by 25%, this gets doubled when under 50% life"); */
             ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = false;
         }
 
@@ -27,7 +23,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.27f;
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.16f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {

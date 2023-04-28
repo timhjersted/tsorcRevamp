@@ -29,13 +29,14 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void UpdateArmorSet(Player player)
         {
             player.whipRangeMultiplier += 0.3f;
-            player.GetAttackSpeed(DamageClass.Summon) += 0.2f;
+            player.GetAttackSpeed(DamageClass.Summon) += 0.29f;
             player.GetModPlayer<tsorcRevampPlayer>().CritDamage250 = true;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpiderMask);
+            recipe.AddIngredient(ItemID.MythrilBar);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
             recipe.AddTile(TileID.DemonAltar);
 

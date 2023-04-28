@@ -9,9 +9,6 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases minion damage by 10%" +
-                "\nSet Bonus: Increases your max number of minions and turrets by 1" +
-                "\nIncreases critical strike damage by 25%"); */
         }
         public override void SetDefaults()
         {
@@ -23,7 +20,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-                player.GetDamage(DamageClass.Summon) += 0.1f;
+            player.GetDamage(DamageClass.Summon) += 0.12f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -31,14 +28,15 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.maxMinions += 1;
-            player.maxTurrets += 1;
+            player.maxMinions += 2;
+            player.maxTurrets += 2;
             player.GetModPlayer<tsorcRevampPlayer>().CritDamage250 = true;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpiderMask);
+            recipe.AddIngredient(ItemID.MythrilBar);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
             recipe.AddTile(TileID.DemonAltar);
 

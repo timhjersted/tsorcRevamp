@@ -34,12 +34,12 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 		// TODO: Inconsistent with vanilla, increasing damage AFTER it is randomised, not before. Change to a different hook in the future.
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
 		{
-			int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(30)); //30 is the base dmg of Searing Lash
-			int tagbonusdamage = 0;
 			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
 			if (markedBySearingLash && !projectile.npcProj && !projectile.trap && projectile.IsMinionOrSentryRelated)
-			{
-				if(npc.HasBuff(BuffID.BlandWhipEnemyDebuff))
+            {
+                int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(30)); //30 is the base dmg of Searing Lash
+                int tagbonusdamage = 0;
+                if (npc.HasBuff(BuffID.BlandWhipEnemyDebuff))
                 {
 					tagbonusdamage += 4;
                 }
@@ -51,13 +51,21 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 				{
 					tagbonusdamage += 7;
 				}
+				if (npc.HasBuff(BuffID.CoolWhipNPCDebuff))
+				{
+					tagbonusdamage += 6;
+				}
 				if (npc.HasBuff(BuffID.SwordWhipNPCDebuff))
 				{
 					tagbonusdamage += 9;
 				}
 				if (npc.HasBuff(BuffID.MaceWhipNPCDebuff))
 				{
-					tagbonusdamage += 5;
+					tagbonusdamage += 4;
+				}
+				if (npc.HasBuff(BuffID.RainbowWhipNPCDebuff))
+				{
+					tagbonusdamage += 10;
 				}
 				if (npc.HasBuff(ModContent.BuffType<EnchantedWhipDebuff>()))
 				{
@@ -65,7 +73,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 				}
 				if (npc.HasBuff(ModContent.BuffType<PolarisLeashDebuff>()))
 				{
-					tagbonusdamage += 7;
+					tagbonusdamage += 6;
 				}
                 if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()))
                 {
@@ -75,10 +83,6 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 				{
 					tagbonusdamage += 8;
 				}
-				if (npc.HasBuff(ModContent.BuffType<DragoonLashDebuff>()))
-                {
-					tagbonusdamage += 3;
-                }
                 if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
                 {
                     tagbonusdamage += Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 5;

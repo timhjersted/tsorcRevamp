@@ -52,13 +52,21 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
                 {
                     tagbonusdamage += 7;
                 }
+                if (npc.HasBuff(BuffID.CoolWhipNPCDebuff))
+                {
+                    tagbonusdamage += 6;
+                }
                 if (npc.HasBuff(BuffID.SwordWhipNPCDebuff))
                 {
                     tagbonusdamage += 9;
                 }
                 if (npc.HasBuff(BuffID.MaceWhipNPCDebuff))
                 {
-                    tagbonusdamage += 5;
+                    tagbonusdamage += 4;
+                }
+                if (npc.HasBuff(BuffID.RainbowWhipNPCDebuff))
+                {
+                    tagbonusdamage += 10;
                 }
                 if (npc.HasBuff(ModContent.BuffType<EnchantedWhipDebuff>()))
                 {
@@ -66,7 +74,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
                 }
                 if (npc.HasBuff(ModContent.BuffType<PolarisLeashDebuff>()))
                 {
-                    tagbonusdamage += 7;
+                    tagbonusdamage += 6;
                 }
                 if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()))
                 {
@@ -75,10 +83,6 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
                 if (npc.HasBuff(ModContent.BuffType<PyrosulfateDebuff>()))
                 {
                     tagbonusdamage += 8;
-                }
-                if (npc.HasBuff(ModContent.BuffType<DragoonLashDebuff>()))
-                {
-                    tagbonusdamage += 12;
                 }
                 if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
                 {

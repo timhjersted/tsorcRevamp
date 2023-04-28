@@ -9,9 +9,6 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases minion damage by 24%" +
-                "\nIncreases your max number of minions by 1" +
-                "\nSet Bonus: Increases hornet minions pierce by 5 and increases stinger movement speed"); */
         }
         public override void SetDefaults()
         {
@@ -23,7 +20,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.24f;
+            player.GetDamage(DamageClass.Summon) += 0.25f;
             player.maxMinions += 1;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)

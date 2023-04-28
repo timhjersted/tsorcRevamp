@@ -104,10 +104,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 				Projectile.WhipSettings.Segments++;
 				Projectile.WhipSettings.RangeMultiplier += 0.005f;
 			}
-			if (ChargeTime % 30 == 0) // Add 20% of projectiles damage every 30 ticks of charge
-			{
-				Projectile.damage += (int)(Projectile.damage * 0.2f);
-			}
 
 			// Increase range up to 2x for full charge.
 			Projectile.WhipSettings.RangeMultiplier += 1 / 120f;
@@ -128,6 +124,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Player player = Main.player[Main.myPlayer];
+            modifiers.SourceDamage *= ChargeTime / 40f;
             Vector2 WhipTip = new Vector2(11, 14) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
             List<Vector2> points = Projectile.WhipPointsForCollision;
             if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))

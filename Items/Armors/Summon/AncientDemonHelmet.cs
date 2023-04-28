@@ -10,8 +10,6 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("You hear an evil whispering from inside" +
-                "\n+27% minion damage"); */
         }
 
         public override void SetDefaults()
@@ -25,14 +23,14 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.27f; 
+            player.GetDamage(DamageClass.Summon) += 0.22f;
         }
 
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.ObsidianHelm, 1);
+            recipe.AddIngredient(ItemID.ObsidianHelm);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 

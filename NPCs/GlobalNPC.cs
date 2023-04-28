@@ -14,10 +14,13 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Buffs.Summon.WhipDebuffs;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Throwing;
+using tsorcRevamp.Projectiles.Summon.Sentry;
+using tsorcRevamp.Projectiles.Summon.Whips;
 
 namespace tsorcRevamp.NPCs
 {
@@ -551,7 +554,6 @@ namespace tsorcRevamp.NPCs
                 int debuffCounter = 1;
                 foreach (int buffType in npc.buffType)
                 {
-
                     if (Main.debuff[buffType] && !(BuffID.Sets.IsAnNPCWhipDebuff[buffType]))
                     {
                         debuffCounter++;
@@ -585,7 +587,13 @@ namespace tsorcRevamp.NPCs
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             int WhipDebuffCounter = 0;
-            if(projectile.IsMinionOrSentryRelated && Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (projectile.IsMinionOrSentryRelated && Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && 
+                  projectile.type != ProjectileID.DD2BallistraProj && projectile.type != ProjectileID.DD2ExplosiveTrapT1Explosion && projectile.type != ProjectileID.DD2ExplosiveTrapT2Explosion
+                && projectile.type != ProjectileID.DD2ExplosiveTrapT3Explosion && projectile.type != ProjectileID.DD2FlameBurstTowerT1Shot && projectile.type != ProjectileID.DD2FlameBurstTowerT2Shot
+                && projectile.type != ProjectileID.DD2FlameBurstTowerT3Shot | projectile.type != ProjectileID.DD2LightningAuraT1 && projectile.type != ProjectileID.DD2LightningAuraT2
+                && projectile.type != ProjectileID.DD2LightningAuraT3 && projectile.type != ProjectileID.HoundiusShootiusFireball && projectile.type != ProjectileID.SpiderEgg && projectile.type != ProjectileID.BabySpider
+                && projectile.type != ProjectileID.FrostBlastFriendly && projectile.type != ProjectileID.MoonlordTurretLaser && projectile.type != ProjectileID.RainbowCrystalExplosion
+                && projectile.type != ModContent.ProjectileType<GaleForceProjectile>())
             {
                 foreach (int buffType in npc.buffType)
                 {
@@ -593,26 +601,37 @@ namespace tsorcRevamp.NPCs
                     {
                         WhipDebuffCounter++;
                     }
-                    if (WhipDebuffCounter == 0) 
-                    {
-                        modifiers.FinalDamage *= 0.2f;
-                    }
-                    if (WhipDebuffCounter == 1) 
-                    {
-                        modifiers.FinalDamage *= 0.4f;
-                    }
-                    if (WhipDebuffCounter == 2)
-                    { 
-                        modifiers.FinalDamage *= 0.6f;
-                    }
-                    if (WhipDebuffCounter == 3)
-                    {
-                        modifiers.FinalDamage *= 0.8f;
-                    }
-                    if (WhipDebuffCounter >= 4)
-                    {
-                        modifiers.FinalDamage *= 1f;
-                    }
+                }
+                if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()) && NightsCrackerProjectile.NightCharges >= 4)
+                {
+                    WhipDebuffCounter++;
+                }
+                if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()) && TerraFallProjectile.TerraCharges >= 4)
+                {
+                    WhipDebuffCounter++;
+                }
+                if (WhipDebuffCounter == 0)
+                {
+                    modifiers.FinalDamage.Flat += 3;
+                    modifiers.FinalDamage *= 0.2f;
+                } else
+                if (WhipDebuffCounter == 1)
+                {
+                    modifiers.FinalDamage.Flat += 2;
+                    modifiers.FinalDamage *= 0.4f;
+                } else
+                if (WhipDebuffCounter == 2)
+                {
+                    modifiers.FinalDamage.Flat += 1;
+                    modifiers.FinalDamage *= 0.6f;
+                } else
+                if (WhipDebuffCounter == 3)
+                {
+                    modifiers.FinalDamage *= 0.8f;
+                } else
+                if (WhipDebuffCounter >= 4)
+                {
+                    modifiers.FinalDamage *= 1f;
                 }
             }
         }

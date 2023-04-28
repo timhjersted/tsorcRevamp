@@ -9,8 +9,6 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("+22% movement speed" +
-                "\nIncreases your max number of minions by 1"); */
         }
 
         public override void SetDefaults()

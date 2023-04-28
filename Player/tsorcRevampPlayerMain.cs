@@ -740,7 +740,7 @@ namespace tsorcRevamp
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250 && proj.DamageType == DamageClass.SummonMeleeSpeed)
             {
-                modifiers.CritDamage += 0.5f;
+                modifiers.CritDamage += 0.25f;
             }
             if (proj.type == ProjectileID.BlandWhip)
             {

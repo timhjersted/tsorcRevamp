@@ -557,9 +557,9 @@ namespace tsorcRevamp
                         #region Minions
                         ItemID.SpiderStaff
                         #endregion
-                        ,
+                        
                         #region Sentries
-                        ItemID.QueenSpiderStaff
+
                         #endregion
                     #endregion
                 #endregion

@@ -9,8 +9,6 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("\nIncreases movement speed by 20%" +
-                "\nIncreases your max number of turrets by 2"); */
         }
         public override void SetDefaults()
         {

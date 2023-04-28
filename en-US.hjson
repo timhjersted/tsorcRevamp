@@ -1236,7 +1236,7 @@ Mods: {
 					12% increased minion damage and speed
 					Increases the size of whips by 10%
 					Enemies are more likely to target you
-					Increases the damage of whip crits by 50%
+					Increases the damage of whip crits by 25%
 					'''
 			}
 
@@ -2156,7 +2156,7 @@ Mods: {
 				Tooltip:
 					'''
 					Forged by those who brave Annihilation
-					+27% whip damage
+					Increases whip damage by 16%
 					Set bonus: Increases whip range by 30%
 					Increases summon attack speed by 25%, this gets doubled when under 50% life
 					'''
@@ -2166,7 +2166,7 @@ Mods: {
 				DisplayName: Ancient Demon Greaves
 				Tooltip:
 					'''
-					+22% movement speed
+					Increases movement speed by 22%
 					Increases your max number of minions by 1
 					'''
 			}
@@ -2176,7 +2176,7 @@ Mods: {
 				Tooltip:
 					'''
 					You hear an evil whispering from inside
-					+27% minion damage
+					Increases minion damage by 22%
 					'''
 			}
 
@@ -2185,7 +2185,7 @@ Mods: {
 				Tooltip:
 					'''
 					Increases your max number of minions by 1
-					Increases minion damage by 16%
+					Increases minion damage by 10%
 					'''
 			}
 
@@ -2193,7 +2193,7 @@ Mods: {
 				DisplayName: Dwarven Crusader Helmet
 				Tooltip:
 					'''
-					Increases whip damage and summon attack speed by 18%
+					Increases whip damage and summon attack speed by 16%
 					Set Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
 					Defense, minion slots and whip range are not affected by this
 					Increases whip range by 30% and life regen by 3
@@ -2213,7 +2213,7 @@ Mods: {
 				DisplayName: Dwarven Knight Helmet
 				Tooltip:
 					'''
-					Increases minion damage by 5% and 3 flat
+					Increases minion damage by 7% and 2 flat
 					Set Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
 					Defense, minion and turret slots are not affected by this
 					Increases your max number of minions and turrets by 1
@@ -2253,7 +2253,7 @@ Mods: {
 				DisplayName: Tarantula Carapace
 				Tooltip:
 					'''
-					Increases minion damage by 25%
+					Increases minion damage by 20%
 					Increases your max number of minions by 1
 					'''
 			}
@@ -2262,9 +2262,8 @@ Mods: {
 				DisplayName: Tarantula Helmet
 				Tooltip:
 					'''
-
 					Increases whip damage by 25%
-					Set Bonus: Increases whip range by 30% and summon attack speed by 20%
+					Set Bonus: Increases whip range by 30% and summon attack speed by 29%
 					Increases critical strike damage by 25%
 					'''
 			}
@@ -2282,8 +2281,8 @@ Mods: {
 				DisplayName: Tarantula Mask
 				Tooltip:
 					'''
-					Increases minion damage by 10%
-					Set Bonus: Increases your max number of minions and turrets by 1
+					Increases minion damage by 12%
+					Set Bonus: Increases your max number of minions and turrets by 2
 					Increases critical strike damage by 25%
 					'''
 			}
@@ -2292,7 +2291,7 @@ Mods: {
 				DisplayName: Wasp Armor
 				Tooltip:
 					'''
-					Increases minion damage by 24%
+					Increases minion damage by 25%
 					Increases your max number of minions by 1
 					Set Bonus: Increases hornet minions pierce by 5 and increases stinger movement speed
 					'''
@@ -2302,7 +2301,6 @@ Mods: {
 				DisplayName: Wasp Greaves
 				Tooltip:
 					'''
-
 					Increases movement speed by 20%
 					Increases your max number of turrets by 2
 					'''
@@ -2312,7 +2310,7 @@ Mods: {
 				DisplayName: Wasp Helmet
 				Tooltip:
 					'''
-					Increases minion damage by 3 flat
+					Increases minion damage by 2 flat
 					Increases your max number of minions by 1
 					'''
 			}
@@ -2920,9 +2918,9 @@ Mods: {
 					Playing as the [c/6d8827:Bearer of the Curse] has the following effects:
 					You deal +20% damage(multiplicative), receive +20% more souls and your stamina recovers much faster
 					However, [c/dd3333:using weapons drains stamina], life regen is halved while stamina isn't at it's maximum,
-					minions base damage is reduced by 100%(damage increases work as normal),
-					their final damage is also reduced by 80%, this reduction is lowered by 20% for each whip debuff active on the enemy,
-					but all minions gain 1 flat damage whilst a summoning staff or whip is being held,
+					summon base damage is reduced by 100%(damage increases work as normal),
+					minion's final damage is also reduced by 80%, this reduction is lowered by 20% for each whip debuff active on the enemy,
+					but gain 1 flat summon damage whilst holding a summon/whip damage weapon,
 					and dying reduces your max HP by 20% until you return to where you died.
 					Greater Magic Mirror use is prohibited, and instant-heal items won't heal you
 					[c/ca1e00:This mode is intended for players experienced with the mod]
@@ -5551,7 +5549,7 @@ Mods: {
 					'''
 					7% summon tag critical strike chance
 					Inflicts Blood Butcherer debuff
-					Critical strikes deal 1.66x damage
+					Critical strikes deal 66% more damage
 					Your summons will focus struck enemies
 					'''
 			}
@@ -5585,11 +5583,11 @@ Mods: {
 					'''
 					Stats of this whip scale with how long you've charged it
 					2-8 summon tag damage
-					Inherits Searing Lash's effect at up to half of its strength
-					Critical strikes deal 1.33x damage
 					1-4% summon tag critical strike chance
 					Gain 6-24% summon attack speed upon striking an enemy
 					Performs better against multiple targets than most whips
+					Inherits Searing Lash's effect at up to half it's strength
+					Critical strikes deal 33% more damage
 					Your summons will focus struck enemies
 					'''
 			}
@@ -5638,11 +5636,11 @@ Mods: {
 					Stats of this whip scale with how long you've charged it
 					Summons a Terraprisma after striking an enemy
 					5-20 summon tag damage
-					Inherits Searing Lash's effect at up to an eighth of it's strength
-					Critical strikes deal 1.33x damage
 					4-12% summon tag crit
 					Gain 12-48% summon attack speed upon striking an enemy
-					This whip performs better against multiple targets than most whips
+					Performs better against multiple targets than most whips
+					Inherits Searing Lash's effect at up to eighth it's strength
+					Critical strikes deal 33% more damage
 					Your summons will focus struck enemies
 					'''
 			}
@@ -7381,12 +7379,12 @@ Mods: {
 		}
 
 		Keybinds: {
-			"Dragoon Boots.DisplayName": Mods.tsorcRevamp.Keybinds.Dragoon Boots.DisplayName
-			"Reflection Shift.DisplayName": Mods.tsorcRevamp.Keybinds.Reflection Shift.DisplayName
-			"Dodge Roll.DisplayName": Mods.tsorcRevamp.Keybinds.Dodge Roll.DisplayName
-			"Special Ability.DisplayName": Mods.tsorcRevamp.Keybinds.Special Ability.DisplayName
-			"Wolf Ring.DisplayName": Mods.tsorcRevamp.Keybinds.Wolf Ring.DisplayName
-			"Wings of Seath speed toggle.DisplayName": Mods.tsorcRevamp.Keybinds.Wings of Seath speed toggle.DisplayName
+			"Dragoon Boots.DisplayName": Dragoon Boots
+			"Reflection Shift.DisplayName":Reflection Shift
+			"Dodge Roll.DisplayName":Dodge Roll
+			"Special Ability.DisplayName": Special Ability
+			"Wolf Ring.DisplayName": Wolf Ring
+			"Wings of Seath speed toggle.DisplayName": Wings of Seath speed toggle
 		}
 	}
 }
