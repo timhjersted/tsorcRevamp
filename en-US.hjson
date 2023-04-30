@@ -1189,7 +1189,11 @@ Mods: {
 
 			MonocleOfPrecision: {
 				DisplayName: Monocle of Precision
-				Tooltip: Increases critical strike chance by 5%
+				Tooltip:
+					'''
+					Increases critical strike chance by 7%
+					Increases hitbox size for whip crits
+					'''
 			}
 
 			ArchmenEmblem: {
@@ -1237,6 +1241,7 @@ Mods: {
 					Increases the size of whips by 10%
 					Enemies are more likely to target you
 					Increases the damage of whip crits by 25%
+					Increases hitbox size for whip crits
 					'''
 			}
 
@@ -2916,7 +2921,7 @@ Mods: {
 					'''
 					Use to become the [c/6d8827:Bearer of the Curse]
 					Playing as the [c/6d8827:Bearer of the Curse] has the following effects:
-					You deal +20% damage(multiplicative), receive +20% more souls and your stamina recovers much faster
+					You deal +10% damage(multiplicative), receive +20% more souls and your stamina recovers much faster
 					However, [c/dd3333:using weapons drains stamina], life regen is halved while stamina isn't at it's maximum,
 					summon base damage is reduced by 100%(damage increases work as normal),
 					minion's final damage is also reduced by 80%, this reduction is lowered by 20% for each whip debuff active on the enemy,
@@ -7380,8 +7385,8 @@ Mods: {
 
 		Keybinds: {
 			"Dragoon Boots.DisplayName": Dragoon Boots
-			"Reflection Shift.DisplayName":Reflection Shift
-			"Dodge Roll.DisplayName":Dodge Roll
+			"Reflection Shift.DisplayName": Reflection Shift
+			"Dodge Roll.DisplayName": Dodge Roll
 			"Special Ability.DisplayName": Special Ability
 			"Wolf Ring.DisplayName": Wolf Ring
 			"Wings of Seath speed toggle.DisplayName": Wings of Seath speed toggle

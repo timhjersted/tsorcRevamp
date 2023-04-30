@@ -77,6 +77,7 @@ namespace tsorcRevamp
 
         public bool CritDamage250 = false;
         public bool WhipCritDamage250 = false;
+        public int WhipCritHitboxSize = 1;
 
         public bool OrbExists = false;
         public int EssenceThief = 0;
@@ -286,6 +287,7 @@ namespace tsorcRevamp
 
             CritDamage250 = false; 
             WhipCritDamage250 = false;
+            WhipCritHitboxSize = 1;
 
             MythrilBulwark = false; 
             IceboundMythrilAegis = false;
@@ -907,7 +909,7 @@ namespace tsorcRevamp
         {
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                Player.GetDamage(DamageClass.Generic) *= 1.2f;
+                Player.GetDamage(DamageClass.Generic) *= 1.1f;
 
                 Player.GetDamage(DamageClass.Summon) -= 1f;
                 Player.GetDamage(DamageClass.SummonMeleeSpeed) += 1f; //this sets whip damage to not be 1 because it also scales with minion damage

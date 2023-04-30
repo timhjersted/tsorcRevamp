@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Items.Weapons.Melee;
+using tsorcRevamp.Projectiles.Summon.Whips;
 
 namespace tsorcRevamp
 {
@@ -102,6 +103,7 @@ namespace tsorcRevamp
         const float SpecialHeldProjectileDrainPerFrame = 0.6f;
         const float FlailDrainPerFrame = 0.4f;
         const float YoyoDrainPerFrame = 0.4f;
+        const float ChargedWhipDrainPerFrame = 0.3f;
 
         // Lets do all our logic for the custom resource here, such as limiting it, increasing it and so on.
         private void UpdateResource()
@@ -185,6 +187,17 @@ namespace tsorcRevamp
 
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= YoyoDrainPerFrame;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
+                        if (staminaResourceCurrent < 1)
+                        {
+                            Main.projectile[p].Kill();
+                        }
+                    }
+
+                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ModContent.ProjectileType<SearingLashProjectile>() || Main.projectile[p].type == ModContent.ProjectileType<NightsCrackerProjectile>() || Main.projectile[p].type == ModContent.ProjectileType<TerraFallProjectile>()))
+
+                    {
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ChargedWhipDrainPerFrame;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
                         if (staminaResourceCurrent < 1)
                         {

@@ -28,6 +28,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
             player.whipRangeMultiplier += 0.1f;
             player.aggro += 400;
             player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250 = true;
+            player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize = 5;
         }
         public override void AddRecipes()
         {

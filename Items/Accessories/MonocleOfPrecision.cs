@@ -8,8 +8,6 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Monocle of Precision");
-            // Tooltip.SetDefault("Increases critical strike chance by 5%");
         }
         public override void SetDefaults()
         {
@@ -21,7 +19,8 @@ namespace tsorcRevamp.Items.Accessories
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Generic) += 5;
+            player.GetCritChance(DamageClass.Generic) += 7;
+            player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize = 5;
         }
         public override void AddRecipes()
         {

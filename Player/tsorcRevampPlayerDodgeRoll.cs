@@ -119,16 +119,6 @@ namespace tsorcRevamp
                     modPlayer.staminaResourceCurrent -= modPlayer.staminaResourceMax2;
                 }
 
-
-                // specifically whips
-                if (item.CountsAsClass(DamageClass.SummonMeleeSpeed)) {
-                    //whip use time is disproportionately high relative to their damage
-                    scaledUseAnimation *= 9;
-                    scaledUseAnimation /= 10;
-
-                    modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation);
-                }
-
                 //piranha gun works differently enough to warrant a special case
                 else if (item.type != ItemID.PiranhaGun && item.type != ItemID.Harpoon) {
                     modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation);
