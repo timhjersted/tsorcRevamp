@@ -104,7 +104,17 @@ namespace tsorcRevamp.Projectiles
                 target.AddBuff(ModContent.BuffType<DarkInferno>(), 240);
             }
         }
-
+        public override bool? CanHitNPC(NPC target)
+        {
+            if (target.immune[Projectile.owner] > 0)
+            {
+                return false;
+            }
+            else
+            {
+                return null;
+            }
+        }
         public override void OnHitPvp(Player target, int damage, bool crit)
         {
             if (Main.rand.NextBool(5))
