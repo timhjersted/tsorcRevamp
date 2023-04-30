@@ -30,10 +30,7 @@ namespace tsorcRevamp.Items.Accessories
 
             if (Main.GameUpdateCount % 180 == 0 && player.whoAmI == Main.myPlayer)
             {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.AuraOfDecay>(), 300, 0, Main.myPlayer, player.whoAmI);
-                }
+                Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.AuraOfDecay>(), 300, 0, Main.myPlayer, player.whoAmI);
             }
         }
 
