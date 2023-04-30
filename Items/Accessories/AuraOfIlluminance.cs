@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Aura of Illuminance");
-            Tooltip.SetDefault("Creates a glowing trail behind you");
+            Tooltip.SetDefault("Creates a glowing trail of damaging hallowed light behind you");
         }
 
         public override void SetDefaults()

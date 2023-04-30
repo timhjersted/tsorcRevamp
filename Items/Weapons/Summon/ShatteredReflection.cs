@@ -25,8 +25,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			Item.damage = 250;
 			Item.knockBack = 3f;
 			Item.mana = 10;
-			Item.width = 42;
-			Item.height = 28;
+			Item.width = 34;
+			Item.height = 38;
 			Item.useTime = 30;
 			Item.useAnimation = 30;
 			Item.useStyle = ItemUseStyleID.Shoot;
