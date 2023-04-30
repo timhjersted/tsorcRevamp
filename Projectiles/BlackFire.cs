@@ -93,6 +93,11 @@ namespace tsorcRevamp.Projectiles
             int preOffset = Main.rand.Next(90);
             dir = new Vector2((float)Math.Cos(preOffset) * dir.X - (float)Math.Sin(preOffset) * dir.Y, (float)Math.Sin(preOffset) * dir.X + (float)Math.Cos(preOffset) * dir.Y);
 
+            Vector2 averageCenter = Vector2.Zero;
+            for (int i = 0; i < trailPositions.Count; i++)
+            {
+                averageCenter += trailPositions[i] / trailPositions.Count;
+            }
             if (Projectile.ai[0] == 0)
             {
                 // create the flaming shrapnel-like projectiles
@@ -111,8 +116,8 @@ namespace tsorcRevamp.Projectiles
 
                     if (Projectile.owner == Main.myPlayer)
                     {
-                        Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 30, 10);
-                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X, Projectile.position.Y, velX, velY, flam, damg, 0, Projectile.owner);
+                        Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), averageCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 30, 10);
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), averageCenter.X, averageCenter.Y, velX, velY, flam, damg, 0, Projectile.owner);
                     }
                 }
 
@@ -123,11 +128,11 @@ namespace tsorcRevamp.Projectiles
                 Projectile.height = Projectile.height << 3;
 
                 Projectile.Damage();
-            }
+            } else
 
             if (Projectile.owner == Main.myPlayer)
             {
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 30, 10);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), averageCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 120, 15);
             }
 
             // create glowing red embers that fill the explosion's radius

@@ -42,6 +42,47 @@ namespace tsorcRevamp.Projectiles
         public override void AI()
         {
             base.AI();
+            float totalDisplacement = 0;
+            float heightDisplacement = 0;
+            float widthDisplacement = 0;
+            bool intersection = false;
+            Vector2 averageCenter = Vector2.Zero;
+            for (int i = 0; i < trailPositions.Count; i++)
+            {
+                if (!intersection && i < (trailPositions.Count * 5) / 6 && (trailPositions[trailPositions.Count - 1] - trailPositions[i]).LengthSquared() < 1000)
+                {
+                    intersection = true;
+                }
+                averageCenter += trailPositions[i] / trailPositions.Count;
+            }
+            for (int i = 0; i < trailPositions.Count; i++)
+            {
+                totalDisplacement += (trailPositions[i] - averageCenter).LengthSquared();
+                widthDisplacement += Math.Abs(trailPositions[i].X - averageCenter.X);
+                heightDisplacement += Math.Abs(trailPositions[i].Y - averageCenter.Y);
+            }
+
+            //Main.NewText(totalDisplacement + " " + widthDisplacement + " " + heightDisplacement);
+
+            if(trailCurrentLength > 1900 && totalDisplacement > 8000000 && intersection && widthDisplacement > 10000 && heightDisplacement > 10000)
+            {
+                Projectile.Kill();
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62 with { Volume = 2f }, averageCenter);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), averageCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 10, 0, Main.myPlayer, 0);
+                for(int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC thisNPC = Main.npc[i];
+                    if(thisNPC.active && !thisNPC.friendly && thisNPC.Distance(averageCenter) < 1000 && thisNPC.damage > 0 && !thisNPC.dontTakeDamage)
+                    {
+                        float damage = 1 - (thisNPC.Distance(averageCenter) / 1000f);
+                        damage *= damage;
+                        if (damage > 0)
+                        {
+                            Main.npc[i].StrikeNPC((int)(damage * 2000), 0, 0);
+                        }
+                    }
+                }
+            }
         }
 
         public override bool HostEntityValid()
