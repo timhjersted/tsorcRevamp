@@ -31,8 +31,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.localNPCHitCooldown = NPC.immuneTime;
 
             trailWidth = 45;
-            trailPointLimit = 900;
-            trailMaxLength = 900; 
+            trailPointLimit = 2000;
+            trailMaxLength = 2000; 
             trailCollision = true;
             collisionFrequency = 3;
             noFadeOut = false;

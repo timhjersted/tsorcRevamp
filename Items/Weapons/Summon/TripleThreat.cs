@@ -11,8 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			Tooltip.SetDefault("Summons a miniature Triad to fight for you" +
-                "\nUses one slot for each of them");
+			Tooltip.SetDefault("Summons a member of the Triad to fight for you");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller

@@ -31,9 +31,6 @@ namespace tsorcRevamp
         public static bool TheEnd;
         public static bool CustomMap;
 
-        [Obsolete("Use NewSlain, and \"new NPCDefinition(npc.type)\" instead of \"npc.type\"")]
-        public static Dictionary<int, int> Slain;
-
         public static List<int> PairedBosses;
 
         public static List<Vector2> LitBonfireList;

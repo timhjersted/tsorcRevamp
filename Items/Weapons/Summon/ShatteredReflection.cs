@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-			Tooltip.SetDefault("What will you see next time you look?" +
+			Tooltip.SetDefault("What will you see next time you look at it?" +
 				"\nSplits off a fragment of your soul to fight for you" +
                 "\nUses 2 minion slots");
 

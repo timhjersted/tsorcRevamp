@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Accessories
             }
 
             //If not, spawn it
-            Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.AuraOfIlluminance>(), 50, 0, Main.myPlayer, player.whoAmI);
+            Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.AuraOfIlluminance>(), 80, 0, Main.myPlayer, player.whoAmI);
         }
     }
 }

@@ -947,7 +947,6 @@ namespace tsorcRevamp
             BossExtrasDescription                               = null;
             AssignedBossExtras                                  = null;
             BossBagIDtoNPCID                                    = null;
-            tsorcRevampWorld.Slain                              = null;
             tsorcRevampWorld.NewSlain                           = null;
             RemovedBossBagLoot                                  = null;
             ModifiedRecipes                                     = null;

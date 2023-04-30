@@ -10,9 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A blade honed sharp by the magic of the coming night." +
-                "\nRight click to dash, consuming stamina and making you immune for a moment" +
-                "\nStriking enemies while dashing creates a demon spirit from their torn soul");
+            Tooltip.SetDefault("A blade honed sharp by the magic of the coming night" +
+                "\nRight click to dash, consuming stamina and making you immune for a moment");
         }
         public override void SetDefaults()
         {

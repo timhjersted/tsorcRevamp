@@ -108,11 +108,11 @@ namespace tsorcRevamp.Projectiles.Summon
 				return;
 			}
 
+			Visuals();
 			GeneralBehavior(owner, out Vector2 vectorToIdlePosition, out float distanceToIdlePosition);
 			SearchForTargets(owner, out bool foundTarget, out float distanceFromTarget);
 			Movement(foundTarget, distanceFromTarget, distanceToIdlePosition, vectorToIdlePosition);
 			Attack();
-			Visuals();
 			
 		}
 
@@ -121,6 +121,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			if (target != null && target.active && target.Distance(Projectile.Center) < 1000)
 			{
 				Vector2 projVel = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target.Center, 1);
+				Projectile.rotation = projVel.ToRotation();
 				if (Main.GameUpdateCount % 240 == 0) {
 					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, projVel, ModContent.ProjectileType<Projectiles.Summon.FriendlyRetLaser>(), Projectile.damage * 4, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);
 				}
