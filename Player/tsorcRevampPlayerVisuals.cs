@@ -668,14 +668,14 @@ namespace tsorcRevamp
     public enum tsorcAuraState
     {
         None,
-        Cataluminance,
         Poison,
         Retinazer,
         Spazmatism,
         Nebula,
         Darkness,
         Light,
-        TripleThreat
+        TripleThreat,
+        Cataluminance,
     };
 
     public class tsorcRevampPlayerAuraDrawLayers : PlayerDrawLayer

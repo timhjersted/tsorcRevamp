@@ -1275,7 +1275,7 @@ namespace tsorcRevamp
 
                 default: {
                     Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
-                    break;
+                        break;
                 }
             }
         }

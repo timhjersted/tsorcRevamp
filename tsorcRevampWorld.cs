@@ -201,6 +201,7 @@ namespace tsorcRevamp
             {
                 writer.Write(CustomMap);
                 writer.Write(SuperHardMode);
+                writer.WriteVector2(AbyssPortalLocation);
 
                 //Storing it in an int32 just so its exact type is guranteed, since that does matter
                 int slainSize = NewSlain.Count;
@@ -234,6 +235,7 @@ namespace tsorcRevamp
         {
             CustomMap = reader.ReadBoolean();
             SuperHardMode = reader.ReadBoolean();
+            AbyssPortalLocation = reader.ReadVector2();
 
             int slainSize = reader.ReadInt32();
             for (int i = 0; i < slainSize; i++)

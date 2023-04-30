@@ -11,12 +11,14 @@ using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Magic
 {
-    class LightOfDawn : DynamicTrail
+    class FriendlyCatLightOfDawn : DynamicTrail
     {
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Light of Dawn");
+            ProjectileID.Sets.MinionShot[Projectile.type] = true;
+
         }
         public override void SetDefaults()
         {
@@ -32,6 +34,7 @@ namespace tsorcRevamp.Projectiles.Magic
             Projectile.localNPCHitCooldown = 10;
 
             trailWidth = 35;
+            Projectile.DamageType = DamageClass.Summon;
             trailPointLimit = 900;
             trailCollision = true;
             NPCSource = false;

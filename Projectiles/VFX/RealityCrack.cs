@@ -80,7 +80,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
                 } while (index < 20);
             }
-            if(filterIndex == null)
+            if(filterIndex == null && Main.netMode != NetmodeID.Server)
             {
                 Projectile.Kill();
                 return;

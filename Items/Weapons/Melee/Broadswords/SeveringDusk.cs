@@ -41,7 +41,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                     player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.MouseWorld, 30);
                     player.immuneTime = 30;
                     dashTimer = 20;
-
+                    if (Main.netMode != NetmodeID.SinglePlayer)
+                    {
+                        NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, player.whoAmI, 0f, 0f, 0f, 0);
+                    }
                     tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
                     modPlayer.effectRadius = 350;
                 }
@@ -64,6 +67,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 if(dashTimer == 0)
                 {
                     player.velocity *= 0.1f;
+                    if (Main.netMode != NetmodeID.SinglePlayer)
+                    {
+                        NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, player.whoAmI, 0f, 0f, 0f, 0);
+                    }
                 }
                 for(int i = 0; i < Main.maxNPCs; i++)
                 {

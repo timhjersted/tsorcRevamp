@@ -123,7 +123,7 @@ namespace tsorcRevamp.Projectiles.Summon
 				Vector2 projVel = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target.Center, 1);
 				Projectile.rotation = projVel.ToRotation();
 				if (Main.GameUpdateCount % 240 == 180) {
-					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, projVel, ModContent.ProjectileType<Projectiles.Magic.LightOfDawn>(), Projectile.damage * 2, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);
+					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, projVel, ModContent.ProjectileType<Projectiles.Magic.FriendlyCatLightOfDawn>(), Projectile.damage * 2, 0, Main.myPlayer, 0, Projectile.whoAmI);
 				}
 			}
 		}

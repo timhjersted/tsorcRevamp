@@ -38,7 +38,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             Item.maxStack = 1;
             Item.UseSound = SoundID.Item1;
             Item.shoot = ModContent.ProjectileType<Projectiles.Spears.FetidExhaust>();
-
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
