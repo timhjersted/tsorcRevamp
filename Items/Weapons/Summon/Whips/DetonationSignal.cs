@@ -12,8 +12,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
             DisplayName.SetDefault("Detonation Signal");
             Tooltip.SetDefault("Enemies struck by this whip will explode once on minion hit" +
-                "\nScales with double the minion damage" +
-                "\nInflicts Hellfire" +
+                "\nExplosion triples the damage of the minion hit that triggered it" +
+				"\nExploded enemies will also deal triple the contact damage to you for 4 seconds" +
                 "\nYour minions will focus struck enemies");
 		}
 
@@ -33,8 +33,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.shootSpeed = 4;
 
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.useTime = 23; // for some reason a lower use speed gives it increased range....
-			Item.useAnimation = 23;
+			Item.useTime = 25; // for some reason a lower use speed gives it increased range....
+			Item.useAnimation = 25;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
 
@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.FireWhip);
 			recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>());
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 105000);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 125000);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();

@@ -56,7 +56,7 @@ namespace tsorcRevamp.Projectiles.Summon
 		// This is mandatory if your minion deals contact damage (further related stuff in AI() in the Movement region)
 		public override bool MinionContactDamage()
 		{
-			return true;
+			return false;
 		}
 
 		bool indexSet = false;

@@ -40,12 +40,12 @@ namespace tsorcRevamp.Projectiles.Summon
 
 		public override bool? CanCutTiles()
 		{
-			return true;
+			return false;
 		}
 
 		public override bool MinionContactDamage()
 		{
-			return true;
+			return false;
 		}
 
 		bool indexSet = false;

@@ -38,7 +38,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
             // Only player attacks should benefit from this buff, hence the NPC and trap checks.
             if (markedByTerraFall && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
             {
-                int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(115)); //42 is the base dmg of Terra Fall
+                int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(115)); //115 is the base dmg of Terra Fall
                 int tagbonusdamage = 0;
                 if (npc.HasBuff(BuffID.BlandWhipEnemyDebuff))
                 {
@@ -85,7 +85,15 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
                     tagbonusdamage += Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 5;
                 }
                 float searingdamagescaling = Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 2 * 0.01f;
-                int tagdamagescaling = Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 5;
+                int tagdamagescaling = Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 5; 
+                if (npc.HasBuff(ModContent.BuffType<SearingLashDebuff>()))
+                {
+                    searingdamagescaling /= 2f;
+                }
+                if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()))
+                {
+                    searingdamagescaling /= 2f;
+                }
                 damage += (int)((projectile.damage + tagbonusdamage) * searingdamagescaling * whipDamage * 0.01f);
                 damage += tagdamagescaling;
                 if (Main.rand.NextBool(100 / (Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 4)))

@@ -9,6 +9,7 @@ using Terraria.ModLoader.IO;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -75,7 +76,24 @@ namespace tsorcRevamp.Projectiles
                 projectile.damage = 1 + player.GetWeaponDamage(player.HeldItem);
             }
         }
-
+        public override void ModifyDamageScaling(Projectile projectile, ref float damageScale)
+        {
+            if (tsorcRevampWorld.NewSlain != null)
+            {
+                if (projectile.type == ProjectileID.EmpressBlade & !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())))
+                {
+                    damageScale *= 0.75f;
+                }
+                else if (projectile.type == ProjectileID.EmpressBlade & !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())))
+                {
+                    damageScale *= 0.88f;
+                }
+            }
+            if (projectile.type == ProjectileID.StardustDragon1 | projectile.type == ProjectileID.StardustDragon2 | projectile.type == ProjectileID.StardustDragon3 | projectile.type == ProjectileID.StardustDragon4)
+            {
+                damageScale *= 0.9f;
+            }
+        }
         public override bool PreAI(Projectile projectile)
         {
             if (projectile.owner < Main.maxPlayers && Main.player[projectile.owner].active)
@@ -107,7 +125,7 @@ namespace tsorcRevamp.Projectiles
                     
                     projectile.penetrate = 6;
                     projectile.usesLocalNPCImmunity = true;
-                    projectile.localNPCHitCooldown = 10;
+                    projectile.localNPCHitCooldown = 30;
                     projectile.extraUpdates = 3;
                 }
 

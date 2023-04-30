@@ -86,6 +86,14 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
                 }
                 float searingdamagescaling = Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 8 * 0.01f;
 				int tagdamagescaling = Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 2;
+				if (npc.HasBuff(ModContent.BuffType<SearingLashDebuff>()))
+				{
+					searingdamagescaling /= 2f;
+				}
+				if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
+				{
+					searingdamagescaling /= 2f;
+				}
                 damage += (int)((projectile.damage + tagbonusdamage) * searingdamagescaling * whipDamage * 0.01f);
 				damage += tagdamagescaling;
 				if (Main.rand.NextBool(100 / Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges))

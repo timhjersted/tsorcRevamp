@@ -26,9 +26,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.timeLeft = 360;
             Projectile.friendly = true;
             Projectile.penetrate = 1;
-            Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = false;
-            Projectile.damage = 45;
             Projectile.knockBack = 9;
             Projectile.DamageType = DamageClass.Summon;
 
@@ -49,7 +47,6 @@ namespace tsorcRevamp.Projectiles
         public override void AI()
         {
             base.AI();
-
             Projectile.velocity *= 1.03f;
         }
 
@@ -62,10 +59,6 @@ namespace tsorcRevamp.Projectiles
             Projectile.timeLeft = 0;
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
-
-            float len = 4f;
-            int flam = ModContent.ProjectileType<BlackFirelet>();
-            int damg = Projectile.damage / 2;
             Vector2 dir = new Vector2(1f, 0f);
 
             // determine how many flamelets to spew (5~8)
@@ -102,18 +95,6 @@ namespace tsorcRevamp.Projectiles
 
             // terminate projectile
             Projectile.active = false;
-        }
-
-        public override bool? CanHitNPC(NPC target)
-        {
-            if (target.immune[Projectile.owner] > 0)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
