@@ -211,7 +211,16 @@ namespace tsorcRevamp
                     permaBuffs.Add(false);
                 }
             }
-            PermanentBuffToggles = permaBuffs.ToArray<bool>();
+            PermanentBuffToggles = permaBuffs.ToArray<bool>(); 
+            if (PermanentBuffToggles.Length < PermanentBuffCount)
+            {
+                bool[] tempToggles = new bool[PermanentBuffCount];
+                for (int i = 0; i < PermanentBuffToggles.Length; i++)
+                {
+                    tempToggles[i] = PermanentBuffToggles[i];
+                }
+                PermanentBuffToggles = tempToggles;
+            }
 
             bool? quest = tag.GetBool("finishedQuest");
             finishedQuest = quest ?? false;
