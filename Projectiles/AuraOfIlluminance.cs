@@ -67,7 +67,32 @@ namespace tsorcRevamp.Projectiles
             if(trailCurrentLength > 1900 && totalDisplacement > 8000000 && intersection && widthDisplacement > 10000 && heightDisplacement > 10000)
             {
                 Projectile.Kill();
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62 with { Volume = 2f }, averageCenter);
+                if (Main.rand.NextBool(20))
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Coins with { Volume = 2f }, averageCenter);
+                    for (int i = 0; i < 120; i++)
+                    {
+                        if (Main.rand.NextBool(4))
+                        {
+                            if (Main.rand.NextBool(4))
+                            {
+                                Item.NewItem(Projectile.GetSource_FromThis(), averageCenter + Main.rand.NextVector2CircularEdge(300, 300), Vector2.Zero, ItemID.GoldCoin);
+                            }
+                            else
+                            {
+                                Item.NewItem(Projectile.GetSource_FromThis(), averageCenter + Main.rand.NextVector2CircularEdge(300, 300), Vector2.Zero, ItemID.SilverCoin);
+                            }
+                        }
+                        else
+                        {
+                            Item.NewItem(Projectile.GetSource_FromThis(), averageCenter + Main.rand.NextVector2CircularEdge(300, 300), Vector2.Zero, ItemID.CopperCoin);
+                        }
+                    }
+                }
+                else
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62 with { Volume = 2f }, averageCenter);
+                }
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), averageCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 10, 0, Main.myPlayer, 0);
                 for(int i = 0; i < Main.maxNPCs; i++)
                 {

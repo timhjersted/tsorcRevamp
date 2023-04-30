@@ -115,7 +115,7 @@ namespace tsorcRevamp.Projectiles.Summon
                 if (closest.HasValue && (Main.npc[closest.Value].type != NPCID.TargetDummy || Main.npc[closest.Value].Distance(Projectile.Center) < 2000))
                 {
 					Vector2 velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.npc[closest.Value].Center, 3);
-					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, velocity, ModContent.ProjectileType<Projectiles.BlackFire>(), Projectile.damage, 0, Main.myPlayer, 1);
+					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, velocity, ModContent.ProjectileType<SRBlackFire>(), Projectile.damage, 0, Main.myPlayer, 1);
 				}
             }
 		}		

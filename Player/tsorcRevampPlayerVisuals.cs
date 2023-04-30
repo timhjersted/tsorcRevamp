@@ -669,13 +669,13 @@ namespace tsorcRevamp
     {
         None,
         Poison,
-        Retinazer,
-        Spazmatism,
         Nebula,
-        Darkness,
-        Light,
         TripleThreat,
         Cataluminance,
+        Spazmatism,
+        Darkness,
+        Light,
+        Retinazer,
     };
 
     public class tsorcRevampPlayerAuraDrawLayers : PlayerDrawLayer
