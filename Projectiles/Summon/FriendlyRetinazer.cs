@@ -31,9 +31,9 @@ namespace tsorcRevamp.Projectiles.Summon
 
 		public sealed override void SetDefaults()
 		{
-			Main.projFrames[Projectile.type] = 2;
-			Projectile.width = 40;
-			Projectile.height = 50;
+			Main.projFrames[Projectile.type] = 3;
+			Projectile.width = 50;
+			Projectile.height = 72;
 			Projectile.tileCollide = false; // Makes the minion go through tiles freely
 
 			// These below are needed for a minion weapon
@@ -342,44 +342,23 @@ namespace tsorcRevamp.Projectiles.Summon
 
 		private void Visuals()
 		{
-			// So it will lean slightly towards the direction it's moving
-			Projectile.rotation = Projectile.velocity.X * 0.1f;
+			Projectile.rotation = Projectile.velocity.ToRotation();
 
 			// This is a simple "loop through all frames from top to bottom" animation
 			int frameSpeed = 5;
 
-			
+			Projectile.frameCounter++;
 
-
-			if (Projectile.velocity.Y < 0)
+			if (Projectile.frameCounter >= frameSpeed)
 			{
-				Projectile.frameCounter++;
+				Projectile.frameCounter = 0;
+				Projectile.frame++;
 
-				if (Projectile.frameCounter >= frameSpeed)
+				if (Projectile.frame >= Main.projFrames[Projectile.type])
 				{
-					Projectile.frameCounter = 0;
-					Projectile.frame++;
-
-					if (Projectile.frame >= Main.projFrames[Projectile.type])
-					{
-						Projectile.frame = 0;
-					}
-				}
-
-				if (Projectile.direction == -1)
-				{
-					int dust = Dust.NewDust(Projectile.Center + new Vector2(Projectile.direction == 1 ? Projectile.width * 0.5f : +15, -22), Projectile.width / 8, Projectile.height / 2, 15, Projectile.velocity.X, Projectile.velocity.Y + 6f, 150, Color.Blue, 1f);
-					Main.dust[dust].noGravity = false;
-				}
-				if (Projectile.direction == 1)
-				{
-					int dust = Dust.NewDust(Projectile.Center + new Vector2(Projectile.direction == -1 ? Projectile.width * -0.5f : -26, -22), Projectile.width / 8, Projectile.height / 2, 15, Projectile.velocity.X, Projectile.velocity.Y + 6f, 150, Color.Blue, 1f);
-					Main.dust[dust].noGravity = false;
+					Projectile.frame = 0;
 				}
 			}
-
-			// Some visuals here
-			Lighting.AddLight(Projectile.Center, Color.OrangeRed.ToVector3() * 0.78f);
 		}
 
 		public static Effect retEffect;
@@ -452,11 +431,7 @@ namespace tsorcRevamp.Projectiles.Summon
 
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-			SpriteEffects spriteEffects = SpriteEffects.None;
-			if (Projectile.direction == 1)
-			{
-				spriteEffects = SpriteEffects.FlipHorizontally;
-			}
+			SpriteEffects spriteEffects = SpriteEffects.FlipHorizontally;
 
 			int frameHeight = ((Texture2D)TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
 			int startY = frameHeight * Projectile.frame;

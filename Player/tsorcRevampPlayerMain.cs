@@ -31,7 +31,7 @@ namespace tsorcRevamp
 {
     public partial class tsorcRevampPlayer : ModPlayer
     {
-        public static readonly int PermanentBuffCount = 56;
+        public static readonly int PermanentBuffCount = 57;
         public static List<int> startingItemsList;
         public List<int> bagsOpened;
         public Dictionary<ItemDefinition, int> consumedPotions;
@@ -212,6 +212,15 @@ namespace tsorcRevamp
                 }
             }
             PermanentBuffToggles = permaBuffs.ToArray<bool>();
+            if(PermanentBuffToggles.Length < PermanentBuffCount)
+            {
+                bool[] tempToggles = new bool[PermanentBuffCount];
+                for(int i = 0; i < PermanentBuffToggles.Length; i++)
+                {
+                    tempToggles[i] = PermanentBuffToggles[i];
+                }
+                PermanentBuffToggles = tempToggles;
+            }
 
             bool? quest = tag.GetBool("finishedQuest");
             finishedQuest = quest ?? false;
