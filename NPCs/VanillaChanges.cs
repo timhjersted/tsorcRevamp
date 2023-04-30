@@ -5585,16 +5585,13 @@ namespace tsorcRevamp.NPCs
 
         public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit)
         {
-            if (projectile.DamageType != DamageClass.Melee)
+            if (npc.type == NPCID.TheDestroyer || npc.type == NPCID.TheDestroyerBody || npc.type == NPCID.TheDestroyerTail)
             {
-                if (npc.type == NPCID.TheDestroyer || npc.type == NPCID.TheDestroyerBody || npc.type == NPCID.TheDestroyerTail)
+                for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    if (Main.npc[i].type == NPCID.TheDestroyer || Main.npc[i].type == NPCID.TheDestroyerBody || Main.npc[i].type == NPCID.TheDestroyerTail)
                     {
-                        if (Main.npc[i].type == NPCID.TheDestroyer || Main.npc[i].type == NPCID.TheDestroyerBody || Main.npc[i].type == NPCID.TheDestroyerTail)
-                        {
-                            Main.npc[i].immune[projectile.owner] = 5;
-                        }
+                        Main.npc[i].immune[projectile.owner] = 5;
                     }
                 }
             }
@@ -5603,7 +5600,16 @@ namespace tsorcRevamp.NPCs
 
         public override void OnHitByItem(NPC npc, Player player, Item item, int damage, float knockback, bool crit)
         {
-            
+            if (npc.type == NPCID.TheDestroyer || npc.type == NPCID.TheDestroyerBody || npc.type == NPCID.TheDestroyerTail)
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].type == NPCID.TheDestroyer || Main.npc[i].type == NPCID.TheDestroyerBody || Main.npc[i].type == NPCID.TheDestroyerTail)
+                    {
+                        Main.npc[i].immune[player.whoAmI] = 5;
+                    }
+                }
+            }
             base.OnHitByItem(npc, player, item, damage, knockback, crit);
         }
 
