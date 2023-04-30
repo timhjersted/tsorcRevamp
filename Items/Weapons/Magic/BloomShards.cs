@@ -27,7 +27,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.autoReuse = true;
             Item.scale = (float)1;
             Item.UseSound = SoundID.Item34;
-            Item.expert = true;
             Item.shoot = ProjectileID.PurificationPowder;
             Item.shootSpeed = 11f;
             Item.mana = 5;
