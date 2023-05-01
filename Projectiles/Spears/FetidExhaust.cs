@@ -145,7 +145,7 @@ namespace tsorcRevamp.Projectiles.Spears
             }
         }
 
-        public override void onhitnpc
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.CursedInferno, 5 * 60);
         }

@@ -5586,6 +5586,7 @@ namespace tsorcRevamp.NPCs
                     }
                 }
             }
+            base.OnHitByProjectile(npc, projectile, hit, damageDone);
         }
 
         public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
@@ -5600,6 +5601,7 @@ namespace tsorcRevamp.NPCs
                     }
                 }
             }
+            base.OnHitByItem(npc, player, item, hit, damageDone);
         }
 
         public override bool CheckDead(NPC npc)

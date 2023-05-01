@@ -38,7 +38,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			int buffIndex = 0;
 			if (markedByDetonationSignal && !projectile.npcProj && !projectile.trap && projectile.IsMinionOrSentryRelated)
 			{
-				modifiers. *= 3;
+				modifiers.ScalingBonusDamage += 2f;
 				Projectile.NewProjectile(Projectile.GetSource_None(), npc.Top, Vector2.Zero, ProjectileID.DD2ExplosiveTrapT2Explosion, 0, 0, Main.myPlayer);
 				SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 0.6f, PitchVariance = 0.3f });
 				npc.AddBuff(ModContent.BuffType<DetonationSignalBuff>(), 4 * 60);

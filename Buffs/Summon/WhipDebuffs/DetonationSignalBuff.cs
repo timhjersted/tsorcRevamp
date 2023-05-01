@@ -31,11 +31,11 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			exploded = false;
 		}
 
-        public override void ModifyHitPlayer(NPC npc, Player target, ref int damage, ref bool crit)
+        public override void ModifyHitPlayer(NPC npc, Player target, ref Player.HurtModifiers modifiers)
         {
 			if (exploded)
 			{
-				damage *= 3;
+				modifiers.SourceDamage *= 3;
 			}
         }
     }

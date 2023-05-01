@@ -441,7 +441,7 @@ Mods: {
 
 			AuraOfDecay: {
 				DisplayName: Aura of Decay
-				Tooltip: Periodically releases a wave of poison
+				Tooltip: You periodically release a damaging wave of poison
 			}
 
 			AuraOfIlluminance: {
@@ -558,7 +558,7 @@ Mods: {
 					[c/ffbf00:Allows you to safely enter The Abyss when worn. Remove the ring to escape from The Abyss!]
 					[c/ffbf00:The Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous in this realm.]
 					[c/00ffd4:Grants immunity to particular dangers caused by the Abyss and foes empowered by it, such as Crippled, Poisoned, On Fire and Oiled]
-					Also grants protection from lava, knockback, and fire blocks, but increases enemy spawn rates.
+					Also grants protection from lava, knockback, Blackened Flames and fire blocks, but increases enemy spawn rates.
 					Increases damage, critical strike chance, movement and attack speed(melee speed bonus doubled) by 7% multiplicatively
 					'''
 			}
@@ -729,7 +729,7 @@ Mods: {
 					An array of meteorite shards, floating in a slow orbit
 					Passively launches homing fireballs at nearby enemies
 					Fireballs scale in power with each boss you kill
-					Also increases damage dealt to burning foes by 5%
+					Burning foes take 5% more damage from other attacks
 					'''
 			}
 
@@ -740,7 +740,7 @@ Mods: {
 					A chunk of meteorite, glowing with heat
 					Rolling summons a barrage of homing fireballs
 					Fireballs scale in power with each boss you kill
-					Also increases damage dealt to burning foes by 5%
+					Burning foes take 5% more damage from other attacks
 					'''
 			}
 
@@ -5522,7 +5522,7 @@ Mods: {
 
 			TripleThreat: {
 				DisplayName: Triple Threat
-				Tooltip: Summons a miniature Triad to fight for youUses one slot for each of them
+				Tooltip: Summons a member of the Triad to fight for you
 			}
 
 			CrystalNunchaku: {
@@ -5542,8 +5542,8 @@ Mods: {
 				Tooltip:
 					'''
 					Enemies struck by this whip will explode once on minion hit
-					Scales with double the minion damage
-					Inflicts Hellfire
+					Explosion triples the damage of the minion hit that triggered it
+					Exploded enemies will also deal triple the contact damage to you for 4 seconds
 					Your minions will focus struck enemies
 					'''
 			}
@@ -5709,7 +5709,6 @@ Mods: {
 				Tooltip:
 					'''
 					An otherworldy artifact of great power
-					Might come in handy in the future...
 					It seems to react to dark souls...
 					'''
 			}
