@@ -100,9 +100,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             }
             
 
-            int frameHeight = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
-            int segmentCount = Projectile.height / frameHeight;
-
 
             DelegateMethods.v3_1 = Color.OrangeRed.ToVector3() * 2f;
             Vector2 startPoint = Projectile.Center;

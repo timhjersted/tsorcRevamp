@@ -58,7 +58,7 @@ namespace tsorcRevamp.NPCs.Special
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
             {
                 NPC.life = 0;
-                if (Filters.Scene[filterIndex] != null && Filters.Scene[filterIndex].IsActive())
+                if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex] != null && Filters.Scene[filterIndex].IsActive())
                 {
                     Filters.Scene[filterIndex].Deactivate();
                 }

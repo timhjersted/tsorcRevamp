@@ -75,7 +75,7 @@ namespace tsorcRevamp
 
             if (oldClone.SoulSlot.Item.IsNotSameTypePrefixAndStack(SoulSlot.Item))
             {
-                SendSingleItemPacket(1, SoulSlot.Item, -1, Player.whoAmI);
+                SendSingleItemPacket(tsorcPacketID.SyncSoulSlot, SoulSlot.Item, -1, Player.whoAmI);
             }
         }
 

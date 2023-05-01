@@ -29,7 +29,7 @@ public sealed class PlayerMousePositionPacket : NetPacket
 
 		// Resend
 		if (Main.netMode == NetmodeID.Server) {
-			MultiplayerSystem.SendPacket(new PlayerMousePositionPacket(player), ignoreClient: sender);
+			//MultiplayerSystem.SendPacket(new PlayerMousePositionPacket(player), ignoreClient: sender);
 		}
 	}
 }

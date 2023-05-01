@@ -54,7 +54,7 @@ public sealed class BroadswordReworkPlayer : ModPlayer
 			MouseWorld = Main.MouseWorld;
 
 			if (Main.netMode == NetmodeID.MultiplayerClient && Main.GameUpdateCount % MouseWorldSyncFrequency == 0 && lastSyncedMouseWorld != MouseWorld) {
-				MultiplayerSystem.SendPacket(new PlayerMousePositionPacket(Player));
+				//MultiplayerSystem.SendPacket(new PlayerMousePositionPacket(Player));
 
 				lastSyncedMouseWorld = MouseWorld;
 			}

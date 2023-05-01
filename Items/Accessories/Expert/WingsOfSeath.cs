@@ -82,14 +82,17 @@ namespace tsorcRevamp.Items.Accessories.Expert
             player.buffImmune[BuffID.OnFire] = true;
             player.nightVision = true;
             player.AddBuff(BuffID.Hunter, 1);
-            if (tsorcRevamp.WingsOfSeath.JustReleased)
+            if (Main.netMode != NetmodeID.MultiplayerClient && player.whoAmI == Main.myPlayer)
             {
-                Slow = !Slow;
-            }
-            if (Slow)
-            {
-                player.velocity.X *= 0.95f;
-                player.slowFall = true;
+                if (tsorcRevamp.WingsOfSeath.JustReleased)
+                {
+                    Slow = !Slow;
+                }
+                if (Slow)
+                {
+                    player.velocity.X *= 0.95f;
+                    player.slowFall = true;
+                }
             }
         }
     }

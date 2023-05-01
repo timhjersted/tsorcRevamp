@@ -1094,7 +1094,7 @@ namespace tsorcRevamp
                         modPlayer.SoulSlot.Item = ItemIO.Receive(reader);
                         if (Main.netMode == NetmodeID.Server)
                         {
-                            modPlayer.SendSingleItemPacket(1, modPlayer.SoulSlot.Item, -1, whoAmI);
+                            modPlayer.SendSingleItemPacket(tsorcPacketID.SyncSoulSlot, modPlayer.SoulSlot.Item, -1, whoAmI);
                         }
                         break;
                     }
