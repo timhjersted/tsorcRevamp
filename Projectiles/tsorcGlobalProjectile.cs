@@ -99,7 +99,7 @@ namespace tsorcRevamp.Projectiles
                 player.manaRegenDelay = ManaDelay;
             }
         }
-        public override void ModifyDamageScaling(Projectile projectile, ref float damageScale)
+        /*public override void ModifyDamageScaling(Projectile projectile, ref float damageScale)
         {
             if (tsorcRevampWorld.NewSlain != null)
             {
@@ -116,7 +116,7 @@ namespace tsorcRevamp.Projectiles
             {
                 damageScale *= 0.9f;
             }
-        }
+        }*/
         public override bool PreAI(Projectile projectile)
         {
             if (projectile.owner < Main.maxPlayers && Main.player[projectile.owner].active)

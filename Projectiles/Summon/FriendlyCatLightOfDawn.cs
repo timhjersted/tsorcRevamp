@@ -16,7 +16,6 @@ namespace tsorcRevamp.Projectiles.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Light of Dawn");
             ProjectileID.Sets.MinionShot[Projectile.type] = true;
 
         }
@@ -69,7 +68,7 @@ namespace tsorcRevamp.Projectiles.Magic
         }
 
         bool hasHitNPC = false;
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             hasHitNPC = true;
         }
