@@ -9,6 +9,7 @@ using Terraria.ModLoader.IO;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -61,6 +62,17 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
+            /*Entitysource experiments
+             * if (projectile.type == ModContent.ProjectileType<Projectiles.Spears.FetidExhaust>())
+            {
+                EntitySource_ItemUse_WithAmmo itemSource = source as EntitySource_ItemUse_WithAmmo;
+
+                if (itemSource != null && itemSource.Item.type == ModContent.ItemType<Items.Weapons.Melee.Spears.FetidExhaust>())
+                {
+                    Main.NewText("a");
+                }
+            }*/
+
             Player player = Main.player[Main.myPlayer];
             int manaCost1 = (int)(ManaBase1 * player.manaCost);
             int manaCost2 = (int)(ManaBase2 * player.manaCost);
@@ -87,7 +99,24 @@ namespace tsorcRevamp.Projectiles
                 player.manaRegenDelay = ManaDelay;
             }
         }
-
+        public override void ModifyDamageScaling(Projectile projectile, ref float damageScale)
+        {
+            if (tsorcRevampWorld.NewSlain != null)
+            {
+                if (projectile.type == ProjectileID.EmpressBlade & !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())))
+                {
+                    damageScale *= 0.75f;
+                }
+                else if (projectile.type == ProjectileID.EmpressBlade & !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())))
+                {
+                    damageScale *= 0.88f;
+                }
+            }
+            if (projectile.type == ProjectileID.StardustDragon1 | projectile.type == ProjectileID.StardustDragon2 | projectile.type == ProjectileID.StardustDragon3 | projectile.type == ProjectileID.StardustDragon4)
+            {
+                damageScale *= 0.9f;
+            }
+        }
         public override bool PreAI(Projectile projectile)
         {
             if (projectile.owner < Main.maxPlayers && Main.player[projectile.owner].active)
@@ -131,7 +160,7 @@ namespace tsorcRevamp.Projectiles
                     
                     projectile.penetrate = 6;
                     projectile.usesLocalNPCImmunity = true;
-                    projectile.localNPCHitCooldown = 10;
+                    projectile.localNPCHitCooldown = 30;
                     projectile.extraUpdates = 3;
                 }
 

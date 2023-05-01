@@ -38,7 +38,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             Item.maxStack = 1;
             Item.UseSound = SoundID.Item1;
             Item.shoot = ModContent.ProjectileType<Projectiles.Spears.FetidExhaust>();
-
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -50,15 +49,20 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             return base.Shoot(player, source, position, velocity, type, damage, knockback);
         }
 
+        public override void HoldItem(Player player)
+        {
+            player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.Spazmatism);
+        }
+
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<GaeBolg>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
-            recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 1);
-            recipe.AddIngredient(ItemID.SoulofMight, 1);
-            recipe.AddIngredient(ItemID.SoulofFright, 1);
-            recipe.AddIngredient(ItemID.SoulofSight, 1);
+            recipe.AddIngredient(ModContent.ItemType<DamagedFlameNozzle>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 5);
+            recipe.AddIngredient(ItemID.SoulofMight, 5);
+            recipe.AddIngredient(ItemID.SoulofFright, 5);
+            recipe.AddIngredient(ItemID.SoulofSight, 5);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

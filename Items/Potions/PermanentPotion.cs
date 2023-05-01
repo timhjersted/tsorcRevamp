@@ -1195,4 +1195,10 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     //increase PermanentBuffCount in tsorcRevampPlayerMain by 1 for each new potion added
 
+        public override void PotionEffect(Player player)
+        {
+            tsorcRevampStaminaPlayer modPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.3f  * EffectPotency;
+        }
+    }
 }

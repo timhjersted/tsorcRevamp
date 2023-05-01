@@ -121,7 +121,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         public bool additiveContext = false;
         public override bool PreDraw(ref Color lightColor)
         {
-            if (!additiveContext)
+            if (!additiveContext || lastPositions == null)
             {
                 return false;
             }

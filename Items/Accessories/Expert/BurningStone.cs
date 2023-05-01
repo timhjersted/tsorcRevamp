@@ -11,10 +11,6 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A chunk of meteorite, glowing with heat" +
-                                "\nRolling summons a barrage of homing fireballs" +
-                                "\nFireballs scale in power with each boss you kill" +
-                                "\nAlso increases damage dealt to burning foes by 5%"); */
         }
 
         public override void SetDefaults()

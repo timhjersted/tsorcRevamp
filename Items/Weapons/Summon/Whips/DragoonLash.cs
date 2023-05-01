@@ -33,8 +33,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.shootSpeed = 4;
 
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.useTime = 25; // for some reason a lower use speed gives it increased range....
-			Item.useAnimation = 25;
+			Item.useTime = 27; // for some reason a lower use speed gives it increased range....
+			Item.useAnimation = 27;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
 

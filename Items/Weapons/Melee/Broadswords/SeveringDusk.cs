@@ -10,16 +10,15 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A blade honed sharp by the magic of the coming night." +
-                "\nRight click to dash, consuming stamina and making you immune for a moment" +
-                "\nStriking enemies while dashing creates a demon spirit from their torn soul"); */
+            /*Tooltip.SetDefault("A blade honed sharp by the magic of the coming night" +
+                "\nRight click to dash, consuming stamina and making you immune for a moment");*/
         }
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Blue;
             Item.damage = 100;
-            Item.width = 50;
-            Item.height = 52;
+            Item.width = 78;
+            Item.height = 78;
             Item.knockBack = 5;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 12;
@@ -39,9 +38,15 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 if (playerStamina.staminaResourceCurrent > 30)
                 {
                     playerStamina.staminaResourceCurrent -= 30;
-                    player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.MouseWorld, 45);
+                    player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.MouseWorld, 30);
                     player.immuneTime = 30;
                     dashTimer = 20;
+                    if (Main.netMode != NetmodeID.SinglePlayer)
+                    {
+                        NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, player.whoAmI, 0f, 0f, 0f, 0);
+                    }
+                    tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                    modPlayer.effectRadius = 350;
                 }
             }
             return base.Shoot(player, source, position, velocity, type, damage, knockback);
@@ -53,13 +58,18 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void HoldItem(Player player)
         {
-            if(dashTimer > 0)
+            player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.Darkness);
+            if (dashTimer > 0)
             {
                 player.immune = true;
                 dashTimer--;
                 if(dashTimer == 0)
                 {
                     player.velocity *= 0.1f;
+                    if (Main.netMode != NetmodeID.SinglePlayer)
+                    {
+                        NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, player.whoAmI, 0f, 0f, 0f, 0);
+                    }
                 }
                 for(int i = 0; i < Main.maxNPCs; i++)
                 {

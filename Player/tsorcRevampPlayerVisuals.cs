@@ -16,6 +16,13 @@ namespace tsorcRevamp
     //Visuals
     public partial class tsorcRevampPlayer
     {
+        public float effectRadius = 150;
+        public float effectIntensity = 0.1f;
+        public float expandLimit = 1;
+        public float collapseSpeed = 1.05f;
+        public int collapseDelay = 0;
+        public static int baseRadius = 150;
+
         public override void DrawEffects(PlayerDrawSet drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
         {
 
@@ -44,13 +51,59 @@ namespace tsorcRevamp
 
         public override void ModifyDrawInfo(ref PlayerDrawSet drawInfo)
         {
-            base.ModifyDrawInfo(ref drawInfo);
+            
         }
         public override void FrameEffects()
         {
             if (MiakodaNewBoost)
             {
                 Player.armorEffectDrawShadow = true;
+            }
+        }
+
+        //Only one aura can be applied, highest in the enum list takes priority
+        public void SetAuraState(tsorcAuraState state)
+        {
+            if (Player.GetModPlayer<tsorcRevampPlayer>().CurrentAuraState < state)
+            {
+                Player.GetModPlayer<tsorcRevampPlayer>().CurrentAuraState = state;
+            }
+        }
+    }
+
+    class tsorcRevampPlayerReflectionDrawLayers : PlayerDrawLayer
+    {
+        public override Position GetDefaultPosition()
+        {
+            return new AfterParent(PlayerDrawLayers.FrontAccFront);
+        }
+        public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
+        {
+            return true;
+        }
+        protected override void Draw(ref PlayerDrawSet drawInfo)
+        {
+            if (drawInfo.drawPlayer.dead)
+            {
+                return;
+            }
+
+            List<Vector2> shatterPositions = new List<Vector2>();
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Summon.ShatteredReflectionProjectile>() && Main.projectile[i].owner == drawInfo.drawPlayer.whoAmI && Main.projectile[i].active)
+                {
+                    shatterPositions.Add(Main.projectile[i].Center - Main.player[Main.projectile[i].owner].Center);
+                }
+            }
+
+            for (int i = 0; i < shatterPositions.Count; i++)
+            {
+                for (int j = 0; j < drawInfo.DrawDataCache.Count; j++)
+                {
+                    DrawData currentData = drawInfo.DrawDataCache[j];
+                    Main.EntitySpriteDraw(currentData.texture, currentData.position + shatterPositions[i], currentData.sourceRect, currentData.color, drawInfo.drawPlayer.fullRotation, currentData.origin, currentData.scale, currentData.effect, 0);
+                }
             }
         }
     }
@@ -192,6 +245,14 @@ namespace tsorcRevamp
                     {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeaponGlowmask];
                     }
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.LightOfDawn>())
+                    {
+                        texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Magic/LightOfDawnCrystal", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+                    }
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.SeveringDusk>())
+                    {
+                        texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.SeveringDuskGlowmask];
+                    }
 
                     //If it's not on the list, don't bother.
                     if (texture != null)
@@ -221,6 +282,21 @@ namespace tsorcRevamp
                         holdOffset.Y = originOffset.Y;
                         drawPos += holdOffset;
 
+                        SpriteEffects effect = SpriteEffects.None;
+                        Color drawColor = Color.White;
+
+                        //Idk why this was necessary, but it was
+                        if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.LightOfDawn>())
+                        {
+                            originOffset.X += 10; 
+                            Color baseColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
+                            drawColor = UsefulFunctions.ShiftColor(baseColor, (float)Main.timeForVisualEffects, 0.03f);
+
+                            if (drawInfo.drawPlayer.direction == -1)
+                            {
+                                effect = SpriteEffects.FlipVertically;
+                            }
+                        }
 
                         //Set the origin based on the offset point
                         Vector2 origin = new Vector2(-originOffset.X, textureMidpoint);
@@ -252,9 +328,7 @@ namespace tsorcRevamp
                         }
 
 
-
-                        Dust d = Dust.NewDustPerfect(drawPos * 16, DustID.MagicMirror);
-                        Dust.NewDustPerfect((drawPos + origin) * 16, DustID.MagicMirror);
+                        
 
 
                         //DrawData data = new DrawData(texture, drawPos, sourceRectangle, Color.White, drawPlayer.itemRotation, origin, modPlayer.Player.HeldItem.scale, drawInfo.spriteEffects, 3);
@@ -264,11 +338,11 @@ namespace tsorcRevamp
                             texture, // The texture to render.
                             drawPos, // Position to render at.
                             null, // Source rectangle.
-                            Color.White, // Color.
+                            drawColor, // Color.
                             rotation, // Rotation.
                             origin, // Origin. Uses the texture's center.
                             drawInfo.drawPlayer.HeldItem.scale, // Scale.
-                            SpriteEffects.None, // SpriteEffects.
+                            effect, // SpriteEffects.
                             0 // 'Layer'. This is always 0 in Terraria.
                         ));
                     }
@@ -589,6 +663,443 @@ namespace tsorcRevamp
                         0 // 'Layer'. This is always 0 in Terraria.
                     ));
             }
+        }
+    }
+    public enum tsorcAuraState
+    {
+        None,
+        Poison,
+        Nebula,
+        TripleThreat,
+        Cataluminance,
+        Spazmatism,
+        Darkness,
+        Light,
+        Retinazer,
+    };
+
+    public class tsorcRevampPlayerAuraDrawLayers : PlayerDrawLayer
+    {
+        public override Position GetDefaultPosition()
+        {
+            return new BeforeParent(PlayerDrawLayers.BackAcc);
+        }
+
+        public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
+        {
+            return true;
+        }
+
+        public static void StartAura(Player player, float radius = -1, float intensity = 0.1f, float collapseSpeed = 1.05f)
+        {
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (radius == -1)
+            {
+                modPlayer.effectRadius = tsorcRevampPlayer.baseRadius;
+            }
+            else
+            {
+                modPlayer.effectRadius = radius;
+            }
+            modPlayer.effectIntensity = intensity;
+            modPlayer.collapseSpeed = collapseSpeed;
+            
+        }
+
+        public static void HandleAura(tsorcRevampPlayer modPlayer)
+        {
+            if (modPlayer.collapseDelay > 0)
+            {
+                if (modPlayer.effectIntensity < modPlayer.expandLimit)
+                {
+                    modPlayer.effectIntensity *= 1.07f;
+                }
+
+                modPlayer.collapseDelay--;
+            }
+            else
+            {
+                if (modPlayer.effectIntensity > 0.1f)
+                {
+                    modPlayer.effectIntensity /= modPlayer.collapseSpeed;
+                }
+
+                if (modPlayer.effectRadius > tsorcRevampPlayer.baseRadius)
+                {
+                    modPlayer.effectRadius /= modPlayer.collapseSpeed;
+                }
+                else
+                {
+                    modPlayer.effectRadius = tsorcRevampPlayer.baseRadius;
+                }
+            }
+            
+            if(modPlayer.effectIntensity < 0.1f)
+            {
+                modPlayer.effectIntensity = 0.1f;
+            }
+            if (modPlayer.effectIntensity > modPlayer.expandLimit)
+            {
+                modPlayer.effectIntensity = modPlayer.expandLimit;
+            }
+        }
+
+
+        int effectTimer;
+        protected override void Draw(ref PlayerDrawSet drawInfo)
+        {
+            tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
+            if (drawInfo.drawPlayer.dead || modPlayer.CurrentAuraState == tsorcAuraState.None)
+            {
+                return;
+            }
+
+
+            switch (modPlayer.CurrentAuraState)
+            {
+                case tsorcAuraState.Cataluminance:
+                    {
+                        DrawCatAura(drawInfo);
+                        break;
+                    }
+                case tsorcAuraState.Poison:
+                    {
+                        DrawAttraidiesAura(drawInfo, Color.GreenYellow);
+                        break;
+                    }
+                case tsorcAuraState.Retinazer:
+                    {
+                        DrawRetAura(drawInfo);
+                        break;
+                    }
+                case tsorcAuraState.Spazmatism:
+                    {
+                        DrawSpazAura(drawInfo);
+                        break;
+                    }
+                case tsorcAuraState.Nebula:
+                    {
+                        DrawAttraidiesAura(drawInfo, Color.Purple * 3);
+                        break;
+                    }
+                case tsorcAuraState.Darkness:
+                    {
+                        DrawAttraidiesAura(drawInfo, Color.Purple * 3);
+                        break;
+                    }
+                case tsorcAuraState.Light:
+                    {
+                        DrawAttraidiesAura(drawInfo, Color.White);
+                        break;
+                    }
+                case tsorcAuraState.TripleThreat:
+                    {
+                        DrawTripleThreatAura(drawInfo);
+                        break;
+                    }
+            }
+
+            if (modPlayer.CurrentAuraState != tsorcAuraState.None)
+            {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            }
+        }
+
+        public static Effect catEffect;
+        void DrawCatAura(PlayerDrawSet drawInfo)
+        {
+            tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+
+            Lighting.AddLight((int)drawInfo.drawPlayer.Center.X / 16, (int)drawInfo.drawPlayer.Center.Y / 16, 0f, 0.4f, 0.8f);
+            Color shaderColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
+            Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, (float)Main.timeForVisualEffects, 0.03f);
+
+            //Apply the shader, caching it as well
+            if (catEffect == null)
+            {
+                catEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            Rectangle sourceRectangle = new Rectangle(0, 0, (int)(modPlayer.effectRadius / 0.7f), (int)(modPlayer.effectRadius / 0.7f));
+            Vector2 origin = sourceRectangle.Size() / 2f;
+
+
+
+            //Pass relevant data to the shader via these parameters
+            catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            catEffect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
+            catEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
+            catEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
+            catEffect.Parameters["fadePercent"].SetValue(0);
+            float timeFactor = 1;
+
+            catEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * timeFactor);
+
+            //Apply the shader
+            catEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, drawInfo.drawPlayer.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, 1, SpriteEffects.None, 0);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            Rectangle baseRectangle = new Rectangle(0, 0, 200, 200);
+            Vector2 baseOrigin = baseRectangle.Size() / 2f;
+
+
+            //Pass relevant data to the shader via these parameters
+            catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            catEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
+            catEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
+            catEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
+            catEffect.Parameters["fadePercent"].SetValue(0);
+            catEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * timeFactor);
+
+            //Apply the shader
+            catEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.PiOver2, baseOrigin, 1, SpriteEffects.None, 0);
+        }
+
+        public static Effect attraidiesEffect;
+        void DrawAttraidiesAura(PlayerDrawSet drawInfo, Color auraColor)
+        {
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
+            Lighting.AddLight(drawInfo.drawPlayer.Center, auraColor.ToVector3());
+            Rectangle baseRectangle = new Rectangle(0, 0, (int)modPlayer.effectRadius * 2, (int)modPlayer.effectRadius * 2);
+            Vector2 baseOrigin = baseRectangle.Size() / 2f;
+            effectTimer++;
+
+            //Apply the shader, caching it as well
+            if (attraidiesEffect == null)
+            {
+                attraidiesEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/AttraidiesAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            //Pass relevant data to the shader via these parameters
+            attraidiesEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+            attraidiesEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
+
+            attraidiesEffect.Parameters["effectColor1"].SetValue(UsefulFunctions.ShiftColor(auraColor, effectTimer / 25f).ToVector4());
+            attraidiesEffect.Parameters["effectColor2"].SetValue(UsefulFunctions.ShiftColor(auraColor, effectTimer / 25f).ToVector4());
+            attraidiesEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
+            attraidiesEffect.Parameters["fadePercent"].SetValue(0);
+            attraidiesEffect.Parameters["scaleFactor"].SetValue(.5f * 150);
+            attraidiesEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 0.05f);
+            attraidiesEffect.Parameters["colorSplitAngle"].SetValue(MathHelper.TwoPi);
+
+            //Apply the shader
+            attraidiesEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.TwoPi, baseOrigin, 1, SpriteEffects.None, 0);
+        }
+
+        float fadeValue = 0;
+        float timeFactor = 1;
+        public static Effect retEffect;
+        void DrawRetAura(PlayerDrawSet drawInfo)
+        {
+            tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
+            Lighting.AddLight((int)drawInfo.drawPlayer.Center.X / 16, (int)drawInfo.drawPlayer.Center.Y / 16, 1f, 0.4f, 0.4f);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            //Apply the shader, caching it as well
+            if (retEffect == null)
+            {
+                retEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/RetAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+
+            if (modPlayer.PiercingGazeCharge >= 16)
+            {
+                modPlayer.collapseDelay = 30;
+                timeFactor = 2;
+                fadeValue = -1;
+            }
+            else if (drawInfo.drawPlayer.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Ranged.PiercingGaze>()] != 0)
+            {
+                modPlayer.effectRadius = 300;
+                fadeValue = -5;
+                timeFactor = 5;
+                modPlayer.collapseDelay = 0;
+            }
+            else
+            {
+                if(modPlayer.effectRadius > 150)
+                {
+                    modPlayer.effectRadius -= 5;
+                }
+                if (fadeValue > 0)
+                {
+                    fadeValue -= 0.1f;
+                }
+                timeFactor = 1;
+            }
+
+            Rectangle sourceRectangle = new Rectangle(0, 0, (int)(modPlayer.effectRadius / 0.7f), (int)(modPlayer.effectRadius / 0.7f));
+            Vector2 origin = sourceRectangle.Size() / 2f;
+
+            Vector3 hslColor = Main.rgbToHsl(Color.Red);
+            hslColor.X += 0.03f * (float)Math.Cos(effectTimer / 250f);
+            effectTimer++;
+            Color rgbColor = Main.hslToRgb(hslColor);
+
+            
+
+            //Pass relevant data to the shader via these parameters
+            retEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+            retEffect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
+            retEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
+            retEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
+            retEffect.Parameters["fadePercent"].SetValue(fadeValue / 2f);
+            retEffect.Parameters["scaleFactor"].SetValue(0);
+            retEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * timeFactor);
+
+            //Apply the shader
+            retEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, 1, SpriteEffects.None, 0);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            Rectangle baseRectangle = new Rectangle(0, 0, 200, 200);
+            Vector2 baseOrigin = baseRectangle.Size() / 2f;
+
+
+            //Pass relevant data to the shader via these parameters
+            retEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+            retEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
+            retEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
+            retEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
+            retEffect.Parameters["fadePercent"].SetValue(fadeValue);
+            retEffect.Parameters["scaleFactor"].SetValue(.5f);
+            retEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 0.5f * timeFactor);
+
+            //Apply the shader
+            retEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, 0, baseOrigin, 1, SpriteEffects.None, 0);
+        }
+
+
+        public static Effect spazEffect;
+        void DrawSpazAura(PlayerDrawSet drawInfo)
+        {
+            tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.effectRadius = 200;
+            Lighting.AddLight((int)drawInfo.drawPlayer.Center.X / 16, (int)drawInfo.drawPlayer.Center.Y / 16, 0f, 0.4f, 0.8f);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            
+            if (drawInfo.drawPlayer.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Spears.FetidExhaust>()] != 0)
+            {
+                if(fadeValue > -5)
+                {
+                    fadeValue -= 0.2f;
+                }
+            }
+            else
+            {
+                fadeValue *= 0.98f;
+            }
+
+            //Apply the shader, caching it as well
+            if (spazEffect == null)
+            {
+                spazEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/SpazAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            Rectangle sourceRectangle = new Rectangle(0, 0, (int)(modPlayer.effectRadius / 0.7f), (int)(modPlayer.effectRadius / 0.7f));
+            Vector2 origin = sourceRectangle.Size() / 2f;
+
+            Vector3 hslColor = Main.rgbToHsl(Color.GreenYellow);
+
+            hslColor.X += 0.03f * (float)Math.Cos(effectTimer / 25f);
+            effectTimer++;
+            Color rgbColor = Main.hslToRgb(hslColor);
+
+            //Pass relevant data to the shader via these parameters
+            spazEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+            spazEffect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
+            spazEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
+            spazEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
+            spazEffect.Parameters["fadePercent"].SetValue(fadeValue);
+            spazEffect.Parameters["scaleFactor"].SetValue(0.3f);
+            spazEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly / 4f);
+
+            //Apply the shader
+            spazEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, 1, SpriteEffects.None, 0);
+        }        
+
+        void DrawTripleThreatAura(PlayerDrawSet drawInfo)
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            Lighting.AddLight(drawInfo.drawPlayer.Center, Color.White.ToVector3());
+
+            Vector3 spazColorPre = Main.rgbToHsl(Color.GreenYellow);
+            spazColorPre.X += 0.01f * (float)Math.Cos(effectTimer / 25f);
+            Color spazColor = Main.hslToRgb(spazColorPre);
+
+            Vector3 retColorPre = Main.rgbToHsl(Color.Red);
+            retColorPre.X += 0.01f * (float)Math.Cos(effectTimer / 250f);
+            effectTimer++;
+            Color retColor = Main.hslToRgb(retColorPre);
+
+            Color catColorPre = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
+            Color catColor = UsefulFunctions.ShiftColor(catColorPre, (float)Main.timeForVisualEffects, 0.01f);
+
+            tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
+            Rectangle baseRectangle = new Rectangle(0, 0, (int)modPlayer.effectRadius * 2, (int)modPlayer.effectRadius * 2);
+            Vector2 baseOrigin = baseRectangle.Size() / 2f;
+            effectTimer++;
+
+            //Apply the shader, caching it as well
+            if (attraidiesEffect == null)
+            {
+                attraidiesEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/AttraidiesAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            //Pass relevant data to the shader via these parameters
+            attraidiesEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+            attraidiesEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
+            attraidiesEffect.Parameters["effectColor1"].SetValue(spazColor.ToVector4());
+            attraidiesEffect.Parameters["effectColor2"].SetValue(retColor.ToVector4());
+            attraidiesEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
+            attraidiesEffect.Parameters["fadePercent"].SetValue(0);
+            attraidiesEffect.Parameters["scaleFactor"].SetValue(.5f * 150);
+            attraidiesEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 0.05f);
+            attraidiesEffect.Parameters["colorSplitAngle"].SetValue(MathHelper.TwoPi / 3f);
+
+            //Apply the shader
+            attraidiesEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, (float)Main.timeForVisualEffects / 25f, baseOrigin, 1, SpriteEffects.None, 0);
+
+
+            attraidiesEffect.Parameters["effectColor1"].SetValue(UsefulFunctions.ShiftColor(retColor, effectTimer / 25f).ToVector4());
+            attraidiesEffect.Parameters["effectColor2"].SetValue(UsefulFunctions.ShiftColor(catColor, effectTimer / 25f).ToVector4());
+            attraidiesEffect.CurrentTechnique.Passes[0].Apply();
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, ((float)Main.timeForVisualEffects / 25f) + MathHelper.TwoPi / 3f, baseOrigin, 1, SpriteEffects.None, 0);
+
+            attraidiesEffect.Parameters["effectColor1"].SetValue(UsefulFunctions.ShiftColor(catColor, effectTimer / 25f).ToVector4());
+            attraidiesEffect.Parameters["effectColor2"].SetValue(UsefulFunctions.ShiftColor(spazColor, effectTimer / 25f).ToVector4());
+            attraidiesEffect.CurrentTechnique.Passes[0].Apply();
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, ((float)Main.timeForVisualEffects / 25f) + MathHelper.TwoPi / 1.5f, baseOrigin, 1, SpriteEffects.None, 0);
         }
     }
 }

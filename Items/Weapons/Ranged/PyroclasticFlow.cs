@@ -29,6 +29,12 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.height = 50;
             Item.width = 32;
             Item.useStyle = ItemUseStyleID.Shoot;
+            Item.UseSound = SoundID.Item40;
+        }
+
+        public override Vector2? HoldoutOffset()
+        {
+            return new Vector2(-6, 0);
         }
 
         public override void AddRecipes()

@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 6;
+            Main.npcFrameCount[NPC.type] = 8;
             NPC.npcSlots = 10;
             NPC.aiStyle = 0;
             NPC.width = 68;
@@ -50,12 +50,9 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            for (int i = 0; i < 200; i++)
+            if (NPC.AnyNPCs(ModContent.NPCType<Death>()))
             {
-                if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<Death>())
-                {
-                    return 0;
-                }
+                return 0;
             }
             if (Main.hardMode)
             {
@@ -169,28 +166,27 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void FindFrame(int currentFrame)
         {
-            int num = 1;
-            if (!Main.dedServ)
-            {
-                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
-            }
-            if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2))
+            NPC.frameCounter += 0.25f;
+
+            if (NPC.frameCounter >= 4)
             {
                 NPC.frameCounter = 0;
-                NPC.frame.Y = 0;
+            }
+
+            int frameHeight = 1;
+            if (!Main.dedServ)
+            {
+                frameHeight = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
+            }
+
+
+            if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2))
+            {
+                NPC.frame.Y = frameHeight * (int)NPC.frameCounter;
             }
             else
             {
-                NPC.frameCounter += 1.0;
-            }
-            if (NPC.frameCounter >= 1.0)
-            {
-                NPC.frame.Y = NPC.frame.Y + num;
-                NPC.frameCounter = 0.0;
-            }
-            if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
-            {
-                NPC.frame.Y = 0;
+                NPC.frame.Y = frameHeight * ((int)NPC.frameCounter + 4);
             }
         }
 

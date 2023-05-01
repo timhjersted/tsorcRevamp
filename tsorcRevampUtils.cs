@@ -872,6 +872,7 @@ namespace tsorcRevamp
                         Main.projectile[i].Kill();
                     }
                     NetMessage.SendData(MessageID.SyncProjectile, number: i);
+                    NetMessage.SendData(MessageID.KillProjectile, number: i);
                 }
             }
 

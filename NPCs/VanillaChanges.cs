@@ -5576,16 +5576,13 @@ namespace tsorcRevamp.NPCs
 
         public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            if (projectile.DamageType != DamageClass.Melee)
+            if (npc.type == NPCID.TheDestroyer || npc.type == NPCID.TheDestroyerBody || npc.type == NPCID.TheDestroyerTail)
             {
-                if (npc.type == NPCID.TheDestroyer || npc.type == NPCID.TheDestroyerBody || npc.type == NPCID.TheDestroyerTail)
+                for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    if (Main.npc[i].type == NPCID.TheDestroyer || Main.npc[i].type == NPCID.TheDestroyerBody || Main.npc[i].type == NPCID.TheDestroyerTail)
                     {
-                        if (Main.npc[i].type == NPCID.TheDestroyer || Main.npc[i].type == NPCID.TheDestroyerBody || Main.npc[i].type == NPCID.TheDestroyerTail)
-                        {
-                            Main.npc[i].immune[projectile.owner] = 5;
-                        }
+                        Main.npc[i].immune[projectile.owner] = 5;
                     }
                 }
             }
@@ -5593,6 +5590,16 @@ namespace tsorcRevamp.NPCs
 
         public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
+            if (npc.type == NPCID.TheDestroyer || npc.type == NPCID.TheDestroyerBody || npc.type == NPCID.TheDestroyerTail)
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].type == NPCID.TheDestroyer || Main.npc[i].type == NPCID.TheDestroyerBody || Main.npc[i].type == NPCID.TheDestroyerTail)
+                    {
+                        Main.npc[i].immune[player.whoAmI] = 5;
+                    }
+                }
+            }
         }
 
         public override bool CheckDead(NPC npc)
@@ -5812,7 +5819,7 @@ namespace tsorcRevamp.NPCs
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SoulOfLife>(), 6);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SoulOfLife>(), 30);
             }
             if (npc.type == NPCID.Golem && !Main.expertMode)
             {

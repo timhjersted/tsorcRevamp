@@ -33,30 +33,22 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			markedByDetonationSignal = false;
 		}
 
-		// TODO: Inconsistent with vanilla, increasing damage AFTER it is randomised, not before. Change to a different hook in the future.
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
 		{
 			int buffIndex = 0;
 			if (markedByDetonationSignal && !projectile.npcProj && !projectile.trap && projectile.IsMinionOrSentryRelated)
 			{
-				modifiers.FinalDamage *= 2;
-				if(projectile.type == ProjectileID.StardustDragon1 || projectile.type == ProjectileID.StardustDragon2 || projectile.type == ProjectileID.StardustDragon3 || projectile.type == ProjectileID.StardustDragon4)
+				modifiers. *= 3;
+				Projectile.NewProjectile(Projectile.GetSource_None(), npc.Top, Vector2.Zero, ProjectileID.DD2ExplosiveTrapT2Explosion, 0, 0, Main.myPlayer);
+				SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 0.6f, PitchVariance = 0.3f });
+				npc.AddBuff(ModContent.BuffType<DetonationSignalBuff>(), 4 * 60);
+				foreach (int buffType in npc.buffType)
 				{
-					modifiers.FinalDamage *= 0.75f;
-				}
-				if (markedByDetonationSignal && !projectile.npcProj && !projectile.trap && projectile.IsMinionOrSentryRelated)
-                {
-					Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), npc.Top, Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, 0, 0, Main.myPlayer);
-					SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 0.6f, PitchVariance = 0.3f });
-					foreach (int buffType in npc.buffType)
+					if (buffType == ModContent.BuffType<DetonationSignalDebuff>())
 					{
-
-						if (buffType == ModContent.BuffType<DetonationSignalDebuff>())
-						{
-							npc.DelBuff(buffIndex);
-						}
-						buffIndex++;
+						npc.DelBuff(buffIndex);
 					}
+					buffIndex++;
 				}
 			}
 		}

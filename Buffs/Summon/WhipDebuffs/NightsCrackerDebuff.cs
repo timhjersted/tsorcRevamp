@@ -32,10 +32,8 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			markedByNightsCracker = false;
 		}
 
-		// TODO: Inconsistent with vanilla, increasing damage AFTER it is randomised, not before. Change to a different hook in the future.
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            // Only player attacks should benefit from this buff, hence the NPC and trap checks.
             if (markedByNightsCracker && !projectile.npcProj && !projectile.trap && projectile.IsMinionOrSentryRelated)
             {
                 int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(42)); //42 is the base dmg of Night's Cracker
@@ -89,7 +87,15 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
                     tagbonusdamage += Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 5;
                 }
                 float searingdamagescaling = Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 8 * 0.01f;
-				int tagdamagescaling = Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 2;
+				int tagdamagescaling = Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 2; 
+                if (npc.HasBuff(ModContent.BuffType<SearingLashDebuff>()))
+                {
+                    searingdamagescaling /= 2f;
+                }
+                if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
+                {
+                    searingdamagescaling /= 2f;
+                }
                 modifiers.FlatBonusDamage += (int)((projectile.damage + tagbonusdamage) * searingdamagescaling * whipDamage * 0.01f);
 				modifiers.FlatBonusDamage += tagdamagescaling;
 				if (Main.rand.NextBool(100 / Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges))

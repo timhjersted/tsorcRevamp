@@ -62,7 +62,7 @@ namespace tsorcRevamp.Projectiles.VFX
                         filterIndex = currentIndex;
                         initialized = true;
                         break;
-                    }                    
+                    }
 
                     //If more than 10 are already active at once, give up and just kill the shockwave instead of creating yet another one.
                     if(index >= 10)
@@ -76,7 +76,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 } while (index < 10);
             }
 
-            if(filterIndex == null)
+            if(filterIndex == null && Main.netMode != NetmodeID.Server)
             {
                 Projectile.Kill();
                 return;
@@ -113,16 +113,21 @@ namespace tsorcRevamp.Projectiles.VFX
 
             if(effectTimer > effectLimit * 0.99f)
             {
-                if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex].IsActive())
-                {
-                    Filters.Scene[filterIndex].Deactivate();
-                }
                 Projectile.Kill();
             }
         }
         public override bool PreDraw(ref Color lightColor)
         {
             return false;
+        }
+
+        public override bool PreKill(int timeLeft)
+        {
+            if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex].IsActive())
+            {
+                Filters.Scene[filterIndex].Deactivate();
+            }
+            return base.PreKill(timeLeft);
         }
 
 

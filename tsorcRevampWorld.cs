@@ -32,9 +32,6 @@ namespace tsorcRevamp
         public static bool TheEnd;
         public static bool CustomMap;
 
-        [Obsolete("Use NewSlain, and \"new NPCDefinition(npc.type)\" instead of \"npc.type\"")]
-        public static Dictionary<int, int> Slain;
-
         public static List<int> PairedBosses;
 
         public static List<Vector2> LitBonfireList;
@@ -205,6 +202,7 @@ namespace tsorcRevamp
             {
                 writer.Write(CustomMap);
                 writer.Write(SuperHardMode);
+                writer.WriteVector2(AbyssPortalLocation);
 
                 //Storing it in an int32 just so its exact type is guranteed, since that does matter
                 int slainSize = NewSlain.Count;
@@ -238,6 +236,7 @@ namespace tsorcRevamp
         {
             CustomMap = reader.ReadBoolean();
             SuperHardMode = reader.ReadBoolean();
+            AbyssPortalLocation = reader.ReadVector2();
 
             int slainSize = reader.ReadInt32();
             for (int i = 0; i < slainSize; i++)
@@ -1129,6 +1128,8 @@ namespace tsorcRevamp
         }
         public override void PostUpdateEverything()
         {
+            tsorcRevamp.NearbySoapstoneMouse = false;
+            tsorcRevamp.NearbySoapstoneMouseDistance = float.MaxValue;
             if (JustPressed(Keys.Home) && JustPressed(Keys.NumPad0)) //they have to be pressed *on the same tick*. you can't hold one and then press the other.
                 PlaceModdedTiles();
 

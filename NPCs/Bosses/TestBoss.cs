@@ -63,11 +63,11 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.defense = 0;
             if (damageCounter > 0)
             {
-                Main.NewText("DPS: " + damageCounter / thisWatch.Elapsed.TotalSeconds);
+                UsefulFunctions.BroadcastText("DPS: " + damageCounter / thisWatch.Elapsed.TotalSeconds);
             }
             if (watchTimer == 1)
             {
-                Main.NewText("DPS measuring ended. DPS at the final hit: " + damageCounter / lastTimer);
+                UsefulFunctions.BroadcastText("DPS measuring ended. DPS at the final hit: " + damageCounter / lastTimer);
                 damageCounter = 0;
             }
             if (watchTimer > 0)

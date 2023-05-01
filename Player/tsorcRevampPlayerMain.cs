@@ -667,7 +667,7 @@ namespace tsorcRevamp
             { //Miakoda New Moon
                 if (MiakodaEffectsTimer > 720)
                 {
-                    if (hit.Crit || (proj.minion && Main.player[proj.owner].HeldItem.CountsAsClass(DamageClass.Summon)))
+                    if (hit.Crit)
                     {
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
@@ -684,8 +684,9 @@ namespace tsorcRevamp
             if(proj.type == ModContent.ProjectileType<Projectiles.Ranged.PiercingPlasma>())
             {
                 PiercingGazeCharge++;
-                if(PiercingGazeCharge == 15)
+                if(PiercingGazeCharge == 16)
                 {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item113, Player.Center);
                     UsefulFunctions.DustRing(Player.Center, 70, DustID.FireworkFountain_Red, 100, 18);
                 }
             }
@@ -696,10 +697,6 @@ namespace tsorcRevamp
             if (Player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread)
             {
                 modifiers.DamageVariationScale *= 0;
-            }
-            if ((BurningAura || BurningStone) && target.onFire == true)
-            {
-                modifiers.TargetDamageMultiplier *= 1.05f;
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().Sharpened)
             {
@@ -737,6 +734,10 @@ namespace tsorcRevamp
 
         public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Item, consider using ModifyHitNPC instead */
         {
+            if ((BurningAura || BurningStone) && target.onFire == true)
+            {
+                modifiers.TargetDamageMultiplier *= 1.05f;
+            }
         }
 
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Projectile, consider using ModifyHitNPC instead */
@@ -751,6 +752,12 @@ namespace tsorcRevamp
             {
                 modifiers.CritDamage += 0.25f;
             }
+            if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
+            {
+                modifiers.TargetDamageMultiplier *= 1.05f;
+            }
+
+
             if (proj.type == ProjectileID.BlandWhip)
             {
                 modifiers.SourceDamage *= 2;

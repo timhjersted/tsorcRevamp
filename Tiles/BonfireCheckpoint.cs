@@ -44,14 +44,12 @@ namespace tsorcRevamp.Tiles
 
         public override bool CanKillTile(int i, int j, ref bool blockDamaged)
         {
-            Player player = Main.LocalPlayer;
-
-            if (player.name == "Chroma TSORC test" || player.name == "Yournamehere") //feel free to add your players name, you can break it but has to be the top row of tiles for some reason
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                return true;
+                return false;
             }
 
-            return false;
+            return true;
         }
 
         public override bool IsTileSpelunkable(int i, int j) => true;
@@ -548,10 +546,6 @@ namespace tsorcRevamp.Tiles
         {
             public override void SetStaticDefaults()
             {
-                // DisplayName.SetDefault("Dark Souls Bonfire");
-                /* Tooltip.SetDefault("Right-click to light" +
-                "\nYou probably shouldn't have this" +
-                "\nCan only be placed by devs"); */
             }
 
             public override void SetDefaults()
@@ -561,15 +555,15 @@ namespace tsorcRevamp.Tiles
                 Item.placeStyle = 0;
             }
 
-            public override bool CanUseItem(Player player)
+            public override void AddRecipes()
             {
-                if (player.name == "Chroma TSORC test" || player.name.Contains("Sam") || player.name == "Yournamehere") //feel free to add your players name
-                {
-                    return true;
-                }
+                Recipe recipe = CreateRecipe();
+                recipe.AddIngredient(ItemID.Campfire, 1);
+                recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 1000);
+                recipe.AddTile(TileID.DemonAltar);
+                recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
 
-                return false;
-
+                recipe.Register();
             }
         }
     }

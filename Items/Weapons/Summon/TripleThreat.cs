@@ -7,22 +7,19 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-    [Autoload(false)]
     public class TripleThreat : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
-			/* Tooltip.SetDefault("Summons a miniature Triad to fight for you" +
-                "Uses one slot for each of them"); */
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
 			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 3;
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
         }
 		public override void SetDefaults()
 		{
-			Item.damage = 40;
+			Item.damage = 100;
 			Item.knockBack = 3f;
 			Item.mana = 10;
 			Item.width = 42;
@@ -79,5 +76,18 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			// Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
 			return false;
 		}
-    }
+		public override void AddRecipes()
+		{
+			Recipe recipe = CreateRecipe();
+			recipe.AddIngredient(ModContent.ItemType<DamagedRemote>());
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
+			recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 5);
+			recipe.AddIngredient(ItemID.SoulofMight, 5);
+			recipe.AddIngredient(ItemID.SoulofFright, 5);
+			recipe.AddIngredient(ItemID.SoulofSight, 5);
+
+			recipe.AddTile(TileID.DemonAltar);
+			recipe.Register();
+		}
+	}
 }

@@ -177,6 +177,7 @@ namespace tsorcRevamp.Items
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()); //Head is detached from its body
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()); //Head is detached from its body
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()); //Just spawns the head, nothing more
+            bannedBosses.Add(ModContent.NPCType<NPCs.Enemies.RedKnight>()); //Bugged loot
 
             //Check if the keys list has any of the banned bosses, and if so remove them
             for (int i = 0; i < bannedBosses.Count; i++)

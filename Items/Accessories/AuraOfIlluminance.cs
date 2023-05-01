@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Aura of Illuminance");
-            // Tooltip.SetDefault("Creates a glowing trail behind you");
+            /*DisplayName.SetDefault("Aura of Illuminance");
+            Tooltip.SetDefault("Creates a glowing trail behind you");*/
         }
 
         public override void SetDefaults()
@@ -24,21 +24,23 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void UpdateEquip(Player player)
         {
-            if (player.whoAmI != Main.myPlayer)
-            {
-                return;
-            }
+            player.GetModPlayer<tsorcRevampPlayer>().AuraOfIlluminance = true;
+            player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.Cataluminance);
 
-            //If no projectile exists for this player, spawn it
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            if (player.whoAmI == Main.myPlayer)
             {
-                if(Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<Projectiles.AuraOfIlluminance>() && Main.projectile[i].ai[0] == player.whoAmI)
+                //If a projectile exists for this player, return as soon as it is found
+                for (int i = 0; i < Main.maxProjectiles; i++)
                 {
-                    return;
+                    if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<Projectiles.AuraOfIlluminance>() && Main.projectile[i].ai[0] == player.whoAmI)
+                    {
+                        return;
+                    }
                 }
-            }
 
-            Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.AuraOfIlluminance>(), 50, 0, Main.myPlayer, player.whoAmI);
+                //If not, spawn it
+                Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.AuraOfIlluminance>(), 80, 0, Main.myPlayer, player.whoAmI);
+            }
         }
     }
 }

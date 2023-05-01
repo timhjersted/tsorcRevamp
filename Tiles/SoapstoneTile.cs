@@ -77,24 +77,50 @@ namespace tsorcRevamp.Tiles {
                 Vector2 textureSize = texture.Size();
 
                 Vector2 position = new(i * 16 - ((int)Main.screenPosition.X + textureSize.X / 2) + 16, j * 16 - (int)Main.screenPosition.Y);
-                Vector2 worldPosition = new Vector2(i+1, j+1) * 16;
+                Vector2 worldPosition = new Vector2(i + 1, j + 1) * 16;
                 float distance = Vector2.Distance(Main.LocalPlayer.Center, worldPosition);
                 float mouseDistance = Vector2.Distance(tsorcRevampPlayer.RealMouseWorld, worldPosition);
-                
+
                 bool mouseLineOfSight = (Collision.CanHitLine(Main.LocalPlayer.Center, 1, 1, worldPosition, 1, 1));
                 if (entity.read)
                 {
                     mouseLineOfSight = true;
                 }
 
-                if (distance <= 128 || (mouseDistance < 75 && mouseLineOfSight))
+                bool selectedSoapstone = false;
+                bool mouseInRange = mouseDistance < 150 && mouseLineOfSight;
+                bool playerInRange = distance <= 128;
+
+                //Main.NewText("soap " + tsorcRevamp.NearbySoapstoneMouse);
+                //If the mouse is already nearby a soapstone
+                if (tsorcRevamp.NearbySoapstoneMouse)
+                {
+                    //If the mouse is closer to this soapstone than to the previous one, set this as the current soapstone
+                    if (mouseDistance < tsorcRevamp.NearbySoapstoneMouseDistance && mouseInRange && distance < 400)
+                    {
+                        tsorcRevamp.NearbySoapstone = entity;
+                        tsorcRevamp.NearbySoapstoneMouse = true;
+                        tsorcRevamp.NearbySoapstoneMouseDistance = mouseDistance;
+                        entity.timer = 25;
+                        entity.read = true;
+                        entity.nearPlayer = true;
+                    }
+                }
+                else if (playerInRange || (mouseInRange && distance < 400))
                 {
                     tsorcRevamp.NearbySoapstone = entity;
+                    if (mouseInRange)
+                    {
+                        tsorcRevamp.NearbySoapstoneMouse = true;
+                        tsorcRevamp.NearbySoapstoneMouseDistance = mouseDistance;
+                    }
                     entity.timer = 25;
                     entity.read = true;
                     entity.nearPlayer = true;
                 }
-                else
+
+
+                if (!selectedSoapstone)
                 {
                     if (entity.timer > 0)
                     {

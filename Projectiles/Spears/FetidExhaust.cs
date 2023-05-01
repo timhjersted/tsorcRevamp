@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Spears
         {
             Projectile.friendly = true;
             Projectile.hostile = false;
-            Projectile.penetrate = 50;
+            Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
@@ -46,20 +46,14 @@ namespace tsorcRevamp.Projectiles.Spears
         List<float> lastRotations;
         public override void AI()
         {
-            Projectile.Center = Main.player[Projectile.owner].Center;
-            if (Main.myPlayer == Projectile.owner)
-            {
-                Vector2 angleVector = Main.player[Projectile.owner].Center - Main.MouseWorld;
-                Projectile.rotation = MathHelper.Pi + angleVector.ToRotation();
-                int dir = 1;
-                if (angleVector.X > 0)
-                {
-                    dir = -1;
-                }
-                Main.player[Projectile.owner].ChangeDir(dir);
-            }
+            Player player = Main.player[Projectile.owner];
+            Vector2 rrp = player.RotatedRelativePoint(player.MountedCenter, true);
+            UpdatePlayerVisuals(player);
 
-            
+            if (player.whoAmI == Main.myPlayer)
+            {
+                UpdateAim(rrp, player.HeldItem.shootSpeed);
+            }
 
             if (Main.player[Projectile.owner].channel && Projectile.timeLeft > 30)
             {
@@ -106,12 +100,42 @@ namespace tsorcRevamp.Projectiles.Spears
 
             Utils.PlotTileLine(startPoint, endpoint, 100, DelegateMethods.CastLight);
         }
+        private void UpdatePlayerVisuals(Player player)
+        {
+            Projectile.Center = player.Center;
+            Projectile.rotation = Projectile.velocity.ToRotation();
+            Projectile.spriteDirection = Projectile.direction;
+
+            player.ChangeDir(Projectile.direction);
+            //player.heldProj = projectile.whoAmI;
+
+            player.itemTime = 2;
+            player.itemAnimation = 2;
+            player.itemRotation = (Projectile.velocity * Projectile.direction).ToRotation();
+        }
+        private void UpdateAim(Vector2 source, float speed)
+        {
+            Vector2 aim = Vector2.Normalize(Main.MouseWorld - source);
+            if (aim.HasNaNs())
+            {
+                aim = -Vector2.UnitY;
+            }
+
+            aim = Vector2.Normalize(Vector2.Lerp(Vector2.Normalize(Projectile.velocity), aim, 1));
+            aim *= speed;
+
+            if (aim != Projectile.velocity)
+            {
+                Projectile.netUpdate = true;
+            }
+            Projectile.velocity = aim;
+        }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float point = 0;
             if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center,
-                    Projectile.Center + Projectile.rotation.ToRotationVector2() * laserWidth * 0.7f, Projectile.height / 3f, ref point))
+                    Projectile.Center + Projectile.rotation.ToRotationVector2() * laserWidth, Projectile.height / 3f, ref point))
             {
                 return true;
             }
@@ -120,9 +144,14 @@ namespace tsorcRevamp.Projectiles.Spears
                 return false;
             }
         }
+
+        public override void onhitnpc
+        {
+            target.AddBuff(BuffID.CursedInferno, 5 * 60);
+        }
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(BuffID.CursedInferno, 300);
+            target.AddBuff(BuffID.CursedInferno, 5 * 60);
         }
 
         public static ArmorShaderData data;

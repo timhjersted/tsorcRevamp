@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.DataStructures;
@@ -18,8 +19,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetDefaults()
         {
-            Item.width = 28;
-            Item.height = 30;
+            Item.width = 36;
+            Item.height = 42;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useTurn = true;
             Item.useAnimation = 10;
@@ -45,6 +46,50 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             rotation += MathHelper.TwoPi / 6f;
             position += new Vector2(80, 0).RotatedBy(rotation);
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            
+            modPlayer.collapseDelay = 30;
+            //tsorcRevampPlayerAuraDrawLayers.StartAura(player, 150, fadeOutSpeed: 30);
+        }
+
+        public override void HoldItem(Player player)
+        {
+            player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.Cataluminance);
+        }
+
+        public static Texture2D crystalTexture;
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            if(crystalTexture == null || crystalTexture.IsDisposed)
+            {
+                crystalTexture = (Texture2D)ModContent.Request<Texture2D>(Texture + "Crystal", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            }
+            spriteBatch.Draw((Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type], position, null, Color.White, 0, origin, scale, SpriteEffects.None, 0);
+
+            Color shaderColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
+            Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, (float)Main.timeForVisualEffects, 0.03f);
+
+            spriteBatch.Draw(crystalTexture, position, null, rgbColor, 0, origin, scale, SpriteEffects.None, 0);
+            return false;
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<DamagedCrystal>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 5);
+            recipe.AddIngredient(ItemID.SpellTome, 1);
+            recipe.AddIngredient(ItemID.SoulofMight, 5);
+            recipe.AddIngredient(ItemID.SoulofFright, 5);
+            recipe.AddIngredient(ItemID.SoulofSight, 5);
+
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.Register();
+        }
+        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        {
+            return base.PreDrawInWorld(spriteBatch, lightColor, alphaColor, ref rotation, ref scale, whoAmI);
         }
     }
 }

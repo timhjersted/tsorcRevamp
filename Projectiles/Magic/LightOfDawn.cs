@@ -42,11 +42,6 @@ namespace tsorcRevamp.Projectiles.Magic
         }
 
         bool playedSound = false;
-        float homingAcceleration = 0;
-
-        float transitionTimer;
-        bool forcePink = false;
-        bool forceBlue = false;
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
@@ -91,11 +86,7 @@ namespace tsorcRevamp.Projectiles.Magic
 
         public override void SetEffectParameters(Effect effect)
         {
-            float trueFadeOut = fadeOut;
-            trueFadeOut += trueFadeOut * ((float)Main.timeForVisualEffects / 120f);
-
             Color shaderColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
-            float intensity = 0.07f + 0.03f * ((float)Main.timeForVisualEffects / 120f);
             Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, (float)Main.timeForVisualEffects, 0.03f);
 
             collisionEndPadding = (int)trailCurrentLength / 30;

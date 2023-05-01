@@ -31,16 +31,16 @@ namespace tsorcRevamp.Projectiles.Summon
 
 		public sealed override void SetDefaults()
 		{
-			Main.projFrames[Projectile.type] = 2;
-			Projectile.width = 40;
-			Projectile.height = 50;
+			Main.projFrames[Projectile.type] = 3;
+			Projectile.width = 50;
+			Projectile.height = 72;
 			Projectile.tileCollide = false; // Makes the minion go through tiles freely
 
 			// These below are needed for a minion weapon
 			Projectile.friendly = true; // Only controls if it deals damage to enemies on contact (more on that later)
 			Projectile.minion = true; // Declares this as a minion (has many effects)
 			Projectile.DamageType = DamageClass.Summon; // Declares the damage type (needed for it to deal damage)
-			Projectile.minionSlots = 2f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
+			Projectile.minionSlots = 1; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
 			Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
 
 			Projectile.usesLocalNPCImmunity = true;
@@ -56,27 +56,39 @@ namespace tsorcRevamp.Projectiles.Summon
 		// This is mandatory if your minion deals contact damage (further related stuff in AI() in the Movement region)
 		public override bool MinionContactDamage()
 		{
-			return true;
+			return false;
 		}
 
 		bool indexSet = false;
 		List<float> foundIndicies = new List<float>();
+		int totalTriadProjectiles
+		{
+			get
+			{
+				return Main.player[Projectile.owner].ownedProjectileCounts[ModContent.ProjectileType<FriendlySpazmatism>()] +
+					Main.player[Projectile.owner].ownedProjectileCounts[ModContent.ProjectileType<FriendlyRetinazer>()] +
+					Main.player[Projectile.owner].ownedProjectileCounts[ModContent.ProjectileType<FriendlyCataluminance>()];
+			}
+		}
 		// The AI of this minion is split into multiple methods to avoid bloat. This method just passes values between calls actual parts of the AI.
 		public override void AI()
 		{
 			Player owner = Main.player[Projectile.owner];
 
-			if (!indexSet)
+			//if (!indexSet)
 			{
 				for (int i = 0; i < Main.maxProjectiles; i++)
 				{
-					if (Main.projectile[i].active && Main.projectile[i].type == Projectile.type && Main.projectile[i].owner == Projectile.owner && Main.projectile[i].whoAmI != Projectile.whoAmI)
+					if (Main.projectile[i].active && Main.projectile[i].owner == Projectile.owner && Main.projectile[i].whoAmI != Projectile.whoAmI)
 					{
-						foundIndicies.Add(Main.projectile[i].ai[0]);
+						if (Main.projectile[i].type == ModContent.ProjectileType<FriendlySpazmatism>() || Main.projectile[i].type == ModContent.ProjectileType<FriendlyRetinazer>() || Main.projectile[i].type == ModContent.ProjectileType<FriendlyCataluminance>())
+						{
+							foundIndicies.Add(Main.projectile[i].ai[0]);
+						}
 					}
 				}
 
-				for (int i = 0; i < 6; i++)
+				for (int i = 0; i < totalTriadProjectiles + 1; i++)
 				{
 					if (foundIndicies.Contains(i))
 					{
@@ -95,12 +107,12 @@ namespace tsorcRevamp.Projectiles.Summon
 			{
 				return;
 			}
+			Visuals();
 
 			GeneralBehavior(owner, out Vector2 vectorToIdlePosition, out float distanceToIdlePosition);
 			SearchForTargets(owner, out bool foundTarget, out float distanceFromTarget);
 			Movement(foundTarget, distanceFromTarget, distanceToIdlePosition, vectorToIdlePosition);
 			Attack();
-			Visuals();
 			
 		}
 
@@ -109,18 +121,9 @@ namespace tsorcRevamp.Projectiles.Summon
 			if (target != null && target.active && target.Distance(Projectile.Center) < 1000)
 			{
 				Vector2 projVel = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target.Center, 1);
-				if (Main.GameUpdateCount % 240 == 0) {
-					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, projVel, ModContent.ProjectileType<Projectiles.Summon.FriendlyRedLaser>(), Projectile.damage * 4, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);
-				}
-
-				if (Main.GameUpdateCount % 240 >= 180 && Main.GameUpdateCount % 240 <= 220 && Main.GameUpdateCount % 3 == 0)
-				{
-					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, target.velocity + projVel * 10, ModContent.ProjectileType<Projectiles.Summon.FriendlyDragonsBreath>(), Projectile.damage / 4, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);
-				}
-
-				if (Main.GameUpdateCount % 60 < 15 && Main.GameUpdateCount % 4 == 0)
-                {
-					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, target.velocity + projVel * 17, ModContent.ProjectileType<Projectiles.Summon.FriendlyTetsujinLaser>(), Projectile.damage, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);					
+				Projectile.rotation = projVel.ToRotation();
+				if (Main.GameUpdateCount % 240 == 180) {
+					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, projVel, ModContent.ProjectileType<Projectiles.Magic.FriendlyCatLightOfDawn>(), Projectile.damage * 2, 0, Main.myPlayer, 0, Projectile.whoAmI);
 				}
 			}
 		}
@@ -130,12 +133,12 @@ namespace tsorcRevamp.Projectiles.Summon
 		{
 			if (owner.dead || !owner.active)
 			{
-				owner.ClearBuff(ModContent.BuffType<Buffs.Summon.TetsujinBuff>());
+				owner.ClearBuff(ModContent.BuffType<Buffs.Summon.TripleThreatBuff>());
 
 				return false;
 			}
 
-			if (owner.HasBuff(ModContent.BuffType<Buffs.Summon.TetsujinBuff>()))
+			if (owner.HasBuff(ModContent.BuffType<Buffs.Summon.TripleThreatBuff>()))
 			{
 				Projectile.timeLeft = 2;
 			}
@@ -253,9 +256,9 @@ namespace tsorcRevamp.Projectiles.Summon
 			}
 
 			float angle = 0;
-			if(owner.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.TetsujinProjectile>()] > 0)
+			if(totalTriadProjectiles > 0)
             {
-				angle = (Main.GameUpdateCount / 120f) + (int)(Main.GameUpdateCount / 480f) + MathHelper.TwoPi * (Projectile.ai[0] / owner.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.TetsujinProjectile>()]);
+				angle = (Main.GameUpdateCount / 120f) + (int)(Main.GameUpdateCount / 480f) + MathHelper.TwoPi * (Projectile.ai[0] / totalTriadProjectiles);
 
 			}
 			targetCenter += new Vector2(300, 0).RotatedBy(angle);
@@ -340,53 +343,90 @@ namespace tsorcRevamp.Projectiles.Summon
 
 		private void Visuals()
 		{
-			// So it will lean slightly towards the direction it's moving
-			Projectile.rotation = Projectile.velocity.X * 0.1f;
+			Projectile.rotation = Projectile.velocity.ToRotation();
 
-			// This is a simple "loop through all frames from top to bottom" animation
 			int frameSpeed = 5;
 
-			
+			Projectile.frameCounter++;
 
-
-			if (Projectile.velocity.Y < 0)
+			if (Projectile.frameCounter >= frameSpeed)
 			{
-				Projectile.frameCounter++;
+				Projectile.frameCounter = 0;
+				Projectile.frame++;
 
-				if (Projectile.frameCounter >= frameSpeed)
+				if (Projectile.frame >= Main.projFrames[Projectile.type])
 				{
-					Projectile.frameCounter = 0;
-					Projectile.frame++;
-
-					if (Projectile.frame >= Main.projFrames[Projectile.type])
-					{
-						Projectile.frame = 0;
-					}
-				}
-
-				if (Projectile.direction == -1)
-				{
-					int dust = Dust.NewDust(Projectile.Center + new Vector2(Projectile.direction == 1 ? Projectile.width * 0.5f : +15, -22), Projectile.width / 8, Projectile.height / 2, 15, Projectile.velocity.X, Projectile.velocity.Y + 6f, 150, Color.Blue, 1f);
-					Main.dust[dust].noGravity = false;
-				}
-				if (Projectile.direction == 1)
-				{
-					int dust = Dust.NewDust(Projectile.Center + new Vector2(Projectile.direction == -1 ? Projectile.width * -0.5f : -26, -22), Projectile.width / 8, Projectile.height / 2, 15, Projectile.velocity.X, Projectile.velocity.Y + 6f, 150, Color.Blue, 1f);
-					Main.dust[dust].noGravity = false;
+					Projectile.frame = 0;
 				}
 			}
-
-			// Some visuals here
-			Lighting.AddLight(Projectile.Center, Color.OrangeRed.ToVector3() * 0.78f);
+            //TextureAssets.Npc[NPCID.Deerclops].t
 		}
 
+		public static Effect catEffect;
         public override bool PreDraw(ref Color lightColor)
         {
-			SpriteEffects spriteEffects = SpriteEffects.None;
-			if (Projectile.direction == 1)
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+
+			Lighting.AddLight((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16, 0f, 0.4f, 0.8f);
+			Color shaderColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
+			Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, (float)Main.timeForVisualEffects, 0.03f);
+
+			//Apply the shader, caching it as well
+			if (catEffect == null)
 			{
-				spriteEffects = SpriteEffects.FlipHorizontally;
+				catEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 			}
+
+			Rectangle auraSourceRectangle = new Rectangle(0, 0, 70, 70);
+			Vector2 auraOrigin = auraSourceRectangle.Size() / 2f;
+
+
+
+			//Pass relevant data to the shader via these parameters
+			catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+			catEffect.Parameters["effectSize"].SetValue(auraSourceRectangle.Size());
+			catEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
+			catEffect.Parameters["ringProgress"].SetValue(0.1f);
+			catEffect.Parameters["fadePercent"].SetValue(0);
+			float timeFactor = 1;
+
+			catEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * timeFactor);
+
+			//Apply the shader
+			catEffect.CurrentTechnique.Passes[0].Apply();
+
+			Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, Projectile.Center - Main.screenPosition, auraSourceRectangle, Color.White, 0, auraOrigin, 1, SpriteEffects.None, 0);
+
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+			Rectangle baseRectangle = new Rectangle(0, 0, 200, 200);
+			Vector2 baseOrigin = baseRectangle.Size() / 2f;
+
+
+			//Pass relevant data to the shader via these parameters
+			catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+			catEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
+			catEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
+			catEffect.Parameters["ringProgress"].SetValue(0.1f);
+			catEffect.Parameters["fadePercent"].SetValue(0);
+			catEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * timeFactor);
+
+			//Apply the shader
+			catEffect.CurrentTechnique.Passes[0].Apply();
+
+			Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, Projectile.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.PiOver2, baseOrigin, 1, SpriteEffects.None, 0);
+
+			Main.spriteBatch.End();
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+
+
+
+
+			SpriteEffects spriteEffects = SpriteEffects.FlipHorizontally;
 
 			int frameHeight = ((Texture2D)TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
 			int startY = frameHeight * Projectile.frame;

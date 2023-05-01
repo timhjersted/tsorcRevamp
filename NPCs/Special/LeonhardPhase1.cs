@@ -541,7 +541,7 @@ namespace tsorcRevamp.NPCs.Special
                     NPC.FaceTarget(); //Face targeted player
                 }
 
-                if (NPC.ai[1] == 120) //When timer is 120
+                if (NPC.ai[1] == 120 && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<LeonhardPhase1>()))) //When timer is 120
                 {
                     //Main.NewText("[c/CCCCCC:???:] Very good, a worthy opponent. Take these, for your trouble", 109, 145, 138); //Send message to chat
                     for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)

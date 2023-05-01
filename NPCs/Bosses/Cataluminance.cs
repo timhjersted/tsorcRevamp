@@ -1225,6 +1225,11 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             if (!Main.expertMode)
             {
+                Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<DamagedCrystal>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<DamagedFlameNozzle>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<DamagedLaser>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<DamagedRemote>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<Items.Accessories.AuraOfIlluminance>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<CrestOfSky>(), 3);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MechanicalWheelPiece);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HallowedBar, 15 + Main.rand.Next(16));

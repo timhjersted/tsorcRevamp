@@ -209,7 +209,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 holdTimer--;
             }
 
-            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 1300)
+            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 1150)
             {
                 NPC.defense = 9999;
                 if (holdTimer <= 0)
@@ -219,7 +219,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 else
                 {
-                    NPC.defense = 220;
+                    NPC.defense = 160;
                 }
             }
             
@@ -535,7 +535,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         }
                     }
                     //RAIN OF DEATH FINAL
-                    if (NPC.life <= 199000 && NPC.Distance(player.Center) > 650 && NPC.Distance(player.Center) < 1299 && Main.rand.NextBool(90))
+                    if (NPC.life <= 199000 && NPC.Distance(player.Center) > 580 && NPC.Distance(player.Center) < 1199 && Main.rand.NextBool(90))
                     {
                         Player nT = Main.player[NPC.target];
 
@@ -556,7 +556,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
 
                     //CURSED FLAMES RAIN WHEN FAR AWAY
-                    if (NPC.life <= 700000 && NPC.life >= 120001 && NPC.Distance(player.Center) > 1300 && Main.rand.NextBool(320))
+                    if (NPC.life <= 700000 && NPC.life >= 120001 && NPC.Distance(player.Center) > 1200 && Main.rand.NextBool(320))
                     {
                             Player nT = Main.player[NPC.target];
 
@@ -575,7 +575,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
 
                 //CURSED FLAMES FAR AWAY FINAL RAIN
-                if (NPC.life <= 120000 && NPC.Distance(player.Center) > 1300 && Main.rand.NextBool(120))
+                if (NPC.life <= 120000 && NPC.Distance(player.Center) > 1000 && Main.rand.NextBool(120))
                 {
                     Player nT = Main.player[NPC.target];
                     if (Main.rand.NextBool(12))
@@ -1421,7 +1421,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (swordDead)
                     {
                         
-                        NPC.defense = 150; //Speed things up a bit
+                        NPC.defense = 140; //Speed things up a bit
                         baseCooldown = 180; //was 90
 
                         if ((customspawn2 < 1) && Main.rand.NextBool(1000))

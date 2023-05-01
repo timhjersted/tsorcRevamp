@@ -26,6 +26,7 @@ namespace tsorcRevamp.Buffs.Summon
 				|| player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.FriendlySpazmatism>()] > 0
 				|| player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.FriendlyCataluminance>()] > 0)
 			{
+				player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.TripleThreat);
 				player.buffTime[buffIndex] = 18000;
 			}
 			else

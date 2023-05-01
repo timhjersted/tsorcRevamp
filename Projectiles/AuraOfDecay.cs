@@ -28,15 +28,17 @@ namespace tsorcRevamp.Projectiles
             Projectile.penetrate = -1;
             Projectile.hostile = false;
             Projectile.hide = true;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = NPC.immuneTime;
 
             trailWidth = 45;
             trailPointLimit = 2000;
             trailMaxLength = 9999999;
-            collisionPadding = 50;
             NPCSource = true;
             trailCollision = true;
-            collisionFrequency = 5;
             noFadeOut = true;
+            collisionFrequency = 2;
+            trailWidth = 25;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
@@ -100,9 +102,7 @@ namespace tsorcRevamp.Projectiles
         float timeFactor = 0;
         public override void SetEffectParameters(Effect effect)
         {
-            collisionFrequency = 2;
             visualizeTrail = false;
-            trailWidth = 25;
 
             timeFactor++;
 

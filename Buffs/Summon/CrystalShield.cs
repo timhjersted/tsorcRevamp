@@ -27,7 +27,7 @@ namespace tsorcRevamp.Buffs.Summon
         }
         public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
-            tip = $"Defense increased by {defense}, damage dealt increased by {damage}";
+            tip = $"Defense increased by {defense}, damage dealt increased by {damage}%";
         }
     }
 }
