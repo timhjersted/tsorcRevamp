@@ -8,8 +8,6 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A powerful crystal, once charged with illuminant hallowed light\n" +
-                "Perhaps it can be repaired?");
         }
 
         public override void SetDefaults()
@@ -24,8 +22,6 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A nozzle once used to expel searing jets of cursed fire\n" +
-                "Perhaps it can be repaired?");
         }
 
         public override void SetDefaults()
@@ -40,8 +36,6 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A laser that once fired cataclysmic torrents of energy\n" +
-                "Perhaps it can be repaired?");
         }
 
         public override void SetDefaults()
@@ -56,8 +50,6 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A broken remote, humming with a strange \n" +
-                "Perhaps it can be repaired?");
         }
 
         public override void SetDefaults()

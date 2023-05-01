@@ -5979,6 +5979,38 @@ Mods: {
 				DisplayName: Damage Debug Tome
 				Tooltip: Enables/disables damage spread
 			}
+
+			DamagedCrystal: {
+				DisplayName: Damaged Crystal
+				Tooltip:	'''
+							A powerful crystal, once charged with illuminant hallowed light
+							Perhaps it can be repaired?
+							'''
+			}
+
+			DamagedFlameNozzle: {
+				DisplayName: Damaged Flame Nozzle
+				Tooltip:	'''
+							A nozzle once used to expel searing jets of cursed fire
+							Perhaps it can be repaired?
+							'''
+			}
+
+			DamagedLaser: {
+				DisplayName: Damaged Laser
+				Tooltip:	'''
+							A laser that once fired cataclysmic torrents of energy
+							Perhaps it can be repaired?
+							'''
+			}
+
+			DamagedRemote: {
+				DisplayName: Damaged Remote
+				Tooltip:	'''
+							A broken remote, humming with a strange sound
+							Perhaps it can be repaired?
+							'''
+			}
 		}
 
 		Buffs: {
@@ -6645,6 +6677,11 @@ Mods: {
 				DisplayName: Sickle Slashes
 				Description: Mods.tsorcRevamp.Buffs.SickleSlashes.Description
 			}
+
+			DetonationSignalBuff: {
+				DisplayName: Detonation Signal Buff
+				Description: Mods.tsorcRevamp.Buffs.DetonationSignalBuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -7114,13 +7151,13 @@ Mods: {
 			SuperBlasterShot.DisplayName: Super Blaster Shot
 			DrakarthusDagger.DisplayName: Drakarthus Dagger
 			DrakarthusDagger2.DisplayName: Drakarthus Dagger2
-			NightbringerThrust.DisplayName: Nightbringer Thrust
-			NightbringerTornado.DisplayName: Nightbringer Tornado
-			NightbringerWindWall.DisplayName: Nightbringer Firewall
-			PlasmaWhirlwindThrust.DisplayName: Plasma Whirlwind Thrust
-			PlasmaWhirlwindTornado.DisplayName: Plasma Whirlwind Tornado
-			SteelTempestThrust.DisplayName: Steel Tempest Thrust
-			SteelTempestTornado.DisplayName: Steel Tempest Tornado
+			NightbringerThrust.DisplayName: Nightbringer
+			NightbringerTornado.DisplayName: Nightbringer
+			NightbringerWindWall.DisplayName: Nightbringer
+			PlasmaWhirlwindThrust.DisplayName: Plasma Whirlwind
+			PlasmaWhirlwindTornado.DisplayName: Plasma Whirlwind
+			SteelTempestThrust.DisplayName: Steel Tempest
+			SteelTempestTornado.DisplayName: Steel Tempest
 			ThrowingAxe.DisplayName: Throwing Axe
 			ThrowingKnifeHostile.DisplayName: Throwing Knife Hostile
 			ThrowingSpear.DisplayName: Throwing Spear
@@ -7138,6 +7175,9 @@ Mods: {
 			VirulentCatShot.DisplayName: Virulent Cat Shot
 			WhiteLotusCore.DisplayName: White Lotus Core
 			WhiteLotusPetal.DisplayName: White Lotus Petal
+			FriendlyCatLightOfDawn.DisplayName: Light Of Dawn
+			SRBlackFire.DisplayName: Black Fire
+			FriendlyRetLaser.DisplayName: Laser
 		}
 
 		NPCs: {

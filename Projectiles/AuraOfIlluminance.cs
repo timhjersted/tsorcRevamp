@@ -103,7 +103,7 @@ namespace tsorcRevamp.Projectiles
                         damage *= damage;
                         if (damage > 0)
                         {
-                            Main.npc[i].StrikeNPC((int)(damage * 2000), 0, 0);
+                            //Main.npc[i].StrikeNPC((int)(damage * 2000), 0, 0);
                         }
                     }
                 }
