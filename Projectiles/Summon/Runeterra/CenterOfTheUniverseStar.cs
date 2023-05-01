@@ -115,6 +115,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         }
         public override void AI()
         {
+            base.AI();
             Player owner = Main.player[Projectile.owner];
 
             Vector2 visualplayercenter = owner.Center + new Vector2(-27, -12);

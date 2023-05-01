@@ -5982,34 +5982,38 @@ Mods: {
 
 			DamagedCrystal: {
 				DisplayName: Damaged Crystal
-				Tooltip:	'''
-							A powerful crystal, once charged with illuminant hallowed light
-							Perhaps it can be repaired?
-							'''
+				Tooltip:
+					'''
+					A powerful crystal, once charged with illuminant hallowed light
+					Perhaps it can be repaired?
+					'''
 			}
 
 			DamagedFlameNozzle: {
 				DisplayName: Damaged Flame Nozzle
-				Tooltip:	'''
-							A nozzle once used to expel searing jets of cursed fire
-							Perhaps it can be repaired?
-							'''
+				Tooltip:
+					'''
+					A nozzle once used to expel searing jets of cursed fire
+					Perhaps it can be repaired?
+					'''
 			}
 
 			DamagedLaser: {
 				DisplayName: Damaged Laser
-				Tooltip:	'''
-							A laser that once fired cataclysmic torrents of energy
-							Perhaps it can be repaired?
-							'''
+				Tooltip:
+					'''
+					A laser that once fired cataclysmic torrents of energy
+					Perhaps it can be repaired?
+					'''
 			}
 
 			DamagedRemote: {
 				DisplayName: Damaged Remote
-				Tooltip:	'''
-							A broken remote, humming with a strange sound
-							Perhaps it can be repaired?
-							'''
+				Tooltip:
+					'''
+					A broken remote, humming with a strange sound
+					Perhaps it can be repaired?
+					'''
 			}
 		}
 

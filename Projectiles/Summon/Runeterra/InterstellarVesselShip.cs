@@ -83,6 +83,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 		public override void AI()
 		{
+			base.AI();
 			if (angularSpeed2 > 0.03f)
 			{
 				trailIntensity = 2;
