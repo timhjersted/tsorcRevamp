@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A broken remote, humming with a strange \n" +
+            Tooltip.SetDefault("A broken remote, humming with a strange frequency\n" +
                 "Perhaps it can be repaired?");
         }
 
