@@ -14,7 +14,6 @@ namespace tsorcRevamp.Projectiles
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            // DisplayName.SetDefault("Illuminant Trail");
         }
         public override void SetDefaults()
         {
@@ -93,17 +92,27 @@ namespace tsorcRevamp.Projectiles
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62 with { Volume = 2f }, averageCenter);
                 }
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), averageCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 10, 0, Main.myPlayer, 0);
-                for(int i = 0; i < Main.maxNPCs; i++)
+
+                if (Projectile.owner == Main.myPlayer)
                 {
-                    NPC thisNPC = Main.npc[i];
-                    if(thisNPC.active && !thisNPC.friendly && thisNPC.Distance(averageCenter) < 1000 && thisNPC.damage > 0 && !thisNPC.dontTakeDamage)
+                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), averageCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 10, 0, Main.myPlayer, 0);
+
+
+                    for (int i = 0; i < Main.maxNPCs; i++)
                     {
-                        float damage = 1 - (thisNPC.Distance(averageCenter) / 1000f);
-                        damage *= damage;
-                        if (damage > 0)
+                        NPC thisNPC = Main.npc[i];
+                        if (thisNPC.active && !thisNPC.friendly && thisNPC.Distance(averageCenter) < 1000 && thisNPC.damage > 0 && !thisNPC.dontTakeDamage)
                         {
-                            //Main.npc[i].StrikeNPC((int)(damage * 2000), 0, 0);
+                            float damage = 1 - (thisNPC.Distance(averageCenter) / 1000f);
+                            damage *= damage;
+                            if (damage > 0)
+                            {
+                                if (Main.netMode == NetmodeID.MultiplayerClient)
+                                {
+                                    NetMessage.SendData(MessageID.DamageNPC, number: i, number2: (int)(damage * 2000));
+                                }
+                                Main.npc[i].StrikeNPC((int)(damage * 2000), 0, 0);
+                            }
                         }
                     }
                 }

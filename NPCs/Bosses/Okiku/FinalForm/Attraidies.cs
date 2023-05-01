@@ -1058,7 +1058,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         int animationState;
         public override void FindFrame(int frameHeight)
         {
-            if(texture == null || texture.IsDisposed)
+            if(Main.netMode == NetmodeID.Server || texture == null || texture.IsDisposed)
             {
                 return;
             }
