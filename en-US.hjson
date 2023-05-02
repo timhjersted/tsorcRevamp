@@ -6011,7 +6011,7 @@ Mods: {
 				DisplayName: Damaged Remote
 				Tooltip:
 					'''
-					A broken remote, humming with a strange sound
+					A broken remote, humming with a strange frequency
 					Perhaps it can be repaired?
 					'''
 			}

@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-    [Autoload(false)]
+    [Autoload(true)]
     public class SpiritBell : ModItem
 	{
 		public override void SetStaticDefaults()

@@ -111,7 +111,7 @@ namespace tsorcRevamp.Projectiles
                                 {
                                     NetMessage.SendData(MessageID.DamageNPC, number: i, number2: (int)(damage * 2000));
                                 }
-                                Main.npc[i].StrikeNPC((int)(damage * 2000), 0, 0);
+                                //Main.npc[i].StrikeNPC((int)(damage * 2000), 0, 0);
                             }
                         }
                     }
