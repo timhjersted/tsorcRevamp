@@ -6,14 +6,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-    [Autoload(false)]
     public class PeculiarSphere : ModItem 
     {
         public override void SetStaticDefaults() 
         {
-            // DisplayName.SetDefault("Peculiar Sphere");
-            // Tooltip.SetDefault("Summons a friendly Owl Archer to fight for you.");
-
             ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
@@ -21,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         }
         public override void SetDefaults() 
         {
-            Item.damage = 115;
+            Item.damage = 80;
             Item.knockBack = 1f;
             Item.width = 44;
             Item.height = 50;
@@ -41,14 +37,16 @@ namespace tsorcRevamp.Items.Weapons.Summon
             player.AddBuff(Item.buffType, 2);
             int p = Projectile.NewProjectile(source, position, speed, type, damage, knockBack);
             Main.projectile[p].originalDamage = Item.damage;
-            return true;
+            return false;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.HallowedBar, 6);
-            recipe.AddIngredient(ItemID.SoulofSight, 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
+            recipe.AddIngredient(ItemID.PygmyStaff);
+            recipe.AddIngredient(ItemID.LightShard);
+            recipe.AddIngredient(ItemID.SoulofMight);
+            recipe.AddIngredient(ItemID.SoulofSight);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

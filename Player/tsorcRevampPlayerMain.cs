@@ -756,48 +756,6 @@ namespace tsorcRevamp
             {
                 modifiers.TargetDamageMultiplier *= 1.05f;
             }
-
-
-            if (proj.type == ProjectileID.BlandWhip)
-            {
-                modifiers.SourceDamage *= 2;
-            }
-            if (proj.type == ProjectileID.ThornWhip)
-            {
-                modifiers.SourceDamage *= 1.667f;
-            }
-            if (proj.type == ProjectileID.BoneWhip)
-            {
-                modifiers.SourceDamage *= 1.112f;
-            }
-            if (proj.type == ProjectileID.FireWhip)
-            {
-                modifiers.SourceDamage *= 1.516f;
-            }
-            if (proj.type == ProjectileID.CoolWhip)
-            {
-                modifiers.SourceDamage *= 1.429f;
-            }
-            if (proj.type == ProjectileID.SwordWhip)
-            {
-                modifiers.SourceDamage *= 1.25f;
-            }
-            if (proj.type == ProjectileID.MaceWhip)
-            {
-                modifiers.SourceDamage *= 1.053f;
-            }
-            if (proj.type == ProjectileID.ScytheWhip)
-            {
-                modifiers.SourceDamage *= 1.112f;
-            }
-            if (proj.type == ProjectileID.RainbowWhip)
-            {
-                modifiers.SourceDamage *= 1.112f;
-            }
-            if (proj.type == ProjectileID.Bullet)
-            {
-                Player.HeldItem.damage = 93;
-            }
         }
 
         public override void ModifyHitByNPC(NPC npc, ref Player.HurtModifiers modifiers)

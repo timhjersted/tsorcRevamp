@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.VanillaItems
             //Lunar items
             if (item.type == ItemID.StardustDragonStaff) //holy the scaling on this weapon is insane, it needs a nerf
             {
-                item.damage = 45;
+                item.damage = 35;
             }
         }
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)

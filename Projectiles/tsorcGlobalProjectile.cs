@@ -99,24 +99,6 @@ namespace tsorcRevamp.Projectiles
                 player.manaRegenDelay = ManaDelay;
             }
         }
-        /*public override void ModifyDamageScaling(Projectile projectile, ref float damageScale)
-        {
-            if (tsorcRevampWorld.NewSlain != null)
-            {
-                if (projectile.type == ProjectileID.EmpressBlade & !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())))
-                {
-                    damageScale *= 0.75f;
-                }
-                else if (projectile.type == ProjectileID.EmpressBlade & !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())))
-                {
-                    damageScale *= 0.88f;
-                }
-            }
-            if (projectile.type == ProjectileID.StardustDragon1 | projectile.type == ProjectileID.StardustDragon2 | projectile.type == ProjectileID.StardustDragon3 | projectile.type == ProjectileID.StardustDragon4)
-            {
-                damageScale *= 0.9f;
-            }
-        }*/
         public override bool PreAI(Projectile projectile)
         {
             if (projectile.owner < Main.maxPlayers && Main.player[projectile.owner].active)
@@ -337,6 +319,53 @@ namespace tsorcRevamp.Projectiles
         public override void ModifyHitNPC(Projectile projectile, NPC target, ref NPC.HitModifiers modifiers)
         {
             Player player = Main.player[projectile.owner];
+            if (tsorcRevampWorld.NewSlain != null)
+            {
+                if (projectile.type == ProjectileID.EmpressBlade & !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())))
+                {
+                    modifiers.FinalDamage *= 0.76f;
+                }
+                else if (projectile.type == ProjectileID.EmpressBlade & !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())))
+                {
+                    modifiers.FinalDamage *= 0.89f;
+                }
+            }
+            if (projectile.type == ProjectileID.BlandWhip)
+            {
+                modifiers.SourceDamage *= 2;
+            }
+            if (projectile.type == ProjectileID.ThornWhip)
+            {
+                modifiers.SourceDamage *= 1.667f;
+            }
+            if (projectile.type == ProjectileID.BoneWhip)
+            {
+                modifiers.SourceDamage *= 1.112f;
+            }
+            if (projectile.type == ProjectileID.FireWhip)
+            {
+                modifiers.SourceDamage *= 1.516f;
+            }
+            if (projectile.type == ProjectileID.CoolWhip)
+            {
+                modifiers.SourceDamage *= 1.429f;
+            }
+            if (projectile.type == ProjectileID.SwordWhip)
+            {
+                modifiers.SourceDamage *= 1.25f;
+            }
+            if (projectile.type == ProjectileID.MaceWhip)
+            {
+                modifiers.SourceDamage *= 1.053f;
+            }
+            if (projectile.type == ProjectileID.ScytheWhip)
+            {
+                modifiers.SourceDamage *= 1.112f;
+            }
+            if (projectile.type == ProjectileID.RainbowWhip)
+            {
+                modifiers.SourceDamage *= 1.112f;
+            }
             #region Vanilla Whip crits
 
             Vector2 LeatherTip = new Vector2(10, 18) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;

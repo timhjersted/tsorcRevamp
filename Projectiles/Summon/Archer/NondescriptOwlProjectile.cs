@@ -7,7 +7,6 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Summon.Archer {
     public class NondescriptOwlProjectile : ModProjectile {
         public override void SetStaticDefaults() {
-            // DisplayName.SetDefault("Owl Archer");
             Main.projFrames[Projectile.type] = 33;
             Main.projPet[Projectile.type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
@@ -22,14 +21,24 @@ namespace tsorcRevamp.Projectiles.Summon.Archer {
             Projectile.tileCollide = false;
             //Projectile.minion = true;
             Projectile.ContinuouslyUpdateDamage = true;
-            Projectile.minionSlots = 0;
+            Projectile.minionSlots = 0f;
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.Summon;
             DrawOffsetX = -22;
             DrawOriginOffsetY = -41;
         }
 
-        const float SCALING_PER_SLOT = 0.55f;
+        public override bool MinionContactDamage()
+        {
+            return false;
+        }
+
+        public override bool? CanCutTiles()
+        {
+            return false;
+        }
+
+        public float SCALING_PER_SLOT = 1.2f;
         public override void AI() {
             Player player = Main.player[Projectile.owner];
             if (player.dead || !player.active) {
@@ -50,10 +59,12 @@ namespace tsorcRevamp.Projectiles.Summon.Archer {
 
             Lighting.AddLight(Projectile.Center, 0.25f, 0.25f, 0.25f);
             AI_026();
-            Main.NewText("State: " + animationState);
-            Main.NewText("Direction: " + Projectile.direction);
             Projectile.spriteDirection = Projectile.direction;
 
+            if (tokenCount <= 0)
+            {
+                Projectile.Kill();
+            }
         }
         private float AI_State {
             get => Projectile.ai[0];
@@ -102,7 +113,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer {
         bool shouldFaceRight = false;
         private void AI_026() {
             Player player = Main.player[Projectile.owner];
-            if (!Main.player[Projectile.owner].active) {
+            if (!player.active) {
                 Projectile.active = false;
                 return;
             }
@@ -123,8 +134,8 @@ namespace tsorcRevamp.Projectiles.Summon.Archer {
                 } 
             }
             if (player.velocity.X == 0) {
-                shouldFaceLeft = false;
-                shouldFaceRight = false;
+                //shouldFaceLeft = false;
+                //shouldFaceRight = false;
             }
             bool attackReady = AI_Timer == 0f;
 
@@ -233,11 +244,11 @@ namespace tsorcRevamp.Projectiles.Summon.Archer {
                             AI_InCombatTimer = minCombatTime;
                             float toTargetDist = currentClosestNPC_X - (Projectile.position.X + Projectile.width / 2);
                             if (toTargetDist > attackRange || toTargetDist < -attackRange) {
-                                if (toTargetDist < -50f) {
+                                if (toTargetDist < -25f) {
                                     shouldFaceLeft = true;
                                     shouldFaceRight = false;
                                 }
-                                else if (toTargetDist > 50f) {
+                                else if (toTargetDist > 25f) {
                                     shouldFaceRight = true;
                                     shouldFaceLeft = false;
                                 }
