@@ -9,12 +9,12 @@ namespace tsorcRevamp.Buffs
 
         public override void Update(int type, Player player, ref int buffIndex)
         {
-            if (type == BuffID.ManaSickness) //-5% damage per second of mana sickness multiplicatively
+            if (type == BuffID.ManaSickness)
             {
-                player.GetDamage(DamageClass.Melee) *= (1f) - (0.05f * ((float)player.buffTime[buffIndex] / 60f));
-                player.GetDamage(DamageClass.Ranged) *= (1f) - (0.05f * ((float)player.buffTime[buffIndex] / 60f));
-                player.GetDamage(DamageClass.Summon) *= (1f) - (0.05f * ((float)player.buffTime[buffIndex] / 60f));
-                player.GetDamage(DamageClass.Throwing) *= (1f) - (0.05f * ((float)player.buffTime[buffIndex] / 60f));
+                player.GetDamage(DamageClass.Melee) *= 1f - player.manaSickReduction;
+                player.GetDamage(DamageClass.Ranged) *= 1f - player.manaSickReduction;
+                player.GetDamage(DamageClass.Summon) *= 1f - player.manaSickReduction;
+                player.GetDamage(DamageClass.Throwing) *= 1f - player.manaSickReduction;
             }
             if (type == BuffID.SolarShield1)
             {

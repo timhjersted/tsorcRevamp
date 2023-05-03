@@ -4626,8 +4626,7 @@ Mods: {
 					'''
 					[c/ffbf00:A green ooze dribbles from the tooth, which deals]
 					[c/ffbf00:triple damage to enemies of a similar nature, potentially more.]
-					Has a chance to heal the player on hit.
-					Heal chance is doubled on non-corrupted enemies.
+					Will heal the player on-hit for a fraction of the damage dealt.
 					'''
 			}
 

@@ -8,10 +8,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("[c/ffbf00:A green ooze dribbles from the tooth, which deals]" +
-                                "\n[c/ffbf00:triple damage to enemies of a similar nature, potentially more.]" +
-                                "\nHas a chance to heal the player on hit." +
-                                "\nHeal chance is doubled on non-corrupted enemies."); */
         }
         public override void SetDefaults()
         {
@@ -40,43 +36,39 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 || target.type == ModContent.NPCType<NPCs.Enemies.BasiliskShifter>()
                 )
             {
-                modifiers.FinalDamage *= 3;
-                if (Main.rand.NextBool(20))
-                {
-                    player.statLife += modifiers.GetDamage(Item.damage, true);
-                    player.HealEffect(modifiers.GetDamage(Item.damage, true));
-                }
+                modifiers.SourceDamage *= 3;
+                player.statLife += modifiers.GetDamage(Item.damage / 15, true);
+                player.HealEffect(modifiers.GetDamage(Item.damage / 15, true));
             }
             else
             {
-                if (Main.rand.NextBool(10))
-                {
-                    player.statLife += modifiers.GetDamage(Item.damage, true);
-                    player.HealEffect(modifiers.GetDamage(Item.damage, true));
-                }
+                player.statLife += modifiers.GetDamage(Item.damage / 10, true);
+                player.HealEffect(modifiers.GetDamage(Item.damage / 10, true));
             }
-            if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.GuardianCorruptor>())     
+            if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.GuardianCorruptor>())
             {
                 //please *DO* use this on a guardian corruptor!
+                modifiers.DamageVariationScale *= 0;
+                modifiers.Defense *= 0;
+                modifiers.SourceDamage *= 0;
+                modifiers.FlatBonusDamage += 500000000f;
                 modifiers.SetCrit(); //let it crit!
-                modifiers.FlatBonusDamage += 100074;//reduced to 99999 after defense
             }
             if (target.type == ModContent.NPCType<NPCs.Enemies.BasiliskWalker>())
             {
-                modifiers.FinalDamage *= 2;
+                modifiers.SourceDamage *= 2;
             }
             if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.BasiliskHunter>())
             {
-                modifiers.FinalDamage *= 11;
+                modifiers.SourceDamage *= 11;
             }
-
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverBroadsword);
-            recipe.AddIngredient(ItemID.RottenChunk, 1);
+            recipe.AddIngredient(ItemID.RottenChunk, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
 

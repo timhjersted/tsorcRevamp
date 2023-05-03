@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -61,6 +62,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void HitEffect(NPC.HitInfo hit)
         {
+            if (hit.Damage >= 1000000)
+            {
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * 10, Mod.Find<ModGore>("Guardian Corruptor Gore 1").Type, 0.9f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * 10, Mod.Find<ModGore>("Guardian Corruptor Gore 2").Type, 0.9f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * 10, Mod.Find<ModGore>("Guardian Corruptor Gore 3").Type, 0.9f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * 10, Mod.Find<ModGore>("Guardian Corruptor Gore 4").Type, 0.9f);
+                for (int i = 0; i < 10; i++)
+                {
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * 10, Mod.Find<ModGore>("Blood Splat").Type, 3f);
+                }
+            }
             if (NPC.life <= 0)
             {
                 if (!Main.dedServ)
@@ -104,8 +116,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }*/
         public override void AI()
         {
-
-
+            if (Main.player[Main.myPlayer].HeldItem.type == ModContent.ItemType<CorruptedTooth>())
+            {
+                Dust.NewDust(NPC.Center, 10, 10, DustID.WaterCandle, 2, 2, Scale: 2);
+            }
 
             if (NPC.target < 0 || NPC.target == 255 || Main.player[NPC.target].dead)
             {
