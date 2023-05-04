@@ -330,42 +330,6 @@ namespace tsorcRevamp.Projectiles
                     modifiers.FinalDamage *= 0.89f;
                 }
             }
-            if (projectile.type == ProjectileID.BlandWhip)
-            {
-                modifiers.SourceDamage *= 2;
-            }
-            if (projectile.type == ProjectileID.ThornWhip)
-            {
-                modifiers.SourceDamage *= 1.667f;
-            }
-            if (projectile.type == ProjectileID.BoneWhip)
-            {
-                modifiers.SourceDamage *= 1.112f;
-            }
-            if (projectile.type == ProjectileID.FireWhip)
-            {
-                modifiers.SourceDamage *= 1.516f;
-            }
-            if (projectile.type == ProjectileID.CoolWhip)
-            {
-                modifiers.SourceDamage *= 1.429f;
-            }
-            if (projectile.type == ProjectileID.SwordWhip)
-            {
-                modifiers.SourceDamage *= 1.25f;
-            }
-            if (projectile.type == ProjectileID.MaceWhip)
-            {
-                modifiers.SourceDamage *= 1.053f;
-            }
-            if (projectile.type == ProjectileID.ScytheWhip)
-            {
-                modifiers.SourceDamage *= 1.112f;
-            }
-            if (projectile.type == ProjectileID.RainbowWhip)
-            {
-                modifiers.SourceDamage *= 1.112f;
-            }
             #region Vanilla Whip crits
 
             Vector2 LeatherTip = new Vector2(10, 18) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
