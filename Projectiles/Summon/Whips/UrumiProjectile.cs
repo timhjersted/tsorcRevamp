@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
-	public class EnchantedWhipProjectile : ModProjectile
+	public class UrumiProjectile : ModProjectile
 	{
 		public override void SetStaticDefaults()
 		{
@@ -29,8 +29,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.extraUpdates = 1;
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = -1;
-			Projectile.WhipSettings.Segments = 16;
-			Projectile.WhipSettings.RangeMultiplier = 0.8f; //only thing affecting the actual whip range
+			Projectile.WhipSettings.Segments = 10;
+			Projectile.WhipSettings.RangeMultiplier = 1.275f; //only thing affecting the actual whip range
 		}
 
 		private float Timer
@@ -76,7 +76,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			// Plays a whipcrack sound at the tip of the whip.
 			List<Vector2> points = Projectile.WhipPointsForCollision;
 			Projectile.FillWhipControlPoints(Projectile, points);
-			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 5, 5, 15, 0f, 0f, 150, default(Color), 1f);
+			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.CorruptionThorns, 0f, 0f, 150, default(Color), 1f);
+			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.CrimsonPlants, 0f, 0f, 150, default(Color), 1.3f);
 			if (Timer == swingTime / 2)
 			{
 				SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Item/SummonerWhipcrack") with { Volume = 0.6f, PitchVariance = 0.3f }, points[points.Count - 1]);
@@ -110,26 +111,28 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			return false; // still charging
 		}
 
+
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Player player = Main.player[Main.myPlayer];
-            Vector2 WhipTip = new Vector2(24, 34) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
+			modifiers.ArmorPenetration += 10;
+            Vector2 WhipTip = new Vector2(16, 20) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
             List<Vector2> points = Projectile.WhipPointsForCollision;
             if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
             {
-                modifiers.SetCrit();
+				modifiers.SetCrit();
             }
         }
-
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.EnchantedWhipDebuff>(), 4 * 60);
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.UrumiDebuff>(), 4 * 60);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
-			Projectile.damage = (int)(damageDone * 0.55f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
+			Projectile.damage = (int)(Projectile.damage * 0.6f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
 		}
 
-		// This method draws a line between all points of the whip, in case there's empty space between the sprites.
-		private void DrawLine(List<Vector2> list)
+
+        // This method draws a line between all points of the whip, in case there's empty space between the sprites.
+        private void DrawLine(List<Vector2> list)
 		{
 			Texture2D texture = TextureAssets.FishingLine.Value;
 			Rectangle frame = texture.Frame();
@@ -142,7 +145,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 				Vector2 diff = list[i + 1] - element;
 
 				float rotation = diff.ToRotation() - MathHelper.PiOver2;
-				Color color = Lighting.GetColor(element.ToTileCoordinates(), Color.DeepSkyBlue);
+				Color color = Lighting.GetColor(element.ToTileCoordinates(), Color.DarkSlateGray);
 				Vector2 scale = new Vector2(1, (diff.Length() + 2) / frame.Height);
 
 				Main.EntitySpriteDraw(texture, pos - Main.screenPosition, frame, color, rotation, origin, scale, SpriteEffects.None, 0);
@@ -174,106 +177,26 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			{
 				// These two values are set to suit this projectile's sprite, but won't necessarily work for your own.
 				// You can change them if they don't!
-				Rectangle frame = new Rectangle(0, 0, 34, 24);
-				Vector2 origin = new Vector2(16, 7);
+				Rectangle frame = new Rectangle(0, 0, 22, 12);
+				Vector2 origin = new Vector2(10, 6);
 				float scale = 1;
 
 				// These statements determine what part of the spritesheet to draw for the current segment.
 				// They can also be changed to suit your sprite.
 				if (i == list.Count - 2)
 				{
-					frame.Y = 96;
-					frame.Height = 24;
+					frame.Y = 12;
+					frame.Height = 34;
 
 					// For a more impactful look, this scales the tip of the whip up when fully extended, and down when curled up.
 					Projectile.GetWhipSettings(Projectile, out float timeToFlyOut, out int _, out float _);
 					float t = Timer / timeToFlyOut;
 					scale = MathHelper.Lerp(0.5f, 1.5f, Utils.GetLerpValue(0.1f, 0.7f, t, true) * Utils.GetLerpValue(0.9f, 0.7f, t, true));
 				}
-				else if (i == 16)
+				else if (i > 0)
 				{
-					frame.Y = 84;
+					frame.Y = 0;
 					frame.Height = 12;
-				}
-				else if (i == 15)
-				{
-					frame.Y = 78;
-					frame.Height = 6;
-				}
-				else if (i == 14) //loops below
-				{
-					frame.Y = 60;
-					frame.Height = 18;
-				}
-				else if (i == 13)
-				{
-					frame.Y = 42;
-					frame.Height = 18;
-				}
-				else if (i == 12)
-				{
-					frame.Y = 60;
-					frame.Height = 18;
-				}
-				else if (i == 11)
-				{
-					frame.Y = 42;
-					frame.Height = 18;
-				}
-				else if (i == 10)
-				{
-					frame.Y = 60;
-					frame.Height = 18;
-				}
-				else if (i == 9)
-				{
-					frame.Y = 42;
-					frame.Height = 18;
-				}
-				else if (i == 8)
-				{
-					frame.Y = 60;
-					frame.Height = 18;
-				}
-				else if (i == 7)
-				{
-					frame.Y = 42;
-					frame.Height = 18;
-				}
-				else if (i == 6)
-				{
-					frame.Y = 60;
-					frame.Height = 18;
-				}
-				else if (i == 5)
-				{
-					frame.Y = 42;
-					frame.Height = 18;
-				}
-				else if (i == 4)
-				{
-					frame.Y = 60;
-					frame.Height = 18;
-				}
-				else if (i == 3)
-				{
-					frame.Y = 42;
-					frame.Height = 18;
-				}
-				else if (i == 2)
-				{
-					frame.Y = 60;
-					frame.Height = 18;
-				}
-				else if (i == 1)
-				{
-					frame.Y = 42;
-					frame.Height = 18;
-				} //end of loop
-				else if (i == 0)
-				{
-					frame.Y = 24;
-					frame.Height = 18;
 				}
 
 				Vector2 element = list[i];

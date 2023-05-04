@@ -19,7 +19,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 			npc.GetGlobalNPC<ScorchingDebuffNPC>().Scorched = true;
 			if (Main.GameUpdateCount % 5 == 0)
 			{
-				Dust.NewDust(npc.Top, 10, 10, DustID.GoldFlame);
+				Dust.NewDust(npc.Center, 10, 10, DustID.GoldFlame);
 			}
 		}
 	}
@@ -47,9 +47,9 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
         }
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
 		{
-			if (Scorched && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type] || ProjectileID.Sets.IsAWhip[projectile.type]))
+			if (Scorched && !projectile.npcProj && !projectile.trap && projectile.IsMinionOrSentryRelated)
 			{
-				if (Main.rand.NextBool(100 / (int)MathF.Round(Main.player[Main.myPlayer].GetTotalCritChance(DamageClass.Generic) / 5f)))
+				if (Main.rand.NextBool(100 / (int)(Main.player[Main.myPlayer].GetTotalCritChance(DamageClass.Summon) / 2f)))
 				{
 					modifiers.SetCrit();
 				}

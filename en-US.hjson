@@ -2923,9 +2923,7 @@ Mods: {
 					Playing as the [c/6d8827:Bearer of the Curse] has the following effects:
 					You deal +10% damage(multiplicative), receive +20% more souls and your stamina recovers much faster
 					However, [c/dd3333:using weapons drains stamina], life regen is halved while stamina isn't at it's maximum,
-					summon base damage is reduced by 100%(damage increases work as normal),
-					minion's final damage is also reduced by 80%, this reduction is lowered by 20% for each whip debuff active on the enemy,
-					but gain 1 flat summon damage whilst holding a summon/whip damage weapon,
+					minion's final damage is reduced by 90%, this reduction is lowered by 20% for each whip debuff active on the enemy,
 					and dying reduces your max HP by 20% until you return to where you died.
 					Greater Magic Mirror use is prohibited, and instant-heal items won't heal you
 					[c/ca1e00:This mode is intended for players experienced with the mod]
@@ -5923,7 +5921,7 @@ Mods: {
 				Tooltip:
 					'''
 					Summons fireballs to rotate around you and damage enemies in their way
-					Uses half a minion slot
+					Uses half a minion slot, grants a fiery aura if enough fireballs are summoned
 					While holding this item, increase their radius by holding Special Ability
 					Or hold Shift + Special Ability to shrink their radius
 					Applies the Scorching debuff, which grants minions crit chance based on a fraction of your critical strike chance
@@ -5956,9 +5954,8 @@ Mods: {
 					While holding this item, increase their radius by holding the Special Ability hotkey
 					Or hold Shift + Special Ability to shrink their radius
 					Press Special Ability while not holding the remote to activate Turboboost
-					This increases the stars damage and movement speed
-					Turboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness
-					Every 20 hits, rightclick with this item in hand to call in the Star Forger
+					This increases the stars damage and movement speed but drains your mana
+					Every 15 critical hits, rightclick with this item in hand to call in the Star Forger
 					The Star Forger will breathe cosmic dust at the mouse location
 					Applies the Sunburn debuff, which grants minions crit chance based on a fraction of your critical strike chance
 					'Leave them in awe at the sight of the Star Forger'
@@ -6013,6 +6010,16 @@ Mods: {
 					'''
 					A broken remote, humming with a strange frequency
 					Perhaps it can be repaired?
+					'''
+			}
+
+			Urumi: {
+				DisplayName: Urumi
+				Tooltip:
+					'''
+					5 summon tag armor penetration
+					Ignores a substantial amount of defense
+					Your summons will focus struck enemies
 					'''
 			}
 		}
@@ -6686,6 +6693,11 @@ Mods: {
 				DisplayName: Detonation Signal Buff
 				Description: Mods.tsorcRevamp.Buffs.DetonationSignalBuff.Description
 			}
+
+			UrumiDebuff: {
+				DisplayName: Urumi Debuff
+				Description: Mods.tsorcRevamp.Buffs.UrumiDebuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -7182,6 +7194,8 @@ Mods: {
 			FriendlyCatLightOfDawn.DisplayName: Light Of Dawn
 			SRBlackFire.DisplayName: Black Fire
 			FriendlyRetLaser.DisplayName: Laser
+			UrumiProjectile.DisplayName: Urumi Projectile
+			ScorchingPointAura.DisplayName: Scorching Point Aura
 		}
 
 		NPCs: {

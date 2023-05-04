@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
 			Item.damage = 120;
-			Item.knockBack = 2;
+			Item.knockBack = 6;
 			Item.rare = ItemRarityID.Red;
 			Item.value = Item.buyPrice(2, 40, 0, 0);
 
@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.shootSpeed = 4;
 
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.useTime = 25; // for some reason a lower use speed gives it increased range....
+			Item.useTime = 25;
 			Item.useAnimation = 25;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.FireWhip);
 			recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>());
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 125000);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 135000);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();

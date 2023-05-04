@@ -14,13 +14,12 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 
 		public override void SetDefaults()
 		{
-
 			Item.height = 80;
 			Item.width = 90;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
 			Item.damage = 115;
-			Item.knockBack = 2;
+			Item.knockBack = 5;
 			Item.rare = ItemRarityID.Red;
 			Item.value = Item.buyPrice(3, 33, 33, 33);
 
@@ -30,11 +29,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.shootSpeed = 4;
 
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.useTime = 30; // for some reason a lower use speed gives it increased range....
+			Item.useTime = 30;
 			Item.useAnimation = 30;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
-
 		}
 		public override bool MeleePrefix()
 		{
@@ -42,13 +40,12 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		}
 		public override void AddRecipes()
 		{
-			
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<NightsCracker>());
 			recipe.AddIngredient(ItemID.SwordWhip);
 			recipe.AddIngredient(ItemID.RainbowWhip);
 			recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>());
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 115000);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();

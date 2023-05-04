@@ -38,6 +38,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             Projectile.minionSlots = 0.5f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
             Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
             Projectile.extraUpdates = 1;
+            Projectile.ContinuouslyUpdateDamage = true;
 
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 20;
@@ -183,11 +184,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             if (hit.Crit)
             {
                 Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().CritCounter += 1;
-                target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 80);
+                target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 2 * 60);
             }
             else
             {
-                target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 40);
+                target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 60);
             }
         }
         private void Visuals()

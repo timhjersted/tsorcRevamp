@@ -918,16 +918,6 @@ namespace tsorcRevamp
             {
                 Player.GetDamage(DamageClass.Generic) *= 1.1f;
 
-                Player.GetDamage(DamageClass.Summon) -= 1f;
-                Player.GetDamage(DamageClass.SummonMeleeSpeed) += 1f; //this sets whip damage to not be 1 because it also scales with minion damage
-                Player.GetDamage(DamageClass.MagicSummonHybrid) += 1f; //these weapons interfere with whip-stacking anyways
-
-                if (Player.HeldItem.DamageType == DamageClass.Summon | Player.HeldItem.DamageType == DamageClass.SummonMeleeSpeed)
-                {
-                    Player.GetDamage(DamageClass.Summon).Flat += 1f;
-                }
-
-
                 if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().minionStaminaCap)
                 {
                     Player.lifeRegen /= 2;

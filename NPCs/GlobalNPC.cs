@@ -610,26 +610,39 @@ namespace tsorcRevamp.NPCs
                 {
                     WhipDebuffCounter++;
                 }
+                if (npc.HasBuff(ModContent.BuffType<ScorchingDebuff>()))
+                {
+                    WhipDebuffCounter--;
+                }
+                if (npc.HasBuff(ModContent.BuffType<ShockedDebuff>()))
+                {
+                    WhipDebuffCounter--;
+                }
+                if (npc.HasBuff(ModContent.BuffType<SunburnDebuff>()))
+                {
+                    WhipDebuffCounter--;
+                }
                 if (WhipDebuffCounter == 0)
                 {
-                    modifiers.FinalDamage.Flat += 3;
-                    modifiers.FinalDamage *= 0.2f;
+                    modifiers.FinalDamage *= 0.1f;
                 } else
                 if (WhipDebuffCounter == 1)
                 {
-                    modifiers.FinalDamage.Flat += 2;
-                    modifiers.FinalDamage *= 0.4f;
+                    modifiers.FinalDamage *= 0.3f;
                 } else
                 if (WhipDebuffCounter == 2)
                 {
-                    modifiers.FinalDamage.Flat += 1;
-                    modifiers.FinalDamage *= 0.6f;
+                    modifiers.FinalDamage *= 0.5f;
                 } else
                 if (WhipDebuffCounter == 3)
                 {
-                    modifiers.FinalDamage *= 0.8f;
+                    modifiers.FinalDamage *= 0.7f;
                 } else
-                if (WhipDebuffCounter >= 4)
+                if (WhipDebuffCounter == 4)
+                {
+                    modifiers.FinalDamage *= 0.9f;
+                } else
+                if (WhipDebuffCounter >= 5)
                 {
                     modifiers.FinalDamage *= 1f;
                 }

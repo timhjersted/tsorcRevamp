@@ -14,7 +14,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 
 		public override void SetDefaults()
 		{
-
 			Item.height = 66;
 			Item.width = 60;
 
@@ -32,7 +31,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.useAnimation = 30;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
-
 		}
         public override bool MeleePrefix()
         {
@@ -40,7 +38,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         }
 		public override void AddRecipes()
 		{
-
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.DemoniteBar, 3);
 			recipe.AddIngredient(ItemID.ShadowScale, 3);

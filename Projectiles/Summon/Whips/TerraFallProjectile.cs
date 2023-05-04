@@ -126,6 +126,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         {
             Player player = Main.player[Main.myPlayer];
             modifiers.SourceDamage *= MathF.Max(ChargeTime / 35f, 1f);
+            modifiers.Knockback *= MathF.Max(ChargeTime / 35f, 1f);
             Vector2 WhipTip = new Vector2(11, 14) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
             List<Vector2> points = Projectile.WhipPointsForCollision;
             if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))

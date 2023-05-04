@@ -10,23 +10,16 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-            // DisplayName.SetDefault("Searing Lash");
-            /* Tooltip.SetDefault("This whip can be charged up for increased range, damage and tag duration" +
-                "\nEnemies struck by this whip will burn horribly" +
-                "\nand increase minion damage by 66% of this whips base damage in +%" +
-                "\nThis stacks on top of other whip tag damage" +
-                "\nYour minions will focus struck enemies"); */
 		}
 
 		public override void SetDefaults()
 		{
-
 			Item.height = 84;
 			Item.width = 88;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
 			Item.damage = 30;
-			Item.knockBack = 2;
+			Item.knockBack = 3;
 			Item.rare = ItemRarityID.Orange;
 			Item.value = Item.buyPrice(0, 8, 50, 0);
 
@@ -35,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.channel = true;
 
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.useTime = 30; // for some reason a lower use speed gives it increased range....
+			Item.useTime = 30;
 			Item.useAnimation = 30;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;

@@ -36,12 +36,13 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Projectile.minionSlots = 0.5f; 
 			Projectile.penetrate = -1;
 			Projectile.extraUpdates = 1;
+            Projectile.ContinuouslyUpdateDamage = true;
 
-			Projectile.usesIDStaticNPCImmunity = true;
-			Projectile.idStaticNPCHitCooldown = 20;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 20;
 
 
-			trailWidth = 45;
+            trailWidth = 45;
 			trailPointLimit = 900;
 			trailMaxLength = 333;
 			Projectile.hide = true;
@@ -224,11 +225,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         {
 			if (hit.Crit)
 			{
-				target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 80);
+				target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 2 * 60);
 			}
 			else
 			{
-				target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 40);
+				target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 60);
 			}
         }
 		private void Visuals()

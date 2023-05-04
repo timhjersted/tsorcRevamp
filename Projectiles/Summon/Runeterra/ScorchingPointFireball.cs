@@ -7,7 +7,6 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Projectiles.VFX;
-using tsorcRevamp.Buffs.Summon.WhipDebuffs;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
@@ -35,9 +34,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Projectile.minionSlots = 0.5f;
 			Projectile.penetrate = -1;
 			Projectile.extraUpdates = 1;
+			Projectile.ContinuouslyUpdateDamage = true;
 
-            Projectile.usesIDStaticNPCImmunity = true;
-            Projectile.idStaticNPCHitCooldown = 20;
+            Projectile.usesLocalNPCImmunity = true;
+			Projectile.localNPCHitCooldown = 20;
 
             trailWidth = 45;
 			trailPointLimit = 900;
@@ -72,6 +72,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Player owner = Main.player[Projectile.owner];
 			tsorcRevampPlayer modPlayer = owner.GetModPlayer<tsorcRevampPlayer>();
 
+			if (ScorchingPoint.processedProjectilesCount > 4 && owner.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointAura>()] == 0) 
+			{
+				Projectile.NewProjectile(Projectile.GetSource_FromThis(), owner.Center, Vector2.Zero, ModContent.ProjectileType<ScorchingPointAura>(), Projectile.damage, 0);
+			}
 
 			if (!CheckActive(owner))
 			{
@@ -192,11 +196,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		{
 			if (hit.Crit)
 			{
-                target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 80);
+                target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 2 * 60);
             }
 			else
 			{
-                target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 40);
+                target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 60);
             }
 		}
     }

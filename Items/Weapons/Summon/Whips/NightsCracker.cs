@@ -14,13 +14,12 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 
 		public override void SetDefaults()
 		{
-
 			Item.height = 39;
 			Item.width = 46;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
 			Item.damage = 42;
-			Item.knockBack = 2;
+			Item.knockBack = 2.5f;
 			Item.rare = ItemRarityID.Pink;
 			Item.value = Item.buyPrice(0, 30, 0, 0);
 
@@ -28,12 +27,11 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.shootSpeed = 4;
 
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.useTime = 30; // for some reason a lower use speed gives it increased range....
+			Item.useTime = 30;
 			Item.useAnimation = 30;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
 			Item.channel = true;
-
 		}
 		public override bool MeleePrefix()
 		{
@@ -41,7 +39,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		}
 		public override void AddRecipes()
 		{
-			
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<Dominatrix>());
 			recipe.AddIngredient(ItemID.ThornWhip);

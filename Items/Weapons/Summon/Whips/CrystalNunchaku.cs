@@ -14,21 +14,20 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 
 		public override void SetDefaults()
 		{
-
 			Item.height = 36;
 			Item.width = 32;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
 			Item.damage = 51;
-			Item.knockBack = 2;
-			Item.rare = ItemRarityID.LightRed;
-			Item.value = Item.buyPrice(0, 6, 0, 0);
+			Item.knockBack = 5f;
+			Item.rare = ItemRarityID.LightPurple;
+			Item.value = Item.buyPrice(0, 20, 0, 0);
 
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.CrystalNunchakuProjectile>();
 			Item.shootSpeed = 4;
 
 			Item.useStyle = ItemUseStyleID.Swing;
-			Item.useTime = 30; // for some reason a lower use speed gives it increased range....
+			Item.useTime = 30;
 			Item.useAnimation = 30;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
@@ -39,7 +38,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         }
 		public override void AddRecipes()
 		{
-
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.CrystalShard, 5);
 			recipe.AddIngredient(ItemID.SoulofLight, 4);

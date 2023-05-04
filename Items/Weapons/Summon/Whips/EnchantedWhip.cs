@@ -11,23 +11,16 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-            // DisplayName.SetDefault("Enchanted Whip");
-            /* Tooltip.SetDefault("4 summon tag damage" +
-                "\nStrike enemies with an enchantment" +
-                "\nEnchanted enemies will be showered by stars upon minion hits" +
-                "\nStar damage scales with half of this whips damage" +
-                "\nYour summons will focus struck enemies"); */
 		}
 
 		public override void SetDefaults()
 		{
-
 			Item.height = 60;
 			Item.width = 52;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
 			Item.damage = 18;
-			Item.knockBack = 2;
+			Item.knockBack = 1.5f;
 			Item.rare = ItemRarityID.Blue;
 			Item.value = Item.buyPrice(0, 3, 50, 0);
 
@@ -39,7 +32,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.useAnimation = 40;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
-
 		}
         public override bool MeleePrefix()
         {

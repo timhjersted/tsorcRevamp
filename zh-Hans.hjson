@@ -6015,6 +6015,16 @@ Mods: {
 					Perhaps it can be repaired?
 					'''
 			}
+
+			Urumi: {
+				// DisplayName: Urumi
+				/* Tooltip:
+					'''
+					5 summon tag armor penetration
+					Ignores a substantial amount of defense
+					Your summons will focus struck enemies
+					''' */
+			}
 		}
 
 		Buffs: {
@@ -6686,6 +6696,11 @@ Mods: {
 				DisplayName: Detonation Signal Buff
 				Description: Mods.tsorcRevamp.Buffs.DetonationSignalBuff.Description
 			}
+
+			UrumiDebuff: {
+				// DisplayName: Urumi Debuff
+				// Description: Mods.tsorcRevamp.Buffs.UrumiDebuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -7182,6 +7197,8 @@ Mods: {
 			FriendlyCatLightOfDawn.DisplayName: Light Of Dawn
 			SRBlackFire.DisplayName: Black Fire
 			FriendlyRetLaser.DisplayName: Laser
+			// UrumiProjectile.DisplayName: Urumi Projectile
+			// ScorchingPointAura.DisplayName: Scorching Point Aura
 		}
 
 		NPCs: {

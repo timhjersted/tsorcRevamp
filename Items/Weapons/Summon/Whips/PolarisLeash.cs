@@ -10,25 +10,16 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-            // DisplayName.SetDefault("Polaris Leash");
-            /* Tooltip.SetDefault("6 summon tag damage" +
-                "\nStriking enemies will create Polaris, which scales with 66% of this whips damage" +
-				"\nPolaris stays on your cursor and hits enemies with a frigid enchantment" +
-                "\nEnchanted Enemies will also be showered by polar stars when struck by minions" +
-                "\nThese scale with half of this whips damage" +
-				"\nYour summons will focus enemies struck by Polaris" +
-                "\nThis whip also inflicts Frostbite"); */
 		}
 
 		public override void SetDefaults()
 		{
-
 			Item.height = 42;
 			Item.width = 42;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
 			Item.damage = 66;
-			Item.knockBack = 2;
+			Item.knockBack = 3.5f;
 			Item.rare = ItemRarityID.LightPurple;
 			Item.value = Item.buyPrice(0, 45, 0, 0);
 
@@ -40,7 +31,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.useAnimation = 50;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
-
 		}
         public override bool MeleePrefix()
         {
@@ -48,7 +38,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         }
         public override void AddRecipes()
 		{
-			
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<EnchantedWhip>(), 1);
 			recipe.AddIngredient(ItemID.CoolWhip, 1);
