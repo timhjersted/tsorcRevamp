@@ -46,6 +46,7 @@ using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Archer;
 using tsorcRevamp.Projectiles.Summon.SpiritBell;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Tiles.BuffStations;
 
 namespace tsorcRevamp
 {
@@ -279,7 +280,7 @@ namespace tsorcRevamp
                 14, 469, 94, 125, 217, 218, 228, 243, 622, //tables, specialized crafting stations
                 16, 17, 18, 77, 86, 96, 101, 106, 114, 133, 134, 172, 247, 283, 355, 412, //core crafting stations
                 220, 300, 301, 302, 303, 304, 305, 306, 307, 308, 499, //theme furniture crafting stations
-                21, 467, 29, 97, 463, 91, 287, 354, 377, 506, 621, 464, //chests, piggy bank, safe, defenders forge, banners, buff stations
+                21, 467, 29, 97, 463, 91, 287, 354, 377, 506, 621, 464, ModContent.TileType<NecromancyAltarTile>(), //chests, piggy bank, safe, defenders forge, banners, buff stations
                 33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
                 128, 269, 470, 378, 240, 560, ModContent.TileType<EmptyTrophyTile>(), 617, //all mannequins, target dummy, trophies and relics
@@ -298,7 +299,7 @@ namespace tsorcRevamp
                 14, 469, 94, 125, 217, 218, 228, 243, 622, //tables, specialized crafting stations
                 16, 17, 18, 77, 86, 96, 101, 106, 114, 133, 134, 172, 247, 283, 355, 412, //core crafting stations
                 220, 300, 301, 302, 303, 304, 305, 306, 307, 308, 499, //theme furniture crafting stations
-                21, 467, 29, 97, 463, 91, 287, 354, 377, 506, 621, 464, //chests, piggy bank, safe, defenders forge, banners, buff stations
+                21, 467, 29, 97, 463, 91, 287, 354, 377, 506, 621, 464, ModContent.TileType<NecromancyAltarTile>(), //chests, piggy bank, safe, defenders forge, banners, buff stations
                 33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
                 128, 269, 470, 378, 240, 560, ModContent.TileType<EmptyTrophyTile>(), 617, //all mannequins, target dummy, trophies and relics
@@ -465,7 +466,6 @@ namespace tsorcRevamp
                     ItemID.ObsidianShirt,
                     ItemID.ObsidianPants
                     ,
-                    ItemID.SpiderMask,
                     ItemID.SpiderBreastplate,
                     ItemID.SpiderGreaves
                     ,

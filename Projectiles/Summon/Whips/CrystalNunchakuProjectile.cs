@@ -77,7 +77,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			List<Vector2> points = Projectile.WhipPointsForCollision;
 			Projectile.FillWhipControlPoints(Projectile, points);
 			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.PurpleCrystalShard, 0f, 0f, 150, default, 1f);
-			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.PinkCrystalShard, 0f, 0f, 150, default, 1f);
+            Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.HallowedTorch, 0f, 0f, 150, default, 0.75f);
+            Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.PinkCrystalShard, 0f, 0f, 150, default, 1f);
 			if (Timer == swingTime / 2)
 			{
 				SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Item/SummonerWhipcrack") with { Volume = 0.6f, PitchVariance = 0.3f }, points[points.Count - 1]);

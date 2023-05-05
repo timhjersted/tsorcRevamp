@@ -149,6 +149,12 @@ namespace tsorcRevamp.Items.Potions
             recipe3.AddTile(TileID.Bottles);
 
             recipe3.Register();
+
+            Recipe recipe4 = CreateRecipe();
+            recipe4.AddIngredient(ItemID.LifeCrystal, 3);
+            recipe4.AddTile(TileID.Bottles);
+
+            recipe4.Register();
         }
     }
 }

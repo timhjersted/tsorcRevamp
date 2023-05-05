@@ -10,6 +10,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
+using tsorcRevamp.Items.Placeable;
 using tsorcRevamp.UI;
 
 namespace tsorcRevamp.Tiles
@@ -540,31 +541,6 @@ namespace tsorcRevamp.Tiles
                 }
             }
             return true;
-        }
-
-        public class BonfirePlaceable : ModItem
-        {
-            public override void SetStaticDefaults()
-            {
-            }
-
-            public override void SetDefaults()
-            {
-                Item.CloneDefaults(ItemID.Bookcase);
-                Item.createTile = ModContent.TileType<BonfireCheckpoint>();
-                Item.placeStyle = 0;
-            }
-
-            public override void AddRecipes()
-            {
-                Recipe recipe = CreateRecipe();
-                recipe.AddIngredient(ItemID.Campfire, 1);
-                recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 1000);
-                recipe.AddTile(TileID.DemonAltar);
-                recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
-
-                recipe.Register();
-            }
         }
     }
 }

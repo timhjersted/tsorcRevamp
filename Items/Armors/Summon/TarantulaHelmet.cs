@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             player.whipRangeMultiplier += 0.3f;
             player.GetAttackSpeed(DamageClass.Summon) += 0.29f;
-            player.GetModPlayer<tsorcRevampPlayer>().CritDamage250 = true;
+            player.GetModPlayer<tsorcRevampPlayer>().MythrilOrichalcumCritDamage = true;
         }
         public override void AddRecipes()
         {

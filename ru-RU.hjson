@@ -6025,6 +6025,11 @@ Mods: {
 					Your summons will focus struck enemies
 					''' */
 			}
+
+			NecromancyAltar: {
+				// DisplayName: Necromancy Altar
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -7199,6 +7204,8 @@ Mods: {
 			FriendlyRetLaser.DisplayName: Laser
 			// UrumiProjectile.DisplayName: Urumi Projectile
 			// ScorchingPointAura.DisplayName: Scorching Point Aura
+			// CenterOfTheUniverseAura.DisplayName: Center Of The Universe Aura
+			// InterstellarVesselAura.DisplayName: Interstellar Vessel Aura
 		}
 
 		NPCs: {

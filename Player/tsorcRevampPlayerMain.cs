@@ -712,7 +712,7 @@ namespace tsorcRevamp
                 float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
                 modifiers.TargetDamageMultiplier *= damageMult;
             }
-            if (Player.GetModPlayer<tsorcRevampPlayer>().CritDamage250)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().MythrilOrichalcumCritDamage)
             {
                 modifiers.CritDamage += 0.25f;
             }
@@ -748,9 +748,9 @@ namespace tsorcRevamp
             {
                 modifiers.FinalDamage *= 0.55f;
             }
-            if (Player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250 && proj.DamageType == DamageClass.SummonMeleeSpeed)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().ChallengersGloveCritDamage && proj.DamageType == DamageClass.SummonMeleeSpeed)
             {
-                modifiers.CritDamage += 0.25f;
+                modifiers.CritDamage += 0.12f;
             }
             if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
             {

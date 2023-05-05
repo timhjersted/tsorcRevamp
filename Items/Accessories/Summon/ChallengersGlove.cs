@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
             player.GetAttackSpeed(DamageClass.Summon) += 0.12f;
             player.whipRangeMultiplier += 0.1f;
             player.aggro += 400;
-            player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250 = true;
+            player.GetModPlayer<tsorcRevampPlayer>().ChallengersGloveCritDamage = true;
             player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize = 3;
         }
         public override void AddRecipes()
@@ -35,6 +35,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.AvengerEmblem);
             recipe.AddIngredient(ItemID.BerserkerGlove);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe.AddTile(TileID.TinkerersWorkbench);
 
             recipe.Register();

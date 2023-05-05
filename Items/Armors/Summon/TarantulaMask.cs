@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             player.maxMinions += 2;
             player.maxTurrets += 2;
-            player.GetModPlayer<tsorcRevampPlayer>().CritDamage250 = true;
+            player.GetModPlayer<tsorcRevampPlayer>().MythrilOrichalcumCritDamage = true;
         }
         public override void AddRecipes()
         {

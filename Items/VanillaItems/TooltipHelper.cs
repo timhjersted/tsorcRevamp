@@ -121,6 +121,11 @@ namespace tsorcRevamp.Items.VanillaItems
                 SimpleGlobalModTooltip(Mod, tooltips, "May make the [c/6d8827:Bearer of the Curse] more vulnerable");
             }
 
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ModContent.ItemType<SearingLash>())
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, "Fully charged whip debuff counts as 2");
+            }
+
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ModContent.ItemType<NightsCracker>())
             {
                 SimpleGlobalModTooltip(Mod, tooltips, "Fully charged whip debuff counts as 2");

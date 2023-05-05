@@ -7,7 +7,7 @@ using tsorcRevamp.Buffs.Runeterra.Summon;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
-	public class ScorchingPointAura : ModProjectile
+	public class InterstellarVesselAura : ModProjectile
 	{
 		public float angularSpeed = 0.03f;
 		public float currentAngle = 0;
@@ -46,12 +46,19 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 				return;
 			}
 
+			if (modPlayer.InterstellarBoost)
+			{
+				Projectile.idStaticNPCHitCooldown = 50;
+			} else
+			{
+				Projectile.idStaticNPCHitCooldown = 100;
+			}
 
 			currentAngle += (angularSpeed / (modPlayer.MinionCircleRadius * 0.001f + 1f));
 
 			Vector2 offset = new Vector2(modPlayer.MinionCircleRadius, modPlayer.MinionCircleRadius);
 
-			Dust.NewDust(owner.Center - offset * 0.75f, (int)(modPlayer.MinionCircleRadius * 1.5f), (int)(modPlayer.MinionCircleRadius * 1.5f), DustID.Torch, 0, 0, 1000, default, 0.75f);
+			Dust.NewDust(owner.Center - offset * 0.75f, (int)(modPlayer.MinionCircleRadius * 1.5f), (int)(modPlayer.MinionCircleRadius * 1.5f), DustID.DesertTorch, 0, 0, 1000, default, 0.75f);
 
 			Projectile.Center = owner.Center;
         }
@@ -74,19 +81,19 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		{
 			if (owner.dead || !owner.active)
 			{
-				owner.ClearBuff(ModContent.BuffType<CenterOfTheHeat>());
+				owner.ClearBuff(ModContent.BuffType<InterstellarCommander>());
 
 				return false;
 			}
 
-			if (!owner.HasBuff(ModContent.BuffType<CenterOfTheHeat>()))
+			if (!owner.HasBuff(ModContent.BuffType<InterstellarCommander>()))
 			{
 				currentAngle = 0;
 				Projectile.Kill();
-				ScorchingPoint.projectiles.Clear();
+				InterstellarVesselGauntlet.projectiles.Clear();
 			}
 
-			if (owner.HasBuff(ModContent.BuffType<CenterOfTheHeat>()) && ScorchingPoint.processedProjectilesCount > 4)
+			if (owner.HasBuff(ModContent.BuffType<InterstellarCommander>()) && InterstellarVesselGauntlet.processedProjectilesCount > 4)
 			{
 				Projectile.timeLeft = 2;
 			}
@@ -97,7 +104,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
 			{
-                target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 2 * 60);
+                target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 2 * 60);
             }
 		}
 
@@ -108,7 +115,12 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-			modifiers.SourceDamage *= (float)ScorchingPoint.processedProjectilesCount / 5f;
+            Player owner = Main.player[Projectile.owner];
+            modifiers.SourceDamage *= (float)InterstellarVesselGauntlet.processedProjectilesCount / 5f;
+            if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+            {
+                modifiers.SourceDamage *= 1.25f;
+            }
         }
     }
 }

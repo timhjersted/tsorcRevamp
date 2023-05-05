@@ -75,8 +75,8 @@ namespace tsorcRevamp
 
         public bool OldWeapon = false;
 
-        public bool CritDamage250 = false;
-        public bool WhipCritDamage250 = false;
+        public bool MythrilOrichalcumCritDamage = false;
+        public bool ChallengersGloveCritDamage = false;
         public int WhipCritHitboxSize = 1;
 
         public bool OrbExists = false;
@@ -289,8 +289,8 @@ namespace tsorcRevamp
             ChloranthyRing2 = false;
             WolfRing = false;
 
-            CritDamage250 = false; 
-            WhipCritDamage250 = false;
+            MythrilOrichalcumCritDamage = false; 
+            ChallengersGloveCritDamage = false;
             WhipCritHitboxSize = 1;
 
             MythrilBulwark = false; 

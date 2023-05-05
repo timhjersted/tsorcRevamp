@@ -1240,7 +1240,7 @@ Mods: {
 					12% increased minion damage and speed
 					Increases the size of whips by 10%
 					Enemies are more likely to target you
-					Increases the damage of whip crits by 25%
+					Increases the damage of whip crits by 12%
 					Increases hitbox size for whip crits
 					'''
 			}
@@ -5934,7 +5934,7 @@ Mods: {
 				Tooltip:
 					'''
 					Summons spaceships to rotate around you and damage enemies in their way
-					Uses half a minion slot
+					Uses half a minion slot, grants a stellar aura if enough spaceships are summoned
 					While holding this item, increase their radius by holding Special Ability
 					Or hold Shift + Special Ability to shrink their radius
 					Press Special Ability while not holding the remote to activate Turboboost
@@ -5950,7 +5950,7 @@ Mods: {
 				Tooltip:
 					'''
 					Summons stars to rotate around you and damage enemies in their way
-					Uses half a minion slot
+					Uses half a minion slot, grants a cosmic aura if enough stars are summoned
 					While holding this item, increase their radius by holding the Special Ability hotkey
 					Or hold Shift + Special Ability to shrink their radius
 					Press Special Ability while not holding the remote to activate Turboboost
@@ -6021,6 +6021,11 @@ Mods: {
 					Ignores a substantial amount of defense
 					Your summons will focus struck enemies
 					'''
+			}
+
+			NecromancyAltar: {
+				DisplayName: Necromancy Altar
+				Tooltip: ""
 			}
 		}
 
@@ -7196,6 +7201,8 @@ Mods: {
 			FriendlyRetLaser.DisplayName: Laser
 			UrumiProjectile.DisplayName: Urumi Projectile
 			ScorchingPointAura.DisplayName: Scorching Point Aura
+			CenterOfTheUniverseAura.DisplayName: Center Of The Universe Aura
+			InterstellarVesselAura.DisplayName: Interstellar Vessel Aura
 		}
 
 		NPCs: {

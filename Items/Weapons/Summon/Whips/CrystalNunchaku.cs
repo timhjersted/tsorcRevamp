@@ -18,9 +18,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 32;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 51;
+			Item.damage = 49;
 			Item.knockBack = 5f;
-			Item.rare = ItemRarityID.LightPurple;
+			Item.rare = ItemRarityID.LightRed;
 			Item.value = Item.buyPrice(0, 20, 0, 0);
 
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.CrystalNunchakuProjectile>();
@@ -41,8 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.CrystalShard, 5);
 			recipe.AddIngredient(ItemID.SoulofLight, 4);
-			recipe.AddIngredient(ItemID.SoulofFright, 20);
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 11000);
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.AddCondition(tsorcRevampWorld.AdventureModeEnabled);
 			recipe.Register();

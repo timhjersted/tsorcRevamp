@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Placeable.Trophies
 
 			Item.width = 32;
 			Item.height = 32;
-			Item.maxStack = 99;
+			Item.maxStack = 9999;
 			Item.rare = ItemRarityID.Blue;
 			Item.value = Item.buyPrice(0, 15, 0, 0);
 		}

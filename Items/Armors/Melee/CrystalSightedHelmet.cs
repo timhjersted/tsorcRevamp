@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateArmorSet(Player player)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().CritDamage250 = true;
+            player.GetModPlayer<tsorcRevampPlayer>().MythrilOrichalcumCritDamage = true;
             player.GetAttackSpeed(DamageClass.Melee) += 0.18f;
 
             if (player.statLife <= (player.statLifeMax2 / 5 * 2))

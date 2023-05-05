@@ -49,7 +49,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 		{
 			if (Scorched && !projectile.npcProj && !projectile.trap && projectile.IsMinionOrSentryRelated)
 			{
-				if (Main.rand.NextBool(100 / (int)(Main.player[Main.myPlayer].GetTotalCritChance(DamageClass.Summon) / 2f)))
+				if (Main.rand.NextBool(100 / (int)(Main.player[Main.myPlayer].GetTotalCritChance(DamageClass.Summon) / 2.5f)))
 				{
 					modifiers.SetCrit();
 				}

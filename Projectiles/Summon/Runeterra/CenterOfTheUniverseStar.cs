@@ -7,7 +7,6 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Projectiles.VFX;
-using tsorcRevamp.Buffs.Summon.WhipDebuffs;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
@@ -124,6 +123,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             if (!CheckActive(owner))
             {
                 return;
+            }
+
+            if (CenterOfTheUniverse.processedProjectilesCount > 13 && owner.ownedProjectileCounts[ModContent.ProjectileType<CenterOfTheUniverseAura>()] == 0)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), owner.Center, Vector2.Zero, ModContent.ProjectileType<CenterOfTheUniverseAura>(), Projectile.damage, 0);
             }
 
             if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)

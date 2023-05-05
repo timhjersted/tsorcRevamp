@@ -602,6 +602,10 @@ namespace tsorcRevamp.NPCs
                         WhipDebuffCounter++;
                     }
                 }
+                if (npc.HasBuff(ModContent.BuffType<SearingLashDebuff>()) && SearingLashProjectile.SearingCharges >= 4)
+                {
+                    WhipDebuffCounter++;
+                }
                 if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()) && NightsCrackerProjectile.NightCharges >= 4)
                 {
                     WhipDebuffCounter++;

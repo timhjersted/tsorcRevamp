@@ -10,10 +10,6 @@ namespace tsorcRevamp.Items.Weapons.Summon {
     {
         public override void SetStaticDefaults() 
         {
-            // DisplayName.SetDefault("Sunset Quasar");
-            /* Tooltip.SetDefault("Summons a small creature to fight for you\n" +
-                                "\"Raccoons are very good as a lifeform\""); */
-
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true;
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
@@ -29,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Summon {
             Item.useTime = 30;
             Item.useAnimation = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.value = Item.buyPrice(1, 50, 0, 0);
+            Item.value = Item.buyPrice(0, 50, 0, 0);
             Item.rare = ModContent.RarityType<CDW_SunsetQuasar>();
             Item.UseSound = SoundID.Item44;
 

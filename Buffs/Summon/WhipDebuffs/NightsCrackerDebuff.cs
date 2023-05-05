@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 {
@@ -36,7 +37,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
         {
             if (markedByNightsCracker && !projectile.npcProj && !projectile.trap && projectile.IsMinionOrSentryRelated)
             {
-                int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(42)); //42 is the base dmg of Night's Cracker
+                int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(50)); //50 is the base dmg of Night's Cracker
                 int tagbonusdamage = 0;
                 if (npc.HasBuff(BuffID.BlandWhipEnemyDebuff))
                 {

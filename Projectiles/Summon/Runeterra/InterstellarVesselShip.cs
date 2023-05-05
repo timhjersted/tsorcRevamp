@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -8,7 +7,6 @@ using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Projectiles.VFX;
 using Microsoft.Xna.Framework.Graphics;
-using System.IO;
 using System.Collections.Generic;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
@@ -85,7 +83,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		public override void AI()
 		{
 			base.AI();
-			if (angularSpeed2 > 0.03f)
+
+            Player owner = Main.player[Projectile.owner];
+            tsorcRevampPlayer modPlayer = owner.GetModPlayer<tsorcRevampPlayer>();
+
+            if (angularSpeed2 > 0.03f)
 			{
 				trailIntensity = 2;
 			}
@@ -96,8 +98,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 				trailIntensity -= 0.05f;
 			}
 
-			Player owner = Main.player[Projectile.owner];
-			tsorcRevampPlayer modPlayer = owner.GetModPlayer<tsorcRevampPlayer>();
+            if (InterstellarVesselGauntlet.processedProjectilesCount > 9 && owner.ownedProjectileCounts[ModContent.ProjectileType<InterstellarVesselAura>()] == 0)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), owner.Center, Vector2.Zero, ModContent.ProjectileType<InterstellarVesselAura>(), Projectile.damage, 0);
+            }
+
 
 
 			if (!CheckActive(owner))
