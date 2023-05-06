@@ -17,7 +17,6 @@ namespace tsorcRevamp.NPCs.Special
     class NamelessKing : BossBase
     {
 
-        NPCDespawnHandler despawnHandler;
         public int ThisNPC => ModContent.NPCType<NPCs.Special.NamelessKing>();
 
         public override void SetStaticDefaults()
@@ -51,12 +50,7 @@ namespace tsorcRevamp.NPCs.Special
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Frostburn] = true;
             despawnHandler = new NPCDespawnHandler(null, Color.Teal, 54);
-
-        
-          
         }
-
-
 
         #region AI
 
@@ -65,8 +59,8 @@ namespace tsorcRevamp.NPCs.Special
 
         public override void AI()
         {
+            base.AI();
             Player player = Main.player[NPC.target];
-            despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
             int lifePercentage = (NPC.life * 100) / NPC.lifeMax;
             float acceleration = 0.04f;
@@ -552,6 +546,9 @@ namespace tsorcRevamp.NPCs.Special
             }
             #endregion
 
+
+            NPC.velocity.Y += 0.5f;
+
         }
 
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
@@ -785,9 +782,27 @@ namespace tsorcRevamp.NPCs.Special
         }
         #endregion
 
-        
-       
+        public override void InitializeMovesAndDamage()
+        {
+            //Create a new function for every move of your boss, and then add them to this list alongside the duration of th attack
+            MoveList = new List<BossMove> {
+                new BossMove(BlankMove, 700),
+                };
 
+
+            //Set the damage numbers for every attack or projectile your boss uses here
+            //Remember: Contact damage is doubled, and projectile damage is multiplied by 4!
+            DamageNumbers = new Dictionary<string, int>
+            {
+                ["PlasmaOrb"] = 65,
+            };
+        }
+
+
+        public void BlankMove()
+        {
+
+        }
 
     }
 }
