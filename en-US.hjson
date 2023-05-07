@@ -868,7 +868,7 @@ Mods: {
 				DisplayName: Golden Hairpin
 				Tooltip:
 					'''
-					Increases either arrow, bullet or rocket damage by 17% multiplicatively
+					Increases either arrow, bullet or specialist damage by 17% multiplicatively
 					Ammo type is decided by a timer that picks one of the three regularly
 					Switches every 7 seconds
 					'''
