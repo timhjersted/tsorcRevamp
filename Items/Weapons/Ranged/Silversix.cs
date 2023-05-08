@@ -10,9 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Silversix");
-            /* Tooltip.SetDefault("Deals extra damage to corrupt/crimson creatures"
-                                + "\nDoesn't require ammo"); */
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
         }
 
         public override void SetDefaults()

@@ -11,9 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Virulent Catalyzer");
-            /* Tooltip.SetDefault("An enhanced projectile propulsion core allows detonating shots to pierce once"
-                                + "\nExtremely toxic - handle with care"); */
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
         }
 
         public override void SetDefaults()

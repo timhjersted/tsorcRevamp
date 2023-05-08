@@ -6,6 +6,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Thrown
 {
     class RoyalThrowingSpear : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
+        }
 
         public override void SetDefaults()
         {

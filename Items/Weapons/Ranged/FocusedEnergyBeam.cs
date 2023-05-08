@@ -10,10 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Uses Tesla Bolts for ammo\n" +
-                        "Fires a single high damage beam that obliterates weaker enemies on contact...\n" +
-                        "A weapon from a civilization not of this world..."); */
-
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
         }
 
         public override void SetDefaults()

@@ -11,11 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Toxic Catalyzer");
-            /* Tooltip.SetDefault("Left-click shots tag and poison enemies"
-                                + "\nRight-click shots detonate tags"
-                                + "\nThe more tags, the greater the explosion and damage"); */
-
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
         }
 
         public override void SetDefaults()

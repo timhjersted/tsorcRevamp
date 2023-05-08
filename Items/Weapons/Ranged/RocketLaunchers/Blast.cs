@@ -1,5 +1,4 @@
-﻿/*
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,9 +9,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged.RocketLaunchers
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Uses Rockets as ammo" +
+            /*Tooltip.SetDefault("Uses Rockets as ammo" +
                 "\nQuite dangerous to use" +
-                "\n'The Number 1 Hero'");
+                "\n'The Number 1 Hero'");*/
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
         }
 
         public override void SetDefaults()
@@ -47,4 +47,4 @@ namespace tsorcRevamp.Items.Weapons.Ranged.RocketLaunchers
             recipe.Register();
         }
     }
-}*/
+}

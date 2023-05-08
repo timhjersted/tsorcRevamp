@@ -8,10 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Thrown
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Aside from its adamantite grip, it is a throwing sword made of pure light." +
-                                "\nBlessed with a divine aura, it manifests endlessly in the wielder's hand" +
-                                "\nand returns if its blade should not pierce into the one whom it was meant for." +
-                                "\nPasses through walls."); */
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
         }
         public override void SetDefaults()
         {

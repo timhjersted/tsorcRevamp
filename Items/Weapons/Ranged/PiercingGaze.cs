@@ -9,10 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     public class PiercingGaze : ModItem
     {
         public override void SetStaticDefaults()
-        { 
-            /* Tooltip.SetDefault("Fires blasts of scorching plasma"
-                                + "\nDealing damage charges its capacitor" +
-                                "\nWhen full, right-click to fire a massive laser"); */
+        {
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
         }
 
         public override void SetDefaults()

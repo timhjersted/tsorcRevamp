@@ -10,10 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("High crit rate" +
-                                "\nUses Bolts as ammo. 10 are crafted with" +
-                                "\none wood and two Dark Souls at a Demon Altar" +
-                                 "\nBolts pierce once"); */
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
         }
         public override void SetDefaults()
         {

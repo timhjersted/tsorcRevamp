@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Fires a blast of freezing wind,\ndamaging up to 8 enemies in a cone.");
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
         }
 
         static readonly int RADIUS = 300;

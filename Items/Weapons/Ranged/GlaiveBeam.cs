@@ -11,8 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A legendary weapon of war from beyond the stars\n" +
-                               "Fabled to cut entire ships in half with a single blast"); */
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
         }
         public override void SetDefaults()
         {

@@ -11,8 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Blaster");
-            // Tooltip.SetDefault("Relatively short range but pierces once. Doesn't require ammo");
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
         }
 
         public override void SetDefaults()
