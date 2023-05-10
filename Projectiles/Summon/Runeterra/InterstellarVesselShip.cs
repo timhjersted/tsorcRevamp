@@ -104,8 +104,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             }
 
 
-
-			if (!CheckActive(owner))
+            if (!CheckActive(owner))
 			{
 				return;
             }
@@ -134,6 +133,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Vector2 offset = new Vector2(0, modPlayer.MinionCircleRadius).RotatedBy(-currentAngle2);
 
 			Projectile.Center = owner.Center + offset;
+            Projectile.velocity = Projectile.rotation.ToRotationVector2();
 
             Visuals();
 		}
@@ -185,7 +185,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			effect.Parameters["shaderColor"].SetValue(new Color(0.8f, 0.6f, 0.2f).ToVector4());
 			effect.Parameters["secondaryColor"].SetValue(new Color(0.005f, 0.05f, 1f).ToVector4());
 			effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
-			return;
 		}
 		public override float CollisionWidthFunction(float progress)
 		{

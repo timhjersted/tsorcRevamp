@@ -86,6 +86,8 @@ namespace tsorcRevamp
         public bool MythrilBulwark = false;
         public bool IceboundMythrilAegis = false;
 
+        public bool SweepingBladeDamage = false;
+
         public int steeltempest = 0;
         public int CritCounter = 0;
 
@@ -335,6 +337,7 @@ namespace tsorcRevamp
             DarkmoonCloak = false;
             manaShield = 0;
             staminaShield = 0;
+            SweepingBladeDamage = false;
 
             ConditionOverload = false;
             supersonicLevel = 0;

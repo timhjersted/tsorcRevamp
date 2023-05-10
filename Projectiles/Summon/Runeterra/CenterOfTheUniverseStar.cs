@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -8,50 +7,50 @@ using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Projectiles.VFX;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
-    public class CenterOfTheUniverseStar : DynamicTrail
-    {
-        public float angularSpeed3 = 0.03f;
-        public static float circleRad3 = 50f;
-        public float currentAngle3 = 0;
-        public static int timer3 = 0;
+	public class CenterOfTheUniverseStar : DynamicTrail
+	{
+		public float angularSpeed3 = 0.03f;
+		public float currentAngle3 = 0;
 
         public override void SetStaticDefaults()
-        {
-            Main.projFrames[Projectile.type] = 5;
-            Main.projPet[Projectile.type] = true;
-            ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
-        }
-        public sealed override void SetDefaults()
-        {
-            Projectile.width = 98;
-            Projectile.height = 54;
-            Projectile.tileCollide = false; // Makes the minion go through tiles freely
+		{
+            //Main.projFrames[Projectile.type] = 2;
+            Main.projPet[Projectile.type] = true; 
+			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; 
+		}
+		public sealed override void SetDefaults()
+		{
+			Projectile.width = 98;
+			Projectile.height = 50;
+			Projectile.tileCollide = false;
 
-            // These below are needed for a minion weapon
-            Projectile.friendly = true; // Only controls if it deals damage to enemies on contact (more on that later)
-            Projectile.minion = true; // Declares this as a minion (has many effects)
-            Projectile.DamageType = DamageClass.Summon; // Declares the damage type (needed for it to deal damage)
-            Projectile.minionSlots = 0.5f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
-            Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
-            Projectile.extraUpdates = 1;
+			Projectile.friendly = true; 
+			Projectile.minion = true;
+			Projectile.DamageType = DamageClass.Summon; 
+			Projectile.minionSlots = 0.5f; 
+			Projectile.penetrate = -1;
+			Projectile.extraUpdates = 1;
             Projectile.ContinuouslyUpdateDamage = true;
 
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 20;
 
+
             trailWidth = 45;
-            trailPointLimit = 900;
-            trailMaxLength = 111;
-            collisionPadding = 50;
-            NPCSource = false;
-            trailCollision = true;
-            collisionFrequency = 5;
-            noFadeOut = true;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-        }
+			trailPointLimit = 900;
+			trailMaxLength = 333;
+			Projectile.hide = true;
+			collisionPadding = 50;
+			NPCSource = false;
+			trailCollision = true;
+			collisionFrequency = 5;
+			noFadeOut = true;
+			customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/InterstellarVessel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+		}
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Player owner = Main.player[Projectile.owner];
@@ -60,74 +59,54 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
                 modifiers.SourceDamage *= 1.25f;
             }
         }
-        public override void OnSpawn(IEntitySource source)
-        {
-            CenterOfTheUniverse.projectiles.Add(this);
-        }
-        public override bool? CanCutTiles()
-        {
-            return false;
-        }
-        public override bool MinionContactDamage()
-        {
-            return true;
-        }
-        public override void Kill(int timeLeft)
-        {
-            CenterOfTheUniverse.projectiles.Remove(this);
-        }
-        Vector2 samplePointOffset1;
-        Vector2 samplePointOffset2;
-        public override void SetEffectParameters(Effect effect)
-        {
-            trailWidth = 45;
-            trailMaxLength = 400;
+        public override void OnSpawn(IEntitySource source) 
+		{
+			CenterOfTheUniverse.projectiles.Add(this);
+		}
+		public override bool? CanCutTiles()
+		{
+			return false;
+		}
+		public override bool MinionContactDamage()
+		{
+			return true;
+		}
+		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+		{
+			behindNPCs.Add(index);
+		}
+		public override void Kill(int timeLeft) 
+		{
+			CenterOfTheUniverse.projectiles.Remove(this);
+		}
 
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
-            effect.Parameters["length"].SetValue(trailCurrentLength);
-            float hostVel = 0;
-            hostVel = Projectile.velocity.Length();
-            float modifiedTime = 0.001f * hostVel;
+		public override void AI()
+		{
+			base.AI();
 
-            if (Main.gamePaused)
-            {
-                modifiedTime = 0;
-            }
-            samplePointOffset1.X += (modifiedTime);
-            samplePointOffset1.Y -= (0.001f);
-            samplePointOffset2.X += (modifiedTime * 3.01f);
-            samplePointOffset2.Y += (0.001f);
-
-            samplePointOffset1.X += modifiedTime;
-            samplePointOffset1.X %= 1;
-            samplePointOffset1.Y %= 1;
-            samplePointOffset2.X %= 1;
-            samplePointOffset2.Y %= 1;
-            collisionEndPadding = trailPositions.Count / 2;
-
-            effect.Parameters["samplePointOffset1"].SetValue(samplePointOffset1);
-            effect.Parameters["samplePointOffset2"].SetValue(samplePointOffset2);
-            effect.Parameters["fadeOut"].SetValue(fadeOut);
-            effect.Parameters["speed"].SetValue(hostVel);
-            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-            effect.Parameters["shaderColor"].SetValue(Color.Orange.ToVector4());
-            effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
-        }
-        public override void AI()
-        {
-            base.AI();
             Player owner = Main.player[Projectile.owner];
+            tsorcRevampPlayer modPlayer = owner.GetModPlayer<tsorcRevampPlayer>();
 
-            Vector2 visualplayercenter = owner.Center + new Vector2(-27, -12);
+            if (angularSpeed3 > 0.03f)
+			{
+				trailIntensity = 2;
+			}
+		
 
-            if (!CheckActive(owner))
-            {
-                return;
-            }
+			if (trailIntensity > 1)
+			{
+				trailIntensity -= 0.05f;
+			}
 
             if (CenterOfTheUniverse.processedProjectilesCount > 13 && owner.ownedProjectileCounts[ModContent.ProjectileType<CenterOfTheUniverseAura>()] == 0)
             {
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), owner.Center, Vector2.Zero, ModContent.ProjectileType<CenterOfTheUniverseAura>(), Projectile.damage, 0);
+            }
+
+
+            if (!CheckActive(owner))
+			{
+				return;
             }
 
             if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
@@ -137,70 +116,131 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             if (!owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost || (owner.statMana <= 0))
             {
                 angularSpeed3 = 0.03f;
-                owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = false;
-            }
+				owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = false;
+				if (Main.netMode == NetmodeID.MultiplayerClient)
+				{
+					ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+					minionPacket.Write(tsorcPacketID.SyncMinionRadius);
+					minionPacket.Write((byte)owner.whoAmI);
+					minionPacket.Write(owner.GetModPlayer<tsorcRevampPlayer>().MinionCircleRadius);
+					minionPacket.Write(owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost);
+					minionPacket.Send();
+				}
+			}
 
-            currentAngle3 += (angularSpeed3 / (circleRad3 * 0.001f + 1f));
+            currentAngle3 += (angularSpeed3 / (modPlayer.MinionCircleRadius * 0.001f + 1f)); 
 
-            Vector2 offset = new Vector2(MathF.Sin(currentAngle3), MathF.Cos(currentAngle3)) * circleRad3;
+			Vector2 offset = new Vector2(0, modPlayer.MinionCircleRadius).RotatedBy(-currentAngle3);
 
-            Projectile.position = visualplayercenter + offset;
+			Projectile.Center = owner.Center + offset;
+            Projectile.velocity = Projectile.rotation.ToRotationVector2();
 
             Visuals();
-        }
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+		}
+
+
+		/*public override void SendExtraAI(BinaryWriter writer)
         {
-            float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
-            if (distance < Projectile.height * 1.2f && distance > Projectile.height * 1.2f - 32)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        private bool CheckActive(Player owner)
+			writer.Write(angularSpeed2);
+		}
+        public override void ReceiveExtraAI(BinaryReader reader)
         {
-            if (owner.dead || !owner.active)
-            {
-                owner.ClearBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
+			angularSpeed2 = reader.ReadSingle();
+		}*/
+		Vector2 samplePointOffset1;
+		Vector2 samplePointOffset2;
+		float trailIntensity = 1;
+		public override void SetEffectParameters(Effect effect)
+		{
+			trailWidth = 45;
+			trailMaxLength = 500;
 
-                return false;
-            }
+			effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
+			effect.Parameters["length"].SetValue(trailCurrentLength);
+			float hostVel = 0;
+			hostVel = Projectile.velocity.Length();
+			float modifiedTime = 0.001f * hostVel;
 
-            if (!owner.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>()))
-            {
-                circleRad3 = 50f;
-                currentAngle3 = 0;
-                CenterOfTheUniverse.projectiles.Clear();
-            }
+			if (Main.gamePaused)
+			{
+				modifiedTime = 0;
+			}
+			samplePointOffset1.X += (modifiedTime * 2);
+			samplePointOffset1.Y -= (0.001f);
+			samplePointOffset2.X += (modifiedTime * 3.01f);
+			samplePointOffset2.Y += (0.001f);
 
-            if (owner.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>()))
-            {
-                Projectile.timeLeft = 2;
-            }
+			samplePointOffset1.X += modifiedTime;
+			samplePointOffset1.X %= 1;
+			samplePointOffset1.Y %= 1;
+			samplePointOffset2.X %= 1;
+			samplePointOffset2.Y %= 1;
+			collisionEndPadding = trailPositions.Count / 2;
 
-            return true;
-        }
+			effect.Parameters["samplePointOffset1"].SetValue(samplePointOffset1);
+			effect.Parameters["samplePointOffset2"].SetValue(samplePointOffset2);
+			effect.Parameters["fadeOut"].SetValue(trailIntensity);
+			effect.Parameters["speed"].SetValue(hostVel);
+			effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+			effect.Parameters["shaderColor"].SetValue(new Color(0.8f, 0.6f, 0.2f).ToVector4());
+			effect.Parameters["secondaryColor"].SetValue(new Color(0.005f, 0.05f, 1f).ToVector4());
+			effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
+		}
+		public override float CollisionWidthFunction(float progress)
+		{
+			return WidthFunction(progress) - 35;
+		}
+
+		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+		{
+			float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
+			if (distance < Projectile.height * 1.2f && distance > Projectile.height * 1.2f - 32)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		private bool CheckActive(Player owner)
+		{
+			if (owner.dead || !owner.active)
+			{
+				owner.ClearBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
+
+				return false;
+			}
+
+			if (!owner.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>()))
+			{
+				currentAngle3 = 0;
+				CenterOfTheUniverse.projectiles.Clear();
+			}
+
+			if (owner.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>()))
+			{
+				Projectile.timeLeft = 2;
+			}
+
+			return true;
+		}
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (hit.Crit)
-            {
-                Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().CritCounter += 1;
-                target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 2 * 60);
-            }
-            else
-            {
-                target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 60);
-            }
+			if (hit.Crit)
+			{
+				target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 2 * 60);
+			}
+			else
+			{
+				target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 60);
+			}
         }
-        private void Visuals()
-        {
+		private void Visuals()
+		{
+			Projectile.rotation = currentAngle3 * -1f; 
 
-            Projectile.rotation = currentAngle3 * -1f;
-
-            float frameSpeed = 3f;
+			/*float frameSpeed = 5f;
 
             Projectile.frameCounter++;
 
@@ -211,12 +251,18 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
                 if (Projectile.frame >= Main.projFrames[Projectile.type])
                 {
-                        Projectile.frame = 0;
+                    Projectile.frame = 0;
                 }
-            }
+            }*/
 
-            // Some visuals here
             Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
-        }
-    }
+		}
+
+		public static Texture2D texture;
+		public static Texture2D glowTexture;
+		public override bool PreDraw(ref Color lightColor)
+        {
+			return true;
+		}
+    }	
 }

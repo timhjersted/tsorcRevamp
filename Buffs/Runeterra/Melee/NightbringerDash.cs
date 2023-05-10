@@ -9,8 +9,6 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Sweeping Blade");
-            // Description.SetDefault("Invulnerability and melee damage boost");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }
@@ -20,7 +18,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
             Main.dust[dustID].noGravity = true;
             if (player.HeldItem.type == ModContent.ItemType<Nightbringer>())
             {
-                player.GetDamage(DamageClass.Melee) *= 3f;
+                player.GetDamage(DamageClass.Melee) += 1f;
+                player.GetModPlayer<tsorcRevampPlayer>().SweepingBladeDamage = true;
             }
         }
     }

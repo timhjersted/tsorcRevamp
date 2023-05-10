@@ -36,7 +36,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
 		public override void UpdateLifeRegen(NPC npc, ref int damage)
 		{
             Player player = Main.player[Main.myPlayer];
-            int DoTPerS = (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(220) + (int)(player.GetTotalCritChance(DamageClass.Ranged) / 100f * 220f);
+            int DoTPerS = (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(220) + (int)(player.GetTotalCritChance(DamageClass.Ranged) / 100f * 220f) + (npc.lifeMax / 600);
             if (Irradiated)
 			{
 				npc.lifeRegen -= DoTPerS * 2;

@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item157;
             Item.DamageType = DamageClass.Ranged; 
-            Item.damage = 90;
+            Item.damage = 60;
             Item.knockBack = 5f;
             Item.noMelee = true;
             Item.shoot = ProjectileID.Seed;

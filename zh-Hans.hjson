@@ -5105,6 +5105,11 @@ Mods: {
 				Tooltip: Relatively short range but pierces once. Doesn't require ammo
 			}
 
+			Blast: {
+				// DisplayName: Blast
+				// Tooltip: ""
+			}
+
 			BlizzardBlaster: {
 				DisplayName: Blizzard Blaster
 				Tooltip:

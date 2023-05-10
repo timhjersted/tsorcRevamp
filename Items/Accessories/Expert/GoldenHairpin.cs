@@ -30,15 +30,15 @@ namespace tsorcRevamp.Items.Accessories.Expert
             }
             if (ammoType == 0)
             {
-                player.arrowDamage *= 1.17f;
+                player.arrowDamage *= 1.2f;
             }
             if (ammoType == 1)
             {
-                player.bulletDamage *= 1.17f;
+                player.bulletDamage *= 1.2f;
             }
             if (ammoType == 2)
             {
-                player.specialistDamage *= 1.17f;
+                player.specialistDamage *= 1.2f;
             }
             if (ammoType >= 3)
             {

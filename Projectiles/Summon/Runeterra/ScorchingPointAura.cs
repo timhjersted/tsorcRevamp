@@ -51,7 +51,9 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			Vector2 offset = new Vector2(modPlayer.MinionCircleRadius, modPlayer.MinionCircleRadius);
 
-			Dust.NewDust(owner.Center - offset * 0.75f, (int)(modPlayer.MinionCircleRadius * 1.5f), (int)(modPlayer.MinionCircleRadius * 1.5f), DustID.Torch, 0, 0, 1000, default, 0.75f);
+			UsefulFunctions.DustRing(owner.Center, modPlayer.MinionCircleRadius + 10f, DustID.InfernoFork, 5, 10);
+
+			//Dust.NewDust(owner.Center - offset * 0.75f, (int)(modPlayer.MinionCircleRadius * 1.5f), (int)(modPlayer.MinionCircleRadius * 1.5f), DustID.Torch, 0, 0, 1000, default, 0.75f);
 
 			Projectile.Center = owner.Center;
         }
@@ -109,6 +111,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
 			modifiers.SourceDamage *= (float)ScorchingPoint.processedProjectilesCount / 5f;
+			modifiers.FlatBonusDamage += target.lifeMax / 400;
         }
     }
 }

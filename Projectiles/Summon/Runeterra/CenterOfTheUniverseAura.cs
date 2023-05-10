@@ -58,7 +58,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			Vector2 offset = new Vector2(modPlayer.MinionCircleRadius, modPlayer.MinionCircleRadius);
 
-			Dust.NewDust(owner.Center - offset * 0.75f, (int)(modPlayer.MinionCircleRadius * 1.5f), (int)(modPlayer.MinionCircleRadius * 1.5f), DustID.Astra, 0, 0, 1000, default, 0.75f);
+            UsefulFunctions.DustRing(owner.Center, modPlayer.MinionCircleRadius + 10f, DustID.YellowStarDust, 2, 1);
+            //Dust.NewDust(owner.Center - offset * 0.75f, (int)(modPlayer.MinionCircleRadius * 1.5f), (int)(modPlayer.MinionCircleRadius * 1.5f), DustID.FireworkFountain_Blue, 0, 0, 1000, default, 1f);
 
 			Projectile.Center = owner.Center;
         }
@@ -121,6 +122,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             {
                 modifiers.SourceDamage *= 1.25f;
             }
+            modifiers.FlatBonusDamage += target.lifeMax / 400;
         }
     }
 }

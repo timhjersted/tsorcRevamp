@@ -89,17 +89,17 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
                 projectileList[i].currentAngle3 = projectileList[i - 1].currentAngle3 + 2f * (float)Math.PI / processedProjectilesCount;
             }
         }
-        /*public override void AddRecipes()
+        public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ModContent.ItemType<InterstellarVesselControls>());
+            recipe.AddIngredient(ModContent.ItemType<InterstellarVesselGauntlet>());
             recipe.AddIngredient(ItemID.LunarBar, 12);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
 
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }*/
+        }
     }
 }

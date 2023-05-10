@@ -707,6 +707,11 @@ namespace tsorcRevamp
                 modifiers.CritDamage += Player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationDamageScaling * 0.1f;
             }
 
+            if (Player.GetModPlayer<tsorcRevampPlayer>().SweepingBladeDamage)
+            {
+                modifiers.FlatBonusDamage += target.lifeMax / 2000;
+            }
+
             if (OldWeapon)
             {
                 float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);

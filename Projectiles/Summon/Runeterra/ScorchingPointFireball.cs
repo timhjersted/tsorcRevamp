@@ -8,6 +8,7 @@ using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Projectiles.VFX;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
@@ -60,8 +61,12 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		public override bool MinionContactDamage()
 		{
 			return true;
-		}
-		public override void Kill(int timeLeft)
+        }
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        {
+            behindNPCs.Add(index);
+        }
+        public override void Kill(int timeLeft)
 		{
 			ScorchingPoint.projectiles.Remove(this);
 		}
@@ -84,7 +89,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			currentAngle += (angularSpeed / (modPlayer.MinionCircleRadius * 0.001f + 1f));
 
-			Vector2 offset = new Vector2(MathF.Sin(currentAngle), MathF.Cos(currentAngle)) * modPlayer.MinionCircleRadius;
+			Vector2 offset = new Vector2(0, modPlayer.MinionCircleRadius).RotatedBy(-currentAngle);
 
 			Projectile.Center = owner.Center + offset;
 			Projectile.velocity = Projectile.rotation.ToRotationVector2();
@@ -136,7 +141,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			Projectile.rotation = currentAngle * -1f;
 
-			float frameSpeed = 4f;
+			/*float frameSpeed = 4f;
 
 			Projectile.frameCounter++;
 
@@ -149,7 +154,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 				{
 					Projectile.frame = 0;
 				}
-			}
+			}*/
 
 			Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
 		}
