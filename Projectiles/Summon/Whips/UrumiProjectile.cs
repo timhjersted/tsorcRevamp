@@ -116,7 +116,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         {
             Player player = Main.player[Main.myPlayer];
 			modifiers.ArmorPenetration += 10;
-            Vector2 WhipTip = new Vector2(16, 20) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
+            Vector2 WhipTip = new Vector2(22, 46) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
             List<Vector2> points = Projectile.WhipPointsForCollision;
             if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
             {
@@ -178,7 +178,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 				// These two values are set to suit this projectile's sprite, but won't necessarily work for your own.
 				// You can change them if they don't!
 				Rectangle frame = new Rectangle(0, 0, 22, 12);
-				Vector2 origin = new Vector2(10, 6);
+				Vector2 origin = new Vector2(10, 5);
 				float scale = 1;
 
 				// These statements determine what part of the spritesheet to draw for the current segment.
@@ -186,7 +186,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 				if (i == list.Count - 2)
 				{
 					frame.Y = 12;
-					frame.Height = 34;
+					frame.Height = 46;
 
 					// For a more impactful look, this scales the tip of the whip up when fully extended, and down when curled up.
 					Projectile.GetWhipSettings(Projectile, out float timeToFlyOut, out int _, out float _);

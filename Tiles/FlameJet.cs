@@ -23,7 +23,6 @@ namespace tsorcRevamp.Tiles
             Main.tileLavaDeath[Type] = false;
             Main.tileSolid[Type] = true;
             Main.tileFrameImportant[Type] = true;
-            ItemDrop = ModContent.ItemType<Tiles.FlameJetItem>();
         }
 
         public int flameJetDamage = 20;

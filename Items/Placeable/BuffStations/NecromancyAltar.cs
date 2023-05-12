@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Placeable.BuffStations
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BewitchingTable);
             recipe.AddIngredient(ItemID.WarTable);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
