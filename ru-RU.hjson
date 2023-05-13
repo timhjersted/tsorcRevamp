@@ -7424,6 +7424,7 @@ Mods: {
 			LeonhardPhase1.DisplayName: ???
 			IchorGlob.DisplayName: Ichor Glob
 			IchorMissile.DisplayName: Ichor Missile
+			// NamelessKing.DisplayName: Nameless King
 		}
 
 		Prefixes: {

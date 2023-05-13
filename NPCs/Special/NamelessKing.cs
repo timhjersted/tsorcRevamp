@@ -17,11 +17,10 @@ namespace tsorcRevamp.NPCs.Special
     class NamelessKing : BossBase
     {
 
-        public int ThisNPC => ModContent.NPCType<NPCs.Special.NamelessKing>();
+        public int ThisNPC => ModContent.NPCType<NamelessKing>();
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Nameless King");
             Main.npcFrameCount[NPC.type] = 27;
             NPCID.Sets.TrailCacheLength[NPC.type] = 4; //How many copies of shadow/trail
             NPCID.Sets.TrailingMode[NPC.type] = 0;
@@ -551,19 +550,17 @@ namespace tsorcRevamp.NPCs.Special
 
         }
 
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (projectile.type == ProjectileID.Boulder) //Rewarding those who are sneaky enough to use the boulder in the cave to hurt him
             {
-                damage *= 5; //340 damage +/-
+                modifiers.FinalDamage *= 5; //340 damage +/-
             }
 
             if (projectile.minion)
             {
-                knockback = 0; //to prevent slime staff from stunlocking him
+                modifiers.Knockback *= 0; //to prevent slime staff from stunlocking him
             }
-
-            base.ModifyHitByProjectile(projectile, ref damage, ref knockback, ref crit, ref hitDirection);
         }
 
         #endregion
@@ -768,16 +765,15 @@ namespace tsorcRevamp.NPCs.Special
 
 
         #region Debuffs
-        public override void OnHitPlayer(Player player, int damage, bool crit)
+        public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)
         {
-            player.AddBuff(BuffID.OnFire, 180, false);
+            target.AddBuff(BuffID.OnFire, 3 * 60, false);
 
             if (Main.rand.NextBool(5))
             {
-                player.AddBuff(ModContent.BuffType<Crippled>(), 180, false); // loss of flight mobility
-                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 1800, false);
-                player.AddBuff(BuffID.NightOwl, 30, false);
-
+                target.AddBuff(ModContent.BuffType<Crippled>(), 3 * 60, false); // loss of flight mobility
+                target.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 30 * 60, false);
+                target.AddBuff(BuffID.NightOwl, 30, false);
             }
         }
         #endregion
