@@ -111,7 +111,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
 			modifiers.SourceDamage *= (float)ScorchingPoint.processedProjectilesCount / 5f;
-			modifiers.FlatBonusDamage += target.lifeMax / 400;
         }
     }
 }

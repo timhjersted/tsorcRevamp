@@ -8,6 +8,7 @@ using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Projectiles.VFX;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
@@ -57,6 +58,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
                 modifiers.SourceDamage *= 1.25f;
+                modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 3000, 150);
             }
         }
         public override void OnSpawn(IEntitySource source) 

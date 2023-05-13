@@ -58,7 +58,6 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            player.GetModPlayer<tsorcRevampPlayer>().OrbExists = true;
             //player.manaRegenDelay = 10;
         }
 
@@ -87,7 +86,6 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 
                         if (Projectile.Hitbox.Intersects(player.Hitbox))
 						{
-							player.GetModPlayer<tsorcRevampPlayer>().OrbExists = false;
                             if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief >= 9)
                             {
                                 SoundEngine.PlaySound(SoundID.Item74, player.Center);

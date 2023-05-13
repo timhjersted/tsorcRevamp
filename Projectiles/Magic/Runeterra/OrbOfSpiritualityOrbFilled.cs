@@ -57,7 +57,6 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            player.GetModPlayer<tsorcRevampPlayer>().OrbExists = true;
 			player.Heal((int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(player.statManaMax2 / 50) + 5);
             player.GetModPlayer<tsorcRevampPlayer>().EssenceThief = 0;
         }
@@ -85,9 +84,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                         Projectile.velocity = unitVectorTowardsPlayer;
 
                         if (Projectile.Hitbox.Intersects(player.Hitbox))
-						{
-							player.GetModPlayer<tsorcRevampPlayer>().OrbExists = false;
-							Projectile.Kill();
+                        {
+                            Projectile.Kill();
                         }
 					break;
 				}

@@ -122,7 +122,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             {
                 modifiers.SourceDamage *= 1.25f;
             }
-            modifiers.FlatBonusDamage += target.lifeMax / 400;
         }
     }
 }

@@ -7,9 +7,7 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
 using ReLogic.Content;
-using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using Terraria.DataStructures;
-using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
@@ -31,8 +29,9 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 			Projectile.width = 66; // The width of your projectile
 			Projectile.height = 28; // The height of your projectile
 			Projectile.friendly = true; // Deals damage to enemies
-			Projectile.penetrate = 1; // Infinite pierce
-			Projectile.DamageType = DamageClass.Magic; // Deals melee damage
+            Projectile.scale = 1.3f;
+			Projectile.penetrate = 1;
+			Projectile.DamageType = DamageClass.Magic;
 			Projectile.usesLocalNPCImmunity = true; // Used for hit cooldown changes in the ai hook
 			Projectile.localNPCHitCooldown = 10; // This facilitates custom hit cooldown logic
 			Projectile.tileCollide = false;
@@ -43,7 +42,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 1.5f);
+            Projectile.damage *= 2;
             player.AddBuff(ModContent.BuffType<OrbOfFlameFireballCooldown>(), 1 * 60);
         }
 
@@ -58,6 +57,10 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         {
             Player player = Main.player[Projectile.owner];
 			target.AddBuff(ModContent.BuffType<SunderedDebuff>(), 5 * 60);
+        }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 1125, 400);
         }
 
         public override bool PreDraw(ref Color lightColor)

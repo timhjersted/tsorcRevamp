@@ -709,7 +709,7 @@ namespace tsorcRevamp
 
             if (Player.GetModPlayer<tsorcRevampPlayer>().SweepingBladeDamage)
             {
-                modifiers.FlatBonusDamage += target.lifeMax / 2000;
+                modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 3000, 150);
             }
 
             if (OldWeapon)

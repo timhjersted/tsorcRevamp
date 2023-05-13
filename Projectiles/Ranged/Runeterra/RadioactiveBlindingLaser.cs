@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
+using System;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
@@ -37,7 +38,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         {
             var player = Main.player[Projectile.owner];
             player.AddBuff(ModContent.BuffType<RadioactiveBlindingLaserCooldown>(), 5 * 60);
-			Projectile.damage *= 4;
+			Projectile.damage *= 3;
 			Projectile.CritChance += 100;
         }
 
@@ -50,6 +51,10 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         {
             target.AddBuff(ModContent.BuffType<IrradiatedDebuff>(), 2 * 60);
             target.AddBuff(BuffID.Confused, 2 * 60);
+        }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 1125, 400);
         }
     }
 }

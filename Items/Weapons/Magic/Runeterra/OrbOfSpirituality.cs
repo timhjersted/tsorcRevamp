@@ -5,6 +5,7 @@ using tsorcRevamp.Projectiles.Magic.Runeterra;
 using Microsoft.Xna.Framework;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using Terraria.Audio;
+using tsorcRevamp.Projectiles.Summon.Runeterra;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
@@ -38,15 +39,15 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            if (player.GetModPlayer<tsorcRevampPlayer>().OrbExists)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] != 0 || player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrbFilled>()] != 0)
             {
                 type = ModContent.ProjectileType<OrbOfSpiritualityFlame>();
             }
-            if (!player.GetModPlayer<tsorcRevampPlayer>().OrbExists && player.GetModPlayer<tsorcRevampPlayer>().EssenceThief < 9)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrbFilled>()] == 0 && player.GetModPlayer<tsorcRevampPlayer>().EssenceThief < 9)
             {
                 type = ModContent.ProjectileType<OrbOfSpiritualityOrb>();
             }
-            if (!player.GetModPlayer<tsorcRevampPlayer>().OrbExists && player.GetModPlayer<tsorcRevampPlayer>().EssenceThief >= 9)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] == 0 && player.GetModPlayer<tsorcRevampPlayer>().EssenceThief >= 9)
             {
                 type = ModContent.ProjectileType<OrbOfSpiritualityOrbFilled>();
             }
@@ -87,9 +88,12 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             {
                 SoundEngine.PlaySound(SoundID.Item104, player.Center);
                 player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.MouseWorld, 15f);
-                Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.One, ModContent.ProjectileType<OrbOfSpiritualityFlameNoMana>(), Item.damage, Item.knockBack, Main.myPlayer);
                 player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDash>(), 1 * 60);
                 player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>(), 10 * 60);
+                if (Main.GameUpdateCount % 5 == 0)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.One, ModContent.ProjectileType<OrbOfSpiritualityFlameNoMana>(), Item.damage, Item.knockBack, Main.myPlayer);
+                }
             }
         }
         public override void UpdateInventory(Player player)

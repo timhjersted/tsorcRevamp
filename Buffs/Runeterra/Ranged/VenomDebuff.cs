@@ -36,7 +36,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
 		public override void UpdateLifeRegen(NPC npc, ref int damage)
 		{
             Player player = Main.player[Main.myPlayer];
-            int DoTPerS = (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(10) + (int)(player.GetTotalCritChance(DamageClass.Ranged) / 100f * 10f) + (npc.lifeMax / 600);
+            int DoTPerS = (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(20) + (int)(player.GetTotalCritChance(DamageClass.Ranged) / 100f * 20f);
             if (Venomized)
 			{
 				npc.lifeRegen -= DoTPerS * 2;

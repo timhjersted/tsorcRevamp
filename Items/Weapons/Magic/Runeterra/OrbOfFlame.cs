@@ -41,15 +41,15 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            if (player.GetModPlayer<tsorcRevampPlayer>().OrbExists)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] != 0 || player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbFilled>()] != 0)
             {
                 type = ModContent.ProjectileType<OrbOfFlameFlame>();
             }
-            if (!player.GetModPlayer<tsorcRevampPlayer>().OrbExists && player.GetModPlayer<tsorcRevampPlayer>().EssenceThief < 9)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbFilled>()] == 0 && player.GetModPlayer<tsorcRevampPlayer>().EssenceThief < 9)
             {
                 type = ModContent.ProjectileType<OrbOfFlameOrb>();
             }
-            if (!player.GetModPlayer<tsorcRevampPlayer>().OrbExists && player.GetModPlayer<tsorcRevampPlayer>().EssenceThief >= 9)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] == 0 && player.GetModPlayer<tsorcRevampPlayer>().EssenceThief >= 9)
             {
                 type = ModContent.ProjectileType<OrbOfFlameOrbFilled>();
             }

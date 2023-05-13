@@ -6033,7 +6033,7 @@ Mods: {
 
 			NecromancyAltar: {
 				// DisplayName: Necromancy Altar
-				// Tooltip: ""
+				// Tooltip: Grants Bewitched and Strategist buffs on right click
 			}
 		}
 
