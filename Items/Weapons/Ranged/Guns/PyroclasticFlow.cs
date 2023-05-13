@@ -4,13 +4,12 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles;
 
-namespace tsorcRevamp.Items.Weapons.Ranged
+namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 {
     public class PyroclasticFlow : ModItem
     {
         public override void SetStaticDefaults()
         {
-            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
         }
 
         public override void SetDefaults()
@@ -35,18 +34,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override Vector2? HoldoutOffset()
         {
             return new Vector2(-6, 0);
-        }
-
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.ClockworkAssaultRifle);
-            recipe.AddIngredient(ItemID.HallowedBar, 10);
-            recipe.AddIngredient(ItemID.SoulofSight, 20);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 16000);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
         }
 
         int tallyCounter;

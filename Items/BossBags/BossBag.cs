@@ -307,7 +307,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.BloomShards>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Summon.ShatteredReflection>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.SeveringDusk>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.PyroclasticFlow>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.Guns.PyroclasticFlow>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.AuraOfDecay>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HeavenPiercer>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheEnd>()));
