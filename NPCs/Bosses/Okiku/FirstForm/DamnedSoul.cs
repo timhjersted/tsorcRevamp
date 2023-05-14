@@ -177,18 +177,18 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
         }
 
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
-        {/*
-            if (NPC.life - damage <= 1000)
+        {
+            if (NPC.life - modifiers.GetDamage(item.damage, false) <= 1000)
             {
                 AttraidiesMask.ShieldBroken = true;
                 NPC.life = 1000;
-                damage = 0;
-            }*/
+                modifiers.FinalDamage *= 0;
+            }
         }
 
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
-        {/*
-            if (NPC.life - damage <= 1000)
+        {
+            if (NPC.life - modifiers.GetDamage(projectile.damage, false) <= 1000)
             {
                 AttraidiesMask.ShieldBroken = true;
                 if(NPC.realLife != -1)
@@ -199,13 +199,13 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                 {
                     NPC.life = 1001;
                 }
-                damage = 0;
+                modifiers.FinalDamage *= 0;
             }
 
             for(int i = 0; i < Main.maxNPCs; i++)
             {
 
-            }*/
+            }
         }
 
         public override void FindFrame(int frameHeight)

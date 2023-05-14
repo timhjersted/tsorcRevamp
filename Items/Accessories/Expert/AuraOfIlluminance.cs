@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories
+namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class AuraOfIlluminance : ModItem
     {
@@ -16,8 +16,8 @@ namespace tsorcRevamp.Items.Accessories
             Item.width = 24;
             Item.height = 24;
             Item.accessory = true;
-            Item.value = PriceByRarity.Green_2;
-            Item.rare = ItemRarityID.Green;
+            Item.value = PriceByRarity.LightPurple_6;
+            Item.expert = true;
         }
 
         public override void UpdateEquip(Player player)

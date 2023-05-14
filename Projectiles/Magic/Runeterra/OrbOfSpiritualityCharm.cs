@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.DataStructures;
 using tsorcRevamp.Buffs.Runeterra.Magic;
+using Terraria.Audio;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
 {
@@ -36,8 +37,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.damage *= 2; //(int)(player.GetWeaponDamage(player.HeldItem) * 1.5f)
-            player.AddBuff(ModContent.BuffType<OrbOfSpiritualityCharmCooldown>(), 1 * 60);
+            player.AddBuff(ModContent.BuffType<OrbOfSpiritualityCharmCooldown>(), 5 * 60);
+            SoundEngine.PlaySound(SoundID.Item78, player.Center);
         }
 
         public override void AI()
@@ -50,11 +51,13 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
-			target.AddBuff(ModContent.BuffType<SunderedDebuff>(), 5 * 60);
+			target.AddBuff(ModContent.BuffType<SunderedDebuff>(), 7 * 60);
+            SoundEngine.PlaySound(SoundID.Item76, target.Center);
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 1125, 400);
+            modifiers.SourceDamage *= 2.5f;
+            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 1000, 450);
         }
 
         public override bool PreDraw(ref Color lightColor)

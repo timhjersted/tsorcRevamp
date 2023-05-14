@@ -699,7 +699,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashCut") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
 
                 NPC.dontTakeDamage = false;
-                //NPC.StrikeNPC(999999, 0, 0);
+                NPC.StrikeNPC(NPC.CalculateHitInfo(999999, 1, true, 0), false, false);
                 NPC.downedMechBoss2 = true;
                 if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.Spazmatism)))
                 {
@@ -1229,9 +1229,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<DamagedFlameNozzle>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<DamagedLaser>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<DamagedRemote>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<Items.Accessories.AuraOfIlluminance>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<CrestOfSky>(), 3);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MechanicalWheelPiece);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HallowedBar, 15 + Main.rand.Next(16));
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SoulofSight, 25 + Main.rand.Next(16));
                 if (Main.rand.NextBool(7))

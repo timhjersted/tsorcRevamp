@@ -46,6 +46,10 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
             Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 2f);
             Projectile.localNPCHitCooldown = (int)(5.5f / (0.5f + (player.GetTotalAttackSpeed(DamageClass.Melee) / 2f)));
         }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            modifiers.SourceDamage *= 2;
+        }
         public override void AI()
         {
             if (!playedSound)

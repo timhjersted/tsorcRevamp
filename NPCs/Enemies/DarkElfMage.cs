@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = 28;
             NPC.knockBackResist = 0.01f;
             NPC.aiStyle = 3;
-            NPC.damage = 76;
+            NPC.damage = 0;
             NPC.defense = 35;
             NPC.height = 40;
             NPC.width = 20;

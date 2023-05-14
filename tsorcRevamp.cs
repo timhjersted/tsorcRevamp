@@ -1296,7 +1296,7 @@ namespace tsorcRevamp
             {
                 summonersAssociation.Call(
                     "AddMinionInfo",
-                    ModContent.ItemType<PhoenixEgg>(),
+                    ModContent.ItemType<Items.Weapons.Expert.PhoenixEgg>(),
                     ModContent.BuffType<PhoenixBuff>(),
                     ModContent.ProjectileType<PhoenixProjectile>(),
                     2f                    
@@ -1452,7 +1452,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.FieryEgg>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.TheRageBag>(), ModContent.ItemType<Items.Weapons.Summon.PhoenixEgg>(), ModContent.ItemType<CrestOfFire>(), ItemID.CobaltDrill }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.TheRageBag>(), ModContent.ItemType<Items.Weapons.Expert.PhoenixEgg>(), ModContent.ItemType<CrestOfFire>(), ItemID.CobaltDrill }, // List containing all the loot to show in the bestiary
                     $"Found in the depths of the Hallowed Caverns.", // Guide to fight the boss
                     "");
 

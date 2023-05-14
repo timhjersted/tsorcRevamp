@@ -10,7 +10,6 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("It is made of razor sharp dragon scales.\nThorns Effect");
         }
         public override void SetDefaults()
         {
@@ -23,15 +22,23 @@ namespace tsorcRevamp.Items.Armors.Magic
         public override void UpdateEquip(Player player)
         {
             player.thorns += 1f;
+            player.GetCritChance(DamageClass.Magic) += 22;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.MythrilHood, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3500);
+            recipe.AddIngredient(ItemID.MythrilHood);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ItemID.MythrilHood);
+            recipe2.AddIngredient(ItemID.OrichalcumHeadgear);
+            recipe2.AddTile(TileID.DemonAltar);
+
+            recipe2.Register();
         }
     }
 }

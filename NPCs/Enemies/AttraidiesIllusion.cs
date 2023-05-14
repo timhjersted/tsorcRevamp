@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.GoblinSorcerer;
             NPC.npcSlots = 5;
             NPC.lifeMax = 400;
-            NPC.damage = 13;
+            NPC.damage = 0;
             NPC.scale = 1f;
             NPC.knockBackResist = 0.3f;
             NPC.value = 6000;

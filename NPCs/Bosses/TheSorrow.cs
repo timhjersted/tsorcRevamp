@@ -34,6 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.behindTiles = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.coldDamage = true;
 
             DrawOffsetY = +70;
             NPC.width = 140;

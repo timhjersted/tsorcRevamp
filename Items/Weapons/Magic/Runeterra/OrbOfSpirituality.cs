@@ -26,9 +26,9 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.useAnimation = 25;
             Item.useTime = 25;
             Item.damage = 220;
-            Item.mana = 60;
+            Item.mana = 100;
             Item.knockBack = 8;
-            Item.UseSound = SoundID.Item1;
+            Item.UseSound = null;
             Item.rare = ItemRarityID.Cyan;
             Item.shootSpeed = 20f;
             Item.noUseGraphic = true;
@@ -89,7 +89,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
                 SoundEngine.PlaySound(SoundID.Item104, player.Center);
                 player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.MouseWorld, 15f);
                 player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDash>(), 1 * 60);
-                player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>(), 10 * 60);
+                player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>(), 20 * 60);
                 if (Main.GameUpdateCount % 5 == 0)
                 {
                     Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.One, ModContent.ProjectileType<OrbOfSpiritualityFlameNoMana>(), Item.damage, Item.knockBack, Main.myPlayer);

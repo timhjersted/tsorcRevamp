@@ -9,8 +9,6 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Dazzling armor cut from crystal." +
-                "\nIncreases movement speed by 21%"); */
         }
 
         public override void UpdateEquip(Player player)
@@ -30,7 +28,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MythrilGreaves);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.npcSlots = 3;
             //npc.maxSpawns = 2; todo investigate
             NPC.aiStyle = 0;
-            NPC.damage = 70;
+            NPC.damage = 0;
             NPC.defense = 20;
             NPC.height = 44;
             NPC.timeLeft = 22500;

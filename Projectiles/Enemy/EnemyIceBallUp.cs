@@ -18,6 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.penetrate = 1;
             Projectile.tileCollide = true;
             Projectile.width = 16;
+            Projectile.coldDamage = true;
         }
         public override void SetStaticDefaults()
         {

@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             NPC.npcSlots = 10;
             NPC.width = 58;
             NPC.height = 121;
-            NPC.damage = 90;
+            NPC.damage = 0;
             NPC.defense = 36;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;

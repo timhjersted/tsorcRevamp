@@ -3,6 +3,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
+using Terraria.DataStructures;
+using static Humanizer.In;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
@@ -30,11 +32,14 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
             Projectile.usesIDStaticNPCImmunity = true;
             Projectile.idStaticNPCHitCooldown = 8;
 		}
+        public override void OnSpawn(IEntitySource source)
+        {
+            Player owner = Main.player[Projectile.owner];
+            //already gains crit chance from the projectile that spawns it
+        }
 
         public override void AI()
         {
-            Player owner = Main.player[Projectile.owner];
-            Projectile.CritChance = 100 + owner.GetWeaponCrit(owner.HeldItem);
             Visuals();
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

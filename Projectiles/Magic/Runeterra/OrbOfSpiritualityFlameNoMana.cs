@@ -1,6 +1,8 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -29,6 +31,11 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             Projectile.localNPCHitCooldown = 10;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
+        }
+        public override void OnSpawn(IEntitySource source)
+        {
+            Player player = Main.player[Projectile.owner];
+            SoundEngine.PlaySound(SoundID.Item73, player.Center);
         }
         public override void AI()
         {
@@ -81,6 +88,11 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         private void Visuals()
         {
             Lighting.AddLight(Projectile.Center, Color.Firebrick.ToVector3() * 0.78f);
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            Player player = Main.player[Projectile.owner];
+            SoundEngine.PlaySound(SoundID.Item74, player.Center);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace tsorcRevamp
 {
     public partial class tsorcRevampPlayer : ModPlayer
     {
-        public static readonly int PermanentBuffCount = 57;
+        public static readonly int PermanentBuffCount = 58;
         public static List<int> startingItemsList;
         public List<int> bagsOpened;
         public Dictionary<ItemDefinition, int> consumedPotions;
@@ -693,7 +693,6 @@ namespace tsorcRevamp
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            int critLevel = (int)(Math.Floor(Player.GetWeaponCrit(Player.HeldItem) / 100f));
             if (Player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread)
             {
                 modifiers.DamageVariationScale *= 0;
@@ -721,6 +720,15 @@ namespace tsorcRevamp
             {
                 modifiers.CritDamage += 0.25f;
             }
+        }
+
+        public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Item, consider using ModifyHitNPC instead */
+        {
+            int critLevel = (int)(Math.Floor(Player.GetWeaponCrit(Player.HeldItem) / 100f));
+            if ((BurningAura || BurningStone) && target.onFire == true)
+            {
+                modifiers.TargetDamageMultiplier *= 1.05f;
+            }
             if (critLevel != 0)
             {
                 if (critLevel > 1)
@@ -737,18 +745,10 @@ namespace tsorcRevamp
             }
         }
 
-        public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Item, consider using ModifyHitNPC instead */
-        {
-            if ((BurningAura || BurningStone) && target.onFire == true)
-            {
-                modifiers.TargetDamageMultiplier *= 1.05f;
-            }
-        }
-
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Projectile, consider using ModifyHitNPC instead */
         {
-            modifiers.FinalDamage.Flat -= 4;
-            modifiers.CritDamage.Flat -= 4;
+            int critLevel = (int)(Math.Floor(proj.CritChance / 100f));
+            modifiers.SourceDamage.Flat -= 4;
             if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>())
             {
                 modifiers.FinalDamage *= 0.55f;
@@ -760,6 +760,20 @@ namespace tsorcRevamp
             if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
             {
                 modifiers.TargetDamageMultiplier *= 1.05f;
+            }
+            if (critLevel != 0)
+            {
+                if (critLevel > 1)
+                {
+                    for (int i = 1; i < critLevel; i++)
+                    {
+                        modifiers.CritDamage *= 2;
+                    }
+                }
+                if (Main.rand.Next(1, 101) <= (float)proj.CritChance - (100 * critLevel))
+                {
+                    modifiers.CritDamage *= 2;
+                }
             }
         }
 

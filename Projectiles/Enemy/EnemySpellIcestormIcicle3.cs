@@ -15,6 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 400;
+            Projectile.coldDamage = true;
         }
         public override void SetStaticDefaults()
         {

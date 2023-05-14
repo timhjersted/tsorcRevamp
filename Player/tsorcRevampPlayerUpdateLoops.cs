@@ -14,6 +14,7 @@ using tsorcRevamp.UI;
 using tsorcRevamp.Buffs.Debuffs;
 using Terraria.ModLoader.Config;
 using System.Linq;
+using Terraria.UI.Gamepad;
 
 namespace tsorcRevamp
 {
@@ -919,6 +920,7 @@ namespace tsorcRevamp
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 Player.GetDamage(DamageClass.Generic) *= 1.1f;
+
 
                 if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().minionStaminaCap)
                 {

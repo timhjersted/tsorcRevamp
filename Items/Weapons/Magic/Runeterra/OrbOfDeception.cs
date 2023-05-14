@@ -25,14 +25,14 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.useAnimation = 25;
             Item.useTime = 25;
             Item.damage = 20;
-            Item.mana = 20;
+            Item.mana = 25;
             Item.knockBack = 8;
-            Item.UseSound = SoundID.Item1;
-            Item.rare = ItemRarityID.Blue;
+            Item.UseSound = null;
+            Item.rare = ItemRarityID.Green;
             Item.shootSpeed = 20f;
             Item.noUseGraphic = true;
             Item.noMelee = true;
-            Item.value = PriceByRarity.Blue_1;
+            Item.value = Item.buyPrice(0, 10, 0, 0);
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<OrbOfDeceptionOrb>();
         }

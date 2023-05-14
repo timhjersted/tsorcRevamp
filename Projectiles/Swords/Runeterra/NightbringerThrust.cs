@@ -50,7 +50,10 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 2f);
+        }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            modifiers.SourceDamage *= 2;
         }
         public override void AI()
 		{

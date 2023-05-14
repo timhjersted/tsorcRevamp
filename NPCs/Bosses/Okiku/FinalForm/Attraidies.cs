@@ -1251,7 +1251,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.RealityCrack>());
                 tsorcRevampWorld.AbyssPortalLocation = NPC.Center;
                 NPC.dontTakeDamage = false;
-                //NPC.StrikeNPC(999999, 0, 0);
+                NPC.StrikeNPC(NPC.CalculateHitInfo(999999, 1, true, 0), false, false);
             }
         }
 
@@ -1310,7 +1310,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.SeveringDusk>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BloomShards>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.Guns.PyroclasticFlow>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.AuraOfDecay>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulOfAttraidies>(), Main.rand.Next(15, 23));
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.HeavenPiercer>());

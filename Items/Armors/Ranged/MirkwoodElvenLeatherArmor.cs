@@ -9,9 +9,6 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Gifted with healing. High defense not necessary." +
-                "\n25% chance not to consume ammo" +
-                "\nSet Bonus: 20% Ranged Crit, +20 Ranged Dmg, +7 Life Regen"); */
         }
 
         public override void SetDefaults()
@@ -29,23 +26,30 @@ namespace tsorcRevamp.Items.Armors.Ranged
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetDamage(DamageClass.Ranged) += 0.2f;
-            player.GetCritChance(DamageClass.Ranged) += 20;
-            player.lifeRegen += 7;
+            player.lifeRegen += 4;
+            player.GetModPlayer<tsorcRevampPlayer>().MythrilOrichalcumCritDamage = true;
         }
         public override void UpdateEquip(Player player)
         {
             player.ammoCost75 = true;
+            player.GetDamage(DamageClass.Ranged) += 0.19f;
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.MythrilChainmail, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
+            recipe.AddIngredient(ItemID.MythrilChainmail);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ItemID.MythrilChainmail);
+            recipe2.AddIngredient(ItemID.OrichalcumBreastplate);
+            recipe2.AddTile(TileID.DemonAltar);
+
+            recipe2.Register();
         }
     }
 }

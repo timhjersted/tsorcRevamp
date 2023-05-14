@@ -27,6 +27,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.penetrate = 1; //was 3
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
+            Projectile.coldDamage = true;
 
             AIType = 4;
         }

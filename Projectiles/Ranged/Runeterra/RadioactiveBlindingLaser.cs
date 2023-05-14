@@ -38,7 +38,6 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         {
             var player = Main.player[Projectile.owner];
             player.AddBuff(ModContent.BuffType<RadioactiveBlindingLaserCooldown>(), 5 * 60);
-			Projectile.damage *= 3;
 			Projectile.CritChance += 100;
         }
 
@@ -54,7 +53,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 1125, 400);
+			modifiers.SourceDamage += 3f;
+            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 1000, 450);
         }
     }
 }

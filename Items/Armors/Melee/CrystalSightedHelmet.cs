@@ -10,10 +10,6 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Dazzling armor cut from crystal" +
-                "\nIncreases melee damage by 6%" +
-                "\nSet Bonus: Increases critical strike damage by 25%" +
-                "\nIncreases melee speed by 18%, doubled when under 40% life"); */
         }
 
         public override void SetDefaults()
@@ -32,17 +28,16 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.06f;
+            player.GetDamage(DamageClass.Melee) += 0.19f;
         }
 
         public override void UpdateArmorSet(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().MythrilOrichalcumCritDamage = true;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.18f;
-
+            player.GetAttackSpeed(DamageClass.Melee) += 0.12f;
             if (player.statLife <= (player.statLifeMax2 / 5 * 2))
             {
-                player.GetAttackSpeed(DamageClass.Melee) += 0.18f;
+                player.GetAttackSpeed(DamageClass.Melee) += 0.12f;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 42, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 105, Color.Aqua, 1.0f);
                 Main.dust[dust].noGravity = true;

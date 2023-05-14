@@ -1218,24 +1218,28 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.DesertDjinn):
                     {
                         npc.value = 1890;
+                        npc.damage = 0;
                         break;
                     }
 
                 case int raggedcaster when (raggedcaster == NPCID.RaggedCaster || raggedcaster == NPCID.RaggedCasterOpenCoat):
                     {
                         npc.value = 2120;
+                        npc.damage = 0;
                         break;
                     }
 
                 case int necromancershadowbeam when (necromancershadowbeam == NPCID.Necromancer || necromancershadowbeam == NPCID.NecromancerArmored):
                     {
                         npc.value = 2370;
+                        npc.damage = 0;
                         break;
                     }
 
                 case int diabolist when (diabolist == NPCID.DiabolistRed || diabolist == NPCID.DiabolistWhite):
                     {
                         npc.value = 2240;
+                        npc.damage = 0;
                         break;
                     }
 
@@ -1383,6 +1387,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.AngryNimbus):
                     {
                         npc.value = 1220;
+                        npc.damage = 0;
                         break;
                     }
 
@@ -1407,6 +1412,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.Gastropod):
                     {
                         npc.value = 1240;
+                        npc.damage = 0;
                         break;
                     }
 
@@ -1489,6 +1495,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.IceElemental):
                     {
                         npc.value = 1270;
+                        npc.damage = 0;
                         break;
                     }
 
@@ -1530,6 +1537,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.SkeletonSniper):
                     {
                         npc.value = 2280;
+                        npc.damage = 0;
                         break;
                     }
 
@@ -1714,6 +1722,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.RuneWizard):
                     {
                         npc.value = 27530;
+                        npc.damage = 0;
                         break;
                     }
 
@@ -2420,6 +2429,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.GoblinSummoner):
                     {
                         npc.value = 15690;
+                        npc.damage = 0;
                         break;
                     }
 
@@ -2568,12 +2578,14 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.DD2DarkMageT1):
                     {
                         npc.value = 5850;
+                        npc.damage = 0;
                         break;
                     }
 
                 case (NPCID.DD2DarkMageT3):
                     {
                         npc.value = 6730;
+                        npc.damage = 0;
                         break;
                     }
 
@@ -2684,6 +2696,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.DrManFly):
                     {
                         npc.value = 1570;
+                        npc.damage = 0;
                         break;
                     }
 
@@ -3026,6 +3039,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.NebulaBrain):
                     {
                         npc.value = 4040;
+                        npc.damage = 0;
                         break;
                     }
 

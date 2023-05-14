@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items
             PermaPotionRecipeS(mod, ModContent.ItemType<StrengthPotion>(), ModContent.ItemType<PermanentStrengthPotion>());
             PermaPotionRecipeS(mod, ItemID.EndurancePotion, ModContent.ItemType<PermanentEndurancePotion>());
             PermaPotionRecipeS(mod, ItemID.LifeforcePotion, ModContent.ItemType<PermanentLifeforcePotion>());
-            PermaPotionRecipeS(mod, ItemID.ManaRegenerationPotion, ModContent.ItemType<PermanentManaRegenerationPotion>());
+            PermaPotionRecipeS(mod, ItemID.MagicPowerPotion, ModContent.ItemType<PermanentMagicPowerPotion>());
             PermaPotionRecipeS(mod, ItemID.GoldenDelight, ModContent.ItemType<PermanentExquisitelyStuffed>());
             PermaPotionRecipeS(mod, ItemID.FeatherfallPotion, ModContent.ItemType<PermanentFeatherfallPotion>());
             PermaPotionRecipeS(mod, ItemID.FlaskofVenom, ModContent.ItemType<PermanentVenomImbuement>());
@@ -36,9 +36,7 @@ namespace tsorcRevamp.Items
             PermaPotionRecipeA(mod, ItemID.CalmingPotion, ModContent.ItemType<PermanentCalmingPotion>());
             PermaPotionRecipeA(mod, ItemID.ArcheryPotion, ModContent.ItemType<PermanentArcheryPotion>());
             PermaPotionRecipeA(mod, ItemID.BattlePotion, ModContent.ItemType<PermanentBattlePotion>());
-            PermaPotionRecipeA(mod, ItemID.MagicPowerPotion, ModContent.ItemType<PermanentMagicPowerPotion>());
             PermaPotionRecipeA(mod, ItemID.RagePotion, ModContent.ItemType<PermanentRagePotion>());
-            PermaPotionRecipeA(mod, ItemID.WrathPotion, ModContent.ItemType<PermanentWrathPotion>());
             PermaPotionRecipeA(mod, ItemID.SpelunkerPotion, ModContent.ItemType<PermanentSpelunkerPotion>());
             PermaPotionRecipeA(mod, ItemID.SwiftnessPotion, ModContent.ItemType<PermanentSwiftnessPotion>());
             PermaPotionRecipeA(mod, ItemID.SummoningPotion, ModContent.ItemType<PermanentSummoningPotion>());
@@ -51,6 +49,8 @@ namespace tsorcRevamp.Items
             #region add b tier recipes
             PermaPotionRecipeB(mod, ModContent.ItemType<BoostPotion>(), ModContent.ItemType<PermanentBoostPotion>());
             PermaPotionRecipeB(mod, ItemID.AmmoReservationPotion, ModContent.ItemType<PermanentAmmoReservationPotion>());
+            PermaPotionRecipeB(mod, ItemID.ManaRegenerationPotion, ModContent.ItemType<PermanentManaRegenerationPotion>());
+            PermaPotionRecipeB(mod, ItemID.WrathPotion, ModContent.ItemType<PermanentWrathPotion>());
             PermaPotionRecipeB(mod, ItemID.CratePotion, ModContent.ItemType<PermanentCratePotion>());
             PermaPotionRecipeB(mod, ItemID.FishingPotion, ModContent.ItemType<PermanentFishingPotion>());
             PermaPotionRecipeB(mod, ItemID.SonarPotion, ModContent.ItemType<PermanentSonarPotion>());
@@ -90,7 +90,16 @@ namespace tsorcRevamp.Items
             .AddIngredient(ItemID.SoulofFlight)
             .AddIngredient(ModContent.ItemType<EternalCrystal>(), 4)
             .AddTile(TileID.DemonAltar);
-            recipe.Register();
+            recipe.Register(); 
+            Recipe recipe2 = Recipe.Create(ModContent.ItemType<PermanentLuckPotion>(), 1)
+            .AddIngredient(ModContent.ItemType<DarkSoul>(), 4444)
+            .AddIngredient(ItemID.Waterleaf, 4)
+            .AddIngredient(ItemID.LuckPotionLesser, 4)
+            .AddIngredient(ItemID.LuckPotion, 4)
+            .AddIngredient(ItemID.LuckPotionGreater, 4)
+            .AddIngredient(ModContent.ItemType<EternalCrystal>())
+            .AddTile(TileID.DemonAltar);
+            recipe2.Register();
             #endregion
 
 

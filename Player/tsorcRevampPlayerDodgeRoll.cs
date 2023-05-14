@@ -484,7 +484,7 @@ namespace tsorcRevamp
 
                         if (!other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Player.Center, new Vector2(200, 200))))
                         {
-                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), 5 * 60);
+                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), 10 * 60);
                         }
                     }
                 }
@@ -496,20 +496,20 @@ namespace tsorcRevamp
 
                         if (!other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Player.Center, new Vector2(200, 200))))
                         {
-                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), 5 * 60);
-                            other.AddBuff(BuffID.Frostburn2, 5 * 60);
+                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), 10 * 60);
+                            other.AddBuff(BuffID.Frostburn2, 10 * 60);
 
                             if (Main.rand.NextBool(3)) 
                             {
-                                other.AddBuff(BuffID.Confused, 5 * 60);
+                                other.AddBuff(BuffID.Confused, 10 * 60);
                             }
                             if (Main.rand.NextBool(3))
                             {
-                                other.AddBuff(BuffID.Bleeding, 5 * 60);
+                                other.AddBuff(BuffID.Bleeding, 10 * 60);
                             }
                             if (Main.rand.NextBool(3))
                             {
-                                other.AddBuff(BuffID.Poisoned, 5 * 60);
+                                other.AddBuff(BuffID.Poisoned, 10 * 60);
                             }
                         }
                     }

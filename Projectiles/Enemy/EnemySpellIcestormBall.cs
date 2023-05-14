@@ -17,6 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.width = 16;
             Projectile.tileCollide = true;
             Projectile.aiStyle = 1;
+            Projectile.coldDamage = true;
         }
 
         public override void AI()

@@ -58,7 +58,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            //player.manaRegenDelay = 10;
+            SoundEngine.PlaySound(SoundID.Item131, player.Center);
         }
 
         public override void AI()
@@ -76,7 +76,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                             StateTimer = 0f;
 							EssenceThiefTimer1 = 0;
                             Projectile.ResetLocalNPCHitImmunity();
-							break;
+                            SoundEngine.PlaySound(SoundID.Item131, player.Center);
+                            break;
                         }
 					break;
 				}
@@ -88,7 +89,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 						{
                             if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief >= 9)
                             {
-                                SoundEngine.PlaySound(SoundID.Item74, player.Center);
+                                SoundEngine.PlaySound(SoundID.Item72, player.Center);
                             }
                             Projectile.Kill();
                         }
@@ -99,9 +100,10 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 		}
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 		{
+			modifiers.SourceDamage *= 1.25f;
 			if (CurrentAIState  == AIState.Retracting)
 			{
-				modifiers.FinalDamage *= 2;
+				modifiers.SourceDamage *= 1.5f;
             }
             modifiers.HitDirectionOverride = (Main.player[Projectile.owner].Center.X < target.Center.X) ? 1 : (-1);
         }
@@ -118,6 +120,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                 }
 				EssenceThiefTimer1 = 1;
             }
+			Projectile.damage = (int)(Projectile.damage * 0.95f);
         }
 
         public override bool PreDraw(ref Color lightColor)

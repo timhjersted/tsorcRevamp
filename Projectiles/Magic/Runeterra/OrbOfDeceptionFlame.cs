@@ -1,5 +1,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -26,6 +28,12 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             Projectile.extraUpdates = 1;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
+        }
+
+        public override void OnSpawn(IEntitySource source)
+        {
+            Player player = Main.player[Projectile.owner];
+            SoundEngine.PlaySound(SoundID.Item73, player.Center);
         }
         public override void AI()
         {
@@ -83,6 +91,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         {
             Player player = Main.player[Projectile.owner];
             player.statMana += player.GetManaCost(player.HeldItem) / 2;
+            SoundEngine.PlaySound(SoundID.Item74, target.Center);
         }
     }
 }

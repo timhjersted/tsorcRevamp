@@ -481,7 +481,7 @@ Mods: {
 
 			AncientDemonShield: {
 				DisplayName: Ancient Demon Shield
-				Tooltip: Powerful Greatshield that reduces damage taken by 5%, inherits Obsidian Shield's effects and gives thorns buff
+				Tooltip: Powerful Greatshield that reduces damage taken by 5%, inherits Obsidian Shield's effects and increases thorns by 100%
 			}
 
 			BandOfCosmicPower: {
@@ -674,7 +674,7 @@ Mods: {
 				Tooltip:
 					'''
 					'Everyone will stay away from you'
-					Reduces damage taken by 4% and gives thorns buff
+					Reduces damage taken by 4% and increases thorns by 100%
 					but also reduces movement speed by 5%
 					Can be upgraded with an Obsidian Shield and 5000 Dark Souls
 					'''
@@ -893,13 +893,13 @@ Mods: {
 					Inherits Mythril Bulwark, Ankh Shield and Frozen Shield effects
 					Includes immunity to Chilled and Stoned
 					Slows down your dodgeroll slightly
-					Rolling through an enemy may inflict some debuffs this item grants immunity to
+					Rolling through an enemy may inflict some debuffs this item grants immunity to for 10 seconds
 					'''
 			}
 
 			MythrilBulwark: {
 				DisplayName: Mythril Bulwark
-				Tooltip: Rolling through enemies makes them take 25% more damage
+				Tooltip: Rolling through enemies makes them take 25% more damage for 10 seconds
 			}
 
 			ReflectionShift: {
@@ -969,7 +969,7 @@ Mods: {
 				Tooltip:
 					'''
 					Damage, crit chance, life, and defense
-					increased by 6%. Luck increased by 0.06
+					increased by 6% multiplicatively. Luck increased by 0.6
 					"Proof of the hero's accomplishments"
 					'''
 			}
@@ -1539,7 +1539,8 @@ Mods: {
 				Tooltip:
 					'''
 					Known to be treasured by assassins.
-					+25% movement.
+					Increases movement speed by 25%
+					Decreases mana costs by 9%
 					'''
 			}
 
@@ -1548,7 +1549,8 @@ Mods: {
 				Tooltip:
 					'''
 					It is made of razor sharp dragon scales.
-					Thorns Effect
+					Increases thorns by 100%
+					Increases magic critical strike chance by 22%
 					'''
 			}
 
@@ -1557,8 +1559,10 @@ Mods: {
 				Tooltip:
 					'''
 					A powerful magic/low defense set chosen by skilled Paladins with a taste for high risk/reward combat
-					Set bonus: 20% magic crit, +30% magic damage, +60 mana, -9% mana cost + Darkmoon Cloak skill
-					Darkmoon Cloak activates rapid mana regen, Star Cloak & Doubles magic crit and damage when life falls below 25%
+					Increases magic damage by 22% and maximum mana by 60
+					Set bonus: Darkmoon Cloak skill activates when life falls below 25%
+					This grants rapid mana regen, Star Cloak effect and 
+					increases magic critical strike chance and damage by another 11%
 					'''
 			}
 
@@ -1637,7 +1641,7 @@ Mods: {
 				Tooltip:
 					'''
 					Increases magic critical strike chance by 7%
-					Set Bonus: +10% magic attack speed, space gun effect
+					Set Bonus: +10% magic attack speed, meteorite set bonus
 					Emergency shield kicks in when life is less than 40%, increasing defense by 15
 					'''
 			}
@@ -1727,7 +1731,7 @@ Mods: {
 				Tooltip:
 					'''
 					Crystal armor vibrates with a mysterious energy
-					Increases melee critical strike chance by 26%
+					Increases melee critical strike chance by 23%
 					'''
 			}
 
@@ -1736,9 +1740,9 @@ Mods: {
 				Tooltip:
 					'''
 					Dazzling armor cut from crystal
-					Increases damage reduction by 3%
+					Increases melee damage by 10%
 					Set Bonus: Increases critical strike damage by 25%
-					Increases damage reduction by another 8% when under 40% life
+					Increases damage reduction by 5%, doubled when under 40% life
 					'''
 			}
 
@@ -1756,9 +1760,9 @@ Mods: {
 				Tooltip:
 					'''
 					Dazzling armor cut from crystal
-					Increases melee damage by 6%
+					Increases melee damage by 19%
 					Set Bonus: Increases critical strike damage by 25%
-					Increases melee speed by 18%, doubled when under 40% life
+					Increases melee speed by 12%, doubled when under 40% life
 					'''
 			}
 
@@ -1965,6 +1969,7 @@ Mods: {
 					'''
 					Gifted with ranged combat. High defense not necessary
 					With eyes of a hunter you can spot enemies in the dark
+					Increases ranged critical strike chance by 21%
 					'''
 			}
 
@@ -1974,7 +1979,9 @@ Mods: {
 					'''
 					Gifted with healing. High defense not necessary.
 					25% chance not to consume ammo
-					Set Bonus: 20% Ranged Crit, +20 Ranged Dmg, +7 Life Regen
+					Increases ranged damage by 19%
+					Set Bonus: Increases critical strike damage by 25%
+					Increases life regeneration by 4
 					'''
 			}
 
@@ -3385,7 +3392,7 @@ Mods: {
 				Tooltip:
 					'''
 					Increases damage by 15% and critical strike chance by 15%
-					Grants enhanced Thorns and the Battle potion effect
+					Increases thorns by 200% and grants the Battle potion effect
 					Does not stack with Demon Drug, Armor Drug, or Strength Potions.
 					'''
 			}
@@ -5883,11 +5890,11 @@ Mods: {
 				DisplayName: Orb of Deception
 				Tooltip:
 					'''
-					Throws a magical Orb which will return to you after a certain distance
+					Throws a magical Orb which will return to you after a certain distance and deal 125% damage
 					Casts homing flames while the Orb is sent out which restore half their mana cost on-hit
-					The Orb deals double damage on the way back
-					Gathers stacks of Essence Thief on most Orb hits and enemy kills, doubled on crits
-					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal double damage
+					The Orb deals 218% damage on the way back
+					Gathers stacks of Essence Thief on most Orb hits and sometimes kills, doubled on crits
+					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal 200/300% damage
 					Heal scales with maximum mana and magic damage
 					'''
 			}
@@ -5896,11 +5903,11 @@ Mods: {
 				DisplayName: Orb of Flame
 				Tooltip:
 					'''
-					Throws a magical Orb which will return to you after a certain distance
+					Throws a magical Orb which will return to you after a certain distance and deal 125% damage
 					Casts homing flames while the Orb is sent out which restore half their mana cost on-hit
-					The Orb deals double damage on the way back
-					Gathers stacks of Essence Thief on most Orb hits and enemy kills, doubled on crits
-					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal double damage
+					The Orb deals 218% damage on the way back
+					Gathers stacks of Essence Thief on most Orb hits and sometimes kills, doubled on crits
+					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal 200/300% damage
 					Heal scales with maximum mana and magic damage
 					Right click to cast a fireball which sunders enemies, increasing their vulnerability to magic damage
 					'''
@@ -5910,11 +5917,11 @@ Mods: {
 				DisplayName: Orb of Spirituality
 				Tooltip:
 					'''
-					Throws a magical Orb which will return to you after a certain distance
+					Throws a magical Orb which will return to you after a certain distance and deal 125% damage
 					Casts homing flames while the Orb is sent out which restore half their mana cost on-hit
-					The Orb deals double damage on the way back
-					Gathers stacks of Essence Thief on most Orb hits and enemy kills, doubled on crits
-					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal double damage
+					The Orb deals 218% damage on the way back
+					Gathers stacks of Essence Thief on most Orb hits and sometimes kills, doubled on crits
+					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal 200/300% damage
 					Heal scales with maximum mana and magic damage
 					Right click to cast a charm which sunders enemies, increasing their vulnerability to magic damage
 					Press Special Ability to dash towards the mouse, casting homing flames along the way
@@ -6031,6 +6038,11 @@ Mods: {
 			NecromancyAltar: {
 				DisplayName: Necromancy Altar
 				Tooltip: Grants Bewitched and Strategist buffs on right click
+			}
+
+			PermanentLuckPotion: {
+				DisplayName: Four Leaf Clover
+				Tooltip: ""
 			}
 		}
 

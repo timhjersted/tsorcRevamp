@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.npcSlots = 5;
             AnimationType = 29;
             NPC.aiStyle = 0;
-            NPC.damage = 25;
+            NPC.damage = 0;
             NPC.defense = 12;
             NPC.height = 44;
             NPC.timeLeft = 22500;

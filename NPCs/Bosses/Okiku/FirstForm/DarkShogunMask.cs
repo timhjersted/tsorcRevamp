@@ -87,20 +87,14 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             }
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
-        {/*
-            if (damage > NPC.life || damage * 2 > NPC.life)
-            {
-                crit = false;
-                damage = NPC.life - 50;
-            }
+        {
+            modifiers.DisableCrit();
+            modifiers.SetMaxDamage(NPC.life - 50);
         }
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
-            if (damage > NPC.life || damage * 2 > NPC.life)
-            {
-                crit = false;
-                damage = NPC.life - 50;
-            }*/
+            modifiers.DisableCrit();
+            modifiers.SetMaxDamage(NPC.life - 50);
         }
 
         int firstSoul = -1;

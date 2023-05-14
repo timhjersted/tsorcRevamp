@@ -23,6 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 150;
             Projectile.light = .3f;
             Main.projFrames[Projectile.type] = 4;
+            Projectile.coldDamage = true;
         }
 
         public override bool PreKill(int timeLeft)

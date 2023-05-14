@@ -9,12 +9,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Crystal armor vibrates with a mysterious energy" + 
-                "\nIncreases melee critical strike chance by 26%"); */
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += 26f;
+            player.GetCritChance(DamageClass.Melee) += 23f;
         }
         public override void SetDefaults()
         {
@@ -28,7 +26,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MythrilChainmail);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

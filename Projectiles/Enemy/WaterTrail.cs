@@ -24,6 +24,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
             Projectile.hostile = true;
+            Projectile.coldDamage = true;
             
         }
         public override void AI()

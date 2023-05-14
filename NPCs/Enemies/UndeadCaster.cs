@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Main.npcFrameCount[NPC.type] = 2;
             AIType = NPCID.GoblinSorcerer;
             NPC.lifeMax = 30;
-            NPC.damage = 12;
+            NPC.damage = 0;
             NPC.scale = 1f;
             NPC.knockBackResist = 0.1f;
             NPC.value = 400;

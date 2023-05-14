@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit42;
             NPC.DeathSound = SoundID.NPCDeath32;
             NPC.value = 0;
-            NPC.rarity = 5;
+            NPC.rarity = 10;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Venom] = true;
@@ -56,15 +56,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (NPC.CountNPCS(ModContent.NPCType<CosmicCrystalLizard>()) < 1 && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneDirtLayerHeight) && !spawnInfo.Water && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].RightSlope && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].LeftSlope && !spawnInfo.Player.ZoneJungle)
             {
-                return 0.02f;
+                return 0.02f * (1f + spawnInfo.Player.luck);
             }
             if (NPC.CountNPCS(ModContent.NPCType<CosmicCrystalLizard>()) < 1 && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneDirtLayerHeight) && !spawnInfo.Water && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].RightSlope && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].LeftSlope && spawnInfo.Player.ZoneJungle)
             {
-                return 0.02f;
+                return 0.02f * (1f + spawnInfo.Player.luck);
             }
             if (NPC.CountNPCS(ModContent.NPCType<CosmicCrystalLizard>()) < 1 && spawnInfo.Player.ZoneOverworldHeight && !spawnInfo.Water && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].RightSlope && !Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].LeftSlope && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 2].WallType == WallID.DirtUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 2].WallType == WallID.MudUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 2].WallType == WallID.Planked))
             {
-                return 0.02f;
+                return 0.02f * (1f + spawnInfo.Player.luck);
             }
             return chance;
         }

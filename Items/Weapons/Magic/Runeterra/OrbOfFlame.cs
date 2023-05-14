@@ -28,9 +28,9 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.useAnimation = 25;
             Item.useTime = 25;
             Item.damage = 60;
-            Item.mana = 40;
+            Item.mana = 50;
             Item.knockBack = 8;
-            Item.UseSound = SoundID.Item1;
+            Item.UseSound = null;
             Item.rare = ItemRarityID.LightRed;
             Item.shootSpeed = 20f;
             Item.noUseGraphic = true;

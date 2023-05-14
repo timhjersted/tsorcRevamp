@@ -324,9 +324,10 @@ namespace tsorcRevamp.NPCs
 
         public override void OnKill(NPC npc)
         {
-            if(npc.active && !npc.friendly && Main.player[Main.myPlayer].HeldItem.type == ModContent.ItemType<OrbOfDeception>())
+            Player LocalPlayer = Main.LocalPlayer;
+            if(npc.active && !npc.friendly && (LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfDeception>() || LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfFlame>() || LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>()) && Main.rand.NextBool(9))
             {
-                Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
+                LocalPlayer.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
             }
 
             if(npc.type == NPCID.Golem && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)

@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             Main.npcFrameCount[NPC.type] = 3;
             NPC.width = 28;
             NPC.height = 44;
-            NPC.damage = 110;
+            NPC.damage = 0;
             NPC.defense = 20;
             NPC.scale = 1.3f;
             NPC.HitSound = SoundID.NPCHit1;

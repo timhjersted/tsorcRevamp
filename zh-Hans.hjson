@@ -6035,6 +6035,11 @@ Mods: {
 				// DisplayName: Necromancy Altar
 				// Tooltip: Grants Bewitched and Strategist buffs on right click
 			}
+
+			PermanentLuckPotion: {
+				// DisplayName: Four Leaf Clover
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {

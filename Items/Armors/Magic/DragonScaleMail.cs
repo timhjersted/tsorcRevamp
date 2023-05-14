@@ -11,9 +11,6 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A powerful magic/low defense set chosen by skilled Paladins with a taste for high risk/reward combat" +
-                "\nSet bonus: 20% magic crit, +30% magic damage, +60 mana, -9% mana cost + Darkmoon Cloak skill" +
-                "\nDarkmoon Cloak activates rapid mana regen, Star Cloak & Doubles magic crit and damage when life falls below 25%"); */
         }
         public override void SetDefaults()
         {
@@ -29,32 +26,37 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.manaCost -= 0.09f;
-            player.statManaMax2 += 60;
             if (player.statLife <= (player.statLifeMax2 / 4))
             {
+                player.GetCritChance(DamageClass.Magic) += 11;
+                player.GetDamage(DamageClass.Magic) += 0.11f;
                 player.manaRegenBuff = true;
                 player.starCloakItem = new Item(ItemID.StarCloak); ;
-                player.GetCritChance(DamageClass.Magic) += 40;
-                player.GetDamage(DamageClass.Magic) += 0.60f;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 65, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Blue, 2.0f);
                 Main.dust[dust].noGravity = true;
             }
-            else
-            {
-                player.GetCritChance(DamageClass.Magic) += 20;
-                player.GetDamage(DamageClass.Magic) += .30f;
-            }
+        }
+        public override void UpdateEquip(Player player)
+        {
+            player.GetDamage(DamageClass.Magic) += 0.22f;
+            player.statManaMax2 += 60;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.MythrilChainmail, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3500);
+            recipe.AddIngredient(ItemID.MythrilChainmail);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ItemID.MythrilChainmail);
+            recipe2.AddIngredient(ItemID.OrichalcumBreastplate);
+            recipe2.AddTile(TileID.DemonAltar);
+
+            recipe2.Register();
         }
     }
 }

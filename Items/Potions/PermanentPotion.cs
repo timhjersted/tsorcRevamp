@@ -278,7 +278,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             if (player.GetModPlayer<tsorcRevampPlayer>().manaShield == 0)
             {
                 player.manaRegenBuff = true;
-                player.manaRegen += (int)ApplyScaling(2f);
+                player.manaRegen += 2;
             }
         }
     }
@@ -1191,6 +1191,28 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(0.3f);
+        }
+    }
+    public class PermanentLuckPotion : PermanentPotion
+    {
+        public override string Texture => "tsorcRevamp/Items/Potions/FourLeafClover";
+        public override int PermanentID => 57;
+        public override int BuffType => BuffID.Lucky;
+        public override bool CanScale => true;
+        public override int ScalingFactor => 14; 
+        public override float EffectPotency
+        {
+            get
+            {
+                float potency = (float)ConsumedAmount / (float)ScalingFactor;
+                potency += 0.1f;
+                return Math.Min(potency, 44.44f);
+            }
+        }
+
+        public override void PotionEffect(Player player)
+        {
+            player.luck += ApplyScaling(0.3f);
         }
     }
     //increase PermanentBuffCount in tsorcRevampPlayerMain by 1 for each new potion added

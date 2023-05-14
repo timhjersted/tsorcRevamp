@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             Main.npcFrameCount[NPC.type] = 3;
             AnimationType = 29;
             NPC.aiStyle = 0;
-            NPC.damage = 120;
+            NPC.damage = 0;
             NPC.defense = 56;
             NPC.height = 44;
             NPC.timeLeft = 22500;

@@ -59,6 +59,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             Player player = Main.player[Projectile.owner];
             player.Heal((int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(player.statManaMax2 / 50) + 5);
             player.GetModPlayer<tsorcRevampPlayer>().EssenceThief = 0;
+            SoundEngine.PlaySound(SoundID.Item104, player.Center);
         }
 
         public override void AI()
@@ -75,7 +76,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 							CurrentAIState = AIState.Retracting;
                             StateTimer = 0f;
                             Projectile.ResetLocalNPCHitImmunity();
-							break;
+                            SoundEngine.PlaySound(SoundID.Item104, player.Center);
+                            break;
                         }
 					break;
 				}
@@ -94,12 +96,17 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 		}
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-			modifiers.FinalDamage *= 2;
+            modifiers.SourceDamage *= 2f;
             if (CurrentAIState == AIState.Retracting)
             {
-                modifiers.FinalDamage *= 2;
+                modifiers.SourceDamage *= 1.5f;
             }
             modifiers.HitDirectionOverride = (Main.player[Projectile.owner].Center.X < target.Center.X) ? 1 : (-1);
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            Projectile.damage = (int)(Projectile.damage * 0.95f);
         }
 
         public override bool PreDraw(ref Color lightColor)

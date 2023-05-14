@@ -21,6 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.penetrate = 3;
             Projectile.alpha = 150;
             Projectile.light = .9f;
+            Projectile.coldDamage = true;
         }
 
         public override void SetStaticDefaults()

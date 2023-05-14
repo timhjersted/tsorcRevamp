@@ -42,8 +42,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.damage *= 2;
-            player.AddBuff(ModContent.BuffType<OrbOfFlameFireballCooldown>(), 1 * 60);
+            player.AddBuff(ModContent.BuffType<OrbOfFlameFireballCooldown>(), 7 * 60);
+            SoundEngine.PlaySound(SoundID.Item45, player.Center);
         }
 
         public override void AI()
@@ -57,10 +57,12 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         {
             Player player = Main.player[Projectile.owner];
 			target.AddBuff(ModContent.BuffType<SunderedDebuff>(), 5 * 60);
+            SoundEngine.PlaySound(SoundID.Item62, target.Center);
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 1125, 400);
+            modifiers.SourceDamage += 2.5f;
+            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 1000, 450);
         }
 
         public override bool PreDraw(ref Color lightColor)

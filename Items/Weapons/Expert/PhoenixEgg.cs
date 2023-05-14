@@ -5,7 +5,7 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon
+namespace tsorcRevamp.Items.Weapons.Expert
 {
 	public class PhoenixEgg : ModItem
 	{

@@ -4,6 +4,8 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using Terraria.Audio;
+using Terraria.DataStructures;
+using static Humanizer.In;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
@@ -30,18 +32,20 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 			Projectile.tileCollide = false;
             Projectile.knockBack = 0f;
 		}
-
-        public override void AI()
+        public override void OnSpawn(IEntitySource source)
         {
             Player owner = Main.player[Projectile.owner];
-            Projectile.CritChance = owner.GetWeaponCrit(owner.HeldItem);
+            Projectile.CritChance = owner.GetWeaponCrit(owner.HeldItem) + 100;
+        }
+        public override void AI()
+        {
             Visuals();
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player owner = Main.player[Projectile.owner];
             SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, Projectile.Center);
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearMushroomExplosion>(), owner.GetWeaponDamage(owner.HeldItem) / 2, owner.GetWeaponKnockback(owner.HeldItem) * 10, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearMushroomExplosion>(), Projectile.damage / 2, Projectile.knockBack * 10, Projectile.owner);
         }
         private void Visuals()
         {

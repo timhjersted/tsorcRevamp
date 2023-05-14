@@ -3,7 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
-namespace tsorcRevamp.Items.Accessories.Expert
+namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class CrackedDragonStone : ModItem
     {
@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             Item.height = 26;
             Item.accessory = true;
             Item.value = PriceByRarity.LightRed_4;
-            Item.expert = true;
+            Item.rare = ItemRarityID.LightRed;
         }
 
         public override void UpdateEquip(Player player)
@@ -31,7 +31,6 @@ namespace tsorcRevamp.Items.Accessories.Expert
             player.buffImmune[BuffID.Burning] = true;
             player.buffImmune[BuffID.Chilled] = true;
             player.buffImmune[ModContent.BuffType<Chilled>()] = true;
-
         }
 
         public override void AddRecipes()
