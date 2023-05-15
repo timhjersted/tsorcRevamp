@@ -1582,6 +1582,9 @@ namespace tsorcRevamp
                 tsorcRevampEstusPlayer estusPlayer = Player.GetModPlayer<tsorcRevampEstusPlayer>();
                 estusPlayer.isDrinking = false;
                 estusPlayer.estusDrinkTimer = 0;
+                tsorcRevampCeruleanPlayer ceruleanPlayer = Player.GetModPlayer<tsorcRevampCeruleanPlayer>();
+                ceruleanPlayer.isDrinking = false;
+                ceruleanPlayer.ceruleanDrinkTimer = 0;
             }
 
             if(Player.respawnTimer > 240 && !tsorcRevampWorld.BossAlive)

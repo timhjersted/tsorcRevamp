@@ -244,6 +244,19 @@ namespace tsorcRevamp
                     InterfaceScaleType.UI)
                 );
             }
+            int resourceBarIndex3 = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
+            if (resourceBarIndex3 != -1)
+            {
+                layers.Insert(resourceBarIndex3, new LegacyGameInterfaceLayer(
+                    "tsorcRevamp: Cerulean Flask UI",
+                    delegate
+                    {
+                        mod._ceruleanFlaskUIState.Draw(Main.spriteBatch, new GameTime());
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
+            }
 
             int potionBagIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
             if (potionBagIndex != -1)
@@ -292,6 +305,10 @@ namespace tsorcRevamp
             if (EstusFlaskUIState.Visible)
             {
                 mod._estusFlaskUIState?.Update(gameTime);
+            }
+            if (CeruleanFlaskUIState.Visible)
+            {
+                mod._ceruleanFlaskUIState?.Update(gameTime);
             }
 
             if (PotionBagUIState.Visible)

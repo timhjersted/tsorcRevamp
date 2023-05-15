@@ -3064,11 +3064,11 @@ Mods: {
 			}
 
 			EstusFlaskShard: {
-				DisplayName: Estus Flask Shard
+				DisplayName: Restoration Flask Shard
 				Tooltip:
 					'''
-					The shard of an Estus Flask
-					Take it to the Emerald Herald to increase flask uses
+					A shard of a Restoration Flask
+					Take it to the Emerald Herald to increase all flask uses
 					'''
 			}
 

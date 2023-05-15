@@ -122,6 +122,8 @@ namespace tsorcRevamp
                 return drawInfo.drawPlayer.HeldItem.ModItem.Mod == mod;
             else if (drawInfo.drawPlayer.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking)
                 return true;
+            else if (drawInfo.drawPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().isDrinking)
+                return true;
             return false;
         }
 
@@ -401,6 +403,59 @@ namespace tsorcRevamp
             else
             {
                 estusPlayer.isDrinking = false;
+            }
+            #endregion
+            #region cerulean flask
+            tsorcRevampCeruleanPlayer ceruleanPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>();
+            if (!ceruleanPlayer.Player.dead)
+            {
+                int ceruleanFrameCount = 3;
+                float ceruleanScale = 0.8f;
+                Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.CeruleanFlask];
+                SpriteEffects effects = drawInfo.drawPlayer.direction > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                int rotation = drawInfo.drawPlayer.direction > 0 ? -90 : 90;
+                int drawX = (int)(drawInfo.Position.X + drawInfo.drawPlayer.width / 2f - Main.screenPosition.X);
+                int drawY = (int)(drawInfo.Position.Y + drawInfo.drawPlayer.height / 2f - Main.screenPosition.Y);
+                int frameHeight = texture.Height / ceruleanFrameCount;
+                int frame;
+                if (ceruleanPlayer.ceruleanChargesCurrent == ceruleanPlayer.ceruleanChargesMax) { frame = 0; }
+                else if (ceruleanPlayer.ceruleanChargesCurrent == 1) { frame = 2; }
+                else { frame = 1; }
+
+                int startY = frameHeight * frame;
+
+                Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+
+                //float chargesPercentage = (float)estusPlayer.estusChargesCurrent / estusPlayer.estusChargesMax;
+                //chargesPercentage = Utils.Clamp(chargesPercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
+
+                Color newColor = Color.White * 0.8f;
+
+                Vector2 origin = sourceRectangle.Size() / 2f;
+
+                if (ceruleanPlayer.ceruleanDrinkTimer >= ceruleanPlayer.ceruleanDrinkTimerMax * 0.4f)
+                {
+                    //DrawData data = new DrawData(texture, new Vector2(drawX + (12 * drawInfo.drawPlayer.direction), drawY - 14), sourceRectangle, newColor, rotation, origin, estusScale, effects, 0);
+                    //Main.playerDrawData.Add(data);
+
+                    drawInfo.DrawDataCache.Add(new DrawData(
+                            texture, // The texture to render.
+                            new Vector2(drawX + (12 * drawInfo.drawPlayer.direction), drawY - 14), // Position to render at.
+                            sourceRectangle, // Source rectangle.
+                            newColor, // Color.
+                            rotation, // Rotation.
+                            origin, // Origin. Uses the texture's center.
+                            ceruleanScale, // Scale.
+                            effects, // SpriteEffects.
+                            0 // 'Layer'. This is always 0 in Terraria.
+                        ));
+
+                }
+
+            }
+            else
+            {
+                ceruleanPlayer.isDrinking = false;
             }
             #endregion
         }

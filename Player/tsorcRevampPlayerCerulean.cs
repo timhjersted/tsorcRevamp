@@ -1,0 +1,225 @@
+﻿using Microsoft.Xna.Framework;
+using System.Linq;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
+
+namespace tsorcRevamp
+{
+
+    //This class stores necessary player info for Estus usage, which is used by those playing as Bearer of the Curse, as their main source of HP recovery
+
+    public class tsorcRevampCeruleanPlayer : ModPlayer
+    {
+
+        public static tsorcRevampCeruleanPlayer ModPlayer(Player player)
+        {
+            return player.GetModPlayer<tsorcRevampCeruleanPlayer>();
+        }
+
+
+        public int ceruleanChargesCurrent; //Current amount of charges left
+        public const int DefaultCeruleanChargesMax = 6; //How many charges the player starts with
+        public int ceruleanChargesMax; //The max amount of charges the player has
+                                    //public int estusChargesMax2; //The temporary amount of charges left
+        public const int DefaultCeruleanManaGain = 100; //How much 1 charge heals to begin with
+        public int ceruleanManaGain; //The amount of health restored per charge
+
+
+        public bool isDrinking; //Whether or not the player is currently drinking estus
+        public bool isCeruleanHealing; //Whether or not the player is currently healing after drinking estus
+
+        public float ceruleanDrinkTimerMax => 1f; //This is actually seconds. How long it takes to drink a charge
+        public float ceruleanDrinkTimer; //How far through the animation we are
+        public float ceruleanManaPerTick; //How much health to restore per tick
+        public float ceruleanHealingTimerMax = 300; //Timer for how long drinking the estus will heal for
+        public float ceruleanHealingTimer; //How far through the healing timer we are
+
+        public override void SaveData(TagCompound tag) //Save max amount of charges, current amount of charges and also health gained for next time the player enters the world
+        {
+            tag.Add("ceruleanChargesMax", ceruleanChargesMax);
+            tag.Add("ceruleanChargesCurrent", ceruleanChargesCurrent);
+            tag.Add("ceruleanManaGain", ceruleanManaGain);
+        }
+
+        public override void LoadData(TagCompound tag) //Load saved data
+        {
+
+            ceruleanChargesMax = tag.GetInt("ceruleanChargesMax");
+            ceruleanChargesCurrent = tag.GetInt("ceruleanChargesCurrent");
+            ceruleanManaGain = tag.GetInt("ceruleanManaGain");
+
+        }
+
+        public override void Initialize() //On loading up the player, set max charges to default, this is then overriden by the saved quantity from Save() and Load()
+        {
+            ceruleanChargesMax = DefaultCeruleanChargesMax;
+            ceruleanManaGain = DefaultCeruleanManaGain;
+            //estusChargesCurrent = estusChargesMax;
+        }
+
+        public override void OnRespawn() //When a player respawns, restore charges
+        {
+            ceruleanChargesCurrent = ceruleanChargesMax;
+        }
+
+        public override void PostUpdateBuffs()
+        {
+            if (Player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && !Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200])
+                && ceruleanChargesCurrent != ceruleanChargesMax && Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) //When the player visits a bonfire, restore charges
+            {
+                ceruleanChargesCurrent = ceruleanChargesMax;
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f }, Player.position);
+            }
+        }
+        public override void PostUpdateMiscEffects()
+        {
+            UpdateResource();
+        }
+
+        private void UpdateResource()
+        {
+            /*Main.NewText("estusChargesCurrent: " + estusChargesCurrent);
+			Main.NewText("estusChargesMax: " + estusChargesMax);
+			Main.NewText("estusHealthGain: " + estusHealthGain);*/
+
+
+            // Limit estusChargesCurrent from going over the limit imposed by estusChargesMax
+            //estusChargesCurrent = Utils.Clamp(estusChargesCurrent, 0, estusChargesMax);
+
+        }
+
+        public override bool PreItemCheck()
+        {
+            UpdateDrinkingCerulean();
+
+            if (isDrinking && (Player.HeldItem.type == ItemID.Umbrella || Player.HeldItem.type == ItemID.BreathingReed))
+            {
+                return false;
+            }
+
+            return base.PreItemCheck();
+        }
+
+        /*public bool TryDrinkEstus()
+		{
+			bool isLocal = player.whoAmI == Main.myPlayer;
+
+			if (isLocal && tsorcRevamp.DrinkEstusKey.JustPressed && !player.mouseInterface && estusChargesCurrent > 0 && player.itemAnimation == 0 
+				&& player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift 
+				&& !player.GetModPlayer<tsorcRevampPlayer>().isDodging && player.statLife != player.statLifeMax2)
+			{
+				isDrinking = true;
+				estusDrinkTimer = 0;
+				return true;
+			}
+			return false;
+		}*/
+
+        public void UpdateDrinkingCerulean()
+        {
+            //estusHealthPerTick += estusHealthGain / estusHealingTimerMax; //Heal this much each tick
+            //Attempt to drink if the player isn't already
+            if (!isDrinking /*&& !TryDrinkEstus()*/)
+            {
+                return;
+            }
+
+            //Progress the action
+            ceruleanDrinkTimer += 1f / 60f;
+
+            //Force player body frame to be Use3, this includes the players arm (drinking position)
+            if (ceruleanDrinkTimer >= ceruleanDrinkTimerMax * 0.4f)
+            {
+                Player.GetModPlayer<tsorcRevampPlayer>().forcedBodyFrame = PlayerFrames.Use2;
+            }
+
+            //Slow player for whole duration of action
+            Player.velocity.X *= 0.9f;
+            Player.velocity.Y *= 0.9f;
+            Player.eocHit = 0;
+
+            if (ceruleanDrinkTimer >= ceruleanDrinkTimerMax) //Once finished drinking:
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item21 with { Volume = 0.5f }, Player.position);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item3, Player.position);
+
+                for (int i = 0; i <= 15; i++)
+                {
+                    int z = Dust.NewDust(Player.position, Player.width, Player.height, DustID.WaterCandle, 0f, 0f, 120, default(Color), 1f);
+                    Main.dust[z].noGravity = true;
+                    Main.dust[z].velocity *= 2.75f;
+                    Main.dust[z].fadeIn = 1.3f;
+                    Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
+                    vectorother.Normalize();
+                    vectorother *= (float)Main.rand.Next(80, 95) * 0.043f;
+                    Main.dust[z].velocity = vectorother;
+                    vectorother.Normalize();
+                    vectorother *= 25f;
+                    Main.dust[z].position = Player.Center - vectorother;
+                }
+
+                isDrinking = false; //No longer drinking
+                ceruleanChargesCurrent--; //Remove a charge
+                ceruleanDrinkTimer = 0; //Set the timer back to 0
+                Player.HealEffect(ceruleanManaGain); //Show green heal text equal to health gain
+                isCeruleanHealing = true; //Commence healing process
+                                       //kplayer.eocDash = 0;
+            }
+        }
+
+        public override void PostUpdate()
+        {
+            if (isCeruleanHealing) //Is the player healing from estus?
+            {
+                ceruleanHealingTimer++; //Advance the timer
+
+                //Main.NewText(estusHealthPerTick);
+
+                if (ceruleanHealingTimer <= ceruleanHealingTimerMax && Player.statMana < Player.statManaMax2) //If the timer is less or equal to timer max and player hp is not at max
+                {
+
+                    ceruleanManaPerTick += ceruleanManaGain / ceruleanHealingTimerMax; //Heal this much each tick
+
+                    if (ceruleanManaPerTick > (int)ceruleanManaPerTick)
+                    {
+                        Player.statMana += (int)ceruleanManaPerTick;
+                        ceruleanManaPerTick -= (int)ceruleanManaPerTick;
+                    }
+
+
+                    int z = Dust.NewDust(Player.position, Player.width, Player.height, DustID.WaterCandle, 0f, 0f, 120, default(Color), 1f);
+                    Main.dust[z].noGravity = true;
+                    Main.dust[z].velocity *= 2.75f;
+                    Main.dust[z].fadeIn = 1.3f;
+                    Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
+                    vectorother.Normalize();
+                    vectorother *= (float)Main.rand.Next(80, 95) * 0.043f;
+                    Main.dust[z].velocity = vectorother;
+                    vectorother.Normalize();
+                    vectorother *= 25f;
+                    Main.dust[z].position = Player.Center - vectorother;
+
+                }
+
+                if (ceruleanHealingTimer >= ceruleanHealingTimerMax) //Once healing process is over
+                {
+                    ceruleanManaPerTick = 0;
+                    ceruleanHealingTimer = 0; //Set timer back to 0
+                    isCeruleanHealing = false; //No longer drinking
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+    }
+}

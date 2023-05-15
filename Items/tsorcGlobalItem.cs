@@ -76,7 +76,7 @@ namespace tsorcRevamp.Items
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                if (player.GetModPlayer<tsorcRevampPlayer>().isDodging || player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking)
+                if (player.GetModPlayer<tsorcRevampPlayer>().isDodging || player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking || player.GetModPlayer<tsorcRevampCeruleanPlayer>().isDrinking)
                 {
                     return false;
                 }

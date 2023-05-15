@@ -856,6 +856,20 @@ namespace tsorcRevamp
 
         private static void CustomQuickMana(Terraria.On_Player.orig_QuickMana orig, Player player)
         {
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            tsorcRevampCeruleanPlayer ceruleanPlayer = player.GetModPlayer<tsorcRevampCeruleanPlayer>();
+            if (modPlayer.BearerOfTheCurse && player.statMana < player.statManaMax2)
+            {
+                if (player == Main.LocalPlayer && !player.mouseInterface && ceruleanPlayer.ceruleanChargesCurrent > 0 && player.itemAnimation == 0
+                && !modPlayer.isDodging && !ceruleanPlayer.isDrinking && !player.CCed)
+                {
+                    ceruleanPlayer.isDrinking = true;
+                    ceruleanPlayer.ceruleanDrinkTimer = 0;
+                    player.AddBuff(ModContent.BuffType<Crippled>(), 60);
+                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60);
+                }
+                return;
+            }
             if (player.noItems || player.statMana == player.statManaMax2)
             {
                 return;
@@ -897,6 +911,7 @@ namespace tsorcRevamp
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
+            tsorcRevampCeruleanPlayer ceruleanPlayer = player.GetModPlayer<tsorcRevampCeruleanPlayer>();
 
             if (modPlayer.BearerOfTheCurse && player.statLife < player.statLifeMax2)
             {
@@ -905,15 +920,14 @@ namespace tsorcRevamp
                 {
                     estusPlayer.isDrinking = true;
                     estusPlayer.estusDrinkTimer = 0;
-                    player.AddBuff(ModContent.BuffType<Crippled>(), 120);
-                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 120);
+                    player.AddBuff(ModContent.BuffType<Crippled>(), 2 * 60);
+                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 2 * 60);
                 }
                 return;
             }
 
             if (player.noItems || player.statLife == player.statLifeMax2 || player.potionDelay > 0)
                 return;
-
             Item selectedItem = player.QuickHeal_GetItemToUse();
             if (selectedItem == null)
             {

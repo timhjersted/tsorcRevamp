@@ -104,7 +104,9 @@ namespace tsorcRevamp
         internal UserInterface _darkSoulCounterUIState; //"prefacing a name with an underscore is supposed to be for private fields!"
         internal UserInterface EmeraldHeraldUserInterface;
         internal EstusFlaskUIState EstusFlaskUIState;
-        internal UserInterface _estusFlaskUIState; //"but reader! i dont care!" says zeo
+        internal CeruleanFlaskUIState CeruleanFlaskUIState;
+        internal UserInterface _estusFlaskUIState; //okay
+        internal UserInterface _ceruleanFlaskUIState; //idk what to say
         internal PotionBagUIState PotionUIState;
         internal UserInterface PotionBagUserInterface;
         internal CustomMapUIState DownloadUIState;
@@ -172,6 +174,9 @@ namespace tsorcRevamp
             //if (!Main.dedServ) EstusFlaskUIState.Activate();
             _estusFlaskUIState = new UserInterface();
 
+            CeruleanFlaskUIState = new CeruleanFlaskUIState();
+            _ceruleanFlaskUIState = new UserInterface();
+
             PotionUIState = new PotionBagUIState();
             PotionBagUserInterface = new UserInterface();
 
@@ -193,7 +198,11 @@ namespace tsorcRevamp
             BonfireUIState.Activate();
             _bonfireUIState.SetState(BonfireUIState);
             _darkSoulCounterUIState.SetState(DarkSoulCounterUIState);
+
             _estusFlaskUIState.SetState(EstusFlaskUIState);
+
+            _ceruleanFlaskUIState.SetState(CeruleanFlaskUIState);
+
             PotionBagUserInterface.SetState(PotionUIState);
             DownloadUI.SetState(DownloadUIState);
             MarkerState.Activate();
@@ -2685,6 +2694,7 @@ namespace tsorcRevamp
             MoonlightGreatsword,
             MoonlightGreatswordGlowmask,
             EstusFlask,
+            CeruleanFlask,
             ElfinArrow,
             ElfinTargeting,
             HumanityPhantom,
@@ -2739,6 +2749,7 @@ namespace tsorcRevamp
                 {TransparentTextureType.MoonlightGreatsword, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/MoonlightGreatsword", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.MoonlightGreatswordGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/MoonlightGreatsword_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.EstusFlask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/EstusFlask_drinking", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.CeruleanFlask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/CeruleanFlask_drinking", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.ElfinArrow, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ElfinArrow", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.ElfinTargeting, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ElfinTargeting", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.HumanityPhantom, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/HumanityPhantom", ReLogic.Content.AssetRequestMode.ImmediateLoad)},
