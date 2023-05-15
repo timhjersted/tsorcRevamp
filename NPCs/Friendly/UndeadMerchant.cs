@@ -71,129 +71,143 @@ namespace tsorcRevamp.NPCs.Friendly
             }
         }
 
+        public override void AddShops() {
+
+
+            
+        }
+
         public override void ModifyActiveShop(string shopName, Item[] items)
-        {/*
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.CharcoalPineResin>());
-            shop.item[nextSlot].shopCustomPrice = 20;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Throwing.Firebomb>());
-            shop.item[nextSlot].shopCustomPrice = 5;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.BloodredMossClump>());
-            shop.item[nextSlot].shopCustomPrice = 4;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Potions.Lifegem>());
-            shop.item[nextSlot].shopCustomPrice = 20;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Potions.GlowingMushroomSkewer>());
-            shop.item[nextSlot].shopCustomPrice = 5;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Potions.HealingElixir>());
-            shop.item[nextSlot].shopCustomPrice = 30;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Potions.GreenBlossom>());
-            shop.item[nextSlot].shopCustomPrice = 30;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.BattlePotion);
-            shop.item[nextSlot].shopCustomPrice = 30;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.WormholePotion);
-            shop.item[nextSlot].shopCustomPrice = 20;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.Defensive.IronShield>());
-            shop.item[nextSlot].shopCustomPrice = 200;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.HollowSoldierHelmet>());
-            shop.item[nextSlot].shopCustomPrice = 100;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.HollowSoldierBreastplate>());
-            shop.item[nextSlot].shopCustomPrice = 100;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.HollowSoldierWaistcloth>());
-            shop.item[nextSlot].shopCustomPrice = 100;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
+        {
+            NPCShop shop = new(NPC.type);
+            shop.Add(new Item(ModContent.ItemType<Items.CharcoalPineResin>()) {
+                shopCustomPrice = 20, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
 
-            if (NPC.downedBoss1) //EoC
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.ThrowingKnifeCrate>());
-                shop.item[nextSlot].shopCustomPrice = 10;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Throwing.Firebomb>()) {
+                shopCustomPrice = 5, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
 
-            if (NPC.downedBoss2) //EoW/BoC(?)
-            {
-                shop.item[nextSlot].SetDefaults(ItemID.VilePowder);
-                shop.item[nextSlot].shopCustomPrice = 1;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }
+            shop.Add(new Item(ModContent.ItemType<Items.BloodredMossClump>()) {
+                shopCustomPrice = 4, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
 
-            if (Main.hardMode)
-            {
-                shop.item[nextSlot].SetDefaults(ItemID.SlimySaddle);
-                shop.item[nextSlot].shopCustomPrice = 1000;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Potions.RadiantLifegem>());
-                shop.item[nextSlot].shopCustomPrice = 60;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }
+            shop.Add(new Item(ModContent.ItemType<Items.Potions.Lifegem>()) {
+                shopCustomPrice = 20, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
 
-            if (NPC.downedMechBoss1) //The Destroyer
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Throwing.BlackFirebomb>());
-                shop.item[nextSlot].shopCustomPrice = 50;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-                
-            }
+            shop.Add(new Item(ModContent.ItemType<Items.Potions.GlowingMushroomSkewer>()) {
+                shopCustomPrice = 5, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
 
-            if (NPC.downedMechBoss3) //Skeletron Prime
-            {
-                shop.item[nextSlot].SetDefaults(ItemID.QueenSlimeMountSaddle);
-                shop.item[nextSlot].shopCustomPrice = 2000;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }
+            shop.Add(new Item(ModContent.ItemType<Items.Potions.HealingElixir>()) {
+                shopCustomPrice = 30, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
 
-                if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition((ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>()))) || tsorcRevampWorld.SuperHardMode /*just in case)
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.PurgingStone>());
-                shop.item[nextSlot].shopCustomPrice = 10000;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }
+            shop.Add(new Item(ModContent.ItemType<Items.Potions.GreenBlossom>()) {
+                shopCustomPrice = 30, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
 
-            if (Main.bloodMoon)
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.MaskOfTheChild>());
-                shop.item[nextSlot].shopCustomPrice = 1000;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.MaskOfTheFather>());
-                shop.item[nextSlot].shopCustomPrice = 1000;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.MaskOfTheMother>());
-                shop.item[nextSlot].shopCustomPrice = 1000;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }*/
+            shop.Add(new Item(ItemID.BattlePotion) {
+                shopCustomPrice = 30, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+            shop.Add(new Item(ItemID.WormholePotion) {
+                shopCustomPrice = 20, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+            shop.Add(new Item(ModContent.ItemType<Items.Accessories.Defensive.IronShield>()) {
+                shopCustomPrice = 200, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+            shop.Add(new Item(ModContent.ItemType<Items.Armors.HollowSoldierHelmet>()) {
+                shopCustomPrice = 100, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+            shop.Add(new Item(ModContent.ItemType<Items.Armors.HollowSoldierBreastplate>()) {
+                shopCustomPrice = 100, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+            shop.Add(new Item(ModContent.ItemType<Items.Armors.HollowSoldierWaistcloth>()) {
+                shopCustomPrice = 100, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+
+   
+            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.ThrowingKnifeCrate>()) {
+                shopCustomPrice = 10, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, Condition.DownedEyeOfCthulhu);
+            
+
+
+            shop.Add(new Item(ItemID.VilePowder) {
+                shopCustomPrice = 1, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, Condition.DownedEowOrBoc);
+            
+
+
+            shop.Add(new Item(ItemID.SlimySaddle) {
+                shopCustomPrice = 1000, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, Condition.Hardmode);
+
+            shop.Add(new Item(ModContent.ItemType<Items.Potions.RadiantLifegem>()) {
+                shopCustomPrice = 60, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, Condition.Hardmode);
+
+            
+
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Throwing.BlackFirebomb>()) {
+                shopCustomPrice = 50, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, Condition.DownedDestroyer);
+
+
+
+            shop.Add(new Item(ItemID.QueenSlimeMountSaddle) {
+                shopCustomPrice = 2000, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, Condition.DownedSkeletronPrime);
+
+
+
+            shop.Add(new Item(ModContent.ItemType<Items.PurgingStone>()) {
+                shopCustomPrice = 10000, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
+            
+
+
+            shop.Add(new Item(ModContent.ItemType<Items.Armors.MaskOfTheChild>()) {
+                shopCustomPrice = 1000, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, Condition.BloodMoon);
+
+            shop.Add(new Item(ModContent.ItemType<Items.Armors.MaskOfTheFather>()) {
+                shopCustomPrice = 1000, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, Condition.BloodMoon);
+
+            shop.Add(new Item(ModContent.ItemType<Items.Armors.MaskOfTheMother>()) {
+                shopCustomPrice = 1000, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, Condition.BloodMoon);
         }
 
         public override void TownNPCAttackStrength(ref int damage, ref float knockback)

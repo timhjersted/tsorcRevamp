@@ -78,108 +78,124 @@ namespace tsorcRevamp.NPCs.Friendly
             }
         }
 
-        public override void ModifyActiveShop(string shopName, Item[] items)
-        {/*
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.BoltCrate>());
-            shop.item[nextSlot].shopCustomPrice = 8;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.ThrowingAxeCrate>());
-            shop.item[nextSlot].shopCustomPrice = 8;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.ThrowingSpearCrate>());
-            shop.item[nextSlot].shopCustomPrice = 8;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.WoodenArrowCrate>());
-            shop.item[nextSlot].shopCustomPrice = 6;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;             
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Ranged.LeatherHelmet>());
-            shop.item[nextSlot].shopCustomPrice = 50;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Ranged.LeatherArmor>());
-            shop.item[nextSlot].shopCustomPrice = 100;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.Ranged.LeatherGreaves>());
-            shop.item[nextSlot].shopCustomPrice = 75;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.LesserHealingPotion);
-            shop.item[nextSlot].shopCustomPrice = 4;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.Safe);
-            shop.item[nextSlot].shopCustomPrice = 250;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.FrostburnArrowCrate>());
-            shop.item[nextSlot].shopCustomPrice = 12;
-            shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-            nextSlot++;
+        public override void AddShops() {
+            NPCShop shop = new(NPC.type);
+            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.BoltCrate>()) {
+                shopCustomPrice = 8,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
 
-            if (NPC.downedBoss1)
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Ranged.OldCrossbow>());
-                shop.item[nextSlot].shopCustomPrice = 180;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Ranged.Bows.OldLongbow>());
-                shop.item[nextSlot].shopCustomPrice = 350;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.UnholyArrowCrate>());
-                shop.item[nextSlot].shopCustomPrice = 25;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
+            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.ThrowingAxeCrate>()) {
+                shopCustomPrice = 8,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
 
-            }
-            if (NPC.downedBoss2)
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.RoyalThrowingSpearCrate>());
-                shop.item[nextSlot].shopCustomPrice = 12;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Gaibon>())))
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.MeteorShotCrate>());
-                shop.item[nextSlot].shopCustomPrice = 30;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.JungleWyvern.JungleWyvernHead>())))
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.EnchantedThrowingSpear>());
-                shop.item[nextSlot].shopCustomPrice = 2200;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Ammo.PowerBolt>());
-                shop.item[nextSlot].shopCustomPrice = 1;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-                shop.item[nextSlot].SetDefaults(ItemID.JestersArrow);
-                shop.item[nextSlot].shopCustomPrice = 1;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-                shop.item[nextSlot].SetDefaults(ItemID.HellfireArrow);
-                shop.item[nextSlot].shopCustomPrice = 1;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }
+            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.ThrowingSpearCrate>()) {
+                shopCustomPrice = 8,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
 
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheHunter>())))
-            {
-                shop.item[nextSlot].SetDefaults(ItemID.HolyArrow);
-                shop.item[nextSlot].shopCustomPrice = 1;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }*/
+            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.WoodenArrowCrate>()) {
+                shopCustomPrice = 6,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+            shop.Add(new Item(ModContent.ItemType<Items.Armors.Ranged.LeatherHelmet>()) {
+                shopCustomPrice = 50,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+            shop.Add(new Item(ModContent.ItemType<Items.Armors.Ranged.LeatherArmor>()) {
+                shopCustomPrice = 100,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+            shop.Add(new Item(ModContent.ItemType<Items.Armors.Ranged.LeatherGreaves>()) {
+                shopCustomPrice = 75,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+            shop.Add(new Item(ItemID.LesserHealingPotion) {
+                shopCustomPrice = 4,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+            shop.Add(new Item(ItemID.Safe) {
+                shopCustomPrice = 250,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.FrostburnArrowCrate>()) {
+                shopCustomPrice = 12,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+
+
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Ranged.OldCrossbow>()) {
+                shopCustomPrice = 180,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            },
+            Condition.DownedEyeOfCthulhu);
+
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Ranged.Bows.OldLongbow>()) {
+                shopCustomPrice = 350,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            },
+            Condition.DownedEyeOfCthulhu);
+
+            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.UnholyArrowCrate>()) {
+                shopCustomPrice = 25,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            },
+            Condition.DownedEyeOfCthulhu);
+
+
+
+            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.RoyalThrowingSpearCrate>()) {
+                shopCustomPrice = 12,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            },
+            Condition.DownedEowOrBoc);
+
+
+
+            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.MeteorShotCrate>()) {
+                shopCustomPrice = 30,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Gaibon>()))));
+
+
+
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.EnchantedThrowingSpear>()) {
+                shopCustomPrice = 2200,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.JungleWyvern.JungleWyvernHead>()))));
+
+            shop.Add(new Item(ModContent.ItemType<Items.Ammo.PowerBolt>()) {
+                shopCustomPrice = 1,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.JungleWyvern.JungleWyvernHead>()))));
+
+            shop.Add(new Item(ItemID.JestersArrow) {
+                shopCustomPrice = 1,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.JungleWyvern.JungleWyvernHead>()))));
+
+            shop.Add(new Item(ItemID.HellfireArrow) {
+                shopCustomPrice = 1,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.JungleWyvern.JungleWyvernHead>()))));
+
+
+
+            shop.Add(new Item(ItemID.HolyArrow) {
+                shopCustomPrice = 1,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheHunter>()))));
+
+            shop.Register();
         }
-
         public override void HitEffect(NPC.HitInfo hit)
         {
             if (base.NPC.life <= 0) //even though npcs are immortal
