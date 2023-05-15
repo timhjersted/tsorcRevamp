@@ -952,66 +952,46 @@ namespace tsorcRevamp.NPCs
             }
         }
 
-        public override void ModifyActiveShop(NPC npc, string shopName, Item[] items)
-        {/*
-            if (type == NPCID.Merchant)
-            {
-                shop.item[nextSlot].SetDefaults(ItemID.Bottle); //despite being able to find the archeologist right after (who sells bottled water), it's nice to have
-                nextSlot++;
-            }
-            if (type == NPCID.SkeletonMerchant)
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Firebomb>());
-                shop.item[nextSlot].shopCustomPrice = 5;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<EternalCrystal>());
-                shop.item[nextSlot].shopCustomPrice = 2000;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }
-            if (type == NPCID.GoblinTinkerer)
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Pulsar>());
-                shop.item[nextSlot].shopCustomPrice = 800;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
+        public override void ModifyShop(NPCShop shop) {
 
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<ToxicCatalyzer>());
-                shop.item[nextSlot].shopCustomPrice = 800;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
+            switch (shop.NpcType) {
+                case NPCID.Merchant: {
+                    shop.Add(ItemID.Bottle);
+                    break;
+                }
+                case NPCID.SkeletonMerchant: {
+                    shop.Add(new Item(ModContent.ItemType<Firebomb>()) {
+                        shopCustomPrice = 5,
+                        shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                    });
+
+                    shop.Add(new Item(ModContent.ItemType<EternalCrystal>()) {
+                        shopCustomPrice = 2000,
+                        shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                    });
+                    break;
+                }
+                case NPCID.GoblinTinkerer: {
+                    shop.Add(new Item(ModContent.ItemType<Pulsar>()) {
+                        shopCustomPrice = 800,
+                        shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                    });
+
+
+                    shop.Add(new Item(ModContent.ItemType<ToxicCatalyzer>()) {
+                        shopCustomPrice = 800,
+                        shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                    });
+                    break;
+                }
+                case NPCID.Mechanic: {
+                    foreach (NPCShop.Entry item in shop.ActiveEntries) {
+                        item.AddCondition(new Condition("", () => !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode));
+                    }
+                    break;
+                }
+                default:break;
             }
-            if (type == NPCID.Mechanic)
-            {
-                shop.item[0].SetDefaults(ModContent.ItemType<DisabledSale>());       // Red Wrench
-                shop.item[1].SetDefaults(ModContent.ItemType<DisabledSale>());       // Blue Wrench
-                shop.item[2].SetDefaults(ModContent.ItemType<DisabledSale>());       // Green Wrench
-                shop.item[3].SetDefaults(ModContent.ItemType<DisabledSale>());       // Yellow Wrench
-                shop.item[4].SetDefaults(ModContent.ItemType<DisabledSale>());       // Wire Cutter
-                shop.item[5].SetDefaults(ModContent.ItemType<DisabledSale>());       // Wire
-                shop.item[6].SetDefaults(ModContent.ItemType<DisabledSale>());       // Leaver
-                shop.item[7].SetDefaults(ModContent.ItemType<DisabledSale>());       // Switch
-                shop.item[8].SetDefaults(ModContent.ItemType<DisabledSale>());       // Red Pressure Plate
-                shop.item[9].SetDefaults(ModContent.ItemType<DisabledSale>());       // Green Pressure Plate
-                shop.item[10].SetDefaults(ModContent.ItemType<DisabledSale>());      // Gray Pressure Plate
-                shop.item[11].SetDefaults(ModContent.ItemType<DisabledSale>());      // Brown Pressure Plate
-                shop.item[12].SetDefaults(ModContent.ItemType<DisabledSale>());      // Blue Pressure Plate
-                shop.item[13].SetDefaults(ModContent.ItemType<DisabledSale>());      // Yellow Pressure Plate
-                shop.item[14].SetDefaults(ModContent.ItemType<DisabledSale>());      // Orange Pressure Plate
-                shop.item[15].SetDefaults(ModContent.ItemType<DisabledSale>());      // Teal Pressure Plate
-                shop.item[16].SetDefaults(ModContent.ItemType<DisabledSale>());      // Booster Track
-                shop.item[17].SetDefaults(ModContent.ItemType<DisabledSale>());      // Actuator
-                shop.item[18].SetDefaults(ModContent.ItemType<DisabledSale>());      // Junction Box
-                shop.item[19].SetDefaults(ModContent.ItemType<DisabledSale>());      // Mechanical Ruler
-                shop.item[20].SetDefaults(ModContent.ItemType<DisabledSale>());      // Mechanical Lens
-                shop.item[22].SetDefaults(ModContent.ItemType<DisabledSale>());      // Wire Bulb
-                shop.item[23].SetDefaults(ModContent.ItemType<DisabledSale>());      // 5 Second Timer
-                shop.item[24].SetDefaults(ModContent.ItemType<DisabledSale>());      // 3 Second Timer
-                shop.item[25].SetDefaults(ModContent.ItemType<DisabledSale>());      // 1 Second Timer
-                shop.item[26].SetDefaults(ModContent.ItemType<DisabledSale>());      // 1/2 Second Timer
-                shop.item[27].SetDefaults(ModContent.ItemType<DisabledSale>());      // 1/4 Second Timer
-            }*/
         }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
