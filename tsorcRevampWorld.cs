@@ -1308,7 +1308,6 @@ namespace tsorcRevamp
             }
         }
 
-
         public static Condition SHM1Downed
         {
             get

@@ -8,7 +8,7 @@ using Terraria.ModLoader.IO;
 namespace tsorcRevamp
 {
 
-    //This class stores necessary player info for Estus usage, which is used by those playing as Bearer of the Curse, as their main source of HP recovery
+    //This class stores necessary player info for Cerulean usage, which is used by those playing as Bearer of the Curse, as their main source of MP recovery
 
     public class tsorcRevampCeruleanPlayer : ModPlayer
     {
@@ -22,21 +22,22 @@ namespace tsorcRevamp
         public int ceruleanChargesCurrent; //Current amount of charges left
         public const int DefaultCeruleanChargesMax = 6; //How many charges the player starts with
         public int ceruleanChargesMax; //The max amount of charges the player has
-                                    //public int estusChargesMax2; //The temporary amount of charges left
-        public const int DefaultCeruleanManaGain = 100; //How much 1 charge heals to begin with
+        public const int DefaultCeruleanManaGain = 120; //How much 1 charge heals to begin with
         public int ceruleanManaGain; //The amount of health restored per charge
+        public float ceruleanManaGainBonus; //A bonus to the health restored
 
 
         public bool isDrinking; //Whether or not the player is currently drinking estus
-        public bool isCeruleanHealing; //Whether or not the player is currently healing after drinking estus
+        public bool isCeruleanRestoring; //Whether or not the player is currently healing after drinking estus
 
-        public float ceruleanDrinkTimerMax => 1f; //This is actually seconds. How long it takes to drink a charge
+        public float ceruleanDrinkTimerMax => 1.5f; //This is actually seconds. How long it takes to drink a charge
         public float ceruleanDrinkTimer; //How far through the animation we are
-        public float ceruleanManaPerTick; //How much health to restore per tick
-        public float ceruleanHealingTimerMax = 300; //Timer for how long drinking the estus will heal for
-        public float ceruleanHealingTimer; //How far through the healing timer we are
+        public float ceruleanManaPerTick; //How much mana to restore per tick
+        public float ceruleanRestorationTimerMax; //Timer for how long drinking the estus will restore for
+        public float ceruleanRestorationTimerBonus;
+        public float ceruleanRestorationTimer; //How far through the healing timer we are
 
-        public override void SaveData(TagCompound tag) //Save max amount of charges, current amount of charges and also health gained for next time the player enters the world
+        public override void SaveData(TagCompound tag) //Save current amount of charges and restore amount
         {
             tag.Add("ceruleanChargesMax", ceruleanChargesMax);
             tag.Add("ceruleanChargesCurrent", ceruleanChargesCurrent);
@@ -45,18 +46,15 @@ namespace tsorcRevamp
 
         public override void LoadData(TagCompound tag) //Load saved data
         {
-
             ceruleanChargesMax = tag.GetInt("ceruleanChargesMax");
             ceruleanChargesCurrent = tag.GetInt("ceruleanChargesCurrent");
             ceruleanManaGain = tag.GetInt("ceruleanManaGain");
-
         }
 
         public override void Initialize() //On loading up the player, set max charges to default, this is then overriden by the saved quantity from Save() and Load()
         {
             ceruleanChargesMax = DefaultCeruleanChargesMax;
             ceruleanManaGain = DefaultCeruleanManaGain;
-            //estusChargesCurrent = estusChargesMax;
         }
 
         public override void OnRespawn() //When a player respawns, restore charges
@@ -75,19 +73,13 @@ namespace tsorcRevamp
         }
         public override void PostUpdateMiscEffects()
         {
-            UpdateResource();
-        }
-
-        private void UpdateResource()
-        {
-            /*Main.NewText("estusChargesCurrent: " + estusChargesCurrent);
-			Main.NewText("estusChargesMax: " + estusChargesMax);
-			Main.NewText("estusHealthGain: " + estusHealthGain);*/
-
-
-            // Limit estusChargesCurrent from going over the limit imposed by estusChargesMax
-            //estusChargesCurrent = Utils.Clamp(estusChargesCurrent, 0, estusChargesMax);
-
+            ceruleanManaGainBonus = 1f + ((float)Player.manaRegenBonus / 200f); 
+            ceruleanRestorationTimerBonus = 1f + (Player.manaRegenDelayBonus / 4f); 
+            if (Player.manaRegenBuff) //so mana regen pot does something
+            {
+                ceruleanRestorationTimerBonus = 1.2f + (Player.manaRegenDelayBonus / 3f); 
+            }
+            ceruleanRestorationTimerMax = 600 * ceruleanRestorationTimerBonus;
         }
 
         public override bool PreItemCheck()
@@ -101,25 +93,8 @@ namespace tsorcRevamp
 
             return base.PreItemCheck();
         }
-
-        /*public bool TryDrinkEstus()
-		{
-			bool isLocal = player.whoAmI == Main.myPlayer;
-
-			if (isLocal && tsorcRevamp.DrinkEstusKey.JustPressed && !player.mouseInterface && estusChargesCurrent > 0 && player.itemAnimation == 0 
-				&& player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift 
-				&& !player.GetModPlayer<tsorcRevampPlayer>().isDodging && player.statLife != player.statLifeMax2)
-			{
-				isDrinking = true;
-				estusDrinkTimer = 0;
-				return true;
-			}
-			return false;
-		}*/
-
         public void UpdateDrinkingCerulean()
         {
-            //estusHealthPerTick += estusHealthGain / estusHealingTimerMax; //Heal this much each tick
             //Attempt to drink if the player isn't already
             if (!isDrinking /*&& !TryDrinkEstus()*/)
             {
@@ -163,24 +138,23 @@ namespace tsorcRevamp
                 isDrinking = false; //No longer drinking
                 ceruleanChargesCurrent--; //Remove a charge
                 ceruleanDrinkTimer = 0; //Set the timer back to 0
-                Player.HealEffect(ceruleanManaGain); //Show green heal text equal to health gain
-                isCeruleanHealing = true; //Commence healing process
-                                       //kplayer.eocDash = 0;
+                Player.ManaEffect((int)(ceruleanManaGain * ceruleanManaGainBonus * ceruleanRestorationTimerBonus)); //Show blue restoration text equal to mana gain
+                isCeruleanRestoring = true; //Commence restoration process
             }
         }
 
         public override void PostUpdate()
         {
-            if (isCeruleanHealing) //Is the player healing from estus?
+            if (isCeruleanRestoring) //Is the player's mana restoring from cerulean?
             {
-                ceruleanHealingTimer++; //Advance the timer
+                ceruleanRestorationTimer++; //Advance the timer
+                Main.NewText(ceruleanRestorationTimerMax);
+                Main.NewText(ceruleanManaPerTick);
 
-                //Main.NewText(estusHealthPerTick);
-
-                if (ceruleanHealingTimer <= ceruleanHealingTimerMax && Player.statMana < Player.statManaMax2) //If the timer is less or equal to timer max and player hp is not at max
+                if (ceruleanRestorationTimer <= ceruleanRestorationTimerMax && Player.statMana < Player.statManaMax2) //If the timer is less or equal to timer max and player mp is not at max
                 {
 
-                    ceruleanManaPerTick += ceruleanManaGain / ceruleanHealingTimerMax; //Heal this much each tick
+                    ceruleanManaPerTick += (ceruleanManaGain * ceruleanManaGainBonus * ceruleanRestorationTimerBonus) / ceruleanRestorationTimerMax; //Heal this much each tick
 
                     if (ceruleanManaPerTick > (int)ceruleanManaPerTick)
                     {
@@ -203,11 +177,11 @@ namespace tsorcRevamp
 
                 }
 
-                if (ceruleanHealingTimer >= ceruleanHealingTimerMax) //Once healing process is over
+                if (ceruleanRestorationTimer >= ceruleanRestorationTimerMax) //Once restoration process is over
                 {
                     ceruleanManaPerTick = 0;
-                    ceruleanHealingTimer = 0; //Set timer back to 0
-                    isCeruleanHealing = false; //No longer drinking
+                    ceruleanRestorationTimer = 0; //Set timer back to 0
+                    isCeruleanRestoring = false; //No longer drinking
                 }
             }
         }

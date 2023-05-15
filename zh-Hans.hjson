@@ -499,6 +499,16 @@ Mods: {
 				Tooltip: Increases life regeneration by 4 and maximum mana by 80
 			}
 
+			BandOfStarforging: {
+				// DisplayName: Band Of Starforging
+				/* Tooltip:
+					'''
+					Increases life regeneration by 4 and maximum mana by 100
+					Increases mana regen by 40 and decreases mana regen delay by 1.25
+					Increases max mana by 50% and decreases mana usage by 10%
+					''' */
+			}
+
 			BarrierRing: {
 				DisplayName: Barrier Ring
 				Tooltip:
@@ -6040,6 +6050,11 @@ Mods: {
 				// DisplayName: Four Leaf Clover
 				// Tooltip: ""
 			}
+
+			StarlightShard: {
+				// DisplayName: Starlight Shard
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -6715,6 +6730,11 @@ Mods: {
 			UrumiDebuff: {
 				// DisplayName: Urumi Debuff
 				// Description: Mods.tsorcRevamp.Buffs.UrumiDebuff.Description
+			}
+
+			StarlightShardRestoration: {
+				// DisplayName: Starlight Shard Restoration
+				// Description: Mods.tsorcRevamp.Buffs.StarlightShardRestoration.Description
 			}
 		}
 

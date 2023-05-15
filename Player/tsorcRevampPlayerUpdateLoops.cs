@@ -204,7 +204,9 @@ namespace tsorcRevamp
         public bool BearerOfTheCurse;
         public bool LifegemHealing;
         public bool RadiantLifegemHealing;
+        public bool StarlightShardRestoration;
         int healingTimer = 0;
+        int restorationTimer = 0;
 
         public Item[] PotionBagItems = new Item[PotionBagUIState.POTION_BAG_SIZE];
         public int potionBagCountdown = 0; //You can't move items around if an item is still 'in use'. This lets us delay opening the bag until that finishes.
@@ -357,6 +359,7 @@ namespace tsorcRevamp
             PhazonCorruption = false;
             LifegemHealing = false;
             RadiantLifegemHealing = false;
+            StarlightShardRestoration = false;
 
             PowerWithin = false;
             BurningAura = false;
@@ -880,6 +883,22 @@ namespace tsorcRevamp
                 healingTimer = 0;
             }
 
+            if (StarlightShardRestoration) // 140 mp over 14 seconds
+            {
+                restorationTimer++;
+
+                if (restorationTimer == 6)
+                {
+                    Player.statMana += 1;
+                    restorationTimer = 0;
+                }
+            }
+
+            if (!StarlightShardRestoration)
+            {
+                restorationTimer = 0;
+            }
+
             #endregion
 
             if (Player.HasBuff(BuffID.WellFed))
@@ -921,11 +940,17 @@ namespace tsorcRevamp
             {
                 Player.GetDamage(DamageClass.Generic) *= 1.1f;
 
+                /*Player.statManaMax2 *= 2;
+                if (!Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) && !Player.HasBuff(ModContent.BuffType<Bonfire>()))
+                {
+                    Player.manaRegenDelay = 1000;
+                }*/
 
                 if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().minionStaminaCap)
                 {
                     Player.lifeRegen /= 2;
                 }
+
             }
             if (ModContent.GetInstance<tsorcRevampConfig>().DisableGloveAutoswing)
             {

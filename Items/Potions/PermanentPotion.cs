@@ -278,7 +278,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             if (player.GetModPlayer<tsorcRevampPlayer>().manaShield == 0)
             {
                 player.manaRegenBuff = true;
-                player.manaRegen += 2;
             }
         }
     }

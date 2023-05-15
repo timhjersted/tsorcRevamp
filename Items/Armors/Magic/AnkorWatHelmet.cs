@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Armors.Magic
             player.statManaMax2 += 120;
 
             player.manaCost -= 0.08f;
-            player.manaRegen += 4;
+            player.manaRegenBonus += 8;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {

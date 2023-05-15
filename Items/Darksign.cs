@@ -54,7 +54,8 @@ namespace tsorcRevamp.Items
 
         public override bool? UseItem(Player player) // Won't consume item without this
         {
-            
+            player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax = player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax * 2;
+            player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain = ((player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain - tsorcRevampEstusPlayer.DefaultEstusHealthGain) * 6) + 120;
             return true;
         }
         public override void UseStyle(Player player, Rectangle rectangle)

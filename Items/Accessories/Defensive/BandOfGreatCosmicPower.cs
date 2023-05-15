@@ -18,7 +18,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Item.width = 28;
             Item.height = 28;
-            Item.lifeRegen = 3;
             Item.accessory = true;
             Item.value = PriceByRarity.Orange_3;
             Item.rare = ItemRarityID.Orange;
@@ -47,6 +46,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             player.lifeRegen += 3;
             player.statManaMax2 += 60;
+            player.manaRegenBonus += 30;
+            player.manaRegenDelayBonus += 1.15f;
         }
 
     }

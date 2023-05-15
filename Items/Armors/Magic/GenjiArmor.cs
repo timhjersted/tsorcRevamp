@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         {
             player.GetCritChance(DamageClass.Magic) += 20;
             player.statManaMax2 += 100;
-            player.manaRegen += 3;
+            player.manaRegenBonus += 6;
         }
         public override void AddRecipes()
         {

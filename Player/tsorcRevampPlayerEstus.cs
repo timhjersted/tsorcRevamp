@@ -45,11 +45,9 @@ namespace tsorcRevamp
 
         public override void LoadData(TagCompound tag) //Load saved data
         {
-
             estusChargesMax = tag.GetInt("estusChargesMax");
             estusChargesCurrent = tag.GetInt("estusChargesCurrent");
             estusHealthGain = tag.GetInt("estusHealthGain");
-
         }
 
         public override void Initialize() //On loading up the player, set max charges to default, this is then overriden by the saved quantity from Save() and Load()

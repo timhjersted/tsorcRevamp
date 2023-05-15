@@ -858,15 +858,15 @@ namespace tsorcRevamp
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             tsorcRevampCeruleanPlayer ceruleanPlayer = player.GetModPlayer<tsorcRevampCeruleanPlayer>();
-            if (modPlayer.BearerOfTheCurse && player.statMana < player.statManaMax2)
+            if (modPlayer.BearerOfTheCurse && player.statMana < player.statManaMax2 && ceruleanPlayer.ceruleanChargesCurrent > 0)
             {
                 if (player == Main.LocalPlayer && !player.mouseInterface && ceruleanPlayer.ceruleanChargesCurrent > 0 && player.itemAnimation == 0
                 && !modPlayer.isDodging && !ceruleanPlayer.isDrinking && !player.CCed)
                 {
                     ceruleanPlayer.isDrinking = true;
                     ceruleanPlayer.ceruleanDrinkTimer = 0;
-                    player.AddBuff(ModContent.BuffType<Crippled>(), 60);
-                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60);
+                    player.AddBuff(ModContent.BuffType<Crippled>(), 60 + 30);
+                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60 + 30);
                 }
                 return;
             }

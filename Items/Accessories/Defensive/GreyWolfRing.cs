@@ -24,7 +24,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Item.width = 24;
             Item.height = 24;
             Item.defense = 19;
-            Item.lifeRegen = 4;
             Item.accessory = true;
             Item.value = PriceByRarity.Red_10;
             Item.rare = ItemRarityID.Red;
@@ -48,7 +47,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
             //Band of Phenomenal Cosmic Power inheritance
             player.statManaMax2 += 100;
-            player.lifeRegen += 4; 
+            player.lifeRegen += 4;
+            player.manaRegenBonus += 35;
+            player.manaRegenDelayBonus += 1.3f;
 
             //Ring of Clarity inheritance
             player.GetDamage(DamageClass.Generic) += 0.03f;

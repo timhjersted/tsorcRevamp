@@ -10,9 +10,6 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Charred, ashen bones" +
-                             "\nCast into the flames of a Bonfire to increase Estus" +
-                             "\nFlask potency, increasing the amount of HP healed"); */
         }
 
         public override void SetDefaults()
@@ -33,10 +30,10 @@ namespace tsorcRevamp.Items
 
         public override bool CanUseItem(Player player)
         {
-            if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain < 120 && player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain < 120)
+            if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain < 120)
             {
                 player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain += 20;
-                player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain += 100;
+                player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain += 120;
                 Main.NewText("Estus Flask potency increased! Heal per charge: " + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain, Color.OrangeRed);
                 Main.NewText("Cerulean Flask potency increased! Heal per charge: " + Main.LocalPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain, Color.RoyalBlue);
                 return true;

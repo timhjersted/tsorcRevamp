@@ -3,6 +3,10 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Items.Accessories;
+using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Accessories.Magic;
+using tsorcRevamp.Items.Armors.Magic;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Items.VanillaItems
@@ -92,6 +96,8 @@ namespace tsorcRevamp.Items.VanillaItems
             SimpleModTooltip(Mod, item, tooltips, ItemID.MonkStaffT3, "Applies a vulnerability hex");
             SimpleModTooltip(Mod, item, tooltips, ItemID.DD2SquireBetsySword, "Applies a vulnerability hex");
             SimpleModTooltip(Mod, item, tooltips, ItemID.DD2BetsyBow, "Applies a vulnerability hex");
+            SimpleModTooltip(Mod, item, tooltips, ItemID.StarinaBottle, "Increases mana regen by 10 and decreases mana regen delay by 50%");
+            SimpleModTooltip(Mod, item, tooltips, ItemID.ManaRegenerationBand, "Increases mana regen by 25 and decreases mana regen delay by 100%");
 
 
             Player player = Main.LocalPlayer;
@@ -131,9 +137,9 @@ namespace tsorcRevamp.Items.VanillaItems
                 SimpleGlobalModTooltip(Mod, tooltips, "Fully charged whip debuff counts as 2");
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ModContent.ItemType<TerraFall>())
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ItemID.ManaRegenerationPotion)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, "Fully charged whip debuff counts as 2");
+                SimpleGlobalModTooltip(Mod, tooltips, "Increases Cerulean Flask restoration time");
             }
         }
     }
