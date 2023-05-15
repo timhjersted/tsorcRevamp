@@ -1110,11 +1110,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         damage *= (1 - p.endurance);
                         if (Main.expertMode)
                         {
-                            //damage += (int)Math.Ceiling(p.statDefense * 0.75f);
+                            damage += (int)Math.Ceiling((float)p.statDefense * 0.75f);
                         }
                         else
                         {
-                            //damage += (int)Math.Ceiling(p.statDefense * 0.5f);
+                            damage += (int)Math.Ceiling((float)p.statDefense * 0.5f);
                         }
 
                         p.immuneTime = 0;
@@ -1528,11 +1528,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 damage *= (1 - p.endurance);
                                 if (Main.expertMode)
                                 {
-                                    //damage += (int)Math.Ceiling(p.statDefense * 0.75f);
+                                    damage += (int)Math.Ceiling((float)p.statDefense * 0.75f);
                                 }
                                 else
                                 {
-                                    //damage += (int)Math.Ceiling(p.statDefense * 0.5f);
+                                    damage += (int)Math.Ceiling((float)p.statDefense * 0.5f);
                                 }
 
                                 p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + " was shattered."), (int)damage, 1);

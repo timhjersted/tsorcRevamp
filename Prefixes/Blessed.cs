@@ -14,7 +14,7 @@ namespace tsorcRevamp.Prefixes
         }
 
         public override bool CanRoll(Item item)     //This also gets ignored, do it via ChoosePrefix from tsorcInstancedGlobalItem
-            => false;
+            => true;
 
 
         // Defaults to Custom

@@ -89,7 +89,7 @@ namespace tsorcRevamp
                     mouseText = "Teleport to Bonfire Checkpoint";
 
                     //Step 4: Check if they're left-clicking, and close the minimap + teleport them if so
-                    if (Main.mouseLeft && !tsorcRevampWorld.BossAlive)
+                    if (Main.mouseLeft && Main.mouseLeftRelease && !tsorcRevampWorld.BossAlive)
                     {
                         if (Main.LocalPlayer.HasBuff(ModContent.BuffType<InCombat>())) {
                             if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().TextCooldown >= 0) {

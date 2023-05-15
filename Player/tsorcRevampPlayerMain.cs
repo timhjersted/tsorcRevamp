@@ -408,6 +408,7 @@ namespace tsorcRevamp
 
         public override bool ShiftClickSlot(Item[] inventory, int context, int slot)
         {
+            if (!PotionBagUIState.Visible) return false;
             if (Player.HasItem(ModContent.ItemType<PotionBag>()) && (context == ItemSlot.Context.ChestItem || context == ItemSlot.Context.BankItem || context == ItemSlot.Context.InventoryItem))
             {
                 if (PotionBagUIState.IsValidPotion(inventory[slot]))
@@ -850,7 +851,7 @@ namespace tsorcRevamp
                 Player.AddBuff(BuffID.OnFire, 600);
             }
 
-            //if (damage >= Player.statLife || (crit && damage * 2 >= Player.statLife))
+            if (hurtInfo.Damage >= Player.statLife)
             {
                 DeathText = PickDeathText();
             }
@@ -898,7 +899,7 @@ namespace tsorcRevamp
             }
 
 
-            //if (damage >= Player.statLife || (crit && damage * 2 >= Player.statLife))
+            if (hurtInfo.Damage >= Player.statLife)
             {
                 DeathText = PickDeathText(proj);
             }

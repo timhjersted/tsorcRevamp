@@ -888,8 +888,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
                                 otherPlayer.Hurt(PlayerDeathReason.LegacyEmpty(), damage, 0, pvp: true);
                                 if (Main.netMode != NetmodeID.SinglePlayer)
                                 {
-                                    //PlayerDeathReason reason = PlayerDeathReason.ByPlayer(otherPlayer.whoAmI);
-                                    //NetMessage.SendPlayerHurt(m, reason, damage, 0, critical: false, pvp: true, 0);
+                                    PlayerDeathReason reason = PlayerDeathReason.ByOther(16);
+                                    Player.HurtInfo info = new();
+                                    info.PvP = true;
+                                    info.DamageSource = reason;
+                                    info.HitDirection = 0;
+                                    info.Damage = damage;
+                                    NetMessage.SendPlayerHurt(m, info, -1);
                                 }
                             }
                         }

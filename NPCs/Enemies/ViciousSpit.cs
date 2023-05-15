@@ -67,8 +67,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Collision.SolidCollision(NPC.position, NPC.width, NPC.height))
             {
-                _ = Main.netMode;
-                //NPC.StrikeNPCNoInteraction(999, 0f, 0);
+                NPC.HideStrikeDamage = true;
+                NPC.SimpleStrikeNPC(999, 1);
             }
             for (int j = 0; j < 2; j++)
             {
