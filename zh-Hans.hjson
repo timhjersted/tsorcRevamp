@@ -3510,6 +3510,15 @@ Mods: {
 					'''
 			}
 
+			StarlightShard: {
+				// DisplayName: Starlight Shard
+				/* Tooltip:
+					'''
+					Restores 140 mana over 24 seconds
+					Does not inflict mana sickness
+					''' */
+			}
+
 			MushroomSkewer: {
 				DisplayName: Mushroom Skewer
 				Tooltip:
@@ -6048,11 +6057,6 @@ Mods: {
 
 			PermanentLuckPotion: {
 				// DisplayName: Four Leaf Clover
-				// Tooltip: ""
-			}
-
-			StarlightShard: {
-				// DisplayName: Starlight Shard
 				// Tooltip: ""
 			}
 		}

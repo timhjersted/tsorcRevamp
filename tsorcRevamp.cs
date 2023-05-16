@@ -637,7 +637,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<TriadBag>()                 , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<WyvernMageBag>()            , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<SerrisBag>()                , BossExtras.StaminaVessel      },
-                {   ModContent.ItemType<DeathBag>()                 , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<DeathBag>()                 , BossExtras.EstusFlaskShard    },
                 {   ModContent.ItemType<MindflayerIllusionBag>()    , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<AttraidiesBag>()            , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<KrakenBag>()                , BossExtras.GuardianSoul

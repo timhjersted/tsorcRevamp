@@ -3521,13 +3521,21 @@ Mods: {
 				DisplayName: Lifegem
 				Tooltip:
 					'''
-
 					Small stone made up of crystallized souls
 					Gradually restores a small amount of HP
 					Often found near abandoned corpses,
 					as if it were what remains of the soul
 					Restores 90 HP over the course of 12 seconds
 					Inflicts potion sickness
+					'''
+			}
+
+			StarlightShard: {
+				DisplayName: Starlight Shard
+				Tooltip:
+					'''
+					Restores 140 mana over 24 seconds
+					Does not inflict mana sickness
 					'''
 			}
 
@@ -6069,11 +6077,6 @@ Mods: {
 			PermanentLuckPotion: {
 				DisplayName: Four Leaf Clover
 				Tooltip: ""
-			}
-
-			StarlightShard: {
-				DisplayName: Starlight Shard
-				Tooltip: "Restores 140 mana over 24 seconds"
 			}
 		}
 

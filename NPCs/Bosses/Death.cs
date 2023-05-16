@@ -6,6 +6,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -223,6 +224,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void OnKill()
         {
+            Player player = Main.player[NPC.target];
             if (!Main.expertMode)
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
@@ -232,6 +234,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPC.type)))
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000);
+                }
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPC.type)) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                {
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.EstusFlaskShard>());
                 }
             }
         }
