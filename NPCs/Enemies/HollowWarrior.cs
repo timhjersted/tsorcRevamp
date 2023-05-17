@@ -805,12 +805,6 @@ namespace tsorcRevamp.NPCs.Enemies
             return chance;
         }
 
-        public override void OnKill()
-        {
-            Player player = Main.player[NPC.target];
-            if (Main.rand.NextBool(15) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-        }
-
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 2, 4));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 30));

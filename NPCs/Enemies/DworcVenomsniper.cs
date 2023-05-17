@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -29,30 +31,33 @@ namespace tsorcRevamp.NPCs.Enemies
 
         //these mfs drop Every Potion too 
         //why
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.BattlePotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.WaterWalkingPotion, 40));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SwiftnessPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SpelunkerPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ShinePotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RegenerationPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.MagicPowerPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GillsPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HunterPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ArcheryPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.BloodMoonStarter, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ManaRegenerationPotion, 55));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GreaterHealingPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GreaterHealingPotion, 50)); //not a typo
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 55));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.BloodredMossClump>(), 8, 1, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 5, 1, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 10));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.CharcoalPineResin>(), 8));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.Lifegem>(), 10));
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            Player player = Main.player[NPC.target];
+
+            npcLoot.Add(ItemDropRule.Common(ItemID.BattlePotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.WaterWalkingPotion, 40));
+            npcLoot.Add(ItemDropRule.Common(ItemID.SwiftnessPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.SpelunkerPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ShinePotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.RegenerationPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GillsPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.HunterPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ArcheryPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 55));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 50)); //not a typo
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 55));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BloodredMossClump>(), 8, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 5, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.CharcoalPineResin>(), 8));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 10));
         }
 
         //Spawns in the Jungle, mostly Underground and in the Cavern.

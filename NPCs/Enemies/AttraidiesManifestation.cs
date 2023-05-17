@@ -2,8 +2,10 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -329,13 +331,6 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            Player player = Main.player[NPC.target];
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {
-                if (Main.rand.Next(100) < 35) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
-                if (Main.rand.Next(100) < 35) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
-            }
 
             UsefulFunctions.BroadcastText("The Attraidies Illusion has been defeated...", 150, 150, 150);
             if (!Main.dedServ)
@@ -349,17 +344,19 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ShinePotion, 5));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RegenerationPotion, 10));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.MagicPowerPotion, 10, 1, 1, 6));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HunterPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GillsPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WandOfFrost>(), 20));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ManaRegenerationPotion, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GreaterHealingPotion, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 5, 2, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ShinePotion, 5));
+            npcLoot.Add(ItemDropRule.Common(ItemID.RegenerationPotion, 10));
+            npcLoot.Add(new CommonDrop(ItemID.MagicPowerPotion, 10, 1, 1, 6));
+            npcLoot.Add(ItemDropRule.Common(ItemID.HunterPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GillsPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WandOfFrost>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 2));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 2));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 5, 2, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 5));
         }
     }
 }

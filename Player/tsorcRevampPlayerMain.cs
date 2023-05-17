@@ -26,6 +26,7 @@ using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Runeterra.Magic;
+using Terraria.Localization;
 
 namespace tsorcRevamp
 {
@@ -78,7 +79,6 @@ namespace tsorcRevamp
                 SendSingleItemPacket(tsorcPacketID.SyncSoulSlot, SoulSlot.Item, -1, Player.whoAmI);
             }
         }
-
         public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
         {
 

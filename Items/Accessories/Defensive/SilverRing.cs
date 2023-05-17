@@ -8,13 +8,13 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Grants 4 defense. Can be upgraded.");
         }
 
         public override void SetDefaults()
         {
             Item.width = 24;
             Item.height = 22;
+            Item.defense = 4;
             Item.accessory = true;
             Item.value = PriceByRarity.White_0;
             Item.rare = ItemRarityID.White;
@@ -32,7 +32,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.statDefense += 4;
         }
 
     }

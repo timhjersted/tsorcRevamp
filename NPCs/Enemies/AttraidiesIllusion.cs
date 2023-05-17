@@ -5,6 +5,8 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy;
+using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -377,21 +379,22 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && (Main.rand.NextFloat() <= .5f))
             {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<RadiantLifegem>());
             }
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ShinePotion, 55));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.RegenerationPotion, 35, 1, 1, 4));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.MagicPowerPotion, 35, 1, 1, 3));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HunterPotion, 35));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GillsPotion, 75));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.IronskinPotion, 35, 1, 1, 2));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.ManaRegenerationPotion, 30, 1, 1, 9));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GoldenKey, 10, 1, 1, 3));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Magic.AquamarineRing>(), 20));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GreaterHealingPotion, 10, 2, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ShinePotion, 55));
+            npcLoot.Add(new CommonDrop(ItemID.RegenerationPotion, 35, 1, 1, 4));
+            npcLoot.Add(new CommonDrop(ItemID.MagicPowerPotion, 35, 1, 1, 3));
+            npcLoot.Add(ItemDropRule.Common(ItemID.HunterPotion, 35));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GillsPotion, 75));
+            npcLoot.Add(new CommonDrop(ItemID.IronskinPotion, 35, 1, 1, 2));
+            npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 30, 1, 1, 9));
+            npcLoot.Add(new CommonDrop(ItemID.GoldenKey, 10, 1, 1, 3));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Magic.AquamarineRing>(), 20));
+            npcLoot.Add(new CommonDrop(ItemID.GreaterHealingPotion, 10, 2, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 6));
         }
     }
 }

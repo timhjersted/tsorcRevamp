@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs
@@ -18,7 +19,7 @@ namespace tsorcRevamp.Buffs
 
             if (Main.rand.NextBool(4))
             {
-                Dust dust = Main.dust[Dust.NewDust(new Vector2(player.position.X, player.position.Y + 10), player.width, player.height, 43, 0, -1f, 100, Color.White, Main.rand.NextFloat(.8f, 1f))];
+                Dust dust = Main.dust[Dust.NewDust(new Vector2(player.position.X, player.position.Y + 10), player.width, player.height, 15, 0, -1f, 100, Color.White, Main.rand.NextFloat(.8f, 1f))]; //DustID 15 is for magic dust
                 dust.noGravity = true;
                 dust.velocity.X *= 0;
             }

@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe2.AddIngredient(ItemID.TissueSample, 6);
 			recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
 			recipe2.AddTile(TileID.DemonAltar);
-			recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
+			recipe2.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
 			recipe2.Register();
 
 			Recipe recipe3 = CreateRecipe();
@@ -61,7 +61,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe3.AddIngredient(ItemID.ShadowScale, 6);
 			recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
 			recipe3.AddTile(TileID.DemonAltar);
-			recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
+			recipe3.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
 			recipe3.Register();
 		}
 	}

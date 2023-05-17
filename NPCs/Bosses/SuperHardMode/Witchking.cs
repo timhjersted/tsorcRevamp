@@ -10,6 +10,8 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {

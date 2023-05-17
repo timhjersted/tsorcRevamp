@@ -953,25 +953,16 @@ namespace tsorcRevamp.NPCs.Enemies
 
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            
-
-            if (!tsorcRevampWorld.SuperHardMode)
-            {
-                IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
-                hmCondition.OnFailedConditions(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 4));
-                hmCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 10));
-                npcLoot.Add(hmCondition);
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.LostUndeadSoul>(), 5));
-                npcLoot.Add(ItemDropRule.Common(ItemID.RagePotion, 13));
-                npcLoot.Add(ItemDropRule.Common(ItemID.WrathPotion, 13));
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 36, 42));
-            }
-
-            if (Main.hardMode)
-            {
-                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofLight, 1));
-            }
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
+            hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofLight, 1));
+            npcLoot.Add(hmCondition);
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Items.Potions.RadiantLifegem>(), 2, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.LostUndeadSoul>(), 5));
+            npcLoot.Add(ItemDropRule.Common(ItemID.RagePotion, 13));
+            npcLoot.Add(ItemDropRule.Common(ItemID.WrathPotion, 13));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 36, 42));
         }
 
         #region Drawing and Animation

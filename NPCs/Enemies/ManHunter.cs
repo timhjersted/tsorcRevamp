@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -48,24 +50,15 @@ namespace tsorcRevamp.NPCs.Enemies
             archerBoltDamage = (int)(archerBoltDamage / 2);
         }
 
-        public override void OnKill()
-        {
-            Player player = Main.player[NPC.target];
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.NextBool(8))
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-            }
-        }
-
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ArcheryPotion));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 36));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HunterPotion, 34));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SwiftnessPotion, 34));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.HealingPotion, 100, 1, 1, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HolyArrow, 4, 10, 20));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 2, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ArcheryPotion));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 36));
+            npcLoot.Add(ItemDropRule.Common(ItemID.HunterPotion, 34));
+            npcLoot.Add(ItemDropRule.Common(ItemID.SwiftnessPotion, 34));
+            npcLoot.Add(new CommonDrop(ItemID.HealingPotion, 100, 1, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ItemID.HolyArrow, 4, 10, 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 2, 1, 2));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 8));
         }
 
 

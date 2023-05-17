@@ -30,7 +30,7 @@ namespace tsorcRevamp
         public bool isDrinking; //Whether or not the player is currently drinking estus
         public bool isCeruleanRestoring; //Whether or not the player is currently healing after drinking estus
 
-        public float ceruleanDrinkTimerMax => 1.5f; //This is actually seconds. How long it takes to drink a charge
+        public float ceruleanDrinkTimerMax => 2f; //This is actually seconds. How long it takes to drink a charge
         public float ceruleanDrinkTimer; //How far through the animation we are
         public float ceruleanManaPerTick; //How much mana to restore per tick
         public float ceruleanRestorationTimerMax; //Timer for how long drinking the estus will restore for
@@ -73,13 +73,13 @@ namespace tsorcRevamp
         }
         public override void PostUpdateMiscEffects()
         {
-            ceruleanManaGainBonus = 1f + ((float)Player.manaRegenBonus / 200f); 
-            ceruleanRestorationTimerBonus = 1f + (Player.manaRegenDelayBonus / 4f); 
+            ceruleanManaGainBonus = 1f + ((float)Player.manaRegenBonus / 150f); //manaRegenBonus is usually in the double digits so this is good scaling 
+            ceruleanRestorationTimerBonus = 1f + (Player.manaRegenDelayBonus / 5f);  //manaRegenDelayBonus is given out at 1 or 0.5 by 2 sources in vanilla so this is also very good scaling
             if (Player.manaRegenBuff) //so mana regen pot does something
             {
-                ceruleanRestorationTimerBonus = 1.2f + (Player.manaRegenDelayBonus / 3f); 
+                ceruleanRestorationTimerBonus = 1.2f + (Player.manaRegenDelayBonus / 4f); 
             }
-            ceruleanRestorationTimerMax = 600 * ceruleanRestorationTimerBonus;
+            ceruleanRestorationTimerMax = 300 * ceruleanRestorationTimerBonus; //base value does not affect the total mana restored
         }
 
         public override bool PreItemCheck()

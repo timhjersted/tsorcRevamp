@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.statManaMax2 += 50;
+            player.statManaMax2 += 40;
             player.manaCost -= 0.05f;
         }
         public override void AddRecipes()

@@ -99,6 +99,7 @@ namespace tsorcRevamp
             Terraria.On_Main.DrawCachedProjs += Main_DrawCachedProjs;
 
             On_Recipe.CollectItemsToCraftWithFrom += Recipe_CollectItemsToCraftWithFrom;
+
         }
 
         private static void StopLunarApocalypse(Terraria.On_WorldGen.orig_TriggerLunarApocalypse orig)

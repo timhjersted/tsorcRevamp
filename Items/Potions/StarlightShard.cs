@@ -22,8 +22,8 @@ namespace tsorcRevamp.Items.Potions
             Item.height = 48;
             Item.maxStack = 9999;
             Item.value = 1000;
-            Item.useAnimation = 90;
-            Item.useTime = 90;
+            Item.useAnimation = 150;
+            Item.useTime = 150;
             Item.useTurn = true;
             Item.rare = ItemRarityID.Cyan;
         }
@@ -57,8 +57,8 @@ namespace tsorcRevamp.Items.Potions
             if (player.itemTime == 0)
             {
                 player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
-                player.AddBuff(ModContent.BuffType<Crippled>(), 60);
-                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60);
+                player.AddBuff(ModContent.BuffType<Crippled>(), 150);
+                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 150);
             }
 
             if (player.itemTime < (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 2)
@@ -103,8 +103,13 @@ namespace tsorcRevamp.Items.Potions
                         dust.noGravity = true;
                     }
                 }
-
-                player.AddBuff(ModContent.BuffType<Buffs.StarlightShardRestoration>(), 24 * 60);
+                if (player.manaRegenBuff)
+                {
+                    player.AddBuff(ModContent.BuffType<Buffs.StarlightShardRestoration>(), (int)(12f * 60f * (1.5f + player.manaRegenDelayBonus)));
+                } else
+                {
+                    player.AddBuff(ModContent.BuffType<Buffs.StarlightShardRestoration>(), (int)(12f * 60f * (1f + player.manaRegenDelayBonus)));
+                }
 
                 //if (Main.mouseItem == null) // Not sure why but seems like it's not null if you're using something
                 //{
@@ -139,37 +144,43 @@ namespace tsorcRevamp.Items.Potions
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.LesserManaPotion, 25);
+            recipe.AddIngredient(ItemID.LesserManaPotion, 65);
+            recipe.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe.AddTile(TileID.Bottles);
 
             recipe.Register();
 
             Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(ItemID.ManaPotion, 20);
+            recipe2.AddIngredient(ItemID.ManaPotion, 50);
+            recipe2.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe2.AddTile(TileID.Bottles);
 
             recipe2.Register();
 
             Recipe recipe3 = CreateRecipe();
-            recipe3.AddIngredient(ItemID.GreaterManaPotion, 15);
+            recipe3.AddIngredient(ItemID.GreaterManaPotion, 40);
+            recipe3.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe3.AddTile(TileID.Bottles);
 
             recipe3.Register();
 
             Recipe recipe4 = CreateRecipe();
-            recipe4.AddIngredient(ItemID.SuperManaPotion, 10);
+            recipe4.AddIngredient(ItemID.SuperManaPotion, 35);
+            recipe4.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe4.AddTile(TileID.Bottles);
 
             recipe4.Register();
 
             Recipe recipe5 = CreateRecipe();
-            recipe5.AddIngredient(ModContent.ItemType<SupremeManaPotion>(), 5);
+            recipe5.AddIngredient(ModContent.ItemType<SupremeManaPotion>(), 10);
+            recipe5.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe5.AddTile(TileID.Bottles);
 
             recipe5.Register();
 
             Recipe recipe6 = CreateRecipe();
-            recipe6.AddIngredient(ItemID.ManaCrystal);
+            recipe6.AddIngredient(ItemID.ManaCrystal, 5);
+            recipe6.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe6.AddTile(TileID.Bottles);
 
             recipe6.Register();

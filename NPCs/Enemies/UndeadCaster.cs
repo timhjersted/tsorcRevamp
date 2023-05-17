@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Potions;
 using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -88,19 +89,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            Player player = Main.player[NPC.target];
-
-            //this doesnt need to be bestiary'd
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
-            //and this literally *cant* be bestiary'd 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.NextBool(4)) {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-            }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
             npcLoot.Add(ItemDropRule.Common(ItemID.SpellTome, 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.DeadChicken>(), 25));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.AttraidiesRelic>(), 100, 1, 1, 10));
@@ -110,7 +105,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 1, 1, 3));
             npcLoot.Add(ItemDropRule.Common(ItemID.HealingPotion, 12, 2, 2));
             npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 8));
-
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 4));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 10));
             int[] armorIDs = new int[] {
                 ModContent.ItemType<Items.Armors.Magic.RedClothHat>(),
                 ModContent.ItemType<Items.Armors.Magic.RedClothTunic>(),

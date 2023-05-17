@@ -133,25 +133,29 @@ namespace tsorcRevamp.Items.Potions
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.GreaterHealingPotion, 20);
+            recipe.AddIngredient(ItemID.GreaterHealingPotion, 60);
+            recipe.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe.AddTile(TileID.Bottles);
 
             recipe.Register();
 
             Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(ItemID.SuperHealingPotion, 10);
+            recipe2.AddIngredient(ItemID.SuperHealingPotion, 45);
+            recipe2.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe2.AddTile(TileID.Bottles);
 
             recipe2.Register();
 
             Recipe recipe3 = CreateRecipe();
-            recipe3.AddIngredient(ItemID.RestorationPotion, 15);
+            recipe3.AddIngredient(ItemID.RestorationPotion, 50);
+            recipe3.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe3.AddTile(TileID.Bottles);
 
             recipe3.Register();
 
             Recipe recipe4 = CreateRecipe();
-            recipe4.AddIngredient(ItemID.LifeCrystal, 3);
+            recipe4.AddIngredient(ItemID.LifeCrystal, 8);
+            recipe4.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe4.AddTile(TileID.Bottles);
 
             recipe4.Register();

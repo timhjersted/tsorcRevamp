@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Potions;
@@ -101,31 +102,22 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             return chance;
         }
-        public override void OnKill()
-        {
-            Player player = Main.player[NPC.target];
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.NextBool(10))
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Lifegem>(), Main.rand.NextBool(20) ? 3 : 1); // 1/5 chance of 3, else 1
-            }
-        }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.CharcoalPineResin>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.CharcoalPineResin>(), 10));
             //npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 100));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RegenerationPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.BattlePotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SwiftnessPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SpelunkerPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ManaRegenerationPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Axes.DunlendingAxe>(), 10));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<BoostPotion>(), 10));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.ShinePotion, 25, 1, 1, 3));
-
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.Torch, 50, 20, 35));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HealingPotion, 55));
+            npcLoot.Add(ItemDropRule.Common(ItemID.RegenerationPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.BattlePotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.SwiftnessPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.SpelunkerPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Axes.DunlendingAxe>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoostPotion>(), 10));
+            npcLoot.Add(new CommonDrop(ItemID.ShinePotion, 25, 1, 1, 3));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 5, 1, 3));
+            npcLoot.Add(ItemDropRule.Common(ItemID.Torch, 50, 20, 35));
+            npcLoot.Add(ItemDropRule.Common(ItemID.HealingPotion, 55));
         }
     }
 }

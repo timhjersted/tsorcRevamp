@@ -689,7 +689,7 @@ Mods: {
 
 			SilverRing: {
 				DisplayName: Silver Ring
-				Tooltip: Grants 4 defense. Can be upgraded.
+				Tooltip: Can be upgraded.
 			}
 
 			SpikedIronShield: {
@@ -1655,7 +1655,7 @@ Mods: {
 				Tooltip:
 					'''
 					Increases magic damage by 2 flat
-					Set bonus: Increases max mana by 50, decreases mana costs by 5%
+					Set bonus: Increases max mana by 40, decreases mana costs by 5%
 					'''
 			}
 
@@ -3534,8 +3534,10 @@ Mods: {
 				DisplayName: Starlight Shard
 				Tooltip:
 					'''
-					Restores 140 mana over 24 seconds
-					Does not inflict mana sickness
+					Restores 1% of maximum mana per second for 12 seconds
+					Scales with bonus mana regen and mana regen delay penalties,
+					alike to the Cerulean Flask
+					Does not inflict Mana Sickness
 					'''
 			}
 

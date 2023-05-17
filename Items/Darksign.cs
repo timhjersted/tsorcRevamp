@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items
         public override bool? UseItem(Player player) // Won't consume item without this
         {
             player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax = player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax * 2;
-            player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain = ((player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain - tsorcRevampEstusPlayer.DefaultEstusHealthGain) * 6) + 120;
+            player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain = ((player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain - tsorcRevampEstusPlayer.DefaultEstusHealthGain) * 2) + 120;
             return true;
         }
         public override void UseStyle(Player player, Rectangle rectangle)
@@ -123,6 +123,15 @@ namespace tsorcRevamp.Items
                         Main.NewText("The curse has been lifted", 200, 60, 40);
 
                     }
+                }
+                if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                {
+                    player.statManaMax2 += player.statManaMax2;
+                    player.statMana += player.statMana;
+                }
+                else
+                {
+                    player.statMana -= player.statMana / 2;
                 }
                 //Main.NewText("Stamina regen rate: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate);
                 //Main.NewText("Stamina regen gain mult: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult);

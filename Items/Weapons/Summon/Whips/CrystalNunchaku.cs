@@ -43,7 +43,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.AddIngredient(ItemID.SoulofLight, 4);
 			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 11000);
 			recipe.AddTile(TileID.DemonAltar);
-			recipe.AddCondition(tsorcRevampWorld.AdventureModeEnabled);
 			recipe.Register();
 		}
 	}

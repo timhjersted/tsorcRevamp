@@ -50,7 +50,7 @@ namespace tsorcRevamp.Buffs
                                 player.buffImmune[buffType] = true;
                             }
                         }
-                        player.lifeRegen += player.statLifeMax2 / 80;
+                        player.lifeRegen += player.statLifeMax2 / 40;
 
                         if (Main.rand.NextBool(8))
                         {
@@ -78,7 +78,7 @@ namespace tsorcRevamp.Buffs
                                 player.buffImmune[buffType] = true;
                             }
                         }
-                        player.lifeRegen += player.statLifeMax2 / 60;
+                        player.lifeRegen += player.statLifeMax2 / 30;
 
                         if (Main.rand.NextBool(4))
                         {
@@ -106,7 +106,7 @@ namespace tsorcRevamp.Buffs
                                 player.buffImmune[buffType] = true;
                             }
                         }
-                        player.lifeRegen += player.statLifeMax2 / 30;
+                        player.lifeRegen += player.statLifeMax2 / 15;
 
                         if (Main.rand.NextBool(2))
                         {
@@ -134,7 +134,7 @@ namespace tsorcRevamp.Buffs
                                 player.buffImmune[buffType] = true;
                             }
                         }
-                        player.lifeRegen += player.statLifeMax2 / 15;
+                        player.lifeRegen += player.statLifeMax2 / 7;
 
                         int z = Dust.NewDust(player.position, player.width, player.height, 270, 0f, 0f, 120, default(Color), 1f);
                         Main.dust[z].noGravity = true;

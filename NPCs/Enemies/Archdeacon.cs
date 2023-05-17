@@ -2,8 +2,10 @@
 using System;
 using System.IO;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -216,9 +218,10 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.HealingElixir>(), 10, 1, 1, 3));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.ManaRegenerationPotion, 25));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GreaterHealingPotion, 10));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.HealingElixir>(), 10, 1, 1, 3));
+            npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 25));
+            npcLoot.Add(new CommonDrop(ItemID.GreaterHealingPotion, 10));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 20));
         }
 
         public override void HitEffect(NPC.HitInfo hit)

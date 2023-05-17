@@ -806,12 +806,6 @@ namespace tsorcRevamp.NPCs.Enemies
 
         }
 
-        public override void OnKill()
-        {
-            Player player = Main.player[NPC.target];
-            if (Main.rand.NextBool(15) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-        }
-
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 3, 9));
             npcLoot.Add(ItemDropRule.Common(ItemID.EndurancePotion, 30));

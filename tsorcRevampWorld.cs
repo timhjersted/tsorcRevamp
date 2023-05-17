@@ -1307,6 +1307,18 @@ namespace tsorcRevamp
                 return internalEnabled;
             }
         }
+        static Condition BotCEnabled;
+        public static Condition BearerOfTheCurseEnabled
+        {
+            get
+            {
+                if (BotCEnabled == null)
+                {
+                    BotCEnabled = new Condition(Language.GetText("Bearer of the Curse Mode-only recipe"), () => Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse);
+                }
+                return BotCEnabled;
+            }
+        }
 
         public static Condition SHM1Downed
         {

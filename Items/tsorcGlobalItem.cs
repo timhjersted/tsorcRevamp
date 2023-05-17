@@ -424,6 +424,16 @@ namespace tsorcRevamp.Items
 
         public override bool OnPickup(Item item, Player player)
         {
+            if (item.type == ItemID.Star || item.type == ItemID.SugarPlum || item.type == ItemID.SoulCake && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.statMana > 95)
+            {
+                player.statMana -= 95;
+                player.ManaEffect(-95);
+            } else if (item.type == ItemID.Star || item.type == ItemID.SugarPlum || item.type == ItemID.SoulCake && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                player.ManaEffect(-player.statMana + 5);
+                player.statMana = 5;
+            }
+
             if (PotionBagUIState.IsValidPotion(item) && player.HasItem(ModContent.ItemType<PotionBag>()))
             {
                 Item[] PotionItems = player.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
@@ -712,6 +722,10 @@ namespace tsorcRevamp.Items
                 else {
                     modPlayer.consumedPotions.Add(pot, 1);
                 }
+            }
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.type == ItemID.ManaCrystal)
+            {
+                player.statMana += 20;
             }
         }
 

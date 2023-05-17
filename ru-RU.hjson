@@ -3514,8 +3514,10 @@ Mods: {
 				// DisplayName: Starlight Shard
 				/* Tooltip:
 					'''
-					Restores 140 mana over 24 seconds
-					Does not inflict mana sickness
+					Restores 1% of maximum mana per second for 12 seconds
+					Scales with bonus mana regen and mana regen delay penalties,
+					alike to the Cerulean Flask
+					Does not inflict Mana Sickness
 					''' */
 			}
 

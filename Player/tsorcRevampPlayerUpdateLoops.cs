@@ -206,7 +206,7 @@ namespace tsorcRevamp
         public bool RadiantLifegemHealing;
         public bool StarlightShardRestoration;
         int healingTimer = 0;
-        int restorationTimer = 0;
+        float restorationTimer = 0;
 
         public Item[] PotionBagItems = new Item[PotionBagUIState.POTION_BAG_SIZE];
         public int potionBagCountdown = 0; //You can't move items around if an item is still 'in use'. This lets us delay opening the bag until that finishes.
@@ -853,54 +853,6 @@ namespace tsorcRevamp
                 Player.noKnockback = true;
             }
 
-            #region Lifegem Healing
-
-
-            if (LifegemHealing) // 90 hp over 12 seconds
-            {
-                healingTimer++;
-
-                if (healingTimer == 8)
-                {
-                    Player.statLife += 1;
-                    healingTimer = 0;
-                }
-            }
-
-            if (RadiantLifegemHealing) // 140 hp over 14 seconds
-            {
-                healingTimer++;
-
-                if (healingTimer == 6)
-                {
-                    Player.statLife += 1;
-                    healingTimer = 0;
-                }
-            }
-
-            if (!RadiantLifegemHealing && !LifegemHealing)
-            {
-                healingTimer = 0;
-            }
-
-            if (StarlightShardRestoration) // 140 mp over 14 seconds
-            {
-                restorationTimer++;
-
-                if (restorationTimer == 6)
-                {
-                    Player.statMana += 1;
-                    restorationTimer = 0;
-                }
-            }
-
-            if (!StarlightShardRestoration)
-            {
-                restorationTimer = 0;
-            }
-
-            #endregion
-
             if (Player.HasBuff(BuffID.WellFed))
             {
                 Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.05f;
@@ -938,18 +890,70 @@ namespace tsorcRevamp
         {
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                /*Player.statManaMax2 *= 2;
-                Player.GetDamage(DamageClass.Magic) *= 1.5f;
-                if (!Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) && !Player.HasBuff(ModContent.BuffType<Bonfire>()))
+                Player.GetDamage(DamageClass.Magic) *= 1.2f;
+                if (Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) || !Player.HasBuff(ModContent.BuffType<Bonfire>()))
                 {
-                    Player.manaRegenDelay = 1000;
-                }*/
+                    Player.manaRegenDelay = 100;
+                }
 
                 if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().minionStaminaCap)
                 {
                     Player.lifeRegen /= 2;
                 }
 
+
+                #region Lifegem Healing and Starlight Shard Restoration
+
+
+                if (LifegemHealing) // 90 hp over 12 seconds
+                {
+                    healingTimer++;
+
+                    if (healingTimer == 8)
+                    {
+                        Player.statLife += 1;
+                        healingTimer = 0;
+                    }
+                }
+
+                if (RadiantLifegemHealing) // 140 hp over 14 seconds
+                {
+                    healingTimer++;
+
+                    if (healingTimer == 6)
+                    {
+                        Player.statLife += 1;
+                        healingTimer = 0;
+                    }
+                }
+
+                if (!RadiantLifegemHealing && !LifegemHealing)
+                {
+                    healingTimer = 0;
+                }
+
+                if (StarlightShardRestoration) //Restores 1% of maximum mana over 12 seconds by default
+                {
+                    restorationTimer += (float)Player.statManaMax2 / 6000f * (1f + ((float)Player.manaRegenBonus / 10f)); //1% of maximum mana per second, since there are 60 ticks per second, manaregenbonuses are usually in the double digits so this is insane scaling
+
+                    if (restorationTimer >= 10f)
+                    {
+                        Player.statMana += 10;
+                        restorationTimer -= 10f;
+                    }
+                    if (restorationTimer >= 1f)
+                    {
+                        Player.statMana += 1;
+                        restorationTimer -= 1f;
+                    }
+                }
+
+                if (!StarlightShardRestoration)
+                {
+                    restorationTimer = 0;
+                }
+
+                #endregion
             }
             if (ModContent.GetInstance<tsorcRevampConfig>().DisableGloveAutoswing)
             {

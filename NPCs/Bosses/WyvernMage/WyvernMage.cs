@@ -2,9 +2,11 @@ using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 {
@@ -365,6 +367,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(new Terraria.GameContent.ItemDropRules.ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.WyvernMageBag>(), 1, 1, 1, new WyvernMageDropCondition()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 1, 1, 2));
         }
         public override void OnKill()
         {
