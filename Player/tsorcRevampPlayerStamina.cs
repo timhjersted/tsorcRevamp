@@ -276,7 +276,7 @@ namespace tsorcRevamp
             public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
                 if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) return;
                 if (!ModContent.GetInstance<tsorcRevampConfig>().ShowStaminaTooltip) return;
-                if (item.pick != 0 || item.axe != 0 || item.hammer != 0) return;
+                if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.DamageType == DamageClass.Summon) return;
                 if (item.damage <= 0 && item.type != ItemID.CoinGun) return;
                 if (item.ammo != AmmoID.None) return; //ammo does not consume stamina
                 StringBuilder tipToAdd = new();
@@ -322,6 +322,11 @@ namespace tsorcRevamp
                 if (tipToAdd.Length == preModificationLength) {
                     int staminaUse = (int)(item.useAnimation / Main.LocalPlayer.GetAttackSpeed(item.DamageType));
                     staminaUse = (int)tsorcRevampPlayer.ReduceStamina(staminaUse);
+                    /*if (item.DamageType == DamageClass.Magic)
+                    {
+                        staminaUse *= 8;
+                        staminaUse /= 10;
+                    }*/
                     tipToAdd.Append($"{staminaUse}"); 
                 }
 

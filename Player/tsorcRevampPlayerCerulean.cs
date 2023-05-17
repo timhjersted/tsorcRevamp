@@ -30,7 +30,7 @@ namespace tsorcRevamp
         public bool isDrinking; //Whether or not the player is currently drinking estus
         public bool isCeruleanRestoring; //Whether or not the player is currently healing after drinking estus
 
-        public float ceruleanDrinkTimerMax => 2f; //This is actually seconds. How long it takes to drink a charge
+        public float ceruleanDrinkTimerMax => 1.5f; //This is actually seconds. How long it takes to drink a charge
         public float ceruleanDrinkTimer; //How far through the animation we are
         public float ceruleanManaPerTick; //How much mana to restore per tick
         public float ceruleanRestorationTimerMax; //Timer for how long drinking the estus will restore for

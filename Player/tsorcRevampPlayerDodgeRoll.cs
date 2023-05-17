@@ -120,6 +120,12 @@ namespace tsorcRevamp
 
                 if (!startedAnimation && item.type != ItemID.Harpoon) return true; 
 
+                /*if (item.DamageType == DamageClass.Magic)
+                {
+                    scaledUseAnimation *= 8;
+                    scaledUseAnimation /= 10;
+                }*/
+
                 if (item.type == ItemID.CoinGun) //coin gun has a damage stat of zero but can still do damage!
                 {
                     modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation);

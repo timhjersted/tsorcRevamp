@@ -1656,6 +1656,7 @@ Mods: {
 					'''
 					Increases magic damage by 2 flat
 					Set bonus: Increases max mana by 40, decreases mana costs by 5%
+					A Mystic Robe will also proc this set bonus
 					'''
 			}
 
@@ -1701,7 +1702,7 @@ Mods: {
 					A lost prince's armor.
 					11% increased melee speed
 					Set bonus: Increases melee damage by 3 flat
-					A gi will also proc this set bonus
+					A Gi will also proc this set bonus
 					'''
 			}
 

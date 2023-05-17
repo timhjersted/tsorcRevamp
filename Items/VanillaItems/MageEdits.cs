@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using tsorcRevamp.Items.Armors.Magic;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
@@ -59,6 +59,24 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.damage = 80;
                 item.mana = 39;
+            }
+        }
+        public override string IsArmorSet(Item head, Item body, Item legs)
+        {
+            if (head.type == ModContent.ItemType<RedClothHat>() && body.type == ItemID.GypsyRobe && legs.type == ModContent.ItemType<RedClothPants>())
+            {
+                return "RedClothRobe";
+            }
+            else return base.IsArmorSet(head, body, legs);
+        }
+        public override void UpdateArmorSet(Player player, string set)
+        {
+            if (set == "RedClothRobe")
+            {
+                player.setBonus = "Increases your maximum mana by 40, decreases mana costs by 5%";
+
+                player.statManaMax2 += 40;
+                player.manaCost -= 0.05f;
             }
         }
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)

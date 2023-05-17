@@ -891,6 +891,7 @@ namespace tsorcRevamp
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 Player.GetDamage(DamageClass.Magic) *= 1.2f;
+                Player.GetAttackSpeed(DamageClass.Magic) *= 1.2f;
                 if (Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) || !Player.HasBuff(ModContent.BuffType<Bonfire>()))
                 {
                     Player.manaRegenDelay = 100;
