@@ -235,10 +235,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000);
                 }
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPC.type)) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.EstusFlaskShard>());
-                }
             }
         }
     }

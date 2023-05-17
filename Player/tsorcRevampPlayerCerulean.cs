@@ -148,8 +148,6 @@ namespace tsorcRevamp
             if (isCeruleanRestoring) //Is the player's mana restoring from cerulean?
             {
                 ceruleanRestorationTimer++; //Advance the timer
-                Main.NewText(ceruleanRestorationTimerMax);
-                Main.NewText(ceruleanManaPerTick);
 
                 if (ceruleanRestorationTimer <= ceruleanRestorationTimerMax && Player.statMana < Player.statManaMax2) //If the timer is less or equal to timer max and player mp is not at max
                 {

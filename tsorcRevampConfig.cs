@@ -72,7 +72,7 @@ namespace tsorcRevamp
         [BackgroundColor(60, 140, 80, 192)]
         [SliderColor(224, 165, 56, 128)]
         [Range(0, 3840)]
-        [DefaultValue(94)]
+        [DefaultValue(111)]
         [Tooltip("The X position of the Estus Flask.")]
         public int EstusFlaskPosX { get; set; }
 
@@ -80,7 +80,7 @@ namespace tsorcRevamp
         [BackgroundColor(60, 140, 80, 192)]
         [SliderColor(224, 165, 56, 128)]
         [Range(0, 2160)]
-        [DefaultValue(120)]
+        [DefaultValue(124)]
         [Tooltip("The Y position of the Estus Flask.")]
         public int EstusFlaskPosY { get; set; }
 
@@ -88,7 +88,7 @@ namespace tsorcRevamp
         [BackgroundColor(60, 140, 80, 192)]
         [SliderColor(224, 165, 56, 128)]
         [Range(0, 3840)]
-        [DefaultValue(124)]
+        [DefaultValue(130)]
         [Tooltip("The X position of the Cerulean Flask.")]
         public int CeruleanFlaskPosX { get; set; }
 
@@ -96,9 +96,15 @@ namespace tsorcRevamp
         [BackgroundColor(60, 140, 80, 192)]
         [SliderColor(224, 165, 56, 128)]
         [Range(0, 2160)]
-        [DefaultValue(120)]
+        [DefaultValue(224)]
         [Tooltip("The Y position of the Cerulean Flask.")]
         public int CeruleanFlaskPosY { get; set; }
+
+        [Label("Hide the Cerulean Flask")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(false)]
+        [Tooltip("Hide the Cerulean Flask obtained in Bearer of the Curse mode, if you don't use it. Defaults to Off.")]
+        public bool HideCeruleanFlask { get; set; }
 
         [Label("Charged Weapon Indicator Opacity")]
         [BackgroundColor(60, 140, 80, 192)]

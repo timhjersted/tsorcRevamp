@@ -31,7 +31,7 @@ namespace tsorcRevamp.UI
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            // This prevents drawing unless we are BotC and have received the flask from the Emerald Herald
+            // This prevents drawing unless we are BotC
             if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 return;

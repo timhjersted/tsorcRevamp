@@ -409,6 +409,7 @@ namespace tsorcRevamp
             DisabledRecipes = new List<int>() 
             {
                 #region Accessories IDs
+                ItemID.ObsidianSkull,
                 ItemID.BalloonHorseshoeSharkron,
                 ItemID.BlueHorseshoeBalloon,
                 ItemID.WhiteHorseshoeBalloon,
@@ -605,7 +606,7 @@ namespace tsorcRevamp
                 {   ItemID.KingSlimeBossBag         , BossExtras.StaminaVessel      },
                 {   ItemID.EyeOfCthulhuBossBag      , BossExtras.StaminaVessel  
                                                     | BossExtras.SublimeBoneDust    },
-                {   ItemID.EaterOfWorldsBossBag     , BossExtras.DarkSoulsOnly      },
+                {   ItemID.EaterOfWorldsBossBag     , BossExtras.EstusFlaskShard    },
                 {   ItemID.BrainOfCthulhuBossBag    , BossExtras.StaminaVessel      },
                 {   ItemID.QueenBeeBossBag          , BossExtras.DarkSoulsOnly      },
                 {   ItemID.SkeletronBossBag         , BossExtras.SublimeBoneDust    },
@@ -637,9 +638,9 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<TriadBag>()                 , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<WyvernMageBag>()            , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<SerrisBag>()                , BossExtras.StaminaVessel      },
-                {   ModContent.ItemType<DeathBag>()                 , BossExtras.EstusFlaskShard    },
+                {   ModContent.ItemType<DeathBag>()                 , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<MindflayerIllusionBag>()    , BossExtras.DarkSoulsOnly      },
-                {   ModContent.ItemType<AttraidiesBag>()            , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<AttraidiesBag>()            , BossExtras.EstusFlaskShard    },
                 {   ModContent.ItemType<KrakenBag>()                , BossExtras.GuardianSoul
                                                                     | BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<MarilithBag>()              , BossExtras.GuardianSoul

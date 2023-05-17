@@ -54,6 +54,19 @@ namespace tsorcRevamp
         Walk14,
         Count
     }
+    public class BearerOfTheCurseAccessorySlot : ModAccessorySlot
+    {
+        public override bool IsEnabled()
+        {
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                return true;
+            } else 
+            {
+                return false;
+            }
+        }
+    }
     public partial class tsorcRevampPlayer : ModPlayer
     {
         public static float DodgeTimeMax => 0.37f;
