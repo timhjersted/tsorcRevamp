@@ -1363,18 +1363,6 @@ namespace tsorcRevamp
 
         public override void UpdateBadLifeRegen()
         {
-            if (Player.HasBuff(BuffID.NebulaUpLife1))
-            {
-                Player.lifeRegen -= 2;
-            }
-            if (Player.HasBuff(BuffID.NebulaUpLife2))
-            {
-                Player.lifeRegen -= 4;
-            }
-            if (Player.HasBuff(BuffID.NebulaUpLife3))
-            {
-                Player.lifeRegen -= 6;
-            }
             if (DarkInferno)
             {
                 if (Player.lifeRegen > 0)

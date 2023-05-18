@@ -68,18 +68,6 @@ namespace tsorcRevamp.Buffs
             {
                 tip = "+24% damage";
             }
-            if (type == BuffID.NebulaUpLife1)
-            {
-                tip = "+2 Life Regeneration per second";
-            }
-            if (type == BuffID.NebulaUpLife2)
-            {
-                tip = "+4 Life Regeneration per second";
-            }
-            if (type == BuffID.NebulaUpLife3)
-            {
-                tip = "+6 Life Regeneration per second";
-            }
         }
 
     }
