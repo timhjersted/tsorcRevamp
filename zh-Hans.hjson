@@ -481,32 +481,44 @@ Mods: {
 
 			AncientDemonShield: {
 				DisplayName: Ancient Demon Shield
-				Tooltip: Powerful Greatshield that reduces damage taken by 5%, inherits Obsidian Shield's effects and gives thorns buff
+				Tooltip: Powerful Greatshield that reduces damage taken by 5%, inherits Obsidian Shield's effects and increases thorns by 100%
 			}
 
 			BandOfCosmicPower: {
 				DisplayName: Band of Cosmic Power
-				Tooltip: Increases life regeneration by 2 and increases max mana by 40
+				Tooltip:
+					'''
+					Increases life regeneration by 2 and increases max mana by 40
+					Increases mana regen by 25 and decreases mana regen delay by 1
+					'''
 			}
 
 			BandOfGreatCosmicPower: {
 				DisplayName: Band of Great Cosmic Power
-				Tooltip: Increases life regeneration by 3 and maximum mana by 60
+				Tooltip:
+					'''
+					Increases life regeneration by 3 and maximum mana by 60
+					Increases mana regen by 30 and decreases mana regen delay by 1.1
+					'''
 			}
 
 			BandOfPhenomenalCosmicPower: {
 				DisplayName: Band of Phenomenal Cosmic Power
-				Tooltip: Increases life regeneration by 4 and maximum mana by 80
+				Tooltip:
+					'''
+					Increases life regeneration by 4 and maximum mana by 80
+					Increases mana regen by 35 and decreases mana regen delay by 1.2
+					'''
 			}
 
 			BandOfStarforging: {
-				// DisplayName: Band Of Starforging
-				/* Tooltip:
+				DisplayName: Band Of Starforging
+				Tooltip:
 					'''
 					Increases life regeneration by 4 and maximum mana by 100
 					Increases mana regen by 40 and decreases mana regen delay by 1.25
 					Increases max mana by 50% and decreases mana usage by 10%
-					''' */
+					'''
 			}
 
 			BarrierRing: {
@@ -589,6 +601,7 @@ Mods: {
 					+12 defense within the Abyss
 					Grants Magma Stone and Acid Venom imbue effect
 					Increases life regeneration by 4 and maximum mana by 100
+					Increases mana regen by 35 and mana regen delay by 1.3
 					Imbue effect can be toggled by hiding the accessory.
 					'''
 			}
@@ -676,7 +689,7 @@ Mods: {
 
 			SilverRing: {
 				DisplayName: Silver Ring
-				Tooltip: Grants 4 defense. Can be upgraded.
+				Tooltip: Can be upgraded.
 			}
 
 			SpikedIronShield: {
@@ -684,7 +697,7 @@ Mods: {
 				Tooltip:
 					'''
 					'Everyone will stay away from you'
-					Reduces damage taken by 4% and gives thorns buff
+					Reduces damage taken by 4% and increases thorns by 100%
 					but also reduces movement speed by 5%
 					Can be upgraded with an Obsidian Shield and 5000 Dark Souls
 					'''
@@ -878,7 +891,7 @@ Mods: {
 				DisplayName: Golden Hairpin
 				Tooltip:
 					'''
-					Increases either arrow, bullet or rocket damage by 17% multiplicatively
+					Increases either arrow, bullet or specialist damage by 20% multiplicatively
 					Ammo type is decided by a timer that picks one of the three regularly
 					Switches every 7 seconds
 					'''
@@ -903,13 +916,13 @@ Mods: {
 					Inherits Mythril Bulwark, Ankh Shield and Frozen Shield effects
 					Includes immunity to Chilled and Stoned
 					Slows down your dodgeroll slightly
-					Rolling through an enemy may inflict some debuffs this item grants immunity to
+					Rolling through an enemy may inflict some debuffs this item grants immunity to for 10 seconds
 					'''
 			}
 
 			MythrilBulwark: {
 				DisplayName: Mythril Bulwark
-				Tooltip: Rolling through enemies makes them take 25% more damage
+				Tooltip: Rolling through enemies makes them take 25% more damage for 10 seconds
 			}
 
 			ReflectionShift: {
@@ -979,7 +992,7 @@ Mods: {
 				Tooltip:
 					'''
 					Damage, crit chance, life, and defense
-					increased by 6%. Luck increased by 0.06
+					increased by 6% multiplicatively. Luck increased by 0.6
 					"Proof of the hero's accomplishments"
 					'''
 			}
@@ -1250,7 +1263,7 @@ Mods: {
 					12% increased minion damage and speed
 					Increases the size of whips by 10%
 					Enemies are more likely to target you
-					Increases the damage of whip crits by 25%
+					Increases the damage of whip crits by 12%
 					Increases hitbox size for whip crits
 					'''
 			}
@@ -1535,7 +1548,7 @@ Mods: {
 				Tooltip:
 					'''
 					Increases max mana by 120
-					Reduces mana costs by 8% and increases mana regen by 4
+					Reduces mana costs by 8% and increases mana regen by 8
 					'''
 			}
 
@@ -1549,7 +1562,8 @@ Mods: {
 				Tooltip:
 					'''
 					Known to be treasured by assassins.
-					+25% movement.
+					Increases movement speed by 25%
+					Decreases mana costs by 9%
 					'''
 			}
 
@@ -1558,7 +1572,8 @@ Mods: {
 				Tooltip:
 					'''
 					It is made of razor sharp dragon scales.
-					Thorns Effect
+					Increases thorns by 100%
+					Increases magic critical strike chance by 22%
 					'''
 			}
 
@@ -1567,8 +1582,10 @@ Mods: {
 				Tooltip:
 					'''
 					A powerful magic/low defense set chosen by skilled Paladins with a taste for high risk/reward combat
-					Set bonus: 20% magic crit, +30% magic damage, +60 mana, -9% mana cost + Darkmoon Cloak skill
-					Darkmoon Cloak activates rapid mana regen, Star Cloak & Doubles magic crit and damage when life falls below 25%
+					Increases magic damage by 22% and maximum mana by 60
+					Set bonus: Darkmoon Cloak skill activates when life falls below 25%
+					This grants +4 mana regen, Star Cloak effect and 
+					increases magic critical strike chance and damage by another 11%
 					'''
 			}
 
@@ -1578,7 +1595,7 @@ Mods: {
 					'''
 					Armor from the East, enchanted with magic forces
 					-12% mana cost
-					Set bonus: +20% Magic Crit, +100 mana, +3 Mana Regen
+					Set bonus: +20% Magic Crit, +100 mana, +6 Mana Regen
 					'''
 			}
 
@@ -1638,7 +1655,8 @@ Mods: {
 				Tooltip:
 					'''
 					Increases magic damage by 2 flat
-					Set bonus: Increases max mana by 50, decreases mana costs by 5%
+					Set bonus: Increases max mana by 40, decreases mana costs by 5%
+					A Mystic Robe will also proc this set bonus
 					'''
 			}
 
@@ -1647,7 +1665,7 @@ Mods: {
 				Tooltip:
 					'''
 					Increases magic critical strike chance by 7%
-					Set Bonus: +10% magic attack speed, space gun effect
+					Set Bonus: +10% magic attack speed, meteorite set bonus
 					Emergency shield kicks in when life is less than 40%, increasing defense by 15
 					'''
 			}
@@ -1684,7 +1702,7 @@ Mods: {
 					A lost prince's armor.
 					11% increased melee speed
 					Set bonus: Increases melee damage by 3 flat
-					A gi will also proc this set bonus
+					A Gi will also proc this set bonus
 					'''
 			}
 
@@ -1737,7 +1755,7 @@ Mods: {
 				Tooltip:
 					'''
 					Crystal armor vibrates with a mysterious energy
-					Increases melee critical strike chance by 26%
+					Increases melee critical strike chance by 23%
 					'''
 			}
 
@@ -1746,9 +1764,9 @@ Mods: {
 				Tooltip:
 					'''
 					Dazzling armor cut from crystal
-					Increases damage reduction by 3%
+					Increases melee damage by 10%
 					Set Bonus: Increases critical strike damage by 25%
-					Increases damage reduction by another 8% when under 40% life
+					Increases damage reduction by 5%, doubled when under 40% life
 					'''
 			}
 
@@ -1766,9 +1784,9 @@ Mods: {
 				Tooltip:
 					'''
 					Dazzling armor cut from crystal
-					Increases melee damage by 6%
+					Increases melee damage by 19%
 					Set Bonus: Increases critical strike damage by 25%
-					Increases melee speed by 18%, doubled when under 40% life
+					Increases melee speed by 12%, doubled when under 40% life
 					'''
 			}
 
@@ -1975,6 +1993,7 @@ Mods: {
 					'''
 					Gifted with ranged combat. High defense not necessary
 					With eyes of a hunter you can spot enemies in the dark
+					Increases ranged critical strike chance by 21%
 					'''
 			}
 
@@ -1984,7 +2003,9 @@ Mods: {
 					'''
 					Gifted with healing. High defense not necessary.
 					25% chance not to consume ammo
-					Set Bonus: 20% Ranged Crit, +20 Ranged Dmg, +7 Life Regen
+					Increases ranged damage by 19%
+					Set Bonus: Increases critical strike damage by 25%
+					Increases life regeneration by 4
 					'''
 			}
 
@@ -2931,13 +2952,15 @@ Mods: {
 					'''
 					Use to become the [c/6d8827:Bearer of the Curse]
 					Playing as the [c/6d8827:Bearer of the Curse] has the following effects:
-					You deal +10% damage(multiplicative), receive +20% more souls and your stamina recovers much faster
-					However, [c/dd3333:using weapons drains stamina], life regen is halved while stamina isn't at it's maximum,
-					summon base damage is reduced by 100%(damage increases work as normal),
-					minion's final damage is also reduced by 80%, this reduction is lowered by 20% for each whip debuff active on the enemy,
-					but gain 1 flat summon damage whilst holding a summon/whip damage weapon,
-					and dying reduces your max HP by 20% until you return to where you died.
-					Greater Magic Mirror use is prohibited, and instant-heal items won't heal you
+					You gain an extra accessory slot, receive +20% more souls and your stamina recovers much faster.
+					However, [c/dd3333:using weapons drains stamina] and life regen is halved while stamina isn't at it's maximum.
+					Greater Magic Mirror use is prohibited, and instant-heal items won't heal you, but grants an Estus Flask to heal you.
+					Dying reduces your max HP by 20% until you return to where you died.
+					Mana regeneration is disabled but grants a Cerulean Flask to restore mana,
+					magic damage and attack speed are both increased by 20% multiplicatively,
+					mana regen bonuses increase total mana restored and mana regen delay penalties increase total mana restoration time.
+					Mana Potions still work and resting at a Bonfire restores mana.
+					Minion's final damage is reduced by 90%, this reduction is lowered by 20% for each whip debuff active on the enemy.
 					[c/ca1e00:This mode is intended for players experienced with the mod]
 					[c/ca1e00:It is not recommended on first playthroughs.]
 					'''
@@ -3069,11 +3092,11 @@ Mods: {
 			}
 
 			EstusFlaskShard: {
-				DisplayName: Estus Flask Shard
+				DisplayName: Restoration Flask Shard
 				Tooltip:
 					'''
-					The shard of an Estus Flask
-					Take it to the Emerald Herald to increase flask uses
+					A shard of a Restoration Flask
+					Take it to the Emerald Herald to increase all flask uses
 					'''
 			}
 
@@ -3397,7 +3420,7 @@ Mods: {
 				Tooltip:
 					'''
 					Increases damage by 15% and critical strike chance by 15%
-					Grants enhanced Thorns and the Battle potion effect
+					Increases thorns by 200% and grants the Battle potion effect
 					Does not stack with Demon Drug, Armor Drug, or Strength Potions.
 					'''
 			}
@@ -3500,7 +3523,6 @@ Mods: {
 				DisplayName: Lifegem
 				Tooltip:
 					'''
-
 					Small stone made up of crystallized souls
 					Gradually restores a small amount of HP
 					Often found near abandoned corpses,
@@ -3511,14 +3533,14 @@ Mods: {
 			}
 
 			StarlightShard: {
-				// DisplayName: Starlight Shard
-				/* Tooltip:
+				DisplayName: Starlight Shard
+				Tooltip:
 					'''
 					Restores 1% of maximum mana per second for 12 seconds
 					Scales with bonus mana regen and mana regen delay penalties,
 					alike to the Cerulean Flask
 					Does not inflict Mana Sickness
-					''' */
+					'''
 			}
 
 			MushroomSkewer: {
@@ -4647,8 +4669,8 @@ Mods: {
 					'''
 					[c/ffbf00:A green ooze dribbles from the tooth, which deals]
 					[c/ffbf00:triple damage to enemies of a similar nature, potentially more.]
-					Has a chance to heal the player on hit.
-					Heal chance is doubled on non-corrupted enemies.
+					Will heal the player on-hit for a fraction of the damage dealt.
+					'Guardian' is written on it.....
 					'''
 			}
 
@@ -5127,8 +5149,8 @@ Mods: {
 			}
 
 			Blast: {
-				// DisplayName: Blast
-				// Tooltip: ""
+				DisplayName: Blast
+				Tooltip: ""
 			}
 
 			BlizzardBlaster: {
@@ -5906,11 +5928,11 @@ Mods: {
 				DisplayName: Orb of Deception
 				Tooltip:
 					'''
-					Throws a magical Orb which will return to you after a certain distance
+					Throws a magical Orb which will return to you after a certain distance and deal 125% damage
 					Casts homing flames while the Orb is sent out which restore half their mana cost on-hit
-					The Orb deals double damage on the way back
-					Gathers stacks of Essence Thief on most Orb hits and enemy kills, doubled on crits
-					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal double damage
+					The Orb deals 218% damage on the way back
+					Gathers stacks of Essence Thief on most Orb hits and sometimes kills, doubled on crits
+					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal 200/300% damage
 					Heal scales with maximum mana and magic damage
 					'''
 			}
@@ -5919,11 +5941,11 @@ Mods: {
 				DisplayName: Orb of Flame
 				Tooltip:
 					'''
-					Throws a magical Orb which will return to you after a certain distance
+					Throws a magical Orb which will return to you after a certain distance and deal 125% damage
 					Casts homing flames while the Orb is sent out which restore half their mana cost on-hit
-					The Orb deals double damage on the way back
-					Gathers stacks of Essence Thief on most Orb hits and enemy kills, doubled on crits
-					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal double damage
+					The Orb deals 218% damage on the way back
+					Gathers stacks of Essence Thief on most Orb hits and sometimes kills, doubled on crits
+					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal 200/300% damage
 					Heal scales with maximum mana and magic damage
 					Right click to cast a fireball which sunders enemies, increasing their vulnerability to magic damage
 					'''
@@ -5933,11 +5955,11 @@ Mods: {
 				DisplayName: Orb of Spirituality
 				Tooltip:
 					'''
-					Throws a magical Orb which will return to you after a certain distance
+					Throws a magical Orb which will return to you after a certain distance and deal 125% damage
 					Casts homing flames while the Orb is sent out which restore half their mana cost on-hit
-					The Orb deals double damage on the way back
-					Gathers stacks of Essence Thief on most Orb hits and enemy kills, doubled on crits
-					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal double damage
+					The Orb deals 218% damage on the way back
+					Gathers stacks of Essence Thief on most Orb hits and sometimes kills, doubled on crits
+					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal 200/300% damage
 					Heal scales with maximum mana and magic damage
 					Right click to cast a charm which sunders enemies, increasing their vulnerability to magic damage
 					Press Special Ability to dash towards the mouse, casting homing flames along the way
@@ -5949,7 +5971,7 @@ Mods: {
 				Tooltip:
 					'''
 					Summons fireballs to rotate around you and damage enemies in their way
-					Uses half a minion slot
+					Uses half a minion slot, grants a fiery aura if enough fireballs are summoned
 					While holding this item, increase their radius by holding Special Ability
 					Or hold Shift + Special Ability to shrink their radius
 					Applies the Scorching debuff, which grants minions crit chance based on a fraction of your critical strike chance
@@ -5962,7 +5984,7 @@ Mods: {
 				Tooltip:
 					'''
 					Summons spaceships to rotate around you and damage enemies in their way
-					Uses half a minion slot
+					Uses half a minion slot, grants a stellar aura if enough spaceships are summoned
 					While holding this item, increase their radius by holding Special Ability
 					Or hold Shift + Special Ability to shrink their radius
 					Press Special Ability while not holding the remote to activate Turboboost
@@ -5978,13 +6000,12 @@ Mods: {
 				Tooltip:
 					'''
 					Summons stars to rotate around you and damage enemies in their way
-					Uses half a minion slot
+					Uses half a minion slot, grants a cosmic aura if enough stars are summoned
 					While holding this item, increase their radius by holding the Special Ability hotkey
 					Or hold Shift + Special Ability to shrink their radius
 					Press Special Ability while not holding the remote to activate Turboboost
-					This increases the stars damage and movement speed
-					Turboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness
-					Every 20 hits, rightclick with this item in hand to call in the Star Forger
+					This increases the stars damage and movement speed but drains your mana
+					Every 15 critical hits, rightclick with this item in hand to call in the Star Forger
 					The Star Forger will breathe cosmic dust at the mouse location
 					Applies the Sunburn debuff, which grants minions crit chance based on a fraction of your critical strike chance
 					'Leave them in awe at the sight of the Star Forger'
@@ -6037,29 +6058,29 @@ Mods: {
 				DisplayName: Damaged Remote
 				Tooltip:
 					'''
-					A broken remote, humming with a strange sound
+					A broken remote, humming with a strange frequency
 					Perhaps it can be repaired?
 					'''
 			}
 
 			Urumi: {
-				// DisplayName: Urumi
-				/* Tooltip:
+				DisplayName: Urumi
+				Tooltip:
 					'''
 					5 summon tag armor penetration
 					Ignores a substantial amount of defense
 					Your summons will focus struck enemies
-					''' */
+					'''
 			}
 
 			NecromancyAltar: {
-				// DisplayName: Necromancy Altar
-				// Tooltip: Grants Bewitched and Strategist buffs on right click
+				DisplayName: Necromancy Altar
+				Tooltip: Grants Bewitched and Strategist buffs on right click
 			}
 
 			PermanentLuckPotion: {
-				// DisplayName: Four Leaf Clover
-				// Tooltip: ""
+				DisplayName: Four Leaf Clover
+				Tooltip: ""
 			}
 		}
 
@@ -6427,7 +6448,7 @@ Mods: {
 
 			NightbringerDash: {
 				DisplayName: Sweeping Blade
-				Description: Invulnerability and melee damage boost
+				Description: Increases melee damage by 100% and adds % max health damage
 			}
 
 			NightbringerDashCooldown: {
@@ -6447,7 +6468,7 @@ Mods: {
 
 			PlasmaWhirlwindDash: {
 				DisplayName: Sweeping Blade
-				Description: Invulnerability and melee damage boost
+				Description: Increases melee damage by 100% and adds % max health damage
 			}
 
 			PlasmaWhirlwindDashCooldown: {
@@ -6734,13 +6755,13 @@ Mods: {
 			}
 
 			UrumiDebuff: {
-				// DisplayName: Urumi Debuff
-				// Description: Mods.tsorcRevamp.Buffs.UrumiDebuff.Description
+				DisplayName: Urumi Debuff
+				Description: Mods.tsorcRevamp.Buffs.UrumiDebuff.Description
 			}
 
 			StarlightShardRestoration: {
-				// DisplayName: Starlight Shard Restoration
-				// Description: Mods.tsorcRevamp.Buffs.StarlightShardRestoration.Description
+				DisplayName: Starlight Shard Restoration
+				Description: Mods.tsorcRevamp.Buffs.StarlightShardRestoration.Description
 			}
 		}
 
@@ -7238,10 +7259,10 @@ Mods: {
 			FriendlyCatLightOfDawn.DisplayName: Light Of Dawn
 			SRBlackFire.DisplayName: Black Fire
 			FriendlyRetLaser.DisplayName: Laser
-			// UrumiProjectile.DisplayName: Urumi Projectile
-			// ScorchingPointAura.DisplayName: Scorching Point Aura
-			// CenterOfTheUniverseAura.DisplayName: Center Of The Universe Aura
-			// InterstellarVesselAura.DisplayName: Interstellar Vessel Aura
+			UrumiProjectile.DisplayName: Urumi Projectile
+			ScorchingPointAura.DisplayName: Scorching Point Aura
+			CenterOfTheUniverseAura.DisplayName: Center Of The Universe Aura
+			InterstellarVesselAura.DisplayName: Interstellar Vessel Aura
 		}
 
 		NPCs: {
@@ -7455,7 +7476,7 @@ Mods: {
 			LeonhardPhase1.DisplayName: ???
 			IchorGlob.DisplayName: Ichor Glob
 			IchorMissile.DisplayName: Ichor Missile
-			// NamelessKing.DisplayName: Nameless King
+			NamelessKing.DisplayName: Nameless King
 		}
 
 		Prefixes: {
