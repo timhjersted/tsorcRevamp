@@ -41,8 +41,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 1200;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
-            /*Banner = npc.type;
-            BannerItem = ModContent.ItemType<Banners.DunlendingBanner>();*/
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.HollowSoldierBanner>();
         }
 
         public override void HitEffect(NPC.HitInfo hit)

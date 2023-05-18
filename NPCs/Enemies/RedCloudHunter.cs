@@ -1,24 +1,35 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
     public class RedCloudHunter : ModNPC
     {
-
-        public int archerBoltDamage = 25; //was 85, whoa, how did no one complain about this?
-
+        public int archerBoltDamage = 30; //was 85, whoa, how did no one complain about this?
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 20;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             AIType = NPCID.SkeletonArcher;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.damage = 52;
-            NPC.lifeMax = 1150;
+            NPC.damage = 18;
+            NPC.lifeMax = 575;
             NPC.scale = 0.9f;
-            NPC.defense = 30;
+            NPC.defense = 18;
             NPC.value = 6500;
             NPC.width = 18;
             NPC.aiStyle = -1;
@@ -28,42 +39,31 @@ namespace tsorcRevamp.NPCs.Enemies
             Banner = NPC.type;
             NPC.buffImmune[BuffID.Confused] = true;
             BannerItem = ModContent.ItemType<Banners.RedCloudHunterBanner>();
-
             AnimationType = NPCID.SkeletonArcher;
-            Main.npcFrameCount[NPC.type] = 20;
-
             if (Main.hardMode)
             {
-                NPC.defense = 24;
+                NPC.lifeMax = 650;
+                NPC.defense = 27;
                 NPC.value = 3500;
-                NPC.damage = 40;
-                archerBoltDamage = 65;
+                NPC.damage = 24;
+                archerBoltDamage = 45;
             }
-
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.lifeMax = 1750;
-                NPC.defense = 70;
+                NPC.lifeMax = 1875;
+                NPC.defense = 42;
                 NPC.value = 3900;
-                NPC.damage = 70;
-                archerBoltDamage = 85;
+                NPC.damage = 35;
+                archerBoltDamage = 70;
             }
 
-        }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            NPC.defense = (int)(NPC.defense * (2 / 3));
-            archerBoltDamage = (int)(archerBoltDamage / 2);
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 6));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HolyArrow, 1, 30, 60));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.UnicornHorn, 3, 1, 1));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 2, 4));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 6));
+            npcLoot.Add(ItemDropRule.Common(ItemID.HolyArrow, 1, 30, 60));
+            npcLoot.Add(ItemDropRule.Common(ItemID.UnicornHorn, 3, 1, 1));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 2, 4));
         }
 
         #region Spawn

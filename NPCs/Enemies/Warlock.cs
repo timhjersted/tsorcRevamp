@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,9 +10,21 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class Warlock : ModNPC
     {
-        public override void SetDefaults()
+        int greatEnergyBeamDamage = 18;
+        int energyBallDamage = 18;
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 15;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
+        public override void SetDefaults()
+        {
             AnimationType = 21;
             NPC.knockBackResist = 0.1f;
             NPC.aiStyle = 3;
@@ -20,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 5;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 2300;
+            NPC.lifeMax = 1150;
             NPC.scale = 1f;
             NPC.HitSound = SoundID.NPCHit37;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -28,32 +41,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.rarity = 3;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.WarlockBanner>();
-
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            //NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-
             if (!Main.hardMode)
             {
-                NPC.damage = 40;
-                NPC.lifeMax = 1500;
+                NPC.damage = 20;
+                NPC.lifeMax = 750;
             }
         }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            greatEnergyBeamDamage = (int)(greatEnergyBeamDamage / 2);
-            energyBallDamage = (int)(energyBallDamage / 2);
-
-        }
-
-        int greatEnergyBeamDamage = 35;
-        int energyBallDamage = 35;
-
-
-
         //Spawn in the Cavern, mostly before 3/10th and after 7/10th (Width). Does not spawn in the Dungeon, Jungle, Meteor, or if there are Town NPCs
         #region Spawn
 
@@ -263,11 +256,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.LifeforcePotion));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.MagicPowerPotion, 30));
+            npcLoot.Add(ItemDropRule.Common(ItemID.LifeforcePotion));
+            npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 30));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>(), 3, 2, 6));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.UnicornHorn, 3));
-
+            npcLoot.Add(ItemDropRule.Common(ItemID.UnicornHorn, 3));
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofLight, 1, 3, 6));
             npcLoot.Add(hmCondition);

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -8,16 +9,23 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class MutantToad : ModNPC
     {
-        public override void SetDefaults()
+        public float swimTime;
+        int cursedFlamesDamage = 22;
+        bool breath;
+        int breathCD = 20;
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
+        }
+        public override void SetDefaults()
+        {
             AnimationType = 3;
             NPC.aiStyle = 3;
-            NPC.damage = 38;
+            NPC.damage = 19;
             NPC.defense = 15;
             NPC.height = 40;
             NPC.width = 30;
-            NPC.lifeMax = 78;
+            NPC.lifeMax = 39;
             NPC.scale = 0.9f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -30,23 +38,13 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.defense = 44;
                 NPC.value = 550;
-                NPC.damage = 110;
-                NPC.lifeMax = 290;
+                NPC.damage = 55;
+                NPC.lifeMax = 195;
                 NPC.knockBackResist = 0.1f;
-
             }
 
         }
 
-        public float swimTime;
-        int cursedFlamesDamage = 22;
-        bool breath;
-        int breathCD = 20;
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-        }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
@@ -100,28 +98,18 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo) //hook works!
         {
-            
-                target.AddBuff(BuffID.Poisoned, 30 * 60, false);
-            
-
+            target.AddBuff(BuffID.Poisoned, 30 * 60, false);
             if (Main.hardMode)
             {
                 target.AddBuff(BuffID.Venom, 1 * 60, false);
             }
-
         }
 
 
         public override void AI()
         {
-
-
-
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //flame thrower
-
-
-
-            if (NPC.life <= 50 && breath == false && Main.hardMode)
+            if (NPC.life <= NPC.lifeMax / 4 && breath == false && Main.hardMode)
             { 
                 breath = true;
             }

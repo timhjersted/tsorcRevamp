@@ -9,33 +9,27 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class Necromancer : ModNPC
     {
-        public override void SetDefaults()
+        int deathStrikeDamage = 18;
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 15;
+        }
+        public override void SetDefaults()
+        {
             AnimationType = 21;
             NPC.knockBackResist = 0.2f;
             NPC.aiStyle = 3;
-            NPC.damage = 60;
+            NPC.damage = 0;
             NPC.defense = 25;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 1580;
+            NPC.lifeMax = 790;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 2700;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.NecromancerBanner>();
         }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            deathStrikeDamage = (int)(deathStrikeDamage / 2);
-        }
-
-        int deathStrikeDamage = 35;
-
         float strikeTimer;
         float skeletonTimer;
         float skeletonsSpawned;
@@ -128,13 +122,13 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Mobility.BootsOfHaste>(), 30));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 40));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 20));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 20));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 20));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 25));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.BloodMoonStarter, 25));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Mobility.BootsOfHaste>(), 30));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 40));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BattlefrontPotion>(), 25));
+            npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 25));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 11));
         }
     }

@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,15 +10,18 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class MindflayerServant : ModNPC
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
+        }
+        public override void SetDefaults()
+        {
             AnimationType = 29;
             NPC.aiStyle = 8;
             NPC.damage = 0;
             NPC.defense = 10;
             NPC.height = 44;
-            NPC.lifeMax = 142;
+            NPC.lifeMax = 71;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
@@ -27,12 +31,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0.5f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.MindflayerServantBanner>();
-        }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
         }
 
         #region Spawn
@@ -64,7 +62,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.LightsBane, 20));
+            npcLoot.Add(ItemDropRule.Common(ItemID.LightsBane, 20));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 9));
         }
     }

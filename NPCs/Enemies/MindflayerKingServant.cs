@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -7,15 +8,18 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class MindflayerKingServant : ModNPC
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
+        }
+        public override void SetDefaults()
+        {
             AnimationType = 29;
             NPC.aiStyle = 8;
             NPC.damage = 0;
             NPC.defense = 15;
             NPC.height = 44;
-            NPC.lifeMax = 400;
+            NPC.lifeMax = 200;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
@@ -25,12 +29,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0.2f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.MindflayerKingServantBanner>();
-        }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
         }
 
         #region Spawn

@@ -1,10 +1,14 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Buffs;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -12,14 +16,31 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Crazed Demon Spirit");
+            Main.npcFrameCount[NPC.type] = 4;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.OnFire,
+                    BuffID.OnFire3,
+                    BuffID.ShadowFlame,
+                    BuffID.Frostburn,
+                    BuffID.Frostburn2,
+                    BuffID.CursedInferno,
+                    BuffID.Poisoned,
+                    BuffID.Venom,
+                    BuffID.Confused,
+                    ModContent.BuffType<DarkInferno>(),
+                    ModContent.BuffType<CrimsonBurn>(),
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
         {
             NPC.aiStyle = 22;
             NPC.npcSlots = 6;
-            Main.npcFrameCount[NPC.type] = 4;
             AnimationType = 60;
             NPC.width = 50;
             NPC.height = 50;
@@ -37,10 +58,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 1600;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CrazedDemonSpiritBanner>();
-
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
         }
         float customAi1;
 
@@ -91,12 +108,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
 
-            if (NPC.life > 200)
+            if (NPC.life > NPC.lifeMax / 2)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Torch, NPC.velocity.X, NPC.velocity.Y, 200, Color.Violet, 2f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 200)
+            else if (NPC.life <= NPC.lifeMax / 2)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Torch, NPC.velocity.X, NPC.velocity.Y, 200, Color.Violet, 3f);
                 Main.dust[dust].noGravity = true;
@@ -461,11 +478,11 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>(), 100, 1, 1, 3));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.BloodMoonStarter, 25));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 20));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ManaRegenerationPotion, 25));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GreaterHealingPotion, 20));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>(), 100, 1, 1, 3));
+            npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 25));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 20));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 25));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 20));
         }
         #region Frames
         public override void FindFrame(int currentFrame)

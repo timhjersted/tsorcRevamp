@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,6 +12,7 @@ using tsorcRevamp.NPCs.Friendly;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Whips;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -18,8 +20,15 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Abandoned Stump"); // A sore sight.
             Main.npcFrameCount[NPC.type] = 8;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] 
+                {
+                    BuffID.Confused
+				}
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
@@ -34,7 +43,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCHit/Dig");
             NPC.DeathSound = SoundID.NPCDeath33;
             NPC.value = 500;
-            NPC.buffImmune[BuffID.Confused] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AbandonedStumpBanner>();
         }
@@ -377,18 +385,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
         }
-        public override void OnKill()
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Wood, Main.rand.Next(2, 4));
-            if (Main.rand.NextBool(3)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CharcoalPineResin>());
-            if (Main.rand.NextFloat() >= 0.2f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>()); //80%
-
-        }
-
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.Wood, 1, 2, 4));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.GreenBlossom>(), 5, 1, 1, 4));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.CharcoalPineResin>(), 3));
+            npcLoot.Add(ItemDropRule.Common(ItemID.Wood, 1, 2, 4));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.GreenBlossom>(), 5, 1, 1, 4));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 3));
 
         }
     }

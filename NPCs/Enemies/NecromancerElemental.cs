@@ -2,22 +2,27 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
     class NecromancerElemental : ModNPC
     {
-        public override void SetDefaults()
+        int deathStrikeDamage = 18;
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 15;
+        }
+        public override void SetDefaults()
+        {
             AnimationType = 21;
             NPC.knockBackResist = 0f;
             NPC.aiStyle = 3;
-            NPC.damage = 70;
+            NPC.damage = 35;
             NPC.defense = 30;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 8780;
+            NPC.lifeMax = 4350;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
@@ -25,16 +30,6 @@ namespace tsorcRevamp.NPCs.Enemies
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.NecromancerElementalBanner>();
         }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            deathStrikeDamage = (int)(deathStrikeDamage / 2);
-        }
-
-        int deathStrikeDamage = 35;
-
         //Spawns in the Underground and Cavern before 4.5/10ths and after 7.5/10ths (Width). Does not Spawn in the Jungle, Meteor, or if there are Town NPCs.
 
         #region Spawn
@@ -119,15 +114,15 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ManaRegenerationBand, 10));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GreaterHealingPotion, 10));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 20));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.MagicPowerPotion, 25));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RegenerationPotion, 25));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationBand, 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 20));
+            npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 25));
+            npcLoot.Add(ItemDropRule.Common(ItemID.RegenerationPotion, 25));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 50));
 
         }
     }

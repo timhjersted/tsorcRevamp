@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,27 +10,34 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class DemonElemental : ModNPC
     {
+        int crystalFireDamage = 28;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Demon Elemental");
+            Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Poisoned,
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
-
-        int crystalFireDamage = 55;
 
         public override void SetDefaults()
         {
             NPC.aiStyle = 22;
             NPC.npcSlots = 5;
-            Main.npcFrameCount[NPC.type] = 3;
             AnimationType = -1; //was 60
             NPC.width = 30;
             NPC.height = 80;
-            NPC.damage = 82;
+            NPC.damage = 41;
             NPC.defense = 18;
             NPC.aiStyle = -1;//22;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.lifeMax = 400;
+            NPC.lifeMax = 200;
             NPC.friendly = false;
             NPC.noTileCollide = true;
             NPC.lavaImmune = true;
@@ -42,27 +50,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.lifeMax = 3660;
+                NPC.lifeMax = 1840;
                 NPC.defense = 67;
                 NPC.value = 16500;
-                NPC.damage = 295;
+                NPC.damage = 148;
                 NPC.knockBackResist = 0.0f;
-                crystalFireDamage = 95;
+                crystalFireDamage = 48;
             }
-
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
         }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            crystalFireDamage = (int)(crystalFireDamage / 2);
-        }
-
-
         float customAi1;
 
         #region Spawn
@@ -110,12 +105,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
 
-            if (NPC.life > 200)
+            if (NPC.life > NPC.lifeMax / 2)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Torch, NPC.velocity.X, NPC.velocity.Y, 200, Color.Violet, 2f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 200)
+            else if (NPC.life <= NPC.lifeMax / 2)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Torch, NPC.velocity.X, NPC.velocity.Y, 200, Color.Violet, 3f);
                 Main.dust[dust].noGravity = true;

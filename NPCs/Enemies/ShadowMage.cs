@@ -2,23 +2,39 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
     class ShadowMage : ModNPC
     {
-        public override void SetDefaults()
+        int oracleDamage = 13;
+        int ice3Damage = 18;
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 2;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Poisoned,
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
+        public override void SetDefaults()
+        {
             AnimationType = 29;
             NPC.aiStyle = 0;
             NPC.damage = 0;
             NPC.defense = 28;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 900;
+            NPC.lifeMax = 450;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.noGravity = false;
@@ -29,22 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0.3f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.ShadowMageBanner>();
-
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
         }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            oracleDamage = (int)(oracleDamage / 2);
-            ice3Damage = (int)(ice3Damage / 2);
-        }
-
-        int oracleDamage = 25;
-        int ice3Damage = 35;
 
         //float customAi1;
 
@@ -97,12 +98,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.ai[1]++; // Timer Teleport
                          // npc.ai[2]++; // Shots
 
-            if (NPC.life > 50)
+            if (NPC.life > NPC.lifeMax * 2 / 3)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.CursedTorch, NPC.velocity.X, NPC.velocity.Y, 200, default, 1f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 50)
+            else if (NPC.life <= NPC.lifeMax / 3)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.CursedTorch, NPC.velocity.X, NPC.velocity.Y, 140, default, 2f);
                 Main.dust[dust].noGravity = true;
@@ -131,7 +132,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.velocity.Y *= 0.37f;
             }
 
-            if ((NPC.ai[1] >= 290 && NPC.life > 50) || (NPC.ai[1] >= 120 && NPC.life <= 50))
+            if ((NPC.ai[1] >= 290 && NPC.life > 50) || (NPC.ai[1] >= 120 && NPC.life <= NPC.lifeMax / 2))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int num36 = 0; num36 < 10; num36++)
@@ -329,8 +330,8 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.ManaRegenerationPotion, 100, 1, 1, 40));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GreaterHealingPotion, 10, 1, 1, 1));
+            npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 100, 1, 1, 40));
+            npcLoot.Add(new CommonDrop(ItemID.GreaterHealingPotion, 10, 1, 1, 1));
 
         }
     }

@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.width = 16;
             NPC.height = 16;
             NPC.aiStyle = -1;
-            NPC.damage = 115;
+            NPC.damage = 68;
             NPC.defense = 0;
             NPC.lifeMax = 1;
             NPC.HitSound = null;
@@ -22,13 +22,9 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.alpha = 80;
             NPC.timeLeft = 600;
         }
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-        }
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults() 
+        {
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
                 Hide = true
             };

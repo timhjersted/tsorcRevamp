@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -7,14 +9,18 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     public class Assassin : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 20;
+        }
         public override void SetDefaults()
         {
             AIType = NPCID.SkeletonArcher;
             NPC.HitSound = SoundID.NPCHit48;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.damage = 70;
-            NPC.lifeMax = 1000; //was 3000 which means 6000
-            if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 3000; NPC.defense = 60; NPC.damage = 80; NPC.value = 6900; }
+            NPC.damage = 35; //normal mode stat
+            NPC.lifeMax = 500; //normal mode stat
+            if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 1500; NPC.defense = 60; NPC.damage = 80; NPC.value = 6900; }
             NPC.scale = 1.0f; //was 1.1
             NPC.defense = 40;
             NPC.value = 4600;
@@ -27,34 +33,25 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.AssassinBanner>();
 
             AnimationType = NPCID.SkeletonArcher;
-            Main.npcFrameCount[NPC.type] = 20;
-        }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Ammo.ArrowOfBard>(), 6, 3, 5));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion,25));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GreaterHealingPotion, 25));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ArcheryPotion, 25));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.FlaskofFire, 25));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 30));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 36));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 28));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 25));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.BloodMoonStarter, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 22));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.HolyArrow, 1, 100, 150));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.UnicornHorn, 1, 1, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 3, 6));
-
-            if (Main.hardMode)
-            {
-                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofNight, 1));
-            }
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Ammo.ArrowOfBard>(), 6, 3, 5));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion,25));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 25));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ArcheryPotion, 25));
+            npcLoot.Add(ItemDropRule.Common(ItemID.FlaskofFire, 25));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 30));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 36));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 28));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 25));
+            npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 22));
+            npcLoot.Add(ItemDropRule.Common(ItemID.HolyArrow, 1, 100, 150));
+            npcLoot.Add(ItemDropRule.Common(ItemID.UnicornHorn, 1, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 3, 6));
+            IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
+            hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofNight));
+            npcLoot.Add(hmCondition);
         }
 
         

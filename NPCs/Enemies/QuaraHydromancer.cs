@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
@@ -8,17 +9,19 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class QuaraHydromancer : ModNPC
     {
-
-        int bubbleDamage = 60;
-        public override void SetDefaults()
+        int bubbleDamage = 33;
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 15;
+        }
+        public override void SetDefaults()
+        {
             AnimationType = 21;
             NPC.aiStyle = 3;
-            NPC.damage = 65;
+            NPC.damage = 0;
             NPC.defense = 22;
             NPC.height = 45;
-            NPC.lifeMax = 500;
+            NPC.lifeMax = 250;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 1500;
@@ -28,19 +31,9 @@ namespace tsorcRevamp.NPCs.Enemies
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.QuaraHydromancerBanner>();
 
-            if (Main.hardMode) { NPC.lifeMax = 1000; NPC.defense = 22; NPC.damage = 125; NPC.value = 1500; bubbleDamage = 70; }
-            if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 3000; NPC.defense = 50; NPC.damage = 160; NPC.value = 3600; bubbleDamage = 80; }
+            if (Main.hardMode) { NPC.lifeMax = 500; NPC.defense = 22; NPC.value = 1500; bubbleDamage = 45; }
+            if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 1500; NPC.defense = 50; NPC.value = 3600; bubbleDamage = 55; }
         }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            bubbleDamage = (int)(bubbleDamage / 2);
-        }
-
-
-
         float bubbleTimer;
 
         #region Spawn
@@ -155,11 +148,11 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.GreatEnergyBeamScroll>(), 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ManaRegenerationPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofLight, 2));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GreaterHealingPotion, 100, 1, 1, 8));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.GreatEnergyBeamScroll>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.SoulofLight, 2));
+            npcLoot.Add(new CommonDrop(ItemID.GreaterHealingPotion, 100, 1, 1, 8));
         }
     }
 }

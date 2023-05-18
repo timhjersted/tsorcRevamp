@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,14 +12,22 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Demon Spirit");
+            Main.npcFrameCount[NPC.type] = 4;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Poisoned,
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
         {
             NPC.aiStyle = 22;
             NPC.npcSlots = 5;
-            Main.npcFrameCount[NPC.type] = 4;
             AnimationType = 60;
             NPC.width = 50;
             NPC.height = 50;
@@ -36,10 +45,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 2200;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DemonSpiritBanner>();
-
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
         }
         float customAi1;
 
@@ -88,12 +93,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
 
-            if (NPC.life > 200)
+            if (NPC.life > NPC.lifeMax / 2)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Torch, NPC.velocity.X, NPC.velocity.Y, 200, Color.Violet, 2f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 200)
+            else if (NPC.life <= NPC.lifeMax / 2)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Torch, NPC.velocity.X, NPC.velocity.Y, 200, Color.Violet, 3f);
                 Main.dust[dust].noGravity = true;

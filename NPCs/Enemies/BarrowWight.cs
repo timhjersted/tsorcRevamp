@@ -7,15 +7,30 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using static tsorcRevamp.oSpawnHelper;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Weapons.Melee.Shortswords;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
     class BarrowWight : ModNPC
     {
-
-      
         bool chargeDamageFlag = false;
-
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 4;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Poisoned,
+                    BuffID.OnFire,
+                    BuffID.Confused,
+                    BuffID.CursedInferno
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.width = 58;
@@ -30,11 +45,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.value = 850;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
-            Main.npcFrameCount[NPC.type] = 4;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BarrowWightBanner>();
         }
@@ -290,9 +300,9 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.BrokenArmor, 1200);
-                target.AddBuff(BuffID.Chilled, 1200);
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000);
+                target.AddBuff(BuffID.BrokenArmor, 20 * 60);
+                target.AddBuff(BuffID.Chilled, 20 * 60);
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 600 * 60);
             }
         }
 
@@ -357,24 +367,17 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ShinePotion, 55));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GreaterHealingPotion, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.MagicPowerPotion, 35));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RegenerationPotion, 35));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SpelunkerPotion, 35));       
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 40));
-            //npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Summon.SpiritBell>()));
-           
-
-            if (Main.hardMode)
-            {
-                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofFlight, 10));
-            }
-            if (tsorcRevampWorld.SuperHardMode) 
-            {
-                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>(), 5));
-            }
-            
+            npcLoot.Add(ItemDropRule.Common(ItemID.ShinePotion, 55));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 50));
+            npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 35));
+            npcLoot.Add(ItemDropRule.Common(ItemID.RegenerationPotion, 35));
+            npcLoot.Add(ItemDropRule.Common(ItemID.SpelunkerPotion, 35));       
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 40));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Summon.SpiritBell>(), 20));
+            IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
+            hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofFlight));
+            npcLoot.Add(hmCondition);
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.SuperHardmodeRule, ModContent.ItemType<BarrowBlade>(), 5));
         }
 
         /* what the hell IS this? i cant find anything about it

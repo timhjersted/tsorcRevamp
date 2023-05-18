@@ -1,7 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -9,8 +12,14 @@ namespace tsorcRevamp.NPCs.Friendly
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Living Shroom");
             Main.npcFrameCount[NPC.type] = 8;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
@@ -25,7 +34,6 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 0;
-            NPC.buffImmune[BuffID.Confused] = true;
             NPC.noGravity = false;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.LivingShroomBanner>();
@@ -269,10 +277,11 @@ namespace tsorcRevamp.NPCs.Friendly
                 }
             }
         }
-        public override void OnKill()
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Mushroom);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>());
+            npcLoot.Add(new CommonDrop(ItemID.Mushroom, 1));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<DarkSoul>(), 1));
         }
     }
 }

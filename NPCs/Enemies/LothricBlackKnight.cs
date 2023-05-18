@@ -51,9 +51,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
             NPC.lavaImmune = true;
-
-            /*Banner = npc.type;
-            BannerItem = ModContent.ItemType<Banners.DunlendingBanner>();*/
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.LothricBlackKnightBanner>();
         }
 
         public override void HitEffect(NPC.HitInfo hit)

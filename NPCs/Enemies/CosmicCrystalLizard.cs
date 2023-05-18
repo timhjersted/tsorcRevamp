@@ -1,10 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Potions;
 
@@ -14,8 +16,25 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Cosmic Crystal Lizard");
             Main.npcFrameCount[NPC.type] = 29;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.OnFire,
+                    BuffID.OnFire3,
+                    BuffID.ShadowFlame,
+                    BuffID.Frostburn,
+                    BuffID.Frostburn2,
+                    BuffID.CursedInferno,
+                    BuffID.Poisoned,
+                    BuffID.Venom,
+                    BuffID.Confused,
+                    ModContent.BuffType<DarkInferno>(),
+                    ModContent.BuffType<CrimsonBurn>(),
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
@@ -31,23 +50,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath32;
             NPC.value = 0;
             NPC.rarity = 10;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Venom] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
-            NPC.buffImmune[BuffID.Frostburn] = true;
-            NPC.buffImmune[BuffID.Frostburn2] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.OnFire3] = true;
-            NPC.buffImmune[BuffID.ShadowFlame] = true;
-            NPC.buffImmune[ModContent.BuffType<Buffs.CrescentMoonlight>()] = true;
-            NPC.buffImmune[ModContent.BuffType<DarkInferno>()] = true;
-            NPC.buffImmune[ModContent.BuffType<Buffs.CrimsonBurn>()] = true;
-            NPC.buffImmune[ModContent.BuffType<Buffs.ToxicCatDrain>()] = true;
-            NPC.buffImmune[ModContent.BuffType<Buffs.ViruCatDrain>()] = true;
-            NPC.buffImmune[ModContent.BuffType<Buffs.BiohazardDrain>()] = true;
-            NPC.buffImmune[ModContent.BuffType<Buffs.ElectrocutedBuff>()] = true;
-            NPC.buffImmune[ModContent.BuffType<Buffs.PolarisElectrocutedBuff>()] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CosmicCrystalLizardBanner>();
         }
@@ -1031,11 +1033,11 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.DarkSoul>(), 1, 500, 1000));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.EternalCrystal>()));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.SoulSiphonPotion>(), 5, 1, 2, 4));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.EndurancePotion, 5, 1, 1, 4));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.EternalCrystal>(), 5, 1, 1, 3));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.DarkSoul>(), 1, 500, 1000));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.EternalCrystal>()));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<SoulSiphonPotion>(), 5, 1, 2, 4));
+            npcLoot.Add(new CommonDrop(ItemID.EndurancePotion, 5, 1, 1, 4));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.EternalCrystal>(), 5, 1, 1, 3));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>()));
         }
     }

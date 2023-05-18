@@ -27,8 +27,8 @@ Mods: {
 			}
 
 			ArmoredWraithBanner: {
-				DisplayName: Armored Wraith Banner
-				Tooltip: Nearby players get a bonus against: Armored Wraith
+				DisplayName: Unarmored Wraith Banner
+				Tooltip: Nearby players get a bonus against: Unarmored Wraith
 			}
 
 			AssassinBanner: {

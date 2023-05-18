@@ -3,9 +3,11 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 {
@@ -13,10 +15,18 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
     {
         int breathCD = 180;
         bool breath = false;
-
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Jungle Wyvern Juvenile");
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] 
+                {
+                    BuffID.Poisoned,
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
         public override void SetDefaults()
         {
@@ -36,10 +46,6 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.value = 2000;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.JungleWyvernJuvenileBanner>();
         }
@@ -357,9 +363,10 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
             return true;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GoldenKey, 4));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.GreenBlossom>(), 1));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.Common(ItemID.GoldenKey, 4));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.GreenBlossom>(), 1));
         }
     }
 }

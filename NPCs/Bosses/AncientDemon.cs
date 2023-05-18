@@ -1,42 +1,56 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
     class AncientDemon : ModNPC
     {
+        int meteorDamage = 16;
+        int cultistFireDamage = 36;
+        int cultistMagicDamage = 50;
+        int cultistLightningDamage = 43;
+        int fireBreathDamage = 21;
+        int lostSoulDamage = 32;
+
+        int greatFireballDamage = 33;
+        int blackFireDamage = 24;
+        int greatAttackDamage = 31;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Ancient Demon");
+            Main.npcFrameCount[NPC.type] = 16;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Poisoned,
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 16;
             AnimationType = 28;
             NPC.height = 120;
             NPC.width = 50;
-            NPC.damage = 55;
+            NPC.damage = 27;
             NPC.defense = 15;
             NPC.lifeMax = 9000;
-            NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 76000;
             NPC.knockBackResist = 0;
             NPC.lavaImmune = true;
             NPC.boss = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler("An ancient demon decides to show you mercy ...", Color.Gold, DustID.GoldFlame);
-
-            Main.npcFrameCount[NPC.type] = 16;
         }
 
         
@@ -92,44 +106,18 @@ namespace tsorcRevamp.NPCs.Bosses
         #endregion
 
         NPCDespawnHandler despawnHandler;
-        int meteorDamage = 31;
-        int cultistFireDamage = 72;
-        int cultistMagicDamage = 99;
-        int cultistLightningDamage = 85;
-        int fireBreathDamage = 41;
-        int lostSoulDamage = 63;
-
-
-        int greatFireballDamage = 66;
-        int blackFireDamage = 47;
-        int greatAttackDamage = 62;
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-        
-            NPC.damage = (int)(NPC.damage / 2);
-            meteorDamage = (int)(meteorDamage / 2);
-            cultistFireDamage = (int)(cultistFireDamage / 2);
-            cultistMagicDamage = (int)(cultistMagicDamage / 2);
-            cultistLightningDamage = (int)(cultistLightningDamage / 2);
-            fireBreathDamage = (int)(fireBreathDamage / 2);
-            lostSoulDamage = (int)(lostSoulDamage / 2);
-            greatFireballDamage = (int)(greatFireballDamage / 2);
-            blackFireDamage = (int)(blackFireDamage / 2);
-            greatAttackDamage = (int)(greatAttackDamage / 2);
-        }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-                target.AddBuff(20, 600, false); //poisoned
-                target.AddBuff(30, 600, false); //bleeding
-                target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false); //reduced defense on hit
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 HP after several hits
-                target.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 20;
-  
+            target.AddBuff(BuffID.Poisoned, 10 * 60, false);
+            target.AddBuff(BuffID.Bleeding, 10 * 60, false);
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false); //reduced defense on hit
+            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false); //-20 HP after several hits
+            target.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 20;
+
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(33, 600, false); //weak
+                target.AddBuff(BuffID.Weak, 10 * 60, false);
             }
         }
 
@@ -182,7 +170,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(11f, 8f);
                 NPC.netUpdate = true;
-
             }
         }
 
@@ -199,14 +186,14 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
             //CHANCE TO JUMP BEFORE ATTACK  
-            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(40) && NPC.life >= 3001)
+            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(40) && NPC.life >= NPC.lifeMax / 3)
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-9f, -6f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 1f);
                 NPC.netUpdate = true;
             }
 
-            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(33) && NPC.life <= 3000)
+            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(33) && NPC.life <= NPC.lifeMax / 3)
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-7f, -4f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 1f);
@@ -263,9 +250,9 @@ namespace tsorcRevamp.NPCs.Bosses
             if (breathTimer > 480)
             {
                 NPC.localAI[1] = -50;
-                if (NPC.life >= 3001)
+                if (NPC.life >= NPC.lifeMax / 3)
                 { breathTimer = -60; }
-                if (NPC.life <= 3000)
+                if (NPC.life <= NPC.lifeMax / 3)
                 { breathTimer = -90; }
 
             }
@@ -354,7 +341,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
             //CHOICES
-            if (NPC.localAI[1] >= 160f && (choice == 0 || choice == 4) && NPC.life >= 3001)
+            if (NPC.localAI[1] >= 160f && (choice == 0 || choice == 4) && NPC.life >= NPC.lifeMax / 3)
             {
                 bool clearSpace = true;
                 for (int i = 0; i < 15; i++)
@@ -365,7 +352,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
                 }
                 //LOB ATTACK PURPLE; 
-                if (NPC.life >= 3001 && NPC.life <= 6000 && clearSpace)
+                if (NPC.life >= NPC.lifeMax / 3 && NPC.life <= NPC.lifeMax / 3 * 2 && clearSpace)
                 {
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
 
@@ -382,7 +369,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     { NPC.localAI[1] = 1f; }
                 }
                 //LOB ATTACK >> BOUNCING FIRE
-                if (NPC.life >= 3001 && clearSpace)
+                if (NPC.life >= NPC.lifeMax / 3 && clearSpace)
 
                 {
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
@@ -405,7 +392,7 @@ namespace tsorcRevamp.NPCs.Bosses
         
 
             //MULTI-FIRE 1 ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life >= 3001 && choice == 1) 
+            if (NPC.localAI[1] >= 160f && NPC.life >= NPC.lifeMax / 3 && choice == 1) 
             {
 
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(4), 7);
@@ -424,7 +411,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.netUpdate = true;
             }
             //MULTI-BOUNCING DESPERATE FIRE ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life <= 3000 && (choice == 1 || choice == 2))
+            if (NPC.localAI[1] >= 160f && NPC.life <= NPC.lifeMax / 3 && (choice == 1 || choice == 2))
             {
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 3);
                 speed.Y += Main.rand.NextFloat(2f, -2f);
@@ -442,7 +429,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.netUpdate = true;
             }
             //LIGHTNING ATTACK
-            if (NPC.localAI[1] == 160f && NPC.life >= 1001 && NPC.life <= 6000 && (choice == 5 || choice == 4)) //&& Main.rand.NextBool(8) 
+            if (NPC.localAI[1] == 160f && NPC.life >= 1001 && NPC.life <= NPC.lifeMax / 3 * 2 && (choice == 5 || choice == 4)) //&& Main.rand.NextBool(8) 
             {
                 //&& Main.rand.NextBool(10) Main.rand.NextBool(2) &&
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(1), 1);
@@ -477,7 +464,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			}
 			*/
             //FINAL JUNGLE FLAMES DESPERATE ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life <= 3000 && (choice == 0 || choice == 3))
+            if (NPC.localAI[1] >= 160f && NPC.life <= NPC.lifeMax / 3 && (choice == 0 || choice == 3))
             //if (Main.rand.NextBool(40))
             {
                 Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
@@ -539,7 +526,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (Main.rand.Next(99) < 20) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
             if (Main.rand.Next(99) < 40) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 1);
             if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.BloodMoonStarter, 1);
-          
+
         }
     }
 }

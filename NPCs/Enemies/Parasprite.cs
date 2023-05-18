@@ -7,6 +7,10 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class Parasprite : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 7;
+        }
         public override void SetDefaults()
         {
             NPC.width = 12;
@@ -21,7 +25,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noGravity = true;
             NPC.knockBackResist = 0;
             NPC.value = 50;
-            Main.npcFrameCount[NPC.type] = 7;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.ParaspriteBanner>();
         }

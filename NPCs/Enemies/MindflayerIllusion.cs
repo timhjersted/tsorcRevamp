@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -12,10 +13,21 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class MindflayerIllusion : ModNPC
     {
-
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Confused,
+                    BuffID.Poisoned,
+                    BuffID.OnFire
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
+        public override void SetDefaults()
+        {
             NPC.npcSlots = 5;
             AnimationType = 29;
             NPC.aiStyle = 0;
@@ -32,9 +44,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 500;
             NPC.width = 28;
             NPC.knockBackResist = 0.3f;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.MindflayerIllusionBanner>();
         }
@@ -55,12 +64,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.ai[1]++; // Timer Teleport
                          // npc.ai[2]++; // Shots
 
-            if (NPC.life > 200)
+            if (NPC.life > NPC.lifeMax / 4 * 3)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X, NPC.velocity.Y, 210, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 200)
+            else if (NPC.life <= NPC.lifeMax / 10 * 4)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 140, Color.Red, 2f);
                 Main.dust[dust].noGravity = true;
@@ -123,7 +132,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.velocity.Y *= 0.37f;
             }
 
-            if ((NPC.ai[1] >= 200 && NPC.life > 100) || (NPC.ai[1] >= 120 && NPC.life <= 100))
+            if ((NPC.ai[1] >= 200 && NPC.life > NPC.lifeMax / 4) || (NPC.ai[1] >= 120 && NPC.life <= NPC.lifeMax / 4))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int num36 = 0; num36 < 10; num36++)
@@ -297,7 +306,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<HealingElixir>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 10));
         }
     }

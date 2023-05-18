@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -24,6 +25,16 @@ namespace tsorcRevamp.NPCs.Special
             Main.npcFrameCount[NPC.type] = 27;
             NPCID.Sets.TrailCacheLength[NPC.type] = 4; //How many copies of shadow/trail
             NPCID.Sets.TrailingMode[NPC.type] = 0;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Confused,
+                    BuffID.OnFire,
+                    BuffID.Poisoned,
+                    BuffID.Frostburn
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
@@ -44,10 +55,6 @@ namespace tsorcRevamp.NPCs.Special
             NPC.DeathSound = SoundID.NPCDeath58;
             NPC.dontTakeDamageFromHostiles = true;
             NPC.lavaImmune = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Frostburn] = true;
             despawnHandler = new NPCDespawnHandler(null, Color.Teal, 54);
         }
 

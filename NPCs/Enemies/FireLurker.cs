@@ -1,10 +1,12 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Potions;
 
@@ -12,56 +14,56 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class FireLurker : ModNPC
     {
+        public int lostSoulDamage = 8;
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 15;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.OnFire
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.npcSlots = 3;
-            Main.npcFrameCount[NPC.type] = 15;
             AnimationType = 28;
             NPC.knockBackResist = 0.4f;
             NPC.aiStyle = -1;//was 3
-            NPC.damage = 40;
+            NPC.damage = 20;
             NPC.defense = 10;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 200;
+            NPC.lifeMax = 100;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 430;
             NPC.lavaImmune = true;
-            //Banner = npc.type;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[24] = true;
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.FireLurkerBanner>();
 
             if (Main.hardMode)
             {
-                NPC.lifeMax = 380;
+                NPC.lifeMax = 190;
                 NPC.defense = 22;
                 NPC.value = 650;
-                NPC.damage = 60;
-                lostSoulDamage = 43;
+                NPC.damage = 30;
+                lostSoulDamage = 22;
                 NPC.knockBackResist = 0.2f;
             }
 
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.lifeMax = 2660;
+                NPC.lifeMax = 1330;
                 NPC.defense = 47;
                 NPC.value = 3650;
-                NPC.damage = 95;
-                lostSoulDamage = 73;
+                NPC.damage = 48;
+                lostSoulDamage = 37;
                 NPC.knockBackResist = 0.1f;
 
             }
-        }
-
-        public int lostSoulDamage = 15;
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            //hypnoticDisruptorDamage = (int)(hypnoticDisruptorDamage / 2);
-            lostSoulDamage = (int)(lostSoulDamage / 2);
         }
 
 

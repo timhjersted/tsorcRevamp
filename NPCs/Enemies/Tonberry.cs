@@ -10,10 +10,13 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class Tonberry : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 16;
+        }
         public override void SetDefaults()
         {
             NPC.npcSlots = 5;
-            Main.npcFrameCount[NPC.type] = 16;
             AnimationType = 28;
             NPC.knockBackResist = 0.2f;
             NPC.aiStyle = 3;
@@ -21,7 +24,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 30;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 3000;
+            NPC.lifeMax = 1500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 25000;
@@ -30,20 +33,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.lifeMax = 6660;
+                NPC.lifeMax = 3360;
                 NPC.defense = 57;
                 NPC.value = 70000;
-                NPC.damage = 295;
+                NPC.damage = 0;
             }
         }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-        }
-
-        // (O_O;)
+        // (O_O;) //I haven't played that game so wtf is this
         int throwingKnifeDamage = 9999;
 
 

@@ -14,7 +14,6 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Firebomb Hollow");
             Main.npcFrameCount[NPC.type] = 14;
         }
 

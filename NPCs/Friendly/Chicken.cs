@@ -1,7 +1,8 @@
 ﻿using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -29,10 +30,9 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             return Terraria.ModLoader.Utilities.SpawnCondition.TownGeneralCritter.Chance * 0.2f;
         }
-
-        public override void OnKill()
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DeadChicken>());
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<DeadChicken>(), 1));
         }
 
         public override void AI()

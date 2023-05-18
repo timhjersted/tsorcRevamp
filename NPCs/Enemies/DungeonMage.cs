@@ -1,17 +1,31 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
     class DungeonMage : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Confused,
+                    BuffID.Poisoned,
+                    BuffID.OnFire
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.npcSlots = 5;
-            //npc.maxSpawns = 2; todo investigate
             NPC.aiStyle = 0;
             NPC.damage = 0;
             NPC.defense = 10;
@@ -27,11 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 1500;
             NPC.width = 28;
             NPC.knockBackResist = 0.3f;
-            Main.npcFrameCount[NPC.type] = 3;
             AnimationType = NPCID.GoblinSorcerer;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DungeonMageBanner>();
         }
@@ -55,12 +65,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.ai[1]++; // Timer Teleport
                          // npc.ai[2]++; // Shots
 
-            if (NPC.life > 50)
+            if (NPC.life > NPC.lifeMax / 2)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X, NPC.velocity.Y, 200, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 50)
+            else if (NPC.life <= NPC.lifeMax / 2)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 140, Color.Red, 2f);
                 Main.dust[dust].noGravity = true;
@@ -90,7 +100,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.velocity.Y *= 0.17f;
             }
 
-            if ((NPC.ai[1] >= 260 && NPC.life > 50) || (NPC.ai[1] >= 180 && NPC.life <= 50))
+            if ((NPC.ai[1] >= 260 && NPC.life > NPC.lifeMax / 2) || (NPC.ai[1] >= 180 && NPC.life <= NPC.lifeMax / 2))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int num36 = 0; num36 < 10; num36++)
@@ -234,10 +244,10 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.HealingElixir>(), 15, 1, 1, 3));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.SpellTome, 100, 1, 1, 7));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.ManaRegenerationPotion, 32));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GreaterHealingPotion, 20));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.HealingElixir>(), 15, 1, 1, 3));
+            npcLoot.Add(new CommonDrop(ItemID.SpellTome, 100, 1, 1, 7));
+            npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 32));
+            npcLoot.Add(new CommonDrop(ItemID.GreaterHealingPotion, 20));
         }
 
         public override void HitEffect(NPC.HitInfo hit)

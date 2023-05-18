@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,10 +12,23 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class Archdeacon : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] 
+                {
+                    BuffID.Poisoned,
+                    BuffID.OnFire,
+                    BuffID.Confused
+				}
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.npcSlots = 3;
-            //npc.maxSpawns = 2; todo investigate
             NPC.aiStyle = 0;
             NPC.damage = 0;
             NPC.defense = 20;
@@ -30,13 +44,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 3750;
             NPC.width = 28;
             NPC.knockBackResist = 0.2f;
-            Main.npcFrameCount[NPC.type] = 3;
-            AnimationType = NPCID.GoblinSorcerer;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            //Banner = NPC.type;
-            //BannerItem = ModContent.ItemType<Banners.ArchdeaconBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.ArchdeaconBanner>();
         }
 
        
@@ -64,13 +73,13 @@ namespace tsorcRevamp.NPCs.Enemies
             bool validTarget = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
 
             
-            if (NPC.life > 150)
+            if (NPC.life > NPC.lifeMax * 3 / 10)
             {
                 Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X, NPC.velocity.Y, 200, Color.LightCyan, 1f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 150)
+            else if (NPC.life <= NPC.lifeMax * 3 / 10)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 140, Color.DarkCyan, 2f);
                 Main.dust[dust].noGravity = true;
@@ -217,8 +226,9 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.HealingElixir>(), 10, 1, 1, 3));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<HealingElixir>(), 10, 1, 1, 3));
             npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 25));
             npcLoot.Add(new CommonDrop(ItemID.GreaterHealingPotion, 10));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 20));

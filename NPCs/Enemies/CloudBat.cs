@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -9,7 +11,6 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Cloud Bat");
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.GiantBat];
         }
 
@@ -20,11 +21,9 @@ namespace tsorcRevamp.NPCs.Enemies
             AIType = NPCID.CaveBat;
             NPC.lifeMax = 35;
             NPC.damage = 45;
-            NPC.scale = 1f;
             NPC.knockBackResist = .55f;
             NPC.value = 350;
             NPC.defense = 5;
-            NPC.buffImmune[BuffID.Confused] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CloudBatBanner>();
         }
@@ -42,7 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (Main.rand.NextBool(8))
             {
-                target.AddBuff(BuffID.Confused, 600, true);
+                target.AddBuff(BuffID.Confused, 10 * 60, true);
             }
         }
         public override void HitEffect(NPC.HitInfo hit)
@@ -68,6 +67,10 @@ namespace tsorcRevamp.NPCs.Enemies
                     Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Cloud Bat Gore").Type, 1f);
                 }
             }
+        }
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ItemID.Cloud, 1, 10, 20));
         }
     }
 }

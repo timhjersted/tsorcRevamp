@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,6 +11,19 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class DiscipleOfAttraidies : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Confused,
+                    BuffID.Poisoned,
+                    BuffID.OnFire
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
 
         public override void SetDefaults()
         {
@@ -27,11 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 10000;
             NPC.width = 28;
             NPC.knockBackResist = 0.2f;
-            Main.npcFrameCount[NPC.type] = 3;
             AnimationType = NPCID.GoblinSorcerer;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DiscipleOfAttraidiesBanner>();
         }
@@ -44,12 +54,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.ai[1]++; // Timer Teleport
                          // npc.ai[2]++; // Shots
 
-            if (NPC.life > 1000)
+            if (NPC.life > NPC.lifeMax / 7 * 2)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 150, Color.Black, 1f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 500)
+            else if (NPC.life <= NPC.lifeMax / 7)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 100, Color.Black, 2f);
                 Main.dust[dust].noGravity = true;
@@ -77,7 +87,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.velocity.Y *= 0.17f;
             }
 
-            if ((NPC.ai[1] >= 200 && NPC.life > 1000) || (NPC.ai[1] >= 120 && NPC.life <= 1000))
+            if ((NPC.ai[1] >= 200 && NPC.life > NPC.lifeMax / 7 * 2) || (NPC.ai[1] >= 120 && NPC.life <= NPC.lifeMax / 7 * 2))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int num36 = 0; num36 < 10; num36++)

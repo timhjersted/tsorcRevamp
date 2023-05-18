@@ -3,11 +3,16 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
     public class GhostOfTheForgottenWarrior : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 16;
+        }
         public override void SetDefaults()
         {
             NPC.HitSound = SoundID.NPCHit1;
@@ -25,10 +30,6 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.GhostOfTheForgottenWarriorBanner>();
 
             AnimationType = NPCID.GoblinWarrior;
-            Main.npcFrameCount[NPC.type] = 16;
-
-            
-
             if (Main.hardMode)
             {
                 NPC.lifeMax = 300;
@@ -147,14 +148,13 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GoldenKey, 10));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.EphemeralDust>(), 1, 2, 4));
-
-            if (Main.hardMode)
-            {
-                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofNight, 10));
-            }
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.Common(ItemID.GoldenKey, 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.EphemeralDust>(), 1, 2, 4));
+            IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
+            hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofNight));
+            npcLoot.Add(hmCondition);
         }
     }
 }

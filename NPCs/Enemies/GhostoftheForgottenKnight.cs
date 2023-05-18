@@ -3,30 +3,27 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
     class GhostoftheForgottenKnight : ModNPC
     {
+        public int spearDamage = 15;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Ghost of the Forgotten Knight");
-
+            Main.npcFrameCount[NPC.type] = 16;
         }
-
-        public int spearDamage = 30;
-
         public override void SetDefaults()
         {
             NPC.npcSlots = 3;
-            Main.npcFrameCount[NPC.type] = 16;
             AnimationType = 28;
             NPC.aiStyle = -1;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.damage = 60;
+            NPC.damage = 30;
             NPC.defense = 22;
-            NPC.lifeMax = 300;
+            NPC.lifeMax = 150;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
@@ -34,39 +31,26 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0.0f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.GhostOfTheForgottenKnightBanner>();
-
-            
-
             if (Main.hardMode)
             {
-                NPC.lifeMax = 400;
+                NPC.lifeMax = 200;
                 NPC.defense = 32;
                 NPC.value = 650;
-                NPC.damage = 80;
-                spearDamage = 50;
+                NPC.damage = 40;
+                spearDamage = 25;
                 topSpeed = 1.5f;
             }
 
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.lifeMax = 1800;
+                NPC.lifeMax = 900;
                 NPC.defense = 70;
-                NPC.damage = 100;
+                NPC.damage = 50;
                 NPC.value = 1000;
-                spearDamage = 90;
+                spearDamage = 45;
                 topSpeed = 2f;
             }
         }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            spearDamage = (int)(spearDamage / 2);
-        }
-
-
-
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
 
@@ -152,22 +136,20 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Ranged.Thrown.RoyalThrowingSpear>(), 4, 25, 35));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Weapons.Ranged.Thrown.EphemeralThrowingSpear>(), 5, 25, 30, 2));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.HealingElixir>(), 5, 1, 1, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.EphemeralDust>(), 1, 3, 9));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 35));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GreaterHealingPotion, 35));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.HunterPotion, 100, 1, 1, 8));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.RegenerationPotion, 100, 1, 1, 6));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.ShinePotion, 100, 1, 1, 30));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.BattlePotion, 30));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GoldenKey, 20));
-
-            if (Main.hardMode)
-            {
-                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofNight, 5));
-            }
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Ranged.Thrown.RoyalThrowingSpear>(), 4, 25, 35));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Weapons.Ranged.Thrown.EphemeralThrowingSpear>(), 5, 25, 30, 2));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.HealingElixir>(), 5, 1, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.EphemeralDust>(), 1, 3, 9));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 35));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 35));
+            npcLoot.Add(new CommonDrop(ItemID.HunterPotion, 100, 1, 1, 8));
+            npcLoot.Add(new CommonDrop(ItemID.RegenerationPotion, 100, 1, 1, 6));
+            npcLoot.Add(new CommonDrop(ItemID.ShinePotion, 100, 1, 1, 30));
+            npcLoot.Add(ItemDropRule.Common(ItemID.BattlePotion, 30));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GoldenKey, 20));
+            IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
+            hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofNight));
+            npcLoot.Add(hmCondition);
         }
     }
 }

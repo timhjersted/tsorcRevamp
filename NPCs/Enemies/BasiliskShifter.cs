@@ -1,7 +1,9 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
@@ -12,38 +14,35 @@ namespace tsorcRevamp.NPCs.Enemies
     class BasiliskShifter : ModNPC
     {
         //HARD MODE VARIANT 
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 12;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.npcSlots = 2;
-            Main.npcFrameCount[NPC.type] = 12;
             AnimationType = 28;
             NPC.aiStyle = 3;
-            NPC.damage = 60;
-            NPC.defense = 65;
+            NPC.damage = 30;
+            NPC.defense = 55;
             NPC.height = 54;
             NPC.width = 54;
-            NPC.lifeMax = 670; 
+            NPC.lifeMax = 335; 
             NPC.HitSound = SoundID.NPCHit20;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 2330;
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BasiliskShifterBanner>();
-
-            //NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-        }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            NPC.defense = (int)(NPC.defense * (2 / 3));
-            cursedBreathDamage = (int)(cursedBreathDamage / 2);
-            darkExplosionDamage = (int)(darkExplosionDamage / 2);
-            hypnoticDisruptorDamage = (int)(hypnoticDisruptorDamage / 2);
-            bioSpitDamage = (int)(bioSpitDamage / 2);
         }
 
         float breathTimer = 60;
@@ -52,10 +51,10 @@ namespace tsorcRevamp.NPCs.Enemies
         float shotTimer;
         int chargeDamage = 0;
         bool chargeDamageFlag = false;
-        int cursedBreathDamage = 25;
-        int darkExplosionDamage = 35;
-        int hypnoticDisruptorDamage = 35;
-        int bioSpitDamage = 35;
+        int cursedBreathDamage = 13;
+        int darkExplosionDamage = 18;
+        int hypnoticDisruptorDamage = 18;
+        int bioSpitDamage = 18;
 
 
         #region Spawn
@@ -156,13 +155,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     //CHANCE TO JUMP BEFORE ATTACK
                     //FOR MAIN
-                    if (shotTimer == 105 && Main.rand.NextBool(3) && NPC.life >= 321)
+                    if (shotTimer == 105 && Main.rand.NextBool(3) && NPC.life >= NPC.lifeMax / 2)
                     {
                         
                         NPC.velocity.Y = Main.rand.NextFloat(-10f, -4f);
                     }
                     //FOR FINAL
-                    if (shotTimer >= 185 && Main.rand.NextBool(2) && NPC.life <= 320)
+                    if (shotTimer >= 185 && Main.rand.NextBool(2) && NPC.life <= NPC.lifeMax / 2)
                     {
                         NPC.velocity.Y = Main.rand.NextFloat(-10f, 3f);
                     }
@@ -175,7 +174,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // NEW BREATH ATTACK 
             breathTimer++;
-            if (breathTimer > 480 && Main.rand.NextBool(2) && shotTimer <= 99f && NPC.life >= 321)
+            if (breathTimer > 480 && Main.rand.NextBool(2) && shotTimer <= 99f && NPC.life >= NPC.lifeMax / 2)
             {
                 breathTimer = -60;
                 shotTimer = -60f;
@@ -193,7 +192,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
-            if (breathTimer > 360 && NPC.life >= 321)
+            if (breathTimer > 360 && NPC.life >= NPC.lifeMax / 2)
             {
                 shotTimer = -60f;
                 UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((480 - breathTimer) / 120)), DustID.CursedTorch, 48, 4);
@@ -208,7 +207,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             int choice = Main.rand.Next(4);
             //PURPLE MAGIC LOB ATTACK; && Main.rand.NextBool(2)
-            if (shotTimer >= 110f && NPC.life >= 321 && choice <= 1)
+            if (shotTimer >= 110f && NPC.life >= NPC.lifeMax / 2 && choice <= 1)
             {
                 bool clearSpace = true;
                 for (int i = 0; i < 15; i++)
@@ -249,7 +248,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //NORMAL SPIT ATTACK
-            if (shotTimer >= 115f && NPC.life >= 321 && choice >= 2)
+            if (shotTimer >= 115f && NPC.life >= NPC.lifeMax / 2 && choice >= 2)
             {
                 if (Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
                 {
@@ -266,7 +265,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //FINAL DESPERATE ATTACK
-            if (shotTimer >= 175f && Main.rand.NextBool(2) && NPC.life <= 320)
+            if (shotTimer >= 175f && Main.rand.NextBool(2) && NPC.life <= NPC.lifeMax / 2)
             {
                 int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Blue, 1f);
                 Main.dust[dust2].noGravity = true;
@@ -289,7 +288,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
             //Knockback conditional
-            if (NPC.life >= 321)
+            if (NPC.life >= NPC.lifeMax / 2)
             {
                 NPC.knockBackResist = 0.04f;
             }
@@ -316,7 +315,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //reset attack timer when hit in melee range
-            if (NPC.justHit && NPC.Distance(player.Center) < 100 && NPC.life >= 321)
+            if (NPC.justHit && NPC.Distance(player.Center) < 100 && NPC.life >= NPC.lifeMax / 2)
             {
                 shotTimer = 10f;
             }
@@ -359,13 +358,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
 
-                    NPC.damage = 70;
+                    NPC.damage = 35;
                     chargeDamage++;
                 }
                 if (chargeDamage >= 70)
                 {
                     chargeDamageFlag = false;
-                    NPC.damage = 60;
+                    NPC.damage = 30;
                     chargeDamage = 0;
                 }
             }
@@ -456,14 +455,11 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GreaterHealingPotion, 25));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.BloodredMossClump>(), 2, 1, 2));
-
-            if (Main.hardMode)
-            {
-                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofNight, 3));
-            }
-
+            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 25));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BloodredMossClump>(), 2, 1, 2));
+            IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
+            hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofNight, 3));
+            npcLoot.Add(hmCondition);
         }
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,9 +10,16 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class DarkElfMage : ModNPC
     {
-        public override void SetDefaults()
+        //int meteorDamage = 9;
+        int iceBallDamage = 20;
+        int iceStormDamage = 18;
+        int lightningDamage = 18;
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 16;
+        }
+        public override void SetDefaults()
+        {
             AnimationType = 28;
             NPC.knockBackResist = 0.01f;
             NPC.aiStyle = 3;
@@ -19,31 +27,13 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 35;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 810;
+            NPC.lifeMax = 405;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 1800;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DarkElfMageBanner>();
         }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            meteorDamage = (int)(meteorDamage / 2);
-            iceBallDamage = (int)(iceBallDamage / 2);
-            iceStormDamage = (int)(iceStormDamage / 2);
-            lightningDamage = (int)(lightningDamage / 2);
-        }
-
-        int meteorDamage = 17;
-        int iceBallDamage = 40;
-        int iceStormDamage = 35;
-        int lightningDamage = 35;
-
-
-
 
         //Spawns in Hardmode Surface and Underground, 6.5/10th of the world to the right edge (Width). Does not spawn in Dungeons, Jungle, or Meteor. Only spawns with Town NPCs during Blood Moons.
 
@@ -122,17 +112,17 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenIceRod>(), 20));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenThunderRod>(), 20));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenStardustRod>(), 100));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronskinPotion, 30));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ManaRegenerationPotion, 35));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.GreaterHealingPotion, 20));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.GillsPotion, 100, 1, 1, 6));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.HunterPotion, 100, 1, 1, 6));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.MagicPowerPotion, 25));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ShinePotion, 25));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofNight, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenIceRod>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenThunderRod>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenStardustRod>(), 100));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 30));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 35));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 20));
+            npcLoot.Add(new CommonDrop(ItemID.GillsPotion, 100, 1, 1, 6));
+            npcLoot.Add(new CommonDrop(ItemID.HunterPotion, 100, 1, 1, 6));
+            npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 25));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ShinePotion, 25));
+            npcLoot.Add(ItemDropRule.Common(ItemID.SoulofNight, 2));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 7));
         }
         #endregion

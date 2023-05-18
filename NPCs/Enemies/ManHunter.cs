@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,14 +11,18 @@ namespace tsorcRevamp.NPCs.Enemies
     public class ManHunter : ModNPC
     {
         public int archerBoltDamage = 20;
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 20;
+        }
         public override void SetDefaults()
         {
             AIType = NPCID.SkeletonArcher;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.damage = 25;
-            NPC.lifeMax = 250;
-            NPC.defense = 10;
+            NPC.damage = 12;
+            NPC.lifeMax = 125;
+            NPC.defense = 9;
             NPC.value = 1000;
             NPC.scale = 0.9f;
             NPC.width = 18;
@@ -28,29 +33,19 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.ManHunterBanner>();
 
             AnimationType = NPCID.SkeletonArcher;
-            Main.npcFrameCount[NPC.type] = 20;
 
             if (Main.hardMode)
             {
-                NPC.lifeMax = 500;
-                NPC.defense = 14;
+                NPC.lifeMax = 250;
+                NPC.defense = 12;
                 NPC.value = 1500;
-                NPC.damage = 50;
-                archerBoltDamage = 30;
+                NPC.damage = 25;
+                archerBoltDamage = 15;
             }
-
-
         }
 
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            NPC.defense = (int)(NPC.defense * (2 / 3));
-            archerBoltDamage = (int)(archerBoltDamage / 2);
-        }
-
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(ItemDropRule.Common(ItemID.ArcheryPotion));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 36));
             npcLoot.Add(ItemDropRule.Common(ItemID.HunterPotion, 34));

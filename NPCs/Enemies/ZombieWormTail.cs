@@ -24,8 +24,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 20;
             NPC.aiStyle = 6;
             NPC.timeLeft = 750;
-            NPC.damage = 40;
-            NPC.defense = 18;
+            NPC.damage = 20;
+            NPC.defense = 15;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.lavaImmune = true;
@@ -45,14 +45,6 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
         int[] bodyTypes;
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            NPC.defense = (int)(NPC.defense * (2 / 3));
-        }
-
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
             return false;

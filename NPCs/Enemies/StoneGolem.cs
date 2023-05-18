@@ -11,7 +11,6 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.GraniteGolem];
-
         }
         public override void SetDefaults()
         {

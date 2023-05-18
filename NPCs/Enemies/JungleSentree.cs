@@ -8,6 +8,9 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Whips;
 using tsorcRevamp.Projectiles;
+using Terraria.DataStructures;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Buffs;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -15,8 +18,15 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Jungle Sentree");
             Main.npcFrameCount[NPC.type] = 9;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
@@ -31,7 +41,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCHit/Dig");
             NPC.DeathSound = SoundID.NPCDeath33;
             NPC.value = 1000;
-            NPC.buffImmune[BuffID.Confused] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.JungleSentreeBanner>();
         }
@@ -432,18 +441,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
         #endregion
 
-        public override void OnKill()
-        {
-
-            if (Main.rand.NextFloat() >= 0.2f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>()); //80%
-
-        }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RichMahogany, 1, 3, 5));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.BloodredMossClump>(), 1, 3, 5));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.CharcoalPineResin>(), 5));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.GreenBlossom>(), 5));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.GreenBlossom>()));
         }
     }
 }

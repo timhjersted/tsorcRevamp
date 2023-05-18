@@ -8,12 +8,20 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class MarilithSeeker : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            {
+                Hide = true
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
+        }
         public override void SetDefaults()
         {
             NPC.width = 10;
             NPC.height = 10;
             NPC.aiStyle = -1;
-            NPC.damage = 60;
+            NPC.damage = 30;
             NPC.defense = 0;
             NPC.lifeMax = 1;
             NPC.HitSound = null;
@@ -22,19 +30,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath3;
             NPC.timeLeft = 600;
         }
-
-        public override void SetStaticDefaults() {
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
-                Hide = true
-            };
-            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
-        }
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-        }
-
         public override void AI()
         {
             NPC.velocity.X = NPC.ai[1];

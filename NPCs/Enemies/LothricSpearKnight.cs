@@ -39,8 +39,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noTileCollide = false;
             NPC.lavaImmune = true;
 
-            /*Banner = npc.type;
-            BannerItem = ModContent.ItemType<Banners.DunlendingBanner>();*/
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.LothricSpearKnightBanner>();
         }
 
 
@@ -939,7 +939,6 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 12, 24));
-
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofLight, 1));
             npcLoot.Add(hmCondition);

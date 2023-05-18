@@ -638,10 +638,6 @@ namespace tsorcRevamp.Banners
 
     #region Banner Classes
 
-
-    #region Pre-SHM
-
-
     public class GuardianCorruptorBanner : EnemyBanner
     {
         //you may notice that all mod enemies with banners drop a guardian corruptor banner. this is NOT a bug
@@ -651,7 +647,6 @@ namespace tsorcRevamp.Banners
 
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Guardian Corruptor");
         }
         public override void SetDefaults()
         {
@@ -663,7 +658,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Cloud Bat");
         }
         public override void SetDefaults()
         {
@@ -676,7 +670,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Armored Wraith");
         }
         public override void SetDefaults()
         {
@@ -689,7 +682,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Obsidian Jellyfish");
         }
         public override void SetDefaults()
         {
@@ -702,7 +694,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Stone Golem");
         }
         public override void SetDefaults()
         {
@@ -715,7 +706,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Abandoned Stump");
         }
         public override void SetDefaults()
         {
@@ -727,7 +717,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Resentful Seedling");
         }
         public override void SetDefaults()
         {
@@ -739,8 +728,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Fleeing Fungi Banner");
-            // Tooltip.SetDefault("Nearby players get a bonus against: Fleeing Fungi");
         }
         public override void SetDefaults()
         {
@@ -752,8 +739,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Fungi Felon Banner");
-            // Tooltip.SetDefault("Nearby players get a bonus against: Fungi Felon");
         }
         public override void SetDefaults()
         {
@@ -765,7 +750,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Living Glowshroom");
         }
         public override void SetDefaults()
         {
@@ -777,7 +761,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Ancient Demon");
         }
         public override void SetDefaults()
         {
@@ -789,7 +772,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Undead Caster");
         }
         public override void SetDefaults()
         {
@@ -813,7 +795,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Attraidies Illusion");
         }
         public override void SetDefaults()
         {
@@ -825,7 +806,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Cosmic Crystal Lizard");
         }
         public override void SetDefaults()
         {
@@ -837,7 +817,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Assassin");
         }
         public override void SetDefaults()
         {
@@ -849,7 +828,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Attraidies Manifestation");
         }
         public override void SetDefaults()
         {
@@ -861,7 +839,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Barrow Wight");
         }
         public override void SetDefaults()
         {
@@ -873,7 +850,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Basilisk Shifter");
         }
         public override void SetDefaults()
         {
@@ -885,7 +861,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Basilisk Walker");
         }
         public override void SetDefaults()
         {
@@ -897,7 +872,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Black Knight");
         }
         public override void SetDefaults()
         {
@@ -909,7 +883,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Crazed Demon Spirit");
         }
         public override void SetDefaults()
         {
@@ -921,7 +894,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Dark Elf Mage");
         }
         public override void SetDefaults()
         {
@@ -933,7 +905,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Demon Spirit");
         }
         public override void SetDefaults()
         {
@@ -945,7 +916,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Disciple of Attraidies");
         }
         public override void SetDefaults()
         {
@@ -957,7 +927,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Dungeon Mage");
         }
         public override void SetDefaults()
         {
@@ -969,7 +938,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Dunlending");
         }
         public override void SetDefaults()
         {
@@ -981,7 +949,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Dworc Fleshhunter");
         }
         public override void SetDefaults()
         {
@@ -993,7 +960,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Dworc Venomsniper");
         }
         public override void SetDefaults()
         {
@@ -1005,7 +971,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Dworc Alchemist");
         }
         public override void SetDefaults()
         {
@@ -1017,7 +982,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Dworc Voodoo Shaman");
         }
         public override void SetDefaults()
         {
@@ -1029,7 +993,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Firebomb Hollow");
         }
         public override void SetDefaults()
         {
@@ -1041,7 +1004,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Flame Bat");
         }
         public override void SetDefaults()
         {
@@ -1053,7 +1015,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Ghost of The Darkmoon Knight");
         }
         public override void SetDefaults()
         {
@@ -1065,7 +1026,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Ghost of The Forgotten Knight");
         }
         public override void SetDefaults()
         {
@@ -1077,7 +1037,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Ghost Of The Forgotten Warrior");
         }
         public override void SetDefaults()
         {
@@ -1085,23 +1044,21 @@ namespace tsorcRevamp.Banners
             Item.placeStyle = 35; //change when texture added
         }
     }
-    /*public class Banner : EnemyBanner
+    public class FireLurkerBanner : EnemyBanner
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Nearby players get a bonus against: REDACTED");
         }
         public override void SetDefaults()
         {
             base.SetDefaults();
             Item.placeStyle = 36; //change when texture added
         }
-    }*/
+    }
     public class HeroOfLumeliaBanner : EnemyBanner
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Hero of Lumelia");
         }
         public override void SetDefaults()
         {
@@ -1113,7 +1070,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Jungle Sentree");
         }
         public override void SetDefaults()
         {
@@ -1125,7 +1081,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Man Hunter");
         }
         public override void SetDefaults()
         {
@@ -1137,7 +1092,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Marilith Spirit Twin");
         }
         public override void SetDefaults()
         {
@@ -1149,7 +1103,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Mindflayer Illusion");
         }
         public override void SetDefaults()
         {
@@ -1161,7 +1114,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Mindflayer King Servant");
         }
         public override void SetDefaults()
         {
@@ -1173,7 +1125,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Mindflayer Servant");
         }
         public override void SetDefaults()
         {
@@ -1185,7 +1136,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Mutant Toad");
         }
         public override void SetDefaults()
         {
@@ -1197,7 +1147,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Necromancer");
         }
         public override void SetDefaults()
         {
@@ -1209,7 +1158,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Necromancer Elemental");
         }
         public override void SetDefaults()
         {
@@ -1221,7 +1169,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Parasprite");
         }
         public override void SetDefaults()
         {
@@ -1233,7 +1180,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Quara Hydromancer");
         }
         public override void SetDefaults()
         {
@@ -1245,7 +1191,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Red Cloud Hunter");
         }
         public override void SetDefaults()
         {
@@ -1253,24 +1198,21 @@ namespace tsorcRevamp.Banners
             Item.placeStyle = 49; //change when texture added
         }
     }
-    /*public class Banner : EnemyBanner
+    public class HollowSoldierBanner : EnemyBanner
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault(" Banner");
-            Tooltip.SetDefault("Nearby players get a bonus against: REDACTED");
         }
         public override void SetDefaults()
         {
             base.SetDefaults();
             Item.placeStyle = 50; //change when texture added
         }
-    }*/
+    }
     public class ShadowMageBanner : EnemyBanner
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Shadow Mage");
         }
         public override void SetDefaults()
         {
@@ -1282,7 +1224,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Snow Owl");
         }
         public override void SetDefaults()
         {
@@ -1294,7 +1235,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Tibian Amazon");
         }
         public override void SetDefaults()
         {
@@ -1306,7 +1246,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Tibian Valkyrie");
         }
         public override void SetDefaults()
         {
@@ -1318,7 +1257,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Tonberry");
         }
         public override void SetDefaults()
         {
@@ -1330,7 +1268,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Warlock");
         }
         public override void SetDefaults()
         {
@@ -1342,7 +1279,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Water Spirit");
         }
         public override void SetDefaults()
         {
@@ -1354,7 +1290,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Parasytic Worm");
         }
         public override void SetDefaults()
         {
@@ -1366,7 +1301,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Jungle Wyvern Juvenile");
         }
         public override void SetDefaults()
         {
@@ -1374,17 +1308,10 @@ namespace tsorcRevamp.Banners
             Item.placeStyle = 59; //change when texture added
         }
     }
-
-
-    #endregion
-
-
-    #region SHM
     public class SerpentOfTheAbyssBanner : EnemyBanner
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Serpent Of The Abyss");
         }
         public override void SetDefaults()
         {
@@ -1396,7 +1323,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Abysswalker");
         }
         public override void SetDefaults()
         {
@@ -1408,7 +1334,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Ancient Demon Of The Abyss");
         }
         public override void SetDefaults()
         {
@@ -1420,7 +1345,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Barrow Wight Nemesis");
         }
         public override void SetDefaults()
         {
@@ -1432,7 +1356,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Barrow Wight Phantom");
         }
         public override void SetDefaults()
         {
@@ -1444,7 +1367,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Basilisk Hunter");
         }
         public override void SetDefaults()
         {
@@ -1456,7 +1378,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Corrupted Elemental");
         }
         public override void SetDefaults()
         {
@@ -1468,7 +1389,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Corrupted Hornet");
         }
         public override void SetDefaults()
         {
@@ -1480,7 +1400,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Crystal Knight");
         }
         public override void SetDefaults()
         {
@@ -1492,7 +1411,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Dark Blood Knight");
         }
         public override void SetDefaults()
         {
@@ -1504,7 +1422,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Dark Knight");
         }
         public override void SetDefaults()
         {
@@ -1512,23 +1429,21 @@ namespace tsorcRevamp.Banners
             Item.placeStyle = 71; //change when texture added
         }
     }
-    /*public class Banner : EnemyBanner
+    public class HollowWarriorBanner : EnemyBanner
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Nearby players get a bonus against: REDACTED");
         }
         public override void SetDefaults()
         {
             base.SetDefaults();
             Item.placeStyle = 72; //change when texture added
         }
-    }*/
+    }
     public class HydrisElementalBanner : EnemyBanner
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Hydris Elemental");
         }
         public override void SetDefaults()
         {
@@ -1540,7 +1455,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Hydris Necromancer");
         }
         public override void SetDefaults()
         {
@@ -1552,7 +1466,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Ice Skeleton");
         }
         public override void SetDefaults()
         {
@@ -1564,7 +1477,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Man Of War");
         }
         public override void SetDefaults()
         {
@@ -1576,8 +1488,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Ephemeral Oolacile Demon Banner");
-            // Tooltip.SetDefault("Nearby players get a bonus against: Oolacile Demon");
         }
         public override void SetDefaults()
         {
@@ -1589,7 +1499,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Oolacile Knight");
         }
         public override void SetDefaults()
         {
@@ -1601,7 +1510,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Oolacile Sorcerer");
         }
         public override void SetDefaults()
         {
@@ -1613,8 +1521,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Slogra Banner");
-            // Tooltip.SetDefault("Nearby players get a bonus against: Slogra");
         }
         public override void SetDefaults()
         {
@@ -1626,7 +1532,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Taurus Knight");
         }
         public override void SetDefaults()
         {
@@ -1638,7 +1543,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Tetsujin");
         }
         public override void SetDefaults()
         {
@@ -1650,7 +1554,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Vampire Bat");
         }
         public override void SetDefaults()
         {
@@ -1663,7 +1566,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Archdeacon");
         }
         public override void SetDefaults()
         {
@@ -1676,7 +1578,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Red Knight");
         }
         public override void SetDefaults()
         {
@@ -1688,7 +1589,6 @@ namespace tsorcRevamp.Banners
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Great Red Knight");
         }
         public override void SetDefaults()
         {
@@ -1696,10 +1596,61 @@ namespace tsorcRevamp.Banners
             Item.placeStyle = 86; //change when texture added
         }
     }
-
-    #endregion
-
-
+    public class HumanityPhantomBanner : EnemyBanner
+    {
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Item.placeStyle = 87; //change when texture added
+        }
+    }
+    public class LothricBlackKnightBanner : EnemyBanner
+    {
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Item.placeStyle = 88; //change when texture added
+        }
+    }
+    public class LothricKnightBanner : EnemyBanner
+    {
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Item.placeStyle = 89; //change when texture added
+        }
+    }
+    public class LothricSpearKnightBanner : EnemyBanner
+    {
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Item.placeStyle = 90; //change when texture added
+        }
+    }
+    public class RingedKnightBanner : EnemyBanner
+    {
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Item.placeStyle = 91; //change when texture added
+        }
+    }
     #endregion
 
 }

@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy;
 using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Potions;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -14,8 +15,17 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Attraidies Illusion");
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.GoblinSorcerer];
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Poisoned,
+                    BuffID.OnFire,
+                    BuffID.Confused
+            //npc.buffImmune[BuffID.Paralyzed] = true; ???
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
@@ -35,21 +45,15 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noGravity = false;
             NPC.noTileCollide = false;
             NPC.lavaImmune = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            //npc.buffImmune[BuffID.Paralyzed] = true; ???
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AttraidiesIllusionBanner>();
-
-
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0;
-            if (spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesManifestation>()) < 1
-                && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.DungeonMage>()) < 1)
+            if (spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<AttraidiesManifestation>()) < 1
+                && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1 && NPC.CountNPCS(ModContent.NPCType<DungeonMage>()) < 1)
             {
                 if (!Main.hardMode) { chance = .02f; }
                 else chance = .011f;
@@ -81,12 +85,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.ai[1]++; // Timer Teleport
                          // npc.ai[2]++; // Shots
 
-            if (NPC.life > 300)
+            if (NPC.life > NPC.lifeMax / 4 * 3)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X, NPC.velocity.Y, 120, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 300)
+            else if (NPC.life <= NPC.lifeMax / 10 * 4)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 180, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;
@@ -175,7 +179,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.velocity.Y *= 0.17f;
             }
 
-            if ((NPC.ai[1] >= 280 && NPC.life > 300) || (NPC.ai[1] >= 200 && NPC.life <= 300))
+            if ((NPC.ai[1] >= 280 && NPC.life > NPC.lifeMax / 4 * 3) || (NPC.ai[1] >= 200 && NPC.life <= NPC.lifeMax / 4 * 3))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int num36 = 0; num36 < 10; num36++)
@@ -376,13 +380,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
             Player player = Main.player[NPC.target];
             UsefulFunctions.BroadcastText("The Attraidies Illusion has been vanquished...", 190, 140, 150);
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && (Main.rand.NextFloat() <= .5f))
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<RadiantLifegem>());
-            }
         }
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
             npcLoot.Add(ItemDropRule.Common(ItemID.ShinePotion, 55));
             npcLoot.Add(new CommonDrop(ItemID.RegenerationPotion, 35, 1, 1, 4));
             npcLoot.Add(new CommonDrop(ItemID.MagicPowerPotion, 35, 1, 1, 3));
@@ -393,7 +393,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(new CommonDrop(ItemID.GoldenKey, 10, 1, 1, 3));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Magic.AquamarineRing>(), 20));
             npcLoot.Add(new CommonDrop(ItemID.GreaterHealingPotion, 10, 2, 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<HealingElixir>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>(), 2));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 6));
         }
     }

@@ -8,6 +8,7 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Whips;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -15,7 +16,6 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Resentful Seedling");
             Main.npcFrameCount[NPC.type] = 7;
         }
 
@@ -118,10 +118,10 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<DarkSoul>()));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.Wood));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.Wood, 3));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.GreenBlossom>(), 8));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>()));
+            npcLoot.Add(ItemDropRule.Common(ItemID.Wood));
+            npcLoot.Add(ItemDropRule.Common(ItemID.Wood, 3));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.GreenBlossom>(), 8));
         }
     }
 }

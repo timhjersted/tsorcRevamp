@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -12,34 +13,43 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class BasiliskWalker : ModNPC
     {
-
         float shotTimer;
         int chargeDamage = 0;
         bool chargeDamageFlag = false;
-        int hypnoticDisruptorDamage = 30; //was 15
-        int bioSpitDamage = 20; //was 10
-
-
+        int hypnoticDisruptorDamage = 15;
+        int bioSpitDamage = 10;
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 12;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.npcSlots = 2;
-            Main.npcFrameCount[NPC.type] = 12;
             AnimationType = 28;
             NPC.knockBackResist = 0.3f;
-            NPC.damage = 50;
+            NPC.damage = 23;
             NPC.defense = 8;
             NPC.height = 50;
             NPC.width = 24;
-            NPC.lifeMax = 180; //was 280
+            NPC.lifeMax = 90; //was 280
 
             if (Main.hardMode)
             {
-                NPC.lifeMax = 380;
+                NPC.lifeMax = 190;
                 NPC.defense = 20;
                 NPC.value = 700;
-                NPC.damage = 60;
-                hypnoticDisruptorDamage = 45;
-                bioSpitDamage = 35;
+                NPC.damage = 30;
+                hypnoticDisruptorDamage = 23;
+                bioSpitDamage = 18;
             }
 
             NPC.HitSound = SoundID.NPCHit20;
@@ -48,22 +58,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BasiliskWalkerBanner>();
-
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[24] = true;
         }
-
-
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            hypnoticDisruptorDamage = (int)(hypnoticDisruptorDamage / 2);
-            bioSpitDamage = (int)(bioSpitDamage / 2);
-        }
-
-
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             Player P = spawnInfo.Player; //These are mostly redundant with the new zone definitions, but it still works.
@@ -187,13 +182,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (chargeDamageFlag == true)
                 {
-                    NPC.damage = 50;
+                    NPC.damage = 26;
                     chargeDamage++;
                 }
                 if (chargeDamage >= 55)
                 {
                     chargeDamageFlag = false;
-                    NPC.damage = 45;
+                    NPC.damage = 23;
                     chargeDamage = 0;
                 }
 

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,33 +11,36 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class RedKnight : ModNPC
     {
+        public int redKnightsSpearDamage = 35;
+        public int redMagicDamage = 20;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Red Knight");
+            Main.npcFrameCount[NPC.type] = 16;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
-
-        public int redKnightsSpearDamage = 70;
-        public int redMagicDamage = 40;
-
         public override void SetDefaults()
         {
             NPC.npcSlots = 5;
-            Main.npcFrameCount[NPC.type] = 16;
             AnimationType = 28;
             NPC.aiStyle = 3;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.damage = 149;
+            NPC.damage = 75;
             NPC.defense = 41;
             NPC.scale = 1.1f;
-            NPC.lifeMax = 5000;
+            NPC.lifeMax = 2500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 15110;
             NPC.knockBackResist = 0.06f;
-            NPC.buffImmune[BuffID.Confused] = true;
             NPC.lavaImmune = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.RedKnightBanner>();
             despawnHandler = new NPCDespawnHandler("The Red Knight has slain you...", Color.Red, DustID.RedTorch);
@@ -46,21 +50,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 //npc.defense = 14;
                 //npc.value = 3500;
                 //npc.damage = 40;
-                redKnightsSpearDamage = 28;
-                redMagicDamage = 25;
+                redKnightsSpearDamage = 14;
+                redMagicDamage = 12;
                 NPC.boss = true;
             }
         }
 
         NPCDespawnHandler despawnHandler;
 
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            redKnightsSpearDamage = (int)(redKnightsSpearDamage / 2);
-            redMagicDamage = (int)(redMagicDamage / 2);
-        }
 
 
         #region Spawn
@@ -384,8 +381,6 @@ namespace tsorcRevamp.NPCs.Enemies
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.RegenerationPotion, 30));
             npcLoot.Add(hmCondition);
-
-
             IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 1, 2);
             IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 20);
             SuperHardmodeRule SHM = new();
@@ -398,12 +393,12 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            player.AddBuff(BuffID.OnFire, 180, false);
+            player.AddBuff(BuffID.OnFire, 3 * 60, false);
 
             if (Main.rand.NextBool(5))
             {
-                player.AddBuff(ModContent.BuffType<Crippled>(), 180, false); // loss of flight mobility
-                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 1800, false);
+                player.AddBuff(ModContent.BuffType<Crippled>(), 3 * 60, false); // loss of flight mobility
+                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 30 * 60, false);
                 player.AddBuff(BuffID.NightOwl, 30, false);
 
             }

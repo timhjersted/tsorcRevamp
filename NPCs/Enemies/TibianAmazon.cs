@@ -4,24 +4,19 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static tsorcRevamp.SpawnHelper;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
     class TibianAmazon : ModNPC
     {
+        public int throwingKnifeDamage = 8;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Tibian Amazon");
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Skeleton];
         }
-
-        public int throwingKnifeDamage = 8;
-
         public override void SetDefaults()
         {
-
-
-
             AnimationType = NPCID.Skeleton;
             NPC.aiStyle = -1;
             NPC.height = 40;
@@ -60,9 +55,9 @@ namespace tsorcRevamp.NPCs.Enemies
             };
             npcLoot.Add(new DropMultiple(armorIDs, 30, 1, !NPC.downedBoss1));
 
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.Torch, 20, 10, 30));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.ThrowingKnife, 1, 20, 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.DeadChicken>(), 25));
+            npcLoot.Add(ItemDropRule.Common(ItemID.Torch, 20, 10, 30));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ThrowingKnife, 1, 20, 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.DeadChicken>(), 25));
         }
 
 

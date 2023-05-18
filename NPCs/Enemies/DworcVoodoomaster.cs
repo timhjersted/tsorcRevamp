@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,6 +10,17 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     public class DworcVoodoomaster : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 15;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Poisoned
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.HitSound = SoundID.NPCHit29;
@@ -22,13 +34,10 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.aiStyle = -1;
             NPC.height = 40;
             NPC.knockBackResist = 0.3f;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DworcVoodoomasterBanner>();
 
             AnimationType = NPCID.Skeleton;
-            Main.npcFrameCount[NPC.type] = 15;
 
             if (Main.hardMode)
             {
@@ -39,11 +48,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.knockBackResist = 0.1f;
             }
         }
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Dworc Alchemist");
-        }
-
         //excuse me while i drop Every Potion Known To Mankind holy hell
         //these dudes oughtta be called alchemists or something
         //actually you know what? i have the ability to change that

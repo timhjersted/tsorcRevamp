@@ -10,7 +10,6 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Parasytic Worm");
         }
 
         public override void SetDefaults()
@@ -21,12 +20,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.width = 38;
             NPC.height = 32;
             NPC.aiStyle = 6;
-            NPC.defense = 20;
+            NPC.defense = 18;
             NPC.timeLeft = 750;
-            NPC.damage = 90;
+            NPC.damage = 45;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.lifeMax = 3000;
+            NPC.lifeMax = 1500;
             NPC.knockBackResist = 0;
             NPC.lavaImmune = true;
             NPC.noGravity = true;
@@ -44,13 +43,6 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
         int[] bodyTypes;
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            NPC.defense = (int)(NPC.defense * (2 / 3));
-        }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {

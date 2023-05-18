@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,6 +10,18 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     public class DworcVoodooShaman : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 15;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Poisoned,
+                    BuffID.CursedInferno
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.HitSound = SoundID.NPCHit29;
@@ -21,25 +34,13 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.aiStyle = -1;
             NPC.height = 40;
             NPC.knockBackResist = 0.2f;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            //NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DworcVoodooShamanBanner>();
-
             AnimationType = NPCID.Skeleton;
-            Main.npcFrameCount[NPC.type] = 15;
-        }
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Dworc Shaman");
         }
         //yes i tweaked the drop rates. Fight Me
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            Player player = Main.player[NPC.target];
-
             npcLoot.Add(ItemDropRule.Common(ItemID.RegenerationPotion, 31, 1, 4));
             npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 31, 1, 3));
             npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 31, 1, 5));
@@ -51,7 +52,6 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 26));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 24));
             //npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.BandOfCosmicPower>(), 20));
-
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 3, 5));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BloodredMossClump>(), 3, 3, 6));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 5));

@@ -5,6 +5,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -14,7 +15,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Ghost of the Darkmoon Knight");
+            Main.npcFrameCount[NPC.type] = 16;
         }
 
         public override void SetDefaults()
@@ -29,7 +30,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 12500;
             NPC.knockBackResist = 0.0f;
             AnimationType = 28;
-            Main.npcFrameCount[NPC.type] = 16;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.GhostOfTheDarkmoonKnightBanner>();
         }
@@ -75,8 +75,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.Poisoned, 600);
-                target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 1800);
+                target.AddBuff(BuffID.Poisoned, 10 * 60);
+                target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30 * 60);
             }
         }
 
@@ -94,18 +94,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
         }
-
-
-        //why were this thing's drop rates so low?
-        //they were all 2-5% in tconfig too. wtf
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Axes.GigantAxe>(), 20));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 32));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 32));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.FlaskofFire, 32));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 32));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 32));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.BloodMoonStarter, 30));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Axes.GigantAxe>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 4));
+            npcLoot.Add(ItemDropRule.Common(ItemID.FlaskofFire));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 4));
+            npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 3));
 
 
         }

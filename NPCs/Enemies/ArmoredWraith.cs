@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -9,8 +11,17 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Unarmored Wraith");
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Wraith];
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] 
+                {
+                    BuffID.Poisoned,
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
@@ -26,10 +37,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 25;
             NPC.alpha = 100;
             NPC.lavaImmune = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.ArmoredWraithBanner>();
         }
@@ -56,7 +63,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (Main.rand.NextBool(5))
             {
-                target.AddBuff(BuffID.BrokenArmor, 10800, true);
+                target.AddBuff(BuffID.BrokenArmor, 180 * 60, true);
             }
         }
 
@@ -84,11 +91,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-
-            if (Main.hardMode)
-            {
-                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.SoulofFlight, 10));
-            }
+            IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
+            hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofFlight));
+            npcLoot.Add(hmCondition);
         }
 }
 }

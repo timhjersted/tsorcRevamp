@@ -1,27 +1,43 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
     class MarilithSpiritTwin : ModNPC
     {
+        int lightningDamage = 19;
+        int antiMatterBlastDamage = 28;
+        int crazedPurpleCrushDamage = 23;
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 8;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Confused,
+                    BuffID.CursedInferno
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.npcSlots = 6;
-            Main.npcFrameCount[NPC.type] = 8;
             NPC.width = 120;
             NPC.height = 160;
             NPC.timeLeft = 22500;
             NPC.aiStyle = 22;
-            NPC.damage = 60;
+            NPC.damage = 30;
             NPC.defense = 23;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 20000;
+            NPC.lifeMax = 10000;
             NPC.alpha = 100;
             NPC.knockBackResist = 0;
             NPC.noGravity = true;
@@ -29,23 +45,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 50000;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.MarilithSpiritTwinBanner>();
-
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
         }
 
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            lightningDamage = (int)(lightningDamage / 2);
-            antiMatterBlastDamage = (int)(antiMatterBlastDamage / 2);
-            crazedPurpleCrushDamage = (int)(crazedPurpleCrushDamage / 2);
-        }
-
-        int lightningDamage = 38;
-        int antiMatterBlastDamage = 55;
-        int crazedPurpleCrushDamage = 45;
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -427,9 +428,10 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
         #endregion
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.HolyWarElixir>()));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 10));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.HolyWarElixir>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 10));
         }
     }
 }

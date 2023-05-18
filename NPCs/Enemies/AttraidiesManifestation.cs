@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -11,6 +12,20 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     public class AttraidiesManifestation : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Poisoned,
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
 
@@ -19,10 +34,10 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = 29;
             NPC.aiStyle = 0;
             NPC.damage = 0;
-            NPC.defense = 8;
+            NPC.defense = 7;//not affected by difficulty
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 800;
+            NPC.lifeMax = 400;//gets doubled
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.noGravity = false;
@@ -33,29 +48,16 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0.3f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AttraidiesManifestationBanner>();
-
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
         }
 
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            NPC.defense = (int)(NPC.defense * (2 / 3));
-            demonSpiritDamage = (int)(demonSpiritDamage / 2);
-            poisonFieldDamage = (int)(poisonFieldDamage / 2);
-        }
-
-        int demonSpiritDamage = 18;
-        int poisonFieldDamage = 23;
+        int demonSpiritDamage = 9;//gets doubled
+        int poisonFieldDamage = 12;//gets doubled
 
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            if (!Main.hardMode && spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(40) && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1
-                && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.DungeonMage>()) < 1)
+            if (!Main.hardMode && spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(40) && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1
+                && NPC.CountNPCS(ModContent.NPCType<AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<DungeonMage>()) < 1)
             {
                 //MaxSpawns = 1;
                 if (!NPC.AnyNPCs(ModContent.NPCType<AttraidiesManifestation>()))
@@ -94,12 +96,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.ai[1]++; // Timer Teleport
                          // npc.ai[2]++; // Shots
 
-            if (NPC.life > 300)
+            if (NPC.life > NPC.lifeMax / 4 * 3)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X, NPC.velocity.Y, 210, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 300)
+            else if (NPC.life <= NPC.lifeMax / 10 * 4)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 140, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;
@@ -139,7 +141,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.velocity.Y *= 0.17f;
             }
 
-            if ((NPC.ai[1] >= 290 && NPC.life > 300) || (NPC.ai[1] >= 170 && NPC.life <= 300))
+            if ((NPC.ai[1] >= 290 && NPC.life > NPC.lifeMax / 4 * 3) || (NPC.ai[1] >= 170 && NPC.life <= NPC.lifeMax / 4 * 3))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int num36 = 0; num36 < 10; num36++)
@@ -354,7 +356,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 2));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 5, 2, 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<HealingElixir>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 5));
         }

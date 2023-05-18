@@ -13,14 +13,12 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Undead Caster");
-            //Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.GoblinSorcerer];
+            Main.npcFrameCount[NPC.type] = 2;
         }
 
         public override void SetDefaults()
         {
             NPC.CloneDefaults(NPCID.GoblinSorcerer);
-            Main.npcFrameCount[NPC.type] = 2;
             AIType = NPCID.GoblinSorcerer;
             NPC.lifeMax = 30;
             NPC.damage = 0;

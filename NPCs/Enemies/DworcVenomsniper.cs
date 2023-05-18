@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,6 +11,10 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     public class DworcVenomsniper : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 15;
+        }
         public override void SetDefaults()
         {
             NPC.HitSound = SoundID.NPCHit29; //spider
@@ -33,8 +38,6 @@ namespace tsorcRevamp.NPCs.Enemies
         //why
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            Player player = Main.player[NPC.target];
-
             npcLoot.Add(ItemDropRule.Common(ItemID.BattlePotion, 50));
             npcLoot.Add(ItemDropRule.Common(ItemID.WaterWalkingPotion, 40));
             npcLoot.Add(ItemDropRule.Common(ItemID.SwiftnessPotion, 50));
