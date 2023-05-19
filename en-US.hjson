@@ -6124,6 +6124,16 @@ Mods: {
 				DisplayName: Ringed Knight Banner
 				Tooltip: Nearby players get a bonus against: Ringed Knight
 			}
+
+			JOI3Chassis: {
+				DisplayName: JOI3 Suit
+				Tooltip: Developer Set for JOI3
+			}
+
+			JOI3Headgear: {
+				DisplayName: JOI3 Headgear
+				Tooltip: Developer Set for JOI3
+			}
 		}
 
 		Buffs: {
