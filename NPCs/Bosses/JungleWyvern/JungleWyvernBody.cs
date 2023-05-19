@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -12,7 +13,24 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
     {
 
         public int Timer = -1000;
-
+        public int PoisonFlamesDamage = 25; //should this be so high? (was 45)
+        public override void SetStaticDefaults()
+        {
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            {
+                Hide = true
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Poisoned,
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.netAlways = true;
@@ -32,29 +50,11 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             NPC.behindTiles = true;
             NPC.noTileCollide = true;
             NPC.value = 70000;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
         }
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Ancient Jungle Wyvern");
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
-                Hide = true
-            };
-            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
-        }
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
             return false;
-        }
-
-        public int PoisonFlamesDamage = 25; //should this be so high? (was 45)
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-
         }
 
         public override void AI()

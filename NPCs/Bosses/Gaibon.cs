@@ -9,25 +9,34 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Accessories;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Weapons.Ranged;
+using tsorcRevamp.Items.Weapons.Summon;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
     [AutoloadBossHead]
     class Gaibon : ModNPC
     {
+        //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
+        int burningSphereDamage = 120;
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 2;
+        }
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
             NPC.npcSlots = 5;
-            Main.npcFrameCount[NPC.type] = 2;
             NPC.width = 70;
             NPC.height = 100;
             NPC.scale = 0.6f;
             DrawOffsetY = 20;
-            //It genuinely had none in the original.
-            NPC.defense = 0;
             Music = 12;
-            NPC.defense = 10; //should this be here?
+            NPC.defense = 22;
             NPC.boss = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
@@ -39,21 +48,6 @@ namespace tsorcRevamp.NPCs.Bosses
             despawnHandler = new NPCDespawnHandler(DustID.Torch);
 
             CurrentMove = Bombardment;
-        }
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Gaibon");
-        }
-
-        //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
-        int burningSphereDamage = 120;
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = (int)(NPC.damage * 1.3 / 2);
-            NPC.defense = NPC.defense += 12;
-            //For some reason, its contact damage doesn't get doubled due to expert mode either apparently?
-            //burningSphereDamage = (int)(burningSphereDamage / 2);
         }
 
 
@@ -584,7 +578,13 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(new ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.GaibonBag>(), 1, 1, 1, new GaibonDropCondition()));
+            npcLoot.Add(ItemDropRule.BossBagByCondition(new GaibonDropCondition(), ModContent.ItemType<Items.BossBags.GaibonBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GaibonDropCondition(), ModContent.ItemType<PoisonbiteRing>()));
+            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GaibonDropCondition(), ModContent.ItemType<BloodbiteRing>()));
+            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GaibonDropCondition(), ModContent.ItemType<DarkTrident>()));
+            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GaibonDropCondition(), ModContent.ItemType<SunsetQuasar>()));
+            npcLoot.Add(notExpertCondition);
         }
 
         #region gore
@@ -601,32 +601,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gaibon Gore 4").Type, 0.9f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
-            }
-            if (!NPC.AnyNPCs(ModContent.NPCType<Slogra>()))
-            {
-                if (!Main.expertMode)
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.PoisonbiteRing>(), 1);
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.BloodbiteRing>(), 1);
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), (200 + Main.rand.Next(300)));
-                }
-            }
-            else
-            {
-                int slograID = NPC.FindFirstNPC(ModContent.NPCType<Slogra>());
-                int speed = 30;
-                for (int i = 0; i < 200; i++)
-                {
-                    Vector2 dir = Vector2.UnitX.RotatedByRandom(MathHelper.Pi);
-                    Vector2 dustPos = NPC.Center + dir * 3 * 16;
-                    float distanceFactor = Vector2.Distance(NPC.position, Main.npc[slograID].position) / speed;
-                    Vector2 speedRand = Vector2.UnitX.RotatedByRandom(MathHelper.Pi) * 10;
-                    float speedX = (((Main.npc[slograID].position.X + (Main.npc[slograID].width * 0.5f)) - NPC.position.X) / distanceFactor) + speedRand.X;
-                    float speedY = (((Main.npc[slograID].position.Y + (Main.npc[slograID].height * 0.5f)) - NPC.position.Y) / distanceFactor) + speedRand.Y;
-                    Vector2 dustSpeed = new Vector2(speedX, speedY);
-                    Dust dustObj = Dust.NewDustPerfect(dustPos, 173, dustSpeed, 200, default, 3);
-                    dustObj.noGravity = true;
-                }
             }
         }
         #endregion

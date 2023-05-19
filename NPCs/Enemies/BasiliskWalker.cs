@@ -289,7 +289,8 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnFailedConditions(new CommonDrop(ItemID.HealingPotion, 15, 1, 1, 3));
             npcLoot.Add(hmCondition);

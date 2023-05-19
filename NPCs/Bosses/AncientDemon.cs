@@ -6,6 +6,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items;
+using tsorcRevamp.Items.Accessories;
+using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -52,58 +55,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.boss = true;
             despawnHandler = new NPCDespawnHandler("An ancient demon decides to show you mercy ...", Color.Gold, DustID.GoldFlame);
         }
-
-        
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player p = spawnInfo.Player;
-
-            bool oSky = (spawnInfo.SpawnTileY < (Main.maxTilesY * 0.1f));
-            bool oSurface = (spawnInfo.SpawnTileY >= (Main.maxTilesY * 0.1f) && spawnInfo.SpawnTileY < (Main.maxTilesY * 0.2f));
-            bool oUnderSurface = (spawnInfo.SpawnTileY >= (Main.maxTilesY * 0.2f) && spawnInfo.SpawnTileY < (Main.maxTilesY * 0.3f));
-            bool oUnderground = (spawnInfo.SpawnTileY >= (Main.maxTilesY * 0.3f) && spawnInfo.SpawnTileY < (Main.maxTilesY * 0.4f));
-            bool oCavern = (spawnInfo.SpawnTileY >= (Main.maxTilesY * 0.4f) && spawnInfo.SpawnTileY < (Main.maxTilesY * 0.6f));
-            bool oMagmaCavern = (spawnInfo.SpawnTileY >= (Main.maxTilesY * 0.6f) && spawnInfo.SpawnTileY < (Main.maxTilesY * 0.8f));
-            bool oUnderworld = (spawnInfo.SpawnTileY >= (Main.maxTilesY * 0.8f));
-            if (p.ZoneDungeon || p.ZoneMeteor) return 0;
-            //if (Main.hardMode && oUnderworld && Main.rand.Next(1000)==1) return true;
-            //if (Main.hardMode && Main.bloodMoon && oUnderworld && Main.rand.Next(100)==1) return true;
-            //if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && oUnderworld && Main.rand.Next(30)==1) return true;
-            //if (tsorcRevampWorld.SuperHardMode && oUnderworld && Main.rand.Next(35)==1) return true;
-
-            if (spawnInfo.Player.ZoneUnderworldHeight)
-            {
-                if (!Main.dayTime && !Main.hardMode && !tsorcRevampWorld.SuperHardMode)
-                {
-                    if (Main.rand.NextBool(21000)) return 1;
-                    else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.35f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && Main.rand.NextBool(10000)) return 1;
-                    return 0;
-                }
-
-                if (Main.hardMode)
-                {
-                    bool hunterDowned = tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>()));
-
-                    if (hunterDowned && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AncientDemon>())) && Main.rand.NextBool(100)) return 1;
-                    if (hunterDowned && Main.rand.NextBool(800)) return 1;
-                    if (hunterDowned && !Main.dayTime && Main.rand.NextBool(500)) return 1;
-                    else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.25f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())) && Main.rand.NextBool(500)) return 1;
-                    return 0;
-                }
-
-                if (tsorcRevampWorld.SuperHardMode)
-                {
-                    if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AncientDemon>())) && Main.rand.NextBool(10)) return 1;
-                    if (Main.rand.NextBool(800)) return 1;
-                    else if (!Main.dayTime && Main.rand.NextBool(400)) return 1;
-                    return 0;
-                }
-                return 0;
-            }
-            return 0;
-        }
-        #endregion
 
         NPCDespawnHandler despawnHandler;
 
@@ -321,7 +272,7 @@ namespace tsorcRevamp.NPCs.Bosses
             
 
             //SPAWN FIRE LURKER
-            if ((spawnedDemons < 6) && NPC.life >= 2000 && Main.rand.NextBool(3000))
+            if ((spawnedDemons < 6) && NPC.life >= NPC.lifeMax / 3 && Main.rand.NextBool(3000))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -429,7 +380,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.netUpdate = true;
             }
             //LIGHTNING ATTACK
-            if (NPC.localAI[1] == 160f && NPC.life >= 1001 && NPC.life <= NPC.lifeMax / 3 * 2 && (choice == 5 || choice == 4)) //&& Main.rand.NextBool(8) 
+            if (NPC.localAI[1] == 160f && NPC.life >= NPC.lifeMax / 6 && NPC.life <= NPC.lifeMax / 3 * 2 && (choice == 5 || choice == 4)) //&& Main.rand.NextBool(8) 
             {
                 //&& Main.rand.NextBool(10) Main.rand.NextBool(2) &&
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(1), 1);
@@ -513,20 +464,23 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void OnKill()
         {
-
-            if (!Main.expertMode && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AncientDemon>())))
-            { 
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.EyeOfTheGods>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.BarrierRing>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.CrackedDragonStone>(), 1);
-            }
-
-            if (Main.rand.Next(99) < 40) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>(), 1);
-            if (Main.rand.Next(99) < 20) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
-            if (Main.rand.Next(99) < 40) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 1);
-            if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.BloodMoonStarter, 1);
-
+        }
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            potionType = ItemID.GreaterHealingPotion;
+        }
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.AncientDemonBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<EyeOfTheGods>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BarrierRing>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CrackedDragonStone>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 1, 1, 2));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 1, 1, 2));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BattlefrontPotion>(), 1, 1, 2));
+            npcLoot.Add(notExpertCondition);
+            //npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<DarkSoul>(), 1, 4000, 4000));
         }
     }
 }

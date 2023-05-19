@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
 using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.ModLoader.Config;
+using tsorcRevamp.NPCs.Bosses;
+using Terraria;
+using tsorcRevamp.Projectiles.Summon;
 
 namespace tsorcRevamp {
 
@@ -99,5 +103,16 @@ namespace tsorcRevamp {
         public bool CanDrop(DropAttemptInfo info) => !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode;
         public bool CanShowItemDropInUI() => true;
         public string GetConditionDescription() => "[c/ff9999:Only drops in Non-Adventure Mode]";
+    }
+    public class NoExpertFirstKillRule : IItemDropRuleCondition, IProvideItemConditionDescription
+    {
+        public virtual bool CanDrop(DropAttemptInfo info)
+        {
+            return !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(info.npc.type)) && !info.IsExpertMode && !info.IsMasterMode && info.npc.boss;
+        }
+
+        public bool CanShowItemDropInUI() => true;
+
+        public virtual string GetConditionDescription() => "[c/ff9999: Only drops on the first kill";
     }
 }

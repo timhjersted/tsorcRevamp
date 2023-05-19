@@ -1203,9 +1203,13 @@ namespace tsorcRevamp
             {
                 multiplier += 0.20f;
             }
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSerpentRing)
+            {
+                multiplier += 0.30f;
+            }
             if (player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon)
             {
-                multiplier += 0.2f;
+                multiplier += 0.2f * player.GetModPlayer<tsorcRevampPlayer>().SoulSiphonScaling;
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().SOADrain)
             {

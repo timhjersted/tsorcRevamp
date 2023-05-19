@@ -366,29 +366,18 @@ namespace tsorcRevamp.NPCs
 
             if (npc.lifeMax > 5 && npc.value >= 10f || npc.boss)
             { //stop zero-value souls from dropping (the 'or boss' is for expert mode support)
-
-                if (npc.netID != NPCID.JungleSlime)
+                if (Main.masterMode)
                 {
-                    if (Main.expertMode)
-                    { //npc.value is the amount of coins they drop
-                        enemyValue = (int)npc.value / (divisorMultiplier * 25); //all enemies drop more money in expert mode, so the divisor is larger to compensate
-                    }
-                    else
-                    {
-                        enemyValue = (int)npc.value / (divisorMultiplier * 10);
-                    }
+                    enemyValue = (int)npc.value / (divisorMultiplier * 20);
                 }
-
-                if (npc.netID == NPCID.JungleSlime) //jungle slimes drop 10 souls
+                else
+                if (Main.expertMode)
+                { //npc.value is the amount of coins they drop
+                    enemyValue = (int)npc.value / (divisorMultiplier * 25); //all enemies drop more money in expert mode, so the divisor is larger to compensate
+                }
+                else
                 {
-                    if (Main.expertMode)
-                    {
-                        enemyValue = (int)npc.value / (divisorMultiplier * 125);
-                    }
-                    else
-                    {
-                        enemyValue = (int)npc.value / (divisorMultiplier * 50);
-                    }
+                    enemyValue = (int)npc.value / (divisorMultiplier * 15);
                 }
 
 

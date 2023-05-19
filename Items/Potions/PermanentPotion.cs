@@ -1084,10 +1084,16 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             ItemID.Sets.ItemIconPulse[Item.type] = true; // Makes item pulsate in world.
         }
 
+        public override void SetDefaults()
+        {
+            Item.expert = true;
+        }
+
         public override void PotionEffect(Player player)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.SoulSiphon = true;
+            modPlayer.SoulSiphonScaling = ApplyScaling(1f);
             modPlayer.SoulReaper += 5; //scaling the range would probably just feel bad
             modPlayer.ConsSoulChanceMult += (int)ApplyScaling(10);
         }

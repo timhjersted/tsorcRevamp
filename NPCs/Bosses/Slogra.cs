@@ -2,29 +2,45 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Weapons.Ranged;
+using tsorcRevamp.Items.Weapons.Summon;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
     [AutoloadBossHead]
     class Slogra : ModNPC
     {
+        int tridentDamage = 20;
+        //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
+        int burningSphereDamage = 120;
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 16;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
-
             NPC.npcSlots = 5;
-            Main.npcFrameCount[NPC.type] = 16;
             NPC.width = 38;
             NPC.height = 32;
             AnimationType = 28;
             NPC.aiStyle = -1;
             NPC.timeLeft = 22750;
-            NPC.damage = 70;
-            //npc.Music = 12;
+            NPC.damage = 45;
             NPC.boss = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
@@ -32,25 +48,8 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.4f;
             NPC.value = 130000;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
             despawnHandler = new NPCDespawnHandler("Slogra returns to the depths...", Color.DarkGreen, DustID.Demonite);
 
-        }
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Slogra, Lost Soul of the Depths");
-        }
-
-        int tridentDamage = 40;
-        //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
-        int burningSphereDamage = 120;
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = (int)(NPC.damage * 1.3 / 2);
-            NPC.defense = NPC.defense += 22;
-            tridentDamage = (int)(tridentDamage / 2);
         }
 
 
@@ -464,8 +463,15 @@ namespace tsorcRevamp.NPCs.Bosses
             potionType = ItemID.GreaterHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(new ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.SlograBag>(), 1, 1, 1, new SlograDropCondition()));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.BossBagByCondition(new SlograDropCondition(), ModContent.ItemType<Items.BossBags.SlograBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new SlograDropCondition(), ModContent.ItemType<PoisonbiteRing>()));
+            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new SlograDropCondition(), ModContent.ItemType<BloodbiteRing>()));
+            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new SlograDropCondition(), ModContent.ItemType<DarkTrident>()));
+            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new SlograDropCondition(), ModContent.ItemType<SunsetQuasar>()));
+            npcLoot.Add(notExpertCondition);
         }
         public override void OnKill()
         {
@@ -482,32 +488,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
-            }
-            if (!NPC.AnyNPCs(ModContent.NPCType<Gaibon>()))
-            {
-                if (!Main.expertMode)
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.PoisonbiteRing>(), 1);
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.BloodbiteRing>(), 1);
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 700);
-                }
-            }
-            else
-            {
-                int slograID = NPC.FindFirstNPC(ModContent.NPCType<Gaibon>());
-                int speed = 30;
-                for (int i = 0; i < 200; i++)
-                {
-                    Vector2 dir = Vector2.UnitX.RotatedByRandom(MathHelper.Pi);
-                    Vector2 dustPos = NPC.Center + dir * 3 * 16;
-                    float distanceFactor = Vector2.Distance(NPC.position, Main.npc[slograID].position) / speed;
-                    Vector2 speedRand = Vector2.UnitX.RotatedByRandom(MathHelper.Pi) * 10;
-                    float speedX = (((Main.npc[slograID].position.X + (Main.npc[slograID].width * 0.5f)) - NPC.position.X) / distanceFactor) + speedRand.X;
-                    float speedY = (((Main.npc[slograID].position.Y + (Main.npc[slograID].height * 0.5f)) - NPC.position.Y) / distanceFactor) + speedRand.Y;
-                    Vector2 dustSpeed = new Vector2(speedX, speedY);
-                    Dust dustObj = Dust.NewDustPerfect(dustPos, 262, dustSpeed, 200, default, 3);
-                    dustObj.noGravity = true;
-                }
             }
         }
     }

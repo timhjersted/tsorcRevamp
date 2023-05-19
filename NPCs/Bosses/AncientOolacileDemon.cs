@@ -4,26 +4,49 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
+using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Accessories;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Potions.PermanentPotions;
+using tsorcRevamp.Items.Accessories.Mobility;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
     class AncientOolacileDemon : ModNPC
     {
+        int meteorDamage = 11;
+        int cultistFireDamage = 15;
+        int cultistMagicDamage = 19;
+        int cultistLightningDamage = 17;
+        int fireBreathDamage = 13;
+        int lostSoulDamage = 14;
+        int greatFireballDamage = 19;
+        int blackFireDamage = 25;
+        int greatAttackDamage = 33;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Ancient Oolacile Demon");
+            Main.npcFrameCount[NPC.type] = 16;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Poisoned,
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 16;
-
             AnimationType = 28;
             NPC.height = 120;
             NPC.width = 50;
             NPC.damage = 46;
             NPC.defense = 8;
-            NPC.lifeMax = 6000;
+            NPC.lifeMax = 4800;
             NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
@@ -31,93 +54,67 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.knockBackResist = 0.0f;
             NPC.lavaImmune = true;
             NPC.boss = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler("The ancient Oolacile Demon decides to show mercy ...", Color.Gold, DustID.GoldFlame);
+
+            //alt code: if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EaterofWorldsHead))
+            if (NPC.downedBoss1)
+            {
+                NPC.defense = 18;
+                NPC.value = 90000;
+                meteorDamage = 16;
+                cultistFireDamage = 17;
+                cultistMagicDamage = 20;
+                cultistLightningDamage = 19;
+                fireBreathDamage = 15;
+                lostSoulDamage = 15;
+                greatFireballDamage = 22;
+                blackFireDamage = 27;
+                greatAttackDamage = 35;
+            }
+
+            //difficulty should be on par with jungle wyvern
+            if (NPC.downedBoss3)
+            {
+                NPC.defense = 26;
+                NPC.value = 120000;
+                meteorDamage = 17;
+                cultistFireDamage = 18;
+                cultistMagicDamage = 21;
+                cultistLightningDamage = 20;
+                fireBreathDamage = 17;
+                lostSoulDamage = 17;
+                greatFireballDamage = 23;
+                blackFireDamage = 28;
+                greatAttackDamage = 36;
+            }
         }
 
         NPCDespawnHandler despawnHandler;
-        int meteorDamage = 21;
-        int cultistFireDamage = 29;
-        int cultistMagicDamage = 38;
-        int cultistLightningDamage = 33;
-        int fireBreathDamage = 26;
-        int lostSoulDamage = 28;
-        int greatFireballDamage = 39;
-        int blackFireDamage = 50;
-        int greatAttackDamage = 65;
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EyeofCthulhu)))
             {
-                target.AddBuff(20, 150, false); //poisoned
-                target.AddBuff(30, 150, false); //bleeding
+                target.AddBuff(BuffID.Poisoned, 2 * 60 + 30, false); //poisoned
+                target.AddBuff(BuffID.Bleeding, 2 * 60 + 30, false); //bleeding
             }
 
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)))
             {
-                target.AddBuff(70, 150, false); //acid venom
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 HP after several hits
+                target.AddBuff(BuffID.Venom, 2 * 60 + 30, false); //acid venom
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false); //-20 HP after several hits
                 target.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 20;
             }
 
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(39, 180, false); //cursed flames
-                target.AddBuff(33, 300, false); //weak
+                target.AddBuff(BuffID.CursedInferno, 3 * 60, false); //cursed flames
+                target.AddBuff(BuffID.Weak, 5 * 60, false); //weak
             }
         }
 
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 1.25);
-            NPC.damage = (int)(NPC.damage / 2);
-            meteorDamage = (int)(meteorDamage / 2);
-            cultistFireDamage = (int)(cultistFireDamage / 2);
-            cultistMagicDamage = (int)(cultistMagicDamage / 2);
-            cultistLightningDamage = (int)(cultistLightningDamage / 2);
-            fireBreathDamage = (int)(fireBreathDamage / 2);
-            lostSoulDamage = (int)(lostSoulDamage / 2);
-            greatFireballDamage = (int)(greatFireballDamage / 2);
-            blackFireDamage = (int)(blackFireDamage / 2);
-            greatAttackDamage = (int)(greatAttackDamage / 2);
-
-
-            //alt code: if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EaterofWorldsHead))
-            if (NPC.downedBoss1)  
-            {
-                NPC.defense = 18;
-                NPC.value = 90000;
-                meteorDamage = 31;
-                cultistFireDamage = 33;
-                cultistMagicDamage = 39;
-                cultistLightningDamage = 37;
-                fireBreathDamage = 30;
-                lostSoulDamage = 30;
-                greatFireballDamage = 43;
-                blackFireDamage = 54;
-                greatAttackDamage = 69;
-            }
-
-            //difficulty should be on par with jungle wyvern
-            if (NPC.downedBoss3)   
-            {
-                NPC.defense = 26;
-                NPC.value = 120000;
-                meteorDamage = 34;
-                cultistFireDamage = 37;
-                cultistMagicDamage = 42;
-                cultistLightningDamage = 40;
-                fireBreathDamage = 33;
-                lostSoulDamage = 33;
-                greatFireballDamage = 46;
-                blackFireDamage = 57;
-                greatAttackDamage = 72;
-            }
-           
         }
 
         public Player Player
@@ -246,14 +243,14 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
             //CHANCE TO JUMP BEFORE ATTACK  
-            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(50) && NPC.life >= 2001)
+            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(50) && NPC.life >= NPC.lifeMax / 3)
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-9f, -6f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 1f);
                 NPC.netUpdate = true;
             }
 
-            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(33) && NPC.life <= 2000)
+            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(33) && NPC.life <= NPC.lifeMax / 3)
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-7f, -4f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 1f);
@@ -312,9 +309,9 @@ namespace tsorcRevamp.NPCs.Bosses
             if (breathTimer > 480)
             {
                 NPC.localAI[1] = -50;
-                if (NPC.life >= 2001)
+                if (NPC.life >= NPC.lifeMax / 3)
                 { breathTimer = -30; }
-                if (NPC.life <= 2000)
+                if (NPC.life <= NPC.lifeMax / 3)
                 { breathTimer = -70; }
 
             }
@@ -385,7 +382,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], ProjectileID.LostSoulHostile, lostSoulDamage, 3, lineOfSight, true, 4, 9);
 
             //SPAWN FIRE LURKER
-            if ((spawnedDemons < 2) && NPC.life >= 4000 && Main.rand.NextBool(3000))
+            if ((spawnedDemons < 2) && NPC.life >= NPC.lifeMax / 3 * 2 && Main.rand.NextBool(3000))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -405,7 +402,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
             //CHOICES
-            if (NPC.localAI[1] >= 160f && (choice == 0 || choice == 4) && NPC.life >= 2001)
+            if (NPC.localAI[1] >= 160f && (choice == 0 || choice == 4) && NPC.life >= NPC.lifeMax / 3)
             {
                 bool clearSpace = true;
                 for (int i = 0; i < 15; i++)
@@ -416,7 +413,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
                 }
                 //LOB ATTACK PURPLE; 
-                if (NPC.life >= 2001 && NPC.life <= 4000 && clearSpace)
+                if (NPC.life >= NPC.lifeMax / 3 && NPC.life <= NPC.lifeMax / 3 * 2 && clearSpace)
                 {
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
 
@@ -433,7 +430,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     { NPC.localAI[1] = 1f; }
                 }
                 //LOB ATTACK >> BOUNCING FIRE
-                if (NPC.life >= 4001 && clearSpace)
+                if (NPC.life >= NPC.lifeMax / 3 * 2 && clearSpace)
 
                 {
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
@@ -455,7 +452,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.TargetClosest(true);
             
             //MULTI-FIRE 1 ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life >= 2001 && choice == 1) 
+            if (NPC.localAI[1] >= 160f && NPC.life >= NPC.lifeMax / 3 && choice == 1) 
             {
 
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(4), 7);
@@ -474,7 +471,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.netUpdate = true;
             }
             //MULTI-BOUNCING DESPERATE FIRE ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life <= 2000 && (choice == 1 || choice == 2))
+            if (NPC.localAI[1] >= 160f && NPC.life <= NPC.lifeMax / 3 && (choice == 1 || choice == 2))
             {
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 3);
                 speed.Y += Main.rand.NextFloat(2f, -2f);
@@ -492,7 +489,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.netUpdate = true;
             }
             //LIGHTNING ATTACK
-            if (NPC.localAI[1] == 160f && NPC.life >= 1001 && NPC.life <= 4000 && (choice == 5 || choice == 4)) 
+            if (NPC.localAI[1] == 160f && NPC.life >= NPC.lifeMax / 6 && NPC.life <= NPC.lifeMax / 3 * 2 && (choice == 5 || choice == 4)) 
             {
                 
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(1), 1);
@@ -525,7 +522,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			}
 			*/
             //FINAL JUNGLE FLAMES DESPERATE ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life <= 2000 && (choice == 0 || choice == 3))
+            if (NPC.localAI[1] >= 160f && NPC.life <= NPC.lifeMax / 3 && (choice == 0 || choice == 3))
             //if (Main.rand.NextBool(40))
             {
                 Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
@@ -555,10 +552,20 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.netUpdate = true;
             }
         }
-
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            potionType = ItemID.GreaterHealingPotion;
+        }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.OolacileDemonBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.OolacileDemonBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BandOfCosmicPower>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<PermanentShinePotion>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<PermanentNightOwlPotion>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ImprovedBlueBalloon>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 1, 1, 3));
+            npcLoot.Add(notExpertCondition);
         }
 
         public override void HitEffect(NPC.HitInfo hit)
@@ -573,17 +580,6 @@ namespace tsorcRevamp.NPCs.Bosses
                     Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Ancient Demon Gore 2").Type, 1f);
                     Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Ancient Demon Gore 3").Type, 1f);
                 }
-            }
-        }
-        public override void OnKill()
-        {
- 
-            if (!Main.expertMode)
-            {
-                if (Main.rand.Next(99) < 60) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), 3);
-                if (Main.rand.Next(99) < 60) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.BloodMoonStarter, 3);
-
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 10);
             }
         }
     }

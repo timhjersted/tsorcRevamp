@@ -12,6 +12,8 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using System.Collections.Generic;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Items.Accessories.Mobility;
+using tsorcRevamp.Items.Potions.PermanentPotions;
 
 namespace tsorcRevamp.Items.BossBags
 {
@@ -81,8 +83,10 @@ namespace tsorcRevamp.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.DragonCrestShield>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.BandOfCosmicPower>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.PermanentPotions.PermanentShinePotion>()));
-            itemLoot.Add(ItemDropRule.Common(ItemID.CloudinaBottle));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PermanentShinePotion>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PermanentNightOwlPotion>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImprovedBlueBalloon>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DemonDrugPotion>(), 1, 3, 6));
         }
     }
     public class SlograBag : BossBag
@@ -149,10 +153,13 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            //no expert-exclusive item yet
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.CrackedDragonStone>(), 1));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.EyeOfTheGods>(), 1));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.BarrierRing>(), 1));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PermanentSoulSiphonPotion>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.CrackedDragonStone>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.EyeOfTheGods>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.BarrierRing>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 1, 2, 4));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 1, 2, 4));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BattlefrontPotion>(), 1, 2, 4));
         }
     }
     public class HeroOfLumeliaBag : BossBag
@@ -543,6 +550,10 @@ namespace tsorcRevamp.Items.BossBags
             NPC boss = new NPC();
             boss.SetDefaults(tsorcRevamp.BossBagIDtoNPCID[bossBagID]);
             float bossValue = boss.value / 25f;
+            if (Main.masterMode)
+            {
+                bossValue *= 1.2f;
+            }
             float multiplier = tsorcRevampPlayer.CheckSoulsMultiplier(player);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), (int)(multiplier * bossValue));
             modPlayer.bagsOpened.Add(bossBagID);

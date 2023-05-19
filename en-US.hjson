@@ -809,7 +809,8 @@ Mods: {
 				Tooltip:
 					'''
 					An ancient relic forged and lost many centuries ago
-					[c/ffbf00:Increases the number of Dark Souls dropped by fallen creatures by 50% but reduces defense by 40]
+					[c/ffbf00:Increases the number of Dark Souls dropped by fallen creatures by 30% but reduces defense by 40]
+					Also increases the chance of consumable soul drops by 100%
 					All souls are drawn to the wearer from a large distance
 					The ring glows with a bright white light
 					'''
@@ -3322,6 +3323,7 @@ Mods: {
 				Tooltip:
 					'''
 					Turns on Master Mode or turns it off
+					Receive 20% more souls in master mode
 					Master Mode has not been tuned yet whatsoever, don't expect it to be well balanced
 					Alpha mode in testing starting now. [c/00ffd4:For a more polished, unique challenge, try the Dark Sign]
 					'''
@@ -6085,42 +6087,42 @@ Mods: {
 
 			FireLurkerBanner: {
 				DisplayName: Fire Lurker Banner
-				Tooltip: ""
+				Tooltip: Nearby players get a bonus against: Firelurker
 			}
 
 			HollowSoldierBanner: {
 				DisplayName: Hollow Soldier Banner
-				Tooltip: ""
+				Tooltip: Nearby players get a bonus against: Hollow Soldier
 			}
 
 			HollowWarriorBanner: {
 				DisplayName: Hollow Warrior Banner
-				Tooltip: ""
+				Tooltip: Nearby players get a bonus against: Hollow Warrior
 			}
 
 			HumanityPhantomBanner: {
 				DisplayName: Humanity Phantom Banner
-				Tooltip: ""
+				Tooltip: Nearby players get a bonus against: Humanity Phantom
 			}
 
 			LothricBlackKnightBanner: {
 				DisplayName: Lothric Black Knight Banner
-				Tooltip: ""
+				Tooltip: Nearby players get a bonus against: Lothric Black Knight
 			}
 
 			LothricKnightBanner: {
 				DisplayName: Lothric Knight Banner
-				Tooltip: ""
+				Tooltip: Nearby players get a bonus against: Lothric Knight
 			}
 
 			LothricSpearKnightBanner: {
 				DisplayName: Lothric Spear Knight Banner
-				Tooltip: ""
+				Tooltip: Nearby players get a bonus against: Lothric Spear Knight
 			}
 
 			RingedKnightBanner: {
 				DisplayName: Ringed Knight Banner
-				Tooltip: ""
+				Tooltip: Nearby players get a bonus against: Ringed Knight
 			}
 		}
 
@@ -6801,7 +6803,7 @@ Mods: {
 
 			StarlightShardRestoration: {
 				DisplayName: Starlight Shard Restoration
-				Description: Mods.tsorcRevamp.Buffs.StarlightShardRestoration.Description
+				Description: Restores a percentage of your maximum mana each second
 			}
 		}
 

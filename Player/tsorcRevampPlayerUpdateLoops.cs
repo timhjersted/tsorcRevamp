@@ -34,6 +34,7 @@ namespace tsorcRevamp
         public bool townWarpSet;
 
         public bool SilverSerpentRing = false;
+        public bool SoulSerpentRing = false;
         public bool DragonStone = false;
         public int SoulReaper = 5;
         public bool TornWings = false;
@@ -106,6 +107,7 @@ namespace tsorcRevamp
 
         public bool BoneRevenge = false;
         public bool SoulSiphon = false;
+        public float SoulSiphonScaling = 1;
         public int ConsSoulChanceMult;
         public bool SoulSickle = false;
 
@@ -277,6 +279,7 @@ namespace tsorcRevamp
         public override void ResetEffects()
         {
             SilverSerpentRing = false;
+            SoulSerpentRing = false;
             DragonStone = false;
             SoulReaper = 5;
 
@@ -317,6 +320,7 @@ namespace tsorcRevamp
             DarkInferno = false;
             BoneRevenge = false;
             SoulSiphon = false;
+            SoulSiphonScaling = 1f;
 
             CrimsonDrain = false;
             Shockwave = false;

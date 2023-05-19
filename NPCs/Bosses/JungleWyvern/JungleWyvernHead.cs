@@ -9,6 +9,11 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
 using tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
+using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Accessories;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
 {
@@ -19,10 +24,18 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
         int breathCD = 180;
         bool breath = false;
         int juvenileSpawnTimer = 0;
-
+        public int CursedFlamesDamage = 23;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Ancient Jungle Wyvern");
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Poisoned,
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
         public override void SetDefaults()
         {
@@ -43,18 +56,9 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             NPC.behindTiles = true;
             NPC.boss = true;
             NPC.value = 113490;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler("The Jungle Wyvern departs to seek its next prey...", Color.GreenYellow, DustID.GreenFairy);
-
         }
 
-        public int CursedFlamesDamage = 23;
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-        }
 
         NPCDespawnHandler despawnHandler;
         public override void AI()
@@ -359,31 +363,23 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             potionType = ItemID.GreaterHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.JungleWyvernBag>()));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.JungleWyvernBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.Amethyst, 1, 1, 7));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.Topaz, 1, 1, 7));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.Sapphire, 1, 1, 7));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.Emerald, 1, 1, 7));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.Ruby, 1, 1, 7));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.Amber, 1, 1, 7));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.Diamond, 1, 1, 7));
+            npcLoot.Add(notExpertCondition);
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
         }
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             modifiers.FinalDamage *= 2;
-        }
-        public override void OnKill()
-        {
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Sapphire, Main.rand.Next(1, 7));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Ruby, Main.rand.Next(1, 7));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Topaz, Main.rand.Next(1, 7));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Diamond, Main.rand.Next(1, 7));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Emerald, Main.rand.Next(1, 7));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Amethyst, Main.rand.Next(1, 7));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Amber, Main.rand.Next(1, 7));
-                if (!(tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<JungleWyvernHead>()))))
-                { //If the boss has not yet been killed
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 9000); //Then drop the souls
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<StaminaVessel>());
-
-                }
-            }
         }
     }
 }

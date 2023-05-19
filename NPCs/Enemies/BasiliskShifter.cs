@@ -454,7 +454,8 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 25));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BloodredMossClump>(), 2, 1, 2));
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());

@@ -51,7 +51,16 @@ namespace tsorcRevamp.Items
         {
             grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper);
         }
-
+        public override bool CanUseItem(Player player)
+        {
+            if (Main.expertMode || Main.masterMode)
+            {
+                return true;
+            } else
+            {
+                return false;
+            }
+        }
         public override bool? UseItem(Player player) // Won't consume item without this
         {
             player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax = player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax * 2;
