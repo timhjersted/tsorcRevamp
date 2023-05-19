@@ -6082,6 +6082,46 @@ Mods: {
 				DisplayName: Four Leaf Clover
 				Tooltip: ""
 			}
+
+			FireLurkerBanner: {
+				// DisplayName: Fire Lurker Banner
+				// Tooltip: ""
+			}
+
+			HollowSoldierBanner: {
+				// DisplayName: Hollow Soldier Banner
+				// Tooltip: ""
+			}
+
+			HollowWarriorBanner: {
+				// DisplayName: Hollow Warrior Banner
+				// Tooltip: ""
+			}
+
+			HumanityPhantomBanner: {
+				// DisplayName: Humanity Phantom Banner
+				// Tooltip: ""
+			}
+
+			LothricBlackKnightBanner: {
+				// DisplayName: Lothric Black Knight Banner
+				// Tooltip: ""
+			}
+
+			LothricKnightBanner: {
+				// DisplayName: Lothric Knight Banner
+				// Tooltip: ""
+			}
+
+			LothricSpearKnightBanner: {
+				// DisplayName: Lothric Spear Knight Banner
+				// Tooltip: ""
+			}
+
+			RingedKnightBanner: {
+				// DisplayName: Ringed Knight Banner
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
