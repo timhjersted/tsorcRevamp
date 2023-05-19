@@ -16,16 +16,6 @@ namespace tsorcRevamp.Items.Accessories.Magic
 
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases max mana by 40" +
-                "\nReduces mana usage by 16%" +
-                "\nAutomatically use mana potions when needed" +
-                "\nIncreases pickup range for mana stars" +
-                "\nRestores mana when damaged" +
-                "\nGrants a thorns effects scaling with max mana" +
-                "\nSmall chance to spawn falling mana stars when hitting an enemy" +
-                "\nTheir damage scales with max mana" +
-                "\nMana stars restore mana when collected"); */
-
         }
 
         public override void SetDefaults()

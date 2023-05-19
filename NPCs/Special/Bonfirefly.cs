@@ -19,6 +19,7 @@ namespace tsorcRevamp.NPCs.Special
             NPC.height = 20;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.friendly = false;
+            NPC.lifeMax = 5;
             NPC.noTileCollide = true;
             NPC.noGravity = true;
             NPC.knockBackResist = 0;

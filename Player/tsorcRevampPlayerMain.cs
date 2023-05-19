@@ -1077,6 +1077,7 @@ namespace tsorcRevamp
                 {
                     Player.statMana -= Items.Accessories.Defensive.ManaShield.manaCost;
                     Player.manaRegenDelay = Items.Accessories.Defensive.ManaShield.regenDelay;
+                    Player.maxRegenDelay = Items.Accessories.Defensive.ManaShield.regenDelay;
                 }
             }
             if (manaShield == 2)
@@ -1085,6 +1086,7 @@ namespace tsorcRevamp
                 {
                     Player.statMana -= Items.Accessories.Defensive.Celestriad.manaCost;
                     Player.manaRegenDelay = Items.Accessories.Defensive.Celestriad.regenDelay;
+                    Player.maxRegenDelay = Items.Accessories.Defensive.Celestriad.regenDelay;
                 }
             }
             // stamina shield code

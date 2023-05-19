@@ -42,6 +42,12 @@ namespace tsorcRevamp
         [Tooltip("Disable the Melee/Whip Autoswing feature provided by the Feral Claws and it's upgrades, the Autofire option overrides this. Useful for whip stacking. Defaults to Off.")]
         public bool DisableGloveAutoswing { get; set; }
 
+        [Label("Disable automatic Mana Potion drinking")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(false)]
+        [Tooltip("Disable the automatic quick mana feature provided by the Mana Flower and it's upgrades, useful for not accidentally drinking the Cerulean Flask in BotC-mode. Defaults to Off.")]
+        public bool DisableAutomaticQuickMana { get; set; }
+
 
         [Header("Visual")]
 

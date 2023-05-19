@@ -788,7 +788,7 @@ namespace tsorcRevamp
                                                         }                                                                                },
                 {   ItemID.EaterOfWorldsBossBag     ,   new List<IItemDropRule>()
                                                         {
-                                                            ItemDropRule.ByCondition(tsorcItemDropRuleConditions.FirstBagRule, ModContent.ItemType<Items.DarkSoul>(), 1, 5000, 5000),
+                                                            ItemDropRule.ByCondition(tsorcItemDropRuleConditions.FirstBagRule, ModContent.ItemType<DarkSoul>(), 1, 5000, 5000),
                                                             ItemDropRule.Common(ItemID.GoldCoin, 1, 5, 7),
                                                          }                                                        },
                 {   ItemID.BrainOfCthulhuBossBag    ,   new List<IItemDropRule>()                                                        },
@@ -819,7 +819,7 @@ namespace tsorcRevamp
                                                         {
                                                             ItemDropRule.Common(ModContent.ItemType<CrestOfStone>()),
                                                             ItemDropRule.ByCondition(tsorcItemDropRuleConditions.AdventureModeRule,
-                                                                                     ModContent.ItemType<Items.BrokenPicksaw>()),
+                                                                                     ModContent.ItemType<BrokenPicksaw>()),
                                                             ItemDropRule.ByCondition(tsorcItemDropRuleConditions.NonAdventureModeRule,
                                                                                      ItemID.Picksaw, 3)
                                                         }                                                                                },

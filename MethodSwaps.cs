@@ -87,9 +87,10 @@ namespace tsorcRevamp
 
 			Terraria.On_Player.DashMovement += Player_DashMovement;
 
-			//Terraria.On_Player.DropTombstone += Player_DropTombstone;
+            Terraria.On_Player.DropTombstone += On_Player_DropTombstone;
 
             Terraria.DataStructures.On_PlayerDrawLayers.DrawPlayer_TransformDrawData += PaperMarioMode;
+
             //Terraria.On_Player.VanillaPreUpdateInventory += Player_VanillaPreUpdateInventory;
 
             Terraria.On_Main.Draw += Main_Draw;
@@ -100,6 +101,63 @@ namespace tsorcRevamp
 
             On_Recipe.CollectItemsToCraftWithFrom += Recipe_CollectItemsToCraftWithFrom;
 
+            On_Player.PickupItem += On_Player_PickupItem;
+
+            On_Player.OnHurt_Part2 += On_Player_OnHurt_Part2;
+
+            On_Player.ItemCheck_ApplyManaRegenDelay += On_Player_ItemCheck_ApplyManaRegenDelay;
+        }
+
+        private static void On_Player_DropTombstone(On_Player.orig_DropTombstone orig, Player self, long coinsOwned, Terraria.Localization.NetworkText deathText, int hitDirection)
+        {
+            //thank you DarkLight66's NoMoreTombs and stinkylizard
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+                orig(self, coinsOwned, deathText, hitDirection);
+        }
+
+        private static void On_Player_ItemCheck_ApplyManaRegenDelay(On_Player.orig_ItemCheck_ApplyManaRegenDelay orig, Player self, Item sItem)
+        {
+            if (self.GetManaCost(sItem) > 0 && self.manaRegenDelay < self.maxRegenDelay)
+            {
+                self.manaRegenDelay = (int)self.maxRegenDelay;
+            }
+            if (self.GetManaCost(sItem) > 0 && self.manaRegenDelay < self.maxRegenDelay && sItem.DamageType != DamageClass.Magic)
+            {
+                self.manaRegenDelay = (int)self.maxRegenDelay * 10;
+            }
+        }
+
+        private static void On_Player_OnHurt_Part2(On_Player.orig_OnHurt_Part2 orig, Player self, Player.HurtInfo info)
+        {
+            if (self.magicCuffs && self.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                int ManaGain = info.SourceDamage / 6 * (self.statManaMax2 / 150);
+                self.statMana += ManaGain;
+                if (self.statMana > self.statManaMax2)
+                {
+                    self.statMana = self.statManaMax2;
+                }
+                self.ManaEffect(ManaGain);
+                return;
+            }
+            orig(self, info);
+        }
+
+        private static Item On_Player_PickupItem(On_Player.orig_PickupItem orig, Player self, int playerIndex, int worldItemArrayIndex, Item itemToPickUp)
+        {
+            if (itemToPickUp.type == ItemID.Star || itemToPickUp.type == ItemID.SugarPlum || itemToPickUp.type == ItemID.SoulCake && self.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                SoundEngine.PlaySound(SoundID.Item7, new Vector2((int)self.position.X, (int)self.position.Y));
+                self.statMana += self.statManaMax2 / 25;
+                self.ManaEffect(self.statManaMax2 / 25);
+                if (self.statMana > self.statManaMax2)
+                {
+                    self.statMana = self.statManaMax2;
+                }
+                itemToPickUp.TurnToAir();
+                return itemToPickUp;
+            }
+            return orig(self, playerIndex, worldItemArrayIndex, itemToPickUp);
         }
 
         private static void StopLunarApocalypse(Terraria.On_WorldGen.orig_TriggerLunarApocalypse orig)
@@ -350,13 +408,6 @@ namespace tsorcRevamp
             return item;
         }
 
-        private static void Player_DropTombstone(Terraria.On_Player.orig_DropTombstone orig, Player self, int coinsOwned, Terraria.Localization.NetworkText deathText, int hitDirection)
-		{
-			//thank you DarkLight66's NoMoreTombs
-            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
-                orig(self, coinsOwned, deathText, hitDirection);
-            
-		}
 
 		private static void Player_DashMovement(Terraria.On_Player.orig_DashMovement orig, Player self)
 		{

@@ -9,6 +9,7 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Ammo;
 using tsorcRevamp.Items.Potions;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -1101,6 +1102,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.HeroOfLumeliaBag>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
         }
     }
 }

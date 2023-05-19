@@ -76,7 +76,25 @@ namespace tsorcRevamp.NPCs
             Soulstruck = false;
             PhazonCorruption = false;
         }
-
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            if (npc.type == NPCID.KingSlime)
+            {
+                npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
+            }
+            if (npc.type == NPCID.EyeofCthulhu)
+            {
+                npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
+            }
+            if (npc.type == NPCID.BrainofCthulhu)
+            {
+                npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
+            }
+            if (npc.type == NPCID.DukeFishron)
+            {
+                npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
+            }
+        }
         public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
         {
 
@@ -638,7 +656,7 @@ namespace tsorcRevamp.NPCs
                 } else
                 if (WhipDebuffCounter >= 5)
                 {
-                    modifiers.FinalDamage *= 1f;
+                    modifiers.FinalDamage *= 1.1f;
                 }
             }
         }
