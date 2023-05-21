@@ -58,6 +58,7 @@ namespace tsorcRevamp
     {
         public override bool IsEnabled()
         {
+            return false;
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 return true;
