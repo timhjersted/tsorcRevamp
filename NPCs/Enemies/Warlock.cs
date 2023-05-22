@@ -84,8 +84,8 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (!Main.hardMode && oCavern)
             {
-                if (Main.rand.NextBool(1000)) return 1;
-                else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(400))
+                if (Main.rand.NextBool(1200)) return 1;
+                else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(430))
                 {
                     UsefulFunctions.BroadcastText("A Warlock is near... ", 175, 75, 255);
                     return 1;
@@ -94,8 +94,8 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (Main.hardMode && (oCavern || oUnderground || Jungle))
             {
-                if (Main.rand.NextBool(400)) return 1;
-                else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(200))
+                if (Main.rand.NextBool(600)) return 1;
+                else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(300))
                 {
                     UsefulFunctions.BroadcastText("A Warlock is hunting you... ", 175, 75, 255);
                     return 1;
