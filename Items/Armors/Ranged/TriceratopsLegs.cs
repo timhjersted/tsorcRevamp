@@ -9,7 +9,6 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Increases movement speed by 14%");
         }
         public override void SetDefaults()
         {
@@ -27,18 +26,11 @@ namespace tsorcRevamp.Items.Armors.Ranged
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.FossilPants, 1);
+            recipe.AddIngredient(ItemID.FossilPants);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-
-            Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(ItemID.GladiatorLeggings, 1);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 3500);
-            recipe2.AddTile(TileID.DemonAltar);
-
-            recipe2.Register();
         }
     }
 }

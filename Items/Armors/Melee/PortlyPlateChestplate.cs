@@ -9,22 +9,18 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A lost prince's armor." +
-                "\n11% increased melee speed" +
-                "\nSet bonus: Increases melee damage by 3 flat" +
-                "\nA gi will also proc this set bonus"); */
         }
         public override void SetDefaults()
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 6;
-            Item.rare = ItemRarityID.Green;
+            Item.defense = 10;
+            Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Melee) += 0.11f;
+            player.GetDamage(DamageClass.Melee) += 0.1f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -32,13 +28,19 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetDamage(DamageClass.Melee).Flat += 3f;
+            player.lifeRegen += 2;
+            player.noKnockback = true;
+
+            if (player.statLife <= (player.statLifeMax2 / 4))
+            {
+                player.lifeRegen += 3;
+            }
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.GoldChainmail, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 250);
+            recipe.AddIngredient(ItemID.GladiatorBreastplate);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1800);
             recipe.AddTile(TileID.DemonAltar);
 
             //recipe.Register();

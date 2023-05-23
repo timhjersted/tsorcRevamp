@@ -15,15 +15,31 @@ using System.IO;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Weapons.Magic;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
     [AutoloadBossHead]
     class Cataluminance : ModNPC
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 6;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] 
+                {
+                    BuffID.OnFire,
+                    BuffID.Poisoned,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
+        public override void SetDefaults()
+        {
             NPC.damage = 50;
             NPC.defense = 25;
             AnimationType = -1;
@@ -42,19 +58,10 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.value = 600000;
             NPC.aiStyle = -1;
 
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-
             despawnHandler = new NPCDespawnHandler("The Triad returns to the skies...", Color.Cyan, 180);
             InitializeMoves();
         }
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Cataluminance v1.08");
-        }
 
         int StarBlastDamage = 35;
         int FinalStandStarDamage = 30;
@@ -1218,28 +1225,24 @@ namespace tsorcRevamp.NPCs.Bosses
             potionType = ItemID.GreaterHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) { 
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TriadBag>()));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        { 
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TriadBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedCrystal>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedFlameNozzle>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedLaser>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedRemote>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CrestOfSky>(), 1, 3, 3));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.HallowedBar, 1, 25, 40));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofSight, 1, 20, 40));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.TwinMask, 7));
+            npcLoot.Add(notExpertCondition);
         }
 
         public override void OnKill()
         {
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<DamagedCrystal>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<DamagedFlameNozzle>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<DamagedLaser>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<DamagedRemote>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.Center, Vector2.Zero, ModContent.ItemType<CrestOfSky>(), 3);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HallowedBar, 15 + Main.rand.Next(16));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SoulofSight, 25 + Main.rand.Next(16));
-                if (Main.rand.NextBool(7))
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.TwinMask);
-                }
-            }
-
             if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:CatShockwave"].IsActive())
             {
                 Filters.Scene["tsorcRevamp:CatShockwave"].Deactivate();

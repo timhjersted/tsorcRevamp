@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,17 +9,34 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 {
     class SerrisTail : ModNPC
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            {
+                Hide = true
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused,
+                    BuffID.Frozen
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
+        public override void SetDefaults()
+        {
             NPC.netAlways = true;
             NPC.npcSlots = 1;
             NPC.width = 38;
             NPC.height = 46;
             NPC.aiStyle = 6;
             NPC.timeLeft = 750;
-            NPC.damage = 90;
-            NPC.defense = 28;
+            NPC.damage = 29;
+            NPC.defense = 40;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.dontTakeDamage = true;
@@ -30,21 +48,6 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             NPC.behindTiles = true;
             NPC.boss = true;
             NPC.value = 500;
-            NPC.buffImmune[BuffID.Frozen] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-        }
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Serris");
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
-                Hide = true
-            };
-            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
-        }
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = (int)(NPC.damage * 1.3 / tsorcRevampGlobalNPC.expertScale);
-            NPC.defense = NPC.defense += 12;
         }
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)

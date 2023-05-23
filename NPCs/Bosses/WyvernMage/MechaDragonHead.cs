@@ -2,11 +2,13 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 {
@@ -16,7 +18,19 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Wyvern Mage Disciple");
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Poisoned,
+                    BuffID.OnFire,
+                    BuffID.OnFire3,
+                    BuffID.Frostburn,
+                    BuffID.Frostburn2,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
         public override void SetDefaults()
         {
@@ -37,12 +51,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             NPC.behindTiles = true;
             NPC.boss = true;
             NPC.value = 25000;
-
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
-
             despawnHandler = new NPCDespawnHandler(DustID.OrangeTorch);
 
             bodyTypes = new int[] { ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
@@ -65,11 +73,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 		{
 			return head ? (bool?)null : false;
 		}**/
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-        }
-
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
@@ -206,27 +209,14 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.WyvernMageBag>(), 1, 1, 1, new WyvernDiscipleDropCondition()));
-        }
-
-        public override void OnKill()
-        {
-
-            //Kind of like EoW, it always drops this many extra souls whether it's been killed or not.
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 900);
-            if (!Main.expertMode)
-            {
-                if (!(tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<MechaDragonHead>()))))
-                { //If the boss has not yet been killed
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 5000); //Then drop the souls
-                }
-            }
+            npcLoot.Add(new ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.WyvernMageBag>(), 1, 1, 1, new WyvernDiscipleDropCondition()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 900, 900));
         }
     }
 
-    public class WyvernDiscipleDropCondition : Terraria.GameContent.ItemDropRules.IItemDropRuleCondition
+    public class WyvernDiscipleDropCondition : IItemDropRuleCondition
     {
-        public bool CanDrop(Terraria.GameContent.ItemDropRules.DropAttemptInfo info)
+        public bool CanDrop(DropAttemptInfo info)
         {
             return !NPC.AnyNPCs(ModContent.NPCType<WyvernMage>());
         }

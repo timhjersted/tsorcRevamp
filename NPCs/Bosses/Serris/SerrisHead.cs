@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,16 +11,27 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
     [AutoloadBossHead]
     class SerrisHead : ModNPC
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
+        public override void SetDefaults()
+        {
             NPC.netAlways = true;
             NPC.npcSlots = 5;
             NPC.width = 38;
             NPC.height = 70;
             NPC.aiStyle = 6;
             NPC.timeLeft = 22750;
-            NPC.damage = 80;
+            NPC.damage = 26;
             NPC.defense = 999999;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
@@ -32,9 +44,6 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             NPC.boss = true;
             Music = 12;
             NPC.value = 0;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
 
             //If one already exists, don't add text to the others despawnhandler (so it doesn't show duplicate messages if you die)
             if (NPC.CountNPCS(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) > 1)
@@ -46,17 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                 despawnHandler = new NPCDespawnHandler("Serris retreats to the depths of its temple...", Color.Cyan, DustID.Firework_Blue);
             }
         }
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Serris");
-        }
-        int distortionDamage = 90;
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = (int)(NPC.damage * 1.3 / 2);
-            NPC.defense = NPC.defense += 12;
-            distortionDamage /= 2;
-        }
+        int distortionDamage = 45;
 
 
         bool tailSpawned = false;

@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.thorns += 1f;
+            player.statManaMax2 += 80;
             player.GetCritChance(DamageClass.Magic) += 22;
         }
         public override void AddRecipes()

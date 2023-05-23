@@ -11,15 +11,29 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Graphics.Effects;
 using Terraria.Audio;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
     [AutoloadBossHead]
     class RetinazerV2 : ModNPC
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 6;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.OnFire,
+                    BuffID.Poisoned,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
+        public override void SetDefaults()
+        {
             NPC.damage = 50;
             NPC.defense = 25;
             AnimationType = -1;
@@ -38,18 +52,9 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.value = 600000;
             NPC.aiStyle = -1;
 
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-
             InitializeMoves();
         }
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Retinazer v2.05");
-        }
 
         int DeathLaserDamage = 27;
         int PiercingGazeDamage = 35;
@@ -1144,6 +1149,10 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.GreaterHealingPotion;
+        }
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ItemID.RetinazerTrophy, 10, 1, 1));
         }
 
         //TODO: Copy vanilla death effects

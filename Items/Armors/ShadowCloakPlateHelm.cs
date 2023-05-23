@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Armors.Melee
+namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Head)]
     public class ShadowCloakPlateHelm : ModItem
@@ -20,13 +20,13 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += 21;
+            player.GetCritChance(DamageClass.Generic) += 18;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.ShadowHelmet, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddIngredient(ItemID.ShadowHelmet);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1400);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

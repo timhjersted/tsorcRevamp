@@ -1071,7 +1071,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         }
     }
 
-    public class PermanentSoulSiphonPotion : PermanentPotion //unobtainable currently, maybe make it obtainable through special means that don't cost souls?
+    public class PermanentSoulSiphonPotion : PermanentPotion
     {
         public override string Texture => "tsorcRevamp/Items/Potions/SoulSiphonPotion";
         public override int PermanentID => 52;
@@ -1086,6 +1086,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void SetDefaults()
         {
+            Item.width = 16;
+            Item.height = 25;
+            Item.consumable = false;
+            Item.maxStack = 1;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 8;
+            Item.useTime = 8;
+            Item.UseSound = SoundID.Item21;
             Item.expert = true;
         }
 

@@ -516,7 +516,7 @@ Mods: {
 				Tooltip:
 					'''
 					Increases life regeneration by 4 and maximum mana by 100
-					Increases mana regen by 40 and decreases mana regen delay by 1.25
+					Increases mana regen by 50 and decreases mana regen delay by 1.5
 					Increases max mana by 50% and decreases mana usage by 10%
 					'''
 			}
@@ -618,7 +618,10 @@ Mods: {
 
 			LightCloak: {
 				DisplayName: Light Cloak
-				Tooltip: Light Cloak grants 3 increased life regenerationWhen life falls below 40%, increases life regeneration by 11 total
+				Tooltip:	'''
+							Light Cloak grants 3 increased life regeneration
+							When life falls below 40%, increases life regeneration by 11 total
+							'''
 			}
 
 			ManaShield: {
@@ -1050,7 +1053,7 @@ Mods: {
 				DisplayName: Gem Box
 				Tooltip:
 					'''
-					All spells can be casted twice as fast
+					Doubles magic attack speed
 					Reduces magic damage by 30% multiplicatively
 					Some spells cannot benefit from this.
 					'''
@@ -1501,16 +1504,21 @@ Mods: {
 
 			DragoonHelmet: {
 				DisplayName: Dragoon Helmet
-				Tooltip: +120 Mana, reduces mana costs by 14%
+				Tooltip:	'''
+							+120 Mana, reduces mana costs by 14%
+							Increases mana regeneration by 10
+							'''
 			}
 
 			DragoonHelmet2: {
 				DisplayName: Supreme Dragoon Helmet
 				Tooltip:
 					'''
-					+200 Mana and Philosopher's stone effect
+					Increases maximum mana by 200 and decreases mana costs by 17%
+					Increases mana regeneration by 15
+					Grants Philosopher's Stone effect
 					Set Bonus: Harmonized with the four elements: fire, water, earth and air, including +5 life regen and flight
-					Boosts damage, crit chance, melee and movement speed by 38% and reduces mana costs by 17%
+					Boosts damage, crit chance, melee and movement speed by 38%
 					'''
 			}
 
@@ -1564,7 +1572,7 @@ Mods: {
 					'''
 					Known to be treasured by assassins.
 					Increases movement speed by 25%
-					Decreases mana costs by 9%
+					Decreases mana costs by 17%
 					'''
 			}
 
@@ -1573,8 +1581,8 @@ Mods: {
 				Tooltip:
 					'''
 					It is made of razor sharp dragon scales.
-					Increases thorns by 100%
 					Increases magic critical strike chance by 22%
+					Increases maximum mana by 80
 					'''
 			}
 
@@ -1583,9 +1591,11 @@ Mods: {
 				Tooltip:
 					'''
 					A powerful magic/low defense set chosen by skilled Paladins with a taste for high risk/reward combat
-					Increases magic damage by 22% and maximum mana by 60
-					Set bonus: Darkmoon Cloak skill activates when life falls below 25%
-					This grants +4 mana regen, Star Cloak effect and 
+					Increases magic damage by 22%
+					Increases thorns by 100%
+					Set bonus: Increases mana regen by 6
+					Darkmoon Cloak skill activates when life falls below 25%
+					This doubles mana regen provided by this armor set, Star Cloak effect and 
 					increases magic critical strike chance and damage by another 11%
 					'''
 			}
@@ -1620,7 +1630,7 @@ Mods: {
 
 			MimeticHat: {
 				DisplayName: Mimetic Hat
-				Tooltip: Increases your max mana by 80 and reduces mana costs by 13%
+				Tooltip: Increases your max mana by 80 and reduces mana costs by 16%
 			}
 
 			MimeticPants: {
@@ -1637,7 +1647,9 @@ Mods: {
 				Tooltip:
 					'''
 					Increases magic damage by 11%
-					Set Bonus: Burning Mana Skill activates when life falls below 50%, increasing mana regen by 5
+					Increases mana regen by 7
+					Set Bonus: Burning Mana Skill activates when life falls below 50%, 
+					doubling mana regen bonus and mana cost reductions provided by this armor set
 					'''
 			}
 
@@ -1871,24 +1883,23 @@ Mods: {
 				Tooltip:
 					'''
 					7% increased movement speed
-					Increases melee speed by 9%
+					Increases all attack speed by 9%
 					'''
 			}
 
 			ShadowCloakPlateHelm: {
 				DisplayName: Shadow Cloak Helm
-				Tooltip: Increases melee critical strike chance by 21%
+				Tooltip: Increases critical strike chance by 18%
 			}
 
 			ShadowCloakPlateMail: {
 				DisplayName: Shadow Cloak Plate Mail
 				Tooltip:
 					'''
-					Increases melee damage by 10%
-					Set bonus: A Shadow Cloak activates when life falls below 25%, increasing life regen by 5
-					Increases life regen by 2 otherwise
-					Grants Double Jump Skill
+					Increases damage by 8%
+					Set bonus: Grants Double Jump Skill
 					Increases movement speed and acceleration
+					Makes the player panic when below 50% maximum life
 					'''
 			}
 
@@ -2078,7 +2089,7 @@ Mods: {
 				Tooltip:
 					'''
 					Increases ranged damage by 3 flat
-					Set Bonus: Grants sandstorm double jump
+					Set Bonus: Increases specialist damage by 20% multiplicatively
 					Reduces chance to consume ammo by 25%
 					'''
 			}
@@ -2957,11 +2968,12 @@ Mods: {
 					However, [c/dd3333:using weapons drains stamina] and life regen is halved while stamina isn't at it's maximum.
 					Greater Magic Mirror use is prohibited, and instant-heal items won't heal you, but grants an Estus Flask to heal you.
 					Dying reduces your max HP by 20% until you return to where you died.
-					Mana regeneration is disabled but grants a Cerulean Flask to restore mana,
-					magic damage and attack speed are both increased by 20% multiplicatively,
-					mana regen bonuses increase total mana restored and mana regen delay penalties increase total mana restoration time.
+					Mana regeneration is disabled but grants a Cerulean Flask to restore mana, scaling with 5% maximum mana,
+					mana regen bonuses increase total mana restored and mana regen delay penalties increase total mana restoration time,
+					magic damage is increased by 20% and attack speed by 15% multiplicatively,
 					Mana Potions still work and resting at a Bonfire restores mana.
-					Minion's final damage is reduced by 90%, this reduction is lowered by 20% for each whip debuff active on the enemy.
+					Minion's final damage is reduced by 90%, this reduction is lowered by 22% for each whip debuff active on the enemy.
+					capping at 120% final damage if 5 or more whip debuffs are active simultaneously.
 					[c/ca1e00:This mode is intended for players experienced with the mod]
 					[c/ca1e00:It is not recommended on first playthroughs.]
 					'''
@@ -3324,8 +3336,6 @@ Mods: {
 					'''
 					Turns on Master Mode or turns it off
 					Receive 20% more souls in master mode
-					Master Mode has not been tuned yet whatsoever, don't expect it to be well balanced
-					Alpha mode in testing starting now. [c/00ffd4:For a more polished, unique challenge, try the Dark Sign]
 					'''
 			}
 
@@ -4370,7 +4380,11 @@ Mods: {
 
 			LightOfDawn: {
 				DisplayName: Light of Dawn
-				Tooltip: Day finally breaksFires illuminant streaks of hallowed light
+				Tooltip:
+					'''
+					Day finally breaks
+					Fires illuminant streaks of hallowed light
+					'''
 			}
 
 			MagicBarrierScroll: {
@@ -6150,19 +6164,28 @@ Mods: {
 				Tooltip: ""
 			}
 
+			PortlyPlateHelmet: {
+				DisplayName: Portly Plate Helmet
+				Tooltip:	'''
+							Increases melee critical strike chance by 5%
+							'''
+
 			PortlyPlateChestplate: {
 				DisplayName: Portly Plate Chestplate
-				Tooltip: ""
+				Tooltip:	'''
+							Increases melee damage by 10%
+							Set Bonus: Increases life regenaration by 2
+							Grants knockbakc immunity
+							When life falls below 25% of it's maximum, gain another 3 regen
+							'''
 			}
 
 			PortlyPlateGreaves: {
 				DisplayName: Portly Plate Greaves
-				Tooltip: ""
+				Tooltip:	'''
+							Increases melee speed by 27%
+							'''
 			}
-
-			PortlyPlateHelmet: {
-				DisplayName: Portly Plate Helmet
-				Tooltip: ""
 			}
 		}
 

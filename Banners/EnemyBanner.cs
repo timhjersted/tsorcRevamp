@@ -1055,7 +1055,7 @@ namespace tsorcRevamp.Banners
             Item.placeStyle = 36; //change when texture added
         }
     }
-    public class HeroOfLumeliaBanner : EnemyBanner
+    /*public class EnemyBanner : EnemyBanner //REDACTED
     {
         public override void SetStaticDefaults()
         {
@@ -1065,7 +1065,7 @@ namespace tsorcRevamp.Banners
             base.SetDefaults();
             Item.placeStyle = 37; //change when texture added
         }
-    }
+    }*/
     public class JungleSentreeBanner : EnemyBanner
     {
         public override void SetStaticDefaults()

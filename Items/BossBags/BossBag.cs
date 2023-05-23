@@ -223,9 +223,8 @@ namespace tsorcRevamp.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.MythrilBulwark>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfEarth>()));
-            itemLoot.Add(ItemDropRule.Common(ItemID.AngelWings));
             itemLoot.Add(ItemDropRule.Common(ItemID.Drax));
-            itemLoot.Add(ItemDropRule.Common(ItemID.WaterWalkingBoots));
+            itemLoot.Add(ItemDropRule.Common(ItemID.AngelWings));
         }
     }
 

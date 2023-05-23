@@ -1,28 +1,43 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Weapons.Magic;
 
 namespace tsorcRevamp.NPCs.Bosses.Serris
 {
     [AutoloadBossHead]
     class SerrisX : ModNPC
     {
-        public override void SetDefaults()
+        int plasmaOrbDamage = 50;
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 16;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] 
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
+        public override void SetDefaults()
+        {
             DrawOffsetY = 10;
             NPC.npcSlots = 5;
             NPC.width = 70;
             NPC.height = 70;
             NPC.aiStyle = 2;
             NPC.timeLeft = 22500;
-            NPC.damage = 150;
+            NPC.damage = 49;
             NPC.defense = 9999;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -33,8 +48,6 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             NPC.noTileCollide = true;
             NPC.boss = true;
             NPC.value = 500000;
-
-            NPC.buffImmune[BuffID.Confused] = true;
 
             //If one already exists, don't add text to the others despawnhandler (so it doesn't show duplicate messages if you die)
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) || NPC.CountNPCS(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()) > 1)
@@ -47,17 +60,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             }
         }
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Serris-X");
-        }
 
-        int plasmaOrbDamage = 100;
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = (int)(NPC.damage * 1.3 / tsorcRevampGlobalNPC.expertScale);
-            plasmaOrbDamage /= 2;
-        }
 
         bool immuneFlash = true;
         bool TimeLock = false;
@@ -288,30 +291,20 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
         public override void OnKill()
         {
             UsefulFunctions.BroadcastText("Serris falls...", Color.Cyan);
-            if (!Main.expertMode)
-            {
-                if (!(NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) || (NPC.CountNPCS(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()) > 1)))
-                {
-
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), 3 + Main.rand.Next(4));
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), 3 + Main.rand.Next(4));
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>(), 1);
-                    if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPC.type)))
-                    {
-                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 50000);
-                    }
-                }
-            }
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SerrisBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SerrisBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DemonDrugPotion>(), 1, 2, 4));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ArmorDrugPotion>(), 1, 2, 4));
+            npcLoot.Add(notExpertCondition);
         }
         public override void BossLoot(ref string name, ref int potionType)
         {
-            potionType = ItemID.GreaterHealingPotion;
+            potionType = ItemID.SuperHealingPotion;
         }
         public override void FindFrame(int currentFrame)
         {

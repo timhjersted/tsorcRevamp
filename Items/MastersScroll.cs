@@ -9,9 +9,6 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Turns on Master Mode or turns it off" +
-                "\nMaster Mode has not been tuned yet whatsoever, don't expect it to be well balanced" +
-                "\nAlpha mode in testing starting now. [c/00ffd4:For a more polished, unique challenge, try the Dark Sign]"); */
         }
 
         public override void SetDefaults()
@@ -37,7 +34,7 @@ namespace tsorcRevamp.Items
                 if (Main.GameMode == 1)
                 {
                     Main.GameMode = 2;
-                    Main.NewText("Master Mode has been enabled, enjoy your extra accessory slot!\nIt has not been tested thoroughly yet, so expect the unexpected!", Color.DarkRed);
+                    Main.NewText("Master Mode has been enabled, enjoy your extra accessory slot!", Color.DarkRed);
                 }
                 else
                 {

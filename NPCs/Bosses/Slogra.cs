@@ -9,6 +9,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Summon;
 
@@ -472,6 +473,7 @@ namespace tsorcRevamp.NPCs.Bosses
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new SlograDropCondition(), ModContent.ItemType<DarkTrident>()));
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new SlograDropCondition(), ModContent.ItemType<SunsetQuasar>()));
             npcLoot.Add(notExpertCondition);
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 1, 3, 6));
         }
         public override void OnKill()
         {

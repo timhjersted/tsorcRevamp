@@ -2,10 +2,17 @@ using Microsoft.Xna.Framework;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Buffs;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Items;
 using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -13,14 +20,37 @@ namespace tsorcRevamp.NPCs.Bosses
     [AutoloadBossHead]
     class Death : ModNPC
     {
-        public override void SetDefaults()
+        int shadowShotDamage = 98;
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 8;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.OnFire,
+                    BuffID.OnFire3,
+                    BuffID.Poisoned,
+                    BuffID.Venom,
+                    BuffID.Frostburn,
+                    BuffID.Frostburn2,
+                    BuffID.ShadowFlame,
+                    BuffID.Ichor,
+                    BuffID.CursedInferno,
+                    ModContent.BuffType<CrimsonBurn>(),
+                    ModContent.BuffType<DarkInferno>(),
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
+        public override void SetDefaults()
+        {
             NPC.npcSlots = 10;
             NPC.aiStyle = 0;
             NPC.width = 68;
             NPC.height = 70;
-            NPC.damage = 390;
+            NPC.damage = 254;
             NPC.defense = 45;
             NPC.scale = 1.1f;
             NPC.HitSound = SoundID.NPCHit1;
@@ -34,49 +64,10 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.knockBackResist = 0;
             NPC.value = 150000;
 
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            //NPC.buffImmune[BuffID.OnFire] = true;
             despawnHandler = new NPCDespawnHandler("Death claims you at last...", Color.DarkMagenta, DustID.Demonite);
         }
 
 
-        int shadowShotDamage = 150;
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = (int)(NPC.damage * 1.3 / 2);
-            NPC.defense = NPC.defense += 12;
-            shadowShotDamage = (int)(shadowShotDamage * 1.3 / 2);
-        }
-
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (NPC.AnyNPCs(ModContent.NPCType<Death>()))
-            {
-                return 0;
-            }
-            if (Main.hardMode)
-            {
-                bool nospecialbiome = !spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && !spawnInfo.Player.ZoneHallow && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
-
-                bool sky = nospecialbiome && ((double)spawnInfo.Player.position.Y < Main.worldSurface * 0.44999998807907104);
-                bool surface = nospecialbiome && !sky && (spawnInfo.Player.position.Y <= Main.worldSurface);
-                bool underground = nospecialbiome && !surface && (spawnInfo.Player.position.Y <= Main.rockLayer);
-                bool underworld = (spawnInfo.Player.position.Y > Main.maxTilesY - 190);
-                bool cavern = nospecialbiome && (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25);
-                bool undergroundJungle = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && spawnInfo.Player.ZoneJungle;
-                bool undergroundEvil = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && (spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson);
-                bool undergroundHoly = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && spawnInfo.Player.ZoneHallow;
-                if (!Main.dayTime && Main.bloodMoon && surface)
-                {
-                    if (Main.rand.NextBool(250))
-                    {
-                        return 1;
-                    }
-                }
-            }
-            return 0;
-        }
 
         float nextWarpAngle = 0;
         NPCDespawnHandler despawnHandler;
@@ -216,26 +207,20 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void BossLoot(ref string name, ref int potionType)
         {
-            potionType = ItemID.GreaterHealingPotion;
+            potionType = ItemID.SuperHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.DeathBag>()));
-        }
-        public override void OnKill()
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            Player player = Main.player[NPC.target];
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>(), 4);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MidnightRainbowDye, 5);
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPC.type)))
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000);
-                }
-            }
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.DeathBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>(), 1, 2, 4));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<GreatMagicShieldScroll>(), 6));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MagicBarrierScroll>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Humanity>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.LivingRainbowDye, 3));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.MidnightRainbowDye, 3));
+            npcLoot.Add(notExpertCondition);
         }
     }
 }

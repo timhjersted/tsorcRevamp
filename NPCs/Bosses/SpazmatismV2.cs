@@ -10,15 +10,32 @@ using Terraria.ModLoader;
 using Terraria.Graphics.Effects;
 using Terraria.Audio;
 using System.IO;
+using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
     [AutoloadBossHead]
     class SpazmatismV2 : ModNPC
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 6;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.OnFire,
+                    BuffID.Poisoned,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
+        public override void SetDefaults()
+        {
             NPC.damage = 50;
             NPC.defense = 25;
             AnimationType = -1;
@@ -37,10 +54,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.value = 600000;
             NPC.aiStyle = -1;
 
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
             //Terraria.GameContent.UI.BigProgressBar.IBigProgressBar bossBar;
             //Main.BigBossProgressBar.TryGetSpecialVanillaBossBar(NPC.netID, out bossBar);
             //bossBar.Draw();
@@ -48,10 +61,6 @@ namespace tsorcRevamp.NPCs.Bosses
             InitializeMoves();
         }
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Spazmatism v2.15");
-        }
 
         int FireJetDamage = 40;
         int CursedMalestromDamage = 50;
@@ -1017,6 +1026,10 @@ namespace tsorcRevamp.NPCs.Bosses
             fadePercent = 0;
             ringCollapse = 1;
             fadeInPercent = 0;
+        }
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ItemID.SpazmatismTrophy, 10, 1, 1));
         }
 
         //TODO: Copy vanilla death effects

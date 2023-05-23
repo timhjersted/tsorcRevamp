@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += 0.25f;
-            player.manaCost -= 0.09f;
+            player.manaCost -= 0.17f;
         }
         public override void AddRecipes()
         {

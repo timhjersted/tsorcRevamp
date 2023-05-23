@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Armors.Melee
+namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Legs)]
     public class ShadowCloakGreaves : ModItem
@@ -22,14 +22,14 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += 0.07f;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.09f;
+            player.GetAttackSpeed(DamageClass.Generic) += 0.09f;
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.ShadowGreaves, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddIngredient(ItemID.ShadowGreaves);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1600);
             recipe.AddTile(TileID.DemonAltar);
             
             recipe.Register();

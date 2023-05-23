@@ -9,7 +9,6 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("+120 Mana, reduces mana costs by 14%");
         }
         public override void SetDefaults()
         {
@@ -23,6 +22,7 @@ namespace tsorcRevamp.Items.Armors
         {
             player.statManaMax2 += 120;
             player.manaCost -= 0.14f;
+            player.manaRegenBonus += 10;
         }
         public override void AddRecipes()
         {
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.SoulofMight, 10);
             recipe.AddIngredient(ItemID.SoulofSight, 10);
             recipe.AddIngredient(ItemID.SoulofFright, 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 24000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

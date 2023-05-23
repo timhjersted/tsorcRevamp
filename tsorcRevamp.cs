@@ -265,7 +265,7 @@ namespace tsorcRevamp
             tsorcItemDropRuleConditions.FirstBagCursedRule = new FirstBagCursedRule();
             tsorcItemDropRuleConditions.AdventureModeRule = new AdventureModeRule();
             tsorcItemDropRuleConditions.NonAdventureModeRule = new NonAdventureModeRule();
-            tsorcItemDropRuleConditions.NoExpertFirstKillRule = new NoExpertFirstKillRule();
+            tsorcItemDropRuleConditions.NoExpertFirstKillRule = new NonExpertFirstKillRule();
             #endregion
             //--------
             #region Unbreakable list

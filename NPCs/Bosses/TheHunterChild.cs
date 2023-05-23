@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,17 +12,25 @@ namespace tsorcRevamp.NPCs.Bosses
     //[AutoloadBossHead]
     class TheHunterChild : ModNPC
     {
+        int sproutDamage = 33;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
-            // DisplayName.SetDefault("The Hunter's child");
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] 
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         } 
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = 6000;
-            NPC.damage = 105;
-            NPC.defense = 26;
+            NPC.damage = 53;
+            NPC.defense = 36;
             NPC.knockBackResist = 0f;
             NPC.scale = 0.7f;
             NPC.value = 31500;
@@ -32,28 +41,14 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.behindTiles = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-
             DrawOffsetY = +70;
             NPC.width = 140;
             NPC.height = 60;
-
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
             despawnHandler = new NPCDespawnHandler("The Hunter's child has experienced the thrill of their first kill...", Color.Green, 89);
         }
 
         int hitTime = 0;
-        int sproutDamage = 65;
         public float flapWings;
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = NPC.damage / 2;
-            NPC.defense = NPC.defense += 10;
-            //NPC.lifeMax = 9000;
-            //sproutDamage = (int)(sproutDamage * 1.3 / 2);
-            sproutDamage = (int)(sproutDamage / 2);
-        }
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
@@ -109,7 +104,7 @@ namespace tsorcRevamp.NPCs.Bosses
             
             if (!hunterAlive)
             {
-                if(NPC.life >= 501)
+                if(NPC.life > 500)
                 { NPC.life = 500; } 
             }
 

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -14,11 +15,24 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
     [AutoloadBossHead]
     class WyvernMage : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Frostburn,
+                    BuffID.Frostburn2,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.scale = 1;
             NPC.npcSlots = 6;
-            Main.npcFrameCount[NPC.type] = 3;
             NPC.width = 28;
             NPC.height = 44;
             NPC.damage = 0;
@@ -35,31 +49,18 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             NPC.lavaImmune = true;
             NPC.boss = true;
             NPC.value = 150000;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            //NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler("The Wyvern Mage stands victorious...", Color.DarkCyan, DustID.Demonite);
             nextWarpPoint = Main.rand.NextVector2CircularEdge(320, 320);
         }
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Wyvern Mage");
-        }
 
-        int frozenSawDamage = 60;
-        int lightningDamage = 80;
+        int frozenSawDamage = 30;
+        int lightningDamage = 40;
        
         int plasmaDamage = 40;
         int lifeTimer = 0;
 
         int holdTimer = 0;
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            frozenSawDamage = (int)(frozenSawDamage / 2);
-            lightningDamage = (int)(lightningDamage / 2);
-        }
 
         //When this hits 5, the boss fires an orb and resets it back to 0. Only happens right at the start of its teleport.
         public int OrbTimer
@@ -369,7 +370,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         {
             npcLoot.Add(new ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.WyvernMageBag>(), 1, 1, 1, new WyvernMageDropCondition()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 1, 1, 2));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 1, 2, 4));
         }
         public override void OnKill()
         {

@@ -2,9 +2,12 @@
 using System;
 using System.IO;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -12,17 +15,28 @@ namespace tsorcRevamp.NPCs.Bosses
     [AutoloadBossHead]
     class TheSorrow : ModNPC
     {
+        int waterTrailsDamage = 30;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] 
+                {
+                    BuffID.Frostburn,
+                    BuffID.Frostburn2,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = 18000;
-            NPC.damage = 120;
-            NPC.defense = 24;
+            NPC.damage = 60;
+            NPC.defense = 34;
             NPC.knockBackResist = 0f;
             NPC.scale = 1.4f;
             NPC.value = 170000;
@@ -35,16 +49,9 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.coldDamage = true;
-
             DrawOffsetY = +70;
             NPC.width = 140;
             NPC.height = 60;
-
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            //NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            //NPC.buffImmune[BuffID.CursedInferno] = true;
-
             despawnHandler = new NPCDespawnHandler("The Sorrow claims you...", Color.DarkCyan, 29);
         }
 
@@ -53,7 +60,6 @@ namespace tsorcRevamp.NPCs.Bosses
         //npc.ai[3] = state counter
         public float flapWings;
         int hitTime = 0; //How long since it's last been hit (used for reducing damage counter)
-        int waterTrailsDamage = 60;
 
         //magic from above attack
         public float iceSpiritTimer;
@@ -79,14 +85,6 @@ namespace tsorcRevamp.NPCs.Bosses
         bool announcedDebuffs = false;
         float ice3Timer;
 
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = NPC.damage / 2;
-            NPC.defense = NPC.defense += 10;
-            //NPC.lifeMax = 28000; //with this and NPC.lifeMax = 26600; life was set to 18,200 - whaaaa?
-            //waterTrailsDamage = (int)(waterTrailsDamage * 1.3 / 2);
-            waterTrailsDamage = (int)(waterTrailsDamage / 2);
-        }
 
         NPCDespawnHandler despawnHandler;
         public override void AI()
@@ -574,8 +572,13 @@ namespace tsorcRevamp.NPCs.Bosses
             potionType = ItemID.GreaterHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TheSorrowBag>()));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TheSorrowBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CrestOfWater>(), 1, 2, 2));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.AdamantiteDrill));
+            npcLoot.Add(notExpertCondition);
         }
         public override void OnKill()
         {
@@ -587,11 +590,6 @@ namespace tsorcRevamp.NPCs.Bosses
             for (int num36 = 0; num36 < 100; num36++)
             {
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 132, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, Color.Orange, 3f);
-            }
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CrestOfWater>(), 2);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.AdamantiteDrill, 1, false, -1);
             }
         }
     }

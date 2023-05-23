@@ -26,11 +26,12 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateArmorSet(Player player)
         {
+            player.manaRegenBonus += 6;
             if (player.statLife <= (player.statLifeMax2 / 4))
             {
                 player.GetCritChance(DamageClass.Magic) += 11;
                 player.GetDamage(DamageClass.Magic) += 0.11f;
-                player.manaRegenBonus += 4;
+                player.manaRegenBonus += 6;
                 player.starCloakItem = new Item(ItemID.StarCloak); ;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 65, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Blue, 2.0f);
@@ -40,7 +41,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         public override void UpdateEquip(Player player)
         {
             player.GetDamage(DamageClass.Magic) += 0.22f;
-            player.statManaMax2 += 60;
+            player.thorns += 1f;
         }
         public override void AddRecipes()
         {

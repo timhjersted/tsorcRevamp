@@ -12,8 +12,6 @@ namespace tsorcRevamp.Items.Armors
         public override string Texture => "tsorcRevamp/Items/Armors/DragoonGreaves";
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Supreme Dragoon Greaves");
-            // Tooltip.SetDefault("Grants an extra double jump and Shiny Red Balloon effect\nIncreases your max number of minions by 3");
         }
 
         public override void SetDefaults()
@@ -61,7 +59,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ModContent.ItemType<DragoonGreaves>());
             //recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 1);
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 56000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

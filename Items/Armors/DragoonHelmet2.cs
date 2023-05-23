@@ -12,10 +12,6 @@ namespace tsorcRevamp.Items.Armors
         public override string Texture => "tsorcRevamp/Items/Armors/DragoonHelmet";
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Supreme Dragoon Helmet");
-            /* Tooltip.SetDefault("+200 Mana and Philosopher's stone effect" +
-                "\nSet Bonus: Harmonized with the four elements: fire, water, earth and air, including +5 life regen and flight" +
-                "\nBoosts damage, crit chance, melee and movement speed by 38% and reduces mana costs by 17%"); */
         }
 
         public override void SetDefaults()
@@ -30,6 +26,8 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.statManaMax2 += 200;
+            player.manaCost -= 0.17f;
+            player.manaRegenBonus += 15;
             player.pStone = true;
         }
 
@@ -49,7 +47,6 @@ namespace tsorcRevamp.Items.Armors
             player.GetCritChance(DamageClass.Generic) += 38;
             player.GetAttackSpeed(DamageClass.Melee) += 0.38f;
             player.moveSpeed += 0.38f;
-            player.manaCost -= 0.17f;
             player.lifeRegen += 5;
             player.GetModPlayer<tsorcRevampPlayer>().DarkmoonCloak = true;
 
@@ -93,10 +90,11 @@ namespace tsorcRevamp.Items.Armors
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<DragoonHelmet>());
+            recipe.AddIngredient(ItemID.CharmofMyths);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 1);
             recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 1);
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 54000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

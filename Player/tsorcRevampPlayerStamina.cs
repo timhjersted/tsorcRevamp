@@ -279,6 +279,7 @@ namespace tsorcRevamp
                 if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.DamageType == DamageClass.Summon) return;
                 if (item.damage <= 0 && item.type != ItemID.CoinGun) return;
                 if (item.ammo != AmmoID.None) return; //ammo does not consume stamina
+                if (item.type == ItemID.EoCShield) return;
                 StringBuilder tipToAdd = new();
                 tipToAdd.Append("Stamina Use: ");
 

@@ -144,27 +144,27 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ItemID.CelestialMagnet)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, "Mana Star pickups only restore 4% of the Curse Bearer's maximum mana");
+                SimpleGlobalModTooltip(Mod, tooltips, "Mana Star pickups only restore 4% of the [c/6d8827:Bearer of the Curse's] maximum mana");
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ItemID.CelestialEmblem)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, "Mana Star pickups only restore 4% of the Curse Bearer's maximum mana");
+                SimpleGlobalModTooltip(Mod, tooltips, "Mana Star pickups only restore 4% of the [c/6d8827:Bearer of the Curse's] maximum mana");
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ItemID.CelestialCuffs)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, "Mana Star pickups only restore 4% of the Curse Bearer's maximum mana\nOnly restores a sixth of pre-mitigation damage taken as mana, scaling with maximum mana");
+                SimpleGlobalModTooltip(Mod, tooltips, "Mana Star pickups only restore 4% of the [[c/6d8827:Bearer of the Curse's] maximum mana\nOnly restores a sixth of pre-mitigation damage taken by the [c/6d8827:Bearer of the Curse] as mana");
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ItemID.MagicCuffs)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, "Only converts a sixth of pre-mitigation damage taken by the Bearer of the Curse into mana, scaling with maximum mana");
+                SimpleGlobalModTooltip(Mod, tooltips, "Only converts a seventh of pre-mitigation damage taken by the [c/6d8827:Bearer of the Curse's] into mana");
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ModContent.ItemType<CelestialCloak>())
             {
-                SimpleGlobalModTooltip(Mod, tooltips, "Mana Star pickups only restore 4% of the Curse Bearer's maximum mana\nOnly restores a sixth of pre-mitigation damage taken as mana, scaling with maximum mana");
+                SimpleGlobalModTooltip(Mod, tooltips, "Mana Star pickups only restore 4% of the [c/6d8827:Bearer of the Curse's] maximum mana\nOnly restores a seventh of pre-mitigation damage taken by the [c/6d8827:Bearer of the Curse] as mana");
             }
 
         }

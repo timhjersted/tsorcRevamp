@@ -13,11 +13,6 @@ namespace tsorcRevamp.Items.Armors
         public override string Texture => "tsorcRevamp/Items/Armors/DragoonArmor";
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Supreme Dragoon Armor");
-            /* Tooltip.SetDefault("A reforged upgrade to the legendary Dragoon Armor." +
-                "\nYou are a master of all forces, the protector of Earth, the Hero of the age." +
-                "\nThe powers of the Dragoon Cloak are embedded within its blue-plated chest piece." +
-                "\nDragoon Cloak effects kick in at 40% life."); */
         }
 
         public override void SetDefaults()
@@ -75,7 +70,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ModContent.ItemType<DragoonCloak>());
             //recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 1);
             recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

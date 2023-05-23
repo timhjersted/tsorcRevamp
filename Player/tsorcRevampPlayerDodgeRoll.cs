@@ -62,7 +62,7 @@ namespace tsorcRevamp
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 return true;
-            } else 
+            } else
             {
                 return false;
             }

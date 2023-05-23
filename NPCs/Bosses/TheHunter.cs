@@ -1,9 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -11,17 +14,28 @@ namespace tsorcRevamp.NPCs.Bosses
     [AutoloadBossHead]
     class TheHunter : ModNPC
     {
+        int sproutDamage = 33;
+        int cursedBreathDamage = 30;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] 
+                {
+                    BuffID.Poisoned,
+                    BuffID.Venom,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
-
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = 21000;
-            NPC.damage = 130;
-            NPC.defense = 26;
+            NPC.damage = 65;
+            NPC.defense = 36;
             NPC.knockBackResist = 0f;
             NPC.scale = 1.4f;
             NPC.value = 220000;
@@ -33,20 +47,13 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.behindTiles = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-
             DrawOffsetY = +70;
             NPC.width = 140;
             NPC.height = 60;
-
-            //NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
             despawnHandler = new NPCDespawnHandler("The Hunter seeks its next prey...", Color.Green, 89);
         }
 
         int hitTime = 0;
-        int sproutDamage = 65;
-        int cursedBreathDamage = 30;
         public float flapWings;
 
         //oolicile sorcerer
@@ -61,17 +68,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
         float breathTimer = 60;
         float breathTimer2 = 600;
-
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = NPC.damage / 2;
-            NPC.defense = NPC.defense += 10;
-            //NPC.lifeMax = 32000; //this plus NPC.lifeMax = 32000; made the health 20,800
-            //sproutDamage = (int)(sproutDamage * 1.3 / 2);
-            sproutDamage = (int)(sproutDamage / 2);
-        }
-
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(BuffID.Bleeding, 30 * 60, false);
@@ -414,7 +410,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
 
                     //if (NPC.life > (NPC.lifeMax / 2) + 100 || NPC.life < (NPC.lifeMax / 2) - 1100)
-                    if (NPC.life > 600)
+                    if (NPC.life > 35)
                     {
                         NPC.life -= 400; //boss takes burst damage when enraged
                     }
@@ -522,8 +518,14 @@ namespace tsorcRevamp.NPCs.Bosses
             potionType = ItemID.GreaterHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TheHunterBag>()));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TheHunterBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CrestOfEarth>(), 1, 2, 2));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.Drax));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.AngelWings));
+            npcLoot.Add(notExpertCondition);
         }
 
         public override void OnKill()
@@ -536,13 +538,6 @@ namespace tsorcRevamp.NPCs.Bosses
             for (int num36 = 0; num36 < 100; num36++)
             {
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 131, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, Color.Orange, 3f);
-            }
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CrestOfEarth>(), 2);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.AngelWings, 1, false, -1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.WaterWalkingBoots, 1, false, -1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Drax, 1, false, -1);
             }
         }
     }

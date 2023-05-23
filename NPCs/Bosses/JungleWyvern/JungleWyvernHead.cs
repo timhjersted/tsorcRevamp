@@ -29,7 +29,8 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
         {
             NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
             {
-                SpecificallyImmuneTo = new int[] {
+                SpecificallyImmuneTo = new int[] 
+                {
                     BuffID.Poisoned,
                     BuffID.OnFire,
                     BuffID.Confused

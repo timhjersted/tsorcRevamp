@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
         {
             player.lifeRegen += 4;
             player.statManaMax2 += 100;
-            player.manaRegenBonus += 40;
+            player.manaRegenBonus += 50;
             player.manaRegenDelayBonus += 1.5f;
             player.statManaMax2 = (int)(player.statManaMax2 * 1.5f);
             player.manaCost -= 0.1f;

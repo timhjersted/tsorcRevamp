@@ -30,7 +30,7 @@ namespace tsorcRevamp
         public bool isDrinking; //Whether or not the player is currently drinking estus
         public bool isCeruleanRestoring; //Whether or not the player is currently healing after drinking estus
 
-        public float ceruleanDrinkTimerMax => 1.5f; //This is actually seconds. How long it takes to drink a charge
+        public float ceruleanDrinkTimerMax => 1f; //This is actually seconds. How long it takes to drink a charge
         public float ceruleanDrinkTimer; //How far through the animation we are
         public float ceruleanManaPerTick; //How much mana to restore per tick
         public float ceruleanRestorationTimerMax; //Timer for how long drinking the estus will restore for
@@ -138,7 +138,7 @@ namespace tsorcRevamp
                 isDrinking = false; //No longer drinking
                 ceruleanChargesCurrent--; //Remove a charge
                 ceruleanDrinkTimer = 0; //Set the timer back to 0
-                Player.ManaEffect((int)(ceruleanManaGain * ceruleanManaGainBonus * ceruleanRestorationTimerBonus)); //Show blue restoration text equal to mana gain
+                Player.ManaEffect((int)((ceruleanManaGain + (Player.statManaMax2 / 20)) * ceruleanManaGainBonus * ceruleanRestorationTimerBonus)); //Show blue restoration text equal to mana gain
                 isCeruleanRestoring = true; //Commence restoration process
             }
         }
@@ -152,7 +152,7 @@ namespace tsorcRevamp
                 if (ceruleanRestorationTimer <= ceruleanRestorationTimerMax && Player.statMana < Player.statManaMax2) //If the timer is less or equal to timer max and player mp is not at max
                 {
 
-                    ceruleanManaPerTick += (ceruleanManaGain * ceruleanManaGainBonus * ceruleanRestorationTimerBonus) / ceruleanRestorationTimerMax; //Heal this much each tick
+                    ceruleanManaPerTick += ((ceruleanManaGain + (Player.statManaMax2 / 20)) * ceruleanManaGainBonus * ceruleanRestorationTimerBonus) / ceruleanRestorationTimerMax; //Heal this much each tick
 
                     if (ceruleanManaPerTick > (int)ceruleanManaPerTick)
                     {

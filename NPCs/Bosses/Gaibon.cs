@@ -585,6 +585,7 @@ namespace tsorcRevamp.NPCs.Bosses
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GaibonDropCondition(), ModContent.ItemType<DarkTrident>()));
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GaibonDropCondition(), ModContent.ItemType<SunsetQuasar>()));
             npcLoot.Add(notExpertCondition);
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>()));
         }
 
         #region gore

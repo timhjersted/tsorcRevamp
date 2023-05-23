@@ -16,6 +16,7 @@ using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Summon.WhipDebuffs;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Throwing;
@@ -81,6 +82,7 @@ namespace tsorcRevamp.NPCs
             if (npc.type == NPCID.KingSlime)
             {
                 npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
+                npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>()));
             }
             if (npc.type == NPCID.EyeofCthulhu)
             {
@@ -89,10 +91,38 @@ namespace tsorcRevamp.NPCs
             if (npc.type == NPCID.BrainofCthulhu)
             {
                 npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
+                npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 1, 1, 2));
+            }
+            if (npc.type == NPCID.QueenSlimeBoss)
+            {
+                npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 1, 4, 8));
+            }
+            if (npc.type == NPCID.Plantera)
+            {
+                npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>(), 1, 1, 2));
             }
             if (npc.type == NPCID.DukeFishron)
             {
                 npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
+                npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>(), 1, 3, 6));
+            }
+            if (npc.type == NPCID.Golem)
+            {
+                npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>(), 1, 2, 4));
+            }
+            if (npc.type == NPCID.HallowBoss)
+            {
+                npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>(), 1, 3, 6));
+                npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 1, 3, 6));
+            }
+            if (npc.type == NPCID.CultistBoss)
+            {
+                npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 1, 4, 8));
+            }
+            if (npc.type == NPCID.MoonLordCore)
+            {
+                npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>(), 1, 5, 10));
+                npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 1, 5, 10));
             }
         }
         public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
@@ -640,23 +670,23 @@ namespace tsorcRevamp.NPCs
                 } else
                 if (WhipDebuffCounter == 1)
                 {
-                    modifiers.FinalDamage *= 0.3f;
+                    modifiers.FinalDamage *= 0.32f;
                 } else
                 if (WhipDebuffCounter == 2)
                 {
-                    modifiers.FinalDamage *= 0.5f;
+                    modifiers.FinalDamage *= 0.54f;
                 } else
                 if (WhipDebuffCounter == 3)
                 {
-                    modifiers.FinalDamage *= 0.7f;
+                    modifiers.FinalDamage *= 0.76f;
                 } else
                 if (WhipDebuffCounter == 4)
                 {
-                    modifiers.FinalDamage *= 0.9f;
+                    modifiers.FinalDamage *= 0.98f;
                 } else
                 if (WhipDebuffCounter >= 5)
                 {
-                    modifiers.FinalDamage *= 1.1f;
+                    modifiers.FinalDamage *= 1.2f;
                 }
             }
         }

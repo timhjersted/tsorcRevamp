@@ -104,7 +104,7 @@ namespace tsorcRevamp {
         public bool CanShowItemDropInUI() => true;
         public string GetConditionDescription() => "[c/ff9999:Only drops in Non-Adventure Mode]";
     }
-    public class NoExpertFirstKillRule : IItemDropRuleCondition, IProvideItemConditionDescription
+    public class NonExpertFirstKillRule : IItemDropRuleCondition, IProvideItemConditionDescription
     {
         public virtual bool CanDrop(DropAttemptInfo info)
         {
@@ -113,6 +113,6 @@ namespace tsorcRevamp {
 
         public bool CanShowItemDropInUI() => true;
 
-        public virtual string GetConditionDescription() => "[c/ff9999: Only drops on the first kill";
+        public virtual string GetConditionDescription() => "[c/ff9999: Only drops on the first kill outside of Expert Mode";
     }
 }

@@ -10,56 +10,47 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Ammo;
 using tsorcRevamp.Items.Potions;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
+using tsorcRevamp.Items.Weapons.Magic;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
     class HeroofLumelia : ModNPC
     {
+        public int throwingKnifeDamage = 34;
+        public int smokebombDamage = 43;//ah yes it teleporting right next to you and then instantly throwing the bombs at you the next tick is very fair
+        int herosArrowDamage = 42;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Hero of Lumelia");
-
+            Main.npcFrameCount[NPC.type] = 16;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
-
-        public int throwingKnifeDamage = 80;
-        public int smokebombDamage = 121;
-
         public override void SetDefaults()
         {
             NPC.npcSlots = 5;
-            Main.npcFrameCount[NPC.type] = 16;
             AnimationType = 28;
             NPC.aiStyle = 3;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.damage = 150;
+            NPC.damage = 75;
             NPC.defense = 75;
             NPC.boss = true;
-            NPC.lifeMax = 10000;
+            NPC.lifeMax = 8000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 137430;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0f;
             NPC.rarity = 4;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-
-            Banner = NPC.type;
-            BannerItem = ModContent.ItemType<Banners.HeroOfLumeliaBanner>();
             despawnHandler = new NPCDespawnHandler("The hero of Lumelia stands victorious...", Color.Gold, DustID.GoldFlame);
         }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 1.25);
-            NPC.damage = (int)(NPC.damage / 2);
-            herosArrowDamage = (int)(herosArrowDamage / 2);
-            throwingKnifeDamage = (int)(throwingKnifeDamage / 2);
-            smokebombDamage = (int)(smokebombDamage / 2);
-        }
-
-        int herosArrowDamage = 90;
         
 
         bool wolfSpawned1 = false;
@@ -1062,26 +1053,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hero of Lumelia Gore 2").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hero of Lumelia Gore 3").Type, 1f);
             }
-            if (!Main.expertMode)
-            {
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<HeroofLumelia>())))
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 5091);
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1);
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ObsidianSkinPotion, 1);
-                }
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.WaterWalkingBoots);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<SoulCoin>(), 10 + Main.rand.Next(11));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<ArrowOfBard>(), 10 + Main.rand.Next(11));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ArcheryPotion, 3);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<GreaterRestorationPotion>(), 1 + Main.rand.Next(3));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.LifeforcePotion, 1 + Main.rand.Next(3));
-            }
-
-
         }
         #endregion
 
@@ -1101,8 +1072,19 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.HeroOfLumeliaBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.HeroOfLumeliaBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 7, 14));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ArrowOfBard>(), 1, 7, 14));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.WaterWalkingBoots));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MagicBarrierScroll>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Humanity>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.ObsidianSkinPotion));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 1, 1, 2));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 1, 1, 2));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<GreaterRestorationPotion>(), 1, 1, 2));
+            npcLoot.Add(notExpertCondition);
         }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -11,17 +14,28 @@ namespace tsorcRevamp.NPCs.Bosses
     [AutoloadBossHead]
     class TheRage : ModNPC
     {
+        int fireTrailsDamage = 28; //23 was a bit too easy for folks based on some feedback and watching a LP
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] 
+                {
+                    BuffID.OnFire,
+                    BuffID.OnFire3,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = 15000;
-            NPC.damage = 110; 
-            NPC.defense = 22;
+            NPC.damage = 55; 
+            NPC.defense = 32;
             NPC.knockBackResist = 0f;
             NPC.scale = 1.4f;
             NPC.value = 120000;
@@ -38,16 +52,11 @@ namespace tsorcRevamp.NPCs.Bosses
             DrawOffsetY = +70;
             NPC.width = 140;
             NPC.height = 60;
-            NPC.buffImmune[BuffID.Burning] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
             despawnHandler = new NPCDespawnHandler("The Rage is satisfied...", Color.OrangeRed, 127);
         }
 
         public float flapWings;
         int hitTime = 0;
-        int fireTrailsDamage = 55; //45 was a bit too easy for folks based on some feedback and watching a LP
 
         //oolicile sorcerer
         public float FlameShotTimer;
@@ -79,17 +88,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public Player Target
         {
             get => Main.player[NPC.target];
-        }        
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = NPC.damage / 2;
-            NPC.defense = NPC.defense += 10;
-            //NPC.lifeMax = 20000; //this set the rage health to 13000 with NPC.lifeMax = 23100; above and I have no idea why
-            //fireTrailsDamage = (int)(fireTrailsDamage * 1.3 / 2);
-            fireTrailsDamage = (int)(fireTrailsDamage / 2);
         }
-
 
         NPCDespawnHandler despawnHandler;
         public override void AI()
@@ -317,7 +316,7 @@ namespace tsorcRevamp.NPCs.Bosses
             
 
             //SPAWN METEOR HELL
-            if (Main.rand.NextBool(80) && NPC.Distance(player.Center) > 100 && NPC.life <= 3000 )
+            if (Main.rand.NextBool(80) && NPC.Distance(player.Center) > 100 && NPC.life <= NPC.lifeMax / 5 )
             {
 
                 if (player.position.Y + 50 >= NPC.position.Y)
@@ -487,7 +486,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     NPC.ai[3] = 1;
                     //if (NPC.life < NPC.lifeMax / 2)
-                    if (NPC.life > 500)
+                    if (NPC.life > NPC.lifeMax / 30)
                     {
                         NPC.life -= 300; //amount boss takes damage when enraged
                       
@@ -572,7 +571,11 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TheRageBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TheRageBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CrestOfFire>(), 1, 2, 2));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.CobaltDrill));
+            npcLoot.Add(notExpertCondition);
         }
 
         public override void OnKill()
@@ -585,11 +588,6 @@ namespace tsorcRevamp.NPCs.Bosses
             for (int num36 = 0; num36 < 70; num36++)
             {
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 130, Main.rand.Next(-50, 50), Main.rand.Next(-40, 40), 100, Color.Orange, 3f);
-            }
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CrestOfFire>(), 2);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.CobaltDrill, 1, false, -1);
             }
         }
     }

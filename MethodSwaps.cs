@@ -131,7 +131,7 @@ namespace tsorcRevamp
         {
             if (self.magicCuffs && self.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                int ManaGain = info.SourceDamage / 6 * (self.statManaMax2 / 150);
+                int ManaGain = info.SourceDamage / 7;
                 self.statMana += ManaGain;
                 if (self.statMana > self.statManaMax2)
                 {
@@ -145,7 +145,7 @@ namespace tsorcRevamp
 
         private static Item On_Player_PickupItem(On_Player.orig_PickupItem orig, Player self, int playerIndex, int worldItemArrayIndex, Item itemToPickUp)
         {
-            if (itemToPickUp.type == ItemID.Star || itemToPickUp.type == ItemID.SugarPlum || itemToPickUp.type == ItemID.SoulCake && self.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (itemToPickUp.type == ItemID.Star || itemToPickUp.type == ItemID.SugarPlum || itemToPickUp.type == ItemID.SoulCake || itemToPickUp.type == ItemID.ManaCloakStar && self.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 SoundEngine.PlaySound(SoundID.Item7, new Vector2((int)self.position.X, (int)self.position.Y));
                 self.statMana += self.statManaMax2 / 25;

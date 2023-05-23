@@ -18,7 +18,11 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.accessory = true;
             }
-
+            if (item.type == ItemID.MoltenPickaxe)
+            {
+                item.useTime = 15;
+                item.useAnimation = 15;
+            }
         }
         public override void GrabRange(Item item, Player player, ref int grabRange)
         {

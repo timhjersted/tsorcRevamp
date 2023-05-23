@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Armors.Melee
+namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Body)]
     public class ShadowCloakPlateMail : ModItem
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.Generic) += 0.08f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -31,11 +31,9 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.lifeRegen += 2;
-
-            if (player.statLife <= (player.statLifeMax2 / 4))
+            if (player.statLife <= (player.statLifeMax2 / 2))
             {
-                player.lifeRegen += 3;
+                player.panic = true;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 245, Color.Violet, 2.0f);
                 Main.dust[dust].noGravity = true;
@@ -56,7 +54,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.ShadowScalemail, 1);
+            recipe.AddIngredient(ItemID.ShadowScalemail);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
             recipe.AddTile(TileID.DemonAltar);
             
