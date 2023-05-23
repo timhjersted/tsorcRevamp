@@ -1,14 +1,19 @@
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Summon
 {
     public class ShamanEmblem : ModItem
     {
+        public static float SummonDamage = 12;
+        public static int MaximumMinionIncrease = 1;
+        public static int MaximumTurretIncrease = 1;
+
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonDamage, MaximumMinionIncrease, MaximumTurretIncrease);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("+12% minion damage, +1 minion and turret slot");
         }
 
         public override void SetDefaults()
@@ -34,9 +39,9 @@ namespace tsorcRevamp.Items.Accessories.Summon
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.12f;
-            player.maxMinions += 1;
-            player.maxTurrets += 1;
+            player.GetDamage(DamageClass.Summon) += SummonDamage / 100f;
+            player.maxMinions += MaximumMinionIncrease;
+            player.maxTurrets += MaximumTurretIncrease;
         }
     }
 }

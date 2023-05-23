@@ -618,10 +618,11 @@ Mods: {
 
 			LightCloak: {
 				DisplayName: Light Cloak
-				Tooltip:	'''
-							Light Cloak grants 3 increased life regeneration
-							When life falls below 40%, increases life regeneration by 11 total
-							'''
+				Tooltip:
+					'''
+					Light Cloak grants 3 increased life regeneration
+					When life falls below 40%, increases life regeneration by 11 total
+					'''
 			}
 
 			ManaShield: {
@@ -1285,7 +1286,12 @@ Mods: {
 
 			ShamanEmblem: {
 				DisplayName: Shaman Emblem
-				Tooltip: +12% minion damage, +1 minion and turret slot
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					{$CommonItemTooltip.IncreasesMaxSentriesBy@2}
+					'''
 			}
 
 			BetterGodmode: {
@@ -1504,10 +1510,11 @@ Mods: {
 
 			DragoonHelmet: {
 				DisplayName: Dragoon Helmet
-				Tooltip:	'''
-							+120 Mana, reduces mana costs by 14%
-							Increases mana regeneration by 10
-							'''
+				Tooltip:
+					'''
+					+120 Mana, reduces mana costs by 14%
+					Increases mana regeneration by 10
+					'''
 			}
 
 			DragoonHelmet2: {
@@ -6166,26 +6173,33 @@ Mods: {
 
 			PortlyPlateHelmet: {
 				DisplayName: Portly Plate Helmet
-				Tooltip:	'''
-							Increases melee critical strike chance by 5%
-							'''
+				Tooltip: Increases melee critical strike chance by 5%
+
+				PortlyPlateChestplate: {
+					DisplayName: Portly Plate Chestplate
+					Tooltip:
+						'''
+						Increases melee damage by 10%
+						Set Bonus: Increases life regenaration by 2
+						Grants knockbakc immunity
+						When life falls below 25% of it's maximum, gain another 3 regen
+						'''
+				}
+
+				PortlyPlateGreaves: {
+					DisplayName: Portly Plate Greaves
+					Tooltip: Increases melee speed by 27%
+				}
+			}
 
 			PortlyPlateChestplate: {
 				DisplayName: Portly Plate Chestplate
-				Tooltip:	'''
-							Increases melee damage by 10%
-							Set Bonus: Increases life regenaration by 2
-							Grants knockbakc immunity
-							When life falls below 25% of it's maximum, gain another 3 regen
-							'''
+				Tooltip: ""
 			}
 
 			PortlyPlateGreaves: {
 				DisplayName: Portly Plate Greaves
-				Tooltip:	'''
-							Increases melee speed by 27%
-							'''
-			}
+				Tooltip: ""
 			}
 		}
 

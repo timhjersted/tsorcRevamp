@@ -6148,6 +6148,27 @@ Mods: {
 				// Tooltip: ""
 			}
 
+			PortlyPlateHelmet: {
+				// DisplayName: Portly Plate Helmet
+				// Tooltip: Increases melee critical strike chance by 5%
+
+				PortlyPlateChestplate: {
+					// DisplayName: Portly Plate Chestplate
+					/* Tooltip:
+						'''
+						Increases melee damage by 10%
+						Set Bonus: Increases life regenaration by 2
+						Grants knockbakc immunity
+						When life falls below 25% of it's maximum, gain another 3 regen
+						''' */
+				}
+
+				PortlyPlateGreaves: {
+					// DisplayName: Portly Plate Greaves
+					// Tooltip: Increases melee speed by 27%
+				}
+			}
+
 			PortlyPlateChestplate: {
 				// DisplayName: Portly Plate Chestplate
 				// Tooltip: ""
@@ -6155,11 +6176,6 @@ Mods: {
 
 			PortlyPlateGreaves: {
 				// DisplayName: Portly Plate Greaves
-				// Tooltip: ""
-			}
-
-			PortlyPlateHelmet: {
-				// DisplayName: Portly Plate Helmet
 				// Tooltip: ""
 			}
 		}
