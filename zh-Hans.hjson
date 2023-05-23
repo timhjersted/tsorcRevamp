@@ -6132,6 +6132,21 @@ Mods: {
 				// DisplayName: JOI3 Headgear
 				// Tooltip: Developer Set for JOI3
 			}
+
+			CatarinaChestplate: {
+				// DisplayName: Catarina Chestplate
+				// Tooltip: ""
+			}
+
+			CatarinaGreaves: {
+				// DisplayName: Catarina Greaves
+				// Tooltip: ""
+			}
+
+			CatarinaHelmet: {
+				// DisplayName: Catarina Helmet
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -7507,17 +7522,217 @@ Mods: {
 			ZombieWormHead.DisplayName: Parasytic Worm
 			ZombieWormTail.DisplayName: Parasytic Worm
 			Chicken.DisplayName: Chicken
-			Dwarf.DisplayName: Dwarf
-			DwarvenGuard.DisplayName: Dwarven Guard
-			EmeraldHerald.DisplayName: Emerald Herald
-			FreedFairy.DisplayName: Freed Fairy
+
+			Dwarf: {
+				DisplayName: Dwarf
+
+				TownNPCMood: {
+					// Content: I am content.
+					// NoHome: I hate not having a home.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LoveBiome: I love {BiomeName}.
+					// LikeBiome: I like {BiomeName}.
+					// DislikeBiome: I dislike {BiomeName}.
+					// HateBiome: I hate {BiomeName}.
+					// LoveNPC: I love {NPCName}.
+					// LikeNPC: I like {NPCName}.
+					// DislikeNPC: I dislike {NPCName}.
+					// HateNPC: I hate {NPCName}.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+			}
+
+			DwarvenGuard: {
+				DisplayName: Dwarven Guard
+
+				TownNPCMood: {
+					// Content: I am content.
+					// NoHome: I hate not having a home.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LoveBiome: I love {BiomeName}.
+					// LikeBiome: I like {BiomeName}.
+					// DislikeBiome: I dislike {BiomeName}.
+					// HateBiome: I hate {BiomeName}.
+					// LoveNPC: I love {NPCName}.
+					// LikeNPC: I like {NPCName}.
+					// DislikeNPC: I dislike {NPCName}.
+					// HateNPC: I hate {NPCName}.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+			}
+
+			EmeraldHerald: {
+				DisplayName: Emerald Herald
+
+				TownNPCMood: {
+					// Content: I am content.
+					// NoHome: I hate not having a home.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LoveBiome: I love {BiomeName}.
+					// LikeBiome: I like {BiomeName}.
+					// DislikeBiome: I dislike {BiomeName}.
+					// HateBiome: I hate {BiomeName}.
+					// LoveNPC: I love {NPCName}.
+					// LikeNPC: I like {NPCName}.
+					// DislikeNPC: I dislike {NPCName}.
+					// HateNPC: I hate {NPCName}.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+			}
+
+			FreedFairy: {
+				DisplayName: Freed Fairy
+
+				TownNPCMood: {
+					// Content: I am content.
+					// NoHome: I hate not having a home.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LoveBiome: I love {BiomeName}.
+					// LikeBiome: I like {BiomeName}.
+					// DislikeBiome: I dislike {BiomeName}.
+					// HateBiome: I hate {BiomeName}.
+					// LoveNPC: I love {NPCName}.
+					// LikeNPC: I like {NPCName}.
+					// DislikeNPC: I dislike {NPCName}.
+					// HateNPC: I hate {NPCName}.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+			}
+
 			LivingGlowshroom.DisplayName: Living Glowshroom
 			LivingShroom.DisplayName: Living Shroom
-			ShamanElder.DisplayName: Shaman Elder
-			SolaireOfAstora.DisplayName: Warrior of Sunlight
-			TibianArcher.DisplayName: Tibian Archer
-			TibianMage.DisplayName: Tibian Mage
-			UndeadMerchant.DisplayName: Undead Merchant
+
+			ShamanElder: {
+				DisplayName: Shaman Elder
+
+				TownNPCMood: {
+					// Content: I am content.
+					// NoHome: I hate not having a home.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LoveBiome: I love {BiomeName}.
+					// LikeBiome: I like {BiomeName}.
+					// DislikeBiome: I dislike {BiomeName}.
+					// HateBiome: I hate {BiomeName}.
+					// LoveNPC: I love {NPCName}.
+					// LikeNPC: I like {NPCName}.
+					// DislikeNPC: I dislike {NPCName}.
+					// HateNPC: I hate {NPCName}.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+			}
+
+			SolaireOfAstora: {
+				DisplayName: Warrior of Sunlight
+
+				TownNPCMood: {
+					// Content: I am content.
+					// NoHome: I hate not having a home.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LoveBiome: I love {BiomeName}.
+					// LikeBiome: I like {BiomeName}.
+					// DislikeBiome: I dislike {BiomeName}.
+					// HateBiome: I hate {BiomeName}.
+					// LoveNPC: I love {NPCName}.
+					// LikeNPC: I like {NPCName}.
+					// DislikeNPC: I dislike {NPCName}.
+					// HateNPC: I hate {NPCName}.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+			}
+
+			TibianArcher: {
+				DisplayName: Tibian Archer
+
+				TownNPCMood: {
+					// Content: I am content.
+					// NoHome: I hate not having a home.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LoveBiome: I love {BiomeName}.
+					// LikeBiome: I like {BiomeName}.
+					// DislikeBiome: I dislike {BiomeName}.
+					// HateBiome: I hate {BiomeName}.
+					// LoveNPC: I love {NPCName}.
+					// LikeNPC: I like {NPCName}.
+					// DislikeNPC: I dislike {NPCName}.
+					// HateNPC: I hate {NPCName}.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+			}
+
+			TibianMage: {
+				DisplayName: Tibian Mage
+
+				TownNPCMood: {
+					// Content: I am content.
+					// NoHome: I hate not having a home.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LoveBiome: I love {BiomeName}.
+					// LikeBiome: I like {BiomeName}.
+					// DislikeBiome: I dislike {BiomeName}.
+					// HateBiome: I hate {BiomeName}.
+					// LoveNPC: I love {NPCName}.
+					// LikeNPC: I like {NPCName}.
+					// DislikeNPC: I dislike {NPCName}.
+					// HateNPC: I hate {NPCName}.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+			}
+
+			UndeadMerchant: {
+				DisplayName: Undead Merchant
+
+				TownNPCMood: {
+					// Content: I am content.
+					// NoHome: I hate not having a home.
+					// FarFromHome: I am too far from home.
+					// LoveSpace: I love having so much space.
+					// DislikeCrowded: I dislike how crowded I am.
+					// HateCrowded: I hate how crowded I am.
+					// LoveBiome: I love {BiomeName}.
+					// LikeBiome: I like {BiomeName}.
+					// DislikeBiome: I dislike {BiomeName}.
+					// HateBiome: I hate {BiomeName}.
+					// LoveNPC: I love {NPCName}.
+					// LikeNPC: I like {NPCName}.
+					// DislikeNPC: I dislike {NPCName}.
+					// HateNPC: I hate {NPCName}.
+					// LikeNPC_Princess: I like {NPCName}.
+					// Princess_LovesNPC: I like {NPCName}.
+				}
+			}
+
 			AbyssPortal.DisplayName: Abyssal Fissure
 			AttraidiesApparition.DisplayName: Attraidies
 			Bonfirefly.DisplayName: Bonfirefly

@@ -809,53 +809,55 @@ namespace tsorcRevamp
                 return;
             }
 
-
-            switch (modPlayer.CurrentAuraState)
-            {
-                case tsorcAuraState.Cataluminance:
-                    {
-                        DrawCatAura(drawInfo);
-                        break;
-                    }
-                case tsorcAuraState.Poison:
-                    {
-                        DrawAttraidiesAura(drawInfo, Color.GreenYellow);
-                        break;
-                    }
-                case tsorcAuraState.Retinazer:
-                    {
-                        DrawRetAura(drawInfo);
-                        break;
-                    }
-                case tsorcAuraState.Spazmatism:
-                    {
-                        DrawSpazAura(drawInfo);
-                        break;
-                    }
-                case tsorcAuraState.Nebula:
-                    {
-                        DrawAttraidiesAura(drawInfo, Color.Purple * 3);
-                        break;
-                    }
-                case tsorcAuraState.Darkness:
-                    {
-                        DrawAttraidiesAura(drawInfo, Color.Purple * 3);
-                        break;
-                    }
-                case tsorcAuraState.Light:
-                    {
-                        DrawAttraidiesAura(drawInfo, Color.White);
-                        break;
-                    }
-                case tsorcAuraState.TripleThreat:
-                    {
-                        DrawTripleThreatAura(drawInfo);
-                        break;
-                    }
-            }
-
             if (modPlayer.CurrentAuraState != tsorcAuraState.None)
             {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+                switch (modPlayer.CurrentAuraState)
+                {
+                    case tsorcAuraState.Cataluminance:
+                        {
+                            DrawCatAura(drawInfo);
+                            break;
+                        }
+                    case tsorcAuraState.Poison:
+                        {
+                            DrawAttraidiesAura(drawInfo, Color.GreenYellow);
+                            break;
+                        }
+                    case tsorcAuraState.Retinazer:
+                        {
+                            DrawRetAura(drawInfo);
+                            break;
+                        }
+                    case tsorcAuraState.Spazmatism:
+                        {
+                            DrawSpazAura(drawInfo);
+                            break;
+                        }
+                    case tsorcAuraState.Nebula:
+                        {
+                            DrawAttraidiesAura(drawInfo, Color.Purple * 3);
+                            break;
+                        }
+                    case tsorcAuraState.Darkness:
+                        {
+                            DrawAttraidiesAura(drawInfo, Color.Purple * 3);
+                            break;
+                        }
+                    case tsorcAuraState.Light:
+                        {
+                            DrawAttraidiesAura(drawInfo, Color.White);
+                            break;
+                        }
+                    case tsorcAuraState.TripleThreat:
+                        {
+                            DrawTripleThreatAura(drawInfo);
+                            break;
+                        }
+                }
+
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             }
@@ -865,8 +867,6 @@ namespace tsorcRevamp
         void DrawCatAura(PlayerDrawSet drawInfo)
         {
             tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
 
             Lighting.AddLight((int)drawInfo.drawPlayer.Center.X / 16, (int)drawInfo.drawPlayer.Center.Y / 16, 0f, 0.4f, 0.8f);
@@ -924,9 +924,6 @@ namespace tsorcRevamp
         void DrawAttraidiesAura(PlayerDrawSet drawInfo, Color auraColor)
         {
 
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
             tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
             Lighting.AddLight(drawInfo.drawPlayer.Center, auraColor.ToVector3());
             Rectangle baseRectangle = new Rectangle(0, 0, (int)modPlayer.effectRadius * 2, (int)modPlayer.effectRadius * 2);
@@ -964,9 +961,6 @@ namespace tsorcRevamp
         {
             tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
             Lighting.AddLight((int)drawInfo.drawPlayer.Center.X / 16, (int)drawInfo.drawPlayer.Center.Y / 16, 1f, 0.4f, 0.4f);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //Apply the shader, caching it as well
             if (retEffect == null)
@@ -1054,9 +1048,6 @@ namespace tsorcRevamp
             tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.effectRadius = 200;
             Lighting.AddLight((int)drawInfo.drawPlayer.Center.X / 16, (int)drawInfo.drawPlayer.Center.Y / 16, 0f, 0.4f, 0.8f);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             
             if (drawInfo.drawPlayer.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Spears.FetidExhaust>()] != 0)
             {
@@ -1102,8 +1093,6 @@ namespace tsorcRevamp
 
         void DrawTripleThreatAura(PlayerDrawSet drawInfo)
         {
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             Lighting.AddLight(drawInfo.drawPlayer.Center, Color.White.ToVector3());
 
             Vector3 spazColorPre = Main.rgbToHsl(Color.GreenYellow);
