@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors.Melee
 {
     [AutoloadEquip(EquipType.Body)]
-    public class CatarinaChestplate : ModItem
+    public class PortlyPlateChestplate : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return head.type == ModContent.ItemType<CatarinaHelmet>() && legs.type == ModContent.ItemType<CatarinaGreaves>();
+            return head.type == ModContent.ItemType<PortlyPlateHelmet>() && legs.type == ModContent.ItemType<PortlyPlateGreaves>();
         }
         public override void UpdateArmorSet(Player player)
         {

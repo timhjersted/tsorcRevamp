@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors.Melee
 {
     [AutoloadEquip(EquipType.Head)]
-    public class CatarinaHelmet : ModItem
+    public class PortlyPlateHelmet : ModItem
     {
         public override void SetStaticDefaults()
         {

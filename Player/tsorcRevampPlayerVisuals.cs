@@ -808,59 +808,57 @@ namespace tsorcRevamp
             {
                 return;
             }
+            
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            if (modPlayer.CurrentAuraState != tsorcAuraState.None)
+            //Draw the aura and apply the shader
+            switch (modPlayer.CurrentAuraState)
             {
-                Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-                switch (modPlayer.CurrentAuraState)
-                {
-                    case tsorcAuraState.Cataluminance:
-                        {
-                            DrawCatAura(drawInfo);
-                            break;
-                        }
-                    case tsorcAuraState.Poison:
-                        {
-                            DrawAttraidiesAura(drawInfo, Color.GreenYellow);
-                            break;
-                        }
-                    case tsorcAuraState.Retinazer:
-                        {
-                            DrawRetAura(drawInfo);
-                            break;
-                        }
-                    case tsorcAuraState.Spazmatism:
-                        {
-                            DrawSpazAura(drawInfo);
-                            break;
-                        }
-                    case tsorcAuraState.Nebula:
-                        {
-                            DrawAttraidiesAura(drawInfo, Color.Purple * 3);
-                            break;
-                        }
-                    case tsorcAuraState.Darkness:
-                        {
-                            DrawAttraidiesAura(drawInfo, Color.Purple * 3);
-                            break;
-                        }
-                    case tsorcAuraState.Light:
-                        {
-                            DrawAttraidiesAura(drawInfo, Color.White);
-                            break;
-                        }
-                    case tsorcAuraState.TripleThreat:
-                        {
-                            DrawTripleThreatAura(drawInfo);
-                            break;
-                        }
-                }
-
-                Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+                case tsorcAuraState.Cataluminance:
+                    {
+                        DrawCatAura(drawInfo);
+                        break;
+                    }
+                case tsorcAuraState.Poison:
+                    {
+                        DrawAttraidiesAura(drawInfo, Color.GreenYellow);
+                        break;
+                    }
+                case tsorcAuraState.Retinazer:
+                    {
+                        DrawRetAura(drawInfo);
+                        break;
+                    }
+                case tsorcAuraState.Spazmatism:
+                    {
+                        DrawSpazAura(drawInfo);
+                        break;
+                    }
+                case tsorcAuraState.Nebula:
+                    {
+                        DrawAttraidiesAura(drawInfo, Color.Purple * 3);
+                        break;
+                    }
+                case tsorcAuraState.Darkness:
+                    {
+                        DrawAttraidiesAura(drawInfo, Color.Purple * 3);
+                        break;
+                    }
+                case tsorcAuraState.Light:
+                    {
+                        DrawAttraidiesAura(drawInfo, Color.White);
+                        break;
+                    }
+                case tsorcAuraState.TripleThreat:
+                    {
+                        DrawTripleThreatAura(drawInfo);
+                        break;
+                    }
             }
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
         }
 
         public static Effect catEffect;
