@@ -6149,6 +6149,21 @@ Mods: {
 				DisplayName: Catarina Helmet
 				Tooltip: ""
 			}
+
+			PortlyPlateChestplate: {
+				DisplayName: Portly Plate Chestplate
+				Tooltip: ""
+			}
+
+			PortlyPlateGreaves: {
+				DisplayName: Portly Plate Greaves
+				Tooltip: ""
+			}
+
+			PortlyPlateHelmet: {
+				DisplayName: Portly Plate Helmet
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {

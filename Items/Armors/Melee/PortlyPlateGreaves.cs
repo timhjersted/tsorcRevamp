@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors.Melee
 {
     [AutoloadEquip(EquipType.Legs)]
-    public class CatarinaGreaves : ModItem
+    public class PortlyPlateGreaves : ModItem
     {
         public override void SetStaticDefaults()
         {
