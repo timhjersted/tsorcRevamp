@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,17 +11,33 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class Abysswalker : ModNPC
     {
+        int poisonBallDamage = 27;
+        int stormBallDamage = 30;
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 15;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused,
+                    BuffID.OnFire,
+                    BuffID.Poisoned,
+                    BuffID.Venom
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.npcSlots = 5;
-            Main.npcFrameCount[NPC.type] = 15;
             AnimationType = 21;
             NPC.knockBackResist = 0;
             NPC.aiStyle = 3;
             NPC.damage = 0;
             NPC.defense = 72;
             NPC.height = 40;
-            NPC.lifeMax = 5100;
+            NPC.lifeMax = 2550;
             NPC.scale = 1.2f;
             NPC.HitSound = SoundID.NPCHit29;
             NPC.DeathSound = SoundID.NPCDeath31;
@@ -28,27 +45,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.width = 18;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AbysswalkerBanner>();
-
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
         }
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Dworc Abysswalker");
-        }
-
-        int poisonBallDamage = 27;
-        int stormBallDamage = 30;
-
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            poisonBallDamage = (int)(poisonBallDamage * tsorcRevampWorld.SubtleSHMScale);
-            stormBallDamage = (int)(stormBallDamage * tsorcRevampWorld.SubtleSHMScale);
+            poisonBallDamage = (int)(poisonBallDamage * tsorcRevampWorld.SHMScale);
+            stormBallDamage = (int)(stormBallDamage * tsorcRevampWorld.SHMScale);
         }
-
 
         //Spawns in the Jungle Underground and in the Cavern.
         #region Spawn
@@ -169,7 +171,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.FlameOfTheAbyss>(), 10, 4, 7));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FlameOfTheAbyss>(), 10, 4, 7));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>(), 5));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 4));
         }

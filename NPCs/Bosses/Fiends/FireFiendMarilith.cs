@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
@@ -10,6 +11,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Items.Weapons.Melee;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
 
 namespace tsorcRevamp.NPCs.Bosses.Fiends
@@ -17,16 +23,29 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
     [AutoloadBossHead]
     class FireFiendMarilith : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 8;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused,
+                    BuffID.OnFire,
+                    BuffID.OnFire3
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.scale = 1;
             NPC.npcSlots = 10;
             NPC.aiStyle = -1;
-            Main.npcFrameCount[NPC.type] = 8;
             NPC.width = 120;
             NPC.height = 160;
-            NPC.damage = 60;
-            NPC.defense = 38;
+            NPC.damage = 39;
+            NPC.defense = 50;
             AnimationType = -1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
@@ -40,30 +59,12 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.lavaImmune = true;
             NPC.boss = true;
             NPC.value = 600000;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
             despawnHandler = new NPCDespawnHandler("Fire Fiend Marilith descends to the underworld...", Color.OrangeRed, DustID.FireworkFountain_Red);
         }
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Fire Fiend Marilith");
-        }
-
         int holdBallDamage = 50;
         int fireBallDamage = 45;
         int lightningDamage = 55;
         int fireStormDamage = 50;
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = (int)(NPC.damage * 1.3 / 2);
-            NPC.defense = NPC.defense += 12;
-        }
-
-
         //If this is set to anything but -1, the boss will *only* use that attack ID
         int testAttack = -1;
         MarilithMove CurrentMove
@@ -599,26 +600,19 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.MarilithBag>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AdventureModeRule, ItemID.LargeSapphire));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<FairyInABottle>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ForgottenRisingSun>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BarrowBlade>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Ice3Tome>()));
+            npcLoot.Add(notExpertCondition);
         }
         public override void OnKill()
-        {            
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 1);
-                if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.LargeSapphire);
-                }
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPC.type)))
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
-                }
-            }            
-
+        {           
             if(Main.netMode != NetmodeID.MultiplayerClient)
             {
                 NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<MarilithDeath>(), ai0: NPC.velocity.X, ai1: NPC.velocity.Y);

@@ -9,17 +9,20 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Bosses.Fiends
 {
     class MarilithIntro : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 8;
+        }
         public override void SetDefaults()
         {
-            NPC.scale = 1;
             NPC.npcSlots = 10;
             NPC.aiStyle = -1;
-            Main.npcFrameCount[NPC.type] = 8;
             NPC.width = 40;
             NPC.height = 40;
             NPC.damage = 60;
@@ -40,10 +43,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.behindTiles = true;
         }
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("?????");
-        }
 
         float progress = 0;
         bool tripped = false;

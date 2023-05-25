@@ -4,6 +4,8 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -13,11 +15,19 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 15;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
         public override void SetDefaults()
         {
             NPC.knockBackResist = 0;
-            NPC.damage = 180;
+            NPC.damage = 90;
             NPC.defense = 60;
             NPC.height = 40;
             NPC.width = 30;
@@ -43,36 +53,26 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public int iceStormDamage = 30;
         //This attack does damage equal to 25% of your max health no matter what, so its damage stat is irrelevant and only listed for readability.
         public int gravityBallDamage = 0;
-
-        bool defenseBroken = false;
-
-
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.damage = (int)(NPC.damage / 2);
-            holdBallDamage = (int)(holdBallDamage * tsorcRevampWorld.SubtleSHMScale);
-            energyBallDamage = (int)(energyBallDamage * tsorcRevampWorld.SubtleSHMScale);
-            lightPillarDamage = (int)(lightPillarDamage * tsorcRevampWorld.SubtleSHMScale);
-            blackBreathDamage = (int)(blackBreathDamage * tsorcRevampWorld.SubtleSHMScale);
-            lightning3Damage = (int)(lightning3Damage * tsorcRevampWorld.SubtleSHMScale);
-            ice3Damage = (int)(ice3Damage * tsorcRevampWorld.SubtleSHMScale);
-            phantomSeekerDamage = (int)(phantomSeekerDamage * tsorcRevampWorld.SubtleSHMScale);
-            lightning4Damage = (int)(lightning4Damage * tsorcRevampWorld.SubtleSHMScale);
-            shardsDamage = (int)(shardsDamage * tsorcRevampWorld.SubtleSHMScale);
-            iceStormDamage = (int)(iceStormDamage * tsorcRevampWorld.SubtleSHMScale);
-            //gravityBallDamage = (int)(gravityBallDamage * tsorcRevampWorld.SubtleSHMScale);
+            holdBallDamage = (int)(holdBallDamage * tsorcRevampWorld.SHMScale);
+            energyBallDamage = (int)(energyBallDamage * tsorcRevampWorld.SHMScale);
+            lightPillarDamage = (int)(lightPillarDamage * tsorcRevampWorld.SHMScale);
+            blackBreathDamage = (int)(blackBreathDamage * tsorcRevampWorld.SHMScale);
+            lightning3Damage = (int)(lightning3Damage * tsorcRevampWorld.SHMScale);
+            ice3Damage = (int)(ice3Damage * tsorcRevampWorld.SHMScale);
+            phantomSeekerDamage = (int)(phantomSeekerDamage * tsorcRevampWorld.SHMScale);
+            lightning4Damage = (int)(lightning4Damage * tsorcRevampWorld.SHMScale);
+            shardsDamage = (int)(shardsDamage * tsorcRevampWorld.SHMScale);
+            iceStormDamage = (int)(iceStormDamage * tsorcRevampWorld.SHMScale);
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-
-            int expertScale = 1;
-            if (Main.expertMode) expertScale = 2;
-
             if (Main.rand.NextBool(4))
             {
-                target.AddBuff(BuffID.BrokenArmor, 180 / expertScale, false);
-                target.AddBuff(BuffID.Poisoned, 3600 / expertScale, false);
+                target.AddBuff(BuffID.BrokenArmor, 3 * 60, false);
+                target.AddBuff(BuffID.Poisoned, 60 * 60, false);
                 //target.AddBuff(BuffID.Cursed, 300 / expertScale, false);
                 //target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
             }
@@ -350,7 +350,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                     if ((customspawn2 < 2) && Main.rand.NextBool(950))
                     {
-                        int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.RedKnight>(), 0); // Spawns Red Knight
+                        int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<RedKnight>(), 0); // Spawns Red Knight
                         Main.npc[Spawned].velocity.Y = -8;
                         Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
                         NPC.ai[0] = 20 - Main.rand.Next(80);
@@ -738,9 +738,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #endregion
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.GuardianSoul>()));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.BossItems.DarkMirror>()));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.DarkSoul>(), 1, 5000, 5000));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.GuardianSoul>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BossItems.DarkMirror>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.DarkSoul>(), 1, 5000, 5000));
         }
 
         public override void FindFrame(int currentFrame)

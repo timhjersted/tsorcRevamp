@@ -3,26 +3,30 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class TaurusKnight : ModNPC
     {
+        int breathDamage = 20;
+        int tridentDamage = 25;
+        int crystalFireDamage = 50;
+        public int disrupterDamage = 65;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Taurus Knight");
+            Main.npcFrameCount[NPC.type] = 16;
         }
         public override void SetDefaults()
         {
             NPC.npcSlots = 5;
-            Main.npcFrameCount[NPC.type] = 16;
             AnimationType = 28;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.damage = 145;
+            NPC.damage = 73;
             NPC.defense = 50;
             NPC.timeLeft = 22000;
-            NPC.lifeMax = 14200;
+            NPC.lifeMax = 7100;
             NPC.scale = 1.1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -31,26 +35,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TaurusKnightBanner>();
-
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
         }
-
-        int breathDamage = 20;
-        int tridentDamage = 25;
-        int crystalFireDamage = 50;
-
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            breathDamage = (int)(breathDamage * tsorcRevampWorld.SubtleSHMScale);
-            tridentDamage = (int)(tridentDamage * tsorcRevampWorld.SubtleSHMScale);
-            crystalFireDamage = (int)(crystalFireDamage * tsorcRevampWorld.SubtleSHMScale);
+            breathDamage = (int)(breathDamage * tsorcRevampWorld.SHMScale);
+            tridentDamage = (int)(tridentDamage * tsorcRevampWorld.SHMScale);
+            crystalFireDamage = (int)(crystalFireDamage * tsorcRevampWorld.SHMScale);
+            disrupterDamage = (int)(disrupterDamage * tsorcRevampWorld.SHMScale);
         }
 
-        public int disrupterDamage = 65;
         int chargeDamage = 0;
         bool chargeDamageFlag = false;
 
@@ -149,7 +142,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     projectileTimer = 0;
                 }
 
-                if (NPC.life < NPC.lifeMax * 0.5f)
+                if (NPC.life < NPC.lifeMax / 2)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -262,9 +255,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 1, 1, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 3, 6));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 1, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 3, 6));
         }
     }
 }

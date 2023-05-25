@@ -20,6 +20,7 @@ using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Throwing;
+using tsorcRevamp.NPCs.Bosses.Fiends;
 using tsorcRevamp.Projectiles.Summon.Sentry;
 using tsorcRevamp.Projectiles.Summon.Whips;
 
@@ -490,9 +491,13 @@ namespace tsorcRevamp.NPCs
                             NetMessage.SendData(MessageID.WorldData); //Slain only exists on the server. This tells the server to run NetSend(), which syncs this data with clients
                         }
 
-                        if (Main.expertMode)
+                        if (Main.expertMode && npc.type != ModContent.NPCType<LichKingDisciple>() && npc.type != ModContent.NPCType<LichKingSerpentHead>())
                         {
                             DarkSoulQuantity = 0;
+                        }
+                        if (npc.type == ModContent.NPCType<LichKingDisciple>() && Main.expertMode)
+                        {
+                            DarkSoulQuantity = (int)((float)DarkSoulQuantity * 2.5f);
                         }
                     }
                 }

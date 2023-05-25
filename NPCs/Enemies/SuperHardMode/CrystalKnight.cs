@@ -1,16 +1,31 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class CrystalKnight : ModNPC
     {
+        int crystalBoltDamage = 30;
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 20;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Frostburn, 
+                    BuffID.Frostburn2
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.npcSlots = 3;
-            Main.npcFrameCount[NPC.type] = 20;
             AnimationType = 110;
             NPC.width = 18;
             NPC.height = 48;
@@ -20,25 +35,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
-            NPC.lifeMax = 3500;
+            NPC.lifeMax = 1750;
             NPC.scale = 0.9f;
             NPC.knockBackResist = 0;
             NPC.value = 7230;
-
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            //NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
-
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CrystalKnightBanner>();
         }
-
-        int crystalBoltDamage = 30;
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            crystalBoltDamage = (int)(crystalBoltDamage * tsorcRevampWorld.SubtleSHMScale);
+            crystalBoltDamage = (int)(crystalBoltDamage * tsorcRevampWorld.SHMScale);
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -127,8 +133,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.BlueTitanite>(), 1, 3, 5));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BlueTitanite>(), 1, 3, 5));
         }
 
     }

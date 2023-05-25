@@ -6,6 +6,11 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Accessories;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
 {
@@ -16,7 +21,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         bool breath = false;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Serpent of the Abyss");
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] 
+                {
+                    BuffID.Confused,
+                    BuffID.OnFire,
+                    BuffID.OnFire3
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
         public override void SetDefaults()
         {
@@ -27,10 +41,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
             NPC.aiStyle = 6;
             NPC.defense = 200;
             NPC.timeLeft = 22500;
-            NPC.damage = 170;
+            NPC.damage = 85;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.lifeMax = 20000;
+            NPC.lifeMax = 10000;
             NPC.knockBackResist = 0;
             NPC.lavaImmune = true;
             NPC.scale = 1;
@@ -39,10 +53,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
             NPC.behindTiles = true;
             NPC.value = 25500;
             Banner = NPC.type;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            //NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
             BannerItem = ModContent.ItemType<Banners.SerpentOfTheAbyssBanner>();
 
             bodyTypes = new int[33];
@@ -59,11 +69,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            cursedBreathDamage = (int)(cursedBreathDamage * tsorcRevampWorld.SubtleSHMScale);
-            poisonFlamesDamage = (int)(poisonFlamesDamage * tsorcRevampWorld.SubtleSHMScale);
-            dragonMeteorDamage = (int)(dragonMeteorDamage * tsorcRevampWorld.SubtleSHMScale);
+            cursedBreathDamage = (int)(cursedBreathDamage * tsorcRevampWorld.SHMScale);
+            poisonFlamesDamage = (int)(poisonFlamesDamage * tsorcRevampWorld.SHMScale);
+            dragonMeteorDamage = (int)(dragonMeteorDamage * tsorcRevampWorld.SHMScale);
         }
         int[] bodyTypes;
 
@@ -167,15 +175,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
             }
         }
 
-        public override void OnKill()
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Humanity>(), 3);
-
-            if (Main.rand.NextBool(12))
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Humanity>(), Main.rand.Next(3, 6));
-            }
-
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 3, 6));
         }
 
         public override void HitEffect(NPC.HitInfo hit)
@@ -193,8 +196,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         {
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.CursedInferno, 600);
-                target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 1200);
+                target.AddBuff(BuffID.CursedInferno, 10 * 60);
+                target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 20 * 60);
             }
         }
     }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -17,7 +18,14 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Example Boss");
+            Main.npcFrameCount[NPC.type] = 6;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
@@ -27,7 +35,6 @@ namespace tsorcRevamp.NPCs.Bosses
             base.SetDefaults();
 
             //The rest are unique to this specific boss, and we have to set here:
-            Main.npcFrameCount[NPC.type] = 6;
             NPC.width = 100;
             NPC.height = 100;
             NPC.scale = 2;

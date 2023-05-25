@@ -1,43 +1,44 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class HydrisElemental : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 15;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.CursedInferno,
+                    BuffID.Ichor
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
-
             NPC.npcSlots = 1;
             NPC.width = 18;
             NPC.height = 40;
             AnimationType = 120;
-            Main.npcFrameCount[NPC.type] = 15;
             NPC.knockBackResist = 0.2f;
-
             NPC.aiStyle = 3;
             NPC.timeLeft = 750;
-            NPC.damage = 100;
+            NPC.damage = 50;
             NPC.defense = 42;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 1700;
-            NPC.scale = 1f;
+            NPC.lifeMax = 850;
             NPC.value = 1200;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.HydrisElementalBanner>();
-
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
-        }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
         }
 
         //Spawns in the Underground and Cavern before 3.5/10ths and after 7.5/10ths (Width). Does not Spawn in the Jungle, Meteor, or if there are Town NPCs.
@@ -66,8 +67,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(13, 1800, false); //battle
-                target.AddBuff(33, 1800, false); //weak
+                target.AddBuff(BuffID.Battle, 30 * 60, false); //battle
+                target.AddBuff(BuffID.Weak, 30 * 60, false); //weak
             }
 
         }
@@ -94,8 +95,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 4, 0.2f, 0.2f, 200, default(Color), 2f);
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.DyingWindShard>(), 100, 1, 1, 50));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.DyingWindShard>(), 100, 1, 1, 50));
         }
     }
 }

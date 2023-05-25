@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Enemy.DarkCloud;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {

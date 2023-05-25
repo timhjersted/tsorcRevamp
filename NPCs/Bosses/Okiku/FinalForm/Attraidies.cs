@@ -9,12 +9,32 @@ using Terraria.ModLoader;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
+using tsorcRevamp.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Items;
+using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Items.Weapons.Ranged.Guns;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 {
     [AutoloadBossHead]
     class Attraidies : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 7;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/SecondForm/DarkDragonMask";
         public override void SetDefaults()
         {
@@ -36,10 +56,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             NPC.value = 600000;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            Main.npcFrameCount[NPC.type] = 7;
             despawnHandler = new NPCDespawnHandler("With your death a dark shadow falls over the world...", Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
 
@@ -1280,7 +1296,16 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.AttraidiesBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.AttraidiesBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<TheEnd>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ShatteredReflection>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SeveringDusk>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BloomShards>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<PyroclasticFlow>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulOfAttraidies>(), 1, 10, 17));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HeavenPiercer>()));
+            npcLoot.Add(notExpertCondition);
         }
 
         public override void OnKill()
@@ -1300,23 +1325,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 Dust.NewDust(NPC.Center, 30, 30, 234, vel.X, vel.Y, 240, default, 5f);
                 Main.dust[dust].noGravity = true;
                 Dust.NewDust(NPC.Center, 30, 30, DustID.Torch, vel.X, vel.Y, 200, default, 3f);
-            }
-
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.TheEnd>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Summon.ShatteredReflection>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.SeveringDusk>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BloomShards>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.Guns.PyroclasticFlow>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulOfAttraidies>(), Main.rand.Next(15, 23));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.HeavenPiercer>());
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Attraidies>())) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.EstusFlaskShard>());
-                }
             }
 
             if (!tsorcRevampWorld.SuperHardMode)

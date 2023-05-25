@@ -4,6 +4,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -11,24 +13,31 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Ephemeral Oolacile Demon");
+            Main.npcFrameCount[NPC.type] = 5;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
         public override void SetDefaults()
         {
             NPC.npcSlots = 5;
-            Main.npcFrameCount[NPC.type] = 5;
             AnimationType = 62;
             NPC.width = 70;
             NPC.height = 70;
             NPC.aiStyle = 22;
-            NPC.damage = 125;
+            NPC.damage = 63;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.defense = 70;
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
             NPC.lavaImmune = true;
             NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
-            NPC.lifeMax = 9000;
+            NPC.lifeMax = 4500;
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.2f;
             NPC.noGravity = true;
@@ -37,16 +46,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.OolacileDemonBanner>();
         }
-
         int cursedBreathDamage = 35;
         int bioSpitDamage = 40;
-
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            cursedBreathDamage = (int)(cursedBreathDamage * tsorcRevampWorld.SubtleSHMScale);
-            bioSpitDamage = (int)(bioSpitDamage * tsorcRevampWorld.SubtleSHMScale);
+            cursedBreathDamage = (int)(cursedBreathDamage * tsorcRevampWorld.SHMScale);
+            bioSpitDamage = (int)(bioSpitDamage * tsorcRevampWorld.SHMScale);
         }
 
         //float customAi1;
@@ -498,14 +503,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false); //-20 HP curse
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 600 * 60, false); //-20 HP curse
             }
 
             if (Main.rand.NextBool(4))
             {
 
-                target.AddBuff(ModContent.BuffType<FracturingArmor>(), 3600, false); //armor reduced on hit
-                target.AddBuff(ModContent.BuffType<Chilled>(), 300, false); //chilled
+                target.AddBuff(ModContent.BuffType<FracturingArmor>(), 60 * 60, false); //armor reduced on hit
+                target.AddBuff(ModContent.BuffType<Chilled>(), 5 * 60, false); //chilled
 
             }
 
@@ -578,8 +583,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 1, 2));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 1, 2));
         }
     }
 }

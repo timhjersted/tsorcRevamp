@@ -6,6 +6,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 {
@@ -17,6 +18,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 
         public float TimerAnim;
 
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 4;
+        }
         public override void SetDefaults()
         {
             NPC.alpha = 50;
@@ -32,19 +37,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0f;
-            Main.npcFrameCount[NPC.type] = 4;
             despawnHandler = new NPCDespawnHandler(54);
         }
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Damned Soul");
-        }
 
         public int ObscureShotDamage = 30;
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-        }
 
         public NPC Attraidies
         {

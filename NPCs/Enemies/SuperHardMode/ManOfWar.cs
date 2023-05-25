@@ -3,37 +3,48 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class ManOfWar : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 7;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused,
+                    BuffID.Frozen
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
-            NPC.npcSlots = 1;
             NPC.width = 26;
             NPC.height = 26;
-            Main.npcFrameCount[NPC.type] = 7;
             AnimationType = NPCID.GreenJellyfish;
             NPC.aiStyle = 18;
             NPC.timeLeft = 750;
-            NPC.damage = 120;
+            NPC.damage = 60;
             NPC.defense = 40;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.lifeMax = 2000;
+            NPC.lifeMax = 1000;
             NPC.alpha = 20;
             NPC.scale = .7f;
             NPC.knockBackResist = 0.3f;
             NPC.noGravity = true;
             NPC.value = 1250;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.Frozen] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.ManOfWarBanner>();
             if (Main.hardMode)
             {
-                NPC.lifeMax = 500;
+                NPC.lifeMax = 250;
                 NPC.defense = 30;
                 NPC.value = 550;
             }
@@ -50,12 +61,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<Projectiles.Enemy.JellyfishLightning>(), 30, 1, Main.myPlayer, 0, NPC.whoAmI);
                 }
             }
-        }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -77,8 +82,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.PotionSickness, 3600); //evil! pure evil!
-                target.AddBuff(BuffID.Electrified, 300);
+                target.AddBuff(BuffID.PotionSickness, 60 * 60); //evil! pure evil!
+                target.AddBuff(BuffID.Electrified, 5 * 60);
             }
         }
         public override void HitEffect(NPC.HitInfo hit)

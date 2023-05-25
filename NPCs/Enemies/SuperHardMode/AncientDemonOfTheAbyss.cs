@@ -1,8 +1,10 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -10,19 +12,30 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Ancient Demon of the Abyss");
+            Main.npcFrameCount[NPC.type] = 16;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused,
+                    BuffID.OnFire,
+                    BuffID.Poisoned,
+                    BuffID.CursedInferno,
+                    BuffID.Ichor
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
         {
             NPC.npcSlots = 10;
-            Main.npcFrameCount[NPC.type] = 16;
             AnimationType = 28;
             NPC.height = 120;
             NPC.width = 50;
-            NPC.damage = 220;
+            NPC.damage = 110;
             NPC.defense = 70;
-            NPC.lifeMax = 30000;
+            NPC.lifeMax = 15000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
 
@@ -31,49 +44,29 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AncientDemonOfTheAbyssBanner>();
-
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
             despawnHandler = new NPCDespawnHandler("A demon of the abyss has absorbed you into its flesh ...", Color.Gold, DustID.GoldFlame);
         }
 
         NPCDespawnHandler despawnHandler;
-        int meteorDamage = 31;
-        int cultistFireDamage = 92;
-        int cultistMagicDamage = 289;
-        int cultistLightningDamage = 200;
-        int fireBreathDamage = 151;
-        int lostSoulDamage = 223;
+        int meteorDamage = 16;
+        int cultistFireDamage = 46;
+        int cultistMagicDamage = 145;
+        int cultistLightningDamage = 100;
+        int fireBreathDamage = 76;
+        int lostSoulDamage = 112;
 
 
-        int greatFireballDamage = 266;
-        int blackFireDamage = 147;
-        int greatAttackDamage = 162;
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            meteorDamage = (int)(meteorDamage / 2);
-            cultistFireDamage = (int)(cultistFireDamage / 2);
-            cultistMagicDamage = (int)(cultistMagicDamage / 2);
-            cultistLightningDamage = (int)(cultistLightningDamage / 2);
-            fireBreathDamage = (int)(fireBreathDamage / 2);
-            lostSoulDamage = (int)(lostSoulDamage / 2);
-            greatFireballDamage = (int)(greatFireballDamage / 2);
-            blackFireDamage = (int)(blackFireDamage / 2);
-            greatAttackDamage = (int)(greatAttackDamage / 2);
-        }
+        int greatFireballDamage = 133;
+        int blackFireDamage = 79;
+        int greatAttackDamage = 81;
 
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(20, 1200, false); //poisoned
-            target.AddBuff(30, 1200, false); //bleeding
-            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false); //reduced defense on hit
-            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 HP after several hits
+            target.AddBuff(BuffID.Poisoned, 20 * 60, false);
+            target.AddBuff(BuffID.Bleeding, 20 * 60, false);
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false); //reduced defense on hit
+            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false); //-20 HP after several hits
             target.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 30;
         }
 
@@ -180,14 +173,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
             //CHANCE TO JUMP BEFORE ATTACK  
-            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(40) && NPC.life >= 10001)
+            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(40) && NPC.life >= NPC.lifeMax / 3)
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-9f, -6f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 1f);
                 NPC.netUpdate = true;
             }
 
-            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(33) && NPC.life <= 10000)
+            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(33) && NPC.life <= NPC.lifeMax / 3)
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-7f, -4f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 1f);
@@ -246,9 +239,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (breathTimer > 480)
             {
                 NPC.localAI[1] = -50;
-                if (NPC.life >= 10001)
+                if (NPC.life >= NPC.lifeMax / 3)
                 { breathTimer = -70; }
-                if (NPC.life <= 10000)
+                if (NPC.life <= NPC.lifeMax / 3)
                 { breathTimer = -160; }
 
             }
@@ -317,7 +310,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
             //SPAWN FIRE LURKER
-            if ((spawnedDemons < 6) && NPC.life >= 2000 && Main.rand.NextBool(3000))
+            if ((spawnedDemons < 6) && NPC.life >= NPC.lifeMax / 15 && Main.rand.NextBool(3000))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -337,7 +330,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
             //CHOICES
-            if (NPC.localAI[1] >= 160f && (choice == 0 || choice == 4) && NPC.life >= 10001)
+            if (NPC.localAI[1] >= 160f && (choice == 0 || choice == 4) && NPC.life >= NPC.lifeMax / 3)
             {
                 bool clearSpace = true;
                 for (int i = 0; i < 15; i++)
@@ -348,7 +341,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     }
                 }
                 //LOB ATTACK PURPLE; 
-                if (NPC.life >= 3001 && NPC.life <= 20000 && clearSpace)
+                if (NPC.life >= NPC.lifeMax / 10 && NPC.life <= NPC.lifeMax / 3 * 2 && clearSpace)
                 {
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
 
@@ -365,7 +358,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     { NPC.localAI[1] = 1f; }
                 }
                 //LOB ATTACK >> BOUNCING FIRE
-                if (NPC.life >= 3001 && clearSpace)
+                if (NPC.life >= NPC.lifeMax / 15 && clearSpace)
 
                 {
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
@@ -388,7 +381,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
             //MULTI-FIRE 1 ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life >= 10001 && choice == 1)
+            if (NPC.localAI[1] >= 160f && NPC.life >= NPC.lifeMax / 3 && choice == 1)
             {
 
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(4), 7);
@@ -407,7 +400,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 NPC.netUpdate = true;
             }
             //MULTI-BOUNCING DESPERATE FIRE ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life <= 10000 && (choice == 1 || choice == 2))
+            if (NPC.localAI[1] >= 160f && NPC.life <= NPC.lifeMax / 3 && (choice == 1 || choice == 2))
             {
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 3);
                 speed.Y += Main.rand.NextFloat(2f, -2f);
@@ -425,7 +418,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 NPC.netUpdate = true;
             }
             //LIGHTNING ATTACK
-            if (NPC.localAI[1] == 160f && NPC.life >= 10001 && NPC.life <= 20000 && (choice == 5 || choice == 4)) //&& Main.rand.NextBool(8) 
+            if (NPC.localAI[1] == 160f && NPC.life >= NPC.lifeMax / 3 && NPC.life <= NPC.lifeMax / 3 * 2 && (choice == 5 || choice == 4)) //&& Main.rand.NextBool(8) 
             {
                 //&& Main.rand.NextBool(10) Main.rand.NextBool(2) &&
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(1), 1);
@@ -450,7 +443,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
 
             /*JUMP DASH FOR FINAL
-			if (npc.localAI[1] == 140 && npc.velocity.Y == 0f && Main.rand.NextBool(20) && npc.life <= 10000)
+			if (npc.localAI[1] == 140 && npc.velocity.Y == 0f && Main.rand.NextBool(20) && npc.life <= NPC.lifeMax / 3)
 			{
 				int dust2 = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Blue, 1f);
 				Main.dust[dust2].noGravity = true;
@@ -460,7 +453,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			}
 			*/
             //FINAL JUNGLE FLAMES DESPERATE ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life <= 10000 && (choice == 0 || choice == 3))
+            if (NPC.localAI[1] >= 160f && NPC.life <= NPC.lifeMax / 3 && (choice == 0 || choice == 3))
             //if (Main.rand.NextBool(40))
             {
                 Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
@@ -543,11 +536,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.StrengthPotion>(), 100, 10, 10, 40));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 10, 5, 10));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Broadswords.Ragnarok>(), 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 1, 1, 2));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.StrengthPotion>(), 100, 10, 10, 40));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 10, 5, 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Broadswords.Ragnarok>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 1, 1, 2));
         }
     }
 }

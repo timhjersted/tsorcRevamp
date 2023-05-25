@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
@@ -22,6 +23,23 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
         bool Initialized;
 
         public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/FirstForm/DarkShogunMask";
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Poisoned,
+                    BuffID.Frostburn,
+                    BuffID.Confused,
+                    BuffID.CursedInferno,
+                    BuffID.Ichor,
+                    BuffID.Venom
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.width = 58;
@@ -39,12 +57,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             NPC.value = Item.buyPrice(0, 26);
             NPC.knockBackResist = 0f;
             Music = 39;
-            NPC.buffImmune[20] = true;
-            NPC.buffImmune[44] = true;
-            NPC.buffImmune[31] = true;
-            NPC.buffImmune[39] = true;
-            NPC.buffImmune[69] = true;
-            NPC.buffImmune[70] = true;
             despawnHandler = new NPCDespawnHandler("You've been slain at the hand of Attraidies...", Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
@@ -57,16 +69,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             modifiers.DisableCrit();
             modifiers.SetMaxDamage(NPC.life - 50);
         }
-        public override void SetStaticDefaults()
-        {
-            Main.npcFrameCount[NPC.type] = 3;
-            // DisplayName.SetDefault("Mindflayer Illusion");
-        }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-        }
-
         public void Teleport(float X, float Y)
         {
             int dustDeath = 0;
@@ -376,17 +378,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
         public override bool CheckActive()
         {
             return false;
-        }
-        public override void OnKill()
-        {
-            if (!Main.expertMode)
-            {
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPC.type)))
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 35000);
-                }
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>());
-            }
         }
 
     }

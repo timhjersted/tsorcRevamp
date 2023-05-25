@@ -1,43 +1,50 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class DarkKnight : ModNPC
     {
+        int stormWaveDamage = 35;
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 20;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.CursedInferno,
+                    BuffID.Ichor
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.npcSlots = 3;
-            Main.npcFrameCount[NPC.type] = 20;
             AnimationType = 110;
             NPC.width = 18;
             NPC.height = 48;
-
             NPC.timeLeft = 750;
             NPC.damage = 105;
             NPC.lavaImmune = true;
             NPC.defense = 30;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.lifeMax = 5600;
+            NPC.lifeMax = 2800;
             NPC.knockBackResist = 0f;
             NPC.value = 9680;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DarkKnightBanner>();
-
-            //NPC.buffImmune[BuffID.Poisoned] = true;
-            //NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
         }
 
-        int stormWaveDamage = 35;
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            stormWaveDamage = (int)(stormWaveDamage * tsorcRevampWorld.SubtleSHMScale);
+            stormWaveDamage = (int)(stormWaveDamage * tsorcRevampWorld.SHMScale);
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -114,10 +121,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
         }
-
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.WhiteTitanite>(), 1, 3, 5));
-        }
         #endregion
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.WhiteTitanite>(), 1, 3, 5));
+        }
     }
 }

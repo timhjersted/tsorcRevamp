@@ -9,6 +9,7 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.NPCs.Bosses.Fiends;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {

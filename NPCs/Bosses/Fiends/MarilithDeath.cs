@@ -18,19 +18,17 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Fire Fiend Marilith");
+            Main.npcFrameCount[NPC.type] = 8;
         }
 
         public override void SetDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 8;
             NPC.scale = 1;
             NPC.npcSlots = 10;
             NPC.aiStyle = -1;
-            Main.npcFrameCount[NPC.type] = 8;
             NPC.width = 40;
             NPC.height = 40;
-            NPC.damage = 60;
+            NPC.damage = 0;
             NPC.defense = 38;
             AnimationType = -1;
             NPC.HitSound = SoundID.NPCHit1;
@@ -60,13 +58,13 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             progress++;
             if(progress % 10 == 0)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62 with { Volume = 0.5f, Pitch = Main.rand.NextFloat(-0.2f, 0.2f) }, NPC.Center);
+                SoundEngine.PlaySound(SoundID.Item62 with { Volume = 0.5f, Pitch = Main.rand.NextFloat(-0.2f, 0.2f) }, NPC.Center);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(150, 150), Vector2.Zero, ModContent.ProjectileType<CataclysmicFirestorm>(), 55, 0.5f, Main.myPlayer);
             }
 
             if (progress % 11 == 0)
             {
-                Terraria.Audio.SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Thunder_0") with { Volume = 0.5f, Pitch = Main.rand.NextFloat(-0.2f, 0.2f) }, NPC.Center);
+                SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Thunder_0") with { Volume = 0.5f, Pitch = Main.rand.NextFloat(-0.2f, 0.2f) }, NPC.Center);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<MarilithLightning>(), 55, 0.5f, Main.myPlayer);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<MarilithLightning>(), 55, 0.5f, Main.myPlayer);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<MarilithLightning>(), 55, 0.5f, Main.myPlayer);
@@ -82,7 +80,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath62 with { Volume = 1.3f }, NPC.Center);
+                    SoundEngine.PlaySound(SoundID.NPCDeath62 with { Volume = 1.3f }, NPC.Center);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<CataclysmicFirestorm>(), 55, 0.5f, Main.myPlayer);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<CataclysmicFirestorm>(), 55, 0.5f, Main.myPlayer);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<CataclysmicFirestorm>(), 55, 0.5f, Main.myPlayer);

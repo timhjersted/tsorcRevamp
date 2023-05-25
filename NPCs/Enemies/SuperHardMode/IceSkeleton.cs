@@ -2,27 +2,39 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class IceSkeleton : ModNPC
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 15;
-            NPC.npcSlots = 1;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Frostburn,
+                    BuffID.Frostburn2
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
+        public override void SetDefaults()
+        {
             AnimationType = NPCID.AngryBones;
             NPC.width = 18;
             NPC.height = 40;
             NPC.knockBackResist = .3f;
             NPC.value = 1630;
             NPC.timeLeft = 750;
-            NPC.damage = 120;
+            NPC.damage = 60;
             NPC.defense = 73;
             NPC.HitSound = SoundID.NPCHit2;
             NPC.DeathSound = SoundID.NPCDeath2;
-            NPC.lifeMax = 2000;
-            NPC.scale = 1;
+            NPC.lifeMax = 1000;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.IceSkeletonBanner>();
         }
@@ -46,13 +58,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 dashCounter = 0;
             }
         }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-        }
-
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             Player p = spawnInfo.Player;

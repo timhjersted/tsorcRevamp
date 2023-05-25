@@ -6,28 +6,39 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class BarrowWightNemesis : ModNPC
     {
+        int breathDamage = 35;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Barrow Wight Nemesis");
+            Main.npcFrameCount[NPC.type] = 4;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Poisoned,
+                    BuffID.Venom
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
         public override void SetDefaults()
         {
 
             NPC.npcSlots = 5;
-            Main.npcFrameCount[NPC.type] = 4;
             NPC.width = 58;
             NPC.height = 48;
             NPC.aiStyle = 22;
-            NPC.damage = 115;
+            NPC.damage = 58;
             NPC.defense = 40;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 5000;
+            NPC.lifeMax = 2500;
             NPC.knockBackResist = 0;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -35,14 +46,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BarrowWightNemesisBanner>();
         }
-
-        
-        int breathDamage = 35;
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            breathDamage = (int)(breathDamage * tsorcRevampWorld.SubtleSHMScale);
+            breathDamage = (int)(breathDamage * tsorcRevampWorld.SHMScale);
         }
 
         int breathCD = 45;
@@ -84,17 +90,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             return chance;
         }
         #endregion
-
-
-        //void DealtPlayer(Player player, double damage, NPC npc)
-
-
-
-        //public void DamagePlayer(ref int damage, Player player);
-
-
-
-
 
         #region AI
         public override void AI()
@@ -424,9 +419,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #endregion
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.CursedSoul>(), 1, 3, 3));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 50));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>(), 5));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.CursedSoul>(), 1, 3, 3));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>(), 5));
         }
         #region Magic Defense
         public int MagicDefenseValue()
@@ -478,7 +473,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-
             if (Main.rand.NextBool(2))
             {
 
@@ -488,14 +482,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 target.AddBuff(ModContent.BuffType<CurseBuildup>(), 600 * 60, false); //-20 life after several hits
                 target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 600 * 60, false); //-100 life after several hits
             }
-
-            //	if (Main.rand.NextBool(8) && player.statLifeMax > 20) 
-
-            //{
-
-            //			Main.NewText("You have been cursed!");
-            //	player.statLifeMax -= 20;
-            //}
         }
     }
 }

@@ -5,19 +5,29 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Potions;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class HydrisNecromancer : ModNPC
     {
+        int deathStrikeDamage = 65;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Hydris Necromancer");
+            Main.npcFrameCount[NPC.type] = 15;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.CursedInferno,
+                    BuffID.Ichor
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
         public override void SetDefaults()
         {
             NPC.npcSlots = 5;
-            Main.npcFrameCount[NPC.type] = 15;
             AnimationType = 21;
             NPC.knockBackResist = 0.1f;
             NPC.aiStyle = 3; //was 3
@@ -25,7 +35,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.defense = 75; //was 135
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 6000;
+            NPC.lifeMax = 3000;
             NPC.lavaImmune = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -34,14 +44,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             BannerItem = ModContent.ItemType<Banners.HydrisNecromancerBanner>();
 
         }
-
-        int deathStrikeDamage = 65;
-
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            deathStrikeDamage = (int)(deathStrikeDamage * tsorcRevampWorld.SubtleSHMScale);
+            deathStrikeDamage = (int)(deathStrikeDamage * tsorcRevampWorld.SHMScale);
         }
 
         //Spawns in the Underground and Cavern before 3.5/10ths and after 7.5/10ths (Width). Does not Spawn in the Jungle, Meteor, or if there are Town NPCs.
@@ -125,11 +130,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     int spawnType;
                     if (Main.rand.NextBool())
                     {
-                        spawnType = ModContent.NPCType<NPCs.Enemies.HollowSoldier>();
+                        spawnType = ModContent.NPCType<HollowSoldier>();
                     }
                     else
                     {
-                        spawnType = ModContent.NPCType<NPCs.Enemies.SuperHardMode.HydrisElemental>(); //NPCID.ChaosElemental;
+                        spawnType = ModContent.NPCType<HydrisElemental>(); //NPCID.ChaosElemental;
                     }
 
                     int spawnedNPC = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, spawnType, 0);
@@ -191,7 +196,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Ammo.TeslaBolt>(), 1, 8, 16));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Ammo.TeslaBolt>(), 1, 8, 16));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 6));
         }
     }

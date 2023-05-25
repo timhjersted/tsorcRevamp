@@ -7987,12 +7987,12 @@ Mods: {
 				}
 
 				BonfireFlyVolume: {
-					// Label: Bonfire Fly Volume
+					// Label: Bonfirefly Volume
 					/* Tooltip:
 						'''
-						Bonfire Fly teasing you about a Bonfire which you can't reach yet?
-						This slider controls Bonfire Fly's volume.
-						Set to 0 to disable Bonfire Fly sounds.
+						Bonfirefly teasing you about a Bonfire which you can't reach yet?
+						This slider controls Bonfirefly's volume.
+						Set to 0 to disable Bonfirefly sounds.
 						''' */
 				}
 			}

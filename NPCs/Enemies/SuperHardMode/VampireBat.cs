@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static tsorcRevamp.SpawnHelper;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -11,7 +12,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Vampire Bat");
             Main.npcFrameCount[NPC.type] = 8;
         }
 
@@ -22,24 +22,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.aiStyle = 14;
             AIType = NPCID.CaveBat;
             NPC.timeLeft = 750;
-            NPC.damage = 98;
+            NPC.damage = 49;
             NPC.defense = 70;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath4;
-            NPC.lifeMax = 1500;
+            NPC.lifeMax = 750;
             NPC.scale = 1;
             NPC.knockBackResist = 0.5f;
             NPC.value = 1200;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.VampireBatBanner>();
         }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-        }
-
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             Player p = spawnInfo.Player;
@@ -89,9 +82,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 3600);
-            target.AddBuff(BuffID.Poisoned, 3600);
-            target.AddBuff(BuffID.Bleeding, 3600);
+            target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 60 * 60);
+            target.AddBuff(BuffID.Poisoned, 60 * 60);
+            target.AddBuff(BuffID.Bleeding, 60 * 60);
         }
     }
 }

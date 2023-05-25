@@ -5,24 +5,40 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
+using tsorcRevamp.Items;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Items.Weapons.Melee;
 
 namespace tsorcRevamp.NPCs.Bosses.Fiends
 {
     class LichKingDisciple : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
-            NPC.npcSlots = 1;
-            Main.npcFrameCount[NPC.type] = 3;
             AnimationType = 29;
             NPC.aiStyle = 0;
-            NPC.damage = 140;
-            NPC.defense = 40;
+            NPC.damage = 0;
+            NPC.defense = 52;
             NPC.height = 44;
             NPC.boss = true;
             NPC.timeLeft = 22500;
             NPC.lifeMax = 50000;
-            NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.noGravity = false;
@@ -31,27 +47,13 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.value = 40000;
             NPC.width = 28;
             NPC.knockBackResist = 0.2f;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
             despawnHandler = new NPCDespawnHandler(DustID.GreenFairy);
         }
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Lich King Disciple");
-        }
 
         int frozenSawDamage = 105;
         //chaos
         int holdTimer = 0;
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = (int)(NPC.damage * 1.3 / 2);
-            NPC.defense = NPC.defense += 12;
-        }
-
         #region AI
         NPCDespawnHandler despawnHandler;
         bool OptionSpawned = false;
@@ -82,7 +84,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             //Proximity Debuffs
             if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 300)
             {
-                player.AddBuff(BuffID.Ichor, 600, false);
+                player.AddBuff(BuffID.Ichor, 10 * 60, false);
                 //player.AddBuff(BuffID.PotionSickness, 60, false);
 
                 if (holdTimer <= 0)
@@ -94,18 +96,18 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             }
 
             //causes potion sickness at 20k health
-            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 320 && NPC.life <= 19999)
+            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 320 && NPC.life <= NPC.lifeMax / 5 * 2)
             {
-                player.AddBuff(BuffID.PotionSickness, 60, false);
-                player.AddBuff(BuffID.Hunter, 60, false);
-                player.AddBuff(BuffID.Blackout, 60, false);
+                player.AddBuff(BuffID.PotionSickness, 1 * 60, false);
+                player.AddBuff(BuffID.Hunter, 1 * 60, false);
+                player.AddBuff(BuffID.Blackout, 1 * 60, false);
             }
-            if (NPC.life > 20000)
+            if (NPC.life > NPC.lifeMax / 5 * 2)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X - 70, (float)NPC.position.Y - 60), NPC.width * 7, NPC.height * 7 , DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, 150, Color.Black, 2f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 19999)
+            else if (NPC.life <= NPC.lifeMax / 5 * 2)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X - 70, (float)NPC.position.Y-60), NPC.width * 7, NPC.height * 7, DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, 100, Color.Yellow, 3f);
                 Main.dust[dust].noGravity = true;
@@ -130,7 +132,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 NPC.velocity.Y *= 0.17f;
             }
 
-            if ((NPC.ai[1] >= 200 && NPC.life > 2000) || (NPC.ai[1] >= 120 && NPC.life <= 2000))
+            if ((NPC.ai[1] >= 200 && NPC.life > NPC.lifeMax / 50) || (NPC.ai[1] >= 120 && NPC.life <= NPC.lifeMax / 50))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int num36 = 0; num36 < 10; num36++)
@@ -228,14 +230,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                     Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 2").Type, 1f);
                     Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 3").Type, 1f);
                     Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 3").Type, 1f);
-                }
-            }
-
-            if (!Main.expertMode)
-            {
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPC.type)))
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
                 }
             }
         }

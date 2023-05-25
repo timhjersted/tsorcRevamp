@@ -4,24 +4,28 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class Tetsujin : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 2;
+        }
         public override void SetDefaults()
         {
             //npc.npcSlots = 50;
-            Main.npcFrameCount[NPC.type] = 2;
             NPC.width = 42;
             NPC.height = 42;
             NPC.aiStyle = 22;
-            NPC.damage = 165;
+            NPC.damage = 83;
             NPC.defense = 70; //190
             NPC.lavaImmune = true; ;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
-            NPC.lifeMax = 6000; //was 35k
+            NPC.lifeMax = 3000; //was 35k
             NPC.scale = 1f;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
@@ -36,11 +40,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int blasterDamage = 22; //35
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            laserDamage = (int)(laserDamage * tsorcRevampWorld.SubtleSHMScale);
-            breathDamage = (int)(breathDamage * tsorcRevampWorld.SubtleSHMScale);
-            blasterDamage = (int)(blasterDamage * tsorcRevampWorld.SubtleSHMScale);
+            laserDamage = (int)(laserDamage * tsorcRevampWorld.SHMScale);
+            breathDamage = (int)(breathDamage * tsorcRevampWorld.SHMScale);
+            blasterDamage = (int)(blasterDamage * tsorcRevampWorld.SHMScale);
         }
 
 
@@ -486,9 +488,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Ammo.TeslaBolt>(), 1, 200, 230));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.OneFromOptions(1, ModContent.ItemType<Items.CompactFrame>(), ModContent.ItemType<Items.DestructionElement>()));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Ammo.TeslaBolt>(), 1, 200, 230));
+            npcLoot.Add(ItemDropRule.OneFromOptions(1, ModContent.ItemType<Items.CompactFrame>(), ModContent.ItemType<Items.DestructionElement>()));
         }
     }
 }

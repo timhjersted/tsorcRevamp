@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
@@ -16,6 +17,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
                 Hide = true
             };
             NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused,
+                    BuffID.OnFire,
+                    BuffID.OnFire3
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
         public override void SetDefaults()
         {
@@ -25,13 +36,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
             NPC.height = 14;
             NPC.aiStyle = 6;
             NPC.timeLeft = 750;
-            NPC.damage = 105;
+            NPC.damage = 53;
             NPC.defense = 58;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0;
-            NPC.lifeMax = 50000;
+            NPC.lifeMax = 25000;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
@@ -43,12 +54,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
             {
                 bodyTypes[i] = bodyID;
             }
-        }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
         }
 
         int[] bodyTypes;
@@ -70,8 +75,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         {
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.CursedInferno, 180);
-                target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 1800);
+                target.AddBuff(BuffID.CursedInferno, 3 * 60);
+                target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 30 * 60);
             }
         }
     }

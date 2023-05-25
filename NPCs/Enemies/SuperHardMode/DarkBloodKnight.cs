@@ -1,45 +1,50 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class DarkBloodKnight : ModNPC
     {
+        int blackFireDamage = 35;
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 20;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
-
             NPC.npcSlots = 3;
-            Main.npcFrameCount[NPC.type] = 20;
             AnimationType = 110;
             NPC.width = 18;
             NPC.height = 48;
-
-            //AIType = 110;
             NPC.aiStyle = 0;
             NPC.timeLeft = 750;
             NPC.damage = 65;
             NPC.defense = 67;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.lifeMax = 6700;
+            NPC.lifeMax = 3350;
             NPC.knockBackResist = 0;
             NPC.value = 10430;
             Banner = NPC.type;
-            //NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            //NPC.buffImmune[BuffID.CursedInferno] = true;
             BannerItem = ModContent.ItemType<Banners.DarkBloodKnightBanner>();
         }
 
-        int blackFireDamage = 35;
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            blackFireDamage = (int)(blackFireDamage * tsorcRevampWorld.SubtleSHMScale);
+            blackFireDamage = (int)(blackFireDamage * tsorcRevampWorld.SHMScale);
         }
 
 
@@ -109,8 +114,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.FlameOfTheAbyss>()));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FlameOfTheAbyss>()));
         }
     }
 }

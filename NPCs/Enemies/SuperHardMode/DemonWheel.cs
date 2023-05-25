@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -6,15 +7,23 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class DemonWheel : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 8;
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            {
+                Hide = true
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
+        }
         public override void SetDefaults()
         {
             NPC.width = 34;
             NPC.height = 34;
             NPC.aiStyle = 21;
-            Main.npcFrameCount[NPC.type] = 8;
             NPC.timeLeft = 750;
             AIType = 72;
-            NPC.damage = 120;
+            NPC.damage = 60;
             NPC.defense = 1000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -24,15 +33,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.noGravity = true;
             NPC.behindTiles = true;
             NPC.dontTakeDamage = true;
-
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
-        }
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = (int)(NPC.damage / 2);
         }
 
         //Super high because they seem to like spawning, rolling out of range, and instantly despawning
@@ -75,13 +75,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             Lighting.AddLight((int)((NPC.position.X + (float)(NPC.width / 2)) / 16f), (int)((NPC.position.Y + (float)(NPC.height / 2)) / 16f), red, green, blue);
 
-        }
-
-        public override void SetStaticDefaults() {
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
-                Hide = true
-            };
-            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
         }
     }
 }

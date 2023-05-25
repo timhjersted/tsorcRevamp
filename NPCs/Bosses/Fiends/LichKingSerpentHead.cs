@@ -4,14 +4,27 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses.Fiends
 {
     class LichKingSerpentHead : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 1;
             AnimationType = 10;
             NPC.netAlways = true;
             NPC.npcSlots = 3;
@@ -19,9 +32,9 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.height = 40;
             NPC.boss = true;
             NPC.aiStyle = 6;
-            NPC.defense = 10;
+            NPC.defense = 22;
             NPC.timeLeft = 22500;
-            NPC.damage = 250;
+            NPC.damage = 163;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.Item119;
             NPC.lifeMax = 120000;
@@ -33,12 +46,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.value = 40000;
             despawnHandler = new NPCDespawnHandler(DustID.GreenFairy);
             DrawOffsetY = 15;
-
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-
             bodyTypes = new int[43];
             int bodyID = ModContent.NPCType<LichKingSerpentBody>();
             for (int i = 0; i < 43; i++)
@@ -47,18 +54,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             }
         }
         int[] bodyTypes;
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Lich King Serpent");
-        }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = (int)(NPC.damage * 1.3 / 2);
-            NPC.defense = NPC.defense += 12;
-        }
-
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
@@ -89,7 +84,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             return closestSegment; //the whoAmI of the closest segment
         }
 
-        public override bool PreKill() {
+        public override bool PreKill() 
+        {
             int closestSegmentID = ClosestSegment(NPC, ModContent.NPCType<LichKingSerpentBody>(), ModContent.NPCType<LichKingSerpentTail>());
             NPC.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
             return base.PreKill();
@@ -119,13 +115,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                     Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Lich King Serpent Body Gore").Type, 1f);
                     Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Lich King Serpent Body Gore").Type, 1f);
                     Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Lich King Serpent Tail Gore").Type, 1f);
-                }
-            }
-            if (!Main.expertMode)
-            {
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPC.type)))
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
                 }
             }
         }

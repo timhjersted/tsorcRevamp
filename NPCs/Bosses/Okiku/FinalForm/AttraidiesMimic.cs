@@ -5,6 +5,8 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 {
@@ -19,9 +21,20 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         int phaseTime = 400;
         bool phaseStarted = false;
 
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
+        public override void SetDefaults()
+        {
             NPC.npcSlots = 10;
             NPC.width = 58;
             NPC.height = 121;
@@ -37,15 +50,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             NPC.knockBackResist = 0;
             NPC.lavaImmune = true;
             NPC.value = 3500;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
         }
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Attraidies");
-        }
 
 
         public void Teleport(float X, float Y)

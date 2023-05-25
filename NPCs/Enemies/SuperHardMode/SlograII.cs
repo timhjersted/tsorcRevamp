@@ -3,42 +3,38 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class SlograII : ModNPC
     {
+        int tridentDamage = 50;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Slogra");
+            Main.npcFrameCount[NPC.type] = 16;
         }
         public override void SetDefaults()
         {
             NPC.npcSlots = 3;
-            Main.npcFrameCount[NPC.type] = 16;
             NPC.width = 38;
             NPC.height = 32;
             AnimationType = 104;
             NPC.aiStyle = 26;
             //npc.timeLeft = 750;
-            NPC.damage = 116;
+            NPC.damage = 58;
             NPC.defense = 50;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
-            NPC.lifeMax = 6200;
+            NPC.lifeMax = 3100;
             NPC.knockBackResist = 0f;
             NPC.value = 6000;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.SlograIIBanner>();
         }
-
-        int tridentDamage = 50;
-
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            tridentDamage = (int)(tridentDamage * tsorcRevampWorld.SubtleSHMScale);
+            tridentDamage = (int)(tridentDamage * tsorcRevampWorld.SHMScale);
         }
 
         float tridentTimer;
@@ -150,7 +146,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     hitCounter++;
                 }
 
-                if (hitCounter > 6 || (NPC.life < 0.1 * NPC.lifeMax && Main.rand.NextBool(400)))
+                if (hitCounter > 6 || (NPC.life < NPC.lifeMax / 10 && Main.rand.NextBool(400)))
                 {
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 15);
                     NPC.netUpdate = true;
@@ -196,8 +192,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.FlameOfTheAbyss>()));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FlameOfTheAbyss>()));
         }
         #region Draw Spear
         static Texture2D spearTexture;

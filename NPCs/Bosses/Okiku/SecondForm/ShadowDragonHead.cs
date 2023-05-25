@@ -1,7 +1,10 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 {
@@ -13,6 +16,17 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 
         public float TimerAnim;
 
+        public override void SetStaticDefaults()
+        {
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.width = 42;
@@ -27,6 +41,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0f;
+            NPC.value = 10000;
             despawnHandler = new NPCDespawnHandler(DustID.PurpleCrystalShard);
 
             DrawOffsetY = 45;
@@ -41,16 +56,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             };
         }
         public static int[] bodyTypes;
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Shadow Dragon");
-        }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-        }
-
         NPCDespawnHandler despawnHandler;
 
 
@@ -70,10 +75,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
         public override bool CheckActive()
         {
             return false;
-        }
-        public override void OnKill()
-        {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 500);
         }
     }
 }

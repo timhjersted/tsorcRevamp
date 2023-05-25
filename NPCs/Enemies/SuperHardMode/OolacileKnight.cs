@@ -6,6 +6,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -13,20 +15,27 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Oolacile Knight");
+            Main.npcFrameCount[NPC.type] = 16;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
         public override void SetDefaults()
         {
             NPC.npcSlots = 2;
-            Main.npcFrameCount[NPC.type] = 16;
             AnimationType = 28;
             NPC.height = 40;
             NPC.width = 20;
-            Music = 12;
-            NPC.damage = 125;
+            //Music = 12;
+            NPC.damage = 63;
             NPC.defense = 70;
             NPC.lavaImmune = true;
-            NPC.lifeMax = 18000;
+            NPC.lifeMax = 9000;
             NPC.scale = 1.1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -43,11 +52,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            dragonsBreathDamage = (int)(dragonsBreathDamage * tsorcRevampWorld.SubtleSHMScale);
-            darkExplosionDamage = (int)(darkExplosionDamage * tsorcRevampWorld.SubtleSHMScale);
-            earthTridentDamage = (int)(earthTridentDamage * tsorcRevampWorld.SubtleSHMScale);
+            dragonsBreathDamage = (int)(dragonsBreathDamage * tsorcRevampWorld.SHMScale);
+            darkExplosionDamage = (int)(darkExplosionDamage * tsorcRevampWorld.SHMScale);
+            earthTridentDamage = (int)(earthTridentDamage * tsorcRevampWorld.SHMScale);
         }
 
 
@@ -169,7 +176,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     hitCounter++;
                 }
 
-                if (hitCounter > 6 || (NPC.life < 0.1 * NPC.lifeMax && Main.rand.NextBool(400)))
+                if (hitCounter > 6 || (NPC.life < NPC.lifeMax / 10 && Main.rand.NextBool(400)))
                 {
                     NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 15);
                     NPC.netUpdate = true;
@@ -205,15 +212,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false); //-20 HP curse
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 600 * 60, false); //-20 HP curse
             }
 
             if (Main.rand.NextBool(4))
             {
 
-                target.AddBuff(36, 600, false); //broken armor
-                target.AddBuff(23, 300, false); //cursed
-
+                target.AddBuff(BuffID.BrokenArmor, 10 * 60, false);
+                target.AddBuff(BuffID.Cursed, 5 * 60, false);
             }
 
             //if (Main.rand.NextBool(10) && player.statLifeMax > 20) 
@@ -304,9 +310,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 2, 2));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Humanity>(), 100, 1, 1, 30));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 2, 2));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Humanity>(), 100, 1, 1, 30));
         }
     }
 }

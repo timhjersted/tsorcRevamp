@@ -5,6 +5,8 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 {
@@ -21,6 +23,18 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
         int randPosX = 0;
         int nextRandPosX = 0;
 
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 7;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.width = 28;
@@ -36,23 +50,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0f;
             NPC.npcSlots = 6f;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
             despawnHandler = new NPCDespawnHandler("You've been slain at the hand of Attraidies...", Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
 
-        public override void SetStaticDefaults()
-        {
-            Main.npcFrameCount[NPC.type] = 7;
-            // DisplayName.SetDefault("Attraidies");
-        }
-
         public int ObscureDropDamage = 60;
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-        }
-
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {

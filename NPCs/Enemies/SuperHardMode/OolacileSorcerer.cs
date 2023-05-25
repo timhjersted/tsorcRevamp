@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -11,18 +12,28 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class OolacileSorcerer : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
-
             NPC.npcSlots = 2;
-            Main.npcFrameCount[NPC.type] = 3;
             AnimationType = 29;
             NPC.aiStyle = 0;
-            NPC.damage = 96;
+            NPC.damage = 48;
             NPC.defense = 92;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 12800;
+            NPC.lifeMax = 6400;
             NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
@@ -35,10 +46,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 10500;
             NPC.width = 28;
             NPC.knockBackResist = 0.1f;
-
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
         }
 
         int darkBeadDamage = 40;
@@ -47,11 +54,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            darkBeadDamage = (int)(darkBeadDamage * tsorcRevampWorld.SubtleSHMScale);
-            darkOrbDamage = (int)(darkOrbDamage * tsorcRevampWorld.SubtleSHMScale);
-            seekerDamage = (int)(seekerDamage * tsorcRevampWorld.SubtleSHMScale);
+            darkBeadDamage = (int)(darkBeadDamage * tsorcRevampWorld.SHMScale);
+            darkOrbDamage = (int)(darkOrbDamage * tsorcRevampWorld.SHMScale);
+            seekerDamage = (int)(seekerDamage * tsorcRevampWorld.SHMScale);
         }
 
 
@@ -127,12 +132,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.ai[1]++; // Timer Teleport
                          // npc.ai[2]++; // Shots
 
-            if (NPC.life > 900)
+            if (NPC.life > NPC.lifeMax / 14)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 210, Color.Black, 2f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 900)
+            else if (NPC.life <= NPC.lifeMax / 14)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 140, Color.Black, 3f);
                 Main.dust[dust].noGravity = true;
@@ -169,7 +174,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 NPC.velocity.Y *= 0.17f;
             }
 
-            if ((NPC.ai[1] >= 280 && NPC.life > 300) || (NPC.ai[1] >= 120 && NPC.life <= 300)) //300 increases the time between teleports
+            if ((NPC.ai[1] >= 280 && NPC.life > NPC.lifeMax / 42) || (NPC.ai[1] >= 120 && NPC.life <= NPC.lifeMax / 42)) //300 increases the time between teleports
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int num36 = 0; num36 < 10; num36++)
@@ -405,16 +410,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>()));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 30));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.CursedSoul>(), 2));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 100, 1, 1, 5));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.StrengthPotion>(), 100, 1, 1, 5));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 100, 1, 1, 5));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 100, 1, 1, 5));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.BloodMoonStarter, 100, 1, 1, 5));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 30));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.CursedSoul>(), 2));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 100, 1, 1, 5));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.StrengthPotion>(), 100, 1, 1, 5));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 100, 1, 1, 5));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 100, 1, 1, 5));
+            npcLoot.Add(new CommonDrop(ItemID.BloodMoonStarter, 100, 1, 1, 5));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 4));
         }
     }

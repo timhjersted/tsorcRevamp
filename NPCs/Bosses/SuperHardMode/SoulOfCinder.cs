@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Gwyn;
 using static tsorcRevamp.UsefulFunctions;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {

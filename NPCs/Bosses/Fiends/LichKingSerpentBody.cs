@@ -2,14 +2,31 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Bosses.Fiends
 {
     class LichKingSerpentBody : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            {
+                Hide = true
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 1;
             AnimationType = 10;
             NPC.netAlways = true;
             NPC.npcSlots = 1;
@@ -17,8 +34,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.height = 14;
             NPC.aiStyle = 6;
             NPC.timeLeft = 750;
-            NPC.damage = 250;
-            NPC.defense = 28;
+            NPC.damage = 163;
+            NPC.defense = 40;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.lavaImmune = true;
@@ -28,12 +45,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
             NPC.value = 460;
-
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-
             bodyTypes = new int[43];
             int bodyID = ModContent.NPCType<LichKingSerpentBody>();
             for (int i = 0; i < 43; i++)
@@ -42,22 +53,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             }
         }
         int[] bodyTypes;
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Lich King Serpent");
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
-                Hide = true
-            };
-            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
-        }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = (int)(NPC.damage * 1.3 / tsorcRevampGlobalNPC.expertScale);
-            NPC.defense = NPC.defense += 12;
-        }
-
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
             return false;

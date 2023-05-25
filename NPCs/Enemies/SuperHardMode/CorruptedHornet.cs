@@ -1,17 +1,31 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class CorruptedHornet : ModNPC
     {
+        int cursedFlameDamage = 50;
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Poisoned,
+                    BuffID.Venom
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
-
-            Main.npcFrameCount[NPC.type] = 3;
             NPC.npcSlots = 1;
             AnimationType = 42;
             AIType = 42;
@@ -21,24 +35,18 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 1130;
             NPC.aiStyle = 5;
             NPC.timeLeft = 750;
-            NPC.damage = 95;
+            NPC.damage = 48;
             NPC.defense = 40;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.noGravity = true;
-            NPC.lifeMax = 3000;
-            NPC.scale = 1;
+            NPC.lifeMax = 1500;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CorruptedHornetBanner>();
         }
-
-        int cursedFlameDamage = 50;
-
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            cursedFlameDamage = (int)(cursedFlameDamage * tsorcRevampWorld.SubtleSHMScale);
+            cursedFlameDamage = (int)(cursedFlameDamage * tsorcRevampWorld.SHMScale);
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -60,7 +68,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(31, 180, false); //confused!
+                target.AddBuff(BuffID.Confused, 3 * 60, false); //confused!
             }
         }
 
@@ -106,8 +114,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 4, 0.2f, 0.2f, 100, default(Color), 1f);
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 4, 0.2f, 0.2f, 100, default(Color), 1f);
         }
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.FlameOfTheAbyss>(), 2));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FlameOfTheAbyss>(), 2));
         }
     }
 }

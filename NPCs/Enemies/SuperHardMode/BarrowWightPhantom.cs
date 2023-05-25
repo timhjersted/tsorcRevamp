@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,40 +11,41 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class BarrowWightPhantom : ModNPC
     {
+        int dragonsBreathDamage = 33;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Barrow Wight Phantom");
+            Main.npcFrameCount[NPC.type] = 4;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Poisoned,
+                    BuffID.Venom
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
         public override void SetDefaults()
         {
-
-
             NPC.npcSlots = 1;
-            Main.npcFrameCount[NPC.type] = 4;
             NPC.width = 58;
             NPC.height = 48;
             NPC.aiStyle = 22;
-            NPC.damage = 100;
+            NPC.damage = 50;
             NPC.defense = 15;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 1000;
+            NPC.lifeMax = 500;
             NPC.knockBackResist = 0;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.value = 0;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BarrowWightPhantomBanner>();
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
         }
-
-        int dragonsBreathDamage = 33;
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            dragonsBreathDamage = (int)(dragonsBreathDamage * tsorcRevampWorld.SubtleSHMScale);
+            dragonsBreathDamage = (int)(dragonsBreathDamage * tsorcRevampWorld.SHMScale);
         }
 
         int breathCD = 45;
@@ -370,8 +372,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             target.AddBuff(ModContent.BuffType<CurseBuildup>(), 600 * 60, false); //-20 life after several hits
                                                                                      //player.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false); //-100 life after several hits	
-
-
             if (Main.rand.NextBool(4))
             {
 
@@ -380,14 +380,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 target.AddBuff(BuffID.Frostburn, 10 * 60, false);
 
             }
-
-            //	if (Main.rand.NextBool(14) && player.statLifeMax > 20) 
-
-            //{
-
-            //			Main.NewText("You have been cursed!");
-            //	player.statLifeMax -= 20;
-            //}
         }
     }
 }

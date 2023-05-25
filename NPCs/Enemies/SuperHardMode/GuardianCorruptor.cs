@@ -1,27 +1,36 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class GuardianCorruptor : ModNPC
     {
-
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.CursedInferno,
+                    BuffID.Ichor
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
-
         public override void SetDefaults()
         {
             NPC.width = 90;
             NPC.height = 164;
-            NPC.damage = 83;
+            NPC.damage = 42;
             NPC.defense = 50;
-            NPC.lifeMax = 9000;
+            NPC.lifeMax = 4500;
             NPC.aiStyle = -1;
             NPC.npcSlots = 3;
             NPC.value = 18750;
@@ -32,12 +41,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.noGravity = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.GuardianCorruptorBanner>();
-        }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -54,9 +57,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             return chance;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.CursedSoul>(), 1, 8, 16));
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.CommonDrop(ItemID.RottenChunk, 100, 1, 5, 33));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.CursedSoul>(), 1, 8, 16));
+            npcLoot.Add(new CommonDrop(ItemID.RottenChunk, 100, 1, 5, 33));
 
         }
 
@@ -90,8 +94,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(BuffID.Weak, 7200, true);
-            target.AddBuff(BuffID.BrokenArmor, 180, true);
+            target.AddBuff(BuffID.Weak, 120 * 60, true);
+            target.AddBuff(BuffID.BrokenArmor, 3 * 60, true);
         }
 
         /*public override void FindFrame(int frameHeight)

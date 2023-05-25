@@ -361,7 +361,6 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.Ice3Tome>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<FairyInABottle>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>()));
-            itemLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AdventureModeRule, ItemID.LargeSapphire));
         }
     }
     public class LichBag : BossBag

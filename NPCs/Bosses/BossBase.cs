@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -21,6 +22,20 @@ namespace tsorcRevamp.NPCs.Bosses
         /// class YourBossName : ModNPC
 
         /// <summary>
+        /// Override this to set your bosses debuff immunities and frameCount
+        /// </summary>
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 1;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
+        /// <summary>
         /// Override this to set your bosses stats and properties.
         /// Remember to call base.SetDefaults(); first so that you don't have to rewrite all the basic stuff
         /// </summary>
@@ -38,7 +53,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.boss = true;
 
             /* These will be different for every boss, and you will have to set them yourself
-            Main.npcFrameCount[NPC.type] = 8;
             NPC.width = 110;
             NPC.height = 170;
             NPC.damage = 50;
@@ -52,13 +66,6 @@ namespace tsorcRevamp.NPCs.Bosses
             */
         }
 
-        /// <summary>
-        /// Override this to set your bosses name
-        /// </summary>
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("BossName");
-        }
 
         //These variables control basic parts of the bosses behavior
         //Things like damage numbers, how long it should pause between attacks, etc

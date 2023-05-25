@@ -4,6 +4,8 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 {
@@ -22,6 +24,18 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 
         public bool Transform;
 
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.width = 28;
@@ -36,19 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             NPC.noGravity = true;
             NPC.knockBackResist = 0f;
             NPC.value = 50000;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
             despawnHandler = new NPCDespawnHandler("You've been slain at the hand of Attraidies...", Color.DarkMagenta, 54);
-        }
-
-        public override void SetStaticDefaults()
-        {
-            Main.npcFrameCount[NPC.type] = 3;
-            // DisplayName.SetDefault("Mindflayer King");
-        }
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
         }
         public override void FindFrame(int frameHeight)
         {

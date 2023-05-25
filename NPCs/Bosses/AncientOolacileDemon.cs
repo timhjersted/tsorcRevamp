@@ -30,7 +30,8 @@ namespace tsorcRevamp.NPCs.Bosses
             Main.npcFrameCount[NPC.type] = 16;
             NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
             {
-                SpecificallyImmuneTo = new int[] {
+                SpecificallyImmuneTo = new int[] 
+                {
                     BuffID.Poisoned,
                     BuffID.OnFire,
                     BuffID.Confused

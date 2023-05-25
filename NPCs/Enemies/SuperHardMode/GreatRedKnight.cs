@@ -1,52 +1,56 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-
-
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     class GreatRedKnight : ModNPC
     {
+        public int poisonStrikeDamage = 40;
+        public int redKnightsSpearDamage = 35;
+        public int redMagicDamage = 40;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Great Red Knight");
+            Main.npcFrameCount[NPC.type] = 16;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.OnFire,
+                    BuffID.OnFire3
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
         public override void SetDefaults()
         {
             NPC.npcSlots = 5;
-            Main.npcFrameCount[NPC.type] = 16;
             AnimationType = 28;
             NPC.height = 40;
             NPC.width = 20;
             NPC.damage = 105;
             NPC.defense = 61; //was 211
-            NPC.lifeMax = 13330; //was 35k
+            NPC.lifeMax = 6665; //was 35k
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 81870;
             NPC.knockBackResist = 0.36f;
             Banner = NPC.type;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
             BannerItem = ModContent.ItemType<Banners.GreatRedKnightBanner>();
         }
 
-        public int poisonStrikeDamage = 40;
-        public int redKnightsSpearDamage = 35;
-        public int redMagicDamage = 40;
 
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            poisonStrikeDamage = (int)(poisonStrikeDamage * tsorcRevampWorld.SubtleSHMScale);
-            redKnightsSpearDamage = (int)(redKnightsSpearDamage * tsorcRevampWorld.SubtleSHMScale);
-            redMagicDamage = (int)(redMagicDamage * tsorcRevampWorld.SubtleSHMScale);
+            poisonStrikeDamage = (int)(poisonStrikeDamage * tsorcRevampWorld.SHMScale);
+            redKnightsSpearDamage = (int)(redKnightsSpearDamage * tsorcRevampWorld.SHMScale);
+            redMagicDamage = (int)(redMagicDamage * tsorcRevampWorld.SHMScale);
         }
 
 
@@ -152,8 +156,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (NPC.Distance(player.Center) < 600)
             {
 
-                player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
-                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60, false);
+                player.AddBuff(ModContent.BuffType<TornWings>(), 1 * 60, false);
+                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 1 * 60, false);
 
             }
 
@@ -327,7 +331,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
               */
 
-            if (Main.rand.NextBool(10) && NPC.life <= 5000)
+            if (Main.rand.NextBool(10) && NPC.life <= NPC.lifeMax / 8 * 3)
             {
                 if (Main.rand.NextBool(180))
                 {
@@ -438,7 +442,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
             //DD2DrakinShot FINAL ATTACK
-            if (poisonTimer >= 185f && NPC.life <= 3000)
+            if (poisonTimer >= 185f && NPC.life <= NPC.lifeMax / 4)
             {
                 bool clearSpace = true;
                 for (int i = 0; i < 15; i++)
@@ -470,7 +474,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
             /*INSANE WHIP ATTACK
-            if (poisonTimer >= 180f && npc.life <= 2000) //180 (without 2nd condition) and 185 created an insane attack
+            if (poisonTimer >= 180f && npc.life <= npc.lifemax / 6) //180 (without 2nd condition) and 185 created an insane attack
             {
                 npc.TargetClosest(true);
                 if (Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
@@ -510,11 +514,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 3, 6));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 1, 1, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.FlameOfTheAbyss>(), 1, 1, 2));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 6));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 3, 6));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 1, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FlameOfTheAbyss>(), 1, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 6));
         }
 
 

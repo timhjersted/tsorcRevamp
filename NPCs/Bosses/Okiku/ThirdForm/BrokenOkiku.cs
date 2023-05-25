@@ -2,9 +2,12 @@
 using System;
 using System.IO;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
@@ -27,11 +30,18 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
-            // DisplayName.SetDefault("Mindflayer Illusion");
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
                 Hide = true
             };
             NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
@@ -54,10 +64,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             NPC.value = 350000;
             despawnHandler = new NPCDespawnHandler(DustID.PurpleCrystalShard);
         }
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-        }
-
         public int nextPhase
         {
             get => (int)NPC.ai[0];
@@ -394,7 +400,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.MindflayerIllusionBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.MindflayerIllusionBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MindflayerIllusionRelic>()));
+            npcLoot.Add(notExpertCondition);
         }
 
 
@@ -402,12 +411,5 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
         {
             potionType = ItemID.GreaterHealingPotion;
         }
-
-        //public override void OnKill()
-        //{
-            //Now drops from boss bag
-            //Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>());
-            //Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 35000);
-        //}
     }
 }
