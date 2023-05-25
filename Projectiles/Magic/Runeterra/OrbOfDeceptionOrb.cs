@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 			// These lines facilitate the trail drawing
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-            Main.projFrames[Projectile.type] = 9;
+            Main.projFrames[Projectile.type] = 4;
         }
 
 		public override void SetDefaults()

@@ -7359,6 +7359,7 @@ Mods: {
 			ScorchingPointAura.DisplayName: Scorching Point Aura
 			CenterOfTheUniverseAura.DisplayName: Center Of The Universe Aura
 			InterstellarVesselAura.DisplayName: Interstellar Vessel Aura
+			// OrbOfDeceptionOrbIdle.DisplayName: Orb Of Deception Orb Idle
 		}
 
 		NPCs: {

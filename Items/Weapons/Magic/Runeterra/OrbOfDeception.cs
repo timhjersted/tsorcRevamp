@@ -51,6 +51,13 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
                 type = ModContent.ProjectileType<OrbOfDeceptionOrbFilled>();
             }
         }
+        public override void HoldItem(Player player)
+        {
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrbFilled>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrbIdle>()] == 0) 
+            {
+                Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbOfDeceptionOrbIdle>(), 0, 0, Main.myPlayer); 
+            }
+        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
