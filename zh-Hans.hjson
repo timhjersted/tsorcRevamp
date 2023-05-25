@@ -7813,5 +7813,189 @@ Mods: {
 			"Wolf Ring.DisplayName": Wolf Ring
 			"Wings of Seath speed toggle.DisplayName": Wings of Seath speed toggle
 		}
+
+		Configs: {
+			tsorcRevampConfig: {
+				// DisplayName: Config
+
+				AdventureMode: {
+					// Label: Adventure Mode: Main
+					/* Tooltip:
+						'''
+						Prevents breaking and placing most blocks. 
+						It also enables some features intended for the custom map. 
+						"If the game lets you break it or place it, it's allowed!"
+						Leave this enabled if you're playing with the custom map!
+						''' */
+				}
+
+				SoulsDropOnDeath: {
+					// Label: Souls Drop On Death
+					/* Tooltip:
+						'''
+						Drop all your Dark Souls when you die.
+						If "Delete Dropped Souls on Death" is enabled, 
+						your Souls will drop after old Souls are deleted.
+						Does not take effect in multiplayer.
+						Defaults to On
+						''' */
+				}
+
+				DeleteDroppedSoulsOnDeath: {
+					// Label: Delete Dropped Souls On Death
+					/* Tooltip:
+						'''
+						Dark Souls dropped by dying will be deleted if you die again
+						before picking them up. Even if this option is disabled, your
+						Souls will be deleted if you exit the game while your Souls
+						are still on the ground. Does not take effect in multiplayer.
+						Defaults to On
+						''' */
+				}
+
+				BossZenConfig: {
+					// Label: Boss Zen Config
+					/* Tooltip:
+						'''
+						Boss Zen disables enemy spawns while a boss is alive.
+						Defaults to On
+						''' */
+				}
+
+				DisableGloveAutoswing: {
+					// Label: Disable Melee/Whip Glove's Autoswing
+					/* Tooltip:
+						'''
+						Disable the Melee/Whip Autoswing feature provided by the Feral Claws and it's upgrades,
+						the Autofire option overrides this. Useful for whip stacking. Defaults to Off.
+						''' */
+				}
+
+				DisableAutomaticQuickMana: {
+					// Label: Disable Automatic Mana Potion drinking
+					/* Tooltip:
+						'''
+						Disable the automatic quick mana feature provided by the Mana Flower and it's upgrades,
+						useful for not accidentally drinking the Cerulean Flask in BotC-mode. Defaults to Off.
+						''' */
+				}
+
+				SoulCounterPosX: {
+					// Label: Soul Counter X Position
+					// Tooltip: The X position of the Soul Counter.
+				}
+
+				SoulCounterPosY: {
+					// Label: Soul Counter Y Position
+					// Tooltip: The Y Position of the Soul Counter.
+				}
+
+				EstusFlaskPosX: {
+					// Label: Estus Flask X Position
+					// Tooltip: The X position of the Estus Flask.
+				}
+
+				EstusFlaskPosY: {
+					// Label: Estus Flask Y Position
+					// Tooltip: The Y position of the Estus Flask.
+				}
+
+				CeruleanFlaskPosX: {
+					// Label: Cerulean Flask X Position
+					// Tooltip: The X position of the Cerulean Flask.
+				}
+
+				CeruleanFlaskPosY: {
+					// Label: Cerulean Flask Y Position
+					// Tooltip: The Y position of the Cerulean Flask.
+				}
+
+				HideCeruleanFlask: {
+					// Label: Hide the Cerulean Flask
+					/* Tooltip:
+						'''
+						Hide the Cerulean Flask obtained in Bearer of the Curse mode,
+						if you don't use it. Defaults to Off.
+						''' */
+				}
+
+				ChargeCircleOpacity: {
+					// Label: Charged Weapon Indicator Opacity
+					/* Tooltip:
+						'''
+						Some charged weapons draw a circle around the cursor to indicate the
+						current charge level. The opacity of that circle can be set here.
+						Set to 0 to disable charge circles.
+						''' */
+				}
+
+				HideSoapstones: {
+					// Label: Hide Read Soapstones
+					/* Tooltip:
+						'''
+						If enabled, soapstone messages that have been read will
+						not be shown until a button is clicked to show them.
+						Defaults to on.
+						''' */
+				}
+
+				SoapstoneScale: {
+					// Label: Soapstone Size Increase
+					/* Tooltip:
+						'''
+						Increases the size of all soapstone dialogue boxes by a percentage.
+						Defaults to 0%.
+						''' */
+				}
+
+				ShowStaminaTooltip: {
+					// Label: Show Stamina Use Tooltip
+					/* Tooltip:
+						'''
+						Show the stamina consumption tooltip for Bearer of the Curse mode.
+						Defaults to On.
+						''' */
+				}
+
+				GravityFix: {
+					// Label: Disable Gravitation Effect Screen Flip
+					/* Tooltip:
+						'''
+						IN BETA! (Mostly working, but there will be some minor bugs)
+						Flipping gravity will only flip your character instead of the whole screen.
+						''' */
+				}
+
+				BroadswordRework: {
+					// Label: Broadsword Rework
+					/* Tooltip:
+						'''
+						IN BETA! 
+						Make broadswords great again. 
+						Requires reloading the world to have an effect.
+						''' */
+				}
+
+				MiakodaVolume: {
+					// Label: Miakoda Volume
+					/* Tooltip:
+						'''
+						Revamp Miakoda giving you Navi flashbacks?
+						This slider controls Miakoda's volume.
+						Set to 0 to disable Miakoda sounds.
+						''' */
+				}
+
+				BonfireFlyVolume: {
+					// Label: Bonfire Fly Volume
+					/* Tooltip:
+						'''
+						Bonfire Fly teasing you about a Bonfire which you can't reach yet?
+						This slider controls Bonfire Fly's volume.
+						Set to 0 to disable Bonfire Fly sounds.
+						''' */
+				}
+			}
+		}
 	}
 }

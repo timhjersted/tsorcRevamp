@@ -51,8 +51,7 @@ namespace tsorcRevamp.NPCs.Special
                     {
                         PitchRange = (-0.1f, 0.3f),
                         PlayOnlyIfFocused = true,
-                        Volume = 0.4f,
-                        Type = SoundType.Ambient
+                        Volume = 0.004f * ModContent.GetInstance<tsorcRevampConfig>().BonfireFlyVolume, //Default is 100
                     };
                     SoundEngine.PlaySound(flee, NPC.position);
                 }
@@ -72,8 +71,7 @@ namespace tsorcRevamp.NPCs.Special
                 {
                     PitchRange = (-0.1f, 0.3f),
                     PlayOnlyIfFocused = true,
-                    Volume = 0.85f,
-                    Type = SoundType.Ambient
+                    Volume = 0.0085f * ModContent.GetInstance<tsorcRevampConfig>().BonfireFlyVolume, //Default is 100
                 };
                 SoundEngine.PlaySound(twinkle, NPC.position);
                 NPC.ai[2] = 0;
