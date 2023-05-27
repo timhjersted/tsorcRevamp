@@ -7,23 +7,21 @@ namespace tsorcRevamp.Buffs.Summon
 {
 	public class NightsCrackerBuff : ModBuff
 	{
-		public int attackspeed;
+		public float AttackSpeed;
 		public override void SetStaticDefaults()
 		{
-			// DisplayName.SetDefault("Night Crack");
-			// Description.SetDefault("+6% summon attack speed");
 			Main.buffNoSave[Type] = true;
 			Main.buffNoTimeDisplay[Type] = false;
 		}
 
         public override void Update(Player player, ref int buffIndex)
         {
-			attackspeed = Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 6;
-			player.GetAttackSpeed(DamageClass.Summon) += attackspeed / 100;
+			AttackSpeed = player.GetModPlayer<tsorcRevampPlayer>().NightsCrackerStacks * 6f;
+			player.GetAttackSpeed(DamageClass.Summon) += AttackSpeed / 100;
 		}
 		public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
 		{
-			tip = $"+{attackspeed}% summon attack speed";
+			tip = $"+{AttackSpeed}% summon attack speed";
 		}
 	}
 }

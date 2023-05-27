@@ -43,21 +43,6 @@ namespace tsorcRevamp.Items.VanillaItems
         }
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
-            if (item.type == ItemID.RainbowWhip)
-            {
-                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
-                if (ttindex != -1)
-                {
-                    tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", "10 summon tag damage"));
-                }
-                int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip1");
-                if (ttindex2 != -1)
-                {
-                    tooltips.RemoveAt(ttindex2);
-                    tooltips.Insert(ttindex2, new TooltipLine(Mod, "TagCritNerfed", "5% summon tag critical strike chance"));
-                }
-            }
             if (item.type == ItemID.MaceWhip)
             {
                 int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip0");
@@ -71,6 +56,21 @@ namespace tsorcRevamp.Items.VanillaItems
                 {
                     tooltips.RemoveAt(ttindex2);
                     tooltips.Insert(ttindex2, new TooltipLine(Mod, "TagCritNerfed", "6% summon tag critical strike chance"));
+                }
+            }
+            if (item.type == ItemID.RainbowWhip)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", "10 summon tag damage"));
+                }
+                int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip1");
+                if (ttindex2 != -1)
+                {
+                    tooltips.RemoveAt(ttindex2);
+                    tooltips.Insert(ttindex2, new TooltipLine(Mod, "TagCritNerfed", "5% summon tag critical strike chance"));
                 }
             }
             if (item.type == ItemID.EmpressBlade && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())))

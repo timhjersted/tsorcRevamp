@@ -12,8 +12,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 {
 	public class TerraFallProjectile : ModProjectile
     {
-        public static int TerraCharges = 0;
-
         public override void SetStaticDefaults()
 		{
 			// This makes the projectile use whip collision detection and allows flasks to be applied to it.
@@ -136,12 +134,14 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             }
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-		{
-            TerraCharges = (int)ChargeTime / 40 + 1;
-            Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.TerraFallBuff>(), TerraCharges * 150);
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.TerraFallDebuff>(), TerraCharges * 150);
-            Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
-			Projectile.damage = (int)(Projectile.damage * ((float)TerraCharges / 10 + 0.6f)); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
+        {
+            Player player = Main.player[Projectile.owner];
+            var modPlayer = Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.TerraFallStacks = ChargeTime / 40 + 1;
+            player.AddBuff(ModContent.BuffType<Buffs.Summon.TerraFallBuff>(), (int)(modPlayer.TerraFallStacks * 150));
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.TerraFallDebuff>(), (int)(modPlayer.TerraFallStacks * 150));
+            player.MinionAttackTargetNPC = target.whoAmI;
+			Projectile.damage = (int)(Projectile.damage * (modPlayer.TerraFallStacks / 10f + 0.6f)); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
 		}
 
 		// This method draws a line between all points of the whip, in case there's empty space between the sprites.

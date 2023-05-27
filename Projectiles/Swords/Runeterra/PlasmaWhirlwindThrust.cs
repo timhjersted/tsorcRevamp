@@ -122,9 +122,9 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
             Player player = Main.player[Projectile.owner];
             if (steeltempesthittimer2 == 0)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().steeltempest += 1;
+                player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks += 1;
                 steeltempesthittimer2 = 1;
-                if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().steeltempest == 2)
+                if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks == 2)
                 {
                     SoundEngine.PlaySound(SoundID.Item60, player.Center);
                 }

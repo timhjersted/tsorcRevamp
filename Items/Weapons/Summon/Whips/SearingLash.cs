@@ -7,6 +7,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
 	public class SearingLash : ModItem
 	{
+		public const int BaseDamage = 30;
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
@@ -18,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 88;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 30;
+			Item.damage = BaseDamage;
 			Item.knockBack = 3;
 			Item.rare = ItemRarityID.Orange;
 			Item.value = Item.buyPrice(0, 8, 50, 0);

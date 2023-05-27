@@ -7,6 +7,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
 	public class NightsCracker : ModItem
 	{
+		public const int BaseDamage = 50;
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
@@ -18,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 46;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 50;
+			Item.damage = BaseDamage;
 			Item.knockBack = 2.5f;
 			Item.rare = ItemRarityID.Pink;
 			Item.value = Item.buyPrice(0, 30, 0, 0);

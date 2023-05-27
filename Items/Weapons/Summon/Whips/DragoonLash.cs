@@ -7,6 +7,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
 	public class DragoonLash: ModItem
 	{
+		public const int BaseDamage = 90;
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
@@ -18,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 60;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 90;
+			Item.damage = BaseDamage;
 			Item.knockBack = 3.5f;
 			Item.rare = ItemRarityID.Lime;
 			Item.value = Item.buyPrice(0, 70, 0, 0);

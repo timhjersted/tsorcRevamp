@@ -12,7 +12,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 {
 	public class SearingLashProjectile : ModProjectile
 	{
-        public static int SearingCharges = 0;
         public override void SetStaticDefaults()
 		{
 			// This makes the projectile use whip collision detection and allows flasks to be applied to it.
@@ -132,11 +131,13 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-		{
-            SearingCharges = (int)ChargeTime / 40 + 1;
-            target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.SearingLashDebuff>(), SearingCharges * 150);
-			target.AddBuff(BuffID.OnFire, SearingCharges * 150);
-			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
+        {
+            Player player = Main.player[Projectile.owner];
+            var modPlayer = Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.SearingLashStacks = ChargeTime / 40 + 1;
+            target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.SearingLashDebuff>(), (int)(modPlayer.SearingLashStacks * 150));
+			target.AddBuff(BuffID.OnFire, (int)(modPlayer.SearingLashStacks * 150));
+			player.MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(Projectile.damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
 		}
 

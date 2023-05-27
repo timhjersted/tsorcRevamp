@@ -1,6 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 {
@@ -13,26 +14,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 
 		public override void Update(NPC npc, ref int buffIndex)
 		{
-			npc.GetGlobalNPC<UrumiDebuffNPC>().markedByUrumi = true;
-		}
-	}
-
-	public class UrumiDebuffNPC : GlobalNPC
-	{
-		public override bool InstancePerEntity => true;
-
-		public bool markedByUrumi;
-
-		public override void ResetEffects(NPC npc)
-		{
-			markedByUrumi = false;
-		}
-		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
-		{
-			if (markedByUrumi && !projectile.npcProj && !projectile.trap && projectile.IsMinionOrSentryRelated)
-			{
-				modifiers.ArmorPenetration += 5;
-			}
+			npc.GetGlobalNPC<tsorcRevampGlobalNPC>().markedByUrumi = true;
 		}
 	}
 }

@@ -64,7 +64,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 //Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             }
             Vector2 playerCenter = new Vector2(-13, 0);
-            if (player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2)
+            if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
             {
                 Dust.NewDust(player.TopLeft + playerCenter, 50, 50, DustID.Smoke, Scale: 1);
             }
@@ -72,7 +72,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
-            if (player.altFunctionUse == 2 && player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2)
+            if (player.altFunctionUse == 2 && player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
             {
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noUseGraphic = false;
@@ -82,7 +82,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 //player.GetModPlayer<tsorcRevampPlayer>().steeltempest = 0;
                 //player.altFunctionUse = 1;
             } else
-            if (player.altFunctionUse == 2 && player.GetModPlayer<tsorcRevampPlayer>().steeltempest < 2)
+            if (player.altFunctionUse == 2 && player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2)
             {
                 Item.useStyle = ItemUseStyleID.Rapier;
                 Item.noUseGraphic = true;
@@ -99,14 +99,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 return true;
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().steeltempest < 2)
+            if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2)
             {
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<SteelTempestThrust>(), damage, 7, player.whoAmI);
             }
-            else if (player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2)
+            else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
             {
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<SteelTempestTornado>(), damage, 7, player.whoAmI);
-                player.GetModPlayer<tsorcRevampPlayer>().steeltempest = 0;
+                player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks = 0;
             }
             return false;
 

@@ -18,8 +18,8 @@ namespace tsorcRevamp.Buffs.Summon
 			player.GetAttackSpeed(DamageClass.Summon) += 0.33f;
             if (Main.GameUpdateCount % 1 == 0 & player.whoAmI == Main.myPlayer)
             {
-                WhipDebuffs.DragoonLashDebuffNPC.fireBreathTimer += 0.0167f;
-				Projectiles.Summon.Whips.DragoonLashProjectile.DragoonLashHitTimer -= 0.0167f;
+                player.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer += 0.0167f;
+				player.GetModPlayer<tsorcRevampPlayer>().DragoonLashHitTimer -= 0.0167f;
             }
         }
     }

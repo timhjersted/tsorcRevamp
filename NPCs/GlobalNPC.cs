@@ -6,6 +6,7 @@ using System.Diagnostics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Chat;
+using Terraria.GameContent.Drawing;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.Localization;
@@ -14,11 +15,13 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Buffs.Summon;
 using tsorcRevamp.Buffs.Summon.WhipDebuffs;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Items.Weapons.Ranged;
+using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Items.Weapons.Throwing;
 using tsorcRevamp.NPCs.Bosses.Fiends;
 using tsorcRevamp.Projectiles.Summon.Sentry;
@@ -35,6 +38,38 @@ namespace tsorcRevamp.NPCs
         float divisorMultiplier = 1f;
         int DarkSoulQuantity;
 
+        public float SummonTagFlatDamage;
+        public float SummonTagCriticalStrikeChance;
+        public float SummonTagScalingDamage;
+        public float SummonTagArmorPenetration;
+        public bool markedByCrystalNunchaku;
+        public bool markedByDetonationSignal;
+        public bool markedByDominatrix;
+        public bool markedByDragoonLash;
+        public bool markedByEnchantedWhip;
+        public bool markedByNightsCracker;
+        public bool markedByPolarisLeash;
+        public bool markedByPyrosulfate;
+        public bool markedBySearingLash;
+        public bool markedByTerraFall;
+        public bool markedByUrumi;
+        public bool markedByLeatherWhip;
+        public bool markedBySnapthorn;
+        public bool markedBySpinalTap;
+        public bool markedByFirecracker;
+        public bool markedByCoolWhip;
+        public bool markedByDurendal;
+        public bool markedByMorningStar;
+        public bool markedByDarkHarvest;
+        public bool markedByKaleidoscope;
+
+        public float CrystalNunchakuStacks = 10;
+        public bool CrystalNunchakuProc = false;
+        public float CrystalNunchakuUpdateTick = 0f;
+        public float CrystalNunchakuScalingDamage = 0f;
+
+        public float DragoonLashFireBreathTimer = 0f;
+
         //Stores the event this NPC belongs to
         public ScriptedEvent ScriptedEventOwner;
 
@@ -47,19 +82,19 @@ namespace tsorcRevamp.NPCs
         //Whatever custom expert scaling we want goes here. For reference 1 eliminates all expert mode doubling, and 2 is normal expert mode scaling.
         public static double expertScale = 2;
 
-        public bool DarkInferno = false;
-        public bool CrimsonBurn = false;
-        public bool ToxicCatDrain = false;
-        public bool ResetToxicCatBlobs = false;
-        public bool ViruCatDrain = false;
-        public bool ResetViruCatBlobs = false;
-        public bool BiohazardDrain = false;
-        public bool ResetBiohazardBlobs = false;
-        public bool ElectrocutedEffect = false;
-        public bool PolarisElectrocutedEffect = false;
-        public bool CrescentMoonlight = false;
-        public bool Soulstruck = false;
-        public bool PhazonCorruption = false;
+        public bool DarkInferno;
+        public bool CrimsonBurn;
+        public bool ToxicCatDrain;
+        public bool ResetToxicCatBlobs;
+        public bool ViruCatDrain;
+        public bool ResetViruCatBlobs;
+        public bool BiohazardDrain;
+        public bool ResetBiohazardBlobs;
+        public bool ElectrocutedEffect;
+        public bool PolarisElectrocutedEffect;
+        public bool CrescentMoonlight;
+        public bool Soulstruck;
+        public bool PhazonCorruption;
 
 
         public override void ResetEffects(NPC npc)
@@ -77,6 +112,31 @@ namespace tsorcRevamp.NPCs
             CrescentMoonlight = false;
             Soulstruck = false;
             PhazonCorruption = false;
+            SummonTagFlatDamage = 0f;
+            SummonTagCriticalStrikeChance = 0f;
+            SummonTagScalingDamage = 0f;
+            SummonTagArmorPenetration = 0f;
+            markedByCrystalNunchaku = false;
+            markedByDetonationSignal = false;
+            markedByDominatrix = false;
+            markedByDragoonLash = false;
+            markedByEnchantedWhip = false;
+            markedByNightsCracker = false;
+            markedByPolarisLeash = false;
+            markedByPyrosulfate = false;
+            markedBySearingLash = false;
+            markedByTerraFall = false;
+            markedByUrumi = false;
+            markedByLeatherWhip = false;
+            markedBySnapthorn = false;
+            markedBySpinalTap = false;
+            markedByFirecracker = false;
+            markedByCoolWhip = false;
+            markedByDurendal = false;
+            markedByMorningStar = false;
+            markedByDarkHarvest = false;
+            markedByKaleidoscope = false;
+            CrystalNunchakuScalingDamage = 0f;
         }
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
@@ -625,12 +685,236 @@ namespace tsorcRevamp.NPCs
                 double scalar = Math.Pow(1.15, debuffCounter - 1); //was 1.2 before, then 1.1
                 modifiers.FinalDamage *= (float)scalar;
             }
+            if (markedByCrystalNunchaku && CrystalNunchakuProc)
+            {
+                CrystalNunchakuScalingDamage += CrystalNunchakuStacks / 20f; //this should still fall into the category of summon tag scaling damage for any bonuses related, but it works on all sources of damage, so it gets treated differently
+                modifiers.ScalingBonusDamage += CrystalNunchakuScalingDamage; //in case you want to add an effect that affects summon tag damage, don't forget to include it here
+            }
         }
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
+            Player projectileOwner = Main.player[projectile.owner];
+            var modPlayerProjectileOwner = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
+            float SummonTagDamageMultiplier = ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type];
+            #region Individual Whip debuff effects
+            #region Modded Whips
+            //if(markedByCrystalNunchaku) only has a special effect
+            if (markedByDetonationSignal)
+            {
+                SummonTagScalingDamage += 2f;
+            }
+            if (markedByDominatrix)
+            {
+                SummonTagCriticalStrikeChance += 7f;
+            }
+            //if (markedByDragoonLash) only has a special effect
+            if (markedByEnchantedWhip)
+            {
+                SummonTagFlatDamage += 4f;
+            }
+            if (markedByNightsCracker)
+            {
+                SummonTagFlatDamage += modPlayerProjectileOwner.NightsCrackerStacks * 2f;
+                SummonTagCriticalStrikeChance += modPlayerProjectileOwner.NightsCrackerStacks;
+                //SearingLashDamageBonus needs to be calculated after all the flat tag damage has been added
+            }
+            if (markedByPolarisLeash)
+            {
+                SummonTagFlatDamage += 6f;
+            }
+            if (markedByPyrosulfate)
+            {
+                SummonTagFlatDamage += 8f;
+                SummonTagCriticalStrikeChance += 3f;
+            }
+            //if (markedBySearingLash) SearingLashDamageBonus needs to be calculated after all the flat tag damage has been added
+            if (markedByTerraFall)
+            {
+                SummonTagFlatDamage += modPlayerProjectileOwner.TerraFallStacks * 5f;
+                SummonTagCriticalStrikeChance += modPlayerProjectileOwner.TerraFallStacks * 4f;
+            }
+            if (markedByUrumi)
+            {
+                SummonTagArmorPenetration += 5f;
+            }
+            #endregion
+            #region Vanilla Whips
+            if (markedByLeatherWhip)
+            {
+                SummonTagFlatDamage += 4f;
+            }
+            if (markedBySnapthorn)
+            {
+                SummonTagFlatDamage += 6f;
+            }
+            if (markedBySpinalTap)
+            {
+                SummonTagFlatDamage += 7f;
+            }
+            //if(markedByFirecracker) only has a special effect
+            if (markedByCoolWhip)
+            {
+                SummonTagFlatDamage += 6f;
+            }
+            if (markedByDurendal)
+            {
+                SummonTagFlatDamage += 9f;
+            }
+            if (markedByMorningStar)
+            {
+                SummonTagFlatDamage += 4f;
+                SummonTagCriticalStrikeChance += 6f;
+            }
+            if (markedByDarkHarvest)
+            {
+                SummonTagFlatDamage += 10f;
+            }
+            if (markedByKaleidoscope)
+            {
+                SummonTagFlatDamage += 10f;
+                SummonTagCriticalStrikeChance += 5f;
+            }
+            #endregion
+            #endregion
+            #region Summon Tag Damage Calculation and Special Effects
+            if (projectile.IsMinionOrSentryRelated)
+            {
+                #region Modded Whip Special Effects
+                //Crystal Nunchaku Effect located in ModifyIncomingHit
+                if (markedByDetonationSignal) //Detonation Signal effect
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_None(), npc.Top, Vector2.Zero, ProjectileID.DD2ExplosiveTrapT2Explosion, 0, 0, Main.myPlayer);
+                    SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 0.6f, PitchVariance = 0.3f }, npc.Top);
+                    npc.AddBuff(ModContent.BuffType<DetonationSignalBuff>(), 4 * 60);
+                    npc.RequestBuffRemoval(ModContent.BuffType<DetonationSignalDebuff>());
+                }
+                //Dragoon Lash effect at the bottom
+                if (markedByEnchantedWhip)
+                {
+                    int StarDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(EnchantedWhip.BaseDamage / 2);
+                    Vector2 StarVector1 = new Vector2(-640, -800) + npc.Center;
+                    Vector2 StarVector2 = new Vector2(640, -800) + npc.Center;
+                    Vector2 StarVector3 = new Vector2(0, -800) + npc.Center;
+                    Vector2 StarMove1 = new Vector2(+32, 40);
+                    Vector2 StarMove2 = new Vector2(-32, 40);
+                    Vector2 StarMove3 = new Vector2(0, 40);
+                    if (Main.rand.NextBool(3))
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_None(), StarVector1, StarMove1, ModContent.ProjectileType<EnchantedWhipFallingStar>(), StarDamage, 0, Main.myPlayer);
+                    }
+                    else if (Main.rand.NextBool(3))
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_None(), StarVector2, StarMove2, ModContent.ProjectileType<EnchantedWhipFallingStar>(), StarDamage, 0, Main.myPlayer);
+                    }
+                    else
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_None(), StarVector3, StarMove3, ModContent.ProjectileType<EnchantedWhipFallingStar>(), StarDamage, 0, Main.myPlayer);
+
+                    }
+                }
+                if (markedByNightsCracker)
+                {
+                    int WhipDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(NightsCracker.BaseDamage);
+                    float SearingLashDamageScaling = modPlayerProjectileOwner.NightsCrackerStacks * 8f * 0.01f;
+                    if (markedBySearingLash)
+                    {
+                        SearingLashDamageScaling /= 2f;
+                    }
+                    if (markedByTerraFall)
+                    {
+                        SearingLashDamageScaling /= 2f;
+                    }
+                    SummonTagFlatDamage += (projectile.damage + SummonTagFlatDamage) * SearingLashDamageScaling * WhipDamage * 0.01f;
+                }
+                if (markedByPolarisLeash)
+                {
+                    int StarDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(PolarisLeash.BaseDamage / 2);
+                    Vector2 StarVector1 = new Vector2(-640, -800) + npc.Center;
+                    Vector2 StarVector2 = new Vector2(640, -800) + npc.Center;
+                    Vector2 StarVector3 = new Vector2(0, -800) + npc.Center;
+                    Vector2 StarMove1 = new Vector2(+32, 40);
+                    Vector2 StarMove2 = new Vector2(-32, 40);
+                    Vector2 StarMove3 = new Vector2(0, 40);
+                    if (Main.rand.NextBool(3))
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_None(), StarVector1, StarMove1, ModContent.ProjectileType<PolarisLeashFallingStar>(), StarDamage, 0, Main.myPlayer);
+                    }
+                    else if (Main.rand.NextBool(3))
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_None(), StarVector2, StarMove2, ModContent.ProjectileType<PolarisLeashFallingStar>(), StarDamage, 0, Main.myPlayer);
+                    }
+                    else
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_None(), StarVector3, StarMove3, ModContent.ProjectileType<PolarisLeashFallingStar>(), StarDamage, 0, Main.myPlayer);
+                    }
+                }
+                if (markedBySearingLash)
+                {
+                    int WhipDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(SearingLash.BaseDamage);
+                    SummonTagFlatDamage += (projectile.damage + SummonTagFlatDamage) * 0.66f * WhipDamage * 0.01f;
+                }
+                if (markedByTerraFall)
+                {
+                    int WhipDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(TerraFall.BaseDamage);
+                    float SearingLashDamageScaling = modPlayerProjectileOwner.TerraFallStacks * 2f * 0.01f;
+                    if (markedBySearingLash)
+                    {
+                        SearingLashDamageScaling /= 2f;
+                    }
+                    if (markedByNightsCracker)
+                    {
+                        SearingLashDamageScaling /= 2f;
+                    }
+                    SummonTagFlatDamage += (int)((projectile.damage + SummonTagFlatDamage) * SearingLashDamageScaling * WhipDamage * 0.01f);
+                }
+                #endregion
+                #region Vanilla Whip Special Effects
+                if (markedByFirecracker)
+                {
+                    int FireCrackerExplosionDamage = (int)(modifiers.SourceDamage.ApplyTo(projectile.damage) * 2.75f);
+                    int num9 = Projectile.NewProjectile(projectile.GetSource_FromThis(), npc.Center, Vector2.Zero, ProjectileID.FireWhipProj, FireCrackerExplosionDamage, 0f, projectile.owner);
+                    Main.projectile[num9].localNPCImmunity[npc.netID] = -1;
+                    npc.RequestBuffRemoval(BuffID.FlameWhipEnemyDebuff);
+                }
+                if (markedByDarkHarvest)
+                {
+                    int num6 = Projectile.NewProjectile(projectile.GetSource_FromThis(), npc.Center, Vector2.Zero, ProjectileID.ScytheWhipProj, (int)(10f * SummonTagDamageMultiplier), 0f, projectile.owner);
+                    Main.projectile[num6].localNPCImmunity[npc.netID] = -1;
+                    Projectile.EmitBlackLightningParticles(npc);
+                }
+                if (markedByKaleidoscope)
+                {
+                    ParticleOrchestrator.RequestParticleSpawn(clientOnly: false, ParticleOrchestraType.RainbowRodHit, new ParticleOrchestraSettings
+                    {
+                        PositionInWorld = npc.Center
+                    });
+                }
+                #endregion
+
+                modifiers.FlatBonusDamage += SummonTagFlatDamage;
+                modifiers.ScalingBonusDamage += SummonTagScalingDamage;
+                if (Main.rand.NextBool((int)(SummonTagCriticalStrikeChance / 100f)))
+                {
+                    modifiers.SetCrit();
+                }
+                modifiers.ArmorPenetration += SummonTagArmorPenetration;
+
+            }
+            if (markedByDragoonLash && (projectile.IsMinionOrSentryRelated || ProjectileID.Sets.IsAWhip[projectile.type])) //has to be outside of the main if since this is supposed to also be procced on whip-hit
+            {
+                int WhipDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(DragoonLash.BaseDamage);
+                if (DragoonLashFireBreathTimer >= 1)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_None(), projectileOwner.Center, (npc.Center - projectileOwner.Center) * 0.1f, ProjectileID.Flamelash, WhipDamage, 1f, Main.myPlayer);
+                    DragoonLashFireBreathTimer = 0;
+                }
+            }
+            #endregion
+
+            #region BotC Whip Debuff Damage Scaling
             int WhipDebuffCounter = 0;
-            if (projectile.IsMinionOrSentryRelated && Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && 
+            if (projectile.IsMinionOrSentryRelated && Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse &&
                   projectile.type != ProjectileID.DD2BallistraProj && projectile.type != ProjectileID.DD2ExplosiveTrapT1Explosion && projectile.type != ProjectileID.DD2ExplosiveTrapT2Explosion
                 && projectile.type != ProjectileID.DD2ExplosiveTrapT3Explosion && projectile.type != ProjectileID.DD2FlameBurstTowerT1Shot && projectile.type != ProjectileID.DD2FlameBurstTowerT2Shot
                 && projectile.type != ProjectileID.DD2FlameBurstTowerT3Shot | projectile.type != ProjectileID.DD2LightningAuraT1 && projectile.type != ProjectileID.DD2LightningAuraT2
@@ -645,15 +929,15 @@ namespace tsorcRevamp.NPCs
                         WhipDebuffCounter++;
                     }
                 }
-                if (npc.HasBuff(ModContent.BuffType<SearingLashDebuff>()) && SearingLashProjectile.SearingCharges >= 4)
+                if (npc.HasBuff(ModContent.BuffType<SearingLashDebuff>()) && modPlayerProjectileOwner.SearingLashStacks >= 4f)
                 {
                     WhipDebuffCounter++;
                 }
-                if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()) && NightsCrackerProjectile.NightCharges >= 4)
+                if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()) && modPlayerProjectileOwner.NightsCrackerStacks >= 4f)
                 {
                     WhipDebuffCounter++;
                 }
-                if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()) && TerraFallProjectile.TerraCharges >= 4)
+                if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()) && modPlayerProjectileOwner.TerraFallStacks >= 4f)
                 {
                     WhipDebuffCounter++;
                 }
@@ -672,33 +956,38 @@ namespace tsorcRevamp.NPCs
                 if (WhipDebuffCounter == 0)
                 {
                     modifiers.FinalDamage *= 0.1f;
-                } else
+                }
+                else
                 if (WhipDebuffCounter == 1)
                 {
                     modifiers.FinalDamage *= 0.32f;
-                } else
+                }
+                else
                 if (WhipDebuffCounter == 2)
                 {
                     modifiers.FinalDamage *= 0.54f;
-                } else
+                }
+                else
                 if (WhipDebuffCounter == 3)
                 {
                     modifiers.FinalDamage *= 0.76f;
-                } else
+                }
+                else
                 if (WhipDebuffCounter == 4)
                 {
                     modifiers.FinalDamage *= 0.98f;
-                } else
+                }
+                else
                 if (WhipDebuffCounter >= 5)
                 {
                     modifiers.FinalDamage *= 1.2f;
                 }
             }
+            #endregion
         }
 
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
-
         }
 
         public override void ModifyGlobalLoot(GlobalLoot globalLoot) {
@@ -1035,8 +1324,30 @@ namespace tsorcRevamp.NPCs
                 default:break;
             }
         }
+        public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            if (!CrystalNunchakuProc && !(CrystalNunchakuStacks == 0) && markedByCrystalNunchaku)
+            {
+                CrystalNunchakuStacks -= 1;
+            }
+            if (CrystalNunchakuProc && markedByCrystalNunchaku)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().CrystalNunchakuDefenseDamage = 15f - (CrystalNunchakuStacks * 1.5f);
+                player.AddBuff(ModContent.BuffType<CrystalShield>(), 4 * 60);
+            }
+        }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
+            if (!CrystalNunchakuProc && !(CrystalNunchakuStacks == 0) && !projectile.npcProj && !projectile.trap && markedByCrystalNunchaku && projectile.type != ModContent.ProjectileType<CrystalNunchakuProjectile>())
+            {
+                CrystalNunchakuStacks -= 1;
+            }
+            if (CrystalNunchakuProc && !projectile.npcProj && !projectile.trap && markedByCrystalNunchaku)
+            {
+                Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>().CrystalNunchakuDefenseDamage = 15f - (CrystalNunchakuStacks * 1.5f);
+                Main.player[projectile.owner].AddBuff(ModContent.BuffType<CrystalShield>(), 4 * 60);
+            }
+
             if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>()))
             {
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetToxicCatBlobs = true;

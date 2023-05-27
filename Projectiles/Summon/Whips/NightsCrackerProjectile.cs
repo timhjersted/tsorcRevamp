@@ -12,8 +12,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 {
 	public class NightsCrackerProjectile : ModProjectile
 	{
-		public static int NightCharges = 0;
-
 		public override void SetStaticDefaults()
 		{
 			// This makes the projectile use whip collision detection and allows flasks to be applied to it.
@@ -135,11 +133,13 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            NightCharges = (int)ChargeTime / 40 + 1;
-            Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerBuff>(), NightCharges * 150);
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.NightsCrackerDebuff>(), NightCharges * 150);
-			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
-            Projectile.damage = (int)(Projectile.damage * ((float)NightCharges / 16 + 0.6f)); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
+			Player player = Main.player[Projectile.owner];
+            var modPlayer = Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.NightsCrackerStacks = ChargeTime / 40f + 1f;
+            player.AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerBuff>(), (int)(modPlayer.NightsCrackerStacks * 150));
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.NightsCrackerDebuff>(), (int)(modPlayer.NightsCrackerStacks * 150));
+			player.MinionAttackTargetNPC = target.whoAmI;
+            Projectile.damage = (int)(Projectile.damage * ((float)modPlayer.NightsCrackerStacks / 16f + 0.6f)); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
         }
 
 		// This method draws a line between all points of the whip, in case there's empty space between the sprites.

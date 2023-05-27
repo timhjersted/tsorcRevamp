@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Buffs.Summon
 {
@@ -19,10 +20,10 @@ namespace tsorcRevamp.Buffs.Summon
         {
             if (player.whoAmI == Main.myPlayer)
             {
-                int whipDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo((int)(66f * 0.66f)); //66 is the base dmg of Polaris Leash
+                int WhipDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(PolarisLeash.BaseDamage * 0.66f);
                 if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Whips.PolarisLeashPolaris>()] == 0)
                 {
-                    Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.One, ModContent.ProjectileType<Projectiles.Summon.Whips.PolarisLeashPolaris>(), whipDamage, 1f, Main.myPlayer);
+                    Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.One, ModContent.ProjectileType<Projectiles.Summon.Whips.PolarisLeashPolaris>(), WhipDamage, 1f, Main.myPlayer);
                 }
             }
         }

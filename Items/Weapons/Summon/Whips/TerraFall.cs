@@ -7,6 +7,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
 	public class TerraFall : ModItem
 	{
+		public const int BaseDamage = 115;
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
@@ -18,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 90;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 115;
+			Item.damage = BaseDamage;
 			Item.knockBack = 5;
 			Item.rare = ItemRarityID.Red;
 			Item.value = Item.buyPrice(3, 33, 33, 33);

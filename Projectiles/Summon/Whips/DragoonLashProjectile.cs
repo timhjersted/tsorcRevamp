@@ -11,7 +11,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 {
 	public class DragoonLashProjectile : ModProjectile
 	{
-		public static float DragoonLashHitTimer = 0f;
 		public override void SetStaticDefaults()
 		{
 			// This makes the projectile use whip collision detection and allows flasks to be applied to it.
@@ -129,10 +128,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.DragoonLashDebuff>(), 4 * 60);
 			owner.MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(Projectile.damage * 0.8f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
-            if (DragoonLashHitTimer <= 0)
+            if (owner.GetModPlayer<tsorcRevampPlayer>().DragoonLashHitTimer <= 0)
             {
-                Buffs.Summon.WhipDebuffs.DragoonLashDebuffNPC.fireBreathTimer = 1f;
-                DragoonLashHitTimer = 0.07f;//3 ticks, supposed to stop you from spawning fire for every single enemy hit and only spawn one max
+                owner.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer = 1f;
+                owner.GetModPlayer<tsorcRevampPlayer>().DragoonLashHitTimer = 0.07f;//3 ticks, supposed to stop you from spawning fire for every single enemy hit and only spawn one max
             }
 
 		}

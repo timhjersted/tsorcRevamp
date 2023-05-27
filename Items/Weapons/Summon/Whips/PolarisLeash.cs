@@ -7,6 +7,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
 	public class PolarisLeash : ModItem
 	{
+		public const int BaseDamage = 66;
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
@@ -18,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 42;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 66;
+			Item.damage = BaseDamage;
 			Item.knockBack = 3.5f;
 			Item.rare = ItemRarityID.LightPurple;
 			Item.value = Item.buyPrice(0, 45, 0, 0);

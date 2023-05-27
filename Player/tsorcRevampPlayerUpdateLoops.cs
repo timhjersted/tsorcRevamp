@@ -83,13 +83,21 @@ namespace tsorcRevamp
 
         public int EssenceThief = 0;
 
-        public float CrystalDefenseDamage;
+        public float CrystalNunchakuDefenseDamage;
+
+        public float DragoonLashFireBreathTimer = 0f;
+        public float DragoonLashHitTimer = 0f;
+
+        public float SearingLashStacks = 0f;
+        public float NightsCrackerStacks = 0f;
+        public float TerraFallStacks = 0f;
+
         public bool MythrilBulwark = false;
         public bool IceboundMythrilAegis = false;
 
         public bool SweepingBladeDamage = false;
 
-        public int steeltempest = 0;
+        public int SteelTempestStacks = 0;
         public int CritCounter = 0;
 
         public bool InterstellarBoost = false;

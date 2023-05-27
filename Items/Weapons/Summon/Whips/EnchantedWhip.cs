@@ -8,6 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
 	public class EnchantedWhip : ModItem
 	{
+		public const int BaseDamage = 18;
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
@@ -19,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 52;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 18;
+			Item.damage = BaseDamage;
 			Item.knockBack = 1.5f;
 			Item.rare = ItemRarityID.Blue;
 			Item.value = Item.buyPrice(0, 3, 50, 0);

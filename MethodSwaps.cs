@@ -26,6 +26,8 @@ using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Projectiles.Enemy.Triad;
 using Terraria.Graphics;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.GameContent.Drawing;
+using Terraria.WorldBuilding;
 
 namespace tsorcRevamp
 {
@@ -106,6 +108,30 @@ namespace tsorcRevamp
             On_Player.OnHurt_Part2 += On_Player_OnHurt_Part2;
 
             On_Player.ItemCheck_ApplyManaRegenDelay += On_Player_ItemCheck_ApplyManaRegenDelay;
+
+            On_Projectile.Damage += On_Projectile_Damage;
+        }
+
+        private static void On_Projectile_Damage(On_Projectile.orig_Damage orig, Projectile self)
+        {
+            if(self.IsMinionOrSentryRelated)
+            {
+                bool vanillaCanDamage = true;
+                if (self.type == 378 || self.type == 613 || (self.type == 434 && self.localAI[0] != 0f) || self.aiStyle == 138 || (self.type == 818 && self.ai[0] < 1f) || self.type == 831 || self.type == 970 || (self.type == 833 && self.ai[0] == 4f) || (self.type == 834 && self.ai[0] == 4f) || (self.type == 835 && self.ai[0] == 4f) ||  self.type == 614 || (self.aiStyle == 15 && self.ai[0] == 0f && self.localAI[1] <= 12f) || (self.aiStyle == 93 && self.ai[0] != 0f && self.ai[0] != 2f) || (self.aiStyle == 10 && self.localAI[1] == -1f) || (Main.projPet[self.type] && self.type != 266 && self.type != 407 && self.type != 317 && (self.type != 388 || self.ai[0] != 2f) && (self.type < 390 || self.type > 392) && (self.type < 393 || self.type > 395) && (self.type != 533 || !(self.ai[0] >= 6f) || !(self.ai[0] <= 8f)) && (self.type < 625 || self.type > 628) && (self.type != 755 || self.ai[0] == 0f) && (self.type != 946 || self.ai[0] == 0f) && self.type != 758 && self.type != 951 && self.type != 963 && (self.type != 759 || self.frame == Main.projFrames[self.type] - 1) && self.type != 833 && self.type != 834 && self.type != 835 && self.type != 864 && (self.type != 623 || self.ai[0] != 2f)))
+                {
+                    vanillaCanDamage = false;
+                }
+                if (Main.projPet[self.type] && ProjectileLoader.MinionContactDamage(self))
+                {
+                    vanillaCanDamage = true;
+                }
+                if (!(ProjectileLoader.CanDamage(self) ?? vanillaCanDamage))
+                {
+                    return;
+                }
+                return;
+            }
+            orig(self);
         }
 
         private static void On_Player_DropTombstone(On_Player.orig_DropTombstone orig, Player self, long coinsOwned, Terraria.Localization.NetworkText deathText, int hitDirection)
@@ -910,7 +936,7 @@ namespace tsorcRevamp
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             tsorcRevampCeruleanPlayer ceruleanPlayer = player.GetModPlayer<tsorcRevampCeruleanPlayer>();
-            if (modPlayer.BearerOfTheCurse && player.statMana < player.statManaMax2 && ceruleanPlayer.ceruleanChargesCurrent > 0)
+            if (modPlayer.BearerOfTheCurse && player.statMana < player.statManaMax2 && ceruleanPlayer.ceruleanChargesCurrent > 0 && !ceruleanPlayer.isCeruleanRestoring)
             {
                 if (player == Main.LocalPlayer && !player.mouseInterface && ceruleanPlayer.ceruleanChargesCurrent > 0 && player.itemAnimation == 0
                 && !modPlayer.isDodging && !ceruleanPlayer.isDrinking && !player.CCed)
