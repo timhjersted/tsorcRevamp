@@ -42,7 +42,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 		}
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.PolarisLeashDebuff>(), 4 * 60);
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.PolarisLeashDebuff>(), (int)(4 * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 		}
 	}

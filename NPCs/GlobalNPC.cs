@@ -702,7 +702,7 @@ namespace tsorcRevamp.NPCs
             //if(markedByCrystalNunchaku) only has a special effect
             if (markedByDetonationSignal)
             {
-                SummonTagScalingDamage += 2f;
+                SummonTagScalingDamage += 1.5f;
             }
             if (markedByDominatrix)
             {
@@ -752,7 +752,10 @@ namespace tsorcRevamp.NPCs
             {
                 SummonTagFlatDamage += 7f;
             }
-            //if(markedByFirecracker) only has a special effect
+            if(markedByFirecracker)
+            {
+                SummonTagScalingDamage += 1f;
+            }
             if (markedByCoolWhip)
             {
                 SummonTagFlatDamage += 6f;
@@ -784,10 +787,18 @@ namespace tsorcRevamp.NPCs
                 //Crystal Nunchaku Effect located in ModifyIncomingHit
                 if (markedByDetonationSignal) //Detonation Signal effect
                 {
+                    int buffIndex = 0;
                     Projectile.NewProjectile(Projectile.GetSource_None(), npc.Top, Vector2.Zero, ProjectileID.DD2ExplosiveTrapT2Explosion, 0, 0, Main.myPlayer);
-                    SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 0.6f, PitchVariance = 0.3f }, npc.Top);
+                    SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1.5f, PitchVariance = 0.3f }, npc.Top);
                     npc.AddBuff(ModContent.BuffType<DetonationSignalBuff>(), 4 * 60);
-                    npc.RequestBuffRemoval(ModContent.BuffType<DetonationSignalDebuff>());
+                    foreach (int buffType in npc.buffType)
+                    {
+                        if (buffType == ModContent.BuffType<DetonationSignalDebuff>())
+                        {
+                            npc.DelBuff(buffIndex);
+                        }
+                        buffIndex++;
+                    }
                 }
                 //Dragoon Lash effect at the bottom
                 if (markedByEnchantedWhip)
@@ -872,10 +883,16 @@ namespace tsorcRevamp.NPCs
                 #region Vanilla Whip Special Effects
                 if (markedByFirecracker)
                 {
-                    int FireCrackerExplosionDamage = (int)(modifiers.SourceDamage.ApplyTo(projectile.damage) * 2.75f);
-                    int num9 = Projectile.NewProjectile(projectile.GetSource_FromThis(), npc.Center, Vector2.Zero, ProjectileID.FireWhipProj, FireCrackerExplosionDamage, 0f, projectile.owner);
-                    Main.projectile[num9].localNPCImmunity[npc.netID] = -1;
-                    npc.RequestBuffRemoval(BuffID.FlameWhipEnemyDebuff);
+                    int buffIndex = 0;
+                    Projectile.NewProjectile(projectile.GetSource_FromThis(), npc.Center, Vector2.Zero, ProjectileID.FireWhipProj, 0, 0f, projectile.owner);
+                    foreach (int buffType in npc.buffType)
+                    {
+                        if (buffType == ModContent.BuffType<FirecrackerDebuff>())
+                        {
+                            npc.DelBuff(buffIndex);
+                        }
+                        buffIndex++;
+                    }
                 }
                 if (markedByDarkHarvest)
                 {
@@ -892,13 +909,17 @@ namespace tsorcRevamp.NPCs
                 }
                 #endregion
 
-                modifiers.FlatBonusDamage += SummonTagFlatDamage;
-                modifiers.ScalingBonusDamage += SummonTagScalingDamage;
-                if (Main.rand.NextBool((int)(SummonTagCriticalStrikeChance / 100f)))
+                modifiers.FlatBonusDamage += SummonTagFlatDamage * ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type] * modPlayerProjectileOwner.SummonTagStrength;
+                modifiers.ScalingBonusDamage += SummonTagScalingDamage * ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type] * modPlayerProjectileOwner.SummonTagStrength;
+                modifiers.ArmorPenetration += SummonTagArmorPenetration * modPlayerProjectileOwner.SummonTagStrength;
+                Main.NewText(projectileOwner.GetTotalCritChance(DamageClass.Summon));
+                if (SummonTagCriticalStrikeChance > 0)
                 {
-                    modifiers.SetCrit();
+                    if (Main.rand.NextBool((int)(100f / (SummonTagCriticalStrikeChance * modPlayerProjectileOwner.SummonTagStrength * (1f + (projectileOwner.GetTotalCritChance(DamageClass.Summon) / 100f))))))
+                    {
+                        modifiers.SetCrit();
+                    }
                 }
-                modifiers.ArmorPenetration += SummonTagArmorPenetration;
 
             }
             if (markedByDragoonLash && (projectile.IsMinionOrSentryRelated || ProjectileID.Sets.IsAWhip[projectile.type])) //has to be outside of the main if since this is supposed to also be procced on whip-hit
@@ -1338,6 +1359,51 @@ namespace tsorcRevamp.NPCs
         }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
+            Player player = Main.player[projectile.owner];
+            var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
+            #region Vanilla Whips applying their modded counterparts
+            if (projectile.type == ProjectileID.BlandWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<LeatherWhipDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.ThornWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<SnapthornDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+                player.AddBuff(BuffID.ThornWhipPlayerBuff, (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.BoneWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<SpinalTapDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.FireWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<FirecrackerDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.CoolWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<CoolWhipDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+                player.AddBuff(BuffID.CoolWhipPlayerBuff, (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.SwordWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<DurendalDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+                player.AddBuff(BuffID.SwordWhipPlayerBuff, (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.MaceWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<MorningStarDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.ScytheWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<DarkHarvestDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+                player.AddBuff(BuffID.SwordWhipPlayerBuff, (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.RainbowWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<KaleidoscopeDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            #endregion
+            #region Crystal Nunchaku effects
             if (!CrystalNunchakuProc && !(CrystalNunchakuStacks == 0) && !projectile.npcProj && !projectile.trap && markedByCrystalNunchaku && projectile.type != ModContent.ProjectileType<CrystalNunchakuProjectile>())
             {
                 CrystalNunchakuStacks -= 1;
@@ -1347,7 +1413,7 @@ namespace tsorcRevamp.NPCs
                 Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>().CrystalNunchakuDefenseDamage = 15f - (CrystalNunchakuStacks * 1.5f);
                 Main.player[projectile.owner].AddBuff(ModContent.BuffType<CrystalShield>(), 4 * 60);
             }
-
+            #endregion
             if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>()))
             {
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetToxicCatBlobs = true;

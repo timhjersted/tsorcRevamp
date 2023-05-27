@@ -125,8 +125,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.DominatrixDebuff>(), 4 * 60);
-			target.AddBuff(BuffID.BloodButcherer, 3 * 60);
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.DominatrixDebuff>(), (int)(4 * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
+			target.AddBuff(BuffID.BloodButcherer, 4 * 60);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(Projectile.damage * 0.65f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
 		}

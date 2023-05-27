@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -124,10 +125,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-		{
-			if (!target.HasBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.CrystalNunchakuDebuff>()))
+        {
+            if (!target.HasBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.CrystalNunchakuDebuff>()))
 			{
-                target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.CrystalNunchakuDebuff>(), 15 * 60);
+                target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.CrystalNunchakuDebuff>(), (int)(15 * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
             }
 			Projectile.damage = (int)(Projectile.damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
 		}

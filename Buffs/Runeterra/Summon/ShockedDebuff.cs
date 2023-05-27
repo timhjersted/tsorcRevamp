@@ -45,7 +45,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
         }
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
 		{
-			if (Shocked && !projectile.npcProj && !projectile.trap && projectile.IsMinionOrSentryRelated)
+			if (Shocked && projectile.IsMinionOrSentryRelated)
             {
                 if (Main.rand.NextBool(100 / (int)(Main.player[Main.myPlayer].GetTotalCritChance(DamageClass.Summon) / 2.5f)))
                 {

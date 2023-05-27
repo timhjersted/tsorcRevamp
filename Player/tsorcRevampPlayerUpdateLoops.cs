@@ -79,7 +79,7 @@ namespace tsorcRevamp
 
         public bool MythrilOrichalcumCritDamage = false;
         public bool ChallengersGloveCritDamage = false;
-        public int WhipCritHitboxSize = 1;
+        public float WhipCritHitboxSize = 1f;
 
         public int EssenceThief = 0;
 
@@ -88,9 +88,12 @@ namespace tsorcRevamp
         public float DragoonLashFireBreathTimer = 0f;
         public float DragoonLashHitTimer = 0f;
 
-        public float SearingLashStacks = 0f;
-        public float NightsCrackerStacks = 0f;
-        public float TerraFallStacks = 0f;
+        public float SearingLashStacks;
+        public float NightsCrackerStacks;
+        public float TerraFallStacks;
+
+        public float SummonTagStrength;
+        public float SummonTagDuration;
 
         public bool MythrilBulwark = false;
         public bool IceboundMythrilAegis = false;
@@ -307,6 +310,9 @@ namespace tsorcRevamp
             MythrilOrichalcumCritDamage = false; 
             ChallengersGloveCritDamage = false;
             WhipCritHitboxSize = 1;
+
+            SummonTagStrength = 1f;
+            SummonTagDuration = 1f;
 
             MythrilBulwark = false; 
             IceboundMythrilAegis = false;

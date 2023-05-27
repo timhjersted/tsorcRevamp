@@ -1,11 +1,15 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories
 {
     public class MonocleOfPrecision : ModItem
     {
+        public static float CriticalStrikeChance = 7;
+        public static float WhipCritHitboxSize = 3;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CriticalStrikeChance, WhipCritHitboxSize);
         public override void SetStaticDefaults()
         {
         }
@@ -19,14 +23,14 @@ namespace tsorcRevamp.Items.Accessories
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Generic) += 7;
-            player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize = 3;
+            player.GetCritChance(DamageClass.Generic) += CriticalStrikeChance / 100f;
+            player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize = WhipCritHitboxSize;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BlackLens);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

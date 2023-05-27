@@ -1,6 +1,8 @@
+using Humanizer;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items.Armors.Summon;
@@ -41,21 +43,24 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 35;
             }
         }
+        public static float MorningStarTagDamage = 4;
+        public static float MorningStarTagCriticalStrikeChance = 6;
+        public static float KaleidoscopeTagDamage = 10;
+        public static float KaleidoscopeTagCriticalStrikeChance = 5;
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
             if (item.type == ItemID.MaceWhip)
             {
-                int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MorningStar").FormatWith(MorningStarTagDamage, MorningStarTagCriticalStrikeChance)));
+                }
+                int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
                 if (ttindex1 != -1)
                 {
                     tooltips.RemoveAt(ttindex1);
-                    tooltips.Insert(ttindex1, new TooltipLine(Mod, "TagNerfed", "4 summon tag damage"));
-                }
-                int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip1");
-                if (ttindex2 != -1)
-                {
-                    tooltips.RemoveAt(ttindex2);
-                    tooltips.Insert(ttindex2, new TooltipLine(Mod, "TagCritNerfed", "6% summon tag critical strike chance"));
                 }
             }
             if (item.type == ItemID.RainbowWhip)
@@ -64,29 +69,70 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", "10 summon tag damage"));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.Kaleidoscope").FormatWith(KaleidoscopeTagDamage, KaleidoscopeTagCriticalStrikeChance)));
                 }
-                int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip1");
-                if (ttindex2 != -1)
+                int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
+                if (ttindex1 != -1)
                 {
-                    tooltips.RemoveAt(ttindex2);
-                    tooltips.Insert(ttindex2, new TooltipLine(Mod, "TagCritNerfed", "5% summon tag critical strike chance"));
+                    tooltips.RemoveAt(ttindex1);
                 }
             }
             if (item.type == ItemID.EmpressBlade && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())))
             {
-                int ttindex2 = tooltips.FindLastIndex(t => t.Name == "Tooltip0");
-                if (ttindex2 != -1)
+                int ttindex = tooltips.FindLastIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex2 + 1, new TooltipLine(Mod, "Nerfed", "The full power of this blade has been sealed by an ancient knight\nDefeat him to partially unlock its power!"));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Nerfed", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.TerraprismaTier1")));
                 }
             } else
             if (item.type == ItemID.EmpressBlade && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())))
             {
-                int ttindex2 = tooltips.FindLastIndex(t => t.Name == "Tooltip0");
-                if (ttindex2 != -1)
+                int ttindex1 = tooltips.FindLastIndex(t => t.Name == "Tooltip0");
+                if (ttindex1 != -1)
                 {
-                    tooltips.Insert(ttindex2 + 1, new TooltipLine(Mod, "Nerfed2", "The full power of this blade has been sealed by the embodiment of chaos\nDefeat it to fully unlock its power!"));
+                    tooltips.Insert(ttindex1 + 1, new TooltipLine(Mod, "StillNerfed", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.TerraprismaTier2")));
+                }
+            }
+            if (item.type == ItemID.HerculesBeetle)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagStrengthBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.HerculesBeetle").FormatWith(MethodSwaps.SummonTagDurationBoost)));
+                }
+                int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
+                if (ttindex1 != -1)
+                {
+                    tooltips.RemoveAt(ttindex1);
+                }
+            }
+            if (item.type == ItemID.NecromanticScroll)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagDurationBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.NecromanticScroll").FormatWith(MethodSwaps.SummonTagDurationBoost)));
+                }
+                int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
+                if (ttindex1 != -1)
+                {
+                    tooltips.RemoveAt(ttindex1);
+                }
+            }
+            if (item.type == ItemID.PapyrusScarab)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagStrengthDurationBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.PapyrusScarab").FormatWith(MethodSwaps.SummonTagStrengthBoost, MethodSwaps.SummonTagDurationBoost)));
+                }
+                int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
+                if (ttindex1 != -1)
+                {
+                    tooltips.RemoveAt(ttindex1);
                 }
             }
         }
@@ -178,6 +224,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 player.whipRangeMultiplier += scaleDelta;
             }
         }
+        public static int MaxMinionIncrease = 1;
         public override string IsArmorSet(Item head, Item body, Item legs)
         {
             if (head.type == ModContent.ItemType<OldChainCoif>() && body.type == ItemID.FlinxFurCoat && legs.type == ModContent.ItemType<OldChainGreaves>())
@@ -190,9 +237,8 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if (set == "FlinxFurChained")
             {
-                player.setBonus = "Increases your max number of minions by 1";
-
-                player.maxMinions += 1;
+                player.setBonus = Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.FlinxFurChainedSetBonus").FormatWith(MaxMinionIncrease);
+                player.maxMinions += MaxMinionIncrease;
             }
         }
 

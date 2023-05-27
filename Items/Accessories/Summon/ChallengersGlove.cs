@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Summon
@@ -7,6 +8,12 @@ namespace tsorcRevamp.Items.Accessories.Summon
     [AutoloadEquip(EquipType.HandsOn)]
     public class ChallengersGlove : ModItem
     {
+        public static float SummonDamage = 12;
+        public static float SummonAttackSpeed = 12;
+        public static float WhipRangeIncrease = 10;
+        public static float WhipCritDamage = 12; //this does actually affect the crit damage, but in a different file
+        public static float WhipCritHitboxSize = 3;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonDamage, SummonAttackSpeed, WhipRangeIncrease, WhipCritDamage, WhipCritHitboxSize);
         public override void SetStaticDefaults()
         {
         }
@@ -23,12 +30,12 @@ namespace tsorcRevamp.Items.Accessories.Summon
         {
             player.GetKnockback(DamageClass.SummonMeleeSpeed) += 2f;
             player.autoReuseGlove = true;
-            player.GetDamage(DamageClass.Summon) += 0.12f;
-            player.GetAttackSpeed(DamageClass.Summon) += 0.12f;
-            player.whipRangeMultiplier += 0.1f;
+            player.GetDamage(DamageClass.Summon) += SummonDamage / 100f;
+            player.GetAttackSpeed(DamageClass.Summon) += SummonAttackSpeed / 100f;
+            player.whipRangeMultiplier += WhipRangeIncrease / 100f;
             player.aggro += 400;
             player.GetModPlayer<tsorcRevampPlayer>().ChallengersGloveCritDamage = true;
-            player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize = 3;
+            player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize = WhipCritHitboxSize;
         }
         public override void AddRecipes()
         {

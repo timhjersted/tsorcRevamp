@@ -28,6 +28,7 @@ using Terraria.Graphics;
 using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.Drawing;
 using Terraria.WorldBuilding;
+using System.ComponentModel.Design;
 
 namespace tsorcRevamp
 {
@@ -109,29 +110,46 @@ namespace tsorcRevamp
 
             On_Player.ItemCheck_ApplyManaRegenDelay += On_Player_ItemCheck_ApplyManaRegenDelay;
 
-            On_Projectile.Damage += On_Projectile_Damage;
+            On_Projectile.StatusNPC += On_Projectile_StatusNPC;
+
+            On_Player.ApplyEquipFunctional += On_Player_ApplyEquipFunctional;
         }
 
-        private static void On_Projectile_Damage(On_Projectile.orig_Damage orig, Projectile self)
+        public static float SummonTagStrengthBoost = 50;
+        public static float SummonTagDurationBoost = 50;
+        private static void On_Player_ApplyEquipFunctional(On_Player.orig_ApplyEquipFunctional orig, Player self, Item currentItem, bool hideVisual)
         {
-            if(self.IsMinionOrSentryRelated)
+            var modPlayer = self.GetModPlayer<tsorcRevampPlayer>();
+            if(currentItem.type == ItemID.NecromanticScroll)
             {
-                bool vanillaCanDamage = true;
-                if (self.type == 378 || self.type == 613 || (self.type == 434 && self.localAI[0] != 0f) || self.aiStyle == 138 || (self.type == 818 && self.ai[0] < 1f) || self.type == 831 || self.type == 970 || (self.type == 833 && self.ai[0] == 4f) || (self.type == 834 && self.ai[0] == 4f) || (self.type == 835 && self.ai[0] == 4f) ||  self.type == 614 || (self.aiStyle == 15 && self.ai[0] == 0f && self.localAI[1] <= 12f) || (self.aiStyle == 93 && self.ai[0] != 0f && self.ai[0] != 2f) || (self.aiStyle == 10 && self.localAI[1] == -1f) || (Main.projPet[self.type] && self.type != 266 && self.type != 407 && self.type != 317 && (self.type != 388 || self.ai[0] != 2f) && (self.type < 390 || self.type > 392) && (self.type < 393 || self.type > 395) && (self.type != 533 || !(self.ai[0] >= 6f) || !(self.ai[0] <= 8f)) && (self.type < 625 || self.type > 628) && (self.type != 755 || self.ai[0] == 0f) && (self.type != 946 || self.ai[0] == 0f) && self.type != 758 && self.type != 951 && self.type != 963 && (self.type != 759 || self.frame == Main.projFrames[self.type] - 1) && self.type != 833 && self.type != 834 && self.type != 835 && self.type != 864 && (self.type != 623 || self.ai[0] != 2f)))
-                {
-                    vanillaCanDamage = false;
-                }
-                if (Main.projPet[self.type] && ProjectileLoader.MinionContactDamage(self))
-                {
-                    vanillaCanDamage = true;
-                }
-                if (!(ProjectileLoader.CanDamage(self) ?? vanillaCanDamage))
-                {
-                    return;
-                }
+                self.GetDamage(DamageClass.Summon) -= 0.1f;
+                self.maxMinions--;
+                modPlayer.SummonTagDuration += SummonTagDurationBoost / 100f;
+            }
+            if(currentItem.type == ItemID.HerculesBeetle)
+            {
+                self.GetKnockback(DamageClass.Summon) -= 2f;
+                self.GetDamage(DamageClass.Summon) -= 0.15f;
+                modPlayer.SummonTagStrength += SummonTagStrengthBoost / 100f;
+            }
+            if (currentItem.type == ItemID.PapyrusScarab)
+            {
+                self.GetKnockback(DamageClass.Summon) -= 2f;
+                self.GetDamage(DamageClass.Summon) -= 0.15f;
+                self.maxMinions--;
+                self.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength += SummonTagStrengthBoost / 100f;
+                modPlayer.SummonTagDuration += SummonTagDurationBoost / 100f;
+            }
+            orig(self, currentItem, hideVisual);
+        }
+
+        private static void On_Projectile_StatusNPC(On_Projectile.orig_StatusNPC orig, Projectile self, int i)
+        {
+            if (self.type == ProjectileID.BlandWhip || self.type == ProjectileID.ThornWhip || self.type == ProjectileID.BoneWhip || self.type == ProjectileID.FireWhip || self.type == ProjectileID.CoolWhip || self.type == ProjectileID.SwordWhip || self.type == ProjectileID.MaceWhip || self.type == ProjectileID.ScytheWhip || self.type == ProjectileID.RainbowWhip)
+            {
                 return;
             }
-            orig(self);
+            orig(self, i);
         }
 
         private static void On_Player_DropTombstone(On_Player.orig_DropTombstone orig, Player self, long coinsOwned, Terraria.Localization.NetworkText deathText, int hitDirection)

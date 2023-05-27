@@ -135,7 +135,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             Player player = Main.player[Projectile.owner];
             var modPlayer = Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>();
             modPlayer.SearingLashStacks = ChargeTime / 40 + 1;
-            target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.SearingLashDebuff>(), (int)(modPlayer.SearingLashStacks * 150));
+            target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.SearingLashDebuff>(), (int)(modPlayer.SearingLashStacks * 150 * modPlayer.SummonTagDuration));
 			target.AddBuff(BuffID.OnFire, (int)(modPlayer.SearingLashStacks * 150));
 			player.MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(Projectile.damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.

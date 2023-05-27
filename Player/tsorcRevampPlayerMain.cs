@@ -27,6 +27,7 @@ using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using Terraria.Localization;
+using tsorcRevamp.Items.Accessories.Summon;
 
 namespace tsorcRevamp
 {
@@ -749,14 +750,13 @@ namespace tsorcRevamp
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Projectile, consider using ModifyHitNPC instead */
         {
             int critLevel = (int)(Math.Floor(proj.CritChance / 100f));
-            modifiers.SourceDamage.Flat -= 4;
             if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>())
             {
                 modifiers.FinalDamage *= 0.55f;
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().ChallengersGloveCritDamage && proj.DamageType == DamageClass.SummonMeleeSpeed)
             {
-                modifiers.CritDamage += 0.12f;
+                modifiers.CritDamage += ChallengersGlove.WhipCritDamage / 100f;
             }
             if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
             {

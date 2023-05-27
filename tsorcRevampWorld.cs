@@ -1290,7 +1290,7 @@ namespace tsorcRevamp
             {
                 if (internalDisabled == null)
                 {
-                    internalDisabled = new Condition(Language.GetText("Only craftable outside of Adventure Mode"), () => !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode);
+                    internalDisabled = new Condition("Mods.tsorcRevamp.Conditions.AdventureModeDisabled", () => !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode);
                 }
                 return internalDisabled;
             }
@@ -1302,7 +1302,7 @@ namespace tsorcRevamp
             {
                 if (internalEnabled == null)
                 {
-                    internalEnabled = new Condition(Language.GetText("Adventure Mode-only recipe"), () => ModContent.GetInstance<tsorcRevampConfig>().AdventureMode);
+                    internalEnabled = new Condition("Mods.tsorcRevamp.Conditions.AdventureModeEnabled", () => ModContent.GetInstance<tsorcRevampConfig>().AdventureMode);
                 }
                 return internalEnabled;
             }
@@ -1314,7 +1314,7 @@ namespace tsorcRevamp
             {
                 if (BotCEnabled == null)
                 {
-                    BotCEnabled = new Condition(Language.GetText("Bearer of the Curse Mode-only recipe"), () => Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse);
+                    BotCEnabled = new Condition("Mods.tsorcRevamp.Conditions.BotCEnabled", () => Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse);
                 }
                 return BotCEnabled;
             }
@@ -1324,28 +1324,28 @@ namespace tsorcRevamp
         {
             get
             {
-                return new Condition(Language.GetText("One Guardian of the Abyss Slain"), () => SHMDowned > 0);
+                return new Condition("Mods.tsorcRevamp.Conditions.SHM1Downed", () => SHMDowned > 0);
             }
         }
         public static Condition SHM3Downed
         {
             get
             {
-                return new Condition(Language.GetText("Three Guardians of the Abyss Slain"), () => SHMDowned >= 3);
+                return new Condition("Mods.tsorcRevamp.Conditions.SHM3Downed", () => SHMDowned >= 3);
             }
         }
         public static Condition SHM6Downed
         {
             get
             {
-                return new Condition(Language.GetText("Six Guardians of the Abyss Slain"), () => SHMDowned >= 6);
+                return new Condition("Mods.tsorcRevamp.Conditions.SHM6Downed", () => SHMDowned >= 6);
             }
         }
         public static Condition SHM9Downed
         {
             get
             {
-                return new Condition(Language.GetText("Nine Guardians of the Abyss Slain"), () => SHMDowned >= 9);
+                return new Condition("Mods.tsorcRevamp.Conditons.SHM9Downed", () => SHMDowned >= 9);
             }
         }
 

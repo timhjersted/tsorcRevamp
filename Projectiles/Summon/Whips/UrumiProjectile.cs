@@ -125,7 +125,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.UrumiDebuff>(), 4 * 60);
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.UrumiDebuff>(), (int)(4 * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(Projectile.damage * 0.6f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
 		}

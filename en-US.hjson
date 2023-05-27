@@ -1,419 +1,497 @@
 Mods: {
 	tsorcRevamp: {
+		CommonItemTooltip: {
+			IncreasesWhipKnockback: Increases whip knockback
+			IncreasedSummonAttackSpeed: Increases whip attack speed by {0}%
+			GrantsMeleeWhipAutoswing: Enables auto swing for melee weapons
+			AggroIncrease: Enemies are more likely to target you
+			WhipCritDamage: Increases the damage of whip crits by {0}%
+			WhipCritHitboxSize: Increases the Whip Tip Crit Hitbox Size to {0}x
+			SummonTagStrengthBoost: Increases the strength of Summon Tag effects by {0}%
+			SummonTagDurationBoost: Increases the duration of Summon Tag effects by {0}%
+			BotCSummonTagDoubleBuffCount: Fully charged whip debuff counts as 2
+		}
+
 		Items: {
+			VanillaItems: {
+				MorningStar:
+					'''
+					{$CommonItemTooltip.SummonTagDamage}
+					{$CommonItemTooltip.PercentSummonTagCritChance@1}
+					'''
+				Kaleidoscope:
+					'''
+					{$CommonItemTooltip.SummonTagDamage}
+					{$CommonItemTooltip.PercentSummonTagCritChance@1}
+					'''
+				TerraprismaTier1:
+					'''
+					The full power of this blade has been sealed by an ancient knight...
+					Defeat him to partially unlock its power!
+					'''
+				TerraprismaTier2:
+					'''
+					The full power of this blade has been sealed by the embodiment of chaos
+					Defeat it to fully unlock its power!
+					'''
+				HerculesBeetle: "{$CommonItemTooltip.SummonTagStrengthBoost}"
+				NecromanticScroll: "{$CommonItemTooltip.SummonTagDurationBoost}"
+				PapyrusScarab:
+					'''
+					{$CommonItemTooltip.SummonTagStrengthBoost}
+					{$CommonItemTooltip.SummonTagDurationBoost@1}
+					'''
+				FlinxFurChainedSetBonus: "{$CommonItemTooltip.IncreasesMaxMinionsBy}"
+			}
+
 			AbandonedStumpBanner: {
 				DisplayName: Abandoned Stump Banner
-				Tooltip: Nearby players get a bonus against: Abandoned Stump
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Abandoned Stump"
 			}
 
 			AbysswalkerBanner: {
 				DisplayName: Abysswalker Banner
-				Tooltip: Nearby players get a bonus against: Abysswalker
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Abysswalker"
 			}
 
 			AncientDemonBanner: {
 				DisplayName: Ancient Demon Banner
-				Tooltip: Nearby players get a bonus against: Ancient Demon
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Ancient Demon"
 			}
 
 			AncientDemonOfTheAbyssBanner: {
 				DisplayName: Ancient Demon Of The Abyss Banner
-				Tooltip: Nearby players get a bonus against: Ancient Demon Of The Abyss
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Ancient Demon Of The Abyss"
 			}
 
 			ArchdeaconBanner: {
 				DisplayName: Archdeacon Banner
-				Tooltip: Nearby players get a bonus against: Archdeacon
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Archdeacon"
 			}
 
 			ArmoredWraithBanner: {
 				DisplayName: Unarmored Wraith Banner
-				Tooltip: Nearby players get a bonus against: Unarmored Wraith
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Unarmored Wraith"
 			}
 
 			AssassinBanner: {
 				DisplayName: Assassin Banner
-				Tooltip: Nearby players get a bonus against: Assassin
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Assassin"
 			}
 
 			AttraidiesIllusionBanner: {
 				DisplayName: Attraidies Illusion Banner
-				Tooltip: Nearby players get a bonus against: Attraidies Illusion
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Attraidies Illusion"
 			}
 
 			AttraidiesManifestationBanner: {
 				DisplayName: Attraidies Manifestation Banner
-				Tooltip: Nearby players get a bonus against: Attraidies Manifestation
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Attraidies Manifestation"
 			}
 
 			BarrowWightBanner: {
 				DisplayName: Barrow Wight Banner
-				Tooltip: Nearby players get a bonus against: Barrow Wight
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Barrow Wight"
 			}
 
 			BarrowWightNemesisBanner: {
 				DisplayName: Barrow Wight Nemesis Banner
-				Tooltip: Nearby players get a bonus against: Barrow Wight Nemesis
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Barrow Wight Nemesis"
 			}
 
 			BarrowWightPhantomBanner: {
 				DisplayName: Barrow Wight Phantom Banner
-				Tooltip: Nearby players get a bonus against: Barrow Wight Phantom
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Barrow Wight Phantom"
 			}
 
 			BasiliskHunter: {
 				DisplayName: Basilisk Hunter
-				Tooltip: Nearby players get a bonus against: Basilisk Hunter
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Basilisk Hunter"
 			}
 
 			BasiliskShifterBanner: {
 				DisplayName: Basilisk Shifter Banner
-				Tooltip: Nearby players get a bonus against: Basilisk Shifter
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Basilisk Shifter"
 			}
 
 			BasiliskWalkerBanner: {
 				DisplayName: Basilisk Walker Banner
-				Tooltip: Nearby players get a bonus against: Basilisk Walker
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Basilisk Walker"
 			}
 
 			BlackKnightBanner: {
 				DisplayName: Black Knight Banner
-				Tooltip: Nearby players get a bonus against: Black Knight
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Black Knight"
 			}
 
 			ChickenBanner: {
 				DisplayName: Chicken Banner
-				Tooltip: Nearby players get a bonus against: Chicken
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Chicken"
 			}
 
 			CloudBatBanner: {
 				DisplayName: Cloud Bat Banner
-				Tooltip: Nearby players get a bonus against: Cloud Bat
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Cloud Bat"
 			}
 
 			CorruptedElementalBanner: {
 				DisplayName: Corrupted Elemental Banner
-				Tooltip: Nearby players get a bonus against: Corrupted Elemental
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Corrupted Elemental"
 			}
 
 			CorruptedHornetBanner: {
 				DisplayName: Corrupted Hornet Banner
-				Tooltip: Nearby players get a bonus against: Corrupted Hornet
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Corrupted Hornet"
 			}
 
 			CosmicCrystalLizardBanner: {
 				DisplayName: Cosmic Crystal Lizard Banner
-				Tooltip: Nearby players get a bonus against: Cosmic Crystal Lizard
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Cosmic Crystal Lizard"
 			}
 
 			CrazedDemonSpiritBanner: {
 				DisplayName: Crazed Demon Spirit Banner
-				Tooltip: Nearby players get a bonus against: Crazed Demon Spirit
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Crazed Demon Spirit"
 			}
 
 			CrystalKnightBanner: {
 				DisplayName: Crystal Knight Banner
-				Tooltip: Nearby players get a bonus against: Crystal Knight
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Crystal Knight"
 			}
 
 			DarkBloodKnightBanner: {
 				DisplayName: Dark Blood Knight Banner
-				Tooltip: Nearby players get a bonus against: Dark Blood Knight
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Dark Blood Knight"
 			}
 
 			DarkElfMageBanner: {
 				DisplayName: Dark Elf Mage Banner
-				Tooltip: Nearby players get a bonus against: Dark Elf Mage
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Dark Elf Mage"
 			}
 
 			DarkKnightBanner: {
 				DisplayName: Dark Knight Banner
-				Tooltip: Nearby players get a bonus against: Dark Knight
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Dark Knight"
 			}
 
 			DemonSpiritBanner: {
 				DisplayName: Demon Spirit Banner
-				Tooltip: Nearby players get a bonus against: Demon Spirit
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Demon Spirit"
 			}
 
 			DiscipleOfAttraidiesBanner: {
 				DisplayName: Disciple Of Attraidies Banner
-				Tooltip: Nearby players get a bonus against: Disciple of Attraidies
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Disciple of Attraidies"
 			}
 
 			DungeonMageBanner: {
 				DisplayName: Dungeon Mage Banner
-				Tooltip: Nearby players get a bonus against: Dungeon Mage
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Dungeon Mage"
 			}
 
 			DunlendingBanner: {
 				DisplayName: Dunlending Banner
-				Tooltip: Nearby players get a bonus against: Dunlending
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Dunlending"
 			}
 
 			DworcFleshhunterBanner: {
 				DisplayName: Dworc Fleshhunter Banner
-				Tooltip: Nearby players get a bonus against: Dworc Fleshhunter
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Dworc Fleshhunter"
 			}
 
 			DworcVenomsniperBanner: {
 				DisplayName: Dworc Venomsniper Banner
-				Tooltip: Nearby players get a bonus against: Dworc Venomsniper
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Dworc Venomsniper"
 			}
 
 			DworcVoodoomasterBanner: {
 				DisplayName: Dworc Voodoomaster Banner
-				Tooltip: Nearby players get a bonus against: Dworc Alchemist
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Dworc Alchemist"
 			}
 
 			DworcVoodooShamanBanner: {
 				DisplayName: Dworc Voodoo Shaman Banner
-				Tooltip: Nearby players get a bonus against: Dworc Voodoo Shaman
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Dworc Voodoo Shaman"
 			}
 
 			FirebombHollowBanner: {
 				DisplayName: Firebomb Hollow Banner
-				Tooltip: Nearby players get a bonus against: Firebomb Hollow
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Firebomb Hollow"
 			}
 
 			FlameBatBanner: {
 				DisplayName: Flame Bat Banner
-				Tooltip: Nearby players get a bonus against: Flame Bat
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Flame Bat"
 			}
 
 			GhostOfTheDarkmoonKnightBanner: {
 				DisplayName: Ghost Of The Darkmoon Knight Banner
-				Tooltip: Nearby players get a bonus against: Ghost of The Darkmoon Knight
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Ghost of The Darkmoon Knight"
 			}
 
 			GhostOfTheForgottenKnightBanner: {
 				DisplayName: Ghost Of The Forgotten Knight Banner
-				Tooltip: Nearby players get a bonus against: Ghost of The Forgotten Knight
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Ghost of The Forgotten Knight"
 			}
 
 			GhostOfTheForgottenWarriorBanner: {
 				DisplayName: Ghost Of The Forgotten Warrior Banner
-				Tooltip: Nearby players get a bonus against: Ghost Of The Forgotten Warrior
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Ghost Of The Forgotten Warrior"
 			}
 
 			GreatRedKnightBanner: {
 				DisplayName: Great Red Knight Banner
-				Tooltip: Nearby players get a bonus against: Great Red Knight
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Great Red Knight"
 			}
 
 			GuardianCorruptorBanner: {
 				DisplayName: Guardian Corruptor Banner
-				Tooltip: Nearby players get a bonus against: Guardian Corruptor
-			}
-
-			HeroOfLumeliaBanner: {
-				DisplayName: Hero Of Lumelia Banner
-				Tooltip: Nearby players get a bonus against: Hero of Lumelia
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Guardian Corruptor"
 			}
 
 			HydrisElementalBanner: {
 				DisplayName: Hydris Elemental Banner
-				Tooltip: Nearby players get a bonus against: Hydris Elemental
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Hydris Elemental"
 			}
 
 			HydrisNecromancerBanner: {
 				DisplayName: Hydris Necromancer Banner
-				Tooltip: Nearby players get a bonus against: Hydris Necromancer
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Hydris Necromancer"
 			}
 
 			IceSkeletonBanner: {
 				DisplayName: Ice Skeleton Banner
-				Tooltip: Nearby players get a bonus against: Ice Skeleton
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Ice Skeleton"
 			}
 
 			JungleSentreeBanner: {
 				DisplayName: Jungle Sentree Banner
-				Tooltip: Nearby players get a bonus against: Jungle Sentree
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Jungle Sentree"
 			}
 
 			JungleWyvernJuvenileBanner: {
 				DisplayName: Jungle Wyvern Juvenile Banner
-				Tooltip: Nearby players get a bonus against: Jungle Wyvern Juvenile
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Jungle Wyvern Juvenile"
 			}
 
 			LivingGlowshroomBanner: {
 				DisplayName: Living Glowshroom Banner
-				Tooltip: Nearby players get a bonus against: Living Glowshroom
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Living Glowshroom"
 			}
 
 			LivingShroomBanner: {
 				DisplayName: Fleeing Fungi Banner
-				Tooltip: Nearby players get a bonus against: Fleeing Fungi
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Fleeing Fungi"
 			}
 
 			LivingShroomThiefBanner: {
 				DisplayName: Fungi Felon Banner
-				Tooltip: Nearby players get a bonus against: Fungi Felon
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Fungi Felon"
 			}
 
 			ManHunterBanner: {
 				DisplayName: Man Hunter Banner
-				Tooltip: Nearby players get a bonus against: Man Hunter
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Man Hunter"
 			}
 
 			ManOfWarBanner: {
 				DisplayName: Man Of War Banner
-				Tooltip: Nearby players get a bonus against: Man Of War
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Man Of War"
 			}
 
 			MarilithSpiritTwinBanner: {
 				DisplayName: Marilith Spirit Twin Banner
-				Tooltip: Nearby players get a bonus against: Marilith Spirit Twin
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Marilith Spirit Twin"
 			}
 
 			MindflayerIllusionBanner: {
 				DisplayName: Mindflayer Illusion Banner
-				Tooltip: Nearby players get a bonus against: Mindflayer Illusion
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Mindflayer Illusion"
 			}
 
 			MindflayerKingServantBanner: {
 				DisplayName: Mindflayer King Servant Banner
-				Tooltip: Nearby players get a bonus against: Mindflayer King Servant
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Mindflayer King Servant"
 			}
 
 			MindflayerServantBanner: {
 				DisplayName: Mindflayer Servant Banner
-				Tooltip: Nearby players get a bonus against: Mindflayer Servant
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Mindflayer Servant"
 			}
 
 			MutantToadBanner: {
 				DisplayName: Mutant Toad Banner
-				Tooltip: Nearby players get a bonus against: Mutant Toad
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Mutant Toad"
 			}
 
 			NecromancerBanner: {
 				DisplayName: Necromancer Banner
-				Tooltip: Nearby players get a bonus against: Necromancer
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Necromancer"
 			}
 
 			NecromancerElementalBanner: {
 				DisplayName: Necromancer Elemental Banner
-				Tooltip: Nearby players get a bonus against: Necromancer Elemental
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Necromancer Elemental"
 			}
 
 			ObsidianJellyfishBanner: {
 				DisplayName: Obsidian Jellyfish Banner
-				Tooltip: Nearby players get a bonus against: Obsidian Jellyfish
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Obsidian Jellyfish"
 			}
 
 			OolacileDemonBanner: {
 				DisplayName: Ephemeral Oolacile Demon Banner
-				Tooltip: Nearby players get a bonus against: Oolacile Demon
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Oolacile Demon"
 			}
 
 			OolacileKnightBanner: {
 				DisplayName: Oolacile Knight Banner
-				Tooltip: Nearby players get a bonus against: Oolacile Knight
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Oolacile Knight"
 			}
 
 			OolacileSorcererBanner: {
 				DisplayName: Oolacile Sorcerer Banner
-				Tooltip: Nearby players get a bonus against: Oolacile Sorcerer
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Oolacile Sorcerer"
 			}
 
 			ParaspriteBanner: {
 				DisplayName: Parasprite Banner
-				Tooltip: Nearby players get a bonus against: Parasprite
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Parasprite"
 			}
 
 			ParasyticWormBanner: {
 				DisplayName: Parasytic Worm Banner
-				Tooltip: Nearby players get a bonus against: Parasytic Worm
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Parasytic Worm"
 			}
 
 			QuaraHydromancerBanner: {
 				DisplayName: Quara Hydromancer Banner
-				Tooltip: Nearby players get a bonus against: Quara Hydromancer
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Quara Hydromancer"
 			}
 
 			RedCloudHunterBanner: {
 				DisplayName: Red Cloud Hunter Banner
-				Tooltip: Nearby players get a bonus against: Red Cloud Hunter
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Red Cloud Hunter"
 			}
 
 			RedKnightBanner: {
 				DisplayName: Red Knight Banner
-				Tooltip: Nearby players get a bonus against: Red Knight
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Red Knight"
 			}
 
 			ResentfulSeedlingBanner: {
 				DisplayName: Resentful Seedling Banner
-				Tooltip: Nearby players get a bonus against: Resentful Seedling
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Resentful Seedling"
 			}
 
 			SerpentOfTheAbyssBanner: {
 				DisplayName: Serpent Of The Abyss Banner
-				Tooltip: Nearby players get a bonus against: Serpent Of The Abyss
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Serpent Of The Abyss"
 			}
 
 			ShadowMageBanner: {
 				DisplayName: Shadow Mage Banner
-				Tooltip: Nearby players get a bonus against: Shadow Mage
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Shadow Mage"
 			}
 
 			SlograIIBanner: {
 				DisplayName: Slogra Banner
-				Tooltip: Nearby players get a bonus against: Slogra
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Slogra"
 			}
 
 			SnowOwlBanner: {
 				DisplayName: Snow Owl Banner
-				Tooltip: Nearby players get a bonus against: Snow Owl
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Snow Owl"
 			}
 
 			StoneGolemBanner: {
 				DisplayName: Stone Golem Banner
-				Tooltip: Nearby players get a bonus against: Stone Golem
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Stone Golem"
 			}
 
 			TaurusKnightBanner: {
 				DisplayName: Taurus Knight Banner
-				Tooltip: Nearby players get a bonus against: Taurus Knight
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Taurus Knight"
 			}
 
 			TetsujinBanner: {
 				DisplayName: Tetsujin Banner
-				Tooltip: Nearby players get a bonus against: Tetsujin
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Tetsujin"
 			}
 
 			TibianAmazonBanner: {
 				DisplayName: Tibian Amazon Banner
-				Tooltip: Nearby players get a bonus against: Tibian Amazon
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Tibian Amazon"
 			}
 
 			TibianValkyrieBanner: {
 				DisplayName: Tibian Valkyrie Banner
-				Tooltip: Nearby players get a bonus against: Tibian Valkyrie
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Tibian Valkyrie"
 			}
 
 			TonberryBanner: {
 				DisplayName: Tonberry Banner
-				Tooltip: Nearby players get a bonus against: Tonberry
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Tonberry"
 			}
 
 			UndeadCasterBanner: {
 				DisplayName: Undead Caster Banner
-				Tooltip: Nearby players get a bonus against: Undead Caster
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Undead Caster"
 			}
 
 			VampireBatBanner: {
 				DisplayName: Vampire Bat Banner
-				Tooltip: Nearby players get a bonus against: Vampire Bat
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Vampire Bat"
 			}
 
 			WarlockBanner: {
 				DisplayName: Warlock Banner
-				Tooltip: Nearby players get a bonus against: Warlock
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Warlock"
 			}
 
 			WaterSpiritBanner: {
 				DisplayName: Water Spirit Banner
-				Tooltip: Nearby players get a bonus against: Water Spirit
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Water Spirit"
+			}
+
+			FireLurkerBanner: {
+				DisplayName: Fire Lurker Banner
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Firelurker"
+			}
+
+			HollowSoldierBanner: {
+				DisplayName: Hollow Soldier Banner
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Hollow Soldier"
+			}
+
+			HollowWarriorBanner: {
+				DisplayName: Hollow Warrior Banner
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Hollow Warrior"
+			}
+
+			HumanityPhantomBanner: {
+				DisplayName: Humanity Phantom Banner
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Humanity Phantom"
+			}
+
+			LothricBlackKnightBanner: {
+				DisplayName: Lothric Black Knight Banner
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Lothric Black Knight"
+			}
+
+			LothricKnightBanner: {
+				DisplayName: Lothric Knight Banner
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Lothric Knight"
+			}
+
+			LothricSpearKnightBanner: {
+				DisplayName: Lothric Spear Knight Banner
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Lothric Spear Knight"
+			}
+
+			RingedKnightBanner: {
+				DisplayName: Ringed Knight Banner
+				Tooltip: "{$CommonItemTooltip.BannerBonus}Ringed Knight"
 			}
 
 			AbyssScroll: {
@@ -1030,6 +1108,11 @@ Mods: {
 					Their damage scales with max mana
 					Mana stars restore mana when collected
 					'''
+				BotCTooltip:
+					'''
+					Mana Star pickups only restore 4% of the [c/6d8827:Bearer of the Curse's] maximum mana
+					Only restores a seventh of pre-mitigation damage taken by the [c/6d8827:Bearer of the Curse] as mana
+					'''
 			}
 
 			EnchantedWizardsHat: {
@@ -1219,8 +1302,8 @@ Mods: {
 				DisplayName: Monocle of Precision
 				Tooltip:
 					'''
-					Increases critical strike chance by 7%
-					Increases hitbox size for whip crits
+					{$CommonItemTooltip.PercentIncreasedCritChance}
+					{$CommonItemTooltip.WhipCritHitboxSize@1}
 					'''
 			}
 
@@ -1264,12 +1347,14 @@ Mods: {
 				DisplayName: Challenger's Glove
 				Tooltip:
 					'''
-					Increases whip knockback and grants autoswing effect
-					12% increased minion damage and speed
-					Increases the size of whips by 10%
-					Enemies are more likely to target you
-					Increases the damage of whip crits by 12%
-					Increases hitbox size for whip crits
+					{$CommonItemTooltip.PercentIncreasedSummonDamage@0}
+					{$CommonItemTooltip.IncreasedSummonAttackSpeed@1}
+					{$CommonItemTooltip.IncreasesWhipRangeByPercent@2}
+					{$CommonItemTooltip.WhipCritDamage@3}
+					{$CommonItemTooltip.WhipCritHitboxSize@4}
+					{$CommonItemTooltip.IncreasesWhipKnockback}
+					{$CommonItemTooltip.GrantsMeleeWhipAutoswing}
+					{$CommonItemTooltip.AggroIncrease}
 					'''
 			}
 
@@ -1277,11 +1362,12 @@ Mods: {
 				DisplayName: Crystalline Shard
 				Tooltip:
 					'''
-					Increases your max minions by 2
-					Increases your minion damage by 1.5% multiplicatively for each minion slot you have
-					Decreases whip range by 33%
+					{$CommonItemTooltip.IncreasesMaxMinionsBy}
+					Decreases Whip range by {1}%
+					Increases your minion's critical strike chance for each minion slot you have
 					"A magical substance found only in the Crystalline Dimension"
 					'''
+				CriticalStrikeChance: "Current Increase: "
 			}
 
 			ShamanEmblem: {
@@ -5606,6 +5692,7 @@ Mods: {
 					Damage bonus ranges from 25% to 0%, Defense bonus ranges from 0 to 15
 					'The best defense is a good offense, or was it the other way around?'
 					'''
+				BotCTooltip: May make the [c/6d8827:Bearer of the Curse] more vulnerable
 			}
 
 			DetonationSignal: {
@@ -5615,7 +5702,7 @@ Mods: {
 					Enemies struck by this whip will explode once on minion hit
 					Explosion triples the damage of the minion hit that triggered it
 					Exploded enemies will also deal triple the contact damage to you for 4 seconds
-					Your minions will focus struck enemies
+					{$CommonItemTooltip.Whips}
 					'''
 			}
 
@@ -5626,7 +5713,7 @@ Mods: {
 					7% summon tag critical strike chance
 					Inflicts Blood Butcherer debuff
 					Critical strikes deal 66% more damage
-					Your summons will focus struck enemies
+					{$CommonItemTooltip.Whips}
 					'''
 			}
 
@@ -5637,7 +5724,7 @@ Mods: {
 					Breathe fire at enemies struck by this whip and a minion on a cooldown
 					Refresh the cooldown by whipping an enemy
 					Strike enemies to gain attack speed
-					Your summons will focus struck enemies
+					{$CommonItemTooltip.Whips}
 					'''
 			}
 
@@ -5649,7 +5736,7 @@ Mods: {
 					Strike enemies with an enchantment
 					Enchanted enemies will be showered by stars upon minion hits
 					Star damage scales with half of this whips damage
-					Your summons will focus struck enemies
+					{$CommonItemTooltip.Whips}
 					'''
 			}
 
@@ -5664,8 +5751,9 @@ Mods: {
 					Performs better against multiple targets than most whips
 					Inherits Searing Lash's effect at up to half it's strength
 					Critical strikes deal 33% more damage
-					Your summons will focus struck enemies
+					{$CommonItemTooltip.Whips}
 					'''
+				BotCTooltip: "{$CommonItemTooltip.BotCSummonTagDoubleBuffCount}"
 			}
 
 			PolarisLeash: {
@@ -5688,7 +5776,7 @@ Mods: {
 					'''
 					8 summon tag damage
 					3% summon tag critical strike chance
-					Your minions will focus struck enemies
+					{$CommonItemTooltip.Whips}
 					Inflicts Cursed Inferno
 					'''
 			}
@@ -5701,8 +5789,9 @@ Mods: {
 					Enemies struck by this whip will burn horribly
 					and increase minion damage by 66% of this whips base damage in +%
 					This stacks on top of other whip tag damage
-					Your minions will focus struck enemies
+					{$CommonItemTooltip.Whips}
 					'''
+				BotCTooltip: "{$CommonItemTooltip.BotCSummonTagDoubleBuffCount}"
 			}
 
 			TerraFall: {
@@ -5717,8 +5806,9 @@ Mods: {
 					Performs better against multiple targets than most whips
 					Inherits Searing Lash's effect at up to eighth it's strength
 					Critical strikes deal 33% more damage
-					Your summons will focus struck enemies
+					{$CommonItemTooltip.Whips}
 					'''
+				BotCTooltip: "{$CommonItemTooltip.BotCSummonTagDoubleBuffCount}"
 			}
 
 			BlackFirebomb: {
@@ -6092,7 +6182,7 @@ Mods: {
 					'''
 					5 summon tag armor penetration
 					Ignores a substantial amount of defense
-					Your summons will focus struck enemies
+					{$CommonItemTooltip.Whips}
 					'''
 			}
 
@@ -6104,46 +6194,6 @@ Mods: {
 			PermanentLuckPotion: {
 				DisplayName: Four Leaf Clover
 				Tooltip: ""
-			}
-
-			FireLurkerBanner: {
-				DisplayName: Fire Lurker Banner
-				Tooltip: Nearby players get a bonus against: Firelurker
-			}
-
-			HollowSoldierBanner: {
-				DisplayName: Hollow Soldier Banner
-				Tooltip: Nearby players get a bonus against: Hollow Soldier
-			}
-
-			HollowWarriorBanner: {
-				DisplayName: Hollow Warrior Banner
-				Tooltip: Nearby players get a bonus against: Hollow Warrior
-			}
-
-			HumanityPhantomBanner: {
-				DisplayName: Humanity Phantom Banner
-				Tooltip: Nearby players get a bonus against: Humanity Phantom
-			}
-
-			LothricBlackKnightBanner: {
-				DisplayName: Lothric Black Knight Banner
-				Tooltip: Nearby players get a bonus against: Lothric Black Knight
-			}
-
-			LothricKnightBanner: {
-				DisplayName: Lothric Knight Banner
-				Tooltip: Nearby players get a bonus against: Lothric Knight
-			}
-
-			LothricSpearKnightBanner: {
-				DisplayName: Lothric Spear Knight Banner
-				Tooltip: Nearby players get a bonus against: Lothric Spear Knight
-			}
-
-			RingedKnightBanner: {
-				DisplayName: Ringed Knight Banner
-				Tooltip: Nearby players get a bonus against: Ringed Knight
 			}
 
 			JOI3Chassis: {
@@ -6881,6 +6931,51 @@ Mods: {
 			StarlightShardRestoration: {
 				DisplayName: Starlight Shard Restoration
 				Description: Restores a percentage of your maximum mana each second
+			}
+
+			CoolWhipDebuff: {
+				DisplayName: Cool Whip Debuff
+				Description: Mods.tsorcRevamp.Buffs.CoolWhipDebuff.Description
+			}
+
+			DarkHarvestDebuff: {
+				DisplayName: Dark Harvest Debuff
+				Description: Mods.tsorcRevamp.Buffs.DarkHarvestDebuff.Description
+			}
+
+			DurendalDebuff: {
+				DisplayName: Durendal Debuff
+				Description: Mods.tsorcRevamp.Buffs.DurendalDebuff.Description
+			}
+
+			FirecrackerDebuff: {
+				DisplayName: Firecracker Debuff
+				Description: Mods.tsorcRevamp.Buffs.FirecrackerDebuff.Description
+			}
+
+			KaleidoscopeDebuff: {
+				DisplayName: Kaleidoscope Debuff
+				Description: Mods.tsorcRevamp.Buffs.KaleidoscopeDebuff.Description
+			}
+
+			LeatherWhipDebuff: {
+				DisplayName: Leather Whip Debuff
+				Description: Mods.tsorcRevamp.Buffs.LeatherWhipDebuff.Description
+			}
+
+			MorningStarDebuff: {
+				DisplayName: Morning Star Debuff
+				Description: Mods.tsorcRevamp.Buffs.MorningStarDebuff.Description
+			}
+
+			SnapthornDebuff: {
+				DisplayName: Snapthorn Debuff
+				Description: Mods.tsorcRevamp.Buffs.SnapthornDebuff.Description
+			}
+
+			SpinalTapDebuff: {
+				DisplayName: Spinal Tap Debuff
+				Description: Mods.tsorcRevamp.Buffs.SpinalTapDebuff.Description
 			}
 		}
 
@@ -8019,6 +8114,13 @@ Mods: {
 						'''
 				}
 			}
+		}
+
+		Conditions: {
+			AdventureModeDisabled: Sandbox-only
+			AdventureModeEnabled: Adventure Mode-only
+			BotCEnabled: Bearer of the Curse-only
+			SHM3Downed: Three Guardians of the Abyss slain
 		}
 	}
 }

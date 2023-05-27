@@ -125,7 +125,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
 			target.AddBuff(BuffID.Frostburn2, 4 * 60);
-            Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.PolarisLeashBuff>(), 10 * 60); //Star inflicts the whips debuff
+            Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.PolarisLeashBuff>(), (int)(10 * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration)); //Star inflicts the whips debuff
 			Projectile.damage = (int)(Projectile.damage * 0.75f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
 		}
 		// This method draws a line between all points of the whip, in case there's empty space between the sprites.

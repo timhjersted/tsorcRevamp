@@ -136,8 +136,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Player player = Main.player[Projectile.owner];
             var modPlayer = Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>();
             modPlayer.NightsCrackerStacks = ChargeTime / 40f + 1f;
-            player.AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerBuff>(), (int)(modPlayer.NightsCrackerStacks * 150));
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.NightsCrackerDebuff>(), (int)(modPlayer.NightsCrackerStacks * 150));
+            player.AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerBuff>(), (int)(modPlayer.NightsCrackerStacks * 150 * modPlayer.SummonTagDuration));
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.NightsCrackerDebuff>(), (int)(modPlayer.NightsCrackerStacks * 150 * modPlayer.SummonTagDuration));
 			player.MinionAttackTargetNPC = target.whoAmI;
             Projectile.damage = (int)(Projectile.damage * ((float)modPlayer.NightsCrackerStacks / 16f + 0.6f)); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
         }
