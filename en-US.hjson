@@ -111,8 +111,8 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}Barrow Wight Phantom"
 			}
 
-			BasiliskHunter: {
-				DisplayName: Basilisk Hunter
+			BasiliskHunterBanner: {
+				DisplayName: Basilisk Hunter Banner
 				Tooltip: "{$CommonItemTooltip.BannerBonus}Basilisk Hunter"
 			}
 
@@ -7905,6 +7905,9 @@ Mods: {
 			IchorGlob.DisplayName: Ichor Glob
 			IchorMissile.DisplayName: Ichor Missile
 			NamelessKing.DisplayName: Nameless King
+			ParasyticWormBody.DisplayName: Parasytic Worm Body
+			ParasyticWormHead.DisplayName: Parasytic Worm Head
+			ParasyticWormTail.DisplayName: Parasytic Worm Tail
 		}
 
 		Prefixes: {

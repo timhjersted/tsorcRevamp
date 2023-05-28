@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    class ZombieWormHead : ModNPC
+    class ParasyticWormHead : ModNPC
     {
         public override void SetStaticDefaults()
         {
@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.ParasyticWormBanner>();
 
             bodyTypes = new int[13];
-            int bodyID = ModContent.NPCType<ZombieWormBody>();
+            int bodyID = ModContent.NPCType<ParasyticWormBody>();
             for (int i = 0; i < 13; i++)
             {
                 bodyTypes[i] = bodyID;
@@ -71,7 +71,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<ZombieWormHead>(), bodyTypes, ModContent.NPCType<ZombieWormTail>(), 15, .4f, 8, 0.07f, false, false, false, true, true);
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<ParasyticWormHead>(), bodyTypes, ModContent.NPCType<ParasyticWormTail>(), 15, .4f, 8, 0.07f, false, false, false, true, true);
         }
 
         private static int ClosestSegment(NPC head, params int[] segmentIDs)
@@ -104,7 +104,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Worm Gore 1").Type, 1f);
             }
-            int closestSegmentID = ClosestSegment(NPC, ModContent.NPCType<ZombieWormBody>(), ModContent.NPCType<ZombieWormTail>());
+            int closestSegmentID = ClosestSegment(NPC, ModContent.NPCType<ParasyticWormBody>(), ModContent.NPCType<ParasyticWormTail>());
             NPC.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
             return true;
         }
