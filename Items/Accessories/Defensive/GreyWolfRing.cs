@@ -63,7 +63,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.buffImmune[BuffID.CursedInferno] = true;
             player.buffImmune[BuffID.Ichor] = true;
             player.buffImmune[BuffID.Gravitation] = true;
-            player.buffImmune[ModContent.BuffType<Chilled>()] = true;
+            player.buffImmune[ModContent.BuffType<Frostbite>()] = true;
 
             //Wolf Ring inheritance
             if (Main.bloodMoon)

@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.buffImmune[BuffID.OnFire] = true;
             player.buffImmune[BuffID.Burning] = true;
             player.buffImmune[BuffID.Chilled] = true;
-            player.buffImmune[ModContent.BuffType<Chilled>()] = true;
+            player.buffImmune[ModContent.BuffType<Frostbite>()] = true;
         }
 
         public override void AddRecipes()

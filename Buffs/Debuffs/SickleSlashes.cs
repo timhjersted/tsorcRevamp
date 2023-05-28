@@ -1,11 +1,12 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-	public class SickleSlashes : ModBuff
+    public class SickleSlashes : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
@@ -14,7 +15,7 @@ namespace tsorcRevamp.Buffs.Debuffs
 
 		public override void Update(NPC npc, ref int buffIndex)
         {
-            Player player = Main.player[Main.myPlayer];
+            var player = Main.LocalPlayer;
             if (player.GetModPlayer<tsorcRevampPlayer>().HasShadowSickle)
             {
                 if (player.statMana > (int)(player.manaCost * 10f))
@@ -23,7 +24,7 @@ namespace tsorcRevamp.Buffs.Debuffs
                     {
                         player.statMana -= (int)(player.manaCost * 10f);
                         player.manaRegenDelay = 200;
-                        Projectile.NewProjectile(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ProjectileID.Muramasa, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(25), 0, Main.myPlayer);
+                        Projectile.NewProjectile(new EntitySource_Buff(npc, Type, buffIndex), npc.Center, Vector2.Zero, ProjectileID.Muramasa, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(25), 0, Main.myPlayer);
                     }
                 }
             }

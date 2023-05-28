@@ -510,7 +510,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
 
                 target.AddBuff(ModContent.BuffType<FracturingArmor>(), 60 * 60, false); //armor reduced on hit
-                target.AddBuff(ModContent.BuffType<Chilled>(), 5 * 60, false); //chilled
+                target.AddBuff(ModContent.BuffType<Frostbite>(), 5 * 60, false); //chilled
 
             }
 

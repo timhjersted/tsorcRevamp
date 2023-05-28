@@ -27,11 +27,12 @@ namespace tsorcRevamp.Buffs.Debuffs
 		{
 			RammedByMythril = false;
 		}
+
         public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers)
         {
             if (RammedByMythril)
             {
-                modifiers.TargetDamageMultiplier *= 1.2f;
+                modifiers.FinalDamage *= 1.25f;
             }
         }
     }

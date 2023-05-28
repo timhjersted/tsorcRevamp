@@ -6331,11 +6331,6 @@ Mods: {
 				Description: You feel like giving up!
 			}
 
-			Chilled: {
-				DisplayName: Frostbite
-				Description: Defense and speed reduced
-			}
-
 			CowardsAffliction: {
 				DisplayName: Coward's Affliction
 				Description: Do not flee from the Lord of Cinder.
@@ -6348,7 +6343,7 @@ Mods: {
 
 			CurseBuildup: {
 				DisplayName: Curse Buildup
-				Description: Mods.tsorcRevamp.BuffDescription.CurseBuildup
+				Description: ""
 			}
 
 			DarkInferno: {
@@ -6358,7 +6353,12 @@ Mods: {
 
 			FracturingArmor: {
 				DisplayName: Fracturing Armor
-				Description: Mods.tsorcRevamp.BuffDescription.FracturingArmor
+				Description: ""
+			}
+
+			Frostbite: {
+				DisplayName: Frostbite
+				Description: Defense and speed reduced
 			}
 
 			GrappleMalfunction: {
@@ -6373,17 +6373,17 @@ Mods: {
 
 			InCombat: {
 				DisplayName: In Combat
-				Description: You are in combat.
+				Description: You are in combat
 			}
 
 			MythrilRamDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.MythrilRamDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.MythrilRamDebuff
+				DisplayName: Mythril Ram Debuff
+				Description: ""
 			}
 
 			PowerfulCurseBuildup: {
 				DisplayName: Powerful Curse Buildup
-				Description: Mods.tsorcRevamp.BuffDescription.PowerfulCurseBuildup
+				Description: ""
 			}
 
 			RejuvenationCooldown: {
@@ -6398,7 +6398,7 @@ Mods: {
 
 			TornWings: {
 				DisplayName: Torn Wings
-				Description: You can't fly!
+				Description: You cannot fly!
 			}
 
 			WeightOfShadow: {
