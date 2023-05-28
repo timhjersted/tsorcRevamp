@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 8820;
             NPC.lavaImmune = true;
             Banner = NPC.type;
-            BannerItem = ModContent.ItemType<Banners.BasiliskHunter>();
+            BannerItem = ModContent.ItemType<Banners.BasiliskHunterBanner>();
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
