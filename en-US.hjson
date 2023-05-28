@@ -7924,7 +7924,6 @@ Mods: {
 		}
 
 		Tiles: {
-			EnemyBannerTile.MapEntry: Banner
 			BonfireCheckpoint.MapEntry: Bonfire Checkpoint
 			FlameJet.MapEntry: Flame Jet
 			SoapstoneTile.MapEntry: Soapstone Message

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;
@@ -7,35 +8,33 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
+using tsorcRevamp.NPCs.Bosses;
+using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.NPCs.Enemies.SuperHardMode;
+using tsorcRevamp.NPCs.Friendly;
 
 namespace tsorcRevamp.Banners
 {
     public abstract class EnemyBanner : ModItem
     {
+        public abstract int PlaceStyle { get; }
 
         public override void SetDefaults()
         {
+            Item.DefaultToPlaceableTile(ModContent.TileType<EnemyBannerTile>(), PlaceStyle);
             Item.width = 10;
             Item.height = 24;
-            Item.maxStack = 99;
-            Item.useTurn = true;
-            Item.autoReuse = true;
-            Item.useAnimation = 15;
-            Item.useTime = 10;
             Item.scale = 1.5f;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.consumable = true;
             Item.rare = ItemRarityID.Blue;
             Item.value = Item.buyPrice(0, 0, 10, 0);
-            Item.createTile = ModContent.TileType<EnemyBannerTile>();
         }
+
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
             scale = 1.5f;
             return true;
         }
     }
-
 
     public class EnemyBannerTile : ModTile
     {
@@ -44,6 +43,7 @@ namespace tsorcRevamp.Banners
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
             Main.tileLavaDeath[Type] = true;
+
             TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2Top);
             TileObjectData.newTile.Height = 3;
             TileObjectData.newTile.CoordinateHeights = new[] { 16, 16, 16 };
@@ -51,588 +51,133 @@ namespace tsorcRevamp.Banners
             TileObjectData.newTile.AnchorTop = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide | AnchorType.SolidBottom, TileObjectData.newTile.Width, 0);
             TileObjectData.newTile.StyleWrapLimit = 111;
             TileObjectData.addTile(Type);
-            //DustType = -1;
+
             TileID.Sets.DisableSmartCursor[Type] = true;
-            LocalizedText name = CreateMapEntryName();
-            // name.SetDefault("Banner");
-            AddMapEntry(new Color(13, 88, 130), name);
+
+            AddMapEntry(new Color(13, 88, 130), Language.GetText("MapObject.Banner"));
         }
 
-
-        #region KillMultiTile
-
-
-        public override void KillMultiTile(int i, int j, int frameX, int frameY)
+        public override IEnumerable<Item> GetItemDrops(int i, int j)
         {
-            int style = frameX / 18;
-            string item;
-            switch (style)
-            {
-                #region Pre-SHM
-                case 0:
-                    item = "GuardianCorruptorBanner";
-                    break;
-                case 1:
-                    item = "CloudBatBanner";
-                    break;
-                case 2:
-                    item = "ArmoredWraithBanner";
-                    break;
-                case 3:
-                    item = "ObsidianJellyfishBanner";
-                    break;
-                case 4:
-                    item = "StoneGolemBanner";
-                    break;
-                case 5:
-                    item = "AbandonedStumpBanner";
-                    break;
-                case 6:
-                    item = "ResentfulSeedlingBanner";
-                    break;
-                case 7:
-                    item = "LivingShroomBanner";
-                    break;
-                case 8:
-                    item = "LivingShroomThiefBanner";
-                    break;
-                case 9:
-                    item = "LivingGlowshroomBanner";
-                    break;
-                case 10:
-                    item = "AncientDemonBanner";
-                    break;
-                case 11:
-                    item = "UndeadCasterBanner";
-                    break;
-                case 12:
-                    item = "ChickenBanner";
-                    break;
-                case 13:
-                    item = "AttraidiesIllusionBanner";
-                    break;
-                case 14:
-                    item = "CosmicCrystalLizardBanner";
-                    break;
-                case 15:
-                    item = "AssassinBanner";
-                    break;
-                case 16:
-                    item = "AttraidiesManifestationBanner";
-                    break;
-                case 17:
-                    item = "BarrowWightBanner";
-                    break;
-                case 18:
-                    item = "BasiliskShifterBanner";
-                    break;
-                case 19:
-                    item = "BasiliskWalkerBanner";
-                    break;
-                case 20:
-                    item = "BlackKnightBanner";
-                    break;
-                case 21:
-                    item = "CrazedDemonSpiritBanner";
-                    break;
-                case 22:
-                    item = "DarkElfMageBanner";
-                    break;
-                case 23:
-                    item = "DemonSpiritBanner";
-                    break;
-                case 24:
-                    item = "DiscipleOfAttraidiesBanner";
-                    break;
-                case 25:
-                    item = "DungeonMageBanner";
-                    break;
-                case 26:
-                    item = "DunlendingBanner";
-                    break;
-                case 27:
-                    item = "DworcFleshhunterBanner";
-                    break;
-                case 28:
-                    item = "DworcVenomsniperBanner";
-                    break;
-                case 29:
-                    item = "DworcVoodoomasterBanner";
-                    break;
-                case 30:
-                    item = "DworcVoodooShamanBanner";
-                    break;
-                case 31:
-                    item = "FirebombHollowBanner";
-                    break;
-                case 32:
-                    item = "FlameBatBanner";
-                    break;
-                case 33:
-                    item = "GhostOfTheDarkmoonKnightBanner";
-                    break;
-                case 34:
-                    item = "GhostOfTheForgottenKnightBanner";
-                    break;
-                case 35:
-                    item = "GhostOfTheForgottenWarriorBanner";
-                    break;
-                /*case 36: /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    item = "";
-                    break;*/
-                case 37:
-                    item = "HeroOfLumeliaBanner";
-                    break;
-                case 38:
-                    item = "JungleSentreeBanner";
-                    break;
-                case 39:
-                    item = "ManHunterBanner";
-                    break;
-                case 40:
-                    item = "MarilithSpiritTwinBanner";
-                    break;
-                case 41:
-                    item = "MindflayerIllusionBanner";
-                    break;
-                case 42:
-                    item = "MindflayerKingServantBanner";
-                    break;
-                case 43:
-                    item = "MindflayerServantBanner";
-                    break;
-                case 44:
-                    item = "MutantToadBanner";
-                    break;
-                case 45:
-                    item = "NecromancerBanner";
-                    break;
-                case 46:
-                    item = "NecromancerElementalBanner";
-                    break;
-                case 47:
-                    item = "ParaspriteBanner";
-                    break;
-                case 48:
-                    item = "QuaraHydromancerBanner";
-                    break;
-                case 49:
-                    item = "RedCloudHunterBanner";
-                    break;
-                /*case 50: //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    item = "";
-                    break;*/
-                case 51:
-                    item = "ShadowMageBanner";
-                    break;
-                case 52:
-                    item = "SnowOwlBanner";
-                    break;
-                case 53:
-                    item = "TibianAmazonBanner";
-                    break;
-                case 54:
-                    item = "TibianValkyrieBanner";
-                    break;
-                case 55:
-                    item = "TonberryBanner";
-                    break;
-                case 56:
-                    item = "WarlockBanner";
-                    break;
-                case 57:
-                    item = "WaterSpiritBanner"; //does this thing even spawn?
-                    break;
-                case 58:
-                    item = "ParasyticWormBanner";
-                    break;
-                case 59:
-                    item = "JungleWyvernJuvenileBanner";
-                    break;
-
-                #endregion
-                #region SHM
-
-                case 60:
-                    item = "SerpentOfTheAbyssBanner";
-                    break;
-                case 61:
-                    item = "AbysswalkerBanner";
-                    break;
-                case 62:
-                    item = "AncientDemonOfTheAbyssBanner";
-                    break;
-                case 63:
-                    item = "BarrowWightNemesisBanner";
-                    break;
-                case 64:
-                    item = "BarrowWightPhantomBanner";
-                    break;
-                case 65:
-                    item = "BasiliskHunterBanner";
-                    break;
-                case 66:
-                    item = "CorruptedElementalBanner";
-                    break;
-                case 67:
-                    item = "CorruptedHornetBanner";
-                    break;
-                case 68:
-                    item = "CrystalKnightBanner";
-                    break;
-                case 69:
-                    item = "CrystalKnightIIBanner";
-                    break;
-                case 70:
-                    item = "DarkBloodKnightBanner";
-                    break;
-                case 71:
-                    item = "DarkKnightBanner";
-                    break;
-                /*case 72://////////////////////////////////////////////////////////////////////////
-                    item = "";
-                    break;*/
-                case 73:
-                    item = "HydrisElementalBanner";
-                    break;
-                case 74:
-                    item = "HydrisNecromancerBanner";
-                    break;
-                case 75:
-                    item = "IceSkeletonBanner";
-                    break;
-                case 76:
-                    item = "ManOfWarBanner";
-                    break;
-                case 77:
-                    item = "OolacileDemonBanner";
-                    break;
-                case 78:
-                    item = "OolacileKnightBanner";
-                    break;
-                case 79:
-                    item = "OolacileSorcererBanner";
-                    break;
-                case 80:
-                    item = "SlograIIBanner";
-                    break;
-                case 81:
-                    item = "TaurusKnightBanner";
-                    break;
-                case 82:
-                    item = "TetsujinBanner";
-                    break;
-                case 83:
-                    item = "VampireBatBanner";
-                    break;
-                case 84:
-                    item = "ArchdeaconBanner";
-                    break;
-                case 85:
-                    item = "RedKnightBanner";
-                    break;
-                case 86:
-                    item = "GreatRedKnightBanner";
-                    break;
-
-                #endregion
-
-                default:
-                    return;
-            }
-            Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), i * 16, j * 16, 16, 48, Mod.Find<ModItem>(item).Type);
+            int style = Main.tile[i, j].TileFrameX / 18;
+            int dropItem = TileLoader.GetItemDropFromTypeAndStyle(Type, style);
+            yield return new Item(dropItem);
         }
-
-
-        #endregion
-
-
-        #region NearbyEffects
-
 
         public override void NearbyEffects(int i, int j, bool closer)
         {
             if (closer)
             {
-                Player player = Main.LocalPlayer;
                 int style = Main.tile[i, j].TileFrameX / 18;
-                string type;
-                switch (style)
+                int type = style switch
                 {
-                    case 0:
-                        type = "GuardianCorruptor";
-                        break;
-                    case 1:
-                        type = "CloudBat";
-                        break;
-                    case 2:
-                        type = "ArmoredWraith";
-                        break;
-                    case 3:
-                        type = "ObsidianJellyfish";
-                        break;
-                    case 4:
-                        type = "StoneGolem";
-                        break;
-                    case 5:
-                        type = "AbandonedStump";
-                        break;
-                    case 6:
-                        type = "ResentfulSeedling";
-                        break;
-                    case 7:
-                        type = "LivingShroom";
-                        break;
-                    case 8:
-                        type = "LivingShroomThief";
-                        break;
-                    case 9:
-                        type = "LivingGlowshroom";
-                        break;
-                    case 10:
-                        type = "AncientDemon";
-                        break;
-                    case 11:
-                        type = "UndeadCaster";
-                        break;
-                    case 12:
-                        type = "Chicken";
-                        break;
-                    case 13:
-                        type = "AttraidiesIllusion";
-                        break;
-                    case 14:
-                        type = "CosmicCrystalLizard";
-                        break;
-                    case 15:
-                        type = "Assassin";
-                        break;
-                    case 16:
-                        type = "AttraidiesManifestation";
-                        break;
-                    case 17:
-                        type = "BarrowWight";
-                        break;
-                    case 18:
-                        type = "BasiliskShifter";
-                        break;
-                    case 19:
-                        type = "BasiliskWalker";
-                        break;
-                    case 20:
-                        type = "BlackKnight";
-                        break;
-                    case 21:
-                        type = "CrazedDemonSpirit";
-                        break;
-                    case 22:
-                        type = "DarkElfMage";
-                        break;
-                    case 23:
-                        type = "DemonSpirit";
-                        break;
-                    case 24:
-                        type = "DiscipleOfAttraidies";
-                        break;
-                    case 25:
-                        type = "DungeonMage";
-                        break;
-                    case 26:
-                        type = "Dunlending";
-                        break;
-                    case 27:
-                        type = "DworcFleshhunter";
-                        break;
-                    case 28:
-                        type = "DworcVenomsniper";
-                        break;
-                    case 29:
-                        type = "DworcVoodoomaster";
-                        break;
-                    case 30:
-                        type = "DworcVoodooShaman";
-                        break;
-                    case 31:
-                        type = "FirebombHollow";
-                        break;
-                    case 32:
-                        type = "FlameBat";
-                        break;
-                    case 33:
-                        type = "GhostOfTheDarkmoonKnight";
-                        break;
-                    case 34:
-                        type = "GhostoftheForgottenKnight";
-                        break;
-                    case 35:
-                        type = "GhostOfTheForgottenWarrior";
-                        break;
-                    /*case 36: ///////////////////////////////////////////////////////////////////////////////
-                        type = "";
-                        break;*/
-                    case 37:
-                        type = "HeroofLumelia";
-                        break;
-                    case 38:
-                        type = "JungleSentree";
-                        break;
-                    case 39:
-                        type = "ManHunter";
-                        break;
-                    case 40:
-                        type = "MarilithSpiritTwin";
-                        break;
-                    case 41:
-                        type = "MindflayerIllusion";
-                        break;
-                    case 42:
-                        type = "MindflayerKingServant";
-                        break;
-                    case 43:
-                        type = "MindflayerServant";
-                        break;
-                    case 44:
-                        type = "MutantToad";
-                        break;
-                    case 45:
-                        type = "Necromancer";
-                        break;
-                    case 46:
-                        type = "NecromancerElemental";
-                        break;
-                    case 47:
-                        type = "Parasprite";
-                        break;
-                    case 48:
-                        type = "QuaraHydromancer";
-                        break;
-                    case 49:
-                        type = "RedCloudHunter";
-                        break;
-                    /*case 50: /////////////////////////////////////////////////////////////////////////////
-                        type = "";
-                        break;*/
-                    case 51:
-                        type = "ShadowMage";
-                        break;
-                    case 52:
-                        type = "SnowOwl";
-                        break;
-                    case 53:
-                        type = "TibianAmazon";
-                        break;
-                    case 54:
-                        type = "TibianValkyrie";
-                        break;
-                    case 55:
-                        type = "Tonberry";
-                        break;
-                    case 56:
-                        type = "Warlock";
-                        break;
-                    case 57:
-                        type = "WaterSpirit";
-                        break;
-                    case 58:
-                        type = "ZombieWormHead";
-                        break;
-                    case 59:
-                        type = "JungleWyvernJuvenileHead";
-                        break;
-                    case 60:
-                        type = "SerpentOfTheAbyssHead";
-                        break;
-                    case 61:
-                        type = "Abysswalker";
-                        break;
-                    case 62:
-                        type = "AncientDemonOfTheAbyss";
-                        break;
-                    case 63:
-                        type = "BarrowWightNemesis";
-                        break;
-                    case 64:
-                        type = "BarrowWightPhantom";
-                        break;
-                    case 65:
-                        type = "BasiliskHunter";
-                        break;
-                    case 66:
-                        type = "CorruptedElemental";
-                        break;
-                    case 67:
-                        type = "CorruptedHornet";
-                        break;
-                    case 68:
-                        type = "CrystalKnight";
-                        break;
-                    case 69:
-                        type = "CrystalKnightII";
-                        break;
-                    case 70:
-                        type = "DarkBloodKnight";
-                        break;
-                    case 71:
-                        type = "DarkKnight";
-                        break;
-                    /*case 72: //////////////////////////////////////////////////////////////////////////////////////
-                        type = "";
-                        break;*/
-                    case 73:
-                        type = "HydrisElemental";
-                        break;
-                    case 74:
-                        type = "HydrisNecromancer";
-                        break;
-                    case 75:
-                        type = "IceSkeleton";
-                        break;
-                    case 76:
-                        type = "ManOfWar";
-                        break;
-                    case 77:
-                        type = "OolacileDemon";
-                        break;
-                    case 78:
-                        type = "OolacileKnight";
-                        break;
-                    case 79:
-                        type = "OolacileSorcerer";
-                        break;
-                    case 80:
-                        type = "SlograII";
-                        break;
-                    case 81:
-                        type = "TaurusKnight";
-                        break;
-                    case 82:
-                        type = "Tetsujin";
-                        break;
-                    case 83:
-                        type = "VampireBat";
-                        break;
-                    case 84:
-                        type = "Archdeacon";
-                        break;
-                    case 85:
-                        type = "RedKnight";
-                        break;
-                    case 86:
-                        type = "GreatRedKnight";
-                        break;
+                    0 => ModContent.NPCType<GuardianCorruptor>(),
+                    1 => ModContent.NPCType<CloudBat>(),
+                    2 => ModContent.NPCType<ArmoredWraith>(),
+                    3 => ModContent.NPCType<ObsidianJellyfish>(),
+                    4 => ModContent.NPCType<StoneGolem>(),
+                    5 => ModContent.NPCType<AbandonedStump>(),
+                    6 => ModContent.NPCType<ResentfulSeedling>(),
+                    7 => ModContent.NPCType<LivingShroom>(),
+                    8 => ModContent.NPCType<LivingShroomThief>(),
+                    9 => ModContent.NPCType<LivingGlowshroom>(),
+                    10 => ModContent.NPCType<AncientDemon>(),
+                    11 => ModContent.NPCType<UndeadCaster>(),
+                    12 => ModContent.NPCType<Chicken>(),
+                    13 => ModContent.NPCType<AttraidiesIllusion>(),
+                    14 => ModContent.NPCType<CosmicCrystalLizard>(),
+                    15 => ModContent.NPCType<Assassin>(),
+                    16 => ModContent.NPCType<AttraidiesManifestation>(),
+                    17 => ModContent.NPCType<BarrowWight>(),
+                    18 => ModContent.NPCType<BasiliskShifter>(),
+                    19 => ModContent.NPCType<BasiliskWalker>(),
+                    20 => ModContent.NPCType<BlackKnight>(),
+                    21 => ModContent.NPCType<CrazedDemonSpirit>(),
+                    22 => ModContent.NPCType<DarkElfMage>(),
+                    23 => ModContent.NPCType<DemonSpirit>(),
+                    24 => ModContent.NPCType<DiscipleOfAttraidies>(),
+                    25 => ModContent.NPCType<DungeonMage>(),
+                    26 => ModContent.NPCType<Dunlending>(),
+                    27 => ModContent.NPCType<DworcFleshhunter>(),
+                    28 => ModContent.NPCType<DworcVenomsniper>(),
+                    29 => ModContent.NPCType<DworcVoodoomaster>(),
+                    30 => ModContent.NPCType<DworcVoodooShaman>(),
+                    31 => ModContent.NPCType<FirebombHollow>(),
+                    32 => ModContent.NPCType<FlameBat>(),
+                    33 => ModContent.NPCType<GhostOfTheDarkmoonKnight>(),
+                    34 => ModContent.NPCType<GhostoftheForgottenKnight>(),
+                    35 => ModContent.NPCType<GhostOfTheForgottenWarrior>(),
+                    36 => ModContent.NPCType<FireLurker>(),
+                    // 37 => ModContent.NPCType<HeroOfLumelia>(), 
+                    38 => ModContent.NPCType<JungleSentree>(),
+                    39 => ModContent.NPCType<ManHunter>(),
+                    40 => ModContent.NPCType<MarilithSpiritTwin>(),
+                    41 => ModContent.NPCType<MindflayerIllusion>(),
+                    42 => ModContent.NPCType<MindflayerKingServant>(),
+                    43 => ModContent.NPCType<MindflayerServant>(),
+                    44 => ModContent.NPCType<MutantToad>(),
+                    45 => ModContent.NPCType<Necromancer>(),
+                    46 => ModContent.NPCType<NecromancerElemental>(),
+                    47 => ModContent.NPCType<Parasprite>(),
+                    48 => ModContent.NPCType<QuaraHydromancer>(),
+                    49 => ModContent.NPCType<RedCloudHunter>(),
+                    50 => ModContent.NPCType<HollowSoldier>(),
+                    51 => ModContent.NPCType<ShadowMage>(),
+                    52 => ModContent.NPCType<SnowOwl>(),
+                    53 => ModContent.NPCType<TibianAmazon>(),
+                    54 => ModContent.NPCType<TibianValkyrie>(),
+                    55 => ModContent.NPCType<Tonberry>(),
+                    56 => ModContent.NPCType<Warlock>(),
+                    57 => ModContent.NPCType<WaterSpirit>(),
+                    58 => ModContent.NPCType<ZombieWormHead>(),
+                    59 => ModContent.NPCType<NPCs.Enemies.JungleWyvernJuvenile.JungleWyvernJuvenileHead>(),
+                    60 => ModContent.NPCType<NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss.SerpentOfTheAbyssHead>(),
+                    61 => ModContent.NPCType<Abysswalker>(),
+                    62 => ModContent.NPCType<AncientDemonOfTheAbyss>(),
+                    63 => ModContent.NPCType<BarrowWightNemesis>(),
+                    64 => ModContent.NPCType<BarrowWightPhantom>(),
+                    65 => ModContent.NPCType<BasiliskHunter>(),
+                    66 => ModContent.NPCType<CorruptedElemental>(),
+                    67 => ModContent.NPCType<CorruptedHornet>(),
+                    68 => ModContent.NPCType<CrystalKnight>(),
+                    // 69 => REMOVED,
+                    70 => ModContent.NPCType<DarkBloodKnight>(),
+                    71 => ModContent.NPCType<DarkKnight>(),
+                    72 => ModContent.NPCType<HollowWarrior>(),
+                    73 => ModContent.NPCType<HydrisElemental>(),
+                    74 => ModContent.NPCType<HydrisNecromancer>(),
+                    75 => ModContent.NPCType<IceSkeleton>(),
+                    76 => ModContent.NPCType<ManOfWar>(),
+                    77 => ModContent.NPCType<OolacileDemon>(),
+                    78 => ModContent.NPCType<OolacileKnight>(),
+                    79 => ModContent.NPCType<OolacileSorcerer>(),
+                    80 => ModContent.NPCType<SlograII>(),
+                    81 => ModContent.NPCType<TaurusKnight>(),
+                    82 => ModContent.NPCType<Tetsujin>(),
+                    83 => ModContent.NPCType<VampireBat>(),
+                    84 => ModContent.NPCType<Archdeacon>(),
+                    85 => ModContent.NPCType<RedKnight>(),
+                    86 => ModContent.NPCType<GreatRedKnight>(),
+                    _ => NPCID.None,
+                };
 
-                    default:
-                        return;
+                if (type == NPCID.None)
+                {
+                    return;
                 }
-                Main.SceneMetrics.NPCBannerBuff[Mod.Find<ModNPC>(type).Type] = true;
+
+                Main.SceneMetrics.NPCBannerBuff[type] = true;
                 Main.SceneMetrics.hasBanner = true;
             }
         }
 
-
-        #endregion
-
-
+        public override void SetSpriteEffects(int i, int j, ref SpriteEffects spriteEffects)
+        {
+            if (i % 2 == 1)
+            {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+            }
+        }
     }
 
 
@@ -640,1017 +185,454 @@ namespace tsorcRevamp.Banners
 
     public class GuardianCorruptorBanner : EnemyBanner
     {
-        //you may notice that all mod enemies with banners drop a guardian corruptor banner. this is NOT a bug
-        //it chooses banner type by placeStyle, and they all have placeStyle 0, aka Guardian Corruptor
-        //once they have a sprite and placeStyle gets updated, they'll drop the right banners
-        //public override string Texture => "tsorcRevamp/Banners/placeholder"; //change name or remove line once texture added
-
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 0; //change when texture added
-        }
+        public override int PlaceStyle => 0;
     }
+
     public class CloudBatBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 1;
-        }
+        public override int PlaceStyle => 1;
     }
 
     public class ArmoredWraithBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 2;
-        }
+        public override int PlaceStyle => 2;
     }
 
     public class ObsidianJellyfishBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 3;
-        }
+        public override int PlaceStyle => 3;
     }
 
     public class StoneGolemBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 4;
-        }
+        public override int PlaceStyle => 4;
     }
 
     public class AbandonedStumpBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 5;
-        }
+        public override int PlaceStyle => 5;
     }
+
     public class ResentfulSeedlingBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 6;
-        }
+        public override int PlaceStyle => 6;
     }
+
     public class LivingShroomBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 7;
-        }
+        public override int PlaceStyle => 7;
     }
+
     public class LivingShroomThiefBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 8;
-        }
+        public override int PlaceStyle => 8;
     }
+
     public class LivingGlowshroomBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 9; //change when texture added
-        }
+        public override int PlaceStyle => 9;
     }
+
     public class AncientDemonBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 10; //change when texture added
-        }
+        public override int PlaceStyle => 10;
     }
+
     public class UndeadCasterBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 11; //change when texture added
-        }
+        public override int PlaceStyle => 11;
     }
+
     public class ChickenBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-            // Tooltip.SetDefault("Nearby players get a bonus against: Chicken"); //you're gonna need it
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 12; //change when texture added
-        }
+        public override int PlaceStyle => 12;
     }
+
     public class AttraidiesIllusionBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 13; //change when texture added
-        }
+        public override int PlaceStyle => 13;
     }
+
     public class CosmicCrystalLizardBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 14; //change when texture added
-        }
+        public override int PlaceStyle => 14;
     }
+
     public class AssassinBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 15; //change when texture added
-        }
+        public override int PlaceStyle => 15;
     }
+
     public class AttraidiesManifestationBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 16; //change when texture added
-        }
+        public override int PlaceStyle => 16;
     }
+
     public class BarrowWightBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 17; //change when texture added
-        }
+        public override int PlaceStyle => 17;
     }
+
     public class BasiliskShifterBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 18; //change when texture added
-        }
+        public override int PlaceStyle => 18;
     }
+
     public class BasiliskWalkerBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 19; //change when texture added
-        }
+        public override int PlaceStyle => 19;
     }
+
     public class BlackKnightBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 20; //change when texture added
-        }
+        public override int PlaceStyle => 20;
     }
+
     public class CrazedDemonSpiritBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 21; //change when texture added
-        }
+        public override int PlaceStyle => 21;
     }
+
     public class DarkElfMageBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 22; //change when texture added
-        }
+        public override int PlaceStyle => 22;
     }
+
     public class DemonSpiritBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 23; //change when texture added
-        }
+        public override int PlaceStyle => 23;
     }
+
     public class DiscipleOfAttraidiesBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 24; //change when texture added
-        }
+        public override int PlaceStyle => 24;
     }
+
     public class DungeonMageBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 25; //change when texture added
-        }
+        public override int PlaceStyle => 25;
     }
+
     public class DunlendingBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 26; //change when texture added
-        }
+        public override int PlaceStyle => 26;
     }
+
     public class DworcFleshhunterBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 27; //change when texture added
-        }
+        public override int PlaceStyle => 27;
     }
+
     public class DworcVenomsniperBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 28; //change when texture added
-        }
+        public override int PlaceStyle => 28;
     }
+
     public class DworcVoodoomasterBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 29; //change when texture added
-        }
+        public override int PlaceStyle => 29;
     }
+
     public class DworcVoodooShamanBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 30; //change when texture added
-        }
+        public override int PlaceStyle => 30;
     }
+
     public class FirebombHollowBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 31; //change when texture added
-        }
+        public override int PlaceStyle => 31;
     }
+
     public class FlameBatBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 32; //change when texture added
-        }
+        public override int PlaceStyle => 32;
     }
+
     public class GhostOfTheDarkmoonKnightBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 33; //change when texture added
-        }
+        public override int PlaceStyle => 33;
     }
+
     public class GhostOfTheForgottenKnightBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 34; //change when texture added
-        }
+        public override int PlaceStyle => 34;
     }
+
     public class GhostOfTheForgottenWarriorBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 35; //change when texture added
-        }
+        public override int PlaceStyle => 35;
     }
+
     public class FireLurkerBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 36; //change when texture added
-        }
+        public override int PlaceStyle => 36;
     }
-    /*public class EnemyBanner : EnemyBanner //REDACTED
-    {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 37; //change when texture added
-        }
-    }*/
+
     public class JungleSentreeBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 38; //change when texture added
-        }
+        public override int PlaceStyle => 38;
     }
+
     public class ManHunterBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 39; //change when texture added
-        }
+        public override int PlaceStyle => 39;
     }
+
     public class MarilithSpiritTwinBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 40; //change when texture added
-        }
+        public override int PlaceStyle => 40;
     }
+
     public class MindflayerIllusionBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 41; //change when texture added
-        }
+        public override int PlaceStyle => 41;
     }
+
     public class MindflayerKingServantBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 42; //change when texture added
-        }
+        public override int PlaceStyle => 42;
     }
+
     public class MindflayerServantBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 43; //change when texture added
-        }
+        public override int PlaceStyle => 43;
     }
+
     public class MutantToadBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 44; //change when texture added
-        }
+        public override int PlaceStyle => 44;
     }
+
     public class NecromancerBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 45; //change when texture added
-        }
+        public override int PlaceStyle => 45;
     }
+
     public class NecromancerElementalBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 46; //change when texture added
-        }
+        public override int PlaceStyle => 46;
     }
+
     public class ParaspriteBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 47; //change when texture added
-        }
+        public override int PlaceStyle => 47;
     }
+
     public class QuaraHydromancerBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 48; //change when texture added
-        }
+        public override int PlaceStyle => 48;
     }
+
     public class RedCloudHunterBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 49; //change when texture added
-        }
+        public override int PlaceStyle => 49;
     }
+
     public class HollowSoldierBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 50; //change when texture added
-        }
+        public override int PlaceStyle => 50;
     }
+
     public class ShadowMageBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 51; //change when texture added
-        }
+        public override int PlaceStyle => 51;
     }
+
     public class SnowOwlBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 52; //change when texture added
-        }
+        public override int PlaceStyle => 52;
     }
+
     public class TibianAmazonBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 53; //change when texture added
-        }
+        public override int PlaceStyle => 53;
     }
+
     public class TibianValkyrieBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 54; //change when texture added
-        }
+        public override int PlaceStyle => 54;
     }
+
     public class TonberryBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 55; //change when texture added
-        }
+        public override int PlaceStyle => 55;
     }
+
     public class WarlockBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 56; //change when texture added
-        }
+        public override int PlaceStyle => 56;
     }
+
     public class WaterSpiritBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 57; //change when texture added
-        }
+        public override int PlaceStyle => 57;
     }
+
     public class ParasyticWormBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 58; //change when texture added
-        }
+        public override int PlaceStyle => 58;
     }
+
     public class JungleWyvernJuvenileBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 59; //change when texture added
-        }
+        public override int PlaceStyle => 59;
     }
+
     public class SerpentOfTheAbyssBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 60; //change when texture added
-        }
+        public override int PlaceStyle => 60;
     }
+
     public class AbysswalkerBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 61; //change when texture added
-        }
+        public override int PlaceStyle => 61;
     }
+
     public class AncientDemonOfTheAbyssBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 62; //change when texture added
-        }
+        public override int PlaceStyle => 62;
     }
+
     public class BarrowWightNemesisBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 63; //change when texture added
-        }
+        public override int PlaceStyle => 63;
     }
+
     public class BarrowWightPhantomBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 64; //change when texture added
-        }
+        public override int PlaceStyle => 64;
     }
-    public class BasiliskHunter : EnemyBanner
+
+    // Backwards compatibility with the previously inconsistently named banner.
+    [LegacyName("BasiliskHunter")]
+    public class BasiliskHunterBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 65; //change when texture added
-        }
+        public override int PlaceStyle => 65;
     }
+
     public class CorruptedElementalBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 66; //change when texture added
-        }
+        public override int PlaceStyle => 66;
     }
+
     public class CorruptedHornetBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 67; //change when texture added
-        }
+        public override int PlaceStyle => 67;
     }
+
     public class CrystalKnightBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 68; //change when texture added
-        }
+        public override int PlaceStyle => 68;
     }
+
     public class DarkBloodKnightBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 70; //change when texture added
-        }
+        public override int PlaceStyle => 70;
     }
+
     public class DarkKnightBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 71; //change when texture added
-        }
+        public override int PlaceStyle => 71;
     }
+
     public class HollowWarriorBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 72; //change when texture added
-        }
+        public override int PlaceStyle => 72;
     }
+
     public class HydrisElementalBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 73; //change when texture added
-        }
+        public override int PlaceStyle => 73;
     }
+
     public class HydrisNecromancerBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 74; //change when texture added
-        }
+        public override int PlaceStyle => 74;
     }
+
     public class IceSkeletonBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 75; //change when texture added
-        }
+        public override int PlaceStyle => 75;
     }
+
     public class ManOfWarBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 76; //change when texture added
-        }
+        public override int PlaceStyle => 76;
     }
+
     public class OolacileDemonBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 77; //change when texture added
-        }
+        public override int PlaceStyle => 77;
     }
+
     public class OolacileKnightBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 78; //change when texture added
-        }
+        public override int PlaceStyle => 78;
     }
+
     public class OolacileSorcererBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 79; //change when texture added
-        }
+        public override int PlaceStyle => 79;
     }
+
     public class SlograIIBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 80; //change when texture added
-        }
+        public override int PlaceStyle => 80;
     }
+
     public class TaurusKnightBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 81; //change when texture added
-        }
+        public override int PlaceStyle => 81;
     }
+
     public class TetsujinBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 82; //change when texture added
-        }
+        public override int PlaceStyle => 82;
     }
+
     public class VampireBatBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 83; //change when texture added
-        }
+        public override int PlaceStyle => 83;
     }
 
     public class ArchdeaconBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 84; //change when texture added
-        }
+        public override int PlaceStyle => 84;
     }
 
     public class RedKnightBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 85; //change when texture added
-        }
+        public override int PlaceStyle => 85;
     }
+
     public class GreatRedKnightBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 86; //change when texture added
-        }
+        public override int PlaceStyle => 86;
     }
+
     public class HumanityPhantomBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 87; //change when texture added
-        }
+        public override int PlaceStyle => 87;
     }
+
     public class LothricBlackKnightBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 88; //change when texture added
-        }
+        public override int PlaceStyle => 88;
     }
+
     public class LothricKnightBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 89; //change when texture added
-        }
+        public override int PlaceStyle => 89;
     }
+
     public class LothricSpearKnightBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 90; //change when texture added
-        }
+        public override int PlaceStyle => 90;
     }
+
     public class RingedKnightBanner : EnemyBanner
     {
-        public override void SetStaticDefaults()
-        {
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Item.placeStyle = 91; //change when texture added
-        }
+        public override int PlaceStyle => 91;
     }
     #endregion
-
 }
