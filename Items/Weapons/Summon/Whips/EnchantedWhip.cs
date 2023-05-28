@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
@@ -9,7 +10,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 	public class EnchantedWhip : ModItem
 	{
 		public const int BaseDamage = 18;
-		public override void SetStaticDefaults()
+		public static float SummonTagDamage = 4;
+		public static float StarDamageScaling = 50;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagDamage, StarDamageScaling);
+        public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 		}

@@ -19,6 +19,7 @@ using tsorcRevamp.Buffs.Summon;
 using tsorcRevamp.Buffs.Summon.WhipDebuffs;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
@@ -39,6 +40,7 @@ namespace tsorcRevamp.NPCs
         int DarkSoulQuantity;
 
         public float SummonTagFlatDamage;
+        public float BaseSummonTagCriticalStrikeChance;
         public float SummonTagCriticalStrikeChance;
         public float SummonTagScalingDamage;
         public float SummonTagArmorPenetration;
@@ -113,7 +115,7 @@ namespace tsorcRevamp.NPCs
             Soulstruck = false;
             PhazonCorruption = false;
             SummonTagFlatDamage = 0f;
-            SummonTagCriticalStrikeChance = 0f;
+            BaseSummonTagCriticalStrikeChance = 4f;
             SummonTagScalingDamage = 0f;
             SummonTagArmorPenetration = 0f;
             markedByCrystalNunchaku = false;
@@ -697,46 +699,52 @@ namespace tsorcRevamp.NPCs
             Player projectileOwner = Main.player[projectile.owner];
             var modPlayerProjectileOwner = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
             float SummonTagDamageMultiplier = ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type];
+            if (projectile.DamageType == DamageClass.Summon) //minion damage, whip damage unaffected
+            {
+                modifiers.SourceDamage *= 0.8f;
+                modifiers.CritDamage *= 1.25f;
+            }
             #region Individual Whip debuff effects
             #region Modded Whips
             //if(markedByCrystalNunchaku) only has a special effect
             if (markedByDetonationSignal)
             {
-                SummonTagScalingDamage += 1.5f;
+                SummonTagScalingDamage += DetonationSignal.SummonTagScalingDamage / 100f;
             }
             if (markedByDominatrix)
             {
-                SummonTagCriticalStrikeChance += 7f;
+                BaseSummonTagCriticalStrikeChance += Dominatrix.SummonTagCrit;
             }
             //if (markedByDragoonLash) only has a special effect
             if (markedByEnchantedWhip)
             {
-                SummonTagFlatDamage += 4f;
+                SummonTagFlatDamage += EnchantedWhip.SummonTagDamage;
             }
             if (markedByNightsCracker)
             {
                 SummonTagFlatDamage += modPlayerProjectileOwner.NightsCrackerStacks * 2f;
-                SummonTagCriticalStrikeChance += modPlayerProjectileOwner.NightsCrackerStacks;
+                BaseSummonTagCriticalStrikeChance += modPlayerProjectileOwner.NightsCrackerStacks;
                 //SearingLashDamageBonus needs to be calculated after all the flat tag damage has been added
             }
             if (markedByPolarisLeash)
             {
-                SummonTagFlatDamage += 6f;
+                SummonTagFlatDamage += PolarisLeash.SummonTagDamage;
             }
             if (markedByPyrosulfate)
             {
-                SummonTagFlatDamage += 8f;
-                SummonTagCriticalStrikeChance += 3f;
+                SummonTagFlatDamage += Pyrosulfate.SummonTagDamage;
+                BaseSummonTagCriticalStrikeChance += Pyrosulfate.SummonTagCrit;
             }
             //if (markedBySearingLash) SearingLashDamageBonus needs to be calculated after all the flat tag damage has been added
             if (markedByTerraFall)
             {
                 SummonTagFlatDamage += modPlayerProjectileOwner.TerraFallStacks * 5f;
-                SummonTagCriticalStrikeChance += modPlayerProjectileOwner.TerraFallStacks * 4f;
+                BaseSummonTagCriticalStrikeChance += modPlayerProjectileOwner.TerraFallStacks * 4f;
             }
             if (markedByUrumi)
             {
-                SummonTagArmorPenetration += 5f;
+                SummonTagArmorPenetration += Urumi.SummonTagArmorPen;
+                BaseSummonTagCriticalStrikeChance += Urumi.SummonTagCrit;
             }
             #endregion
             #region Vanilla Whips
@@ -766,8 +774,8 @@ namespace tsorcRevamp.NPCs
             }
             if (markedByMorningStar)
             {
-                SummonTagFlatDamage += 4f;
-                SummonTagCriticalStrikeChance += 6f;
+                SummonTagFlatDamage += SummonerEdits.MorningStarTagDamage;
+                BaseSummonTagCriticalStrikeChance += SummonerEdits.MorningStarTagCriticalStrikeChance;
             }
             if (markedByDarkHarvest)
             {
@@ -775,8 +783,8 @@ namespace tsorcRevamp.NPCs
             }
             if (markedByKaleidoscope)
             {
-                SummonTagFlatDamage += 10f;
-                SummonTagCriticalStrikeChance += 5f;
+                SummonTagFlatDamage += SummonerEdits.KaleidoscopeTagDamage;
+                BaseSummonTagCriticalStrikeChance += SummonerEdits.KaleidoscopeTagCriticalStrikeChance;
             }
             #endregion
             #endregion
@@ -803,7 +811,7 @@ namespace tsorcRevamp.NPCs
                 //Dragoon Lash effect at the bottom
                 if (markedByEnchantedWhip)
                 {
-                    int StarDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(EnchantedWhip.BaseDamage / 2);
+                    int StarDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(EnchantedWhip.BaseDamage * EnchantedWhip.StarDamageScaling / 100f);
                     Vector2 StarVector1 = new Vector2(-640, -800) + npc.Center;
                     Vector2 StarVector2 = new Vector2(640, -800) + npc.Center;
                     Vector2 StarVector3 = new Vector2(0, -800) + npc.Center;
@@ -840,7 +848,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (markedByPolarisLeash)
                 {
-                    int StarDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(PolarisLeash.BaseDamage / 2);
+                    int StarDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(PolarisLeash.BaseDamage * PolarisLeash.StarDamageScaling / 100f);
                     Vector2 StarVector1 = new Vector2(-640, -800) + npc.Center;
                     Vector2 StarVector2 = new Vector2(640, -800) + npc.Center;
                     Vector2 StarVector3 = new Vector2(0, -800) + npc.Center;
@@ -912,13 +920,23 @@ namespace tsorcRevamp.NPCs
                 modifiers.FlatBonusDamage += SummonTagFlatDamage * ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type] * modPlayerProjectileOwner.SummonTagStrength;
                 modifiers.ScalingBonusDamage += SummonTagScalingDamage * ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type] * modPlayerProjectileOwner.SummonTagStrength;
                 modifiers.ArmorPenetration += SummonTagArmorPenetration * modPlayerProjectileOwner.SummonTagStrength;
-                Main.NewText(projectileOwner.GetTotalCritChance(DamageClass.Summon));
-                if (SummonTagCriticalStrikeChance > 0)
+                SummonTagCriticalStrikeChance = (BaseSummonTagCriticalStrikeChance * modPlayerProjectileOwner.SummonTagStrength * (1f + (projectileOwner.GetTotalCritChance(DamageClass.Summon) / 100f)));
+                int critLevel = (int)(Math.Floor(SummonTagCriticalStrikeChance / 100f));
+                if (critLevel >= 1)
                 {
-                    if (Main.rand.NextBool((int)(100f / (SummonTagCriticalStrikeChance * modPlayerProjectileOwner.SummonTagStrength * (1f + (projectileOwner.GetTotalCritChance(DamageClass.Summon) / 100f))))))
+                    modifiers.SetCrit();
+                }
+                if (critLevel > 1)
+                {
+                    for (int i = 1; i < critLevel; i++)
                     {
-                        modifiers.SetCrit();
+                        modifiers.CritDamage *= 2;
                     }
+                }
+                if (Main.rand.Next(1, 101) <= SummonTagCriticalStrikeChance - (100 * critLevel))
+                {
+                    modifiers.SetCrit();
+                    modifiers.CritDamage *= 2;
                 }
 
             }

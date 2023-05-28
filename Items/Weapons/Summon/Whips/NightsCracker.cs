@@ -1,6 +1,7 @@
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
@@ -8,7 +9,16 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 	public class NightsCracker : ModItem
 	{
 		public const int BaseDamage = 50;
-		public override void SetStaticDefaults()
+		public static float MinSummonTagDamage = 2; //this doesn't affect anything
+        public static float MaxSummonTagDamage = 8; //this doesn't affect anything
+		public static float MinSummonTagCrit = 1;//this doesn't affect anything
+        public static float MaxSummonTagCrit = 4;//this doesn't affect anything
+		public static float MinSummonTagAttackSpeed = 6;//this doesn't affect anything
+        public static float MaxSummonTagAttackSpeed = 24;//this doesn't affect anything
+        public static float SearingLashEfficiency = 50;//this doesn't affect anything
+        public static float CritDamage = 33;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MinSummonTagDamage, MaxSummonTagDamage, MinSummonTagCrit, MaxSummonTagCrit, MinSummonTagAttackSpeed, MaxSummonTagAttackSpeed, SearingLashEfficiency, CritDamage);
+        public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 		}

@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
         public static float SummonDamage = 12;
         public static float SummonAttackSpeed = 12;
         public static float WhipRangeIncrease = 10;
-        public static float WhipCritDamage = 12; //this does actually affect the crit damage, but in a different file
+        public static float WhipCritDamage = 12;
         public static float WhipCritHitboxSize = 3;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonDamage, SummonAttackSpeed, WhipRangeIncrease, WhipCritDamage, WhipCritHitboxSize);
         public override void SetStaticDefaults()

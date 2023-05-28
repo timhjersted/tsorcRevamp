@@ -1,6 +1,7 @@
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
@@ -8,7 +9,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 	public class SearingLash : ModItem
 	{
 		public const int BaseDamage = 30;
-		public override void SetStaticDefaults()
+		public static float DamageScaling = 66;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageScaling);
+        public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 		}

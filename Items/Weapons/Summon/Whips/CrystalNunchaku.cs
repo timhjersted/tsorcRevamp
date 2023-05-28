@@ -1,13 +1,19 @@
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
 	public class CrystalNunchaku : ModItem
 	{
-		public override void SetStaticDefaults()
+		public static float MaxSummonTagScalingDamage = 25;
+        public static float MinSummonTagScalingDamage = 0;
+        public static float MaxSummonTagDefense = 15;
+        public static int MinSummonTagDefense = 0;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxSummonTagScalingDamage, MinSummonTagScalingDamage, MaxSummonTagDefense, MinSummonTagDefense);
+        public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 		}

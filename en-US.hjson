@@ -7,9 +7,16 @@ Mods: {
 			AggroIncrease: Enemies are more likely to target you
 			WhipCritDamage: Increases the damage of whip crits by {0}%
 			WhipCritHitboxSize: Increases the Whip Tip Crit Hitbox Size to {0}x
-			SummonTagStrengthBoost: Increases the strength of Summon Tag effects by {0}%
-			SummonTagDurationBoost: Increases the duration of Summon Tag effects by {0}%
+			SummonTagStrength: Increases the strength of Summon Tag effects by {0}%
+			SummonTagDuration: Increases the duration of Summon Tag effects by {0}%
 			BotCSummonTagDoubleBuffCount: Fully charged whip debuff counts as 2
+			CriticalStrikeDamage: Critical strikes deal {0}% more damage
+			ChargedWhip: Stats of this whip scale with how long you've charged it
+			ChargedWhipSummonTagDamage: "{0}-{1} summon tag damage"
+			ChargedWhipSummonTagCrit: "{0}-{1}% summon tag critical strike chance"
+			ChargedWhipSummonAttackSpeed: Gain {0}-{1}% summon attack speed upon striking an enemy
+			ImprovedWhipCrowdControl: Performs better against multiple targets than most whips
+			SummonTagArmorPen: "{0} summon tag armor penetration"
 		}
 
 		Items: {
@@ -34,12 +41,12 @@ Mods: {
 					The full power of this blade has been sealed by the embodiment of chaos
 					Defeat it to fully unlock its power!
 					'''
-				HerculesBeetle: "{$CommonItemTooltip.SummonTagStrengthBoost}"
-				NecromanticScroll: "{$CommonItemTooltip.SummonTagDurationBoost}"
+				HerculesBeetle: "{$CommonItemTooltip.SummonTagStrength}"
+				NecromanticScroll: "{$CommonItemTooltip.SummonTagDuration}"
 				PapyrusScarab:
 					'''
-					{$CommonItemTooltip.SummonTagStrengthBoost}
-					{$CommonItemTooltip.SummonTagDurationBoost@1}
+					{$CommonItemTooltip.SummonTagStrength}
+					{$CommonItemTooltip.SummonTagDuration@1}
 					'''
 				FlinxFurChainedSetBonus: "{$CommonItemTooltip.IncreasesMaxMinionsBy}"
 			}
@@ -5689,7 +5696,7 @@ Mods: {
 					Tags hit enemies with a parasytic crystal for 15 seconds
 					After 5 seconds this will either increase your own defense or increase the enemies damage taken from all sources
 					Hitting the enemy during infection will decrease the damage bonus and increase your defensive bonus(except for the whip itself)
-					Damage bonus ranges from 25% to 0%, Defense bonus ranges from 0 to 15
+					Damage bonus ranges from {0}% to {1}%, Defense bonus ranges from {2} to {3}
 					'The best defense is a good offense, or was it the other way around?'
 					'''
 				BotCTooltip: May make the [c/6d8827:Bearer of the Curse] more vulnerable
@@ -5700,7 +5707,7 @@ Mods: {
 				Tooltip:
 					'''
 					Enemies struck by this whip will explode once on minion hit
-					Explosion triples the damage of the minion hit that triggered it
+					Explosion increases the damage dealt by {0}%
 					Exploded enemies will also deal triple the contact damage to you for 4 seconds
 					{$CommonItemTooltip.Whips}
 					'''
@@ -5710,9 +5717,9 @@ Mods: {
 				DisplayName: Dominatrix
 				Tooltip:
 					'''
-					7% summon tag critical strike chance
+					{$CommonItemTooltip.PercentSummonTagCritChance}
 					Inflicts Blood Butcherer debuff
-					Critical strikes deal 66% more damage
+					{$CommonItemTooltip.CriticalStrikeDamage@1}
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -5732,10 +5739,10 @@ Mods: {
 				DisplayName: Enchanted Whip
 				Tooltip:
 					'''
-					4 summon tag damage
+					{$CommonItemTooltip.SummonTagDamage}
 					Strike enemies with an enchantment
 					Enchanted enemies will be showered by stars upon minion hits
-					Star damage scales with half of this whips damage
+					Star damage scales with {1} of this whips damage
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -5744,13 +5751,13 @@ Mods: {
 				DisplayName: Night's Cracker
 				Tooltip:
 					'''
-					Stats of this whip scale with how long you've charged it
-					2-8 summon tag damage
-					1-4% summon tag critical strike chance
-					Gain 6-24% summon attack speed upon striking an enemy
-					Performs better against multiple targets than most whips
-					Inherits Searing Lash's effect at up to half it's strength
-					Critical strikes deal 33% more damage
+					{$CommonItemTooltip.ChargedWhip}
+					{$CommonItemTooltip.ChargedWhipSummonTagDamage}
+					{$CommonItemTooltip.ChargedWhipSummonTagCrit@2}
+					{$CommonItemTooltip.ChargedWhipSummonAttackSpeed@4}
+					{$CommonItemTooltip.ImprovedWhipCrowdControl}
+					Inherits Searing Lash's effect at up to {6}% of it's strength
+					{$CommonItemTooltip.CriticalStrikeDamage@7}
 					{$CommonItemTooltip.Whips}
 					'''
 				BotCTooltip: "{$CommonItemTooltip.BotCSummonTagDoubleBuffCount}"
@@ -5760,13 +5767,12 @@ Mods: {
 				DisplayName: Polaris Leash
 				Tooltip:
 					'''
-					6 summon tag damage
-					Striking enemies will create Polaris, which scales with 66% of this whips damage
+					{$CommonItemTooltip.SummonTagDamage}
+					Striking enemies will create Polaris, which scales with {1}% of this whips damage
 					Polaris stays on your cursor and hits enemies with a frigid enchantment
 					Enchanted Enemies will also be showered by polar stars when struck by minions
-					These scale with half of this whips damage
+					These scale with {2} of this whips damage
 					Your summons will focus enemies struck by Polaris
-					This whip also inflicts Frostbite
 					'''
 			}
 
@@ -5774,8 +5780,8 @@ Mods: {
 				DisplayName: Pyrosulfate
 				Tooltip:
 					'''
-					8 summon tag damage
-					3% summon tag critical strike chance
+					{$CommonItemTooltip.SummonTagDamage}
+					{$CommonItemTooltip.PercentSummonTagCritChance@1}
 					{$CommonItemTooltip.Whips}
 					Inflicts Cursed Inferno
 					'''
@@ -5785,10 +5791,9 @@ Mods: {
 				DisplayName: Searing Lash
 				Tooltip:
 					'''
-					This whip can be charged up for increased range, damage and tag duration
+					{$CommonItemTooltip.ChargedWhip}
 					Enemies struck by this whip will burn horribly
-					and increase minion damage by 66% of this whips base damage in +%
-					This stacks on top of other whip tag damage
+					and increase minion damage by {0}% of this whips base damage in +%
 					{$CommonItemTooltip.Whips}
 					'''
 				BotCTooltip: "{$CommonItemTooltip.BotCSummonTagDoubleBuffCount}"
@@ -5798,17 +5803,28 @@ Mods: {
 				DisplayName: Terra Fall
 				Tooltip:
 					'''
-					Stats of this whip scale with how long you've charged it
+					{$CommonItemTooltip.ChargedWhip}
 					Summons a Terraprisma after striking an enemy
-					5-20 summon tag damage
-					4-12% summon tag crit
-					Gain 12-48% summon attack speed upon striking an enemy
-					Performs better against multiple targets than most whips
-					Inherits Searing Lash's effect at up to eighth it's strength
-					Critical strikes deal 33% more damage
+					{$CommonItemTooltip.ChargedWhipSummonTagDamage}
+					{$CommonItemTooltip.ChargedWhipSummonTagCrit@2}
+					{$CommonItemTooltip.ChargedWhipSummonAttackSpeed@4}
+					{$CommonItemTooltip.ImprovedWhipCrowdControl}
+					Inherits Searing Lash's effect at up to {6}% of it's strength
+					{$CommonItemTooltip.CriticalStrikeDamage@7}
 					{$CommonItemTooltip.Whips}
 					'''
 				BotCTooltip: "{$CommonItemTooltip.BotCSummonTagDoubleBuffCount}"
+			}
+
+			Urumi: {
+				DisplayName: Urumi
+				Tooltip:
+					'''
+					{$CommonItemTooltip.SummonTagArmorPen}
+					{$CommonItemTooltip.PercentSummonTagCritChance@1}
+					Ignores a substantial amount of defense
+					{$CommonItemTooltip.Whips}
+					'''
 			}
 
 			BlackFirebomb: {
@@ -6173,16 +6189,6 @@ Mods: {
 					'''
 					A broken remote, humming with a strange frequency
 					Perhaps it can be repaired?
-					'''
-			}
-
-			Urumi: {
-				DisplayName: Urumi
-				Tooltip:
-					'''
-					5 summon tag armor penetration
-					Ignores a substantial amount of defense
-					{$CommonItemTooltip.Whips}
 					'''
 			}
 

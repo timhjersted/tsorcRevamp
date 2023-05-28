@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
@@ -119,7 +120,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             List<Vector2> points = Projectile.WhipPointsForCollision;
             if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
             {
-				modifiers.CritDamage *= 1.66f;
+				modifiers.CritDamage *= 1f + (Dominatrix.CritDamage / 100);
 				modifiers.SetCrit();
             }
         }
