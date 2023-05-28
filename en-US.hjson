@@ -7902,9 +7902,9 @@ Mods: {
 			IchorGlob.DisplayName: Ichor Glob
 			IchorMissile.DisplayName: Ichor Missile
 			NamelessKing.DisplayName: Nameless King
-			ParasyticWormBody.DisplayName: Parasytic Worm Body
-			ParasyticWormHead.DisplayName: Parasytic Worm Head
-			ParasyticWormTail.DisplayName: Parasytic Worm Tail
+			ParasyticWormBody.DisplayName: Parasytic Worm
+			ParasyticWormHead.DisplayName: Parasytic Worm
+			ParasyticWormTail.DisplayName: Parasytic Worm
 		}
 
 		Prefixes: {
