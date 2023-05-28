@@ -57,9 +57,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                     || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingSerpentTail>()
                     || target.type == ModContent.NPCType<NPCs.Enemies.DemonSpirit>()
                     || target.type == ModContent.NPCType<NPCs.Enemies.CrazedDemonSpirit>()
-                    || target.type == ModContent.NPCType<NPCs.Enemies.ZombieWormHead>()
-                    || target.type == ModContent.NPCType<NPCs.Enemies.ZombieWormBody>()
-                    || target.type == ModContent.NPCType<NPCs.Enemies.ZombieWormTail>()
+                    || target.type == ModContent.NPCType<NPCs.Enemies.ParasyticWormHead>()
+                    || target.type == ModContent.NPCType<NPCs.Enemies.ParasyticWormBody>()
+                    || target.type == ModContent.NPCType<NPCs.Enemies.ParasyticWormTail>()
                     )
             {
                 modifiers.FinalDamage *= 4;

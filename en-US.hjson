@@ -111,8 +111,8 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}Barrow Wight Phantom"
 			}
 
-			BasiliskHunter: {
-				DisplayName: Basilisk Hunter
+			BasiliskHunterBanner: {
+				DisplayName: Basilisk Hunter Banner
 				Tooltip: "{$CommonItemTooltip.BannerBonus}Basilisk Hunter"
 			}
 
@@ -7681,9 +7681,6 @@ Mods: {
 			ViciousSpit.DisplayName: Vicious Spit
 			Warlock.DisplayName: Warlock
 			WaterSpirit.DisplayName: Water Spirit
-			ZombieWormBody.DisplayName: Parasytic Worm
-			ZombieWormHead.DisplayName: Parasytic Worm
-			ZombieWormTail.DisplayName: Parasytic Worm
 			Chicken.DisplayName: Chicken
 
 			Dwarf: {
@@ -7905,6 +7902,9 @@ Mods: {
 			IchorGlob.DisplayName: Ichor Glob
 			IchorMissile.DisplayName: Ichor Missile
 			NamelessKing.DisplayName: Nameless King
+			ParasyticWormBody.DisplayName: Parasytic Worm
+			ParasyticWormHead.DisplayName: Parasytic Worm
+			ParasyticWormTail.DisplayName: Parasytic Worm
 		}
 
 		Prefixes: {
