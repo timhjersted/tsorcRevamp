@@ -130,7 +130,7 @@ namespace tsorcRevamp.Banners
                     56 => ModContent.NPCType<Warlock>(),
                     57 => ModContent.NPCType<WaterSpirit>(),
                     58 => ModContent.NPCType<ZombieWormHead>(),
-                    59 => ModContent.NPCType<NPCs.Enemies.JungleWyvernJuvenile.JungleWyvernJuvenileHead>()
+                    59 => ModContent.NPCType<NPCs.Enemies.JungleWyvernJuvenile.JungleWyvernJuvenileHead>(),
                     60 => ModContent.NPCType<NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss.SerpentOfTheAbyssHead>(),
                     61 => ModContent.NPCType<Abysswalker>(),
                     62 => ModContent.NPCType<AncientDemonOfTheAbyss>(),
