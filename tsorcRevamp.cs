@@ -321,18 +321,6 @@ namespace tsorcRevamp
             };
             #endregion
             //--------
-            #region RecipeDelete list
-            /*
-            RecipeDelete = new List<int>() {
-                ItemID.DirtBlock, ItemID.StoneBlock, ItemID.Wood, ItemID.WoodenDoor, ItemID.StoneWall, ItemID.DirtWall, ItemID.WoodenChair,
-                ItemID.EbonstoneBlock, ItemID.WoodWall, ItemID.WoodPlatform, ItemID.CopperChandelier, ItemID.SilverChandelier, ItemID.GoldChandelier,
-                129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, //block and wall chunk
-                ItemID.Sign, ItemID.MudBlock, ItemID.ObsidianBrick, ItemID.HellstoneBrick, ItemID.Bed, ItemID.Piano, ItemID.Dresser, ItemID.Bench, ItemID.Bathtub,
-                ItemId.LampPost, ItemID.TikiTorch, ItemID.CookingPot, ItemID.Candelabra, ItemID.Throne, ItemID.Bowl, ItemID.Toilet, ItemID.GrandfatherClock, 
-                ItemID.ArmorStatue, ItemID.GlassWall, //currently up to ID 392
-            };*/
-            #endregion
-            //--------
             #region CrossModTiles list
             CrossModTiles = new List<int>();
 
@@ -586,6 +574,38 @@ namespace tsorcRevamp
                 ItemID.WingsNebula,
                 ItemID.WingsStardust,
                 ItemID.WingsVortex
+                #endregion
+                ,
+                #region Blocks/Furniture
+                ItemID.DirtBlock, ItemID.StoneBlock, ItemID.Wood, ItemID.WoodenDoor, ItemID.StoneWall, ItemID.DirtWall, ItemID.WoodenChair,
+                ItemID.EbonstoneBlock, ItemID.WoodWall, ItemID.WoodPlatform, ItemID.CopperChandelier, ItemID.SilverChandelier, ItemID.GoldChandelier,
+                ItemID.GrayBrick, ItemID.GrayBrickWall, ItemID.RedBrick, ItemID.RedBrickWall, ItemID.ClayBlock, ItemID.BlueBrick, ItemID.BlueBrickWall,
+                ItemID.ChainLantern, ItemID.GreenBrick, ItemID.GreenBrickWall, ItemID.PinkBrick, ItemID.PinkBrickWall, ItemID.GoldBrick, ItemID.GoldBrickWall,
+                ItemID.SilverBrick, ItemID.SilverBrickWall, ItemID.CopperBrick, ItemID.CopperBrickWall, ItemID.Sign, ItemID.MudBlock, ItemID.ObsidianBrick,
+                ItemID.HellstoneBrick, ItemID.Bed, ItemID.Piano, ItemID.Dresser, ItemID.Bench, ItemID.Bathtub, ItemId.LampPost, ItemID.TikiTorch,
+                ItemID.CookingPot, ItemID.Candelabra, ItemID.Throne, ItemID.Bowl, ItemID.Toilet, ItemID.GrandfatherClock, ItemID.ArmorStatue,
+                ItemID.GlassWall, ItemID.PearlsandBlock, ItemID.PearlstoneBlock, ItemID.PearlstoneBrick, ItemID.IridescentBrick, ItemID.MudstoneBrick,
+                ItemID.CobaltBrick, ItemID.MythrilBrick, ItemID.PearlstoneBrickWall, ItemID.PIridescentBrickWall, ItemID.MudstoneBrickWall,
+                ItemID.CobaltBrickWall, ItemID.MythrilBrickWall, ItemID.SiltBlock, ItemID.SwordStatue, ItemID.ShieldStatue, ItemID.BatStatue,
+                ItemID.FishStatue, ItemID.BunnyStatue, ItemID.ReaperStatue, ItemID.WomanStatue, ItemID.GargoyleStatue, ItemID.GloomStatue,
+                ItemID.CrabStatue, ItemID.HammerStatue, ItemID.PotionStatue, ItemID.SpearStatue, ItemID.CrossStatue, ItemID.BowStatue, ItemID.BoomerangStatue,
+                ItemID.BootStatue, ItemID.BirdStatue, ItemID.AxeStatue, ItemID.TreeStatue, ItemID.AnvilStatue, ItemID.PickaxeStatue, ItemID.PillarStatue,
+                ItemID.PotStatue, ItemID.SunflowerStatue, ItemID.PlankedWall, ItemID.WoodenBeam, ItemID.ActiveStoneBlock, ItemID.InactiveStoneBlock,
+                ItemID.Boulder, ItemID.DemoniteBrick, ItemID.Explosives, ItemID.InletPump, ItemID.OutletPump, ItemID.Timer1Second, ItemID.Timer3Second,
+                ItemID.Timer5Second, ItemID.CandyCaneBlock, ItemID.CandyCaneWall, ItemID.GreenCandyCaneBlock, ItemID.GreenCandyCaneWall, ItemID.SnowBlock,
+                ItemID.SnowBrick, ItemID.SnowBrickWall, ItemID.AdamantiteBeam, ItemID.AdamantiteBeamWall, ItemID.DemoniteBrickWall, ItemID.SandstoneBrick,
+                ItemID.SandstoneBrickWall, ItemID.EbonstoneBrick, ItemID.EbonstoneBrickWall, ItemID.RedStucco, ItemID.YellowStucco, ItemID.GreenStucco,
+                ItemID.GrayStucco, ItemID.RedStuccoWall, ItemID.YellowStuccoWall, ItemID.GreenStuccoWall, ItemID.GrayStuccoWall, ItemID.Ebonwood,
+                ItemID.RichMahogany, ItemID.Pearlwood, ItemID.EbonwoodWall, ItemID.RichMahoganyWall, ItemID.PearlwoodWall, ItemID.EbonwoodPlatform,
+                ItemID.RichMahoganyPlatform, ItemID.PearlwoodPlatform, ItemID.BonePlatform, ItemID.EbonwoodPiano, ItemID.RichMahoganyPiano,
+                ItemID.PearlwoodPiano, ItemID.EbonwoodBed, ItemID.RichMahoganyBed, ItemID.PearlwoodBed, ItemID.EbonwoodDresser, ItemID.RichMahoganyDresser,
+                ItemID.PearlwoodDresser, ItemID.EbonwoodDoor, ItemID.RichMahoganyDoor, ItemID.PearlwoodDoor, ItemID.RainbowBrick, ItemID.RainbowBrickWall,
+                ItemID.IceBlock, ItemID.TinChandelier, ItemID.TungstenChandelier, ItemID.PlatinumChandelier, ItemID.PlatinumCandelabra, ItemID.TinBrick,
+                ItemID.TungstenBrick, ItemID.PlatinumBrick, ItemID.TinBrickWall, ItemID.TungstenBrickWall, ItemID.PlatinumBrickWall, ItemID.CactusWall,
+                ItemID.Cloud, ItemID.CloudWall, ItemID.SlimeBlock, ItemID.FleshBlock, ItemID.MushroomWall, ItemID.RainCloud, ItemID.BoneBlock,
+                ItemID.FrozenSlimeBlock, ItemID.BoneBlockWall, ItemID.SlimeBlockWall, ItemID.FleshBlockWall, ItemID.AsphaltBlock, ItemID.CactusDoor,
+                ItemID.FleshDoor, ItemID.MushroomDoor, ItemID.LivingWoodDoor, ItemID.BoneDoor, ItemID.SunplateBlock, ItemID.DiscWall, ItemID.CrimstoneBlock,
+                ItemID.SkywareDoor//currently up to ID 837
                 #endregion
             };
             #endregion
@@ -939,7 +959,6 @@ namespace tsorcRevamp
             PlaceAllowed                                        = null;
             Unbreakable                                         = null;
             IgnoredTiles                                        = null;
-            //DeleteRecipe                                        = null;
             CrossModTiles                                       = null;
             BannedItems                                         = null;
             RestrictedHooks                                     = null;
@@ -1039,50 +1058,7 @@ namespace tsorcRevamp
             // add new recipes
             ModRecipeHelper.AddRecipes();
         }
-
-        /*
-        public override void RemoveRecipes()
-        {
-            RecipeFinder finder = new RecipeFinder(); //initialize finder
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-            {
-                foreach (var IDnum in DeleteRecipes)
-                {
-                    finder = new RecipeFinder();
-                    finder.SetResult(IDnum, 1); //search for all recipes that result in exactly one of the item
-                    foreach (Recipe recipe in finder.SearchRecipes()) {
-                        RecipeEditor editor = new RecipeEditor(recipe);
-                        editor.DeleteRecipe();
-                    }
-                    finder.SetResult(IDnum, 2); //search for all recipes that result in exactly 2 of the item (mostly platforms)
-                    foreach (Recipe recipe in finder.SearchRecipes()) {
-                        RecipeEditor editor = new RecipeEditor(recipe);
-                        editor.DeleteRecipe();
-                    }
-                    finder.SetResult(IDnum, 3); //search for all recipes that result in exactly 3 of the item (misc blocks)
-                    foreach (Recipe recipe in finder.SearchRecipes()) {
-                        RecipeEditor editor = new RecipeEditor(recipe);
-                        editor.DeleteRecipe();
-                    }
-                    finder.SetResult(IDnum, 4); //search for all recipes that result in exactly 4 of the item (mostly walls)
-                    foreach (Recipe recipe in finder.SearchRecipes()) {
-                        RecipeEditor editor = new RecipeEditor(recipe);
-                        editor.DeleteRecipe();
-                    }
-                    finder.SetResult(IDnum, 5); //search for all recipes that result in exactly 5 of the item (Misc blocks)
-                    foreach (Recipe recipe in finder.SearchRecipes()) {
-                        RecipeEditor editor = new RecipeEditor(recipe);
-                        editor.DeleteRecipe();
-                    }
-                    finder.SetResult(IDnum, 20); //search for all recipes that result in exactly 20 of the item (mostly Gemspark blocks)
-                    foreach (Recipe recipe in finder.SearchRecipes()) {
-                        RecipeEditor editor = new RecipeEditor(recipe);
-                        editor.DeleteRecipe();
-                    }
-                }
-            }
-        }
-        */
+        
         public override void HandlePacket(BinaryReader reader, int whoAmI)
         {
             int message = reader.ReadByte();
