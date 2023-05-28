@@ -368,11 +368,6 @@ namespace tsorcRevamp.Banners
         public override int PlaceStyle => 36;
     }
 
-    public class HeroOfLumeliaBanner : EnemyBanner
-    {
-        public override int PlaceStyle => 37;
-    }
-
     public class JungleSentreeBanner : EnemyBanner
     {
         public override int PlaceStyle => 38;
