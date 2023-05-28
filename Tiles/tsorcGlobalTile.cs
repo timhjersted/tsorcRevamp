@@ -27,13 +27,5 @@ namespace tsorcRevamp.Tiles
                 }
             }
         }
-        public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
-        {
-            Player player = Main.LocalPlayer;
-            if ((type == TileID.Plants | type == TileID.Plants2) && (player.HasItem(ModContent.ItemType<ToxicShot>()) | player.HasItem(ModContent.ItemType<AlienRifle>()) | player.HasItem(ModContent.ItemType<OmegaSquadRifle>())))
-            {
-                Item.NewItem(Item.GetSource_NaturalSpawn(), player.Center, ItemID.Seed, 2);
-            }
-        }
     }
 }

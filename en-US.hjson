@@ -6260,6 +6260,13 @@ Mods: {
 		}
 
 		Buffs: {
+			VanillaBuffs: {
+				ManaSickness: Reduces all damage dealt by {0}%
+				SolarShield: "{$CommonItemTooltip.ReducesDamageTakenByPercent}"
+				SolarShieldRepel: ", repel enemies when taking damage"
+				NebulaDamageBoost: "{$CommonItemTooltip.PercentIncreasedDamage}"
+			}
+
 			ArmorDrug: {
 				DisplayName: Demonic Scales
 				Description: Your skin is covered with hard scales...
@@ -8118,6 +8125,23 @@ Mods: {
 						This slider controls Bonfirefly's volume.
 						Set to 0 to disable Bonfirefly sounds.
 						'''
+				}
+
+				Headers: {
+					Mods: {
+						tsorcRevamp: {
+							Configs: {
+								tsorcRevampConfig: {
+									Headers: {
+										AdventureMode: Adventure Mode
+										GameplayChanges: Gameplay Changes
+										Visual: Visual
+										Sound: Sound
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		}

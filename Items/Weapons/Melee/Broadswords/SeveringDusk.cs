@@ -71,9 +71,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 }
                 for(int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (Main.npc[i].active && !Main.npc[i].friendly && Main.npc[i].Distance(player.Center) < 70)
+                    NPC npc = Main.npc[i];
+                    if (npc.active && !npc.friendly && npc.Distance(player.Center) < 70)
                     {
-                        //Main.npc[i].StrikeNPC((int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), 0, 0, true);
+                        npc.StrikeNPC(npc.CalculateHitInfo(Item.damage, 0, false, 0, DamageClass.Melee, true), false, true);
                     }
                 }
             }

@@ -9,13 +9,13 @@ namespace tsorcRevamp
     {
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) => true;
         public override ConfigScope Mode => ConfigScope.ServerSide;
-        //[Header("Adventure Mode")]
+        [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.AdventureMode")]
         [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(true)]
         public bool AdventureMode { get; set; }
 
 
-        //[Header("Gameplay Changes")]
+        [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.GameplayChanges")]
         [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(true)]
         public bool SoulsDropOnDeath { get; set; }
@@ -37,7 +37,7 @@ namespace tsorcRevamp
         public bool DisableAutomaticQuickMana { get; set; }
 
 
-        //[Header("Visual")]
+        [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.Visual")]
 
         /*
         [Label("Legacy Music")]
@@ -119,7 +119,7 @@ namespace tsorcRevamp
 
 
 
-        //[Header("Sound")]
+        [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.Sound")]
 
         [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(100)]

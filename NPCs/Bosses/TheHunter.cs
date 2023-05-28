@@ -489,11 +489,17 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             return false;
         }
-
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            NPC.ai[0] += hit.Damage;
+        }
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            NPC.ai[0] += hit.Damage;
+        }
         public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
         {
             hitTime = 0;
-            //NPC.ai[0] += (float)damage;
             if (NPC.ai[0] > (NPC.lifeMax / 10))
             {
                 UsefulFunctions.BroadcastText("The Hunter has taken damage too fast, its natural defenses activate...", Color.Orange);

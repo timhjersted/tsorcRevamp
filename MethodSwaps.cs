@@ -29,6 +29,8 @@ using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.Drawing;
 using Terraria.WorldBuilding;
 using System.ComponentModel.Design;
+using tsorcRevamp.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 
 namespace tsorcRevamp
 {
@@ -94,8 +96,6 @@ namespace tsorcRevamp
 
             Terraria.DataStructures.On_PlayerDrawLayers.DrawPlayer_TransformDrawData += PaperMarioMode;
 
-            //Terraria.On_Player.VanillaPreUpdateInventory += Player_VanillaPreUpdateInventory;
-
             Terraria.On_Main.Draw += Main_Draw;
 
             Terraria.On_Main.DrawProjectiles += Main_DrawProjectiles;
@@ -113,6 +113,28 @@ namespace tsorcRevamp
             On_Projectile.StatusNPC += On_Projectile_StatusNPC;
 
             On_Player.ApplyEquipFunctional += On_Player_ApplyEquipFunctional;
+
+            On_Player.UpdateEquips += On_Player_UpdateEquips;
+
+            On_WorldGen.KillTile_ShouldDropSeeds += On_WorldGen_KillTile_ShouldDropSeeds;
+        }
+
+        private static bool On_WorldGen_KillTile_ShouldDropSeeds(On_WorldGen.orig_KillTile_ShouldDropSeeds orig, int x, int y)
+        {
+            if (Main.rand.NextBool(2) && (Main.LocalPlayer.HasItem(ModContent.ItemType<ToxicShot>()) || Main.LocalPlayer.HasItem(ModContent.ItemType<AlienRifle>()) || Main.LocalPlayer.HasItem(ModContent.ItemType<OmegaSquadRifle>())))
+            {
+                return true;
+            }
+            return orig(x, y);
+        }
+
+        private static void On_Player_UpdateEquips(On_Player.orig_UpdateEquips orig, Player self, int i)
+        {
+            if (self.inventory[self.selectedItem].type == ModContent.ItemType<AncientDragonLance>())
+            {
+                self.trident = true;
+            }
+            orig(self, i);
         }
 
         public static float SummonTagStrengthBoost = 50;
@@ -390,16 +412,6 @@ namespace tsorcRevamp
 
             orig(self, gameTime);
         }
-
-       
-
-        //I hate that this required a method swap, but unfortunately this does in fact require a method swap. It checks this *right* before applying the movement update.
-        /*private static void Player_VanillaPreUpdateInventory(Terraria.On_Player.orig_VanillaPreUpdateInventory orig, Player self)
-        {
-            if ((self.inventory[self.selectedItem].type == 277 || self.inventory[self.selectedItem].type == ModContent.ItemType<Items.Weapons.Melee.Spears.AncientDragonLance>()) && (!self.mount.Active || !self.mount.Cart))
-                self.trident = true;
-        }*/
-
         private static Item Player_QuickMount_GetItemToUse(Terraria.On_Player.orig_QuickMount_GetItemToUse orig, Player self)
         {
             Item item = null;
