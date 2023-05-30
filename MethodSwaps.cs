@@ -1231,11 +1231,8 @@ namespace tsorcRevamp
                         self.statLife = num;
                     }
                     self.breath = self.breathMax;
-                    if (self.spawnMax)
-                    {
-                        self.statLife = self.statLifeMax2;
-                        self.statMana = self.statManaMax2;
-                    }
+                    self.statLife = self.statLifeMax2;
+                    self.statMana = self.statManaMax2;
                 }
                 self.immune = true;
                 if (self.dead)

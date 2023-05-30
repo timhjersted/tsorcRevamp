@@ -35,32 +35,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.value = PriceByRarity.Cyan_9;
         }
 
-        /*public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            int healEffect = damage / 10;
-
-            if (crit)
-            {
-                healEffect *= 2;
-            }
-
-            player.statLife += healEffect;
-            player.HealEffect(healEffect);
-        }
-
-        public override void OnHitPvp(Player player, Player target, Player.HurtInfo hurtInfo)
-        {
-            int healEffect = damage / 20;
-
-            /*if (crit) //you can't crit in pvp?
-            {
-                healEffect *= 2;
-            }*
-
-            player.statLife += healEffect;
-            player.HealEffect(healEffect);
-        }*/
-
         public override void HoldItem(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.Light);
