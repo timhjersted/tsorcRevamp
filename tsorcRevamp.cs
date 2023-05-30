@@ -1495,7 +1495,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.SerrisBait>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.SerrisBag>(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>() }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.SerrisBag>(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>() }, // List containing all the loot to show in the bestiary
                     $"???", // Guide to fight the boss
                     "", // Despawning Message
                     "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/Serris");
@@ -1510,7 +1510,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Death>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     0,
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.DeathBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>(), ItemID.MidnightRainbowDye }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.DeathBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>() }, // List containing all the loot to show in the bestiary
                     $"???", // Guide to fight the boss
                     "");
 
@@ -1541,7 +1541,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.AttraidiesBag>(), ModContent.ItemType<Items.TheEnd>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.SoulOfAttraidies>(), ModContent.ItemType<Items.Weapons.Magic.BloomShards>(), ItemID.Picksaw }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.AttraidiesBag>(), ModContent.ItemType<Items.TheEnd>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.SoulOfAttraidies>(), ModContent.ItemType<Items.Weapons.Magic.BloomShards>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.SeveringDusk>(), ModContent.ItemType<Items.Weapons.Ranged.Guns.PyroclasticFlow>(), ModContent.ItemType<Items.Weapons.Summon.ShatteredReflection>(),ModContent.ItemType<Items.Weapons.Magic.BloomShards>(), ItemID.Picksaw }, // List containing all the loot to show in the bestiary
                     $"Use the Mindflayer Illusion Relic dropped by Attraidies' illusion.", // Guide to fight the boss
                     "", // Despawning Message
                     "",
