@@ -5,16 +5,16 @@ using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 {
-	public class DarkHarvestDebuff : ModBuff
-	{
-		public override void SetStaticDefaults()
-		{
-			BuffID.Sets.IsAnNPCWhipDebuff[Type] = true;
-		}
+    public class DarkHarvestDebuff : ModBuff
+    {
+        public override void SetStaticDefaults()
+        {
+            BuffID.Sets.IsAnNPCWhipDebuff[Type] = true;
+        }
 
-		public override void Update(NPC npc, ref int buffIndex)
-		{
-			npc.GetGlobalNPC<tsorcRevampGlobalNPC>().markedByDarkHarvest = true;
-		}
-	}
+        public override void Update(NPC npc, ref int buffIndex)
+        {
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().markedByDarkHarvest = true;
+        }
+    }
 }

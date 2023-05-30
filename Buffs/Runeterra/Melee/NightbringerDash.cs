@@ -5,7 +5,7 @@ using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra.Melee
 {
-    class NightbringerDash : ModBuff
+    public class NightbringerDash : ModBuff
     {
         public override void SetStaticDefaults()
         {
@@ -14,8 +14,9 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
         }
         public override void Update(Player player, ref int buffIndex)
         {
-            int dustID = Dust.NewDust(player.position, player.width, player.height, DustID.Torch, Scale: 3);
-            Main.dust[dustID].noGravity = true;
+            var dust = Dust.NewDustDirect(player.position, player.width, player.height, DustID.Torch, Scale: 3f);
+            dust.noGravity = true;
+
             if (player.HeldItem.type == ModContent.ItemType<Nightbringer>())
             {
                 player.GetDamage(DamageClass.Melee) += 1f;

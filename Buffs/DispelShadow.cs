@@ -2,16 +2,9 @@
 
 namespace tsorcRevamp.Buffs
 {
-    class DispelShadow : ModBuff
+    public class DispelShadow : ModBuff
     {
-
         //Generic texture since this buff is enemy-only
-        public override string Texture => "tsorcRevamp/Buffs/ArmorDrug";
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Dispel Shadow");
-            // Description.SetDefault("Your defense has been dispelled");
-        }
+        public override string Texture => "Terraria/Images/Buff";
     }
 }

@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.buffImmune[BuffID.Gravitation] = true;
             player.buffImmune[BuffID.Bleeding] = true;
             player.buffImmune[BuffID.Poisoned] = true;
-            player.buffImmune[ModContent.BuffType<Chilled>()] = true;
+            player.buffImmune[ModContent.BuffType<Frostbite>()] = true;
 
             player.GetDamage(DamageClass.Generic) += 0.03f;
             player.lifeRegen += 2;

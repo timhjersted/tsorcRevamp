@@ -80,7 +80,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         float customspawn1;
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(ModContent.BuffType<Chilled>(), 60, false);
+            target.AddBuff(ModContent.BuffType<Frostbite>(), 60, false);
             target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false);
             target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
             

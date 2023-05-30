@@ -7,13 +7,7 @@ namespace tsorcRevamp.Buffs
     public class BiohazardDrain : ModBuff
     {
         //Generic texture since this buff is enemy-only
-        public override string Texture => "tsorcRevamp/Buffs/ArmorDrug";
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Biohazard Drain");
-            // Description.SetDefault("Rapidly losing life");
-        }
+        public override string Texture => "Terraria/Images/Buff";
 
         public override void Update(NPC npc, ref int buffIndex)
         {

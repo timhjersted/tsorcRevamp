@@ -3,33 +3,34 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class FracturingArmor : ModBuff
+    public class FracturingArmor : ModBuff
     {
-
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Fracturing Armor");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }
 
         public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
-            tip = "Your armor is crumbling away. Defense reduced by " + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().FracturingArmor;
+            tip = base.Description.WithFormatArgs(Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().FracturingArmor).Value;
         }
+
         public override void Update(Player player, ref int buffIndex)
         {
-            player.statDefense -= player.GetModPlayer<tsorcRevampPlayer>().FracturingArmor;
-            player.GetModPlayer<tsorcRevampPlayer>().HasFracturingArmor = true;
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            player.statDefense -= modPlayer.FracturingArmor;
+            modPlayer.HasFracturingArmor = true;
         }
 
         public override bool ReApply(Player player, int time, int buffIndex)
         {
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().FracturingArmor < 65)
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (modPlayer.FracturingArmor < 65)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().FracturingArmor += 4;
+                modPlayer.FracturingArmor += 4;
             }
+
             return false;
         }
     }

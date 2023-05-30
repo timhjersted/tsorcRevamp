@@ -1,28 +1,28 @@
 ﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class GrappleMalfunction : ModBuff
+    public class GrappleMalfunction : ModBuff
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Grapple Malfunction");
-            // Description.SetDefault("Something is causing your grapple to sieze up!");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = true;
         }
-
 
         public override void Update(Player player, ref int buffIndex)
         {
             player.grappling[0] = -1;
             player.grapCount = 0;
-            for (int p = 0; p < 1000; p++)
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].aiStyle == 7)
+                var projectile = Main.projectile[i];
+                if (projectile.active && projectile.owner == player.whoAmI && projectile.aiStyle == ProjAIStyleID.Hook)
                 {
-                    Main.projectile[p].Kill();
+                    projectile.Kill();
                 }
             }
         }

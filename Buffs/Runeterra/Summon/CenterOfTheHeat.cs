@@ -5,26 +5,25 @@ using tsorcRevamp.Projectiles.Summon.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra.Summon
 {
-	public class CenterOfTheHeat : ModBuff
+    public class CenterOfTheHeat : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
-			// DisplayName.SetDefault("Center of the Heat");
-			// Description.SetDefault("You're in a hot center");
-
 			Main.buffNoSave[Type] = true;
 			Main.buffNoTimeDisplay[Type] = true;
 		}
+
 		public override void Update(Player player, ref int buffIndex)
 		{
 			if (player.HeldItem.type == ModContent.ItemType<ScorchingPoint>())
 			{
 				player.maxMinions += 1;
 			}
+
 			// If the minions exist reset the buff time, otherwise remove the buff from the player
 			if (player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointFireball>()] > 0)
 			{
-				// update projectiles
+				// Update projectiles
 				ScorchingPoint.ReposeProjectiles(player);
 				player.buffTime[buffIndex] = 18000;
 			}

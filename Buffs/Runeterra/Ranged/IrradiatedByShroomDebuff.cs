@@ -1,11 +1,10 @@
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Runeterra.Ranged
 {
-	public class IrradiatedByShroomDebuff : ModBuff
+    public class IrradiatedByShroomDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
@@ -14,8 +13,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
 
 		public override void Update(NPC npc, ref int buffIndex)
 		{
-			Player player = Main.player[Main.myPlayer];
 			npc.GetGlobalNPC<IrradiatedByShroomDebuffNPC>().IrradiatedByShroom = true;
+
 			if (Main.GameUpdateCount % 5 == 0)
 			{
 				Dust.NewDust(npc.Top, 20, 20, DustID.PoisonStaff);
@@ -33,9 +32,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
 		{
 			IrradiatedByShroom = false;
 		}
+
 		public override void UpdateLifeRegen(NPC npc, ref int damage)
 		{
-            Player player = Main.player[Main.myPlayer];
+            var player = Main.LocalPlayer;
             int DoTPerS = (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(500) + (int)(player.GetTotalCritChance(DamageClass.Ranged) / 100f * 500f);
             if (IrradiatedByShroom)
 			{

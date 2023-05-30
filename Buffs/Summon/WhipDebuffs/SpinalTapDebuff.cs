@@ -5,16 +5,16 @@ using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 {
-	public class SpinalTapDebuff : ModBuff
-	{
-		public override void SetStaticDefaults()
-		{
-			BuffID.Sets.IsAnNPCWhipDebuff[Type] = true;
-		}
+    public class SpinalTapDebuff : ModBuff
+    {
+        public override void SetStaticDefaults()
+        {
+            BuffID.Sets.IsAnNPCWhipDebuff[Type] = true;
+        }
 
-		public override void Update(NPC npc, ref int buffIndex)
-		{
-			npc.GetGlobalNPC<tsorcRevampGlobalNPC>().markedBySpinalTap = true;
-		}
-	}
+        public override void Update(NPC npc, ref int buffIndex)
+        {
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().markedBySpinalTap = true;
+        }
+    }
 }

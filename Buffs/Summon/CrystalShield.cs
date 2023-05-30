@@ -1,33 +1,32 @@
 ﻿using Terraria;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Summon
 {
-    class CrystalShield : ModBuff
+    public class CrystalShield : ModBuff
     {
-        public int defense;
-        public int damage;
+        public int Defense;
+
+        public override LocalizedText Description => base.Description.WithFormatArgs(Defense);
+
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Crystal Shield");
-            // Description.SetDefault("Defense increased");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.statDefense += (int)player.GetModPlayer<tsorcRevampPlayer>().CrystalNunchakuDefenseDamage;
-            defense = (int)player.GetModPlayer<tsorcRevampPlayer>().CrystalNunchakuDefenseDamage;
-            damage = (int)(25 - (int)(player.GetModPlayer<tsorcRevampPlayer>().CrystalNunchakuDefenseDamage) * 1.67f);
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            player.statDefense += (int)modPlayer.CrystalNunchakuDefenseDamage;
+
+            Defense = (int)modPlayer.CrystalNunchakuDefenseDamage;
+
+            if (modPlayer.BearerOfTheCurse)
             {
-                player.endurance -= (25f - (player.GetModPlayer<tsorcRevampPlayer>().CrystalNunchakuDefenseDamage) * 1.67f) / 100f;
+                player.endurance -= (25f - modPlayer.CrystalNunchakuDefenseDamage * 1.67f) / 100f;
             }
-        }
-        public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
-        {
-            tip = $"Defense increased by {defense}, damage dealt increased by {damage}%";
         }
     }
 }

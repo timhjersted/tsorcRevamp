@@ -3,12 +3,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class SlowedLifeRegen : ModBuff
+    public class SlowedLifeRegen : ModBuff
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Slowed Life Regeneration");
-            // Description.SetDefault("Life regen is weaker");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }
@@ -23,7 +21,6 @@ namespace tsorcRevamp.Buffs.Debuffs
             {
                 player.lifeRegen -= 3;
             }
-
         }
     }
 }

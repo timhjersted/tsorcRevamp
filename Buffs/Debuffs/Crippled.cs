@@ -3,12 +3,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class Crippled : ModBuff
+    public class Crippled : ModBuff
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Crippled");
-            // Description.SetDefault("Your mobility has been crippled!");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

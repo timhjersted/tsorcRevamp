@@ -3,12 +3,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs
 {
-    class Battlefront : ModBuff
+    public class Battlefront : ModBuff
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Battlefront");
-            // Description.SetDefault("You've never felt more ready for a fight...");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

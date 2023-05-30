@@ -1,12 +1,10 @@
-using Mono.Cecil.Cil;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Runeterra.Summon
 {
-	public class ScorchingDebuff : ModBuff
+    public class ScorchingDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
@@ -15,8 +13,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 
 		public override void Update(NPC npc, ref int buffIndex)
 		{
-			Player player = Main.player[Main.myPlayer];
 			npc.GetGlobalNPC<ScorchingDebuffNPC>().Scorched = true;
+
 			if (Main.GameUpdateCount % 5 == 0)
 			{
 				Dust.NewDust(npc.Center, 10, 10, DustID.GoldFlame);
@@ -34,9 +32,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 		{
 			Scorched = false;
 		}
+
 		public override void UpdateLifeRegen(NPC npc, ref int damage)
 		{
-            Player player = Main.player[Main.myPlayer];
+			var player = Main.LocalPlayer;
 			int DoTPerS = (int)player.GetTotalDamage(DamageClass.Summon).ApplyTo(10);
 
             if (Scorched)
@@ -45,11 +44,12 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 				damage += DoTPerS;
 			}
         }
+
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
 		{
 			if (Scorched && projectile.IsMinionOrSentryRelated)
 			{
-				if (Main.rand.NextBool(100 / (int)(Main.player[Main.myPlayer].GetTotalCritChance(DamageClass.Summon) / 2.5f)))
+				if (Main.rand.NextBool(100 / (int)(Main.LocalPlayer.GetTotalCritChance(DamageClass.Summon) / 2.5f)))
 				{
 					modifiers.SetCrit();
 				}

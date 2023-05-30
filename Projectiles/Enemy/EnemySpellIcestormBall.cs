@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             //target.AddBuff(BuffID.Blackout, 360, false); //darkness
-            target.AddBuff(ModContent.BuffType<Chilled>(), 180, false);
+            target.AddBuff(ModContent.BuffType<Frostbite>(), 180, false);
                
         }
 

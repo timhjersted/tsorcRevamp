@@ -34,7 +34,7 @@ namespace tsorcRevamp
 
             if (!Main.gameMenu)
             {
-                if (Player.HasBuff(ModContent.BuffType<Chilled>()))
+                if (Player.HasBuff(ModContent.BuffType<Frostbite>()))
                 {
                     r *= 0.3804f;
                     g *= 0.6902f;

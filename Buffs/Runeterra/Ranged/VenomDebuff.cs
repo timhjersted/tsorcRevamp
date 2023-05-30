@@ -1,11 +1,10 @@
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Runeterra.Ranged
 {
-	public class VenomDebuff : ModBuff
+    public class VenomDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
@@ -14,8 +13,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
 
 		public override void Update(NPC npc, ref int buffIndex)
 		{
-			Player player = Main.player[Main.myPlayer];
 			npc.GetGlobalNPC<VenomDebuffNPC>().Venomized = true;
+
 			if (Main.GameUpdateCount % 5 == 0)
 			{
 				Dust.NewDust(npc.Top, 10, 10, DustID.Venom);
@@ -33,9 +32,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
 		{
 			Venomized = false;
 		}
+
 		public override void UpdateLifeRegen(NPC npc, ref int damage)
 		{
-            Player player = Main.player[Main.myPlayer];
+			var player = Main.LocalPlayer;
             int DoTPerS = (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(20) + (int)(player.GetTotalCritChance(DamageClass.Ranged) / 100f * 20f);
             if (Venomized)
 			{

@@ -1,7 +1,6 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon;
-using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 
 namespace tsorcRevamp.Buffs.Summon
 {
@@ -10,8 +9,6 @@ namespace tsorcRevamp.Buffs.Summon
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Null Sprite");
-            // Description.SetDefault("The null sprite will fight for you");
             Main.buffNoSave[Type] = true;
             Main.buffNoTimeDisplay[Type] = true;
         }
@@ -22,6 +19,7 @@ namespace tsorcRevamp.Buffs.Summon
             {
                 player.maxMinions += 1;
             }
+
             if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.NullSprite>()] > 0)
             {
                 player.buffTime[buffIndex] = 18000;

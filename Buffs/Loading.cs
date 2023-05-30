@@ -4,13 +4,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs
 {
-    class Loading : ModBuff
+    public class Loading : ModBuff
     {
-
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Loading");
-            // Description.SetDefault("You're being held in position while the world finishes loading!");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }
@@ -25,13 +22,13 @@ namespace tsorcRevamp.Buffs
             {
                 player.buffTime[buffIndex] = 0;
             }
-                player.velocity.X = 0;
-            player.velocity.Y = 0;
+
+            player.velocity = Vector2.Zero;
         }
+
         public override void Update(NPC npc, ref int buffIndex)
         {
-            npc.velocity.X = 0;
-            npc.velocity.Y = 0;
+            npc.velocity = Vector2.Zero;
         }
     }
 }
