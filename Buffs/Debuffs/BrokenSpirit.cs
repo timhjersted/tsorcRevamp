@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class BrokenSpirit : ModBuff
+    public class BrokenSpirit : ModBuff
     {
         public override void SetStaticDefaults()
         {

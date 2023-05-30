@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -24,7 +23,7 @@ namespace tsorcRevamp.Buffs.Debuffs
                     {
                         player.statMana -= (int)(player.manaCost * 10f);
                         player.manaRegenDelay = 200;
-                        Projectile.NewProjectile(new EntitySource_Buff(npc, Type, buffIndex), npc.Center, Vector2.Zero, ProjectileID.Muramasa, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(25), 0, Main.myPlayer);
+                        Projectile.NewProjectile(npc.GetSource_Buff(buffIndex), npc.Center, Vector2.Zero, ProjectileID.Muramasa, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(25), 0, Main.myPlayer);
                     }
                 }
             }

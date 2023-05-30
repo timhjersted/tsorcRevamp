@@ -1,12 +1,12 @@
-using Humanizer;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Buffs
 {
-    class tsorcGlobalBuff : GlobalBuff
+    public class tsorcGlobalBuff : GlobalBuff
     {
 
         public override void Update(int type, Player player, ref int buffIndex)
@@ -18,26 +18,32 @@ namespace tsorcRevamp.Buffs
                 player.GetDamage(DamageClass.Summon) *= 1f - player.manaSickReduction;
                 player.GetDamage(DamageClass.Throwing) *= 1f - player.manaSickReduction;
             }
+
             if (type == BuffID.SolarShield1)
             {
                 player.endurance -= 0.15f;
             }
+
             if (type == BuffID.SolarShield2)
             {
                 player.endurance -= 0.1f;
             }
+
             if (type == BuffID.SolarShield3)
             {
                 player.endurance -= 0.05f;
             }
+
             if (type == BuffID.NebulaUpDmg1)
             {
                 player.GetDamage(DamageClass.Generic) -= 0.07f;
             }
+
             if (type == BuffID.NebulaUpDmg2)
             {
                 player.GetDamage(DamageClass.Generic) -= 0.14f;
             }
+
             if (type == BuffID.NebulaUpDmg3)
             {
                 player.GetDamage(DamageClass.Generic) -= 0.21f;
@@ -48,31 +54,37 @@ namespace tsorcRevamp.Buffs
         {
             if (type == BuffID.ManaSickness)
             {
-                tip = Language.GetTextValue("Mods.tsorcRevamp.Buffs.VanillaBuffs.ManaSickness").FormatWith((int)(100 * Main.LocalPlayer.manaSickReduction));
+                tip = LanguageUtils.GetTextValue("Buffs.VanillaBuffs.ManaSickness", (int)(100 * Main.LocalPlayer.manaSickReduction));
             }
+
             if (type == BuffID.SolarShield1)
             {
-                tip = Language.GetTextValue("Mods.tsorcRevamp.Buffs.VanillaBuffs.SolarShield").FormatWith(5) + Language.GetTextValue("Mods.tsorcRevamp.Buffs.VanillaBuffs.SolarShieldRepel");
+                tip = LanguageUtils.GetTextValue("Buffs.VanillaBuffs.SolarShield", 5);
             }
+
             if (type == BuffID.SolarShield2)
             {
-                tip = Language.GetTextValue("Mods.tsorcRevamp.Buffs.VanillaBuffs.SolarShield").FormatWith(10) + Language.GetTextValue("Mods.tsorcRevamp.Buffs.VanillaBuffs.SolarShieldRepel");
+                tip = LanguageUtils.GetTextValue("Buffs.VanillaBuffs.SolarShield", 10);
             }
+
             if (type == BuffID.SolarShield3)
             {
-                tip = Language.GetTextValue("Mods.tsorcRevamp.Buffs.VanillaBuffs.SolarShield").FormatWith(15) + Language.GetTextValue("Mods.tsorcRevamp.Buffs.VanillaBuffs.SolarShieldRepel");
+                tip = LanguageUtils.GetTextValue("Buffs.VanillaBuffs.SolarShield", 15);
             }
+
             if (type == BuffID.NebulaUpDmg1)
             {
-                tip = Language.GetTextValue("Mods.tsorcRevamp.Buffs.VanillaBuffs.NebulaDamageBoost").FormatWith(8);
+                tip = Language.GetTextValue("CommonItemTooltip.PercentIncreasedDamage", 8);
             }
+
             if (type == BuffID.NebulaUpDmg2)
             {
-                tip = Language.GetTextValue("Mods.tsorcRevamp.Buffs.VanillaBuffs.NebulaDamageBoost").FormatWith(16);
+                tip = Language.GetTextValue("CommonItemTooltip.PercentIncreasedDamage", 16);
             }
+
             if (type == BuffID.NebulaUpDmg3)
             {
-                tip = Language.GetTextValue("Mods.tsorcRevamp.Buffs.VanillaBuffs.NebulaDamageBoost").FormatWith(24);
+                tip = Language.GetTextValue("CommonItemTooltip.PercentIncreasedDamage", 24);
             }
         }
 

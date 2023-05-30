@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Runeterra.Magic
 {
-	public class SunderedDebuff : ModBuff
+    public class SunderedDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{
@@ -27,11 +27,12 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
 		{
 			Sundered = false;
 		}
+
         public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers)
         {
 			if (Sundered && modifiers.DamageType == DamageClass.Magic)
             {
-                modifiers.TargetDamageMultiplier *= 1.2f;
+                modifiers.FinalDamage *= 1.2f;
             }
         }
     }

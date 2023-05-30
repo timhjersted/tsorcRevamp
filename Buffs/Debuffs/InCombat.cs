@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class InCombat : ModBuff
+    public class InCombat : ModBuff
     {
         public override void SetStaticDefaults()
         {

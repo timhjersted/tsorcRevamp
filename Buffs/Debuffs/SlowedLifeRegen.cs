@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class SlowedLifeRegen : ModBuff
+    public class SlowedLifeRegen : ModBuff
     {
         public override void SetStaticDefaults()
         {

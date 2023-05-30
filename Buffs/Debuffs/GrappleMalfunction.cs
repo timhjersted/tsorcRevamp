@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class GrappleMalfunction : ModBuff
+    public class GrappleMalfunction : ModBuff
     {
         public override void SetStaticDefaults()
         {

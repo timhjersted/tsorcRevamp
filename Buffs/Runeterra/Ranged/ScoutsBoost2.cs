@@ -3,12 +3,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Runeterra.Ranged
 {
-    class ScoutsBoost2 : ModBuff
+    public class ScoutsBoost2 : ModBuff
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Scouts Boost II");
-            // Description.SetDefault("Multiplies movement speed by 40% and stamina regen by 20%");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class Hold : ModBuff
+    public class Hold : ModBuff
     {
         public override void SetStaticDefaults()
         {

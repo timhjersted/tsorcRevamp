@@ -3,12 +3,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs
 {
-    class Strength : ModBuff
+    public class Strength : ModBuff
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Strength");
-            // Description.SetDefault("You feel as if you could break the world in two, with your bare hands...");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

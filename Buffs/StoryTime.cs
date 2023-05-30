@@ -1,18 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Linq;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Buffs
 {
-    class StoryTime : ModBuff
+    public class StoryTime : ModBuff
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Story Time");
-            /* Description.SetDefault("Stay a moment... gain knowledge. \n" +
-                                   "Enemy spawns disabled"); */
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = true;
         }
@@ -23,108 +20,92 @@ namespace tsorcRevamp.Buffs
         {
             if (player == Main.LocalPlayer)
             {
-                //clears incombat debuff near sign
+                // Clears incombat debuff near sign
                 if (player.HasBuff(ModContent.BuffType<InCombat>()))
                 {
-                    player.ClearBuff(ModContent.BuffType<InCombat>());
-                    
+                    player.ClearBuff(ModContent.BuffType<InCombat>());                  
                 }
 
                 player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff = true;
                 storyEffectTimer++;
 
-                if (player.velocity.X != 0 || player.velocity.Y != 0) //reset if player moves
+                // Reset if player moves
+                if (player.velocity.X != 0 || player.velocity.Y != 0)
                 {
                     storyEffectTimer = 0;
                 }
-                /*
-                #region Regen & Dusts
 
-                if (!Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) && player.statLife < player.statLifeMax) //only heal when no bosses are alive and when hp isn't full
+                bool bossActive = false;
+                for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (storyEffectTimer > 0 && storyEffectTimer <= 60 && (player.velocity.X == 0 && player.velocity.Y == 0)) //wind up 1
+                    if (Main.npc[i].active && Main.npc[i].boss)
+                    {
+                        bossActive = true;
+                        break;
+                    }
+                }
+
+                // Only heal when no bosses are alive, hp isn't full and the player is standing still
+                if (!bossActive && player.statLife < player.statLifeMax2 && player.velocity == Vector2.Zero) 
+                {
+                    // Wind up 1
+                    if (storyEffectTimer > 0 && storyEffectTimer <= 60) 
                     {
                         player.lifeRegen = player.statLifeMax2 / 80;
-
                         if (Main.rand.NextBool(8))
                         {
-                            int z = Dust.NewDust(player.position, player.width, player.height, 270, 0f, 0f, 120, default(Color), 1f);
-                            Main.dust[z].noGravity = true;
-                            Main.dust[z].velocity *= 2.75f;
-                            Main.dust[z].fadeIn = 1.3f;
-                            Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
-                            vectorother.Normalize();
-                            vectorother *= (float)Main.rand.Next(50, 100) * 0.015f;
-                            Main.dust[z].velocity = vectorother;
-                            vectorother.Normalize();
-                            vectorother *= 10f;
-                            Main.dust[z].position = player.Center - vectorother;
+                            GenerateDusts(player, Main.rand.Next(50, 100) * 0.015f, 10f);
                         }
                     }
 
 
-                    if (storyEffectTimer > 60 && storyEffectTimer <= 100 && (player.velocity.X == 0 && player.velocity.Y == 0)) //wind up 2
+                    // Wind up 2
+                    if (storyEffectTimer > 60 && storyEffectTimer <= 100) 
                     {
                         player.lifeRegen = player.statLifeMax2 / 60;
 
                         if (Main.rand.NextBool(4))
                         {
-                            int z = Dust.NewDust(player.position, player.width, player.height, 270, 0f, 0f, 120, default(Color), 1f);
-                            Main.dust[z].noGravity = true;
-                            Main.dust[z].velocity *= 2.75f;
-                            Main.dust[z].fadeIn = 1.3f;
-                            Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
-                            vectorother.Normalize();
-                            vectorother *= (float)Main.rand.Next(50, 100) * 0.025f;
-                            Main.dust[z].velocity = vectorother;
-                            vectorother.Normalize();
-                            vectorother *= 15f;
-                            Main.dust[z].position = player.Center - vectorother;
+                            GenerateDusts(player, Main.rand.Next(50, 100) * 0.025f, 15f);
                         }
                     }
 
-
-                    if (storyEffectTimer > 100 && storyEffectTimer <= 140 && (player.velocity.X == 0 && player.velocity.Y == 0)) //wind up 3
+                    // Wind up 3
+                    if (storyEffectTimer > 100 && storyEffectTimer <= 140)
                     {
                         player.lifeRegen = player.statLifeMax2 / 30;
 
                         if (Main.rand.NextBool(2))
                         {
-                            int z = Dust.NewDust(player.position, player.width, player.height, 270, 0f, 0f, 120, default(Color), 1f);
-                            Main.dust[z].noGravity = true;
-                            Main.dust[z].velocity *= 2.75f;
-                            Main.dust[z].fadeIn = 1.3f;
-                            Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
-                            vectorother.Normalize();
-                            vectorother *= (float)Main.rand.Next(50, 100) * 0.035f;
-                            Main.dust[z].velocity = vectorother;
-                            vectorother.Normalize();
-                            vectorother *= 20f;
-                            Main.dust[z].position = player.Center - vectorother;
+                            GenerateDusts(player, Main.rand.Next(50, 100) * 0.035f, 20f);
                         }
                     }
 
-
-                    if (storyEffectTimer > 140 && (player.velocity.X == 0 && player.velocity.Y == 0))//full effect
+                    // Full effect
+                    if (storyEffectTimer > 140) 
                     {
                         player.lifeRegen = player.statLifeMax2 / 15;
-
-                        int z = Dust.NewDust(player.position, player.width, player.height, 270, 0f, 0f, 120, default(Color), 1f);
-                        Main.dust[z].noGravity = true;
-                        Main.dust[z].velocity *= 2.75f;
-                        Main.dust[z].fadeIn = 1.3f;
-                        Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
-                        vectorother.Normalize();
-                        vectorother *= (float)Main.rand.Next(80, 95) * 0.043f;
-                        Main.dust[z].velocity = vectorother;
-                        vectorother.Normalize();
-                        vectorother *= 25f;
-                        Main.dust[z].position = player.Center - vectorother;
+                        GenerateDusts(player, Main.rand.Next(80, 95) * 0.043f, 25f);
                     }
                 }
-                #endregion
-                */
             }
+        }
+
+        private static void GenerateDusts(Player player, float scaleFactor, float scaleFactor2)
+        {
+            var dust = Dust.NewDustDirect(player.position, player.width, player.height, DustID.FlameBurst, Alpha: 120);
+            dust.noGravity = true;
+            dust.velocity *= 2.75f;
+            dust.fadeIn = 1.3f;
+
+            var vectorOther = new Vector2(Main.rand.Next(-100, 101), Main.rand.Next(-100, 101));
+            vectorOther.Normalize();
+            vectorOther *= scaleFactor;
+            dust.velocity = vectorOther;
+
+            vectorOther.Normalize();
+            vectorOther *= scaleFactor2;
+            dust.position = player.Center - vectorOther;
         }
     }
 }

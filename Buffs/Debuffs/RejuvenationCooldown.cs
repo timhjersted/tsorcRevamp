@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class RejuvenationCooldown : ModBuff
+    public class RejuvenationCooldown : ModBuff
     {
         public override void SetStaticDefaults()
         {

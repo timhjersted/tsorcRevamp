@@ -986,15 +986,6 @@ namespace tsorcRevamp
             {
                 Player.manaRegenBuff = false;
             }
-            int PTilePosX = (int)Player.position.X / 16;
-            bool Ocean = (PTilePosX < 750 || PTilePosX > Main.maxTilesX - 750);
-            bool underground = (Player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); //magic number
-
-            if (((underground && Player.ZoneHallow && !Ocean && !Player.ZoneDungeon /*&& !player.ZoneOverworldHeight*/) || Player.ZoneMeteor) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
-            {
-                Player.AddBuff(ModContent.BuffType<Buffs.GravityAlignment>(), 5);
-                Player.gravControl = true;
-            }
 
             if (Player.position.X == Player.oldPosition.X)
             {

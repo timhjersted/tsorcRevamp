@@ -2,10 +2,11 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class CurseBuildup : ModBuff
+    public class CurseBuildup : ModBuff
     {
         public override void SetStaticDefaults()
         {
@@ -15,7 +16,7 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
-            tip = "When the counter reaches 100, something bad happens. Curse buildup is at " + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().CurseLevel;
+            tip = base.Description.WithFormatArgs(100, Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().CurseLevel).Value;
         }
 
         public override void Update(Player player, ref int buffIndex)
@@ -29,19 +30,19 @@ namespace tsorcRevamp.Buffs.Debuffs
                 {
                     if (player.statLifeMax <= 100)
                     {
-                        Main.NewText("You have been cursed... but the curse cannot weaken you any further!");
+                        Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseText1"));
                     }
 
                     if (player.statLifeMax >= 120)
                     {
                         player.statLifeMax -= 20;
-                        Main.NewText("You have been cursed! -20 HP!");
+                        Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", 20));
                     }
                     else
                     {
                         int lifeLoss = player.statLifeMax - 100;
                         player.statLife -= lifeLoss;
-                        Main.NewText($"You have been cursed! -{lifeLoss} HP!");
+                        Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", lifeLoss));
                     }
                 }
 
@@ -49,7 +50,7 @@ namespace tsorcRevamp.Buffs.Debuffs
 
                 player.AddBuff(ModContent.BuffType<Invincible>(), 480, false); // 8 seconds
                 player.AddBuff(ModContent.BuffType<Strength>(), 3600, false);
-                Main.NewText("You feel invincible!");
+                Main.NewText(LanguageUtils.GetTextValue("Buffs.CurseBuildup.CurseText2"));
 
                 for (int i = 0; i < 30; i++)
                 {

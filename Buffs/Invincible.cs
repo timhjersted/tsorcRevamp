@@ -3,12 +3,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs
 {
-    class Invincible : ModBuff
+    public class Invincible : ModBuff
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Invincible");
-            // Description.SetDefault("You are invincible!");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

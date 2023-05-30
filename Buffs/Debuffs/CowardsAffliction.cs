@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class CowardsAffliction : ModBuff
+    public class CowardsAffliction : ModBuff
     {
         public override void SetStaticDefaults()
         {

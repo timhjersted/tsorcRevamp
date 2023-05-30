@@ -1,16 +1,10 @@
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-	public class MythrilRamDebuff : ModBuff
+    public class MythrilRamDebuff : ModBuff
 	{
-		public override void SetStaticDefaults()
-		{
-			BuffID.Sets.IsAnNPCWhipDebuff[Type] = true;
-		}
-
 		public override void Update(NPC npc, ref int buffIndex)
 		{
 			npc.GetGlobalNPC<MythrilRamDebuffNPC>().RammedByMythril = true;

@@ -3,6 +3,8 @@ Mods: {
 		CommonItemTooltip: {
 			IncreasesWhipKnockback: Increases whip knockback
 			IncreasedSummonAttackSpeed: Increases whip attack speed by {0}%
+			IncreasedWhipDamage: Increases whip damage by {0}%
+			IncreasedMeleeAndWhipDamage: Increases melee and whip damage by {0}%
 			GrantsMeleeWhipAutoswing: Enables auto swing for melee weapons
 			AggroIncrease: Enemies are more likely to target you
 			WhipCritDamage: Increases the damage of whip crits by {0}%
@@ -17,6 +19,7 @@ Mods: {
 			ChargedWhipSummonAttackSpeed: Gain {0}-{1}% summon attack speed upon striking an enemy
 			ImprovedWhipCrowdControl: Performs better against multiple targets than most whips
 			SummonTagArmorPen: "{0} summon tag armor penetration"
+			IncreasedRangedCriticalDamage: Increases ranged critical strike damage by {0}%
 		}
 
 		Items: {
@@ -6262,9 +6265,17 @@ Mods: {
 		Buffs: {
 			VanillaBuffs: {
 				ManaSickness: Reduces all damage dealt by {0}%
-				SolarShield: "{$CommonItemTooltip.ReducesDamageTakenByPercent}"
-				SolarShieldRepel: ", repel enemies when taking damage"
-				NebulaDamageBoost: "{$CommonItemTooltip.PercentIncreasedDamage}"
+				SolarShield: "{$CommonItemTooltip.ReducesDamageTakenByPercent}, repel enemies when taking damage"
+				WeaponImbue: Increases melee crit by {0}% and increases whip damage by {1}% multiplicatively
+				SharpeningStation: Increases melee armor penetration by {0}%
+				AmmoBox: Increases ammo crit chance by the ammo's base damage
+			}
+
+			Curse: {
+				Buildup: When the counter reaches {0}, something bad happens. Curse buildup is at {1}
+				CurseText1: You have been cursed... but the curse cannot weaken you any further!
+				CurseText2: You feel invincible!
+				CurseLifeLoss: You have been cursed! -{0} HP!
 			}
 
 			ArmorDrug: {
@@ -6283,7 +6294,7 @@ Mods: {
 			}
 
 			BoltChainImmunity: {
-				DisplayName: Mods.tsorcRevamp.BuffName.BoltChainImmunity
+				DisplayName: Bolt Chain Immunity
 				Description: Can not be struck by a bolt chain lightning again until this expires
 			}
 
@@ -6318,7 +6329,7 @@ Mods: {
 
 			CrimsonDrain: {
 				DisplayName: Crimson Drain
-				Description: Enemies within a ten tile radius receive Crimson Burn.
+				Description: Enemies within a ten tile radius receive Crimson Burn
 			}
 
 			CrystalMagicWeapon: {
@@ -6343,7 +6354,7 @@ Mods: {
 
 			CurseBuildup: {
 				DisplayName: Curse Buildup
-				Description: ""
+				Description: "{$Buffs.Curse.Buildup}"
 			}
 
 			DarkInferno: {
@@ -6353,7 +6364,7 @@ Mods: {
 
 			FracturingArmor: {
 				DisplayName: Fracturing Armor
-				Description: ""
+				Description: Your armor is crumbling away. Defense reduced by {0}
 			}
 
 			Frostbite: {
@@ -6383,7 +6394,7 @@ Mods: {
 
 			PowerfulCurseBuildup: {
 				DisplayName: Powerful Curse Buildup
-				Description: ""
+				Description: "{$Buffs.Curse.Buildup}"
 			}
 
 			RejuvenationCooldown: {
@@ -6521,7 +6532,7 @@ Mods: {
 
 			MagicPlating: {
 				DisplayName: Magic Plating
-				Description: Damage taken is reduced by attacking
+				Description: "{0}% increased damage reduction against the next attack"
 			}
 
 			MagicShield: {
@@ -6536,12 +6547,12 @@ Mods: {
 
 			MarilithHold: {
 				DisplayName: Held
-				Description: You can't move!
+				Description: You cannot move!
 			}
 
 			MarilithWind: {
 				DisplayName: Storm Wind
-				Description: You're being blown by fierce wind!
+				Description: You are being blown by fierce wind!
 			}
 
 			Miakoda: {
@@ -6605,27 +6616,27 @@ Mods: {
 
 			OrbOfFlameFireballCooldown: {
 				DisplayName: Fireball Cooldown
-				Description: You can't cast another Fireball until this runs out
+				Description: You cannot cast another Fireball until this runs out
 			}
 
 			OrbOfSpiritualityCharmCooldown: {
 				DisplayName: Charm Cooldown
-				Description: You can't cast another Charm until this runs out
+				Description: You cannot cast another Charm until this runs out
 			}
 
 			OrbOfSpiritualityDash: {
 				DisplayName: Spirit Rush Cooldown
-				Description: You can't dash until this runs out
+				Description: You cannot dash until this runs out
 			}
 
 			OrbOfSpiritualityDashCooldown: {
 				DisplayName: Spirit Rush Cooldown
-				Description: You can't dash until this runs out
+				Description: You cannot dash until this runs out
 			}
 
 			SunderedDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.SunderedDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.SunderedDebuff
+				DisplayName: Sundered Debuff
+				Description: ""
 			}
 
 			NightbringerDash: {
@@ -6635,17 +6646,17 @@ Mods: {
 
 			NightbringerDashCooldown: {
 				DisplayName: Sweeping Blade Cooldown
-				Description: You can't dash until this runs out
+				Description: You cannot dash until this runs out
 			}
 
 			NightbringerThrustCooldown: {
 				DisplayName: Thrusting Cooldown
-				Description: You can't thrust until this runs out
+				Description: You cannot thrust until this runs out
 			}
 
 			NightbringerWindwallCooldown: {
 				DisplayName: Windwall Cooldown
-				Description: You can't windwall until this runs out
+				Description: You cannot windwall until this runs out
 			}
 
 			PlasmaWhirlwindDash: {
@@ -6655,47 +6666,47 @@ Mods: {
 
 			PlasmaWhirlwindDashCooldown: {
 				DisplayName: Sweeping Blade Cooldown
-				Description: You can't dash until this runs out
+				Description: You cannot dash until this runs out
 			}
 
 			PlasmaWhirlwindThrustCooldown: {
 				DisplayName: Thrusting Cooldown
-				Description: You can't thrust until this runs out
+				Description: You cannot thrust until this runs out
 			}
 
 			SteelTempestThrustCooldown: {
 				DisplayName: Thrusting Cooldown
-				Description: You can't thrust until this runs out
+				Description: You cannot thrust until this runs out
 			}
 
 			AlienBlindingLaserCooldown: {
 				DisplayName: Alien Blinding Laser Cooldown
-				Description: You can't fire another Blinding Laser until this runs out
+				Description: You cannot fire another Blinding Laser until this runs out
 			}
 
 			ElectrifiedDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.ElectrifiedDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.ElectrifiedDebuff
+				DisplayName: Electrified Debuff
+				Description: ""
 			}
 
 			IrradiatedByShroomDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.IrradiatedByShroomDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.IrradiatedByShroomDebuff
+				DisplayName: Irradiated By Shroom Debuff
+				Description: ""
 			}
 
 			IrradiatedDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.IrradiatedDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.IrradiatedDebuff
+				DisplayName: Irradiated Debuff
+				Description: ""
 			}
 
 			NuclearMushroomCooldown: {
 				DisplayName: Nuclear Mushroom Cooldown
-				Description: You can't deploy another Nuclear Mushroom until this runs out
+				Description: You cannot deploy another Nuclear Mushroom until this runs out
 			}
 
 			RadioactiveBlindingLaserCooldown: {
 				DisplayName: Radioactive Blinding Laser Cooldown
-				Description: You can't fire another Blinding Laser until this runs out
+				Description: You cannot fire another Blinding Laser until this runs out
 			}
 
 			ScoutsBoost: {
@@ -6710,7 +6721,7 @@ Mods: {
 
 			ScoutsBoost2Cooldown: {
 				DisplayName: Scouts Boost II Cooldown
-				Description: You can't trigger the movement speed bonus again until this runs out
+				Description: You cannot trigger the movement speed bonus again until this runs out
 			}
 
 			ScoutsBoostCooldown: {
@@ -6719,38 +6730,38 @@ Mods: {
 			}
 
 			VenomDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.VenomDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.VenomDebuff
+				DisplayName: Venom Debuff
+				Description: ""
 			}
 
 			CenterOfTheHeat: {
 				DisplayName: Center of the Heat
-				Description: You're in a hot center
+				Description: You are in a hot center
 			}
 
 			CenterOfTheUniverseBuff: {
 				DisplayName: Center of the Universe
-				Description: You're the center of the Universe!
+				Description: You are the center of the Universe!
 			}
 
 			InterstellarCommander: {
 				DisplayName: Interstellar Commander
-				Description: You're the commander of these ships!
+				Description: You are the commander of these ships!
 			}
 
 			ScorchingDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.ScorchingDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.ScorchingDebuff
+				DisplayName: Scorching Debuff
+				Description: ""
 			}
 
 			ShockedDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.ShockedDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.ShockedDebuff
+				DisplayName: Shocked Debuff
+				Description: ""
 			}
 
 			SunburnDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.SunburnDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.SunburnDebuff
+				DisplayName: Sunburn Debuff
+				Description: ""
 			}
 
 			ShieldCooldown: {
@@ -6794,17 +6805,17 @@ Mods: {
 
 			CrystalShield: {
 				DisplayName: Crystal Shield
-				Description: Defense increased
+				Description: Defense increased by {0}
 			}
 
 			DragoonLashBuff: {
 				DisplayName: Dragoon Awakening
-				Description: +33% summon attack speed
+				Description: "{$CommonItemTooltip.IncreasedSummonAttackSpeed}"
 			}
 
 			NightsCrackerBuff: {
 				DisplayName: Night Crack
-				Description: +6% summon attack speed
+				Description: "{$CommonItemTooltip.IncreasedSummonAttackSpeed}"
 			}
 
 			NondescriptOwlBuff: {
@@ -6846,7 +6857,7 @@ Mods: {
 				DisplayName: Terraria's Fall
 				Description:
 					'''
-					+12% summon attack speed
+					{$CommonItemTooltip.IncreasedSummonAttackSpeed}
 					Terra Energy fights for you
 					'''
 			}
@@ -6862,53 +6873,53 @@ Mods: {
 			}
 
 			CrystalNunchakuDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.CrystalNunchakuDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.CrystalNunchakuDebuff
+				DisplayName: Crystal Nunchaku Debuff
+				Description: ""
 			}
 
 			DetonationSignalDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.DetonationSignalDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.DetonationSignalDebuff
+				DisplayName: Detonation Signal Debuff
+				Description: ""
 			}
 
 			DominatrixDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.DominatrixDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.DominatrixDebuff
+				DisplayName: Dominatrix Debuff
+				Description: ""
 			}
 
 			DragoonLashDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.DragoonLashDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.DragoonLashDebuff
+				DisplayName: Dragoon Lash Debuff
+				Description: ""
 			}
 
 			EnchantedWhipDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.EnchantedWhipDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.EnchantedWhipDebuff
+				DisplayName: Enchanted Whip Debuff
+				Description: ""
 			}
 
 			NightsCrackerDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.NightsCrackerDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.NightsCrackerDebuff
+				DisplayName: Night's Cracker Debuff
+				Description: ""
 			}
 
 			PolarisLeashDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.PolarisLeashDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.PolarisLeashDebuff
+				DisplayName: Polaris Leash Debuff
+				Description: ""
 			}
 
 			PyrosulfateDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.PyrosulfateDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.PyrosulfateDebuff
+				DisplayName: Pyrosulfate Debuff
+				Description: ""
 			}
 
 			SearingLashDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.SearingLashDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.SearingLashDebuff
+				DisplayName: Searing Lash Debuff
+				Description: ""
 			}
 
 			TerraFallDebuff: {
-				DisplayName: Mods.tsorcRevamp.BuffName.TerraFallDebuff
-				Description: Mods.tsorcRevamp.BuffDescription.TerraFallDebuff
+				DisplayName: Terra Fall Debuff
+				Description: ""
 			}
 
 			ThermalRise: {
@@ -6928,17 +6939,17 @@ Mods: {
 
 			SickleSlashes: {
 				DisplayName: Sickle Slashes
-				Description: Mods.tsorcRevamp.Buffs.SickleSlashes.Description
+				Description: ""
 			}
 
 			DetonationSignalBuff: {
 				DisplayName: Detonation Signal Buff
-				Description: Mods.tsorcRevamp.Buffs.DetonationSignalBuff.Description
+				Description: ""
 			}
 
 			UrumiDebuff: {
 				DisplayName: Urumi Debuff
-				Description: Mods.tsorcRevamp.Buffs.UrumiDebuff.Description
+				Description: ""
 			}
 
 			StarlightShardRestoration: {
@@ -6948,47 +6959,47 @@ Mods: {
 
 			CoolWhipDebuff: {
 				DisplayName: Cool Whip Debuff
-				Description: Mods.tsorcRevamp.Buffs.CoolWhipDebuff.Description
+				Description: ""
 			}
 
 			DarkHarvestDebuff: {
 				DisplayName: Dark Harvest Debuff
-				Description: Mods.tsorcRevamp.Buffs.DarkHarvestDebuff.Description
+				Description: ""
 			}
 
 			DurendalDebuff: {
 				DisplayName: Durendal Debuff
-				Description: Mods.tsorcRevamp.Buffs.DurendalDebuff.Description
+				Description: ""
 			}
 
 			FirecrackerDebuff: {
 				DisplayName: Firecracker Debuff
-				Description: Mods.tsorcRevamp.Buffs.FirecrackerDebuff.Description
+				Description: ""
 			}
 
 			KaleidoscopeDebuff: {
 				DisplayName: Kaleidoscope Debuff
-				Description: Mods.tsorcRevamp.Buffs.KaleidoscopeDebuff.Description
+				Description: ""
 			}
 
 			LeatherWhipDebuff: {
 				DisplayName: Leather Whip Debuff
-				Description: Mods.tsorcRevamp.Buffs.LeatherWhipDebuff.Description
+				Description: ""
 			}
 
 			MorningStarDebuff: {
 				DisplayName: Morning Star Debuff
-				Description: Mods.tsorcRevamp.Buffs.MorningStarDebuff.Description
+				Description: ""
 			}
 
 			SnapthornDebuff: {
 				DisplayName: Snapthorn Debuff
-				Description: Mods.tsorcRevamp.Buffs.SnapthornDebuff.Description
+				Description: ""
 			}
 
 			SpinalTapDebuff: {
 				DisplayName: Spinal Tap Debuff
-				Description: Mods.tsorcRevamp.Buffs.SpinalTapDebuff.Description
+				Description: ""
 			}
 		}
 

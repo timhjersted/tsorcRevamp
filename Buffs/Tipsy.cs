@@ -1,16 +1,15 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Buffs
 {
-    class Tipsy : GlobalBuff
+    public class Tipsy : GlobalBuff
     {
-
         public override void Update(int type, Player player, ref int buffIndex)
         {
-            if (type == BuffID.Tipsy
-                )
+            if (type == BuffID.Tipsy)
             {
                 player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
             }
@@ -20,9 +19,8 @@ namespace tsorcRevamp.Buffs
         {
             if (type == BuffID.Tipsy)
             {
-                tip = "Increases melee, whip damage and speed by 10% at the cost of 4 defense";
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedWhipDamage", 10);
             }
         }
-
     }
 }

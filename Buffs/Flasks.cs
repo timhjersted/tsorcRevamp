@@ -1,46 +1,50 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Buffs
 {
-    class Flasks : GlobalBuff
+    public class Flasks : GlobalBuff
     {
-
         public override void Update(int type, Player player, ref int buffIndex)
         {
-            if (type == BuffID.WeaponImbueIchor
-                || type == BuffID.WeaponImbuePoison
-                )
+            if (type == BuffID.WeaponImbueIchor || type == BuffID.WeaponImbuePoison)
             {
                 player.GetDamage(DamageClass.Melee) += 0.1f;
                 player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
             }
+
             if (type == BuffID.WeaponImbueFire)
             {
                 player.GetDamage(DamageClass.Melee) += 0.12f;
                 player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.12f;
             }
+
             if (type == BuffID.WeaponImbueGold)
             {
                 player.GetDamage(DamageClass.Melee) += 0.15f;
                 player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.15f;
             }
+
             if (type == BuffID.WeaponImbueConfetti)
             {
                 player.GetDamage(DamageClass.Melee) += 0.17f;
                 player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.17f;
             }
+
             if (type == BuffID.WeaponImbueCursedFlames)
             {
                 player.GetDamage(DamageClass.Melee) += 0.16f;
                 player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.16f;
             }
+
             if (type == BuffID.WeaponImbueVenom)
             {
                 player.GetCritChance(DamageClass.Melee) += 8f;
                 player.GetDamage(DamageClass.SummonMeleeSpeed) *= 1.08f;
             }
+
             if (type == BuffID.WeaponImbueNanites)
             {
                 player.GetCritChance(DamageClass.Melee) += 14f;
@@ -52,35 +56,42 @@ namespace tsorcRevamp.Buffs
         {
             if (type == BuffID.WeaponImbuePoison)
             {
-                tip = "Increases melee and whip damage by 10%, melee and whip attacks poison enemies";
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", 10);
             }
+
             if (type == BuffID.WeaponImbueFire)
             {
-                tip = "Increases melee and whip damage by 10%, melee and whip attacks set enemies on fire";
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", 12);
             }
+
             if (type == BuffID.WeaponImbueGold)
             {
-                tip = "Increases melee and whip damage by 15%, melee and whip attacks make enemies drop more gold";
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", 15);
             }
+
             if (type == BuffID.WeaponImbueConfetti)
             {
-                tip = "Increases melee and whip damage by 17%, melee and whip attacks cause confetti to appear";
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", 17);
             }
+
             if (type == BuffID.WeaponImbueCursedFlames)
             {
-                tip = "Increases melee and whip damage by 16%, melee and whip attacks inflict enemies with cursed flames";
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", 16);
             }
+
             if (type == BuffID.WeaponImbueIchor)
             {
-                tip = "Increases melee and whip damage by 10%, melee and whip attacks decrease enemies' defense";
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", 10);
             }
+
             if (type == BuffID.WeaponImbueVenom)
             {
-                tip = "Increases melee crit by 8%, increases whip damage by 8% multiplicatively and melee and whip attacks inflict Venom on enemies";
+                tip += "\n" + LanguageUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", 8, 8);
             }
+
             if (type == BuffID.WeaponImbueNanites)
             {
-                tip = "Increases melee crit by 14%, increases whip damage by 14% multiplicatively and melee and whip attacks confuse enemies";
+                tip += "\n" + LanguageUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", 14, 14);
             }
         }
 

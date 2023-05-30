@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class DarkInferno : ModBuff
+    public class DarkInferno : ModBuff
     {
         public override void SetStaticDefaults()
         {

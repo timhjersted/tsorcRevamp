@@ -5,7 +5,7 @@ using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 {
-	public class CoolWhipDebuff : ModBuff
+    public class CoolWhipDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
 		{

@@ -3,12 +3,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs
 {
-    class ArmorDrug : ModBuff
+    public class ArmorDrug : ModBuff
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Demonic Scales");
-            // Description.SetDefault("Your skin is covered with hard scales...");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class Crippled : ModBuff
+    public class Crippled : ModBuff
     {
         public override void SetStaticDefaults()
         {

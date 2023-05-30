@@ -2,10 +2,11 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class PowerfulCurseBuildup : ModBuff
+    public class PowerfulCurseBuildup : ModBuff
     {
         public override void SetStaticDefaults()
         {
@@ -15,7 +16,7 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
-            tip = "When the counter reaches 500, something terrible happens. Curse buildup is at " + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel;
+            tip = base.Description.WithFormatArgs(500, Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel).Value;
         }
 
         public override void Update(Player player, ref int buffIndex)
@@ -27,19 +28,19 @@ namespace tsorcRevamp.Buffs.Debuffs
                 {
                     if (player.statLifeMax <= 100)
                     {
-                        Main.NewText("You have been cursed... but the curse cannot weaken you any further!");
+                        Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseText1"));
                     }
 
                     if (player.statLifeMax >= 200)
                     {
                         player.statLifeMax -= 100;
-                        Main.NewText("You have been cursed! -100 HP!");
+                        Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", 100));
                     }
                     else
                     {
                         int lifeLoss = player.statLifeMax - 100;
                         player.statLife -= lifeLoss;
-                        Main.NewText($"You have been cursed! -{lifeLoss} HP!");
+                        Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", lifeLoss));
                     }
                 }
 

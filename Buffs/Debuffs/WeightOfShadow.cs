@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class WeightOfShadow : ModBuff
+    public class WeightOfShadow : ModBuff
     {
         public override void SetStaticDefaults()
         {

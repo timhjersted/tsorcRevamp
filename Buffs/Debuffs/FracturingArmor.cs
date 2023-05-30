@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class FracturingArmor : ModBuff
+    public class FracturingArmor : ModBuff
     {
         public override void SetStaticDefaults()
         {
@@ -13,7 +13,7 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
-            tip = "Your armor is crumbling away. Defense reduced by " + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().FracturingArmor;
+            tip = base.Description.WithFormatArgs(Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().FracturingArmor).Value;
         }
 
         public override void Update(Player player, ref int buffIndex)

@@ -113,16 +113,9 @@ namespace tsorcRevamp.Tiles
 
             if (player.whoAmI == Main.myPlayer && distance > 120f && distance < 300f)
             {
-                int buffIndex = 0;
-
-                foreach (int buffType in player.buffType)
+                if (player.HasBuff<Buffs.Bonfire>())
                 {
-
-                    if (buffType == ModContent.BuffType<Buffs.Bonfire>())
-                    {
-                        player.buffTime[buffIndex] = 0;
-                    }
-                    buffIndex++;
+                    player.ClearBuff(ModContent.BuffType<Buffs.Bonfire>());
                 }
             }
         }

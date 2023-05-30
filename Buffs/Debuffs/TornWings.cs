@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    class TornWings : ModBuff
+    public class TornWings : ModBuff
     {
         public override void SetStaticDefaults()
         {
@@ -11,9 +11,9 @@ namespace tsorcRevamp.Buffs.Debuffs
             Main.buffNoTimeDisplay[Type] = false;
         }
 
-        public override void Update(Player P, ref int buffIndex)
+        public override void Update(Player player, ref int buffIndex)
         {
-            P.GetModPlayer<tsorcRevampPlayer>().TornWings = true;
+            player.GetModPlayer<tsorcRevampPlayer>().TornWings = true;
         }
     }
 }
