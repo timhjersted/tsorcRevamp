@@ -8,13 +8,13 @@ namespace tsorcRevamp.Buffs
 {
     public class StoryTime : ModBuff
     {
+        int storyEffectTimer = 0;
+
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = true;
         }
-
-        int storyEffectTimer = 0;
 
         public override void Update(Player player, ref int buffIndex)
         {
