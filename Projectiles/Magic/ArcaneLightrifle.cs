@@ -110,10 +110,10 @@ namespace tsorcRevamp.Projectiles.Magic
 
                 //Calculate its collision point, then spawn a laser with the length from the projectiles center to that collision point
                 Vector2 collision1 = UsefulFunctions.GetFirstCollision(player.Center, Projectile.velocity, 5000, true, true);
-                Vector2 colVel1 = collision1 - Projectile.Center;
+                Vector2 colVel1 = collision1 - player.Center;
                 colVel1.Normalize();
 
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, colVel1, ModContent.ProjectileType<LightrifleFire>(), Projectile.damage, 0, Projectile.owner, colVel1.Length(), 0);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, colVel1, ModContent.ProjectileType<LightrifleFire>(), Projectile.damage, 0, Projectile.owner, colVel1.Length(), 0);
 
                 Vector2 testCol1 = Vector2.Zero;
                 Vector2 testCol2 = Vector2.Zero;
