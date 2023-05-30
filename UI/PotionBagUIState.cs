@@ -30,8 +30,8 @@ namespace tsorcRevamp.UI
             // This means that this class, BonfireUIState, will be our Parent. Since BonfireUIState is a UIState, the Left and Top are relative to the top left of the screen.
             PotionBagUI.Left.Set(152, 0f);
             PotionBagUI.Top.Set(316, 0f);
-            PotionBagUI.Width.Set(600, 0f);
-            PotionBagUI.Height.Set(285, 0f);
+            PotionBagUI.Width.Set(500, 0f);
+            PotionBagUI.Height.Set(304, 0f);
             PotionBagUI.BackgroundColor = new Color(30, 29, 43);
             
             PotionBagUI.OnUpdate += (UIElement affectedElement) => 
@@ -65,8 +65,6 @@ namespace tsorcRevamp.UI
 
         public override void Update(GameTime gameTime)
         {
-            PotionBagUI.Width.Set(500, 0f);
-            PotionBagUI.Height.Set(285, 0f);
             base.Update(gameTime);
             if (!Main.playerInventory || Main.LocalPlayer.chest != -1 || (!Main.LocalPlayer.HasItem(ModContent.ItemType<Items.PotionBag>()) && (Main.mouseItem.type != ModContent.ItemType<Items.PotionBag>())))
             {
