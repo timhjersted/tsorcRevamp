@@ -27,7 +27,6 @@ namespace tsorcRevamp.Items.Armors
         {
             player.hasJumpOption_Unicorn = true;
             player.jumpBoost = true;
-            player.spawnMax = true; //?????
             player.maxMinions += 3;
         }
 

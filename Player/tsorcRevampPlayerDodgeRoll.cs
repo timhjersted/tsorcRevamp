@@ -125,7 +125,7 @@ namespace tsorcRevamp
                 {
                     modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation);
                 }
-                else if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.damage <= 1 || item.type == ModContent.ItemType<Items.Weapons.Ranged.GlaiveBeam>() || item.DamageType == DamageClass.Summon) return true;
+                else if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.damage <= 1 || item.type == ModContent.ItemType<Items.Weapons.Ranged.GlaiveBeam>() || item.type == ModContent.ItemType<Items.Weapons.Magic.ArcaneLightrifle>() || item.DamageType == DamageClass.Summon) return true;
 
 
                 if (item.useAnimation * 0.8f > modPlayer.staminaResourceMax2)

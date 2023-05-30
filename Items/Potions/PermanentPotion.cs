@@ -181,7 +181,11 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             {
                 modPlayer.ActivePermanentPotions.Add(PermanentID);
                 bool canGiveEffect = true;
-                if (player.HasBuff(BuffType)) {
+                if (EffectPotency >= 1 || !CanScale)
+                {
+                    player.buffImmune[BuffType] = true;
+                }
+                else if (player.HasBuff(BuffType)) {
                     canGiveEffect = false;
                 }
 
@@ -329,17 +333,9 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int PermanentID => 10;
         public override int BuffType => BuffID.Shine;
 
-        public override void UpdateInventory(Player player)
-        {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[10])
-            {
-                Lighting.AddLight((int)(player.Center.X / 16), (int)(player.Center.Y / 16), 0.8f, 0.95f, 1f);
-            }
-        }
-
         public override void PotionEffect(Player player)
         {
-            if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[PermanentID])
             {
                 Lighting.AddLight((int)(player.Center.X / 16), (int)(player.Center.Y / 16), 0.8f, 0.95f, 1f);
             }

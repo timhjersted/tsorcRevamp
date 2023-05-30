@@ -218,8 +218,6 @@ namespace tsorcRevamp.NPCs.Bosses
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<GreatMagicShieldScroll>(), 6));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MagicBarrierScroll>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Humanity>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.LivingRainbowDye, 3));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.MidnightRainbowDye, 3));
             npcLoot.Add(notExpertCondition);
         }
     }

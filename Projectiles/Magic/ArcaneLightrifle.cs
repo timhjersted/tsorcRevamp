@@ -29,140 +29,22 @@ namespace tsorcRevamp.Projectiles.Magic
         int altFunctionTimer = 0;
         public override void AI()
         {
-            MaxCharge = 10;
-            altFunctionTimer++;
             Player player = Main.player[Projectile.owner];
-            Vector2 rrp = player.RotatedRelativePoint(player.MountedCenter, true);
-            float trueChargeTime = (MaxCharge * (player.HeldItem.useTime / 5f));
-            charge++;
-            //If the charge is negative, that means we're in the "firing" state
-            if (player.altFunctionUse != 2)
+            //Stop the BotC player from using the Glaive Beam if they have either 120 stamina or are full (ensures they can still use it even if they don't have stamina vessels)
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 30)
             {
-                if (charge < trueChargeTime)
-                {
-                    float radius = (trueChargeTime - charge) / 3f;
-                    radius = ((radius * radius) / 4) + 64;
+                player.channel = false;
 
-                    for (int j = 0; j < 50f * (charge / trueChargeTime) * (charge / trueChargeTime); j++)
-                    {
-                        Vector2 dir = Projectile.velocity;
-                        dir.Normalize();
-                        dir *= radius;
-                        dir = dir.RotatedBy(Main.rand.NextFloat(-MathHelper.PiOver2 / 6f, MathHelper.PiOver2 / 6f));
-                        Vector2 dustPos = player.Center + dir;
-                        Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
-                        Dust d = Dust.NewDustPerfect(dustPos, 174, dustVel, 200, default, 2f);
-                        d.noGravity = true;
-                        d.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.CyanGradientDye), Main.LocalPlayer);
-                    }
-                    for (int j = 0; j < 5f * (charge / trueChargeTime) * (charge / trueChargeTime); j++)
-                    {
-                        Vector2 dir = Main.rand.NextVector2CircularEdge(radius, radius);
-                        Vector2 dustPos = player.Center + dir;
-                        Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
-                        Dust.NewDustPerfect(dustPos, DustID.MagicMirror, Vector2.Zero, 200, default, 0.75f).noGravity = true;
-                    }
-                }
-                else
-                {
-                    //Consume mana etc
-                    charge = 0;
-                    player.statMana -= (int)(50 * player.manaCost);
-                    if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-                    {
-                        player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent = 0;
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45);
-
-                    //Calculate its collision point, then spawn a laser with the length from the projectiles center to that collision point
-                    Vector2 collision1 = UsefulFunctions.GetFirstCollision(player.Center, Projectile.velocity, 5000, true, true);
-                    Vector2 colVel1 = collision1 - Projectile.Center; 
-                    colVel1.Normalize();
-
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, colVel1, ModContent.ProjectileType<LightrifleFire>(), Projectile.damage, 0, Projectile.owner, colVel1.Length(), 0);
-
-                    Vector2 testCol1 = Vector2.Zero;
-                    Vector2 testCol2 = Vector2.Zero;
-
-                    Vector2 reflectionA = colVel1;
-                    reflectionA.Y *= -1;
-                    Vector2 reflectionB = colVel1;
-                    reflectionB.X *= -1;
-
-                    //Calcuate how the lasers should reflect
-                    //If it's aiming up right or down left
-                    if (colVel1.X >= 0 == colVel1.Y >= 0)
-                    {
-                        //Run test collisions aiming up left and down right to see which direction is longer
-                        testCol1 = UsefulFunctions.GetFirstCollision(collision1, reflectionA, 5000, true, true);
-                        testCol2 = UsefulFunctions.GetFirstCollision(collision1, reflectionB, 5000, true, true);
-                    }
-                    //And vice versa with quadrants 2/4 and 1/3
-                    else if (colVel1.X < 0 == colVel1.Y > 0)
-                    {
-                        testCol1 = UsefulFunctions.GetFirstCollision(collision1, reflectionA, 5000, true, true);
-                        testCol2 = UsefulFunctions.GetFirstCollision(collision1, reflectionB, 5000, true, true);
-                    }
-
-                    Vector2 collision2;
-                    if (collision1.DistanceSQ(testCol1) > collision1.DistanceSQ(testCol2))
-                    {
-                        collision2 = testCol1;
-                    }
-                    else
-                    {
-                        collision2 = testCol2;
-                    }
-
-                    Vector2 colVel2 = collision2 - collision1;
-                    colVel2.Normalize();
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision1, colVel2, ModContent.ProjectileType<LightrifleFire>(), (int)(Projectile.damage * 2f), 0, Projectile.owner, colVel2.Length(), 1);
-
-                    //And do it again for the next reflection:
-                    Vector2 reflectionC = colVel2;
-                    reflectionC.Y *= -1;
-                    Vector2 reflectionD = colVel2;
-                    reflectionD.X *= -1;
-
-                    if (colVel2.X >= 0 == colVel2.Y >= 0)
-                    {
-                        //Run test collisions aiming up left and down right to see which direction is longer
-                        testCol1 = UsefulFunctions.GetFirstCollision(collision2, reflectionC, 5000, true, true);
-                        testCol2 = UsefulFunctions.GetFirstCollision(collision2, reflectionD, 5000, true, true);
-                    }
-                    //And vice versa with quadrants 2/4 and 1/3
-                    else if (colVel2.X < 0 == colVel2.Y > 0)
-                    {
-                        testCol1 = UsefulFunctions.GetFirstCollision(collision2, reflectionC, 5000, true, true);
-                        testCol2 = UsefulFunctions.GetFirstCollision(collision2, reflectionD, 5000, true, true);
-                    }
-
-                    Vector2 collision3;
-                    if (collision2.DistanceSQ(testCol1) > collision2.DistanceSQ(testCol2))
-                    {
-                        collision3 = testCol1;
-                    }
-                    else
-                    {
-                        collision3 = testCol2;
-                    }
-
-                    Vector2 colVel3 = collision3 - collision2;
-                    colVel3.Normalize();
-
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision2, colVel3, ModContent.ProjectileType<LightrifleFire>(), (int)(Projectile.damage * 3f), 0, Projectile.owner, colVel3.Length(), 2);
-                }
-            }            
-
-            UpdatePlayerVisuals(player, rrp);
+                Projectile.Kill();
+                return;
+            }
+            Vector2 rrp = player.RotatedRelativePoint(player.MountedCenter, true);
 
             if (Projectile.owner == Main.myPlayer)
             {
                 UpdateAim(rrp, player.HeldItem.shootSpeed);
 
-                bool stillInUse = player.channel || player.altFunctionUse == 2;
-                
-
+                bool stillInUse = player.channel;
 
                 if (player.noItems || player.CCed || player.statMana < (int)(50 * player.manaCost))
                 {
@@ -172,8 +54,141 @@ namespace tsorcRevamp.Projectiles.Magic
                 if (!stillInUse)
                 {
                     Projectile.Kill();
+                    return;
                 }
             }
+
+
+            MaxCharge = 10;
+            float trueChargeTime = (MaxCharge * (player.HeldItem.useTime / 5f));
+            charge++;
+
+            UpdatePlayerVisuals(player, rrp);
+
+            
+
+            //If the charge is negative, that means we're in the "firing" state
+            if (charge < trueChargeTime)
+            {
+                float radius = (trueChargeTime - charge) / 3f;
+                radius = ((radius * radius) / 4) + 64;
+
+                for (int j = 0; j < 50f * (charge / trueChargeTime) * (charge / trueChargeTime); j++)
+                {
+                    Vector2 dir = Projectile.velocity;
+                    dir.Normalize();
+                    dir *= radius;
+                    dir = dir.RotatedBy(Main.rand.NextFloat(-MathHelper.PiOver2 / 6f, MathHelper.PiOver2 / 6f));
+                    Vector2 dustPos = player.Center + dir;
+                    Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
+                    Dust d = Dust.NewDustPerfect(dustPos, 174, dustVel, 200, default, 2f);
+                    d.noGravity = true;
+                    d.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.CyanGradientDye), Main.LocalPlayer);
+                }
+                for (int j = 0; j < 5f * (charge / trueChargeTime) * (charge / trueChargeTime); j++)
+                {
+                    Vector2 dir = Main.rand.NextVector2CircularEdge(radius, radius);
+                    Vector2 dustPos = player.Center + dir;
+                    Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
+                    Dust.NewDustPerfect(dustPos, DustID.MagicMirror, Vector2.Zero, 200, default, 0.75f).noGravity = true;
+                }
+            }
+            else
+            {
+                //Consume mana etc
+                charge = 0;
+                player.statMana -= (int)(50 * player.manaCost);
+                if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                {
+                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30;
+                    if(player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 0)
+                    {
+                        player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent = 0;
+                    }
+                }
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45);
+
+                //Calculate its collision point, then spawn a laser with the length from the projectiles center to that collision point
+                Vector2 collision1 = UsefulFunctions.GetFirstCollision(player.Center, Projectile.velocity, 5000, true, true);
+                Vector2 colVel1 = collision1 - player.Center;
+                colVel1.Normalize();
+
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, colVel1, ModContent.ProjectileType<LightrifleFire>(), Projectile.damage, 0, Projectile.owner, colVel1.Length(), 0);
+
+                Vector2 testCol1 = Vector2.Zero;
+                Vector2 testCol2 = Vector2.Zero;
+
+                Vector2 reflectionA = colVel1;
+                reflectionA.Y *= -1;
+                Vector2 reflectionB = colVel1;
+                reflectionB.X *= -1;
+
+                //Calcuate how the lasers should reflect
+                //If it's aiming up right or down left
+                if (colVel1.X >= 0 == colVel1.Y >= 0)
+                {
+                    //Run test collisions aiming up left and down right to see which direction is longer
+                    testCol1 = UsefulFunctions.GetFirstCollision(collision1, reflectionA, 5000, true, true);
+                    testCol2 = UsefulFunctions.GetFirstCollision(collision1, reflectionB, 5000, true, true);
+                }
+                //And vice versa with quadrants 2/4 and 1/3
+                else if (colVel1.X < 0 == colVel1.Y > 0)
+                {
+                    testCol1 = UsefulFunctions.GetFirstCollision(collision1, reflectionA, 5000, true, true);
+                    testCol2 = UsefulFunctions.GetFirstCollision(collision1, reflectionB, 5000, true, true);
+                }
+
+                Vector2 collision2;
+                if (collision1.DistanceSQ(testCol1) > collision1.DistanceSQ(testCol2))
+                {
+                    collision2 = testCol1;
+                }
+                else
+                {
+                    collision2 = testCol2;
+                }
+
+                Vector2 colVel2 = collision2 - collision1;
+                colVel2.Normalize();
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision1, colVel2, ModContent.ProjectileType<LightrifleFire>(), (int)(Projectile.damage * 2f), 0, Projectile.owner, colVel2.Length(), 1);
+
+                //And do it again for the next reflection:
+                Vector2 reflectionC = colVel2;
+                reflectionC.Y *= -1;
+                Vector2 reflectionD = colVel2;
+                reflectionD.X *= -1;
+
+                if (colVel2.X >= 0 == colVel2.Y >= 0)
+                {
+                    //Run test collisions aiming up left and down right to see which direction is longer
+                    testCol1 = UsefulFunctions.GetFirstCollision(collision2, reflectionC, 5000, true, true);
+                    testCol2 = UsefulFunctions.GetFirstCollision(collision2, reflectionD, 5000, true, true);
+                }
+                //And vice versa with quadrants 2/4 and 1/3
+                else if (colVel2.X < 0 == colVel2.Y > 0)
+                {
+                    testCol1 = UsefulFunctions.GetFirstCollision(collision2, reflectionC, 5000, true, true);
+                    testCol2 = UsefulFunctions.GetFirstCollision(collision2, reflectionD, 5000, true, true);
+                }
+
+                Vector2 collision3;
+                if (collision2.DistanceSQ(testCol1) > collision2.DistanceSQ(testCol2))
+                {
+                    collision3 = testCol1;
+                }
+                else
+                {
+                    collision3 = testCol2;
+                }
+
+                Vector2 colVel3 = collision3 - collision2;
+                colVel3.Normalize();
+
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision2, colVel3, ModContent.ProjectileType<LightrifleFire>(), (int)(Projectile.damage * 3f), 0, Projectile.owner, colVel3.Length(), 2);
+            }
+
+
+            
 
             Projectile.timeLeft = 2;
         }

@@ -1329,6 +1329,178 @@ namespace tsorcRevamp.NPCs
                     shop.Add(ItemID.Bottle);
                     break;
                 }
+                case NPCID.DyeTrader:
+                    {
+                        //Basic dyes (most others can be crafted from a combination of these)
+                        int price = 5;
+                        shop.Add(new Item(ItemID.RedDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.OrangeDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.YellowDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.LimeDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.GreenDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.TealDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.CyanDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.SkyBlueDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.BlueDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.PurpleDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.VioletDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.PinkDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.BlackDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+
+                        price = 25;
+
+                        //Special Dyes (Aka the cool ones)
+                        shop.Add(new Item(ItemID.FogboundDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.MushroomDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.PurpleOozeDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+
+                        shop.Add(new Item(ItemID.ReflectiveDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+
+                        shop.Add(new Item(ItemID.ReflectiveObsidianDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+
+                        shop.Add(new Item(ItemID.ShadowDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+
+                        shop.Add(new Item(ItemID.MirageDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+
+                        shop.Add(new Item(ItemID.TwilightDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.BurningHadesDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.ShadowflameHadesDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+
+                        shop.Add(new Item(ItemID.PhaseDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.ShiftingSandsDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        shop.Add(new Item(ItemID.GelDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+
+                        shop.Add(new Item(ItemID.LivingFlameDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+
+                        shop.Add(new Item(ItemID.LivingRainbowDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+
+                        shop.Add(new Item(ItemID.LivingOceanDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+
+                        shop.Add(new Item(ItemID.MidnightRainbowDye)
+                        {
+                            shopCustomPrice = price,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+
+
+                        break;
+                    }
                 case NPCID.SkeletonMerchant: {
                     shop.Add(new Item(ModContent.ItemType<Firebomb>()) {
                         shopCustomPrice = 5,
