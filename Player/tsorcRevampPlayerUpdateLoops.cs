@@ -56,6 +56,8 @@ namespace tsorcRevamp
         public int curseDecayTimer = 0;
         public int powerfulCurseDecayTimer = 0;
 
+        public int SoulVessel = 0;
+
         public bool ChloranthyRing1 = false;
         public bool ChloranthyRing2 = false;
 
@@ -782,6 +784,14 @@ namespace tsorcRevamp
                 chestBankOpen = false;
             }
 
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                if (Player.GetModPlayer<tsorcRevampPlayer>().SoulVessel > 0)
+                {
+                    Player.statManaMax2 += Player.GetModPlayer<tsorcRevampPlayer>().SoulVessel * 50;
+                }
+            }
+
 
             
             if (!NPC.downedGolemBoss && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !NPC.downedEmpressOfLight)
@@ -1352,7 +1362,7 @@ namespace tsorcRevamp
 
             if (Player.HasBuff<MarilithHold>() || Player.HasBuff<MarilithWind>())
             {
-                int? marilithIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>());
+                int? marilithIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>());
                 if (marilithIndex != null)
                 {
                     NPC marilith = Main.npc[marilithIndex.Value];

@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -71,13 +72,13 @@ namespace tsorcRevamp.Items.BossItems
                 spawnPoint.X += 40;
             }
             spawnPoint.Y -= 5 * 16;
-            NPC.NewNPC(NPC.GetBossSpawnSource(player.whoAmI), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>());
+            NPC.NewNPC(NPC.GetBossSpawnSource(player.whoAmI), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<FireFiendMarilith>());
 
             return true;
         }
         public override bool CanUseItem(Player player)
         {
-            return (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()));
+            return (!NPC.AnyNPCs(ModContent.NPCType<FireFiendMarilith>()));
         }
 
 

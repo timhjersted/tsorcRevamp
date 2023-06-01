@@ -60,7 +60,7 @@ namespace tsorcRevamp
             public static IItemDropRuleCondition FirstBagCursedRule;
             public static IItemDropRuleCondition AdventureModeRule;
             public static IItemDropRuleCondition NonAdventureModeRule;
-            public static IItemDropRuleCondition NoExpertFirstKillRule;
+            public static IItemDropRuleCondition NonExpertFirstKillRule;
         }
 
         public enum BossExtras
@@ -69,7 +69,8 @@ namespace tsorcRevamp
             GuardianSoul    = 0b0100,
             StaminaVessel   = 0b0010,
             SublimeBoneDust = 0b0001,
-            DarkSoulsOnly   = 0b0000
+            DarkSoulsOnly   = 0b0000,
+            SoulVessel      = 0b1001
         };
 
         public static ModKeybind toggleDragoonBoots;
@@ -265,7 +266,7 @@ namespace tsorcRevamp
             tsorcItemDropRuleConditions.FirstBagCursedRule = new FirstBagCursedRule();
             tsorcItemDropRuleConditions.AdventureModeRule = new AdventureModeRule();
             tsorcItemDropRuleConditions.NonAdventureModeRule = new NonAdventureModeRule();
-            tsorcItemDropRuleConditions.NoExpertFirstKillRule = new NonExpertFirstKillRule();
+            tsorcItemDropRuleConditions.NonExpertFirstKillRule = new NonExpertFirstKillRule();
             #endregion
             //--------
             #region Unbreakable list
@@ -286,7 +287,7 @@ namespace tsorcRevamp
                 //6, 7, 8, 9, 22, 37, 58, 63, 64, 65, 66, 67, 67, 68, 107, 108, 111, 166, 167, 168, 169, 211, 221, 222, 223, //All Ores
                 //50, //books (Boss tome can be bought, or a few books can be found in the village for crafting it)
                 //56, 79, 85, //obsidian, beds, tombstones (misc notable disables)
-                4, 12, 13, 236, 215, // torches, Heart crystal, tabled bottles, life fruit, campfires, 
+                4, 12, 13, 236, // torches, Heart crystal, tabled bottles, life fruit,
                 5, 20, 72, 323, 571, 583, 584, 585, 586, 587, 588, 589, 590, 595, 596, 615, 616, // all trees and saplings
                 14, 469, 94, 125, 217, 218, 228, 243, 622, //tables, specialized crafting stations
                 16, 17, 18, 77, 86, 96, 101, 106, 114, 133, 134, 172, 247, 283, 355, 412, //core crafting stations
@@ -296,16 +297,17 @@ namespace tsorcRevamp
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
                 128, 269, 470, 378, 240, 560, ModContent.TileType<EmptyTrophyTile>(), 617, //all mannequins, target dummy, trophies and relics
                 162, 127, 320, 380, 624, //thin ice (breakable kind), Ice Rod's ice, seaweed/herb planters, abigail's flower
-                27, 28, 51, 52, 62, 115, 205, 382, 528, //sunflower, pots, cobwebs, all cuttable vines
+                28, 51, 52, 62, 115, 205, 382, 528, //pots, cobwebs, all cuttable vines
                 31, 32, 69, 352, 53, 112, 116, 234, //orbs/hearts, all thorns, all sands
                 165, 178, 185, 186, 187, 233, 530, 2311, 238, //all ambient objects (background breakables), QB Larva, Plantera Bulb
                 3, 24, 61, 73, 74, 110, 113, 184, 201, 518, 519, 529, 549, //cuttable plants - all biomes
+                27, 215, 42, 621, 506, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle), Slice of Cake, Bast Statue
             };
             #endregion
             //--------
             #region PlaceAllowed list
             PlaceAllowed = new List<int>() {
-                4, 12, 13, 236, 215, // torches, Heart crystal, tabled bottles, life fruit, campfires, 
+                4, 12, 13, 236, // torches, Heart crystal, tabled bottles, life fruit, 
                 5, 20, 72, 323, 571, 583, 584, 585, 586, 587, 588, 589, 590, 595, 596, 615, 616, // all trees and saplings
                 14, 469, 94, 125, 217, 218, 228, 243, 622, //tables, specialized crafting stations
                 16, 17, 18, 77, 86, 96, 101, 106, 114, 133, 134, 172, 247, 283, 355, 412, //core crafting stations
@@ -314,7 +316,8 @@ namespace tsorcRevamp
                 33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
                 128, 269, 470, 378, 240, 560, ModContent.TileType<EmptyTrophyTile>(), 617, //all mannequins, target dummy, trophies and relics
-                320, 380, 27, //thin ice (breakable kind), seaweed/herb planters, sunflower, all sands
+                320, 380, //thin ice (breakable kind), seaweed/herb planters, all sands
+                27, 215, 42, 621, 506, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle), Slice of Cake, Bast Statue
             };
             #endregion
             //--------
@@ -658,7 +661,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<TheSorrowBag>()             , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<TheHunterBag>()             , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<TriadBag>()                 , BossExtras.StaminaVessel      },
-                {   ModContent.ItemType<WyvernMageBag>()            , BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<WyvernMageBag>()            , BossExtras.SoulVessel         },
                 {   ModContent.ItemType<SerrisBag>()                , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<DeathBag>()                 , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<MindflayerIllusionBag>()    , BossExtras.DarkSoulsOnly      },
@@ -671,7 +674,7 @@ namespace tsorcRevamp
                                                                     | BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<BlightBag>()                , BossExtras.GuardianSoul       },
                 {   ModContent.ItemType<ChaosBag>()                 , BossExtras.GuardianSoul       },
-                {   ModContent.ItemType<WyvernMageShadowBag>()      , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<WyvernMageShadowBag>()      , BossExtras.SoulVessel         },
                 {   ModContent.ItemType<OolacileSorcererBag>()      , BossExtras.GuardianSoul       },
                 {   ModContent.ItemType<ArtoriasBag>()              , BossExtras.GuardianSoul       },
                 {   ModContent.ItemType<HellkiteBag>()              , BossExtras.GuardianSoul       },
@@ -689,7 +692,8 @@ namespace tsorcRevamp
                 {   BossExtras.EstusFlaskShard  , ( tsorcItemDropRuleConditions.FirstBagCursedRule , ModContent.ItemType<EstusFlaskShard>() )   },
                 {   BossExtras.GuardianSoul     , ( tsorcItemDropRuleConditions.FirstBagRule       , ModContent.ItemType<GuardianSoul>()    )   },
                 {   BossExtras.StaminaVessel    , ( tsorcItemDropRuleConditions.FirstBagRule       , ModContent.ItemType<StaminaVessel>()   )   },
-                {   BossExtras.SublimeBoneDust  , ( tsorcItemDropRuleConditions.FirstBagCursedRule , ModContent.ItemType<SublimeBoneDust>() )   }
+                {   BossExtras.SublimeBoneDust  , ( tsorcItemDropRuleConditions.FirstBagCursedRule , ModContent.ItemType<SublimeBoneDust>() )   },
+                {   BossExtras.SoulVessel       , ( tsorcItemDropRuleConditions.FirstBagCursedRule , ModContent.ItemType<SoulVessel>()      )   }
             };
             #endregion
             //--------
@@ -734,9 +738,9 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<DeathBag>()                 , ModContent.NPCType<NPCs.Bosses.Death>()                                           },
                 {   ModContent.ItemType<MindflayerIllusionBag>()    , ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>()                     },
                 {   ModContent.ItemType<AttraidiesBag>()            , ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()                      },
-                {   ModContent.ItemType<KrakenBag>()                , ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>()                         },
-                {   ModContent.ItemType<MarilithBag>()              , ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()                        },
-                {   ModContent.ItemType<LichBag>()                  , ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>()                           },
+                {   ModContent.ItemType<KrakenBag>()                , ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>()                         },
+                {   ModContent.ItemType<MarilithBag>()              , ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>()                        },
+                {   ModContent.ItemType<LichBag>()                  , ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>()                           },
                 {   ModContent.ItemType<BlightBag>()                , ModContent.NPCType<Blight>()                                                      },
                 {   ModContent.ItemType<ChaosBag>()                 , ModContent.NPCType<Chaos>()                                                       },
                 {   ModContent.ItemType<WyvernMageShadowBag>()      , ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()  },
@@ -961,7 +965,7 @@ namespace tsorcRevamp
             tsorcItemDropRuleConditions.FirstBagCursedRule      = null;
             tsorcItemDropRuleConditions.AdventureModeRule       = null;
             tsorcItemDropRuleConditions.NonAdventureModeRule    = null;
-            tsorcItemDropRuleConditions.NoExpertFirstKillRule   = null;
+            tsorcItemDropRuleConditions.NonExpertFirstKillRule   = null;
             toggleDragoonBoots                                  = null;
             reflectionShiftKey                                  = null;
             specialAbility                                      = null;
@@ -1572,10 +1576,10 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "AddBoss", // Name of the call
                     21.2f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>() },
+                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>() },
                     this, // Mod
                     "Water Fiend Kraken", // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>()))), // Downed variable (the one keeping track the boss has been defeated once)
+                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.DyingWaterCrystal>(),
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.KrakenBag>(), ModContent.ItemType<Items.Accessories.Expert.DragoonHorn>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() }, // List containing all the loot to show in the bestiary
@@ -1586,10 +1590,10 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "AddBoss", // Name of the call
                     22.3f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>() },
+                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>() },
                     this, // Mod
                     "Earth Fiend Lich", // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>()))), // Downed variable (the one keeping track the boss has been defeated once)
+                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.DyingEarthCrystal>(),
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.LichBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), ModContent.ItemType<Items.Accessories.Expert.DragoonBoots>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenGaiaSword>() }, // List containing all the loot to show in the bestiary
@@ -1654,10 +1658,10 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "AddBoss", // Name of the call
                     26.5f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>() },
+                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>() },
                     this, // Mod
                     "Fire Fiend Marilith", // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()))), // Downed variable (the one keeping track the boss has been defeated once)
+                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.DyingFireCrystal>(),
                     0,
                     new List<int> { ModContent.ItemType<Items.BossBags.MarilithBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>(), ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() },// List containing all the loot to show in the bestiary

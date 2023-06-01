@@ -9,6 +9,7 @@ using tsorcRevamp.Projectiles.Enemy.Gwyn;
 using static tsorcRevamp.UsefulFunctions;
 using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -21,7 +22,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Gwyn, Lord of Cinder");
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()

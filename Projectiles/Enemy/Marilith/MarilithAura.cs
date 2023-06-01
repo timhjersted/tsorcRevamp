@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp.Projectiles.Enemy.Marilith
 {
@@ -38,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         int marilithDeadTimer;
         public override void AI()
         {
-            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()))
+            if (!NPC.AnyNPCs(ModContent.NPCType<FireFiendMarilith>()))
             {
                 marilithDeadTimer++;
                 if(marilithDeadTimer > 45)
@@ -48,7 +49,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             }
             else
             {
-                NPCs.Bosses.Fiends.FireFiendMarilith marl = Main.npc[UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()).Value].ModNPC as NPCs.Bosses.Fiends.FireFiendMarilith;
+                FireFiendMarilith marl = Main.npc[UsefulFunctions.GetFirstNPC(ModContent.NPCType<FireFiendMarilith>()).Value].ModNPC as FireFiendMarilith;
                 truePosition = marl.NPC.Center;
                 intro = marl.introTimer;
                 targetVector = new Vector2(1, -0.2f);

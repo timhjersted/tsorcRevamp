@@ -9,6 +9,10 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
+            if (Main.netMode == NetmodeID.Server)
+            {
+                return;
+            }
             int equipslot = EquipLoader.GetEquipSlot(Mod, "JOI3Chassis_Legs", EquipType.Legs);
             ArmorIDs.Legs.Sets.OverridesLegs[equipslot] = true;
             ArmorIDs.Legs.Sets.HidesBottomSkin[equipslot] = true;
@@ -27,11 +31,17 @@ namespace tsorcRevamp.Items.Armors
         public override void Load()
         {
             if (Main.netMode == NetmodeID.Server)
+            {
                 return;
+            }
             EquipLoader.AddEquipTexture(Mod, "tsorcRevamp/Items/Armors/JOI3Chassis_Legs", EquipType.Legs, this, "JOI3Chassis_Legs");
         }
         public override void SetMatch(bool male, ref int equipSlot, ref bool robes)
         {
+            if (Main.netMode == NetmodeID.Server)
+            {
+                return;
+            }
             robes = true;
             equipSlot = EquipLoader.GetEquipSlot(Mod, "JOI3Chassis_Legs", EquipType.Legs);
         }

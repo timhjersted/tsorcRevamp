@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -28,13 +29,13 @@ namespace tsorcRevamp.Items.BossItems
         public override bool? UseItem(Player player)
         {
             //UsefulFunctions.BroadcastText("Earth Fiend Lich ascends from the ground", Color.GreenYellow);
-            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<EarthFiendLich>());
             return true;
         }
         public override bool CanUseItem(Player player)
         {
 
-            return (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>()));
+            return (!NPC.AnyNPCs(ModContent.NPCType<EarthFiendLich>()));
         }
 
 

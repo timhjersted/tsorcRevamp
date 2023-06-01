@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -52,9 +53,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                     || target.type == NPCID.TheGroom
                     || target.type == NPCID.SkeletronHand
                     || target.type == NPCID.SkeletronHead
-                    || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingSerpentHead>()
-                    || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingSerpentBody>()
-                    || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingSerpentTail>()
+                    || target.type == ModContent.NPCType<LichKingSerpentHead>()
+                    || target.type == ModContent.NPCType<LichKingSerpentBody>()
+                    || target.type == ModContent.NPCType<LichKingSerpentTail>()
                     || target.type == ModContent.NPCType<NPCs.Enemies.DemonSpirit>()
                     || target.type == ModContent.NPCType<NPCs.Enemies.CrazedDemonSpirit>()
                     || target.type == ModContent.NPCType<NPCs.Enemies.ParasyticWormHead>()

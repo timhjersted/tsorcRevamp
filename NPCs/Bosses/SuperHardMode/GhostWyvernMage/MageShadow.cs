@@ -7,57 +7,55 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 {
 
     class MageShadow : ModNPC
     {
+        int frozenSawDamage = 50;
+        int lightningDamage = 60;
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Frostburn,
+                    BuffID.Frostburn2,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.npcSlots = 3;
-            Main.npcFrameCount[NPC.type] = 3;
             AnimationType = 29;
             NPC.aiStyle = 0;
             NPC.damage = 0;
             NPC.defense = 56;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 1000;
+            NPC.lifeMax = 500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.noGravity = false;
             NPC.noTileCollide = false;
             NPC.alpha = 249;
-
             NPC.lavaImmune = true;
             NPC.value = 0;
             NPC.width = 28;
             NPC.knockBackResist = 0f;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-
         }
-
-
-        int frozenSawDamage = 100;
-        int lightningDamage = 120;
         int Timer2 = -Main.rand.Next(200);
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            frozenSawDamage = (int)(frozenSawDamage / 2);
-            lightningDamage = (int)(lightningDamage / 2);
-        }
-
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(BuffID.Frostburn, 90, false);
-            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false);
-            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
+            target.AddBuff(BuffID.Frostburn, 1 * 60 + 30, false);
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false);
+            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false);
         }
 
 
@@ -89,7 +87,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
             // npc.ai[2]++; // Shots
 
-            if (NPC.life < 301)
+            if (NPC.life < NPC.lifeMax / 3)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, Type: DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y, 150, Color.Blue, 1f);
                 Main.dust[dust].noGravity = true;
@@ -119,7 +117,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 NPC.velocity.Y *= 0.27f;
             }
 
-            if ((NPC.ai[1] >= 300 && NPC.life > 300) || (NPC.ai[1] >= 200 && NPC.life <= 300))
+            if ((NPC.ai[1] >= 300 && NPC.life > NPC.lifeMax / 3) || (NPC.ai[1] >= 200 && NPC.life <= NPC.lifeMax / 3))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int num36 = 0; num36 < 10; num36++)
@@ -300,21 +298,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         public override void OnKill()
         {
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-            if (NPC.life <= 0)
+            for (int num36 = 0; num36 < 50; num36++)
             {
-                for (int num36 = 0; num36 < 50; num36++)
                 {
-                    {
-                        Color color = new Color();
-                        int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
-                        Main.dust[dust].noGravity = true;
-                        dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
-                        Main.dust[dust].noGravity = true;
-                        dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
-                        Main.dust[dust].noGravity = true;
-                        dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
-                        Main.dust[dust].noGravity = true;
-                    }
+                    Color color = new Color();
+                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+                    Main.dust[dust].noGravity = true;
+                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+                    Main.dust[dust].noGravity = true;
+                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+                    Main.dust[dust].noGravity = true;
+                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+                    Main.dust[dust].noGravity = true;
                 }
             }
         }

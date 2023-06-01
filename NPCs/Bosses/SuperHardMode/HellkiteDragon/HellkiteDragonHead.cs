@@ -5,17 +5,34 @@ using System;
 using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items;
+using Terraria.DataStructures;
+using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Armors.Summon;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Items.BossItems;
+using tsorcRevamp.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 {
     [AutoloadBossHead]
     class HellkiteDragonHead : ModNPC
     {
-
-        int breathDamage = 33;
-        int flameRainDamage = 32; //was 37
-        int meteorDamage = 63;
-
+        int breathDamage = 17;
+        int flameRainDamage = 16; //was 37
+        int meteorDamage = 32;
+        public override void SetStaticDefaults()
+        {
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.OnFire3,
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.netAlways = true;
@@ -26,7 +43,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;
-            NPC.damage = 290;
+            NPC.damage = 145;
             NPC.defense = 100;
             NPC.HitSound = SoundID.NPCHit13; //better flesh hit
             NPC.DeathSound = SoundID.Item119;//dragon death
@@ -38,21 +55,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.behindTiles = true;
             NPC.value = 250000;
             NPC.lavaImmune = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
-
             Color textColor = new Color(175, 75, 255);
             despawnHandler = new NPCDespawnHandler("The Hellkite Dragon claims its prey...", textColor, 174);
 
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.damage = 290;
+                NPC.damage = 145;
                 NPC.value = 100000;
-                breathDamage = 115;
-                flameRainDamage = 100;
-                meteorDamage = 120;
+                breathDamage = 58;
+                flameRainDamage = 50;
+                meteorDamage = 60;
             }
         }
         public float flapWings;
@@ -64,19 +76,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         public float MeteorShotCounter;
 
         public float CollisionTimer;
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = (int)(NPC.damage / 2);
-            breathDamage = (int)(breathDamage / 2);
-            flameRainDamage = (int)(flameRainDamage / 2);
-            meteorDamage = (int)(meteorDamage / 2);
-        }
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Hellkite Dragon");
-        }
-
         int breathCD = 90;
         //int previous = 0;
         bool breath = false;
@@ -244,8 +243,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.HellkiteBag>()));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.HellkiteBag>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HellkiteStone>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HiRyuuSpear>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 10, 20));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BarrowBlade>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 3, 6));
+            npcLoot.Add(notExpertCondition);
         }
 
         public override void OnKill()
@@ -255,13 +261,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 Gore.NewGore(NPC.GetSource_Death(), NPC.Center, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Hellkite Dragon Head Gore").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.Center, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.Center, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
-            }
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DragonEssence>(), 22 + Main.rand.Next(6));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 4000);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.HellkiteStone>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>());
             }
         }
     }

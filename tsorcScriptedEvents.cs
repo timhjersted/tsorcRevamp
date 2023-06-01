@@ -11,6 +11,7 @@ using Terraria.ModLoader.IO;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
 using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp
 {
@@ -202,7 +203,7 @@ namespace tsorcRevamp
             ScriptedEvent EoL = new ScriptedEvent(new Vector2(4484, 355), 100, NPCID.HallowBoss, DustID.RainbowTorch, false, true, true, "The Empress of Light awakens!", Main.DiscoColor, false, EoLDownedCondition);
 
             //LITCH KING
-            ScriptedEvent LitchKing = new ScriptedEvent(new Vector2(364, 1897), 40, ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>(), DustID.GoldFlame, true, true, true, "The Lich King awakens!", Color.Gold, false);
+            ScriptedEvent LitchKing = new ScriptedEvent(new Vector2(364, 1897), 40, ModContent.NPCType<EarthFiendLich>(), DustID.GoldFlame, true, true, true, "The Lich King awakens!", Color.Gold, false);
 
             //THE HUNTER
             ScriptedEvent TheHunter = new ScriptedEvent(new Vector2(296, 1560), 36, ModContent.NPCType<NPCs.Bosses.TheHunter>(), DustID.GoldFlame, true, true, true, "The hunt begins...", Color.DarkGreen, false);
@@ -280,10 +281,10 @@ namespace tsorcRevamp
             ScriptedEvent SerrisEvent = new ScriptedEvent(new Vector2(1136, 956), 30, SerrisEnemyTypeList, SerrisEnemyLocations, DustID.FireworkFountain_Blue, false, true, true, "The Serris Triplets have been enraged!", Color.Blue, false, SerrisCustomCondition);
 
             //MARILITH 
-            ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(3235, 1770), 100, ModContent.NPCType<NPCs.Bosses.Fiends.MarilithIntro>(), DustID.RedTorch, false, true, true, "default", Color.Red, false, MarilithCustomCondition);
+            ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(3235, 1770), 100, ModContent.NPCType<MarilithIntro>(), DustID.RedTorch, false, true, true, "default", Color.Red, false, MarilithCustomCondition);
 
             //KRAKEN
-            ScriptedEvent KrakenEvent = new ScriptedEvent(new Vector2(1821, 1702), 30, ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>(), DustID.MagicMirror, true, true, true, "The Water Fiend rises!", Color.Blue, false, SuperHardModeCustomCondition);
+            ScriptedEvent KrakenEvent = new ScriptedEvent(new Vector2(1821, 1702), 30, ModContent.NPCType<WaterFiendKraken>(), DustID.MagicMirror, true, true, true, "The Water Fiend rises!", Color.Blue, false, SuperHardModeCustomCondition);
 
             //GWYN's TOMB VISIONS
             ScriptedEvent GwynsTombEvent = new ScriptedEvent(new Vector2(670, 1164), 150, ModContent.NPCType<NPCs.Special.GwynBossVision>(), DustID.RedTorch, false, true, true, "default", default, false, GwynsTombVisionCustomCondition);
@@ -597,7 +598,7 @@ namespace tsorcRevamp
         public static bool MarilithCustomCondition()
         {
 
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>())) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.MarilithIntro>()))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<FireFiendMarilith>())) || NPC.AnyNPCs(ModContent.NPCType<FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<MarilithIntro>()))
             {
                 return false;
             }

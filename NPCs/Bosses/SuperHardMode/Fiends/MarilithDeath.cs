@@ -10,11 +10,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
 
-namespace tsorcRevamp.NPCs.Bosses.Fiends
+namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 {
     class MarilithDeath : ModNPC
     {
-        public override string Texture => "tsorcRevamp/NPCs/Bosses/Fiends/FireFiendMarilith";
+        public override string Texture => "tsorcRevamp/NPCs/Bosses/SuperHardMode/Fiends/FireFiendMarilith";
 
         public override void SetStaticDefaults()
         {

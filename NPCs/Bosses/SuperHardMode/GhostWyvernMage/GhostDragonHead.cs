@@ -1,16 +1,33 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 {
     [AutoloadBossHead]
     class GhostDragonHead : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Frostburn,
+                    BuffID.Frostburn2,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.netAlways = true;
@@ -21,44 +38,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.aiStyle = 6; 
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22750;
-            NPC.damage = 185;
+            NPC.damage = 93;
             NPC.defense = 120;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath10;
-            NPC.lifeMax = 700000;
+            NPC.lifeMax = 350000;
             NPC.boss = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
             NPC.alpha = 100;
             NPC.value = 660000;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler(DustID.OrangeTorch);
         }
         int lightningDamage = 50;
 
         public static int drawOffset = 52;
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-        }
-
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            
-            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false);
-            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false);
+            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false);
         }
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Ghost Wyvern");
-        }
-
         NPCDespawnHandler despawnHandler;
         int[] bodyTypes = new int[] { ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonLegs>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonLegs>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonLegs>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonLegs>(), ModContent.NPCType<GhostDragonBody>(), ModContent.NPCType<GhostDragonBody2>(), ModContent.NPCType<GhostDragonBody3>() };
 
@@ -93,7 +93,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.WyvernMageShadowBag>(), 1, 1, 1, new GhostDiscipleDropCondition()));
+            npcLoot.Add(ItemDropRule.BossBagByCondition(new GhostDiscipleDropCondition(), ModContent.ItemType<Items.BossBags.WyvernMageShadowBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GhostDiscipleDropCondition(), ModContent.ItemType<HolyWarElixir>()));
+            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GhostDiscipleDropCondition(), ModContent.ItemType<GhostWyvernSoul>(), 1, 3, 6));
+            npcLoot.Add(notExpertCondition);
         }
 
         public override void OnKill()
@@ -101,21 +105,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
             int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 62, 0, 0, 100, Color.White, 5.0f);
             Main.dust[dust].noGravity = true;
-
-            if (!Main.expertMode)
-            {
-                //Only drop the loot if the mage is already dead. If it's not, then he will drop it instead.
-                if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()))
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GhostWyvernSoul>(), 8);
-                }
-                else
-                {
-
-                    UsefulFunctions.BroadcastText("The souls of " + NPC.GivenOrTypeName + " have been released!", 175, 255, 75);
-                    tsorcRevampWorld.NewSlain[new Terraria.ModLoader.Config.NPCDefinition(ModContent.NPCType<GhostDragonHead>())] = 1;
-                }
-            }
         }
 
 
@@ -152,9 +141,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             // GhostDragonHead.GhostEffect(npc, spriteBatch, ref texture, 1.5f);
         }
     }
-    public class GhostDiscipleDropCondition : Terraria.GameContent.ItemDropRules.IItemDropRuleCondition
+    public class GhostDiscipleDropCondition : IItemDropRuleCondition
     {
-        public bool CanDrop(Terraria.GameContent.ItemDropRules.DropAttemptInfo info)
+        public bool CanDrop(DropAttemptInfo info)
         {
             return !NPC.AnyNPCs(ModContent.NPCType<WyvernMageShadow>());
         }

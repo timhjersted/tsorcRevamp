@@ -8,7 +8,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.DataStructures;
 using tsorcRevamp.Items;
 
-namespace tsorcRevamp.NPCs.Bosses.Fiends
+namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 {
     class LichKingSerpentHead : ModNPC
     {

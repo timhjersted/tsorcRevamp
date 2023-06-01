@@ -13,7 +13,7 @@ using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Items.Weapons.Melee;
 
-namespace tsorcRevamp.NPCs.Bosses.Fiends
+namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 {
     class LichKingDisciple : ModNPC
     {

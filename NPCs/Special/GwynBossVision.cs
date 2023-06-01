@@ -10,6 +10,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp.NPCs.Special
 {
@@ -60,9 +61,9 @@ namespace tsorcRevamp.NPCs.Special
             if (bossVisions == null)
             {
                 bossVisions = new BossVision[7];
-                bossVisions[0] = new BossVision(700, 1115, ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>(), "tsorcRevamp/NPCs/Special/Visions/WaterFiendKraken", 1, Color.Blue);
-                bossVisions[1] = new BossVision(658, 1129, ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>(), "tsorcRevamp/NPCs/Special/Visions/FireFiendMarilith", 1.2f, Color.OrangeRed);
-                bossVisions[2] = new BossVision(622, 1140, ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>(), "tsorcRevamp/NPCs/Special/Visions/EarthFiendLich", 1.5f, Color.Green);
+                bossVisions[0] = new BossVision(700, 1115, ModContent.NPCType<WaterFiendKraken>(), "tsorcRevamp/NPCs/Special/Visions/WaterFiendKraken", 1, Color.Blue);
+                bossVisions[1] = new BossVision(658, 1129, ModContent.NPCType<FireFiendMarilith>(), "tsorcRevamp/NPCs/Special/Visions/FireFiendMarilith", 1.2f, Color.OrangeRed);
+                bossVisions[2] = new BossVision(622, 1140, ModContent.NPCType<EarthFiendLich>(), "tsorcRevamp/NPCs/Special/Visions/EarthFiendLich", 1.5f, Color.Green);
                 bossVisions[3] = new BossVision(622, 1190, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), "tsorcRevamp/NPCs/Special/Visions/Artorias", 1.5f, Color.DarkBlue * 4);
                 bossVisions[4] = new BossVision(656, 1201, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), "tsorcRevamp/NPCs/Special/Visions/WyvernMageShadow", 1.5f, Color.Purple * 4);
                 bossVisions[5] = new BossVision(700, 1218, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), "tsorcRevamp/NPCs/Special/Visions/SeathTheScalelessHead", 1, Color.White);

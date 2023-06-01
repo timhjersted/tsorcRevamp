@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp.Items
 {
@@ -165,8 +166,8 @@ namespace tsorcRevamp.Items
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.Gaibon>());
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>());
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>());
-            bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.Fiends.LichKingDisciple>());
-            bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.Fiends.LichKingSerpentHead>());
+            bannedBosses.Add(ModContent.NPCType<LichKingDisciple>());
+            bannedBosses.Add(ModContent.NPCType<LichKingSerpentHead>());
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloudMirror>());
             bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>());
             bannedBosses.Add(NPCID.EaterofWorldsBody);

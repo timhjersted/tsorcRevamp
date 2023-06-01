@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -19,7 +20,6 @@ namespace tsorcRevamp.Items.BossItems
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 5;
             Item.useTime = 5;
-            //item.UseSound = SoundID.Item21;
             Item.value = 1000;
             Item.rare = ItemRarityID.Blue;
         }
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.BossItems
         public override bool? UseItem(Player player)
         {
             UsefulFunctions.BroadcastText("A Gate has been opened. The Great Wall has passed into this dimension!... ", 175, 75, 255);
-            NPC.NewNPC(player.GetSource_ItemUse(Item), (int)Main.player[Main.myPlayer].position.X - (1070), (int)Main.player[Main.myPlayer].position.Y - 150, NPCID.WallofFlesh, 1);
+            NPC.SpawnWOF(new Vector2(player.position.X - (1070), player.position.Y - 150));
             return true;
         }
         public override void AddRecipes()

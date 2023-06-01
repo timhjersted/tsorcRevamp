@@ -119,7 +119,7 @@ namespace tsorcRevamp
                 AbyssPortalLocation = new Vector2(1400.5f, 256.5f) * 16;
             }
 
-            //Faisafe. Checks some blocks near the top of one of the Wyvern Mage's tower that are unlikely to change. Even if they do, this shouldn't be necessary though. It's purely to be safe.
+            //Failsafe. Checks some blocks near the top of one of the Wyvern Mage's tower that are unlikely to change. Even if they do, this shouldn't be necessary though. It's purely to be safe.
             if (Framing.GetTileSafely(7102, 137).TileType == 54 && Framing.GetTileSafely(7103, 137).TileType == 357 && Framing.GetTileSafely(7104, 136).TileType == 357 && Framing.GetTileSafely(7105, 136).TileType == 197)
             {
                 CustomMap = true;
@@ -1076,7 +1076,7 @@ namespace tsorcRevamp
 
             //kill signs and place soapstones from the json. for testing manual json edits
             //eventually can be done on world load, or something
-            if (JustPressed(Keys.NumPad5)) {
+            if (JustPressed(Keys.NumPad5) && JustPressed(Keys.Home)) {
 
                 for (int x = 0; x < Main.maxTilesX - 2; x++) {
                     for (int y = 0; y < Main.maxTilesY - 2; y++) {
@@ -1361,16 +1361,16 @@ namespace tsorcRevamp
 
                 int count = 0;
                 if (NewSlain.ContainsKey(
-                    new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>())
+                    new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>())
                     ))
                 {
                     count++;
                 }
-                if ((NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()))))
+                if ((NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>()))))
                 {
                     count++;
                 }
-                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>())))
+                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>())))
                 {
                     count++;
                 }

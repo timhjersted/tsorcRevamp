@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Axes
 {
@@ -55,7 +56,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
                 || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerKingServant>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerServant>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerIllusion>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingDisciple>()
+                || target.type == ModContent.NPCType<LichKingDisciple>()
                 )
             {
                 modifiers.FinalDamage *= 4;

@@ -10,6 +10,13 @@ using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Enemy.DarkCloud;
 using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
+using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Accessories;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Items.Weapons.Summon;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -20,13 +27,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             NPCID.Sets.TrailCacheLength[NPC.type] = (int)TRAIL_LENGTH;    //The length of old position to be recorded
             NPCID.Sets.TrailingMode[NPC.type] = 1;
+            Main.npcFrameCount[NPC.type] = 16;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
 
         public override void SetDefaults()
         {
             NPC.npcSlots = 10;
-            Main.npcFrameCount[NPC.type] = 16;
             AnimationType = 28;
             NPC.aiStyle = 3;
             NPC.height = 40;
@@ -40,11 +54,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.value = 1500000;
             NPC.knockBackResist = 0f;
             NPC.boss = true;
-
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler("You are subsumed by your shadow...", Color.Blue, DustID.ShadowbeamStaff);
         }
 
@@ -73,11 +82,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public static int confinedBlastDamage = 200; //Very high because it isn't compensating for doubling/quadrupling, and is very easy to dodge
         public static int arrowRainDamage = 50;
         #endregion
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = 200;
-        }
 
         #region First Phase Vars
         float comboDamage = 0;
@@ -1762,7 +1766,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (phaseChangeCounter == 240)
             {
                 NPC.velocity = Vector2.Zero;
-                NPC.lifeMax = 500000 * Main.CurrentFrameFlags.ActivePlayersCount;
+                NPC.lifeMax = 300000 * Main.CurrentFrameFlags.ActivePlayersCount;
                 NPC.life = NPC.lifeMax;
                 changingPhases = false;
                 NPC.dontTakeDamage = false;
@@ -2056,8 +2060,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
        
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.DarkCloudBag>()));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.DarkCloudBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 2, 4));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<GuardianSoul>(), 1, 2, 4));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MoonlightGreatsword>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<NullSpriteStaff>()));
+            npcLoot.Add(notExpertCondition);
         }
 
         public override void OnKill()
@@ -2083,14 +2094,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     Main.projectile[i].Kill();
                 }
-            }
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 3);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.MoonlightGreatsword>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Summon.NullSpriteStaff>());
-
             }
             if (Main.tile[5810, 1670] != null)
             {

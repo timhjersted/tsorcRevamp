@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -28,12 +29,12 @@ namespace tsorcRevamp.Items.BossItems
         public override bool? UseItem(Player player)
         {
             //UsefulFunctions.BroadcastText("Water Fiend Kraken emerges from the depths", Color.DeepSkyBlue);
-            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<WaterFiendKraken>());
             return true;
         }
         public override bool CanUseItem(Player player)
         {
-            return (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>()));
+            return (!NPC.AnyNPCs(ModContent.NPCType<WaterFiendKraken>()));
         }
 
         public override void AddRecipes()

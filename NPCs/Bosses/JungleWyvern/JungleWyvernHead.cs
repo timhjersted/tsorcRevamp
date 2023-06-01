@@ -376,7 +376,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.Amber, 1, 1, 7));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.Diamond, 1, 1, 7));
             npcLoot.Add(notExpertCondition);
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
         }
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {

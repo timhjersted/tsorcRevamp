@@ -9,9 +9,8 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
-using Terraria.GameContent.ItemDropRules;
 
-namespace tsorcRevamp.NPCs.Bosses.Fiends
+namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 {
     class MarilithIntro : ModNPC
     {

@@ -2689,7 +2689,6 @@ Mods: {
 					The volcanic stoned etched in Aaron's image
 					Said to protect the one who carries it in times of despair
 					[c/00ffd4:It's true use may reveal itself in time...or at a particular location...]
-					Not MP compatible currently
 					'''
 			}
 
@@ -6215,40 +6214,9 @@ Mods: {
 				Tooltip: Developer Set for JOI3
 			}
 
-			CatarinaChestplate: {
-				DisplayName: Catarina Chestplate
-				Tooltip: ""
-			}
-
-			CatarinaGreaves: {
-				DisplayName: Catarina Greaves
-				Tooltip: ""
-			}
-
-			CatarinaHelmet: {
-				DisplayName: Catarina Helmet
-				Tooltip: ""
-			}
-
-			PortlyPlateHelmet: {
-				DisplayName: Portly Plate Helmet
-				Tooltip: Increases melee critical strike chance by 5%
-
-				PortlyPlateChestplate: {
-					DisplayName: Portly Plate Chestplate
-					Tooltip:
-						'''
-						Increases melee damage by 10%
-						Set Bonus: Increases life regenaration by 2
-						Grants knockbakc immunity
-						When life falls below 25% of it's maximum, gain another 3 regen
-						'''
-				}
-
-				PortlyPlateGreaves: {
-					DisplayName: Portly Plate Greaves
-					Tooltip: Increases melee speed by 27%
-				}
+			SoulVessel: {
+				DisplayName: Soul Vessel
+				Tooltip: Increases maximum mana by 50 for the [c/6d8827:Bearer of the Curse]
 			}
 
 			PortlyPlateChestplate: {
@@ -6258,6 +6226,11 @@ Mods: {
 
 			PortlyPlateGreaves: {
 				DisplayName: Portly Plate Greaves
+				Tooltip: ""
+			}
+
+			PortlyPlateHelmet: {
+				DisplayName: Portly Plate Helmet
 				Tooltip: ""
 			}
 		}

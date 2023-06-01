@@ -4,6 +4,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -76,7 +77,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerKingServant>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerServant>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerIllusion>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingDisciple>()
+                || target.type == ModContent.NPCType<LichKingDisciple>()
                 )
             {
                 modifiers.FinalDamage *= 8;

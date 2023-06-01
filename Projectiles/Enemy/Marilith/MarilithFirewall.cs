@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp.Projectiles.Enemy.Marilith
 {
@@ -33,13 +34,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         {
             //Keep it alive indefinitely while marilith is alive
             Projectile.timeLeft = 2;
-            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()))
+            if (!NPC.AnyNPCs(ModContent.NPCType<FireFiendMarilith>()))
             {
                 Projectile.Kill();
             }
             else
             {
-                NPCs.Bosses.Fiends.FireFiendMarilith marl = Main.npc[UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()).Value].ModNPC as NPCs.Bosses.Fiends.FireFiendMarilith;
+                FireFiendMarilith marl = Main.npc[UsefulFunctions.GetFirstNPC(ModContent.NPCType<FireFiendMarilith>()).Value].ModNPC as FireFiendMarilith;
                 if(Projectile.ai[0] == 2 && marl.MoveIndex == 1 && marl.MoveTimer < 1800)
                 {
                     cloudProgress++;

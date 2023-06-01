@@ -10,12 +10,30 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
+using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Armors.Summon;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 {
     [AutoloadBossHead]
     class SeathTheScalelessHead : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.PossessedArmor];
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Frostburn,
+                    BuffID.Frostburn2,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.width = 44; //44 works for both
@@ -24,7 +42,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;
-            NPC.damage = 300;
+            NPC.damage = 150;
             NPC.defense = 120;
             NPC.HitSound = SoundID.NPCHit6;//6 is werewolf, 7 is the worst, generic hit sound evvarrr, 13, 21 worth trying
             NPC.DeathSound = SoundID.Item119;//good dragon death sound
@@ -35,43 +53,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.noTileCollide = false;
             NPC.behindTiles = true;
             NPC.value = 670000;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            //NPC.buffImmune[BuffID.OnFire] = false;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler("Seath consumes your soul...", Color.Cyan, DustID.BlueFairy);
         }
 
 
-        public int breathDamage = 96;
-        public int smallShardDamage = 94;
-        public int iceWaterDamage = 100;
-        public int iceStormDamage = 100;
-        public int largeShardDamage = 142;
+        public int breathDamage = 48;
+        public int smallShardDamage = 47;
+        public int iceWaterDamage = 50;
+        public int iceStormDamage = 50;
+        public int largeShardDamage = 71;
         public float flapWings;
         public float FrostShotTimer;
         public float FrostShotCounter;
         public float FrostShot2Timer;
         public float FrostShot2Counter;
 
-
         public static int seathPieceSeperation = -5;
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage = (int)(NPC.damage / 2);
-            breathDamage = (int)(breathDamage / 2);
-            smallShardDamage = (int)(smallShardDamage / 2);
-            iceStormDamage = (int)(iceStormDamage / 2);
-            largeShardDamage = (int)(largeShardDamage / 2);
-            iceWaterDamage = (int)(iceWaterDamage / 2);
-        }
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Seath the Scaleless");
-        }
-
-
         int breathCD = 110;
         bool breath = false;
         bool firstCrystalSpawned = false;
@@ -80,9 +77,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         float customspawn1;
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(ModContent.BuffType<Frostbite>(), 60, false);
-            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false);
-            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
+            target.AddBuff(ModContent.BuffType<Frostbite>(), 1 * 60, false);
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false);
+            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 30 * 60, false);
             
         }
 
@@ -508,23 +505,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             SetImmune(projectile, NPC);
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SeathBag>()));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SeathBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 20, 35));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BequeathedSoul>(), 1, 1, 2));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BlueTearstoneRing>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));
+            npcLoot.Add(notExpertCondition);
         }
         public override void OnKill()
         {
             if (!Main.dedServ)
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.Center, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Seath the Scaleless Head Gore").Type, 1f);
-            }
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DragonEssence>(), 35 + Main.rand.Next(5));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 7000);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BequeathedSoul>(), 2);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.BlueTearstoneRing>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.PurgingStone>());
-            }            
+            }          
         }
 
         public static Texture2D texture;

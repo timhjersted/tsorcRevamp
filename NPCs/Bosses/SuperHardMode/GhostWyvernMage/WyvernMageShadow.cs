@@ -2,23 +2,40 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Items;
+using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Potions;
-using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 {
     [AutoloadBossHead]
     class WyvernMageShadow : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 3;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[]
+                {
+                    BuffID.Frostburn,
+                    BuffID.Frostburn2,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+        }
         public override void SetDefaults()
         {
             NPC.npcSlots = 10;
-            Main.npcFrameCount[NPC.type] = 3;
             AnimationType = 29;
             NPC.aiStyle = 0;
             NPC.damage = 0;
@@ -26,7 +43,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.height = 44;
             NPC.scale = 1.2f;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 200000;
+            NPC.lifeMax = 100000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.noGravity = false;
@@ -36,28 +53,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.value = 660000;
             NPC.width = 28;
             NPC.knockBackResist = 0f;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            //NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler("The Wyvern Mage's imprisoned shadow breaks free...", Color.DarkCyan, DustID.Demonite);
         }
 
         int mageShadowTimer = 0;
-        int frozenSawDamage = 55;
-        int lightningDamage = 68;
+        int frozenSawDamage = 28;
+        int lightningDamage = 34;
         int Timer2 = -Main.rand.Next(200);
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            frozenSawDamage = (int)(frozenSawDamage / 2);
-            lightningDamage = (int)(lightningDamage / 2);
-        }
-
-        //float customAi1;
-
 
         #region AI
         NPCDespawnHandler despawnHandler;
@@ -72,12 +74,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
             // npc.ai[2]++; // Shots
 
-            if (NPC.life > 15000)
+            if (NPC.life > NPC.lifeMax / 200 * 15)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, Type: DustID.PurpleTorch, NPC.velocity.X, NPC.velocity.Y, 150, Color.Purple, 1f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (NPC.life <= 15000)
+            else if (NPC.life <= NPC.lifeMax / 200 * 15)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, Type: DustID.PurpleTorch, NPC.velocity.X, NPC.velocity.Y, 100, Color.BlueViolet, 2f);
                 Main.dust[dust].noGravity = true;
@@ -109,7 +111,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 NPC.velocity.Y *= 0.27f;
             }
 
-            if ((NPC.ai[1] >= 500 && NPC.life > 25000) || (NPC.ai[1] >= 250 && NPC.life <= 25000))
+            if ((NPC.ai[1] >= 500 && NPC.life > NPC.lifeMax / 8) || (NPC.ai[1] >= 250 && NPC.life <= NPC.lifeMax / 8))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int num36 = 0; num36 < 10; num36++)
@@ -310,7 +312,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(new Terraria.GameContent.ItemDropRules.ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.WyvernMageShadowBag>(), 1, 1, 1, new GhostWyvernMageDropCondition()));
+            npcLoot.Add(ItemDropRule.BossBagByCondition(new GhostWyvernMageDropCondition(), ModContent.ItemType<Items.BossBags.WyvernMageShadowBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GhostWyvernMageDropCondition(), ModContent.ItemType<HolyWarElixir>()));
+            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GhostWyvernMageDropCondition(), ModContent.ItemType<GhostWyvernSoul>(), 1, 3, 6));
+            npcLoot.Add(notExpertCondition);
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 1, 2, 4));
         }
 
@@ -325,21 +331,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 2").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 3").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Undead Caster Gore 3").Type, 1f);
-            }
-            if (!Main.expertMode)
-            {
-                //Only drop the loot if the dragon is already dead. If it's not, then the dragon will drop it instead.
-                if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>()))
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GhostWyvernSoul>(), 8);
-
-                }
-                else
-                {
-                    UsefulFunctions.BroadcastText("The souls of " + NPC.GivenOrTypeName + " have been released!", 175, 255, 75);
-                    tsorcRevampWorld.NewSlain[new NPCDefinition(ModContent.NPCType<WyvernMageShadow>())] = 1;
-                }
             }
         }
         #endregion
@@ -357,7 +348,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
     }
 
-    public class GhostWyvernMageDropCondition : Terraria.GameContent.ItemDropRules.IItemDropRuleCondition
+    public class GhostWyvernMageDropCondition : IItemDropRuleCondition
     {
         public bool CanDrop(Terraria.GameContent.ItemDropRules.DropAttemptInfo info)
         {

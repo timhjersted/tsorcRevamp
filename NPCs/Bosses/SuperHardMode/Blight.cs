@@ -2,12 +2,17 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Armors.Summon;
+using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -18,6 +23,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 4;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Confused,
+                    BuffID.Frostburn,
+                    BuffID.Frostburn2
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
         public override void SetDefaults()
         {
@@ -26,12 +40,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.height = 110;
             NPC.aiStyle = -1;
             NPC.timeLeft = 22500;
-            NPC.damage = 105;
+            NPC.damage = 53;
             NPC.defense = 90;
             NPC.HitSound = SoundID.NPCHit3;
             NPC.DeathSound = SoundID.Zombie53;
             // npc.DeathSound = SoundID.NPCDeath43;
-            NPC.lifeMax = 500000;
+            NPC.lifeMax = 250000;
             NPC.knockBackResist = 0f;
             NPC.scale = 1f;
             NPC.noGravity = true;
@@ -40,10 +54,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.friendly = false;
             NPC.alpha = 255;
             NPC.boss = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.CursedInferno] = true;
             despawnHandler = new NPCDespawnHandler("Inevitable", new Color(255, 50, 50), DustID.Firework_Blue);
         }
 
@@ -54,13 +64,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         
         //chaos
         int holdTimer = 0;
-        
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-        }
-
         int chargeDamage = 0;
         bool chargeDamageFlag = false;
 
@@ -71,24 +74,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         float targetspazzlevel;
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-
-            int expertScale = 1;
-            if (Main.expertMode) expertScale = 2;
             if (Main.rand.NextBool(4))
             {
-
-                target.AddBuff(BuffID.BrokenArmor, 180 / expertScale, false); //broken armor
-                target.AddBuff(BuffID.Poisoned, 3600 / expertScale, false); //poisoned
-                target.AddBuff(BuffID.Bleeding, 1800 / expertScale, false); //bleeding
+                target.AddBuff(BuffID.BrokenArmor, 3 * 60, false); //broken armor
+                target.AddBuff(BuffID.Poisoned, 60 * 60, false); //poisoned
+                target.AddBuff(BuffID.Bleeding, 30 * 60, false); //bleeding
             }
 
             if (Main.rand.NextBool(2))
             {
-
-                target.AddBuff(BuffID.BrokenArmor, 180 / expertScale, false); //broken armor
-                target.AddBuff(BuffID.CursedInferno, 180 / expertScale, false); //cursed inferno
+                target.AddBuff(BuffID.BrokenArmor, 3 * 60, false); //broken armor
+                target.AddBuff(BuffID.CursedInferno, 3 * 60, false); //cursed inferno
                 //player.AddBuff("Powerful Curse Buildup", 18000, false); //chance to lose -20 life for 5 minutes
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false);
             }
         }
 
@@ -292,7 +290,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             phase++;
 
             // If we're almost dead, activate the Cataclysm
-            if (NPC.life < 2000)
+            if (NPC.life < NPC.lifeMax / 20)
             {
                 attackindex = 5;
             }
@@ -477,17 +475,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.BlightBag>()));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
-        }
-
-        public override void OnKill()
-        {
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.DivineSpark>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulOfBlight>(), Main.rand.Next(3, 5));
-            }
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.BlightBag>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DivineSpark>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulOfBlight>(), 1, 2, 4));
+            npcLoot.Add(notExpertCondition);
         }
     }
 }

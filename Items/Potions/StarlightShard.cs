@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Potions
             {
                 return false;
             }
-            return true;
+            return player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse;
         }
 
         public override void HoldItem(Player player)
@@ -47,8 +47,6 @@ namespace tsorcRevamp.Items.Potions
 
                 player.velocity.X = slowdownX;
                 player.velocity.Y = slowdownY;
-
-
             }
         }
 

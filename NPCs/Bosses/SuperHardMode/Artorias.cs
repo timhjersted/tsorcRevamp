@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
@@ -10,6 +11,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Armors.Summon;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -19,24 +23,30 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 15;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.CursedInferno,
+                    BuffID.Ichor,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
         public override void SetDefaults()
         {
             NPC.knockBackResist = 0;
             NPC.damage = 84;
-            NPC.defense = 50;
+            NPC.defense = 25;
             NPC.height = 40;
             NPC.width = 30;
-            NPC.lifeMax = 150000;
+            NPC.lifeMax = 75000;
             NPC.scale = 1f;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.value = 700000;
             NPC.boss = true;
             NPC.lavaImmune = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Confused] = true;
             despawnHandler = new NPCDespawnHandler("Artorias, the Abysswalker stands victorious...", Color.Gold, DustID.GoldFlame);
         }
 
@@ -66,26 +76,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
-            NPC.lifeMax = (int)(NPC.lifeMax / 2);
-            NPC.damage = (int)(NPC.damage / 2);
-            poisonStrikeDamage = (int)(poisonStrikeDamage * tsorcRevampWorld.SubtleSHMScale);
-            redKnightsSpearDamage = (int)(redKnightsSpearDamage * tsorcRevampWorld.SubtleSHMScale);
-            redMagicDamage = (int)(redMagicDamage * tsorcRevampWorld.SubtleSHMScale);
-            darkBeadDamage = (int)(darkBeadDamage * tsorcRevampWorld.SubtleSHMScale);
+            poisonStrikeDamage = (int)(poisonStrikeDamage * tsorcRevampWorld.SHMScale);
+            redKnightsSpearDamage = (int)(redKnightsSpearDamage * tsorcRevampWorld.SHMScale);
+            redMagicDamage = (int)(redMagicDamage * tsorcRevampWorld.SHMScale);
+            darkBeadDamage = (int)(darkBeadDamage * tsorcRevampWorld.SHMScale);
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            int expertScale = 1;
-            if (Main.expertMode) expertScale = 2;
-            
-            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false);
-
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false);
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.BrokenArmor, 180 / expertScale, false);
-                target.AddBuff(BuffID.Poisoned, 3600 / expertScale, false);
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
+                target.AddBuff(BuffID.BrokenArmor, 3 * 60, false);
+                target.AddBuff(BuffID.Poisoned, 60 * 60, false);
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false);
             }
         }
         float customAi1;
@@ -384,7 +388,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                   */
 
-                if (Main.rand.NextBool(10) && NPC.life <= 50000)
+                if (Main.rand.NextBool(10) && NPC.life <= NPC.lifeMax / 2)
                 {
 
                     //ULTIMATE DEATH ATTACK - BLANKET OF FIRE ABOVE PLAYER THAT CURSES
@@ -479,7 +483,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
                 //POISON ATTACK DUST TELEGRAPH
-                if (poisonTimer >= 310 && NPC.life >= 50001) //was 180
+                if (poisonTimer >= 310 && NPC.life >= NPC.lifeMax / 2) //was 180
                 {
                     //if(Main.rand.NextBool(60))
                     //{
@@ -525,7 +529,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                     //DD2DrakinShot FINAL ATTACK
-                    if (poisonTimer >= 186f && NPC.life <= 50000)
+                    if (poisonTimer >= 186f && NPC.life <= NPC.lifeMax / 2)
                     {
                         bool clearSpace = true;
                         for (int i = 0; i < 10; i++)
@@ -692,8 +696,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.ArtoriasBag>()));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.ArtoriasBag>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AdventureModeRule, ItemID.LargeAmethyst));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<WolfRing>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulOfArtorias>(), 1, 2, 4));
+            npcLoot.Add(notExpertCondition);
         }
 
         #region Gore
@@ -706,18 +715,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Easterling Gore 3").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Easterling Gore 2").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Easterling Gore 3").Type, 1f);
-            }
-            if (!Main.expertMode)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.WolfRing>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulOfArtorias>(), 4);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>());
-                if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.LargeAmethyst);
-                }
             }
         }
         #endregion

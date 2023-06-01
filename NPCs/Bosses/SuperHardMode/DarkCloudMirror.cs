@@ -14,8 +14,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     [AutoloadBossHead]
     class DarkCloudMirror : ModNPC
     {
+        int divineSparkDamage = 75;
+        int darkFlowDamage = 50;
+        int antiMatDamage = 100;
         public override void SetStaticDefaults()
         {
+            Main.npcFrameCount[NPC.type] = 16;
             NPCID.Sets.TrailCacheLength[NPC.type] = (int)TRAIL_LENGTH;    //The length of old position to be recorded
             NPCID.Sets.TrailingMode[NPC.type] = 1;
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
@@ -26,13 +30,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void SetDefaults()
         {
             NPC.npcSlots = 10;
-            Main.npcFrameCount[NPC.type] = 16;
             AnimationType = 0;
             NPC.aiStyle = 0;
             NPC.height = 40;
             NPC.width = 20;
             Music = 12;
-            NPC.damage = 105;
+            NPC.damage = 53;
             NPC.defense = 160;
             NPC.lifeMax = 30000;
             NPC.HitSound = SoundID.NPCHit1;
@@ -44,17 +47,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.noTileCollide = true;
         }
         const float TRAIL_LENGTH = 12;
-
-        int divineSparkDamage = 150;
-        int darkFlowDamage = 100;
-        int antiMatDamage = 200;
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            NPC.damage /= 2;
-            divineSparkDamage /= 2;
-            darkFlowDamage /= 2;
-            antiMatDamage /= 2;
-        }
 
         public int MirrorAttackType
         {

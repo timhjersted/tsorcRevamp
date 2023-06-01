@@ -69,7 +69,6 @@ namespace tsorcRevamp
 
             clone.SoulSlot.Item = SoulSlot.Item.Clone();
         }
-
         public override void SendClientChanges(ModPlayer clientPlayer)
         {
             tsorcRevampPlayer oldClone = clientPlayer as tsorcRevampPlayer;
@@ -118,6 +117,7 @@ namespace tsorcRevamp
             tag.Add("BearerOfTheCurse", BearerOfTheCurse);
             tag.Add("soulSlot", ItemIO.Save(SoulSlot.Item));
             tag.Add("MaxAcquiredHP", MaxAcquiredHP);
+            tag.Add("SoulVessel", SoulVessel);
 
             if (bagsOpened == null)
             {
@@ -173,6 +173,7 @@ namespace tsorcRevamp
             Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
             SoulSlot.Item = soulSlotSouls.Clone();
             MaxAcquiredHP = tag.GetInt("MaxAcquiredHP");
+            SoulVessel = tag.GetInt("SoulVessel");
 
             if (bagsOpened == null)
             {

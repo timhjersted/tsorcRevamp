@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -10,7 +10,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Sword of Lord Gwyn");
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.OnFire,
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
@@ -19,7 +26,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.width = 152;
             NPC.height = 152;
             NPC.aiStyle = 23;
-            //NPC.timeLeft = 22500;
             NPC.knockBackResist = 0;
             NPC.damage = 130;
             NPC.defense = 35;
@@ -29,18 +35,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.value = 10000;
             NPC.noGravity = false;
             NPC.noTileCollide = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 18000, false);
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false);
         }
 
         public override void AI()
         {
-            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()))
+            if (!NPC.AnyNPCs(ModContent.NPCType<Gwyn>()))
             {
                 for (int i = 0; i < 60; i++)
                 {

@@ -1228,7 +1228,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         { 
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TriadBag>()));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedCrystal>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedFlameNozzle>()));
