@@ -106,7 +106,6 @@ namespace tsorcRevamp.Projectiles
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-                projectile.WhipSettings.RangeMultiplier *= 0.8f;
 
                 if (projectile.type == ProjectileID.Terrarian && player.statMana >= (int)(player.manaCost * 2f))
                 {

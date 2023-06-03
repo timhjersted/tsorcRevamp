@@ -762,7 +762,7 @@ namespace tsorcRevamp.NPCs
             }
             if(markedByFirecracker)
             {
-                SummonTagScalingDamage += 1f;
+                SummonTagScalingDamage += SummonerEdits.FirecrackerScalingDamage / 100f;
             }
             if (markedByCoolWhip)
             {
@@ -920,7 +920,7 @@ namespace tsorcRevamp.NPCs
                 modifiers.FlatBonusDamage += SummonTagFlatDamage * ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type] * modPlayerProjectileOwner.SummonTagStrength;
                 modifiers.ScalingBonusDamage += SummonTagScalingDamage * ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type] * modPlayerProjectileOwner.SummonTagStrength;
                 modifiers.ArmorPenetration += SummonTagArmorPenetration * modPlayerProjectileOwner.SummonTagStrength;
-                SummonTagCriticalStrikeChance = (BaseSummonTagCriticalStrikeChance * modPlayerProjectileOwner.SummonTagStrength * (1f + (projectileOwner.GetTotalCritChance(DamageClass.Summon) / 100f)));
+                SummonTagCriticalStrikeChance = (BaseSummonTagCriticalStrikeChance * (1f + (projectileOwner.GetTotalCritChance(DamageClass.Summon) / 100f)));
                 int critLevel = (int)(Math.Floor(SummonTagCriticalStrikeChance / 100f));
                 if (critLevel >= 1)
                 {
@@ -968,15 +968,15 @@ namespace tsorcRevamp.NPCs
                         WhipDebuffCounter++;
                     }
                 }
-                if (npc.HasBuff(ModContent.BuffType<SearingLashDebuff>()) && modPlayerProjectileOwner.SearingLashStacks >= 4f)
+                if (markedBySearingLash && modPlayerProjectileOwner.SearingLashStacks >= 4f)
                 {
                     WhipDebuffCounter++;
                 }
-                if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()) && modPlayerProjectileOwner.NightsCrackerStacks >= 4f)
+                if (markedByNightsCracker && modPlayerProjectileOwner.NightsCrackerStacks >= 4f)
                 {
                     WhipDebuffCounter++;
                 }
-                if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()) && modPlayerProjectileOwner.TerraFallStacks >= 4f)
+                if (markedByTerraFall && modPlayerProjectileOwner.TerraFallStacks >= 4f)
                 {
                     WhipDebuffCounter++;
                 }
@@ -992,35 +992,11 @@ namespace tsorcRevamp.NPCs
                 {
                     WhipDebuffCounter--;
                 }
-                if (WhipDebuffCounter == 0)
+                if (WhipDebuffCounter > Darksign.WhipDebuffCounterCap)
                 {
-                    modifiers.FinalDamage *= 0.1f;
+                    WhipDebuffCounter = Darksign.WhipDebuffCounterCap;
                 }
-                else
-                if (WhipDebuffCounter == 1)
-                {
-                    modifiers.FinalDamage *= 0.32f;
-                }
-                else
-                if (WhipDebuffCounter == 2)
-                {
-                    modifiers.FinalDamage *= 0.54f;
-                }
-                else
-                if (WhipDebuffCounter == 3)
-                {
-                    modifiers.FinalDamage *= 0.76f;
-                }
-                else
-                if (WhipDebuffCounter == 4)
-                {
-                    modifiers.FinalDamage *= 0.98f;
-                }
-                else
-                if (WhipDebuffCounter >= 5)
-                {
-                    modifiers.FinalDamage *= 1.2f;
-                }
+                modifiers.FinalDamage *= 0.1f + (WhipDebuffCounter * Darksign.MinionDamageReductionDecrease / 100f);
             }
             #endregion
         }

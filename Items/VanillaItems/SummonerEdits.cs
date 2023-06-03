@@ -47,8 +47,17 @@ namespace tsorcRevamp.Items.VanillaItems
         public static float MorningStarTagCriticalStrikeChance = 6;
         public static float KaleidoscopeTagDamage = 10;
         public static float KaleidoscopeTagCriticalStrikeChance = 5;
+        public static float FirecrackerScalingDamage = 100f;
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
+            if (item.type == ItemID.FireWhip)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip2");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "TagNerfed", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.Firecracker").FormatWith(FirecrackerScalingDamage)));
+                }
+            }
             if (item.type == ItemID.MaceWhip)
             {
                 int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
@@ -224,7 +233,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 player.whipRangeMultiplier += scaleDelta;
             }
         }
-        public static int MaxMinionIncrease = 1;
+        public static int FlinxFurMaxMinionIncrease = 1;
         public override string IsArmorSet(Item head, Item body, Item legs)
         {
             if (head.type == ModContent.ItemType<OldChainCoif>() && body.type == ItemID.FlinxFurCoat && legs.type == ModContent.ItemType<OldChainGreaves>())
@@ -237,8 +246,8 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if (set == "FlinxFurChained")
             {
-                player.setBonus = Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.FlinxFurChainedSetBonus").FormatWith(MaxMinionIncrease);
-                player.maxMinions += MaxMinionIncrease;
+                player.setBonus = Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.FlinxFurChainedSetBonus").FormatWith(FlinxFurMaxMinionIncrease);
+                player.maxMinions += FlinxFurMaxMinionIncrease;
             }
         }
 

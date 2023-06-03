@@ -28,6 +28,9 @@ using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using Terraria.Localization;
 using tsorcRevamp.Items.Accessories.Summon;
+using tsorcRevamp.Items.Accessories.Expert;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Armors;
 
 namespace tsorcRevamp
 {
@@ -694,6 +697,8 @@ namespace tsorcRevamp
                 }
             }
         }
+        public static float AmmoReservationRangedCritDamage = 10f;
+        public static float SharpenedMeleeArmorPen = 50f;
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             if (Player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread)
@@ -702,11 +707,11 @@ namespace tsorcRevamp
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().Sharpened)
             {
-                modifiers.ScalingArmorPenetration += 0.5f;
+                modifiers.ScalingArmorPenetration += SharpenedMeleeArmorPen / 100f;
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationPotion)
             {
-                modifiers.CritDamage += Player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationDamageScaling * 0.1f;
+                modifiers.CritDamage += Player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationDamageScaling * AmmoReservationRangedCritDamage / 100f;
             }
 
             if (Player.GetModPlayer<tsorcRevampPlayer>().SweepingBladeDamage)
@@ -1204,23 +1209,23 @@ namespace tsorcRevamp
             float multiplier = 1f;
             if (player.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing)
             {
-                multiplier += 0.20f;
+                multiplier += CovetousSilverSerpentRing.SoulAmplifier / 100f;
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().SoulSerpentRing)
             {
-                multiplier += 0.30f;
+                multiplier += CovetousSoulSerpentRing.SoulAmplifier / 100f;
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon)
             {
-                multiplier += 0.2f * player.GetModPlayer<tsorcRevampPlayer>().SoulSiphonScaling;
+                multiplier += SoulSiphonPotion.SoulAmplifier / 100f * player.GetModPlayer<tsorcRevampPlayer>().SoulSiphonScaling;
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().SOADrain)
             {
-                multiplier += 0.4f;
+                multiplier += SymbolOfAvarice.SoulAmplifier / 100f;
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                multiplier += 0.2f;
+                multiplier += Darksign.BotCSoulDropAmplifier / 100f;
             }
             return multiplier;
         }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Armors.Melee;
 
@@ -93,13 +94,14 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             else return base.IsArmorSet(head, body, legs);
         }
+        public static int GoldenGiFlatDamage = 3;
         public override void UpdateArmorSet(Player player, string set)
         {
             if (set == "GoldenGi")
             {
-                player.setBonus = "Increases melee damage by 3 flat";
+                player.setBonus = Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.GoldenGi");
 
-                player.GetDamage(DamageClass.Melee).Flat += 3f;
+                player.GetDamage(DamageClass.Melee).Flat += GoldenGiFlatDamage;
             }
         }
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
@@ -110,15 +112,15 @@ namespace tsorcRevamp.Items.VanillaItems
             int manaCost3 = (int)(ManaBase3 * player.manaCost);
             if (item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand | item.type == ItemID.Starfury)
             {
-                tooltips.Insert(6, new TooltipLine(Mod, "", "Requires " + manaCost1 + " mana to cast projectile"));
+                tooltips.Insert(6, new TooltipLine(Mod, "ManaCost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaCost1") + manaCost1 + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaCost2")));
             }
             if (item.type == ItemID.LightsBane | item.type == ItemID.BladeofGrass)
             {
-                tooltips.Insert(6, new TooltipLine(Mod, "", "Requires " + manaCost2 + " mana to cast projectile"));
+                tooltips.Insert(6, new TooltipLine(Mod, "ManaCost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaCost1") + manaCost2 + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaCost2")));
             }
             if (item.type == ItemID.Meowmere | item.type == ItemID.StarWrath)
             {
-                tooltips.Insert(5, new TooltipLine(Mod, "", "Requires " + manaCost3 + " mana to cast projectile"));
+                tooltips.Insert(5, new TooltipLine(Mod, "ManaCost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaCost1") + manaCost3 + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaCost2")));
             }
         }
     }

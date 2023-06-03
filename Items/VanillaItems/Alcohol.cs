@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.VanillaItems
@@ -14,7 +15,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 || item.type == ItemID.Sake
                 )
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", "Minor improvements to whip stats"));
+                tooltips.Insert(3, new TooltipLine(Mod, "Alcoholic", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.AleSake")));
             }
         }
     }

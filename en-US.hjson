@@ -9,7 +9,7 @@ Mods: {
 			AggroIncrease: Enemies are more likely to target you
 			WhipCritDamage: Increases the damage of whip crits by {0}%
 			WhipCritHitboxSize: Increases the Whip Tip Crit Hitbox Size to {0}x
-			SummonTagStrength: Increases the strength of Summon Tag effects by {0}%
+			SummonTagStrength: Increases Summon Tag Damage and Armor Penetration by {0}%
 			SummonTagDuration: Increases the duration of Summon Tag effects by {0}%
 			BotCSummonTagDoubleBuffCount: Fully charged whip debuff counts as 2
 			CriticalStrikeDamage: Critical strikes deal {0}% more damage
@@ -30,10 +30,46 @@ Mods: {
 			DecreasedDefense: Decreases defense by {0}
 			IncreasedThorns: Increases thorns by {0}
 			UniqueBarrier: Does not stack with other barrier or shield spells
+			IncreasedSoulDrops: Increases the amount of souls dropped by fallen creatures by {0}%
+			IncreasedConsumableSoulDrops: Increases the chance of consumable soul drops by {0}%
+			NonConsumable: Item is non-consumable
+			UnusableDUringBossFight: Can not be used while a boss is alive!
+			MeleeArmorPenPercent: Increases melee armor penetration by {0}%
+			FlatMeleeDamageBoost: Increases melee damage by {0} flat
 		}
 
 		Items: {
 			VanillaItems: {
+				SuspiciousLookingEye:
+					'''
+					Item is not consumed so that you can retry the fight on defeat
+					The Eye of Cthulhu can only be summoned during the night
+					A silver watch may aid in the passing of time...
+					'''
+				MechanicalEye:
+					'''
+					Summons The Triad
+					{$CommonItemTooltip.NonConsumable}
+					'''
+				SharpeningStation: "{$CommonItemTooltip.MeleeArmorPenPercent}"
+				GoldenGi: "{$CommonItemTooltip.FlatMeleeDamageBoost}"
+				ManaCost1: "Requires "
+				ManaCost2: " mana to cast projectile"
+				AmmoReservationPotion: "{$IncreasedRangedCriticalDamage}"
+				AmmoBox: Increases ammo critical strike chance by the ammo's base damage
+				HerosShirt:
+					'''
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltips.PercentIncreasedCritChance}
+					Can be upgraded eventually with flippers, a diving helmet, and 3 mythril bars
+					'''
+				RedClothRobe:
+					'''
+					{$CommonItemTooltip.IncreasesMaxManaBy}
+					{$CommonItemTooltip.PercentReducedManaCost@1}
+					'''
+				MagicSummonHybridDamageClass: magic/summon damage
+				AleSake: Minor improvements to whip stats
+				Firecracker: Explosion increases the damage dealt by {0}%
 				MorningStar:
 					'''
 					{$CommonItemTooltip.SummonTagDamage}
@@ -62,6 +98,57 @@ Mods: {
 					{$CommonItemTooltip.SummonTagDuration@1}
 					'''
 				FlinxFurChainedSetBonus: "{$CommonItemTooltip.IncreasesMaxMinionsBy}"
+				AngelWings: "[c/ffbf00:You will discover these in time...]"
+				AdamantiteDrill:
+					'''
+					Use this to open the Adamantite gates in the
+					Corruption Temple to the west of the village
+					'''
+				BandOfRegeneration:
+					'''
+					Can be upgraded with the Band of Starpower 
+					into the Mana Regeneration Band and then upgraded further with Dark Souls
+					'''
+				BandOfStarpower:
+					'''
+					Can be upgraded with the Band of Regeneration
+					into the Mana Regeneration Band and then upgraded further with Dark Souls
+					'''
+				CobaltDrill:
+					'''
+					[c/ffbf00:Use this to gain entry to the Wyvern Mage's]
+					[c/ffbf00:Fortress above the hallowed caverns to the East]
+					'''
+				DivingHelmet: Can be placed in an accessory slot or in your head slot.
+				MechanicalSkull: "{$CommonItemTooltip.NonConsumable}"
+				MechanicalWorm:
+					'''
+					It's heavier than you expected
+					You get the feeling a way to stay in the air may be key...
+					{$CommonItemTooltip.NonConsumable}
+					'''
+				MoltenPickaxe:
+					'''
+					[c/ffbf00:Can be used to open gates made of Cobalt Ore]
+					Miakoda reminds you of the Cobalt Gate to the East of Obsidian's Volcano
+					'''
+				SilverWatch: "[c/ffbf00:Can be upgraded with Dark Souls to change day to night.]"
+				StickyBomb: More fun to use than a pickaxe!
+				WormFood: "{$CommonItemTooltip.NonConsumable}"
+				CopperAxe: All axes do 2x damage to woody enemies
+				Diamond: Vital ingredient in the crafting of a very powerful potion
+				IronOre: Perhaps you can use these for making special arrows..?
+				RecallItem: "{$CommonItemTooltip.UnusableDuringBossFight}"
+				LargeAmethyst: "[c/ffbf00:A symbol resembling a large pyramid with the moon to its right side is carved into it]"
+				LargeSapphire: "[c/ffbf00:A symbol resembling a snow-capped mountain near a fortress is carved into it]"
+				VulnerabilityHex: Applies a vulnerability hex
+				StarinaBottle: Increases mana regen by 10 and decreases mana regen delay by 50%
+				ManaRegenerationBand: Increases mana regen by 25 and decreases mana regen delay by 100%
+				BotCHealingItems: Doesn't heal the [c/6d8827:Bearer of the Curse]
+				WellFedItemsBotC: Increases stamina regen by {0}% for the [c/6d8827:Bearer of the Curse]
+				ManaRegenerationPotionBotC: Increases Cerulean Flask restoration time by {0}
+				CelestialMagnetBotC: Mana Star pickups only restore 4% of the [c/6d8827:Bearer of the Curse's] maximum mana
+				MagicCuffsBotC: Only restores a sixth of pre-mitigation damage taken by the [c/6d8827:Bearer of the Curse] as mana
 			}
 
 			AbandonedStumpBanner: {
@@ -916,7 +1003,8 @@ Mods: {
 					'''
 					An ancient relic forged and lost many centuries ago
 					One of the 4 Kings of Arradius was said to wear this ring
-					[c/ffbf00:Increases the number of souls dropped from fallen creatures by 20% but reduces defense by 15]
+					[c/ffbf00:{$CommonItemTooltip.IncreasedSoulDrops}]
+					[c/ffbf00:{$CommonItemTooltip.DecreasedDefense@1}]
 					The ring glows with a bright white light
 					'''
 			}
@@ -926,8 +1014,9 @@ Mods: {
 				Tooltip:
 					'''
 					An ancient relic forged and lost many centuries ago
-					[c/ffbf00:Increases the number of Dark Souls dropped by fallen creatures by 30% but reduces defense by 40]
-					Also increases the chance of consumable soul drops by 100%
+					[c/ffbf00:{$CommonItemTooltip.IncreasedSoulDrops}]
+					[c/ffbf00:{$CommonItemTooltip.DecreasedDefense@1}]
+					[c/ffbf00:{$CommonItemTooltip.IncreasedConsumableSoulDrops@2}]
 					All souls are drawn to the wearer from a large distance
 					The ring glows with a bright white light
 					'''
@@ -1142,11 +1231,6 @@ Mods: {
 					Small chance to spawn falling mana stars when hitting an enemy
 					Their damage scales with max mana
 					Mana stars restore mana when collected
-					'''
-				BotCTooltip:
-					'''
-					Mana Star pickups only restore 4% of the [c/6d8827:Bearer of the Curse's] maximum mana
-					Only restores a seventh of pre-mitigation damage taken by the [c/6d8827:Bearer of the Curse] as mana
 					'''
 			}
 
@@ -2525,7 +2609,7 @@ Mods: {
 				DisplayName: Symbol Of Avarice
 				Tooltip:
 					'''
-					Increases Dark soul absorption from defeated enemies by 40%
+					{$CommonItemTooltip.IncreasedSoulDrops}
 					but the curse of the branded also [c/FF0000:drains HP].
 					'''
 			}
@@ -3091,16 +3175,16 @@ Mods: {
 					'''
 					Use to become the [c/6d8827:Bearer of the Curse]
 					Playing as the [c/6d8827:Bearer of the Curse] has the following effects:
-					You gain an extra accessory slot, receive +20% more souls and your stamina recovers much faster.
+					You gain an extra accessory slot, receive {0}% more souls and your stamina recovers much faster.
 					However, [c/dd3333:using weapons drains stamina] and life regen is halved while stamina isn't at it's maximum.
 					Greater Magic Mirror use is prohibited, and instant-heal items won't heal you, but grants an Estus Flask to heal you.
-					Dying reduces your max HP by 20% until you return to where you died.
-					Mana regeneration is disabled but grants a Cerulean Flask to restore mana, scaling with 5% maximum mana,
+					Dying reduces your max HP by {1}% until you return to where you died.
+					Mana regeneration is disabled but grants a Cerulean Flask to restore mana, scaling with {2}% maximum mana,
 					mana regen bonuses increase total mana restored and mana regen delay penalties increase total mana restoration time,
-					magic damage is increased by 20% and attack speed by 15% multiplicatively,
+					magic damage is increased by {3}% and attack speed by {4}% multiplicatively,
 					Mana Potions still work and resting at a Bonfire restores mana.
-					Minion's final damage is reduced by 90%, this reduction is lowered by 22% for each whip debuff active on the enemy.
-					capping at 120% final damage if 5 or more whip debuffs are active simultaneously.
+					Minion's final damage is reduced by {5}%, this reduction is lowered by {6}% for each whip debuff active on the enemy.
+					capping at {8}% final damage if {7} or more whip debuffs are active simultaneously and whip range is reduced by {9}%.
 					[c/ca1e00:This mode is intended for players experienced with the mod]
 					[c/ca1e00:It is not recommended on first playthroughs.]
 					'''
@@ -4017,8 +4101,8 @@ Mods: {
 				DisplayName: Soul Siphon Potion
 				Tooltip:
 					'''
-					Enemies drop 20% more Dark souls
-					Consumable souls' drop chance is increased by 50%
+					{$CommonItemTooltip.IncreasedSoulDrops}
+					{$CommonItemTooltip.IncreasedConsumableSoulDrops@1}
 					Soul pickup range greatly increased
 					'''
 			}
@@ -6271,8 +6355,6 @@ Mods: {
 				ManaSickness: Reduces all damage dealt by {0}%
 				SolarShield: "{$CommonItemTooltip.ReducesDamageTakenByPercent}, repel enemies when taking damage"
 				WeaponImbue: Increases melee crit by {0}% and increases whip damage by {1}% multiplicatively
-				SharpeningStation: Increases melee armor penetration by {0}%
-				AmmoBox: Increases ammo crit chance by the ammo's base damage
 			}
 
 			Curse: {
@@ -7702,6 +7784,24 @@ Mods: {
 
 			Dwarf: {
 				DisplayName: Dwarf
+				Name1: Unfoli
+				Name2: Nollin
+				Name3: Duroin
+				Name4: Jloin
+				Name5: Grefinnyr
+				Name6: Nionwelf
+				Name7: Kloni
+				Name8: Fini
+				Name9: Ofur
+				Name10: Ofi
+				Name11: Bompbi
+				Quote1: I've got some contracts for sale.
+				Quote2: How are you?
+				Quote3: I'm thirsty...
+				Quote4: After you defeat the Eater of Worlds, I'll have cheap sticky bombs for sale!
+				Quote5: If you're able to defeat The Sorrow or The Destroyer, I'll have more things to sell later...
+				Quote6: If you're able to defeat The Sorrow, I'll have more things to sell later...
+				Quote7: If you're able to defeat The Destroyer, I'll have more things to sell later...
 
 				TownNPCMood: {
 					Content: I am content.
@@ -8166,6 +8266,7 @@ Mods: {
 			AdventureModeDisabled: Sandbox-only
 			AdventureModeEnabled: Adventure Mode-only
 			BotCEnabled: Bearer of the Curse-only
+			SorrowDowned: Sorrow has been defeated
 			SHM3Downed: Three Guardians of the Abyss slain
 		}
 	}

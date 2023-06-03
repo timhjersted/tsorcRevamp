@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Humanizer;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.VanillaItems
@@ -16,12 +18,12 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "", "Increases melee armor penetration by 50%"));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "Sharpened", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.SharpeningStation").FormatWith(tsorcRevampPlayer.SharpenedMeleeArmorPen)));
                 }
             }
             if (item.type == ItemID.AmmoBox)
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", "Increases ammo critical strike chance by the ammo's base damage"));
+                tooltips.Insert(3, new TooltipLine(Mod, "QualityAmmo", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.AmmoBox")));
             }
         }
         public override void AddRecipes()

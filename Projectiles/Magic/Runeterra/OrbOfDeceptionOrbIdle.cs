@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 			// These lines facilitate the trail drawing
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-            Main.projFrames[Projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 8;
         }
 
 		public override void SetDefaults()
@@ -52,12 +52,12 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             }
             if (player.direction == 1) 
             {
-                Projectile.Center = new Vector2(player.Center.X + player.width * 2, player.Center.Y - 20);
+                Projectile.Center = new Vector2(player.Center.X + player.width * 2 - 10, player.Center.Y - 20);
             } else
             {
-                Projectile.Center = new Vector2(player.Center.X - player.width * 2, player.Center.Y - 20);
+                Projectile.Center = new Vector2(player.Center.X - player.width * 2 + 10, player.Center.Y - 20);
             }
-            int frameSpeed = 7;
+            int frameSpeed = 5;
 
             Projectile.frameCounter++;
 
@@ -81,6 +81,10 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                 Dust.NewDust(Projectile.Center, 2, 2, DustID.PoisonStaff, 0, 0, 150, default, 0.5f);
             }
 		}
+        public override bool? CanDamage()
+        {
+            return false;
+        }
         public override bool PreDraw(ref Color lightColor)
         {
             if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().EssenceThief > 8)

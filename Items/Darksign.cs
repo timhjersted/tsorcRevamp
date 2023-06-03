@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items
@@ -10,6 +11,17 @@ namespace tsorcRevamp.Items
 
     public class Darksign : ModItem
     {
+        public static float BotCSoulDropAmplifier = 20f;
+        public static float BotCMaxHPLossPercentage = 20f;
+        public static float FlaskMaxManaScaling = 5f;
+        public static float BotCMagicDamageAmplifier = 20f;
+        public static float BotCMagicAttackSpeedAmplifier = 15f;
+        public static float MaxMinionDamageReduction = 90f;
+        public static float MinionDamageReductionDecrease = 22f;
+        public static int WhipDebuffCounterCap = 5;
+        public static float MinionDamageCeiling = MinionDamageReductionDecrease * WhipDebuffCounterCap + 10f;
+        public static float WhipRangeReduction = 33f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BotCSoulDropAmplifier, BotCMaxHPLossPercentage, FlaskMaxManaScaling, BotCMagicDamageAmplifier, BotCMagicAttackSpeedAmplifier, MaxMinionDamageReduction, MinionDamageReductionDecrease, WhipDebuffCounterCap, MinionDamageCeiling, WhipRangeReduction);
         public override void SetStaticDefaults()
         {
             ItemID.Sets.ItemNoGravity[Item.type] = true; // Makes item float in world.

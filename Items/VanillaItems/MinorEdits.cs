@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
     class MinorEdits : GlobalItem
     {
-
+        public static float BotCWellFedStaminaRegen = 5f;
+        public static float BotCPlentySatisfiedStaminaRegen = 10f;
+        public static float BotCExquisitelyStuffedStaminaRegen = 15f;
         public override void SetDefaults(Item item)
         {
             if (item.type == ItemID.StaffofRegrowth && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
@@ -52,7 +55,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "RealBossName", "Summons The Triad\nItem is non-consumable."));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "RealBossName", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MechanicalEye")));
                 }
             }
         }

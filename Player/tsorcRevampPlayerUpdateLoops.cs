@@ -15,6 +15,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using Terraria.ModLoader.Config;
 using System.Linq;
 using Terraria.UI.Gamepad;
+using tsorcRevamp.Items.VanillaItems;
 
 namespace tsorcRevamp
 {
@@ -883,15 +884,15 @@ namespace tsorcRevamp
 
             if (Player.HasBuff(BuffID.WellFed))
             {
-                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.05f;
+                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += MinorEdits.BotCWellFedStaminaRegen / 100f;
             }
             if (Player.HasBuff(BuffID.WellFed2))
             {
-                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f;
+                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += MinorEdits.BotCPlentySatisfiedStaminaRegen / 100f;
             }
             if (Player.HasBuff(BuffID.WellFed3))
             {
-                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.15f;
+                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += MinorEdits.BotCExquisitelyStuffedStaminaRegen / 100f;
             }
 
 
@@ -918,12 +919,14 @@ namespace tsorcRevamp
         {
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                Player.GetDamage(DamageClass.Magic) *= 1.2f;
-                Player.GetAttackSpeed(DamageClass.Magic) *= 1.15f;
+                Player.GetDamage(DamageClass.Magic) *= 1f + (Darksign.BotCMagicDamageAmplifier / 100f);
+                Player.GetAttackSpeed(DamageClass.Magic) *= 1f + (Darksign.BotCMagicAttackSpeedAmplifier / 100f);
                 if (Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) || !Player.HasBuff(ModContent.BuffType<Bonfire>()))
                 {
                     Player.manaRegenDelay = 100;
                 }
+
+                Player.whipRangeMultiplier *= 1f - Darksign.WhipRangeReduction / 100f;
 
                 if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().minionStaminaCap)
                 {

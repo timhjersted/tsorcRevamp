@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Humanizer;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.VanillaItems
@@ -12,7 +14,7 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if (item.type == ItemID.AmmoReservationPotion)
             {
-                tooltips.Insert(4, new TooltipLine(Mod, "", "Increases ranged critical strike damage by 10%"));
+                tooltips.Insert(4, new TooltipLine(Mod, "SharpEyes", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.AmmoReservationPotion").FormatWith(tsorcRevampPlayer.AmmoReservationRangedCritDamage)));
             }
         }
     }

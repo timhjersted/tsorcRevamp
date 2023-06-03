@@ -23,10 +23,10 @@ namespace tsorcRevamp.Buffs.Summon
 
             Defense = (int)modPlayer.CrystalNunchakuDefenseDamage;
 
-            if (modPlayer.BearerOfTheCurse)
+            /*if (modPlayer.BearerOfTheCurse)
             {
                 player.endurance -= (25f - modPlayer.CrystalNunchakuDefenseDamage * 1.67f) / 100f;
-            }
+            }*/
         }
     }
 }

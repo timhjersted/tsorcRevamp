@@ -17,7 +17,7 @@ namespace tsorcRevamp
         {
             return player.GetModPlayer<tsorcRevampCeruleanPlayer>();
         }
-
+        public static float ManaRegenPotRestorationTimerBonus = 20f;
 
         public int ceruleanChargesCurrent; //Current amount of charges left
         public const int DefaultCeruleanChargesMax = 6; //How many charges the player starts with
@@ -77,7 +77,7 @@ namespace tsorcRevamp
             ceruleanRestorationTimerBonus = 1f + (Player.manaRegenDelayBonus / 5f);  //manaRegenDelayBonus is given out at 1 or 0.5 by 2 sources in vanilla so this is also very good scaling
             if (Player.manaRegenBuff) //so mana regen pot does something
             {
-                ceruleanRestorationTimerBonus = 1.2f + (Player.manaRegenDelayBonus / 4f); 
+                ceruleanRestorationTimerBonus = 1f + (ManaRegenPotRestorationTimerBonus / 100f) + (Player.manaRegenDelayBonus / 4f); 
             }
             ceruleanRestorationTimerMax = 300 * ceruleanRestorationTimerBonus; //base value does not affect the total mana restored
         }

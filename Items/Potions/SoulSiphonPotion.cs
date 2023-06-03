@@ -1,17 +1,17 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Potions
 {
     public class SoulSiphonPotion : ModItem
     {
+        public static float SoulAmplifier = 20f;
+        public static int ConsSoulChanceAmplifier = 50;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SoulAmplifier, ConsSoulChanceAmplifier);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Enemies drop 20% more Dark souls\n"
-                                + "Consumable souls' drop chance is increased by 50%\n"
-                                + "Soul pickup range greatly increased"); */
-
             ItemID.Sets.ItemIconPulse[Item.type] = true; // Makes item pulsate in world.
         }
 
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Potions
             Item.rare = ItemRarityID.Lime;
             Item.value = 5000;
             Item.buffType = ModContent.BuffType<Buffs.SoulSiphon>();
-            Item.buffTime = 25200;
+            Item.buffTime = 420 * 60;
         }
         public override void PostUpdate()
         {

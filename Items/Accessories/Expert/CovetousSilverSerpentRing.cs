@@ -1,11 +1,16 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class CovetousSilverSerpentRing : ModItem
     {
+        public static float SoulAmplifier = 20f;
+        public static int DefenseDecrease = 15;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SoulAmplifier, DefenseDecrease);
+
         public override void SetStaticDefaults()
         {
         }
@@ -15,7 +20,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             Item.width = 24;
             Item.height = 22;
             Item.accessory = true;
-            Item.defense = -15;
+            Item.defense = -DefenseDecrease;
             Item.value = PriceByRarity.LightRed_4; //prohibitively expensive soul cost
             Item.expert = true;
         }

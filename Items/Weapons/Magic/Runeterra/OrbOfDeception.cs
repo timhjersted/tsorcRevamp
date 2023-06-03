@@ -15,6 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         public static Color FilledColor = Color.YellowGreen;
         public override void SetStaticDefaults()
         {
+            Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 8));
         }
 
         public override void SetDefaults()
@@ -40,6 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
+            Item.shootSpeed = 20f;
             if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrb>()] != 0 || player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrbFilled>()] != 0)
             {
                 type = ModContent.ProjectileType<OrbOfDeceptionFlame>();

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Humanizer;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
@@ -8,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     class HerosClothes : GlobalItem
     {
 
-
+        public static float CritChance = 5f;
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
             if (item.type == ItemID.HerosShirt)
@@ -16,9 +18,7 @@ namespace tsorcRevamp.Items.Armors
                 int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria"); //find the last tooltip line
                 if (ttindex != -1)
                 {// if we find one
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "", "Set bonus boosts all critical strike chance by 5%"));
-                    tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "", "Can be upgraded eventually with flippers, a diving helmet, and 5 mythril bars."));
-
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CritChance", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.HerosShirt").FormatWith(CritChance)));
                 }
             }
         }
@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Armors
         {
             if (set == "Hero's Clothes")
             {
-                player.GetCritChance(DamageClass.Generic) += 5;
+                player.GetCritChance(DamageClass.Generic) += CritChance / 100f;
             }
         }
 

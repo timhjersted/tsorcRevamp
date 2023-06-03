@@ -1,11 +1,16 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class CovetousSoulSerpentRing : ModItem
     {
+        public static float SoulAmplifier = 30f;
+        public static int DefenseDecrease = 40;
+        public static int ConsSoulChanceAmplifier = 100;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SoulAmplifier, DefenseDecrease, ConsSoulChanceAmplifier);
         public override void SetStaticDefaults()
         {
         }
@@ -15,7 +20,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             Item.width = 24;
             Item.height = 22;
             Item.accessory = true;
-            Item.defense = -40;
+            Item.defense = -DefenseDecrease;
             Item.value = PriceByRarity.Pink_5;
             Item.expert = true;
         }
@@ -34,8 +39,8 @@ namespace tsorcRevamp.Items.Accessories.Expert
         public override void UpdateEquip(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().SoulSerpentRing = true;
-            Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper += 13;
-            player.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult += 20; //100% increase
+            player.GetModPlayer<tsorcRevampPlayer>().SoulReaper += 13;
+            player.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult += ConsSoulChanceAmplifier / 5;
             int posX = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;
             int posY = (int)(player.position.Y + 2f) / 16;
             Lighting.AddLight(posX, posY, 0.9f, 0.8f, 0.7f);

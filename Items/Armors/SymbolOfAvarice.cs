@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
@@ -8,10 +9,10 @@ namespace tsorcRevamp.Items.Armors
 
     public class SymbolOfAvarice : ModItem
     {
+        public static float SoulAmplifier = 40f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SoulAmplifier);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases Dark soul absorption from defeated enemies by 40%"
-                                + "\nbut the curse of the branded also [c/FF0000:drains HP]."); */
         }
         public override void SetDefaults()
         {

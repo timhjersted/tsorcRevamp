@@ -17,7 +17,9 @@ namespace tsorcRevamp.NPCs.Friendly
     {
 
         public static List<string> Names = new List<string> {
-            "Unfoli", "Nollin", "Duroin", "Jloin", "Grefinnyr", "Nionwelf", "Kloni", "Fini", "Ofur", "Ofi", "Bompbi"
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name1"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name2"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name3"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name4"),
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name5"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name6"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name7"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name8"),
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name9"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name10"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Name11")
         };
 
         public override void SetStaticDefaults()
@@ -75,22 +77,22 @@ namespace tsorcRevamp.NPCs.Friendly
         public override string GetChat()
         {
             WeightedRandom<string> chat = new WeightedRandom<string>();
-            chat.Add("I've got some contracts for sale.");
-            chat.Add("How are you?");
-            chat.Add("I'm thirsty...");
-            chat.Add("After you defeat the Eater of Worlds, I'll have cheap sticky bombs for sale!");
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Quote1"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Quote2"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Quote3"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Quote4"));
 
             if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) && !NPC.downedMechBoss1)
             {
-                chat.Add("If you're able to defeat The Sorrow or The Destroyer, I'll have more things to sell later...");
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Quote5"));
             }
             if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) && NPC.downedMechBoss1)
             {
-                chat.Add("If you're able to defeat The Sorrow, I'll have more things to sell later...");
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Quote6"));
             }
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) && !NPC.downedMechBoss1)
             {
-                chat.Add("If you're able to defeat The Destroyer, I'll have more things to sell later...");
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.Dwarf.Quote7"));
             }
             return chat;
         }
@@ -174,12 +176,12 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenIceBrand>()) {
                 shopCustomPrice = 4000, 
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))));
+            }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.SorrowDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))));
 
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Spears.ForgottenPearlSpear>()) {
                 shopCustomPrice = 4000, 
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))));
+            }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.SorrowDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))));
             
 
 

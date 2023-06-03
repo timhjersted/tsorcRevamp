@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.Buffs
 {
@@ -15,7 +16,7 @@ namespace tsorcRevamp.Buffs
         {
             player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon = true;
             player.GetModPlayer<tsorcRevampPlayer>().SoulReaper += 5;
-            player.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult += 10; //50% increase
+            player.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult += SoulSiphonPotion.ConsSoulChanceAmplifier / 5;
         }
     }
 }

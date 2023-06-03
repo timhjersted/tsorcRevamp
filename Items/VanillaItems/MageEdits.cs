@@ -1,6 +1,8 @@
+using Humanizer;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Armors.Magic;
 
@@ -8,7 +10,8 @@ namespace tsorcRevamp.Items.VanillaItems
 {
     class MageEdits : GlobalItem
     {
-
+        public static int RedClothMaxManaBoost = 40;
+        public static float RedClothManaCostReduction = 5f;
         public override void SetDefaults(Item item)
         {
             //Why is this eventide's internal name i'm literally going to go feral
@@ -73,10 +76,10 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if (set == "RedClothRobe")
             {
-                player.setBonus = "Increases your maximum mana by 40, decreases mana costs by 5%";
+                player.setBonus = Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RedClothRobe").FormatWith(RedClothMaxManaBoost, RedClothManaCostReduction);
 
-                player.statManaMax2 += 40;
-                player.manaCost -= 0.05f;
+                player.statManaMax2 += RedClothMaxManaBoost;
+                player.manaCost -= RedClothManaCostReduction / 100f;
             }
         }
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
@@ -88,7 +91,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "DamageType", $"{(int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(item.damage)} magic/summon damage"));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "DamageType", $"{(int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(item.damage)} " + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicSummonHybridDamageClass")));
                 }
             }
             if (item.type == ItemID.NimbusRod)
@@ -97,7 +100,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "DamageType", $"{(int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(item.damage)} magic/summon damage"));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "DamageType", $"{(int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(item.damage)} " + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicSummonHybridDamageClass")));
                 }
             }
             if (item.type == ItemID.ClingerStaff)
@@ -106,7 +109,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "DamageType", $"{(int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(item.damage)} magic/summon damage"));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "DamageType", $"{(int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(item.damage)} " + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicSummonHybridDamageClass")));
                 }
             }
             if (item.type == ItemID.MagnetSphere)
@@ -115,7 +118,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "DamageType", $"{(int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(item.damage)} magic/summon damage"));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "DamageType", $"{(int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(item.damage)} " + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicSummonHybridDamageClass")));
                 }
             }
         }

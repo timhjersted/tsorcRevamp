@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.VanillaItems
@@ -15,9 +16,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
                 if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "EoC1", "Item is not consumed so that you can retry the fight on defeat"));
-                    tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "EoC2", "The Eye of Cthulhu can only be summoned during the night."));
-                    tooltips.Insert(ttindex + 3, new TooltipLine(Mod, "EoC3", "A silver watch may aid in the passing of time..."));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "EoC1", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.SuspiciousLookingEye")));
                 }
             }
         }
