@@ -36,18 +36,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             return new Vector2(-6, 0);
         }
-
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Revolver);
-            recipe.AddIngredient(ItemID.SoulofLight, 9);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
-        }
-
         int tallyCounter;
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
