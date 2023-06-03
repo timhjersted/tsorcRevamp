@@ -12,6 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
     [Autoload(true)]
     public class OrbOfDeception : ModItem
     {
+        public static Color FilledColor = Color.YellowGreen;
         public override void SetStaticDefaults()
         {
         }
@@ -35,6 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.value = Item.buyPrice(0, 10, 0, 0);
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<OrbOfDeceptionOrb>();
+            Item.holdStyle = ItemHoldStyleID.HoldLamp;
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
@@ -55,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         {
             if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrbFilled>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrbIdle>()] == 0) 
             {
-                Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbOfDeceptionOrbIdle>(), 0, 0, Main.myPlayer); 
+                Projectile.NewProjectile(Projectile.InheritSource(player), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbOfDeceptionOrbIdle>(), 0, 0); 
             }
         }
         public override void AddRecipes()

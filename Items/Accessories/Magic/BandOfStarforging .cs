@@ -1,13 +1,21 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Accessories.Defensive;
 
 namespace tsorcRevamp.Items.Accessories.Magic
 {
-    //[AutoloadEquip(EquipType.HandsOn)]
+    [AutoloadEquip(EquipType.HandsOn)]
     public class BandOfStarforging : ModItem
     {
+        public static int LifeRegen = 4;
+        public static int MaxManaIncrease = 100;
+        public static int ManaRegen = 50;
+        public static float ManaRegenDelay = 150f;
+        public static float MaxManaPercentIncrease = 50f;
+        public static float ManaCostReduction = 10f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen, MaxManaIncrease, ManaRegen, ManaRegenDelay, MaxManaPercentIncrease, ManaCostReduction);
         public override void SetStaticDefaults()
         {
         }
@@ -36,12 +44,12 @@ namespace tsorcRevamp.Items.Accessories.Magic
 
         public override void UpdateEquip(Player player)
         {
-            player.lifeRegen += 4;
-            player.statManaMax2 += 100;
-            player.manaRegenBonus += 50;
-            player.manaRegenDelayBonus += 1.5f;
-            player.statManaMax2 = (int)(player.statManaMax2 * 1.5f);
-            player.manaCost -= 0.1f;
+            player.lifeRegen += LifeRegen;
+            player.statManaMax2 += MaxManaIncrease;
+            player.manaRegenBonus += ManaRegen;
+            player.manaRegenDelayBonus += ManaRegenDelay / 100f;
+            player.statManaMax2 = (int)(player.statManaMax2 * (1f + MaxManaPercentIncrease / 100f));
+            player.manaCost -= ManaCostReduction / 100f;
         }
 
     }

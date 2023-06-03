@@ -20,6 +20,16 @@ Mods: {
 			ImprovedWhipCrowdControl: Performs better against multiple targets than most whips
 			SummonTagArmorPen: "{0} summon tag armor penetration"
 			IncreasedRangedCriticalDamage: Increases ranged critical strike damage by {0}%
+			IncreasedLifeRegen: Increases life regeneration by {0}
+			IncreasedManaRegen: Increases mana regeneration by {0}
+			DecreasedManaRegenDelay: Decreases mana regeneration delay by {0}%
+			SetBonus: "Set Bonus: "
+			LifeThreshold: "If life falls below {0}%: "
+			KnockbackImmunity: Grants immunity to knockback
+			ForBotCOnly: " for the [c/6d8827:Bearer of the Curse]"
+			DecreasedDefense: Decreases defense by {0}
+			IncreasedThorns: Increases thorns by {0}
+			UniqueBarrier: Does not stack with other barrier or shield spells
 		}
 
 		Items: {
@@ -522,8 +532,8 @@ Mods: {
 				DisplayName: Anger Talisman
 				Tooltip:
 					'''
-					-30 defense
-					30% increased damage
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					{$CommonItemTooltip.DecreasedDefense@1}
 					'''
 			}
 
@@ -561,23 +571,31 @@ Mods: {
 				DisplayName: Darkmoon Cloak
 				Tooltip:
 					'''
-					Inherits the Star Cloaks effect and grants 5% increased damage and critical strike chance
-					When life falls below 40%, also increases mana regeneration by 5, damage and critical strike chance by 10%
+					Inherits the Star Cloaks effect and grants {$CommonItemTooltip.PercentIncreasedDamageCritChance}
 					Magic Imbues no longer need to go on cooldown
+					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.IncreasedManaRegen@2} and grants an additional
+					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
 					'''
 			}
 
 			AncientDemonShield: {
 				DisplayName: Ancient Demon Shield
-				Tooltip: Powerful Greatshield that reduces damage taken by 5%, inherits Obsidian Shield's effects and increases thorns by 100%
+				Tooltip:
+					'''
+					{$CommonItemTooltip.ReducesDamageTakenByPercent}
+					Inherits Obsidian Shield's effects
+					{$CommonItemTooltip.IncreasedThorns@1}
+					'''
 			}
 
 			BandOfCosmicPower: {
 				DisplayName: Band of Cosmic Power
 				Tooltip:
 					'''
-					Increases life regeneration by 2 and increases max mana by 40
-					Increases mana regen by 25 and decreases mana regen delay by 1
+					{$CommonItemTooltip.IncreasedLifeRegen}
+					{$CommonItemTooltip.IncreasesMaxManaBy@1}
+					{$CommonItemTooltip.IncreasedManaRegen@2}
+					{$CommonItemTooltip.DecreasedManaRegenDelay@3}
 					'''
 			}
 
@@ -585,8 +603,10 @@ Mods: {
 				DisplayName: Band of Great Cosmic Power
 				Tooltip:
 					'''
-					Increases life regeneration by 3 and maximum mana by 60
-					Increases mana regen by 30 and decreases mana regen delay by 1.1
+					{$CommonItemTooltip.IncreasedLifeRegen}
+					{$CommonItemTooltip.IncreasesMaxManaBy@1}
+					{$CommonItemTooltip.IncreasedManaRegen@2}
+					{$CommonItemTooltip.DecreasedManaRegenDelay@3}
 					'''
 			}
 
@@ -594,8 +614,10 @@ Mods: {
 				DisplayName: Band of Phenomenal Cosmic Power
 				Tooltip:
 					'''
-					Increases life regeneration by 4 and maximum mana by 80
-					Increases mana regen by 35 and decreases mana regen delay by 1.2
+					{$CommonItemTooltip.IncreasedLifeRegen}
+					{$CommonItemTooltip.IncreasesMaxManaBy@1}
+					{$CommonItemTooltip.IncreasedManaRegen@2}
+					{$CommonItemTooltip.DecreasedManaRegenDelay@3}
 					'''
 			}
 
@@ -603,9 +625,12 @@ Mods: {
 				DisplayName: Band Of Starforging
 				Tooltip:
 					'''
-					Increases life regeneration by 4 and maximum mana by 100
-					Increases mana regen by 50 and decreases mana regen delay by 1.5
-					Increases max mana by 50% and decreases mana usage by 10%
+					{$CommonItemTooltip.IncreasedLifeRegen}
+					{$CommonItemTooltip.IncreasesMaxManaBy@1}
+					{$CommonItemTooltip.IncreasedManaRegen@2}
+					{$CommonItemTooltip.DecreasedManaRegenDelay@3}
+					{$CommonItemTooltip.IncreasesMaxManaByPercent@4}
+					{$CommonItemTooltip.PercentReducedManaCost@5}
 					'''
 			}
 
@@ -613,9 +638,9 @@ Mods: {
 				DisplayName: Barrier Ring
 				Tooltip:
 					'''
-					Casts Magic Barrier when life falls below 25%
-					Magic Barrier increases defense by 20
-					Does not stack with other barrier or shield spells
+					{$CommonItemTooltip.LifeThreshold}Casts Magic Barrier
+					Magic Barrier effect: {$CommonItemTooltip.IncreasesDefenseBy@1}
+					{$CommonItemTooltip.UniqueBarrier}
 					'''
 			}
 
@@ -6216,22 +6241,28 @@ Mods: {
 
 			SoulVessel: {
 				DisplayName: Soul Vessel
-				Tooltip: Increases maximum mana by 50 for the [c/6d8827:Bearer of the Curse]
-			}
-
-			PortlyPlateChestplate: {
-				DisplayName: Portly Plate Chestplate
-				Tooltip: ""
-			}
-
-			PortlyPlateGreaves: {
-				DisplayName: Portly Plate Greaves
-				Tooltip: ""
+				Tooltip: "{$CommonItemTooltip.PermanentlyIncreasesMaxManaBy}{$CommonItemTooltip.ForBotCOnly}"
 			}
 
 			PortlyPlateHelmet: {
 				DisplayName: Portly Plate Helmet
-				Tooltip: ""
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+			}
+
+			PortlyPlateChestplate: {
+				DisplayName: Portly Plate Chestplate
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasedLifeRegen@1}
+					{$CommonItemTooltip.KnockbackImmunity}
+					{$CommonItemTooltip.LifeThreshold@2}{$CommonItemTooltip.IncreasedLifeRegen@3}
+					'''
+			}
+
+			PortlyPlateGreaves: {
+				DisplayName: Portly Plate Greaves
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeSpeed}"
 			}
 		}
 
@@ -7475,6 +7506,8 @@ Mods: {
 			CenterOfTheUniverseAura.DisplayName: Center Of The Universe Aura
 			InterstellarVesselAura.DisplayName: Interstellar Vessel Aura
 			OrbOfDeceptionOrbIdle.DisplayName: Orb Of Deception Orb Idle
+			OrbOfFlameOrbIdle.DisplayName: Orb Of Flame Orb Idle
+			OrbOfSpiritualityOrbIdle.DisplayName: Orb Of Spirituality Orb Idle
 		}
 
 		NPCs: {

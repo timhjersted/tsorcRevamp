@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories
@@ -9,11 +10,13 @@ namespace tsorcRevamp.Items.Accessories
 
     public class DarkmoonCloak : ModItem
     {
+        public static float DamageAndCritIncrease1 = 5f;
+        public static float LifeThreshold = 40f;
+        public static int ManaRegenBonus = 5;
+        public static float DamageAndCritIncrease2 = 10f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageAndCritIncrease1, LifeThreshold, ManaRegenBonus, DamageAndCritIncrease2);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Inherits the Star Cloaks effect and grants 5% increased damage and critical strike chance" +
-                               "\nWhen life falls below 40%, also increases mana regeneration by 5, damage and critical strike chance by 10%" +
-                                "\nMagic Imbues no longer need to go on cooldown"); */
         }
 
         public override void SetDefaults()
@@ -39,26 +42,25 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void UpdateEquip(Player player)
         {
-
             player.GetModPlayer<tsorcRevampPlayer>().DarkmoonCloak = true;
+            player.GetCritChance(DamageClass.Generic) += DamageAndCritIncrease1;
+            player.GetDamage(DamageClass.Generic) += DamageAndCritIncrease1 / 100f;
+            player.starCloakItem = new Item(ItemID.StarCloak);
 
-            if (player.statLife <= (player.statLifeMax2 / 5 * 2))
+            if (player.statLife <= (int)(player.statLifeMax2 * (LifeThreshold / 100f)))
             {
-                player.manaRegenBonus += 5;
-                player.GetCritChance(DamageClass.Generic) += 10;
-                player.GetDamage(DamageClass.Generic) += 0.1f;
+                player.manaRegenBonus += ManaRegenBonus;
+                player.GetCritChance(DamageClass.Generic) += DamageAndCritIncrease2;
+                player.GetDamage(DamageClass.Generic) += DamageAndCritIncrease2 / 100f;
 
             }
-                player.starCloakItem = new Item(ItemID.StarCloak);
-                player.GetCritChance(DamageClass.Generic) += 5;
-                player.GetDamage(DamageClass.Generic) += 0.05f;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!hideVisual)
             {
-                if (player.statLife <= (player.statLifeMax2 / 5 * 2))
+                if (player.statLife <= (int)(player.statLifeMax2 * (LifeThreshold / 100f)))
                 {
                     Lighting.AddLight(player.Center, .250f, .250f, .650f);
                     if (player.direction == 1)

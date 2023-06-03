@@ -65,7 +65,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 		{
 			Player player = Main.player[Projectile.owner];
 
-            Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(player.Center).SafeNormalize(Vector2.Zero) * 30f;
+			Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(player.Center).SafeNormalize(Vector2.Zero) * 30f;
             switch (CurrentAIState)
 			{
 				case AIState.LaunchingForward:
@@ -95,9 +95,27 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                         }
 					break;
 				}
-			}
-			Visuals();
-		}
+            }
+            int frameSpeed = 5;
+
+            Projectile.frameCounter++;
+
+            if (Projectile.frameCounter >= frameSpeed)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
+                {
+                    Projectile.frame = 0;
+                }
+            }
+
+            Projectile.rotation = Projectile.velocity.ToRotation();
+
+            Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 0.78f);
+            Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
+        }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 		{
 			modifiers.SourceDamage *= 1.25f;
@@ -125,8 +143,6 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 
         public override bool PreDraw(ref Color lightColor)
 		{
-			Vector2 playerArmPosition = Main.GetPlayerArmPosition(Projectile);
-
 			if (CurrentAIState == AIState.LaunchingForward)
 			{
 				Texture2D projectileTexture = TextureAssets.Projectile[Projectile.type].Value;
@@ -143,25 +159,5 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 			}
 			return true;
 		}
-        private void Visuals()
-        {
-            int frameSpeed = 5;
-
-            Projectile.frameCounter++;
-
-            if (Projectile.frameCounter >= frameSpeed)
-            {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
-
-                if (Projectile.frame >= Main.projFrames[Projectile.type])
-                {
-                    Projectile.frame = 0;
-                }
-            }
-
-            Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 0.78f);
-            Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
-        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
@@ -8,9 +9,11 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     [AutoloadEquip(EquipType.Shield)]
     public class AncientDemonShield : ModItem
     {
+        public static float DamageReduction = 5f;
+        public static float Thorns = 1f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageReduction, Thorns);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Powerful Greatshield that reduces damage taken by 5%, inherits Obsidian Shield's effects and gives thorns buff");
         }
 
         public override void SetDefaults()
@@ -25,10 +28,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
+            player.endurance += DamageReduction / 100f;
             player.noKnockback = true;
-            player.thorns += 1f;
             player.fireWalk = true;
-            player.endurance += 0.05f;
+            player.thorns += Thorns;
         }
 
         public override void AddRecipes()

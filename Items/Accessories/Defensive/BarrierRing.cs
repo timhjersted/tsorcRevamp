@@ -1,16 +1,16 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class BarrierRing : ModItem
     {
+        public static float LifeThreshold = 25f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold, Buffs.MagicBarrier.DefenseIncrease);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Casts Magic Barrier when life falls below 25%" +
-                                "\nMagic Barrier increases defense by 20" +
-                                "\nDoes not stack with other barrier or shield spells"); */
         }
 
         public override void SetDefaults()
@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            if ((player.statLife <= (player.statLifeMax2 * 0.25f)) && !(player.HasBuff(ModContent.BuffType<Buffs.MagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicBarrier>())))
+            if ((player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f)) && !(player.HasBuff(ModContent.BuffType<Buffs.MagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicBarrier>())))
             {
                 player.AddBuff(ModContent.BuffType<Buffs.MagicBarrier>(), 1, false);
             }

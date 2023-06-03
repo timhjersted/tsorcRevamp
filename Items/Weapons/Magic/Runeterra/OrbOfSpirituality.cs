@@ -13,6 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
     public class OrbOfSpirituality : ModItem
     {
         public float DashingTimer = 0f;
+        public static Color FilledColor = Color.YellowGreen;
         public override void SetStaticDefaults()
         {
         }
@@ -36,6 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.value = PriceByRarity.Cyan_9;
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<OrbOfSpiritualityOrb>();
+            Item.holdStyle = ItemHoldStyleID.HoldLamp;
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
@@ -67,6 +69,24 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
                 player.altFunctionUse = 1;
             }
         }
+        public override void HoldItem(Player player)
+        {
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrbFilled>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrbIdle>()] == 0)
+            {
+                Projectile.NewProjectile(Projectile.InheritSource(player), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbOfSpiritualityOrbIdle>(), 0, 0);
+            }
+            if (DashingTimer > 0)
+            {
+                SoundEngine.PlaySound(SoundID.Item104, player.Center);
+                player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.MouseWorld, 15f);
+                player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDash>(), 1 * 60);
+                player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>(), 20 * 60);
+                if (Main.GameUpdateCount % 5 == 0)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.One, ModContent.ProjectileType<OrbOfSpiritualityFlameNoMana>(), Item.damage, Item.knockBack, Main.myPlayer);
+                }
+            }
+        }
         public override bool AltFunctionUse(Player player)
         {
             return true;
@@ -80,20 +100,6 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             else
             {
                 return false;
-            }
-        }
-        public override void HoldItem(Player player)
-        {
-            if (DashingTimer > 0)
-            {
-                SoundEngine.PlaySound(SoundID.Item104, player.Center);
-                player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.MouseWorld, 15f);
-                player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDash>(), 1 * 60);
-                player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>(), 20 * 60);
-                if (Main.GameUpdateCount % 5 == 0)
-                {
-                    Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.One, ModContent.ProjectileType<OrbOfSpiritualityFlameNoMana>(), Item.damage, Item.knockBack, Main.myPlayer);
-                }
             }
         }
         public override void UpdateInventory(Player player)

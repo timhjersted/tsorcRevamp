@@ -3,12 +3,15 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items
 {
     class SoulVessel : ModItem
     {
+        public static int MaxManaIncrease = 50;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxManaIncrease);
         public override void SetStaticDefaults()
         {
         }

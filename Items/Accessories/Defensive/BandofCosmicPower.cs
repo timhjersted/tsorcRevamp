@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
@@ -7,6 +8,11 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     [AutoloadEquip(EquipType.HandsOn)]
     public class BandOfCosmicPower : ModItem
     {
+        public static int LifeRegen = 2;
+        public static int MaxManaIncrease = 40;
+        public static int ManaRegen = 25;
+        public static float ManaRegenDelay = 100f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen, MaxManaIncrease, ManaRegen, ManaRegenDelay);
         public override void SetStaticDefaults()
         {
         }
@@ -32,10 +38,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.lifeRegen += 2;
-            player.statManaMax2 += 40;
-            player.manaRegenBonus += 25;
-            player.manaRegenDelayBonus += 1f;
+            player.lifeRegen += LifeRegen;
+            player.statManaMax2 += MaxManaIncrease;
+            player.manaRegenBonus += ManaRegen;
+            player.manaRegenDelayBonus += ManaRegenDelay / 100f;
         }
 
     }

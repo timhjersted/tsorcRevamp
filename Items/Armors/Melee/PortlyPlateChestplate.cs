@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors.Melee
@@ -7,6 +8,11 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Body)]
     public class PortlyPlateChestplate : ModItem
     {
+        public static float DamageIncrease = 10f;
+        public static int LifeRegen1 = 2;
+        public static float LifeThreshold = 25f;
+        public static int LifeRegen2 = 3;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageIncrease, LifeRegen1, LifeThreshold, LifeRegen2);
         public override void SetStaticDefaults()
         {
         }
@@ -20,7 +26,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.Melee) += DamageIncrease / 100f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -28,12 +34,13 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.lifeRegen += 2;
+            player.lifeRegen += LifeRegen1;
             player.noKnockback = true;
 
-            if (player.statLife <= (player.statLifeMax2 / 4))
+            if (player.statLife <= (int)(player.statLifeMax2 * (LifeThreshold / 100f)))
             {
-                player.lifeRegen += 3;
+                player.lifeRegen += LifeRegen2;
+                Dust.NewDust(player.Center, 10, 10, DustID.AmberBolt);
             }
         }
         public override void AddRecipes()

@@ -15,6 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
     [Autoload(true)]
     public class OrbOfFlame : ModItem
     {
+        public static Color FilledColor = Color.YellowGreen;
         public override void SetStaticDefaults()
         {
         }
@@ -38,6 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<OrbOfFlameOrb>();
+            Item.holdStyle = ItemHoldStyleID.HoldLamp;
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
@@ -67,6 +69,13 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             if (Main.mouseLeft)
             {
                 player.altFunctionUse = 1;
+            }
+        }
+        public override void HoldItem(Player player)
+        {
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbFilled>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbIdle>()] == 0)
+            {
+                Projectile.NewProjectile(Projectile.InheritSource(player), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbOfFlameOrbIdle>(), 0, 0);
             }
         }
         public override bool AltFunctionUse(Player player)

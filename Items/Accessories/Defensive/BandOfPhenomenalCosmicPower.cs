@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
@@ -9,10 +10,13 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     [LegacyName("BandOfSupremeCosmicPower")]
     public class BandOfPhenomenalCosmicPower : ModItem
     {
+        public static int LifeRegen = 4;
+        public static int MaxManaIncrease = 80;
+        public static int ManaRegen = 35;
+        public static float ManaRegenDelay = 130f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen, MaxManaIncrease, ManaRegen, ManaRegenDelay);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Band of Phenomenal Cosmic Power");
-            // Tooltip.SetDefault("Increases life regeneration by 4 and maximum mana by 80");
         }
 
         public override void SetDefaults()
@@ -37,10 +41,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.lifeRegen += 4;
-            player.statManaMax2 += 80;
-            player.manaRegenBonus += 35;
-            player.manaRegenDelayBonus += 1.3f;
+            player.lifeRegen += LifeRegen;
+            player.statManaMax2 += MaxManaIncrease;
+            player.manaRegenBonus += ManaRegen;
+            player.manaRegenDelayBonus += ManaRegenDelay / 100f;
         }
 
     }

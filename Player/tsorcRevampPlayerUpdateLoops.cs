@@ -788,7 +788,7 @@ namespace tsorcRevamp
             {
                 if (Player.GetModPlayer<tsorcRevampPlayer>().SoulVessel > 0)
                 {
-                    Player.statManaMax2 += Player.GetModPlayer<tsorcRevampPlayer>().SoulVessel * 50;
+                    Player.statManaMax2 += Player.GetModPlayer<tsorcRevampPlayer>().SoulVessel * Items.SoulVessel.MaxManaIncrease;
                 }
             }
 

@@ -1,15 +1,17 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories
 {
     public class AngerTalisman : ModItem
     {
+        public static float DamageIncrease = 30f;
+        public static int DefenseDecrease = 30;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageIncrease, DefenseDecrease);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("-30 defense" +
-                                "\n30% increased damage"); */
         }
 
         public override void SetDefaults()
@@ -17,6 +19,7 @@ namespace tsorcRevamp.Items.Accessories
             Item.width = 24;
             Item.height = 28;
             Item.accessory = true;
+            Item.defense = -DefenseDecrease;
             Item.value = PriceByRarity.LightRed_4;
             Item.rare = ItemRarityID.LightRed;
         }
@@ -37,9 +40,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void UpdateEquip(Player player)
         {
-            player.statDefense -= 30; //because 10 defense is a joke
-            player.GetDamage(DamageClass.Generic) += 0.3f;
-
+            player.GetDamage(DamageClass.Generic) += DamageIncrease / 100f;
         }
 
     }

@@ -14,7 +14,7 @@ using System.Collections.Generic;
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
 {
 
-    public class OrbOfDeceptionOrbIdle : ModProjectile
+    public class OrbOfFlameOrbIdle : ModProjectile
     {
 
 		public override void SetStaticDefaults()
@@ -46,7 +46,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 		{
 			Player player = Main.player[Projectile.owner];
             player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, player.direction * -1.9f);
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrb>()] > 0 || player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrbFilled>()] > 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] > 0 || player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbFilled>()] > 0)
             {
                 Projectile.Kill();
             }
@@ -85,7 +85,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         {
             if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().EssenceThief > 8)
             {
-                lightColor = OrbOfDeception.FilledColor;
+                lightColor = OrbOfFlame.FilledColor;
                 return base.PreDraw(ref lightColor);
             }
             return base.PreDraw(ref lightColor);

@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors.Melee
@@ -7,6 +8,8 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Legs)]
     public class PortlyPlateGreaves : ModItem
     {
+        public static float MeleeSpeed = 27f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeSpeed);
         public override void SetStaticDefaults()
         {
         }
@@ -20,7 +23,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Melee) += 0.27f;
+            player.GetAttackSpeed(DamageClass.Melee) += MeleeSpeed / 100f;
         }
         public override void AddRecipes()
         {

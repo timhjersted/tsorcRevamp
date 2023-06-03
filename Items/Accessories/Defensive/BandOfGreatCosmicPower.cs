@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
@@ -8,10 +9,13 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
     public class BandOfGreatCosmicPower : ModItem
     {
+        public static int LifeRegen = 3;
+        public static int MaxManaIncrease = 60;
+        public static int ManaRegen = 30;
+        public static float ManaRegenDelay = 115f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen, MaxManaIncrease, ManaRegen, ManaRegenDelay);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Band of Great Cosmic Power");
-            // Tooltip.SetDefault("Increases life regeneration by 3 and maximum mana by 60");
         }
 
         public override void SetDefaults()
@@ -44,10 +48,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.lifeRegen += 3;
-            player.statManaMax2 += 60;
-            player.manaRegenBonus += 30;
-            player.manaRegenDelayBonus += 1.15f;
+            player.lifeRegen += LifeRegen;
+            player.statManaMax2 += MaxManaIncrease;
+            player.manaRegenBonus += ManaRegen;
+            player.manaRegenDelayBonus += ManaRegenDelay / 100f;
         }
 
     }
